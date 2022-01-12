@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "fresh_mob_behaviours",
+  "version": "${version}",
+  "name": "Fresh Mob Behaviours",
+  "description": "A Fresh take on vanilla Mob Behaviours",
+  "authors": ["Traben"],
+  "license": "MIT",
+  "icon": "icon.png",
+  "website": "https://www.curseforge.com/members/traben_0/projects",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "traben.freshMobBehaviours.FreshMobBehaviours"
+    ],
+    "modmenu": [
+      "traben.freshMobBehaviours.modMenuIntergrator2000"
+    ]
+  },
+  "mixins": [
+    "freshMobBehaviours.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.12.12",
+    "fabric": "*",
+    "minecraft": "1.18.1"
+  },
+  "custom": {
+  "modmenu": {
+    "links": {
+      "modmenu.website": "https://www.curseforge.com/members/traben_0/projects"
+    }
+  }
+}
+}
