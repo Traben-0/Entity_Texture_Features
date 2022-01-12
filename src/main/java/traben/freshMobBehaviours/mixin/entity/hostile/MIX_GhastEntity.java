@@ -11,6 +11,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MIX_GhastEntity {
     @Inject(method = "initGoals", at = @At("HEAD"))
     private void adjustSpeedByDistance(CallbackInfo ci) {
+        //test
             ((GhastEntity)(Object)this).verticalCollision = true;
+
     }
 }
