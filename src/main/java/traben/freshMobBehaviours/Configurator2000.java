@@ -6,13 +6,16 @@ import me.shedaniel.autoconfig.annotation.Config;
 @Config(name = "fresh_mob_behaviours")
 public class Configurator2000 implements ConfigData {
     String For_config_descriptions = "Use ModMenu";
+    //ALL
+    public boolean mobsHeal = true;
+    public boolean mobsBurnSpreadFireIfPlayerClose = true;
     //creeper
     public double creeperBaseSpeedModifier = 0D;
     public double creeperDashSpeedModifier = 1D;
     public boolean creeperExplodeOnDeath = false;
     public boolean creepersAmbush = true;
     //zombie
-    public double zombieBaseSpeedModifier = 0.1D;
+    public double zombieBaseSpeedModifier = 0.2D;
     public double zombieDashSpeedModifier = 1.3D;
     //Skeleton
     public double skeletonBaseSpeedModifier = 0D;
@@ -44,6 +47,7 @@ public class Configurator2000 implements ConfigData {
     public boolean zombieCanDash = true;
     public boolean spiderCanDash = true;
     public boolean skeletonCanDash = true;
+    public boolean endermenCanDash = true;
     //Stealth
     public boolean stealthBuffSneak = true;
     public boolean stealthLeatherSneak = true;
@@ -70,7 +74,13 @@ public class Configurator2000 implements ConfigData {
     public boolean doSpookChicken = true;
     public boolean doSpookHorse = true;
     public boolean doSpookSheep = true;
-
+    //Endermen
+    public double endermenBaseSpeedModifier = 0D;
+    public double endermenDashSpeedModifier = 0.3D;
+    public boolean endermenSpawnBlocks = true;
+    public boolean endermenCuriousOfPlayer = true;
+    //Projectiles
+    public boolean projectilesSetFire = true;
 
 
 //    @ConfigEntry.Gui.Excluded

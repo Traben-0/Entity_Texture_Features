@@ -10,11 +10,10 @@ import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.mob.*;
-import net.minecraft.entity.passive.PigEntity;
-import net.minecraft.entity.passive.SheepEntity;
-import net.minecraft.entity.passive.WolfEntity;
+import net.minecraft.entity.passive.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
 import org.apache.commons.lang3.ObjectUtils;
 import traben.freshMobBehaviours.mixin.accessor.ACC_MobEntity;
@@ -90,7 +89,8 @@ public class FreshMobBehaviours implements ModInitializer {
         goal.add(5, new FleeEntityGoal<>(mob, PlayerEntity.class, 8, 1.25D, 1.75D));
         if (mob instanceof SheepEntity){
             goal.add(5, new FleeEntityGoal<>(mob, WolfEntity.class, 8, 1.25D, 1.75D));
-        }else{
+        }else if (mob instanceof CowEntity
+                || mob instanceof HorseBaseEntity ){
             goal.add(5,new EatGrassGoal(mob));
         }
         goal.add(1, new EscapeDangerGoal(mob, 2D));
@@ -112,15 +112,15 @@ public class FreshMobBehaviours implements ModInitializer {
         if (!world.getBlockState(pos).isAir()) testpositions.add(pos);
         try{
             if (!world.getBlockState(pos.east()).isAir()) testpositions.add(pos.east());
-            if (!world.getBlockState(pos.east().east()).isAir()) testpositions.add(pos.east().east());
+            if (!world.getBlockState(pos.east(2)).isAir()) testpositions.add(pos.east(2));
             if (!world.getBlockState(pos.north()).isAir()) testpositions.add(pos.north());
-            if (!world.getBlockState(pos.north().north()).isAir()) testpositions.add(pos.north().north());
+            if (!world.getBlockState(pos.north(2)).isAir()) testpositions.add(pos.north(2));
             if (!world.getBlockState(pos.north().east()).isAir()) testpositions.add(pos.north().east());
             if (!world.getBlockState(pos.north().west()).isAir()) testpositions.add(pos.north().west());
             if (!world.getBlockState(pos.west()).isAir()) testpositions.add(pos.west());
-            if (!world.getBlockState(pos.west().west()).isAir()) testpositions.add(pos.west().west());
+            if (!world.getBlockState(pos.west(2)).isAir()) testpositions.add(pos.west(2));
             if (!world.getBlockState(pos.south()).isAir()) testpositions.add(pos.south());
-            if (!world.getBlockState(pos.south().south()).isAir()) testpositions.add(pos.south().south());
+            if (!world.getBlockState(pos.south(2)).isAir()) testpositions.add(pos.south(2));
             if (!world.getBlockState(pos.south().west()).isAir()) testpositions.add(pos.south().west());
             if (!world.getBlockState(pos.south().east()).isAir()) testpositions.add(pos.south().east());
         }catch(NullPointerException e){
@@ -138,11 +138,11 @@ public class FreshMobBehaviours implements ModInitializer {
                 if(world.getBlockState(checkPos).isOf(block)) {
                     if (DO_PYRAMID_CHECK){
                         return (world.getLightLevel(checkPos)==0
-                                && world.getBlockState(checkPos.north().north()).isOf(Blocks.CHEST)
-                                && world.getBlockState(checkPos.east().east()).isOf(Blocks.CHEST)
-                                && world.getBlockState(checkPos.west().west()).isOf(Blocks.CHEST)
-                                && world.getBlockState(checkPos.south().south()).isOf(Blocks.CHEST)
-                                && world.getBlockState(checkPos.down().down()).isOf(Blocks.TNT));
+                                && world.getBlockState(checkPos.north(2)).isOf(Blocks.CHEST)
+                                && world.getBlockState(checkPos.east(2)).isOf(Blocks.CHEST)
+                                && world.getBlockState(checkPos.west(2)).isOf(Blocks.CHEST)
+                                && world.getBlockState(checkPos.south(2)).isOf(Blocks.CHEST)
+                                && world.getBlockState(checkPos.down(2)).isOf(Blocks.TNT));
                     }else{
                         return  true;
                     }
@@ -161,5 +161,15 @@ public class FreshMobBehaviours implements ModInitializer {
         }
         return false;
 
+    }
+    public static void setFire(BlockPos pos, World world, int randomChanceAtZero){
+        setFire(pos,world,randomChanceAtZero,false);
+    }
+    public static void setFire(BlockPos pos, World world, int randomChanceAtZero, boolean ignoreFloor){
+        if (randomChanceAtZero ==0
+                && world.getBlockState(pos).isAir()
+                && (ignoreFloor || !world.getBlockState(pos.down()).isAir())){
+            world.setBlockState(pos, Blocks.FIRE.getDefaultState(), 2);
+        }
     }
 }

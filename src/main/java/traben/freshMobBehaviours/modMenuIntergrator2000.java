@@ -29,6 +29,27 @@ public class modMenuIntergrator2000 implements ModMenuApi {
                     .setParentScreen(parent)
                     .setTitle(new TranslatableText("Fresh Mob Behaviours by Traben"));
             ConfigEntryBuilder entryBuilder = builder.entryBuilder();
+            ConfigCategory All = builder.getOrCreateCategory(Text.of("All Mobs"));
+            All.addEntry(entryBuilder.startBooleanToggle(Text.of("Mobs heal"), config.mobsHeal)
+                    .setDefaultValue(true) // Recommended: Used when user click "Reset"
+                    .setTooltip(new TranslatableText("""
+                            All (not undead) mobs
+                            will heal over time
+                            Except Bosses, Iron Golems,
+                            Ravagers, Shulkers, Vex""")) // Optional: Shown when the user hover over this option
+                    .setSaveConsumer(newValue -> config.mobsHeal = newValue) // Recommended: Called when user save the config
+                    .build()); // Builds the option entry for cloth config
+            All.addEntry(entryBuilder.startBooleanToggle(Text.of("Burning mobs set fire randomly"), config.mobsBurnSpreadFireIfPlayerClose)
+                    .setDefaultValue(true) // Recommended: Used when user click "Reset"
+                    .setTooltip(new TranslatableText("""
+                            Any mob that is on fire will
+                            randomly spread fire
+                            And unless killed/extinguished by
+                            a player they will cause even more
+                            fire on death""")) // Optional: Shown when the user hover over this option
+                    .setSaveConsumer(newValue -> config.mobsBurnSpreadFireIfPlayerClose = newValue) // Recommended: Called when user save the config
+                    .build()); // Builds the option entry for cloth config
+
             ConfigCategory Hostiles = builder.getOrCreateCategory(Text.of("Hostile Mobs"));
             Hostiles.addEntry(entryBuilder.startBooleanToggle(Text.of("Hostile mobs can Dash at players"), config.hostilesCanDash)
                     .setDefaultValue(true) // Recommended: Used when user click "Reset"
@@ -49,6 +70,8 @@ public class modMenuIntergrator2000 implements ModMenuApi {
                     .setDefaultValue(true).setSaveConsumer(newValue -> config.spiderCanDash = newValue).build());
             dashMobs.add(3, entryBuilder.startBooleanToggle(Text.of("Zombies can dash"), config.zombieCanDash)
                     .setDefaultValue(true).setSaveConsumer(newValue -> config.zombieCanDash = newValue).build());
+            dashMobs.add(4, entryBuilder.startBooleanToggle(Text.of("Endermen can dash"), config.endermenCanDash)
+                    .setDefaultValue(true).setSaveConsumer(newValue -> config.endermenCanDash = newValue).build());
             Hostiles.addEntry(dashMobs.build());
 
             Hostiles.addEntry(entryBuilder.startBooleanToggle(Text.of("Hostile mobs can 'sense' close players"), config.hostileCanSenseClosePlayer)
@@ -170,7 +193,7 @@ public class modMenuIntergrator2000 implements ModMenuApi {
                     .setSaveConsumer(newValue -> config.creeperBaseSpeedModifier = newValue) // Recommended: Called when user save the config
                     .build()); // Builds the option entry for cloth config
             Creeper.addEntry(entryBuilder.startDoubleField(Text.of("Creeper Dash speed modifier"), config.creeperDashSpeedModifier)
-                    .setDefaultValue(0D) // Recommended: Used when user click "Reset"
+                    .setDefaultValue(1D) // Recommended: Used when user click "Reset"
                     .setMin(0)
                     .setTooltip(new TranslatableText("Modify the dash speed of the Mob")) // Optional: Shown when the user hover over this option
                     .setSaveConsumer(newValue -> config.creeperDashSpeedModifier = newValue) // Recommended: Called when user save the config
@@ -195,13 +218,13 @@ public class modMenuIntergrator2000 implements ModMenuApi {
                     .build()); // Builds the option entry for cloth config
             ConfigCategory Zombie = builder.getOrCreateCategory(Text.of("Zombie"));
             Zombie.addEntry(entryBuilder.startDoubleField(Text.of("Zombie speed modifier"), config.zombieBaseSpeedModifier)
-                    .setDefaultValue(0D) // Recommended: Used when user click "Reset"
+                    .setDefaultValue(0.2D) // Recommended: Used when user click "Reset"
                     .setMin(0)
                     .setTooltip(new TranslatableText("Modify the base speed of the Mob")) // Optional: Shown when the user hover over this option
                     .setSaveConsumer(newValue -> config.zombieBaseSpeedModifier = newValue) // Recommended: Called when user save the config
                     .build()); // Builds the option entry for cloth config
             Zombie.addEntry(entryBuilder.startDoubleField(Text.of("Zombie Dash speed modifier"), config.zombieDashSpeedModifier)
-                    .setDefaultValue(0D) // Recommended: Used when user click "Reset"
+                    .setDefaultValue(1.3D) // Recommended: Used when user click "Reset"
                     .setMin(0)
                     .setTooltip(new TranslatableText("Modify the dash speed of the Mob")) // Optional: Shown when the user hover over this option
                     .setSaveConsumer(newValue -> config.zombieDashSpeedModifier = newValue) // Recommended: Called when user save the config
@@ -214,7 +237,7 @@ public class modMenuIntergrator2000 implements ModMenuApi {
                     .setSaveConsumer(newValue -> config.skeletonBaseSpeedModifier = newValue) // Recommended: Called when user save the config
                     .build()); // Builds the option entry for cloth config
             Skeleton.addEntry(entryBuilder.startDoubleField(Text.of("Skeleton Dash speed modifier"), config.skeletonDashSpeedModifier)
-                    .setDefaultValue(0D) // Recommended: Used when user click "Reset"
+                    .setDefaultValue(0.75D) // Recommended: Used when user click "Reset"
                     .setMin(0)
                     .setTooltip(new TranslatableText("Modify the dash speed of the Mob")) // Optional: Shown when the user hover over this option
                     .setSaveConsumer(newValue -> config.skeletonDashSpeedModifier = newValue) // Recommended: Called when user save the config
@@ -241,7 +264,7 @@ public class modMenuIntergrator2000 implements ModMenuApi {
                     .setSaveConsumer(newValue -> config.spiderBaseSpeedModifier = newValue) // Recommended: Called when user save the config
                     .build()); // Builds the option entry for cloth config
             Spider.addEntry(entryBuilder.startDoubleField(Text.of("Spider Dash speed modifier"), config.spiderDashSpeedModifier)
-                    .setDefaultValue(0D) // Recommended: Used when user click "Reset"
+                    .setDefaultValue(1D) // Recommended: Used when user click "Reset"
                     .setMin(0)
                     .setTooltip(new TranslatableText("Modify the dash speed of the Mob")) // Optional: Shown when the user hover over this option
                     .setSaveConsumer(newValue -> config.spiderDashSpeedModifier = newValue) // Recommended: Called when user save the config
@@ -311,8 +334,42 @@ public class modMenuIntergrator2000 implements ModMenuApi {
                             I may register VanillaTweaks mob heads in future""")) // Optional: Shown when the user hover over this option
                     .setSaveConsumer(newValue -> config.stealthBuffHeads = newValue) // Recommended: Called when user save the config
                     .build()); // Builds the option entry for cloth config
-
-
+            ConfigCategory Endermen = builder.getOrCreateCategory(Text.of("Endermen"));
+            Endermen.addEntry(entryBuilder.startDoubleField(Text.of("Endermen speed modifier"), config.endermenBaseSpeedModifier)
+                    .setDefaultValue(0D) // Recommended: Used when user click "Reset"
+                    .setMin(0)
+                    .setTooltip(new TranslatableText("Modify the base speed of the Mob")) // Optional: Shown when the user hover over this option
+                    .setSaveConsumer(newValue -> config.endermenBaseSpeedModifier = newValue) // Recommended: Called when user save the config
+                    .build()); // Builds the option entry for cloth config
+            Endermen.addEntry(entryBuilder.startDoubleField(Text.of("Endermen Dash speed modifier"), config.endermenDashSpeedModifier)
+                    .setDefaultValue(0.3D) // Recommended: Used when user click "Reset"
+                    .setMin(0)
+                    .setTooltip(new TranslatableText("Modify the dash speed of the Mob")) // Optional: Shown when the user hover over this option
+                    .setSaveConsumer(newValue -> config.endermenDashSpeedModifier = newValue) // Recommended: Called when user save the config
+                    .build()); // Builds the option entry for cloth config
+            Endermen.addEntry(entryBuilder.startBooleanToggle(Text.of("Endermen spawn with blocks"), config.endermenSpawnBlocks)
+                    .setDefaultValue(true) // Recommended: Used when user click "Reset"
+                    .setTooltip(new TranslatableText("""
+                                        Endermen will spawn with selected blocks
+                                        from other dimensions sometimes
+                                        only in overworld otherwise
+                                        The End & Warped Forest could farm them""")) // Optional: Shown when the user hover over this option
+                    .setSaveConsumer(newValue -> config.endermenSpawnBlocks = newValue) // Recommended: Called when user save the config
+                    .build()); // Builds the option entry for cloth config
+            Endermen.addEntry(entryBuilder.startBooleanToggle(Text.of("Curious Endermen"), config.endermenCuriousOfPlayer)
+                    .setDefaultValue(true) // Recommended: Used when user click "Reset"
+                    .setTooltip(new TranslatableText("""
+                                        Endermen will teleport to players
+                                        from time to time out of curiosity
+                                        Or is it something else..?""")) // Optional: Shown when the user hover over this option
+                    .setSaveConsumer(newValue -> config.endermenCuriousOfPlayer = newValue) // Recommended: Called when user save the config
+                    .build()); // Builds the option entry for cloth config
+            ConfigCategory Projectiles = builder.getOrCreateCategory(Text.of("Projectiles"));
+            Projectiles.addEntry(entryBuilder.startBooleanToggle(Text.of("Flaming projectiles set Fires"), config.projectilesSetFire)
+                    .setDefaultValue(true) // Recommended: Used when user click "Reset"
+                    .setTooltip(new TranslatableText("Flaming arrows set fires")) // Optional: Shown when the user hover over this option
+                    .setSaveConsumer(newValue -> config.projectilesSetFire = newValue) // Recommended: Called when user save the config
+                    .build()); // Builds the option entry for cloth config
 
             builder.setSavingRunnable(() -> {
                 // Serialise the config into the config file. This will be called last after all variables are updated.

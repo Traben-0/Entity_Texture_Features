@@ -15,4 +15,10 @@ public interface ACC_MobEntity {
         @Accessor("goalSelector")
         void setGoalSelector(GoalSelector value);
 
+        @Accessor("targetSelector")
+        GoalSelector getTargetSelector();
+
+        @Accessor("targetSelector")
+        void setTargetSelector(GoalSelector value);
+
 }

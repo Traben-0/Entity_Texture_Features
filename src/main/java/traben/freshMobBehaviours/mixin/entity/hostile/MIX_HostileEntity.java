@@ -136,7 +136,9 @@ public class MIX_HostileEntity {
                         zombRangemodifier = new EntityAttributeModifier("BOOST_RANGEZ", zombieRange, EntityAttributeModifier.Operation.MULTIPLY_BASE);
                         Objects.requireNonNull(hostileBoi.getAttributeInstance(EntityAttributes.GENERIC_FOLLOW_RANGE)).addTemporaryModifier(zombRangemodifier);
                     } else if (hostileBoi instanceof SkeletonEntity) {
-                        modifiedSpeed = FreshMobBehaviours.slowDownToVanillaByTarget(hostileBoi, closest, config.skeletonBaseSpeedModifier, config.skeletonDashSpeedModifier, config.hostilesCanDash && config.skeletonCanDash);
+                        modifiedSpeed = FreshMobBehaviours.slowDownToVanillaByTarget(hostileBoi, closest, config.endermenBaseSpeedModifier, config.endermenDashSpeedModifier, config.hostilesCanDash && config.endermenCanDash);
+                    }else if (hostileBoi instanceof EndermanEntity) {
+                            modifiedSpeed = FreshMobBehaviours.slowDownToVanillaByTarget(hostileBoi, closest, config.skeletonBaseSpeedModifier, config.skeletonDashSpeedModifier, config.hostilesCanDash && config.skeletonCanDash);
                     } else if (hostileBoi instanceof SpiderEntity) {
                         modifiedSpeed = FreshMobBehaviours.slowDownToVanillaByTarget(hostileBoi, closest, config.spiderBaseSpeedModifier, config.spiderDashSpeedModifier, config.hostilesCanDash && config.spiderCanDash);
                         float spiderRange = (float)(config.hostilesTargetRange -1);
