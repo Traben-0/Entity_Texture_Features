@@ -22,10 +22,9 @@ public abstract class MIX_EndermanEntity {
         try{
         EndermanEntity self = (EndermanEntity) (Object)this;
             PlayerEntity player = Objects.requireNonNull(self.world.getClosestPlayer(self, -1));
-        if (self.canSee(player) && !player.getAbilities().creativeMode){
-            self.lookAtEntity(player,150,70);
-        }else if(!player.getAbilities().creativeMode
-                && !self.world.isClient
+         if(!self.world.isClient
+                 && !self.canSee(player)
+                 && !player.getAbilities().creativeMode
                 && self.world.getServer().getOverworld() == self.getWorld()
                 && self.getRandom().nextInt(300)==1
         ){

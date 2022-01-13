@@ -1,6 +1,7 @@
 package traben.freshMobBehaviours.mixin.entity.passive;
 
 import me.shedaniel.autoconfig.AutoConfig;
+import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.HostileEntity;
@@ -12,6 +13,7 @@ import net.minecraft.world.WorldView;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import traben.freshMobBehaviours.Configurator2000;
+import traben.freshMobBehaviours.FreshMobBehaviours;
 
 import java.util.List;
 
@@ -43,16 +45,23 @@ public abstract class MIX_AnimalEntity {
 
             //breed items
             if (mob instanceof PigEntity) {
-                weight += world.getBlockState(pos).isOf(Blocks.CARROTS) ? 128 : 0;
-                weight += world.getBlockState(pos).isOf(Blocks.POTATOES) ? 128 : 0;
-                weight += world.getBlockState(pos).isOf(Blocks.BEETROOTS) ? 128 : 0;
-                weight += world.getBlockState(pos).isOf(Blocks.RED_MUSHROOM) ? 32 : 0;
-                weight += world.getBlockState(pos).isOf(Blocks.BROWN_MUSHROOM) ? 32 : 0;
-            } else if (mob instanceof SheepEntity
+                if (FreshMobBehaviours.isBlockWithin2(pos, world, new Block[]{
+                        Blocks.CARROTS,Blocks.POTATOES,Blocks.BEETROOTS
+                })){
+                    weight += 128;
+                }
+                if (FreshMobBehaviours.isBlockWithin2(pos, world, new Block[]{
+                        Blocks.RED_MUSHROOM,Blocks.BROWN_MUSHROOM
+                })){
+                    weight += 32;
+                }
+
+            } else if ((mob instanceof SheepEntity
                     || mob instanceof CowEntity
                     || mob instanceof ChickenEntity
-                    || mob instanceof HorseEntity) {
-                weight += world.getBlockState(pos).isOf(Blocks.WHEAT) ? 128 : 0;
+                    || mob instanceof HorseEntity )
+                    &&(FreshMobBehaviours.isBlockWithin2(pos, world, new Block[]{Blocks.WHEAT}))){
+                weight += 128;
             }
         }
         //light is big deal;

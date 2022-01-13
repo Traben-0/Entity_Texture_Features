@@ -6,6 +6,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
+import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -34,25 +35,24 @@ public class MIX_TargetPredicate {
     }
 
 
-   // @ModifyVariable(method = "setBaseMaxDistance", at = @At("HEAD"), ordinal = 0, argsOnly = true)
+//@ModifyVariable(method = "setBaseMaxDistance", at = @At("HEAD"), ordinal = 0, argsOnly = true)
   //  private double largerTargetRange(double x) {
 
      //   return   * x;
    // }
-
-    @ModifyArg(method = "test", at = @At(value = "INVOKE", target = "Ljava/lang/Math;max(DD)D"), index = 0)
-    private double injected(double x) {
+     //
+     @ModifyArg(method = "test", at = @At(value = "INVOKE", target = "Ljava/lang/Math;max(DD)D"), index = 0)
+     private double injected(double x) {
         Configurator2000 config = AutoConfig.getConfigHolder(Configurator2000.class).getConfig();
         if (self instanceof HostileEntity) {
-            return x * config.hostilesTargetRange;
-        } else if(self instanceof AnimalEntity){
+            return config.hostilesTargetRange * x;
+        } else
+            if(self instanceof AnimalEntity){
                 if (target instanceof PlayerEntity && target.isSneaking()){
                     //undo sneak modifier set by hostiles range
                     return x*(config.hostilesTargetRange>=2 ? config.hostilesTargetRange/2:1);
                 }
         }
         return x;
-
-
     }
 }
