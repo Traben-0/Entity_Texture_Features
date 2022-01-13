@@ -9,6 +9,7 @@
     "ai.MIX_RevengeGoal",
     "ai.MIX_TargetPredicate",
     "entity.MIX_LivingEntity",
+    "entity.MIX_MobEntity",
     "entity.MIX_PlayerEntity",
     "entity.MIX_WolfEntity",
     "entity.hostile.MIX_AbstractSkeletonEntity",

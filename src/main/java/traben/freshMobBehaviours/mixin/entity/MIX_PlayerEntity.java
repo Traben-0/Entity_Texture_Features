@@ -45,7 +45,9 @@ public class MIX_PlayerEntity {
                         player.getEquippedStack(EquipmentSlot.OFFHAND).decrement(1);
                     }
                     player.sendMessage(Text.of("With your nightmares slain you rest through the night..."), true);
-                    player.playSound(SoundEvents.ENTITY_PHANTOM_DEATH, SoundCategory.HOSTILE, 0.8F, 0.8F + player.world.random.nextFloat() * 0.4F);
+                    if (player.world.isClient){
+                        player.world.playSound(player.world.getClosestPlayer(player,-1),player.getBlockPos(),SoundEvents.ENTITY_PHANTOM_DEATH, SoundCategory.HOSTILE, 0.4F, 0.8F);
+                    }
                 }
                 return vanillaSleep(player,pos);
             } else {

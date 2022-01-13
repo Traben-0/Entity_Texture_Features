@@ -58,12 +58,12 @@ public class MIX_HostileEntity {
     @Overwrite
     public float getPathfindingFavor(BlockPos pos, WorldView world) {
         Configurator2000 config = AutoConfig.getConfigHolder(Configurator2000.class).getConfig();
+
+        BlockPos selfpos = self.getBlockPos();
         if (config.hostilesWanderBetter) {
-            //avoid temple pressure plates
-            if (world.getBiome(pos).getCategory().getName().equals("desert")){
-                if (FreshMobBehaviours.isBlockWithin2(pos,world,new Block[]{Blocks.STONE_PRESSURE_PLATE})
-                        && FreshMobBehaviours.isBlockWithin2(pos,world,new Block[]{Blocks.CHEST})
-                        && world.getBlockState(pos.down()).isOf(Blocks.CUT_SANDSTONE)){
+            //DESPAWN IF IN TEMPLE
+            if (world.getBiome(selfpos).getCategory().getName().equals("desert")){
+                if (FreshMobBehaviours.isBlockWithin2(selfpos,world,new Block[]{Blocks.STONE_PRESSURE_PLATE},true,false,true)){
                     System.out.println("found possible desert pyramid pressure plate, despawning mob");
                     self.discard();
                     return -40;
@@ -111,9 +111,9 @@ public class MIX_HostileEntity {
     //make mobs faster further from players
     @Inject(method = "tickMovement", at = @At("HEAD"))
     private void adjustSpeedByDistance(CallbackInfo ci) {
-        if (self == null) {
+
             self = (HostileEntity) (Object) this;
-        }
+
         if (!((HostileEntity) (Object) this).world.isClient) {
             this.count++;
             if (this.count >= 15) {

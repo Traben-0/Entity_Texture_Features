@@ -4,6 +4,7 @@ import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.ai.goal.*;
@@ -89,42 +90,74 @@ public class FreshMobBehaviours implements ModInitializer {
         goal.add(5, new FleeEntityGoal<>(mob, PlayerEntity.class, 8, 1.25D, 1.75D));
         if (mob instanceof SheepEntity){
             goal.add(5, new FleeEntityGoal<>(mob, WolfEntity.class, 8, 1.25D, 1.75D));
+        }else{
+            goal.add(5,new EatGrassGoal(mob));
         }
         goal.add(1, new EscapeDangerGoal(mob, 2D));
     }
 
+
+
     public static boolean isBlockWithin2(BlockPos pos, WorldView world, Block[] searchblocks){
+        return isBlockWithin2(pos,world,searchblocks,false,false,false);
+    }
+    public static boolean isBlockWithin2(BlockPos pos, WorldView world, Block[] searchblocks,boolean checkUp,boolean checkDown){
+        return isBlockWithin2(pos,world,searchblocks,checkUp,checkDown,false);
+    }
+    public static boolean isBlockWithin2(BlockPos pos, WorldView world, Block[] searchblocks,boolean checkUp,boolean checkDown, boolean DO_PYRAMID_CHECK){
         //efficiency skip
         BlockPos[] notAirPositions;
         //remove air blocks from check to increase efficiency in large searchlist
         ArrayList<BlockPos> testpositions = new ArrayList<>();
         if (!world.getBlockState(pos).isAir()) testpositions.add(pos);
-        try{if (!world.getBlockState(pos.east()).isAir()) testpositions.add(pos.east());}catch(NullPointerException e){/**/}
-        try{if (!world.getBlockState(pos.east().east()).isAir()) testpositions.add(pos.east().east());}catch(NullPointerException e){/**/}//not valid}
-        try{if (!world.getBlockState(pos.north()).isAir()) testpositions.add(pos.north());}catch(NullPointerException e){/**/}//not valid}
-        try{if (!world.getBlockState(pos.north().north()).isAir()) testpositions.add(pos.north().north());}catch(NullPointerException e){/**/}//not valid}
-        try{if (!world.getBlockState(pos.north().east()).isAir()) testpositions.add(pos.north().east());}catch(NullPointerException e){/**/}//not valid}
-        try{if (!world.getBlockState(pos.north().west()).isAir()) testpositions.add(pos.north().west());}catch(NullPointerException e){/**/}//not valid}
-        try{if (!world.getBlockState(pos.west()).isAir()) testpositions.add(pos.west());}catch(NullPointerException e){/**/}//not valid}
-        try{if (!world.getBlockState(pos.west().west()).isAir()) testpositions.add(pos.west().west());}catch(NullPointerException e){/**/}//not valid}
-        try{if (!world.getBlockState(pos.south()).isAir()) testpositions.add(pos.south());}catch(NullPointerException e){/**/}//not valid}
-        try{if (!world.getBlockState(pos.south().south()).isAir()) testpositions.add(pos.south().south());}catch(NullPointerException e){/**/}//not valid}
-        try{if (!world.getBlockState(pos.south().west()).isAir()) testpositions.add(pos.south().west());}catch(NullPointerException e){/**/}//not valid}
-        try{if (!world.getBlockState(pos.south().east()).isAir()) testpositions.add(pos.south().east());}catch(NullPointerException e){/**/}//not valid}
+        try{
+            if (!world.getBlockState(pos.east()).isAir()) testpositions.add(pos.east());
+            if (!world.getBlockState(pos.east().east()).isAir()) testpositions.add(pos.east().east());
+            if (!world.getBlockState(pos.north()).isAir()) testpositions.add(pos.north());
+            if (!world.getBlockState(pos.north().north()).isAir()) testpositions.add(pos.north().north());
+            if (!world.getBlockState(pos.north().east()).isAir()) testpositions.add(pos.north().east());
+            if (!world.getBlockState(pos.north().west()).isAir()) testpositions.add(pos.north().west());
+            if (!world.getBlockState(pos.west()).isAir()) testpositions.add(pos.west());
+            if (!world.getBlockState(pos.west().west()).isAir()) testpositions.add(pos.west().west());
+            if (!world.getBlockState(pos.south()).isAir()) testpositions.add(pos.south());
+            if (!world.getBlockState(pos.south().south()).isAir()) testpositions.add(pos.south().south());
+            if (!world.getBlockState(pos.south().west()).isAir()) testpositions.add(pos.south().west());
+            if (!world.getBlockState(pos.south().east()).isAir()) testpositions.add(pos.south().east());
+        }catch(NullPointerException e){
+            System.out.println(e.toString());
+        }//not valid}
         notAirPositions =testpositions.toArray(new BlockPos[0]);
             //System.out.println("saved "+(12-notAirPositions.length)+" position checks");
 
-        if (notAirPositions.length==0) return false;
+        //if (notAirPositions.length==0) return false;
 
         for (Block block:
              searchblocks) {
             for (BlockPos checkPos:
                  notAirPositions) {
                 if(world.getBlockState(checkPos).isOf(block)) {
-                    return  true;
+                    if (DO_PYRAMID_CHECK){
+                        return (world.getLightLevel(checkPos)==0
+                                && world.getBlockState(checkPos.north().north()).isOf(Blocks.CHEST)
+                                && world.getBlockState(checkPos.east().east()).isOf(Blocks.CHEST)
+                                && world.getBlockState(checkPos.west().west()).isOf(Blocks.CHEST)
+                                && world.getBlockState(checkPos.south().south()).isOf(Blocks.CHEST)
+                                && world.getBlockState(checkPos.down().down()).isOf(Blocks.TNT));
+                    }else{
+                        return  true;
+                    }
+
                 }
             }
 
+        }
+        if (checkUp){
+            if (isBlockWithin2(pos.up(),world,searchblocks,false,false)){
+                return true;
+            }
+        }
+        if (checkDown){
+            return isBlockWithin2(pos.down(), world, searchblocks, false, false);
         }
         return false;
 

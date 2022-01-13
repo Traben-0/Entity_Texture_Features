@@ -70,7 +70,8 @@ public class modMenuIntergrator2000 implements ModMenuApi {
                     .setTooltip(new TranslatableText("""
                             Hostile mobs that are randomly wandering the world will
                             trend towards points of interest they can reach.
-                            e.g Paths, Lights, Player only blocks, Villages, Strongholds, Dungeons""")) // Optional: Shown when the user hover over this option
+                            e.g Paths, Lights, Player only blocks, Villages, Strongholds, Dungeons
+                            Also makes mobs not accidentally trigger pyramid explosions""")) // Optional: Shown when the user hover over this option
                     .setSaveConsumer(newValue -> config.hostilesWanderBetter = newValue) // Recommended: Called when user save the config
                     .build()); // Builds the option entry for cloth config
             Hostiles.addEntry(entryBuilder.startDoubleField(Text.of("Hostile aggro range multiplier"), config.hostilesTargetRange)
