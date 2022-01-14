@@ -185,6 +185,14 @@ public class modMenuIntergrator2000 implements ModMenuApi {
                     .setDefaultValue(true).setSaveConsumer(newValue -> config.doSpookSheep = newValue).build());
             Animals.addEntry(spookAnimals.build());
 
+            Animals.addEntry(entryBuilder.startBooleanToggle(Text.of("Other animals eat grass"), config.animalsEatGrass)
+                    .setDefaultValue(true) // Recommended: Used when user click "Reset"
+                    .setTooltip(new TranslatableText("""
+                            Other animals can eat grass like sheep
+                            Only [Cows, Horse type mobs, Goats]
+                            No animation yet""")) // Optional: Shown when the user hover over this option
+                    .setSaveConsumer(newValue -> config.animalsEatGrass = newValue) // Recommended: Called when user save the config
+                    .build()); // Builds the option entry for cloth config
             ConfigCategory Creeper = builder.getOrCreateCategory(Text.of("Creeper"));
             Creeper.addEntry(entryBuilder.startDoubleField(Text.of("Creeper speed modifier"), config.creeperBaseSpeedModifier)
                     .setDefaultValue(0D) // Recommended: Used when user click "Reset"
@@ -199,12 +207,13 @@ public class modMenuIntergrator2000 implements ModMenuApi {
                     .setSaveConsumer(newValue -> config.creeperDashSpeedModifier = newValue) // Recommended: Called when user save the config
                     .build()); // Builds the option entry for cloth config
             Creeper.addEntry(entryBuilder.startBooleanToggle(Text.of("!!Creepers explode on death!!"), config.creeperExplodeOnDeath)
-                    .setDefaultValue(false) // Recommended: Used when user click "Reset"
+                    .setDefaultValue(true) // Recommended: Used when user click "Reset"
                     .setTooltip(new TranslatableText("""
                             NOT FOR THE FEINT OF HEART!!
                             Creepers will always explode when they die by ANY means
-                            Creepers are to be feared and avoided not killed
-                            Creepers that explode involuntarily will drop gunpowder like normal""")) // Optional: Shown when the user hover over this option
+                            Creepers are to be feared and avoided
+                            Creepers still drop gunpowder if this is enabled
+                            Animation glitch on client side""")) // Optional: Shown when the user hover over this option
                     .setSaveConsumer(newValue -> config.creeperExplodeOnDeath = newValue) // Recommended: Called when user save the config
                     .build()); // Builds the option entry for cloth config
             Creeper.addEntry(entryBuilder.startBooleanToggle(Text.of("Creepers set ambushes"), config.creepersAmbush)

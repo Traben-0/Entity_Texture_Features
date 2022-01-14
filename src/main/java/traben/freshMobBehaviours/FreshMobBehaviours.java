@@ -12,6 +12,7 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.mob.*;
 import net.minecraft.entity.passive.*;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
@@ -89,8 +90,10 @@ public class FreshMobBehaviours implements ModInitializer {
         goal.add(5, new FleeEntityGoal<>(mob, PlayerEntity.class, 8, 1.25D, 1.75D));
         if (mob instanceof SheepEntity){
             goal.add(5, new FleeEntityGoal<>(mob, WolfEntity.class, 8, 1.25D, 1.75D));
-        }else if (mob instanceof CowEntity
-                || mob instanceof HorseBaseEntity ){
+        }else if (config.animalsEatGrass
+                &&(mob instanceof CowEntity
+                || mob instanceof HorseBaseEntity
+                || mob instanceof GoatEntity)){
             goal.add(5,new EatGrassGoal(mob));
         }
         goal.add(1, new EscapeDangerGoal(mob, 2D));
@@ -170,6 +173,17 @@ public class FreshMobBehaviours implements ModInitializer {
                 && world.getBlockState(pos).isAir()
                 && (ignoreFloor || !world.getBlockState(pos.down()).isAir())){
             world.setBlockState(pos, Blocks.FIRE.getDefaultState(), 2);
+        }
+    }
+
+    public static void sendGlobalMessage(LivingEntity self, String text){
+        try {
+            for (PlayerEntity p :
+                    Objects.requireNonNull(self.world.getServer()).getPlayerManager().getPlayerList()) {
+                p.sendMessage(Text.of(text), false);
+            }
+        }catch(NullPointerException e){
+            System.out.println(e.toString());
         }
     }
 }

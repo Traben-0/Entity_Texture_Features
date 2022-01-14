@@ -16,6 +16,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
@@ -30,6 +31,7 @@ import traben.freshMobBehaviours.Configurator2000;
 import traben.freshMobBehaviours.FreshMobBehaviours;
 
 import java.util.Random;
+import java.util.Set;
 
 @Mixin(LivingEntity.class)
 public abstract class MIX_LivingEntity {
@@ -138,6 +140,11 @@ public abstract class MIX_LivingEntity {
             }else if (self.world.isClient){
                 self.world.playSound(self.world.getClosestPlayer(self,-1),self.getBlockPos(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.PLAYERS, 1.0F, 1.0F);
             }
+        }
+
+        if (!self.world.isClient && self.hasCustomName()) {
+            //  LOGGER.info("Named entity {} died: {}", this, this.getDamageTracker().getDeathMessage().getString())
+            FreshMobBehaviours.sendGlobalMessage(self,"Named Mob: "+self.getDamageTracker().getDeathMessage().getString());
         }
     }
 

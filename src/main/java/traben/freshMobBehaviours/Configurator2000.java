@@ -12,7 +12,7 @@ public class Configurator2000 implements ConfigData {
     //creeper
     public double creeperBaseSpeedModifier = 0D;
     public double creeperDashSpeedModifier = 1D;
-    public boolean creeperExplodeOnDeath = false;
+    public boolean creeperExplodeOnDeath = true;
     public boolean creepersAmbush = true;
     //zombie
     public double zombieBaseSpeedModifier = 0.2D;
@@ -59,6 +59,7 @@ public class Configurator2000 implements ConfigData {
     public int animalsHerdStrength = 6;
     public boolean animalsWanderBetter = true;
     public boolean animalsGetSpooked = true;
+    public boolean animalsEatGrass = true;
     //all animals herd
     public boolean doHerdCow = true;
     public boolean doHerdPig = true;
