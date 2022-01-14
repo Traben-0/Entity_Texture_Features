@@ -14,11 +14,13 @@ import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -28,6 +30,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.freshMobBehaviours.Configurator2000;
+import traben.freshMobBehaviours.FreshMethods;
 import traben.freshMobBehaviours.FreshMobBehaviours;
 
 import java.util.Random;
@@ -96,7 +99,7 @@ public abstract class MIX_LivingEntity {
         }
     }
 
-
+    private int count=0;
     @Inject(method = "tick", at = @At("TAIL"))
     private void healAllMobsRandomly(CallbackInfo ci) {
         Configurator2000 config = AutoConfig.getConfigHolder(Configurator2000.class).getConfig();
@@ -114,10 +117,22 @@ public abstract class MIX_LivingEntity {
                 && self.getRandom().nextInt(500) == 0){
             self.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 200));
         }
-        if (config.mobsBurnSpreadFireIfPlayerClose
+
+        if (count > 20
+                && config.mobsBurnSpreadFireIfPlayerClose
                 && (self.isOnFire() || self.wasOnFire)
-                && self.world.getNonSpectatingEntities(PlayerEntity.class, self.getBoundingBox().expand(18)).size() >0) {
-            FreshMobBehaviours.setFire(self.getBlockPos(), self.world, self.getRandom().nextInt(45));
+                && self.world.getNonSpectatingEntities(PlayerEntity.class, self.getBoundingBox().expand(config.mobsFireRangeFromPlayer)).size() >0) {
+            FreshMethods.setFire(self.getBlockPos(), self.world, config.mobsFlameChance);
+            count=0;
+        }
+        count++;
+        if (self.world.isClient()
+                && count>20
+                && self.isFreezing()){
+            self.world.addParticle(ParticleTypes.SNOWFLAKE, self.getX(), self.getY() + 1, self.getZ(), MathHelper.nextBetween(self.getRandom(), -1.0F, 1.0F) * 0.083333336F, 0.05000000074505806D, MathHelper.nextBetween(self.getRandom(), -1.0F, 1.0F) * 0.083333336F);
+            self.world.addParticle(ParticleTypes.SNOWFLAKE, self.getX(), self.getY() + 2, self.getZ(), (double) (MathHelper.nextBetween(self.getRandom(), -1.0F, 1.0F))* 0.083333336F, 0.05000000074505806D, MathHelper.nextBetween(self.getRandom(), -1.0F, 1.0F)* 0.083333336F);
+            self.world.addParticle(ParticleTypes.SNOWFLAKE, self.getX(), self.getY() + 1.5, self.getZ(), MathHelper.nextBetween(self.getRandom(), -1.0F, 1.0F) * 0.083333336F, 0.05000000074505806D, MathHelper.nextBetween(self.getRandom(), -1.0F, 1.0F) * 0.083333336F);
+            count=0;
         }
     }
 
@@ -131,12 +146,11 @@ public abstract class MIX_LivingEntity {
 
                 && self.world.getNonSpectatingEntities(PlayerEntity.class, self.getBoundingBox().expand(35)).size() >0){
             if (!(self.getAttacker() instanceof PlayerEntity)) {
-                Random rand = self.getRandom();
-                FreshMobBehaviours.setFire(self.getBlockPos(), self.world,rand.nextInt(3));
-                FreshMobBehaviours.setFire(self.getBlockPos().north(), self.world, rand.nextInt(7));
-                FreshMobBehaviours.setFire(self.getBlockPos().east(), self.world, rand.nextInt(7));
-                FreshMobBehaviours.setFire(self.getBlockPos().west(), self.world, rand.nextInt(7));
-                FreshMobBehaviours.setFire(self.getBlockPos().south(), self.world, rand.nextInt(7));
+                FreshMethods.setFire(self.getBlockPos(), self.world, config.mobsFlameChance);
+                FreshMethods.setFire(self.getBlockPos().north(), self.world, config.mobsFlameChance);
+                FreshMethods.setFire(self.getBlockPos().east(), self.world, config.mobsFlameChance);
+                FreshMethods.setFire(self.getBlockPos().west(), self.world, config.mobsFlameChance);
+                FreshMethods.setFire(self.getBlockPos().south(), self.world, config.mobsFlameChance);
             }else if (self.world.isClient){
                 self.world.playSound(self.world.getClosestPlayer(self,-1),self.getBlockPos(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.PLAYERS, 1.0F, 1.0F);
             }
@@ -144,7 +158,7 @@ public abstract class MIX_LivingEntity {
 
         if (!self.world.isClient && self.hasCustomName()) {
             //  LOGGER.info("Named entity {} died: {}", this, this.getDamageTracker().getDeathMessage().getString())
-            FreshMobBehaviours.sendGlobalMessage(self,"Named Mob: "+self.getDamageTracker().getDeathMessage().getString());
+            FreshMethods.sendGlobalMessage(self,"Named Mob: "+self.getDamageTracker().getDeathMessage().getString());
         }
     }
 

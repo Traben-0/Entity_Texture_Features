@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.freshMobBehaviours.Configurator2000;
+import traben.freshMobBehaviours.FreshMethods;
 import traben.freshMobBehaviours.FreshMobBehaviours;
 
 import java.util.Random;
@@ -21,21 +22,23 @@ public abstract class MIX_ProjectileEntity {
         if (config.projectilesSetFire) {
             ProjectileEntity self = (ProjectileEntity) (Object) this;
             if (self.isOnFire() || self.wasOnFire) {
-                FreshMobBehaviours.setFire(self.getBlockPos(), self.world, 0, true);
+                FreshMethods.setFire(self.getBlockPos(), self.world, 100, true);
 
             }
         }
    }
+   private int count =0;
     @Inject(method = "tick", at = @At("HEAD"))
     private void random(CallbackInfo ci) {
         Configurator2000 config = AutoConfig.getConfigHolder(Configurator2000.class).getConfig();
         if (config.projectilesSetFire) {
             ProjectileEntity self = (ProjectileEntity) (Object) this;
             Random rand = new Random();
-            if (self.isOnFire() || self.wasOnFire) {
-                FreshMobBehaviours.setFire(self.getBlockPos(), self.world, rand.nextInt(80), false);
-
+            if (count > 40 && (self.isOnFire() || self.wasOnFire)) {
+                FreshMethods.setFire(self.getBlockPos(), self.world, config.mobsFlameChance, false);
+                count=0;
             }
+            count++;
         }
     }
 }

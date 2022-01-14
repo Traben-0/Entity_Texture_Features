@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.freshMobBehaviours.Configurator2000;
+import traben.freshMobBehaviours.FreshMethods;
 import traben.freshMobBehaviours.FreshMobBehaviours;
 
 @Mixin(CowEntity.class)
@@ -17,7 +18,7 @@ public class MIX_CowEntity {
     private void goalAdjustments(CallbackInfo ci) {
         Configurator2000 config = AutoConfig.getConfigHolder(Configurator2000.class).getConfig();
         if (config.animalsGetSpooked && config.doSpookCow){
-            FreshMobBehaviours.animalSpookedGoalAdjustments(((PathAwareEntity) (Object) this));
+            FreshMethods.animalSpookedGoalAdjustments(((PathAwareEntity) (Object) this));
         }
     }
 }

@@ -13,6 +13,7 @@ import net.minecraft.world.WorldView;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import traben.freshMobBehaviours.Configurator2000;
+import traben.freshMobBehaviours.FreshMethods;
 import traben.freshMobBehaviours.FreshMobBehaviours;
 
 import java.util.List;
@@ -45,12 +46,12 @@ public abstract class MIX_AnimalEntity {
 
             //breed items
             if (mob instanceof PigEntity) {
-                if (FreshMobBehaviours.isBlockWithin2(pos, world, new Block[]{
+                if (FreshMethods.isBlockWithin2(pos, world, new Block[]{
                         Blocks.CARROTS,Blocks.POTATOES,Blocks.BEETROOTS
                 })){
                     weight += 128;
                 }
-                if (FreshMobBehaviours.isBlockWithin2(pos, world, new Block[]{
+                if (FreshMethods.isBlockWithin2(pos, world, new Block[]{
                         Blocks.RED_MUSHROOM,Blocks.BROWN_MUSHROOM
                 })){
                     weight += 32;
@@ -60,7 +61,7 @@ public abstract class MIX_AnimalEntity {
                     || mob instanceof CowEntity
                     || mob instanceof ChickenEntity
                     || mob instanceof HorseEntity )
-                    &&(FreshMobBehaviours.isBlockWithin2(pos, world, new Block[]{Blocks.WHEAT}))){
+                    &&(FreshMethods.isBlockWithin2(pos, world, new Block[]{Blocks.WHEAT}))){
                 weight += 128;
             }
         }

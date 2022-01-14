@@ -14,6 +14,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import traben.freshMobBehaviours.Configurator2000;
+import traben.freshMobBehaviours.FreshMethods;
 
 @Mixin(PlayerEntity.class)
 public class MIX_PlayerEntity {
@@ -32,6 +33,7 @@ public class MIX_PlayerEntity {
         Configurator2000 config = AutoConfig.getConfigHolder(Configurator2000.class).getConfig();
         if (config.sleepNeedsShelter &&( player.world.isSkyVisible(pos) || player.world.getLightLevel(LightType.SKY, pos)>11))  {//if see sky
             player.sendMessage(Text.of("This bed needs more shelter"), true);
+            FreshMethods.sendGlobalMessage(player,"This bed needs more shelter");
             return Either.right(Unit.INSTANCE);
         }else{
             //if has membrane sleep
@@ -45,6 +47,7 @@ public class MIX_PlayerEntity {
                         player.getEquippedStack(EquipmentSlot.OFFHAND).decrement(1);
                     }
                     player.sendMessage(Text.of("With your nightmares slain you rest through the night..."), true);
+
                     if (player.world.isClient){
                         player.world.playSound(player.world.getClosestPlayer(player,-1),player.getBlockPos(),SoundEvents.ENTITY_PHANTOM_DEATH, SoundCategory.HOSTILE, 0.4F, 0.8F);
                     }
@@ -54,6 +57,7 @@ public class MIX_PlayerEntity {
                 //send no membrane msg and dont sleep
                 if (config.sleepNeedsPhantomMembranes ) {
                     player.sendMessage(Text.of("Need Phantom Membranes..."), true);
+                    FreshMethods.sendGlobalMessage(player,"Need Phantom Membranes...");
                 }else{
                     return vanillaSleep(player,pos);
                 }

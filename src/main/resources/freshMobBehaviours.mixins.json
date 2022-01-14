@@ -16,8 +16,6 @@
     "entity.hostile.MIX_AbstractSkeletonEntity",
     "entity.hostile.MIX_CreeperEntity",
     "entity.hostile.MIX_EndermanEntity",
-    "entity.hostile.MIX_GhastEntity",
-    "entity.hostile.MIX_GiantEntity",
     "entity.hostile.MIX_HostileEntity",
     "entity.hostile.MIX_SkeletonEntity",
     "entity.hostile.MIX_SpiderEntity",
@@ -28,7 +26,9 @@
     "entity.passive.MIX_HorseBaseEntity",
     "entity.passive.MIX_PigEntity",
     "entity.passive.MIX_SheepEntity",
-    "entity.projectile.MIX_ProjectileEntity"
+    "entity.projectile.MIX_ProjectileEntity",
+    "entity.projectile.MIX_SnowballEntity",
+    "entity.projectile.MIX_ThrownEntity"
   ],
   "client": [
   ],

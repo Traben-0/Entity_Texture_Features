@@ -9,22 +9,24 @@ public class Configurator2000 implements ConfigData {
     //ALL
     public boolean mobsHeal = true;
     public boolean mobsBurnSpreadFireIfPlayerClose = true;
+    public int mobsFireRangeFromPlayer = 16;
+    public int mobsFlameChance = 5;
     public boolean mobsCollideBetter = true;
     //creeper
     public double creeperBaseSpeedModifier = 0D;
-    public double creeperDashSpeedModifier = 1D;
-    public boolean creeperExplodeOnDeath = true;
+    public double creeperDashSpeedModifier = 0.6D;
+    public boolean creeperExplodeOnDeath = false;
     public boolean creepersAmbush = true;
     //zombie
     public double zombieBaseSpeedModifier = 0.2D;
-    public double zombieDashSpeedModifier = 1.3D;
+    public double zombieDashSpeedModifier = 0.9D;
     //Skeleton
     public double skeletonBaseSpeedModifier = 0D;
     public double skeletonDashSpeedModifier = 0.75D;
     public boolean skeletonPreventFriendlyFire = true;
     public boolean skeletonKeepDistance = true;
     //Spider
-    public double spiderBaseSpeedModifier = 0D;
+    public double spiderBaseSpeedModifier = 0.1D;
     public double spiderDashSpeedModifier = 1D;
     //Phantoms & sleep
     public boolean phantomsSpawnInEnd = true;
@@ -38,10 +40,10 @@ public class Configurator2000 implements ConfigData {
     public boolean hostileCanSenseClosePlayer = true;
     public boolean hostilesStayLongerInDay = true;
     public boolean hostilesWanderBetter = true;
-    public double hostilesTargetRange = 5;
+    public double hostilesTargetRange = 2.5;
     //other/modded hostiles
     public double otherHostileBaseSpeedModifier = 0D;
-    public double otherHostileDashSpeedModifier = 1D;
+    public double otherHostileDashSpeedModifier = 0.5D;
     public boolean otherHostileCanDash = true;
     //all hostiles
     public boolean creeperCanDash = true;
@@ -83,6 +85,7 @@ public class Configurator2000 implements ConfigData {
     public boolean endermenCuriousOfPlayer = true;
     //Projectiles
     public boolean projectilesSetFire = true;
+    public boolean snowballsCauseFreeze = true;
 
 
 //    @ConfigEntry.Gui.Excluded

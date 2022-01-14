@@ -39,6 +39,15 @@ public class modMenuIntergrator2000 implements ModMenuApi {
                             Ravagers, Shulkers, Vex""")) // Optional: Shown when the user hover over this option
                     .setSaveConsumer(newValue -> config.mobsHeal = newValue) // Recommended: Called when user save the config
                     .build()); // Builds the option entry for cloth config
+
+            All.addEntry(entryBuilder.startBooleanToggle(Text.of("Better mob collisons"), config.mobsCollideBetter)
+                    .setDefaultValue(true) // Recommended: Used when user click "Reset"
+                    .setTooltip(new TranslatableText("""
+                            you can stand on any mob
+                            You will collide with any mob
+                            Slimes and Ghasts are bouncy""")) // Optional: Shown when the user hover over this option
+                    .setSaveConsumer(newValue -> config.mobsCollideBetter = newValue) // Recommended: Called when user save the config
+                    .build()); // Builds the option entry for cloth config
             All.addEntry(entryBuilder.startBooleanToggle(Text.of("Burning mobs set fire randomly"), config.mobsBurnSpreadFireIfPlayerClose)
                     .setDefaultValue(true) // Recommended: Used when user click "Reset"
                     .setTooltip(new TranslatableText("""
@@ -49,12 +58,19 @@ public class modMenuIntergrator2000 implements ModMenuApi {
                             fire on death""")) // Optional: Shown when the user hover over this option
                     .setSaveConsumer(newValue -> config.mobsBurnSpreadFireIfPlayerClose = newValue) // Recommended: Called when user save the config
                     .build()); // Builds the option entry for cloth config
-            All.addEntry(entryBuilder.startBooleanToggle(Text.of("Better mob top collisons"), config.mobsCollideBetter)
-                    .setDefaultValue(true) // Recommended: Used when user click "Reset"
+            All.addEntry(entryBuilder.startIntField(Text.of("Burning mob fire spread chance"), config.mobsFlameChance)
+                    .setDefaultValue(5) // Recommended: Used when user click "Reset"
+                            .setMin(0).setMax(100)
                     .setTooltip(new TranslatableText("""
-                            you can stand on any mob
-                            Slimes and Ghasts are bouncy""")) // Optional: Shown when the user hover over this option
-                    .setSaveConsumer(newValue -> config.mobsCollideBetter = newValue) // Recommended: Called when user save the config
+                            0-100 chance of fires spreading""")) // Optional: Shown when the user hover over this option
+                    .setSaveConsumer(newValue -> config.mobsFlameChance = newValue) // Recommended: Called when user save the config
+                    .build()); // Builds the option entry for cloth config
+            All.addEntry(entryBuilder.startIntField(Text.of("Mobs spreading fire range from players"), config.mobsFireRangeFromPlayer)
+                    .setDefaultValue(16) // Recommended: Used when user click "Reset"
+                            .setMin(5).setMax(256)
+                    .setTooltip(new TranslatableText("""
+                            mobs weill only spread fire when atleast this close to a player""")) // Optional: Shown when the user hover over this option
+                    .setSaveConsumer(newValue -> config.mobsFireRangeFromPlayer = newValue) // Recommended: Called when user save the config
                     .build()); // Builds the option entry for cloth config
 
             ConfigCategory Hostiles = builder.getOrCreateCategory(Text.of("Hostile Mobs"));
@@ -105,13 +121,13 @@ public class modMenuIntergrator2000 implements ModMenuApi {
                     .setSaveConsumer(newValue -> config.hostilesWanderBetter = newValue) // Recommended: Called when user save the config
                     .build()); // Builds the option entry for cloth config
             Hostiles.addEntry(entryBuilder.startDoubleField(Text.of("Hostile aggro range multiplier"), config.hostilesTargetRange)
-                    .setDefaultValue(5) // Recommended: Used when user click "Reset"
+                    .setDefaultValue(2.5) // Recommended: Used when user click "Reset"
                     .setMin(1)
                     .setMax(10)
                     .setTooltip(new TranslatableText("""
                             Multiplies the vanilla aggro distance for mobs by this value [1-10]
                             VANILLA = 1
-                            This Mod defaults to 5
+                            This Mod defaults to 2.5
                             Also scales stealth settings in a reasonable way
                             This setting really helps encourage players to not just ignore mobs""")) // Optional: Shown when the user hover over this option
                     .setSaveConsumer(newValue -> config.hostilesTargetRange = newValue) // Recommended: Called when user save the config
@@ -120,7 +136,7 @@ public class modMenuIntergrator2000 implements ModMenuApi {
             moddedHostiles.add(0, entryBuilder.startDoubleField(Text.of("Other & Mod added hostile mobs base speed modifier"), config.otherHostileBaseSpeedModifier)
                     .setMin(0).setDefaultValue(0D).setSaveConsumer(newValue -> config.otherHostileBaseSpeedModifier = newValue).build());
             moddedHostiles.add(1, entryBuilder.startDoubleField(Text.of("Other & Mod added hostile mobs dash speed modifier"), config.otherHostileDashSpeedModifier)
-                    .setMin(0).setDefaultValue(1D).setSaveConsumer(newValue -> config.otherHostileDashSpeedModifier = newValue).build());
+                    .setMin(0).setDefaultValue(0.5D).setSaveConsumer(newValue -> config.otherHostileDashSpeedModifier = newValue).build());
             moddedHostiles.add(2, entryBuilder.startBooleanToggle(Text.of("Other & Mod added hostile mobs can dash"), config.otherHostileCanDash)
                     .setDefaultValue(true).setSaveConsumer(newValue -> config.otherHostileCanDash = newValue).build());
             Hostiles.addEntry(moddedHostiles.build());
@@ -208,7 +224,7 @@ public class modMenuIntergrator2000 implements ModMenuApi {
                     .setSaveConsumer(newValue -> config.creeperBaseSpeedModifier = newValue) // Recommended: Called when user save the config
                     .build()); // Builds the option entry for cloth config
             Creeper.addEntry(entryBuilder.startDoubleField(Text.of("Creeper Dash speed modifier"), config.creeperDashSpeedModifier)
-                    .setDefaultValue(1D) // Recommended: Used when user click "Reset"
+                    .setDefaultValue(0.6D) // Recommended: Used when user click "Reset"
                     .setMin(0)
                     .setTooltip(new TranslatableText("Modify the dash speed of the Mob")) // Optional: Shown when the user hover over this option
                     .setSaveConsumer(newValue -> config.creeperDashSpeedModifier = newValue) // Recommended: Called when user save the config
@@ -240,7 +256,7 @@ public class modMenuIntergrator2000 implements ModMenuApi {
                     .setSaveConsumer(newValue -> config.zombieBaseSpeedModifier = newValue) // Recommended: Called when user save the config
                     .build()); // Builds the option entry for cloth config
             Zombie.addEntry(entryBuilder.startDoubleField(Text.of("Zombie Dash speed modifier"), config.zombieDashSpeedModifier)
-                    .setDefaultValue(1.3D) // Recommended: Used when user click "Reset"
+                    .setDefaultValue(0.9D) // Recommended: Used when user click "Reset"
                     .setMin(0)
                     .setTooltip(new TranslatableText("Modify the dash speed of the Mob")) // Optional: Shown when the user hover over this option
                     .setSaveConsumer(newValue -> config.zombieDashSpeedModifier = newValue) // Recommended: Called when user save the config
@@ -274,7 +290,7 @@ public class modMenuIntergrator2000 implements ModMenuApi {
                     .build()); // Builds the option entry for cloth config
             ConfigCategory Spider = builder.getOrCreateCategory(Text.of("Spider"));
             Spider.addEntry(entryBuilder.startDoubleField(Text.of("Spider speed modifier"), config.spiderBaseSpeedModifier)
-                    .setDefaultValue(0D) // Recommended: Used when user click "Reset"
+                    .setDefaultValue(0.1D) // Recommended: Used when user click "Reset"
                     .setMin(0)
                     .setTooltip(new TranslatableText("Modify the base speed of the Mob")) // Optional: Shown when the user hover over this option
                     .setSaveConsumer(newValue -> config.spiderBaseSpeedModifier = newValue) // Recommended: Called when user save the config

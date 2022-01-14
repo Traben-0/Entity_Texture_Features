@@ -8,6 +8,7 @@ import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.mob.*;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.tag.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldView;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,8 +20,11 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import traben.freshMobBehaviours.Configurator2000;
+import traben.freshMobBehaviours.FreshMethods;
 import traben.freshMobBehaviours.FreshMobBehaviours;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -58,12 +62,12 @@ public class MIX_HostileEntity {
     @Overwrite
     public float getPathfindingFavor(BlockPos pos, WorldView world) {
         Configurator2000 config = AutoConfig.getConfigHolder(Configurator2000.class).getConfig();
-
+        self = ((HostileEntity) (Object) this);
         BlockPos selfpos = self.getBlockPos();
         if (config.hostilesWanderBetter) {
             //DESPAWN IF IN TEMPLE
             if (world.getBiome(selfpos).getCategory().getName().equals("desert")){
-                if (FreshMobBehaviours.isBlockWithin2(selfpos,world,new Block[]{Blocks.STONE_PRESSURE_PLATE},true,false,true)){
+                if (FreshMethods.isBlockWithin2(selfpos,world,new Block[]{Blocks.STONE_PRESSURE_PLATE},true,false,true)){
                     System.out.println("found possible desert pyramid pressure plate, despawning mob");
                     self.discard();
                     return -40;
@@ -77,7 +81,7 @@ public class MIX_HostileEntity {
             weight = world.getBlockState(pos.down()).isOf(Blocks.MOSSY_COBBLESTONE) ? 32 : weight;
 
             if (self instanceof CreeperEntity && config.creepersAmbush) {
-                Block[] doors = new Block[]{Blocks.OAK_DOOR,
+                Block[] doors =  new Block[]{Blocks.OAK_DOOR,
                         Blocks.DARK_OAK_DOOR,
                         Blocks.ACACIA_DOOR,
                         Blocks.BIRCH_DOOR,
@@ -87,8 +91,9 @@ public class MIX_HostileEntity {
                         Blocks.WARPED_DOOR,
                         Blocks.CRIMSON_DOOR,
                         Blocks.CRAFTING_TABLE,
-                        Blocks.CHEST};
-                    if (FreshMobBehaviours.isBlockWithin2(pos,world,doors)){
+                        Blocks.CHEST,
+                        };
+                    if (FreshMethods.isBlockWithin2(pos,world, doors)){
                         weight += 1024;
                     }
             }
@@ -128,7 +133,7 @@ public class MIX_HostileEntity {
                     if (hostileBoi instanceof ZombieEntity) {
                         //zombie has weird range coding
 
-                        modifiedSpeed = FreshMobBehaviours.slowDownToVanillaByTarget(hostileBoi, closest, config.zombieBaseSpeedModifier, config.zombieDashSpeedModifier, config.hostilesCanDash && config.zombieCanDash);
+                        modifiedSpeed = FreshMethods.slowDownToVanillaByTarget(hostileBoi, closest, config.zombieBaseSpeedModifier, config.zombieDashSpeedModifier, config.hostilesCanDash && config.zombieCanDash);
                         float zombieRange = (float)(config.hostilesTargetRange -1);
                         if (zombRangemodifier != null) {
                             Objects.requireNonNull(hostileBoi.getAttributeInstance(EntityAttributes.GENERIC_FOLLOW_RANGE)).removeModifier(zombRangemodifier);
@@ -136,11 +141,11 @@ public class MIX_HostileEntity {
                         zombRangemodifier = new EntityAttributeModifier("BOOST_RANGEZ", zombieRange, EntityAttributeModifier.Operation.MULTIPLY_BASE);
                         Objects.requireNonNull(hostileBoi.getAttributeInstance(EntityAttributes.GENERIC_FOLLOW_RANGE)).addTemporaryModifier(zombRangemodifier);
                     } else if (hostileBoi instanceof SkeletonEntity) {
-                        modifiedSpeed = FreshMobBehaviours.slowDownToVanillaByTarget(hostileBoi, closest, config.endermenBaseSpeedModifier, config.endermenDashSpeedModifier, config.hostilesCanDash && config.endermenCanDash);
+                        modifiedSpeed = FreshMethods.slowDownToVanillaByTarget(hostileBoi, closest, config.endermenBaseSpeedModifier, config.endermenDashSpeedModifier, config.hostilesCanDash && config.endermenCanDash);
                     }else if (hostileBoi instanceof EndermanEntity) {
-                            modifiedSpeed = FreshMobBehaviours.slowDownToVanillaByTarget(hostileBoi, closest, config.skeletonBaseSpeedModifier, config.skeletonDashSpeedModifier, config.hostilesCanDash && config.skeletonCanDash);
+                            modifiedSpeed = FreshMethods.slowDownToVanillaByTarget(hostileBoi, closest, config.skeletonBaseSpeedModifier, config.skeletonDashSpeedModifier, config.hostilesCanDash && config.skeletonCanDash);
                     } else if (hostileBoi instanceof SpiderEntity) {
-                        modifiedSpeed = FreshMobBehaviours.slowDownToVanillaByTarget(hostileBoi, closest, config.spiderBaseSpeedModifier, config.spiderDashSpeedModifier, config.hostilesCanDash && config.spiderCanDash);
+                        modifiedSpeed = FreshMethods.slowDownToVanillaByTarget(hostileBoi, closest, config.spiderBaseSpeedModifier, config.spiderDashSpeedModifier, config.hostilesCanDash && config.spiderCanDash);
                         float spiderRange = (float)(config.hostilesTargetRange -1);
                         if (spiderRangemodifier != null) {
                             Objects.requireNonNull(hostileBoi.getAttributeInstance(EntityAttributes.GENERIC_FOLLOW_RANGE)).removeModifier(spiderRangemodifier);
@@ -148,7 +153,7 @@ public class MIX_HostileEntity {
                         spiderRangemodifier = new EntityAttributeModifier("BOOST_RANGES", spiderRange, EntityAttributeModifier.Operation.MULTIPLY_BASE);
                         Objects.requireNonNull(hostileBoi.getAttributeInstance(EntityAttributes.GENERIC_FOLLOW_RANGE)).addTemporaryModifier(spiderRangemodifier);
                     } else if (hostileBoi instanceof CreeperEntity) {
-                        modifiedSpeed = FreshMobBehaviours.slowDownToVanillaByTarget(hostileBoi, closest, config.creeperBaseSpeedModifier, config.creeperDashSpeedModifier, config.hostilesCanDash && config.creeperCanDash);
+                        modifiedSpeed = FreshMethods.slowDownToVanillaByTarget(hostileBoi, closest, config.creeperBaseSpeedModifier, config.creeperDashSpeedModifier, config.hostilesCanDash && config.creeperCanDash);
                         float creeperrange = (float)(config.hostilesTargetRange -1);
                         if (creeperRangemodifier!= null) {
                             Objects.requireNonNull(hostileBoi.getAttributeInstance(EntityAttributes.GENERIC_FOLLOW_RANGE)).removeModifier(creeperRangemodifier);
@@ -156,7 +161,7 @@ public class MIX_HostileEntity {
                         creeperRangemodifier = new EntityAttributeModifier("BOOST_RANGEC", creeperrange, EntityAttributeModifier.Operation.MULTIPLY_BASE);
                         Objects.requireNonNull(hostileBoi.getAttributeInstance(EntityAttributes.GENERIC_FOLLOW_RANGE)).addTemporaryModifier(creeperRangemodifier);
                     } else {
-                        modifiedSpeed = FreshMobBehaviours.slowDownToVanillaByTarget(hostileBoi, closest, config.otherHostileBaseSpeedModifier, config.otherHostileDashSpeedModifier, config.hostilesCanDash && config.otherHostileCanDash);
+                        modifiedSpeed = FreshMethods.slowDownToVanillaByTarget(hostileBoi, closest, config.otherHostileBaseSpeedModifier, config.otherHostileDashSpeedModifier, config.hostilesCanDash && config.otherHostileCanDash);
                         float otherrange = (float)(config.hostilesTargetRange -1);
                         if (otherAndModdedRangemodifier!= null) {
                             Objects.requireNonNull(hostileBoi.getAttributeInstance(EntityAttributes.GENERIC_FOLLOW_RANGE)).removeModifier(otherAndModdedRangemodifier);
