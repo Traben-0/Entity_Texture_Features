@@ -9,6 +9,7 @@ public class Configurator2000 implements ConfigData {
     //ALL
     public boolean mobsHeal = true;
     public boolean mobsBurnSpreadFireIfPlayerClose = true;
+    public boolean mobsCollideBetter = true;
     //creeper
     public double creeperBaseSpeedModifier = 0D;
     public double creeperDashSpeedModifier = 1D;

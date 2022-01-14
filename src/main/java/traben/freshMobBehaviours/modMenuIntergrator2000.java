@@ -49,6 +49,13 @@ public class modMenuIntergrator2000 implements ModMenuApi {
                             fire on death""")) // Optional: Shown when the user hover over this option
                     .setSaveConsumer(newValue -> config.mobsBurnSpreadFireIfPlayerClose = newValue) // Recommended: Called when user save the config
                     .build()); // Builds the option entry for cloth config
+            All.addEntry(entryBuilder.startBooleanToggle(Text.of("Better mob top collisons"), config.mobsCollideBetter)
+                    .setDefaultValue(true) // Recommended: Used when user click "Reset"
+                    .setTooltip(new TranslatableText("""
+                            you can stand on any mob
+                            Slimes and Ghasts are bouncy""")) // Optional: Shown when the user hover over this option
+                    .setSaveConsumer(newValue -> config.mobsCollideBetter = newValue) // Recommended: Called when user save the config
+                    .build()); // Builds the option entry for cloth config
 
             ConfigCategory Hostiles = builder.getOrCreateCategory(Text.of("Hostile Mobs"));
             Hostiles.addEntry(entryBuilder.startBooleanToggle(Text.of("Hostile mobs can Dash at players"), config.hostilesCanDash)

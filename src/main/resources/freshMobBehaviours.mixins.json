@@ -8,6 +8,7 @@
     "accessor.ACC_TargetPredicate",
     "ai.MIX_RevengeGoal",
     "ai.MIX_TargetPredicate",
+    "entity.MIX_Entity",
     "entity.MIX_LivingEntity",
     "entity.MIX_MobEntity",
     "entity.MIX_PlayerEntity",
