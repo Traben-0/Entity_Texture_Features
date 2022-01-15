@@ -98,8 +98,8 @@ public abstract class MIX_LivingEntity {
             return 0.5D;
         }
     }
-
-    private int count=0;
+    private int fireCount=0;
+    private int freezecount=0;
     @Inject(method = "tick", at = @At("TAIL"))
     private void healAllMobsRandomly(CallbackInfo ci) {
         Configurator2000 config = AutoConfig.getConfigHolder(Configurator2000.class).getConfig();
@@ -117,22 +117,24 @@ public abstract class MIX_LivingEntity {
                 && self.getRandom().nextInt(500) == 0){
             self.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 200));
         }
-
-        if (count > 20
-                && config.mobsBurnSpreadFireIfPlayerClose
-                && (self.isOnFire() || self.wasOnFire)
-                && self.world.getNonSpectatingEntities(PlayerEntity.class, self.getBoundingBox().expand(config.mobsFireRangeFromPlayer)).size() >0) {
-            FreshMethods.setFire(self.getBlockPos(), self.world, config.mobsFlameChance);
-            count=0;
+        if((self.isOnFire() || self.wasOnFire)) {
+            fireCount++;
+            if (fireCount > config.mobsFlameFrequencySeconds * 20
+                    && config.mobsBurnSpreadFireIfPlayerClose
+                    && self.world.getNonSpectatingEntities(PlayerEntity.class, self.getBoundingBox().expand(config.mobsFireRangeFromPlayer)).size() > 0) {
+                FreshMethods.setFire(self.getBlockPos(), self.world, config.mobsFlameChance);
+                fireCount = 0;
+            }
         }
-        count++;
-        if (self.world.isClient()
-                && count>20
-                && self.isFreezing()){
-            self.world.addParticle(ParticleTypes.SNOWFLAKE, self.getX(), self.getY() + 1, self.getZ(), MathHelper.nextBetween(self.getRandom(), -1.0F, 1.0F) * 0.083333336F, 0.05000000074505806D, MathHelper.nextBetween(self.getRandom(), -1.0F, 1.0F) * 0.083333336F);
-            self.world.addParticle(ParticleTypes.SNOWFLAKE, self.getX(), self.getY() + 2, self.getZ(), (double) (MathHelper.nextBetween(self.getRandom(), -1.0F, 1.0F))* 0.083333336F, 0.05000000074505806D, MathHelper.nextBetween(self.getRandom(), -1.0F, 1.0F)* 0.083333336F);
-            self.world.addParticle(ParticleTypes.SNOWFLAKE, self.getX(), self.getY() + 1.5, self.getZ(), MathHelper.nextBetween(self.getRandom(), -1.0F, 1.0F) * 0.083333336F, 0.05000000074505806D, MathHelper.nextBetween(self.getRandom(), -1.0F, 1.0F) * 0.083333336F);
-            count=0;
+        if (self.isFreezing()) {
+            freezecount++;
+            if (self.world.isClient()
+                    && freezecount > 20) {
+                self.world.addParticle(ParticleTypes.SNOWFLAKE, self.getX(), self.getY() + 1, self.getZ(), MathHelper.nextBetween(self.getRandom(), -1.0F, 1.0F) * 0.083333336F, 0.05000000074505806D, MathHelper.nextBetween(self.getRandom(), -1.0F, 1.0F) * 0.083333336F);
+                self.world.addParticle(ParticleTypes.SNOWFLAKE, self.getX(), self.getY() + 2, self.getZ(), (double) (MathHelper.nextBetween(self.getRandom(), -1.0F, 1.0F)) * 0.083333336F, 0.05000000074505806D, MathHelper.nextBetween(self.getRandom(), -1.0F, 1.0F) * 0.083333336F);
+                self.world.addParticle(ParticleTypes.SNOWFLAKE, self.getX(), self.getY() + 1.5, self.getZ(), MathHelper.nextBetween(self.getRandom(), -1.0F, 1.0F) * 0.083333336F, 0.05000000074505806D, MathHelper.nextBetween(self.getRandom(), -1.0F, 1.0F) * 0.083333336F);
+                freezecount = 0;
+            }
         }
     }
 

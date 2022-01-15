@@ -28,16 +28,9 @@ public class FreshMobBehaviours implements ModInitializer{
 
     @Override
     public void onInitialize() {
-        // This code runs as soon as Minecraft is in a mod-load-ready state.
-        // However, some things (like resources) may still be uninitialized.
-        // Proceed with mild caution.
 
-        System.out.println("Hello Fabric world!");
+        System.out.println("[Fabric] Fresh Mob Behaviours - Initializing");
         try{AutoConfig.register(Configurator2000.class, GsonConfigSerializer::new);}catch(Exception e){System.out.println(e);}
-
-
-        //use below to read config
-        //Configurator2000 config = AutoConfig.getConfigHolder(Configurator2000.class).getConfig();
 
     }
 

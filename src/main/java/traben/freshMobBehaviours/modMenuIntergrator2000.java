@@ -65,9 +65,18 @@ public class modMenuIntergrator2000 implements ModMenuApi {
                             0-100 chance of fires spreading""")) // Optional: Shown when the user hover over this option
                     .setSaveConsumer(newValue -> config.mobsFlameChance = newValue) // Recommended: Called when user save the config
                     .build()); // Builds the option entry for cloth config
+            All.addEntry(entryBuilder.startDoubleField(Text.of("How often mobs spread fire"), config.mobsFlameFrequencySeconds)
+                    .setDefaultValue(3.0) // Recommended: Used when user click "Reset"
+                            .setMin(1).setMax(30)
+                    .setTooltip(new TranslatableText("""
+                            mobs on fire will try to spread fire
+                            every amount of seconds chosen here
+                            """)) // Optional: Shown when the user hover over this option
+                    .setSaveConsumer(newValue -> config.mobsFlameFrequencySeconds = newValue) // Recommended: Called when user save the config
+                    .build()); // Builds the option entry for cloth config
             All.addEntry(entryBuilder.startIntField(Text.of("Mobs spreading fire range from players"), config.mobsFireRangeFromPlayer)
                     .setDefaultValue(16) // Recommended: Used when user click "Reset"
-                            .setMin(5).setMax(256)
+                    .setMin(5).setMax(256)
                     .setTooltip(new TranslatableText("""
                             mobs weill only spread fire when atleast this close to a player""")) // Optional: Shown when the user hover over this option
                     .setSaveConsumer(newValue -> config.mobsFireRangeFromPlayer = newValue) // Recommended: Called when user save the config
@@ -230,7 +239,7 @@ public class modMenuIntergrator2000 implements ModMenuApi {
                     .setSaveConsumer(newValue -> config.creeperDashSpeedModifier = newValue) // Recommended: Called when user save the config
                     .build()); // Builds the option entry for cloth config
             Creeper.addEntry(entryBuilder.startBooleanToggle(Text.of("!!Creepers explode on death!!"), config.creeperExplodeOnDeath)
-                    .setDefaultValue(true) // Recommended: Used when user click "Reset"
+                    .setDefaultValue(false) // Recommended: Used when user click "Reset"
                     .setTooltip(new TranslatableText("""
                             NOT FOR THE FEINT OF HEART!!
                             Creepers will always explode when they die by ANY means

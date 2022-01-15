@@ -11,6 +11,7 @@ public class Configurator2000 implements ConfigData {
     public boolean mobsBurnSpreadFireIfPlayerClose = true;
     public int mobsFireRangeFromPlayer = 16;
     public int mobsFlameChance = 5;
+    public double mobsFlameFrequencySeconds = 3.0;
     public boolean mobsCollideBetter = true;
     //creeper
     public double creeperBaseSpeedModifier = 0D;
