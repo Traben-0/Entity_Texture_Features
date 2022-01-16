@@ -319,7 +319,8 @@ public class modMenuIntergrator2000 implements ModMenuApi {
             PhantomSleep.addEntry(entryBuilder.startBooleanToggle(Text.of("Sleep requires Phantom Membranes"), config.sleepNeedsPhantomMembranes)
                     .setDefaultValue(true) // Recommended: Used when user click "Reset"
                     .setTooltip(new TranslatableText("""
-                            makes sleep require Phantom Membranes
+                            Makes sleep require Phantom Membranes
+                            A phantom will likely spawn in the sky when you try
                             I recommend you try it for a while before turning this off
                             It really changes the dynamic of sleeping and how you treat the night
                             Also phantoms are just once again useless without it :(""")) // Optional: Shown when the user hover over this option

@@ -87,7 +87,9 @@ public class Configurator2000 implements ConfigData {
     //Projectiles
     public boolean projectilesSetFire = true;
     public boolean snowballsCauseFreeze = true;
-
+    //Drowned
+    public boolean drownedSwimFaster = true;
+    public boolean drownedGlowLayer = true;
 
 //    @ConfigEntry.Gui.Excluded
 //    InnerStuff invisibleStuff = new InnerStuff();
