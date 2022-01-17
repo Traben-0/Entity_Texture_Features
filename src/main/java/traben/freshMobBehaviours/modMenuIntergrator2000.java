@@ -4,13 +4,11 @@ import com.google.common.collect.ImmutableMap;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 import me.shedaniel.autoconfig.AutoConfig;
-import me.shedaniel.clothconfig2.api.AbstractConfigListEntry;
-import me.shedaniel.clothconfig2.api.ConfigBuilder;
-import me.shedaniel.clothconfig2.api.ConfigCategory;
-import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
+import me.shedaniel.clothconfig2.api.*;
 import me.shedaniel.clothconfig2.gui.entries.SubCategoryListEntry;
 import me.shedaniel.clothconfig2.impl.builders.SubCategoryBuilder;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.option.OptionsScreen;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -28,6 +26,7 @@ public class modMenuIntergrator2000 implements ModMenuApi {
             ConfigBuilder builder = ConfigBuilder.create()
                     .setParentScreen(parent)
                     .setTitle(new TranslatableText("Fresh Mob Behaviours by Traben"));
+            //Screen ModConfigScreen = builder.build();
             ConfigEntryBuilder entryBuilder = builder.entryBuilder();
             ConfigCategory All = builder.getOrCreateCategory(Text.of("All Mobs"));
             All.addEntry(entryBuilder.startBooleanToggle(Text.of("Mobs heal"), config.mobsHeal)
@@ -104,6 +103,8 @@ public class modMenuIntergrator2000 implements ModMenuApi {
                     .setDefaultValue(true).setSaveConsumer(newValue -> config.zombieCanDash = newValue).build());
             dashMobs.add(4, entryBuilder.startBooleanToggle(Text.of("Endermen can dash"), config.endermenCanDash)
                     .setDefaultValue(true).setSaveConsumer(newValue -> config.endermenCanDash = newValue).build());
+            dashMobs.add(4, entryBuilder.startBooleanToggle(Text.of("Drowned can dash"), config.drownedCanDash)
+                    .setDefaultValue(true).setSaveConsumer(newValue -> config.drownedCanDash = newValue).build());
             Hostiles.addEntry(dashMobs.build());
 
             Hostiles.addEntry(entryBuilder.startBooleanToggle(Text.of("Hostile mobs can 'sense' close players"), config.hostileCanSenseClosePlayer)
@@ -412,12 +413,53 @@ public class modMenuIntergrator2000 implements ModMenuApi {
                     .setTooltip(new TranslatableText("Flaming arrows set fires")) // Optional: Shown when the user hover over this option
                     .setSaveConsumer(newValue -> config.projectilesSetFire = newValue) // Recommended: Called when user save the config
                     .build()); // Builds the option entry for cloth config
+            ConfigCategory Drowned = builder.getOrCreateCategory(Text.of("Drowned"));
+            Drowned.addEntry(entryBuilder.startDoubleField(Text.of("Drowned dash speed modifier"), config.drownedDashMultiplier)
+                    .setDefaultValue(0.5D) // Recommended: Used when user click "Reset"
+                    .setMin(0).setMax(5)
+                    .setTooltip(new TranslatableText("""
+                                    Modify the dash speed of Drowned
+                                    """)) // Optional: Shown when the user hover over this option
+                    .setSaveConsumer(newValue -> config.drownedDashMultiplier = newValue) // Recommended: Called when user save the config
+                    .build()); // Builds the option entry for cloth config
+            Drowned.addEntry(entryBuilder.startDoubleField(Text.of("Drowned swim speed modifier"), config.drownedSwimSpeedMultiplier)
+                    .setDefaultValue(1.8D) // Recommended: Used when user click "Reset"
+                    .setMin(1).setMax(5)
+                    .setTooltip(new TranslatableText("""
+                                    Modify the swimming speed of Drowned
+                                    Vanilla = 1, Default = 1.8
+                                    The oceans should be dangerous
+                                    and drowned are frankly too slow
+                                    """)) // Optional: Shown when the user hover over this option
+                    .setSaveConsumer(newValue -> config.drownedSwimSpeedMultiplier = newValue) // Recommended: Called when user save the config
+                    .build()); // Builds the option entry for cloth config
+            Drowned.addEntry(entryBuilder.startDoubleField(Text.of("Drowned walk speed modifier"), config.drownedWalkSpeedMultiplier)
+                    .setDefaultValue(0.5D) // Recommended: Used when user click "Reset"
+                    .setMin(0.3).setMax(1)
+                    .setTooltip(new TranslatableText("""
+                                    Modify the walking speed of Drowned
+                                    Vanilla = 1, Default = 0.5, Minimum = 0.3
+                                    Drowned should swim fast and walk slow
+                                    works well with faster swimming drowned
+                                    your only escape is the land...
+                                    """)) // Optional: Shown when the user hover over this option
+                    .setSaveConsumer(newValue -> config.drownedWalkSpeedMultiplier = newValue) // Recommended: Called when user save the config
+                    .build()); // Builds the option entry for cloth config
+            Drowned.addEntry(entryBuilder.startBooleanToggle(Text.of("Drowned spawn all day"), config.drownedSpawnAnyLight)
+                    .setDefaultValue(true) // Recommended: Used when user click "Reset"
+                    .setTooltip(new TranslatableText("""
+                                    Drown can spawn in any Light level
+                                    The Ocean is always dengerous...
+                                    """)) // Optional: Shown when the user hover over this option
+                    .setSaveConsumer(newValue -> config.drownedSpawnAnyLight = newValue) // Recommended: Called when user save the config
+                    .build()); // Builds the option entry for cloth config
 
             builder.setSavingRunnable(() -> {
                 // Serialise the config into the config file. This will be called last after all variables are updated.
                 AutoConfig.getConfigHolder(Configurator2000.class).save();
 
           });
+            //MinecraftClient.getInstance().openScreen(screen);
             return builder.build();
         };
     }

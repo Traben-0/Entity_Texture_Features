@@ -12,6 +12,7 @@ import net.minecraft.entity.mob.SkeletonEntity;
 import net.minecraft.entity.passive.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.thrown.SnowballEntity;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.tag.BlockTags;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
@@ -25,6 +26,13 @@ import java.util.Random;
 
 public interface FreshMethods {
 
+    static float drownedSlowDownToVanillaByTarget(LivingEntity self,PlayerEntity target, boolean canDash){
+        Configurator2000 config = AutoConfig.getConfigHolder(Configurator2000.class).getConfig();
+        double baseCloseBoost = self.world.getFluidState(self.getBlockPos()).isOf(Fluids.WATER) ?config.drownedSwimSpeedMultiplier : config.drownedWalkSpeedMultiplier-1;
+        double distantSpeedBoost = self.world.getFluidState(self.getBlockPos()).isOf(Fluids.WATER)? config.drownedSwimSpeedMultiplier* config.drownedDashMultiplier : (config.drownedWalkSpeedMultiplier-1)* -config.drownedDashMultiplier;
+        //System.out.println("water = " + self.world.getFluidState(self.getBlockPos()).isOf(Fluids.WATER));
+        return slowDownToVanillaByTarget(self, target, baseCloseBoost, distantSpeedBoost, canDash);
+    }
     static float slowDownToVanillaByTarget(LivingEntity self, PlayerEntity target, double baseCloseBoost, double distantSpeedBoost, boolean canDash) {
         float distance123 = self.distanceTo(target);
         //speed up for chasing players then slow down when close
@@ -36,7 +44,10 @@ public interface FreshMethods {
             range = 24;
         }
         Configurator2000 config = AutoConfig.getConfigHolder(Configurator2000.class).getConfig();
-        if (canDash && self.canSee(target) && !target.getAbilities().creativeMode
+        if (canDash
+                && distantSpeedBoost > 0
+                && self.canSee(target)
+                && !target.getAbilities().creativeMode
                 && (range * config.hostilesTargetRange) >= self.distanceTo(target)
         ) {
             if (distance123 <= 32) {
@@ -48,7 +59,6 @@ public interface FreshMethods {
                     distantSpeedBoost = ((EndermanEntity) self).isAngry() ? distantSpeedBoost * (distance123 / 32) : 0;
                 } else if (self instanceof HostileEntity) {
                     distantSpeedBoost = distantSpeedBoost * (distance123 / 32);
-                    System.out.println("boi is attacking");
                 } else {//all mobs
                     distantSpeedBoost = distantSpeedBoost * (distance123 / 32);
                 }

@@ -108,6 +108,7 @@ public class MIX_HostileEntity {
 
     EntityAttributeModifier modifier;//=new EntityAttributeModifier("BOOST",0.4D, EntityAttributeModifier.Operation.MULTIPLY_BASE);
     EntityAttributeModifier zombRangemodifier;
+    EntityAttributeModifier DrownRangemodifier;
     EntityAttributeModifier otherAndModdedRangemodifier;
     EntityAttributeModifier spiderRangemodifier;
     EntityAttributeModifier creeperRangemodifier;
@@ -121,7 +122,7 @@ public class MIX_HostileEntity {
 
         if (!((HostileEntity) (Object) this).world.isClient) {
             this.count++;
-            if (this.count >= 15) {
+            if (this.count >= 2) {
                 HostileEntity hostileBoi = ((HostileEntity) (Object) this);
                 PlayerEntity closest = hostileBoi.getWorld().getClosestPlayer(hostileBoi, -1);
                 if (closest != null) {
@@ -130,7 +131,7 @@ public class MIX_HostileEntity {
                     }
                     Configurator2000 config = AutoConfig.getConfigHolder(Configurator2000.class).getConfig();
                     float modifiedSpeed;
-                    if (hostileBoi instanceof ZombieEntity) {
+                    if (hostileBoi instanceof ZombieEntity && !(hostileBoi instanceof DrownedEntity)) {
                         //zombie has weird range coding
 
                         modifiedSpeed = FreshMethods.slowDownToVanillaByTarget(hostileBoi, closest, config.zombieBaseSpeedModifier, config.zombieDashSpeedModifier, config.hostilesCanDash && config.zombieCanDash);
@@ -140,7 +141,15 @@ public class MIX_HostileEntity {
                         }
                         zombRangemodifier = new EntityAttributeModifier("BOOST_RANGEZ", zombieRange, EntityAttributeModifier.Operation.MULTIPLY_BASE);
                         Objects.requireNonNull(hostileBoi.getAttributeInstance(EntityAttributes.GENERIC_FOLLOW_RANGE)).addTemporaryModifier(zombRangemodifier);
-                    } else if (hostileBoi instanceof SkeletonEntity) {
+                    } else if(hostileBoi instanceof DrownedEntity){
+                        modifiedSpeed = FreshMethods.drownedSlowDownToVanillaByTarget(hostileBoi, closest, config.hostilesCanDash && config.drownedCanDash);
+                        float DrownRange = (float)(config.hostilesTargetRange -1);
+                        if (DrownRangemodifier != null) {
+                            Objects.requireNonNull(hostileBoi.getAttributeInstance(EntityAttributes.GENERIC_FOLLOW_RANGE)).removeModifier(DrownRangemodifier);
+                        }
+                        DrownRangemodifier = new EntityAttributeModifier("BOOST_RANGED", DrownRange, EntityAttributeModifier.Operation.MULTIPLY_BASE);
+                        Objects.requireNonNull(hostileBoi.getAttributeInstance(EntityAttributes.GENERIC_FOLLOW_RANGE)).addTemporaryModifier(DrownRangemodifier);
+                    }else if (hostileBoi instanceof SkeletonEntity) {
                         modifiedSpeed = FreshMethods.slowDownToVanillaByTarget(hostileBoi, closest, config.endermenBaseSpeedModifier, config.endermenDashSpeedModifier, config.hostilesCanDash && config.endermenCanDash);
                     }else if (hostileBoi instanceof EndermanEntity) {
                             modifiedSpeed = FreshMethods.slowDownToVanillaByTarget(hostileBoi, closest, config.skeletonBaseSpeedModifier, config.skeletonDashSpeedModifier, config.hostilesCanDash && config.skeletonCanDash);

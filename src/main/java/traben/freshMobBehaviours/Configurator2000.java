@@ -52,6 +52,7 @@ public class Configurator2000 implements ConfigData {
     public boolean spiderCanDash = true;
     public boolean skeletonCanDash = true;
     public boolean endermenCanDash = true;
+    public boolean drownedCanDash = true;
     //Stealth
     public boolean stealthBuffSneak = true;
     public boolean stealthLeatherSneak = true;
@@ -88,7 +89,10 @@ public class Configurator2000 implements ConfigData {
     public boolean projectilesSetFire = true;
     public boolean snowballsCauseFreeze = true;
     //Drowned
-    public boolean drownedSwimFaster = true;
+    public double drownedDashMultiplier = 0.5;
+    public double drownedSwimSpeedMultiplier = 1.8;
+    public double drownedWalkSpeedMultiplier = 0.5;
+    public boolean drownedSpawnAnyLight = true;
     public boolean drownedGlowLayer = true;
 
 //    @ConfigEntry.Gui.Excluded

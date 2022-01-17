@@ -4,11 +4,13 @@
   "package": "traben.freshMobBehaviours.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "accessor.ACC_LivingEntityRenderer",
     "accessor.ACC_MobEntity",
     "accessor.ACC_TargetPredicate",
     "ai.MIX_RevengeGoal",
     "ai.MIX_TargetPredicate",
     "blocks.MIX_BedBlock",
+    "client.entity.MIX_DrownedEntityRenderer",
     "entity.MIX_Entity",
     "entity.MIX_LivingEntity",
     "entity.MIX_MobEntity",
