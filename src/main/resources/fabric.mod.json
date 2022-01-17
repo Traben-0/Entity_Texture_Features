@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "fresh_mob_behaviours",
+  "id": "emissive_entities",
   "version": "${version}",
-  "name": "Fresh Mob Behaviours",
-  "description": "A Fresh take on vanilla Mob Behaviours",
+  "name": "Emissive Entities",
+  "description": "Optifine format compatible",
   "authors": ["Traben"],
   "license": "MIT",
   "icon": "icon.png",
@@ -11,14 +11,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "traben.freshMobBehaviours.FreshMobBehaviours"
-    ],
-    "modmenu": [
-      "traben.freshMobBehaviours.modMenuIntergrator2000"
     ]
   },
   "mixins": [
-    "freshMobBehaviours.mixins.json"
+    "emissive_entities.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.12.12",
