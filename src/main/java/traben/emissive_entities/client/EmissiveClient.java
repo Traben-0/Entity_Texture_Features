@@ -1,31 +1,21 @@
 package traben.emissive_entities.client;
 
+import net.fabricmc.api.ModInitializer;
 import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.entity.DrownedEntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
-import net.minecraft.client.render.entity.feature.DrownedOverlayFeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
+import net.minecraft.data.Main;
 import net.minecraft.util.Identifier;
-import traben.emissive_entities.mixin.accessor.ACC_LivingEntityRenderer;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.Writer;
 
 @net.fabricmc.api.Environment(net.fabricmc.api.EnvType.CLIENT)
-public interface EmissiveClient {
+public class EmissiveClient implements ModInitializer {
 
-    public static void addEmissiveRenderer(LivingEntityRenderer renderer, EntityRendererFactory.Context context, FeatureRenderer[] add){
-        for (FeatureRenderer g:
-             add) {
-            ((ACC_LivingEntityRenderer)renderer).getFeatures().add(g);
-        }
+    @Override
+    public void onInitialize() {
     }
-    public static void addSingleEmissiveRenderer(LivingEntityRenderer renderer, EntityRendererFactory.Context context, String str){
-        ((ACC_LivingEntityRenderer)renderer).getFeatures().add( new EmissiveFeatureRenderer(renderer){
-            @Override
-            public RenderLayer getEyesTexture() {
-                return RenderLayer.getEyes(new Identifier(str));
-            }
-        }
-        );
-    }
-
 }
