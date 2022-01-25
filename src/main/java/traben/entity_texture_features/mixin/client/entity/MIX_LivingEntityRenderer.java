@@ -104,7 +104,9 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
         //this.randomAmount = count-1;
         //0=vanilla, 1+ = randoms
         if (data[0] != 1){
-            data[1] = (new Random()).nextInt(count-1)+1;
+
+            data[1] = (id.hashCode()%(count-1))+1;
+           // data[1] = (new Random()).nextInt(count-1)+1;
             randomData.put(id,data);
             return vanillaPath.replace(".png",(data[1]+".png"));
         }
