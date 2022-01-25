@@ -78,7 +78,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
         Identifier vanilla = getTexture((T)entity);
 
         if (!randomData.containsKey(entity.getUuid())) {
-            System.out.println("no data - making2");
+            //System.out.println("no data - making2");
             setRandom(MinecraftClient.getInstance().getResourceManager(),vanilla.getPath(),entity.getUuid());
         }
         if (randomData.get(entity.getUuid())[1] > 1) {
@@ -99,13 +99,16 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
             checkPath = vanillaPath.replace(".png",(count+".png"));
             keepGoing = isExistingFile(resourceManager,new Identifier(checkPath));
         }
-        System.out.println("count="+(count-1));
+        //System.out.println("count="+(count-1));
         Integer[] data = {count-1,1};
         //this.randomAmount = count-1;
         //0=vanilla, 1+ = randoms
         if (data[0] != 1){
 
-            data[1] = (id.hashCode()%(count-1))+1;
+            int randomReliable = id.hashCode() > 0 ? id.hashCode() : -id.hashCode();
+            data[1] = ((randomReliable)%(count-1))+1;
+           // System.out.println(id.hashCode()+"data"+data[1]);
+
            // data[1] = (new Random()).nextInt(count-1)+1;
             randomData.put(id,data);
             return vanillaPath.replace(".png",(data[1]+".png"));
