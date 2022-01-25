@@ -1,4 +1,4 @@
-package traben.emissive_entities.mixin.client.entity;
+package traben.entity_texture_features.mixin.client.entity;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.OverlayTexture;
@@ -8,30 +8,25 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.*;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.EntityModel;
-import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import traben.emissive_entities.client.EmissiveMethods;
+import traben.entity_texture_features.client.entity_texture_features_METHODS;
 
-import java.io.IOException;
 import java.util.*;
 
-import static traben.emissive_entities.client.EmissiveClient.hasEmissive;
-import static traben.emissive_entities.client.EmissiveClient.randomData;
+import static traben.entity_texture_features.client.entity_texture_features_CLIENT.hasEmissive;
+import static traben.entity_texture_features.client.entity_texture_features_CLIENT.randomData;
 
 @Mixin(LivingEntityRenderer.class)
-public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends EntityModel<T>> extends EntityRenderer<T> implements FeatureRendererContext<T, M>,EmissiveMethods {
+public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends EntityModel<T>> extends EntityRenderer<T> implements FeatureRendererContext<T, M>, entity_texture_features_METHODS {
     protected MIX_LivingEntityRenderer(EntityRendererFactory.Context ctx) {
         super(ctx);
     }

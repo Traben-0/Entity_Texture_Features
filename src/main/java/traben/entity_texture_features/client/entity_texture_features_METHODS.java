@@ -1,4 +1,4 @@
-package traben.emissive_entities.client;
+package traben.entity_texture_features.client;
 
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.resource.Resource;
@@ -7,7 +7,7 @@ import net.minecraft.util.Identifier;
 
 import java.io.IOException;
 
-public interface EmissiveMethods {
+public interface entity_texture_features_METHODS {
 
 
 

@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "traben.emissive_entities.mixin",
+  "package": "traben.entity_texture_features.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "client.entity.MIX_LivingEntityRenderer"

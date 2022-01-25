@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "id": "emissive_entities",
+  "id": "entity_texture_features",
   "version": "${version}",
-  "name": "Emissive Entities",
+  "name": "Entity Texture Features",
   "description": "Optifine format compatible",
   "authors": ["Traben"],
   "license": "MIT",
@@ -14,7 +14,7 @@
     ]
   },
   "mixins": [
-    "emissive_entities.mixins.json"
+    "entity_texture_features.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.12.12",
