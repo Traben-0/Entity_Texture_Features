@@ -13,6 +13,11 @@ import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.mob.GhastEntity;
+import net.minecraft.entity.mob.VexEntity;
+import net.minecraft.entity.passive.IronGolemEntity;
+import net.minecraft.entity.passive.VillagerEntity;
+import net.minecraft.entity.passive.WolfEntity;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
@@ -73,12 +78,29 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
     private Identifier returnOwnRandomTexture(LivingEntityRenderer instance, Entity entity) {
         Identifier vanilla = getTexture((T) entity);
 
-        if (!UUID_isRandom.containsKey(entity.getUuid())) {
+        //spread out randomly for lag prevention
+        //reset to detect if texture has changed in base mob and update random assignment
+        if ( (entity instanceof GhastEntity || entity instanceof VexEntity)
+                && ((LivingEntity) entity).getRandom().nextInt(10) == 0
+        ) {//more frequent for hostiles
+            resetSingleVisuals(entity.getUuid());
+        }else if (entity instanceof WolfEntity && ((LivingEntity) entity).getRandom().nextInt(64) == 0
+        ) {
+            resetSingleVisuals(entity.getUuid());
+        }
+        //checks if random needs to be changed
+        if (!UUID_isRandom.containsKey(entity.getUuid())){
             //System.out.println("no data - making2");
             setRandom(MinecraftClient.getInstance().getResourceManager(), vanilla.getPath(), entity.getUuid());
         }
         if (UUID_isRandom.get(entity.getUuid())) {
-            // return new Identifier(vanilla.getPath().replace(".png", randomData.get(entity.getUuid())+".png"));  randomTexture.get(id).getPath();
+//                //if(UUID_randomTexture.get(entity.getUuid())[0].getPath().equals(vanilla.getPath()) ){
+//                String[] nameOfFile = vanilla.getPath().replace(".png", "").split("/");
+//                String[] randomToCheck = UUID_randomTexture.get(entity.getUuid()).getPath().replace(".png", "").split("/");
+//                if (randomToCheck[randomToCheck.length-1].replaceAll("[0-9]","").equals(nameOfFile[nameOfFile.length - 1])) {
+//                    UUID_randomTexture.remove(entity.getUuid());
+//                    UUID_isRandom.remove(entity.getUuid());
+//                    setRandom(MinecraftClient.getInstance().getResourceManager(), vanilla.getPath(), entity.getUuid());
             return UUID_randomTexture.get(entity.getUuid());
         } else {
             return vanilla;
@@ -155,7 +177,8 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
             randomReliable %= allTextures.size();
 
             UUID_isRandom.put(id, true);
-             UUID_randomTexture.put(id, new Identifier(allTextures.get(randomReliable)));
+            //Identifier[] toSend = {new Identifier(vanillaPath),new Identifier(allTextures.get(randomReliable))};
+             UUID_randomTexture.put(id,new Identifier(allTextures.get(randomReliable)) );
             return allTextures.get(randomReliable);
         } else {
             UUID_isRandom.put(id, false);

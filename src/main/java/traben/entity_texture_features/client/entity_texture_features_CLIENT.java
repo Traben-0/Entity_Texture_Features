@@ -10,6 +10,7 @@ import java.util.UUID;
 @net.fabricmc.api.Environment(net.fabricmc.api.EnvType.CLIENT)
 public class entity_texture_features_CLIENT implements ModInitializer {
     public static Map<UUID,Boolean> UUID_isRandom = new HashMap<UUID, Boolean>() ;
+    //[0] is vanilla [1] is new
     public static Map<UUID,Identifier> UUID_randomTexture = new HashMap<UUID, Identifier>() ;
 
     public static Map<String, Identifier> Texture_Emissive = new HashMap<String, Identifier>() ;
