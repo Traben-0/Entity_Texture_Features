@@ -5,7 +5,9 @@ import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.*;
+import net.minecraft.client.render.entity.EntityRenderer;
+import net.minecraft.client.render.entity.EntityRendererFactory;
+import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.util.math.MatrixStack;
@@ -20,10 +22,10 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.client.entity_texture_features_METHODS;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.UUID;
 
-import static traben.entity_texture_features.client.entity_texture_features_CLIENT.hasEmissive;
-import static traben.entity_texture_features.client.entity_texture_features_CLIENT.randomData;
+import static traben.entity_texture_features.client.entity_texture_features_CLIENT.*;
 
 @Mixin(LivingEntityRenderer.class)
 public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends EntityModel<T>> extends EntityRenderer<T> implements FeatureRendererContext<T, M>, entity_texture_features_METHODS {
@@ -35,37 +37,31 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
     //  [0] = total randoms, [1] = self random
 
 
-    @Inject( method = "render(Lnet/minecraft/entity/LivingEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/EntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V",shift = At.Shift.AFTER))
-    private void applyEmissive(T livingEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci)  {
+    @Inject(method = "render(Lnet/minecraft/entity/LivingEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/EntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V", shift = At.Shift.AFTER))
+    private void applyEmissive(T livingEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
         UUID id = livingEntity.getUuid();
         String fileString = getTexture(livingEntity).getPath();
-        if (randomData.get(id)[1] > 1) {
-            fileString = fileString.replace(".png", randomData.get(id)[1] + ".png");
+        if (UUID_isRandom.get(id)) {
+            //fileString = fileString.replace(".png", randomData.get(id) + ".png");
+            fileString = UUID_randomTexture.get(id).getPath();
         }
-        if (hasEmissive.containsKey(fileString)) {
-            if (hasEmissive.get(fileString) !=null){
-                VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getEyes(hasEmissive.get(fileString)));
+        if (Texture_Emissive.containsKey(fileString)) {
+            if (Texture_Emissive.get(fileString) != null) {
+                VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getEyes(Texture_Emissive.get(fileString)));
 
                 this.getModel().render(matrixStack
                         , textureVert
                         , 15728640
                         , OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
             }
-        }else{
-            // if (!randomData.containsKey(livingEntity.getUuid())) {
-            //     System.out.println("no data - making");
-            //     fileString = setRandom(resources,fileString,livingEntity.getUuid());
-            // } else
-
-            //ResourceManager resources = MinecraftClient.getInstance().getResourceManager();
-
+        } else {
             Identifier fileName_e = new Identifier(fileString.replace(".png", "_e.png"));
             if (isExistingFile(MinecraftClient.getInstance().getResourceManager(), fileName_e)) {
                 VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getEyes(fileName_e));
-                hasEmissive.put(fileString,fileName_e);
+                Texture_Emissive.put(fileString, fileName_e);
                 this.getModel().render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
-            }else{
-                hasEmissive.put(fileString,null);
+            } else {
+                Texture_Emissive.put(fileString, null);
             }
         }
     }
@@ -75,50 +71,97 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
             method = "getRenderLayer",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/LivingEntityRenderer;getTexture(Lnet/minecraft/entity/Entity;)Lnet/minecraft/util/Identifier;"))
     private Identifier returnOwnRandomTexture(LivingEntityRenderer instance, Entity entity) {
-        Identifier vanilla = getTexture((T)entity);
+        Identifier vanilla = getTexture((T) entity);
 
-        if (!randomData.containsKey(entity.getUuid())) {
+        if (!UUID_isRandom.containsKey(entity.getUuid())) {
             //System.out.println("no data - making2");
-            setRandom(MinecraftClient.getInstance().getResourceManager(),vanilla.getPath(),entity.getUuid());
+            setRandom(MinecraftClient.getInstance().getResourceManager(), vanilla.getPath(), entity.getUuid());
         }
-        if (randomData.get(entity.getUuid())[1] > 1) {
-            return new Identifier(vanilla.getPath().replace(".png", randomData.get(entity.getUuid())[1]+".png"));
-        }else{
+        if (UUID_isRandom.get(entity.getUuid())) {
+            // return new Identifier(vanilla.getPath().replace(".png", randomData.get(entity.getUuid())+".png"));  randomTexture.get(id).getPath();
+            return UUID_randomTexture.get(entity.getUuid());
+        } else {
             return vanilla;
         }
 
     }
 
 
-    private String setRandom(ResourceManager resourceManager, String vanillaPath, UUID id){
-        boolean keepGoing = true;
+    private String setRandom(ResourceManager resourceManager, String vanillaPath, UUID id) {
+        boolean keepGoing = false;
+        ArrayList<String> allTextures = new ArrayList<String>();
         String checkPath;
+        String checkPathOptifineFormat;
+        String checkPathOldRandomFormat;
+        boolean isOptifine = false;
+        boolean oldRandom = false;
+
+        //first iteration longer
         int count = 1;
-        while (keepGoing){
-            count++;
-            checkPath = vanillaPath.replace(".png",(count+".png"));
-            keepGoing = isExistingFile(resourceManager,new Identifier(checkPath));
+        allTextures.add(vanillaPath);
+        //can start from either texture1.png or texture2.png check both first
+        //check if texturename1.png is used
+        checkPath = vanillaPath.replace(".png", (count + ".png"));
+        checkPathOldRandomFormat = vanillaPath.replace(".png", (count + ".png")).replace("textures/entity", "optifine/mob");
+        checkPathOptifineFormat = vanillaPath.replace(".png", (count + ".png")).replace("textures", "optifine/random");
+        if (isExistingFile(resourceManager, new Identifier(checkPath))) {
+            allTextures.add(checkPath);
+        } else if (isExistingFile(resourceManager, new Identifier(checkPathOptifineFormat))) {
+            isOptifine = true;
+            allTextures.add(checkPathOptifineFormat);
+        } else if (isExistingFile(resourceManager, new Identifier(checkPathOldRandomFormat))) {
+            oldRandom = true;
+            allTextures.add(checkPathOldRandomFormat);
         }
-        //System.out.println("count="+(count-1));
-        Integer[] data = {count-1,1};
-        //this.randomAmount = count-1;
-        //0=vanilla, 1+ = randoms
-        if (data[0] != 1){
+        count++;
+        //check if texture 2.png is used
+        checkPath = vanillaPath.replace(".png", (count + ".png"));
+        checkPathOldRandomFormat = vanillaPath.replace(".png", (count + ".png")).replace("textures/entity", "optifine/mob");
+        checkPathOptifineFormat = vanillaPath.replace(".png", (count + ".png")).replace("textures", "optifine/random");
+        if (isExistingFile(resourceManager, new Identifier(checkPath))) {
+            allTextures.add(checkPath);
+            keepGoing = true;
+        } else if (isExistingFile(resourceManager, new Identifier(checkPathOptifineFormat))) {
+            isOptifine = true;
+            keepGoing = true;
+            allTextures.add(checkPathOptifineFormat);
+        } else if (isExistingFile(resourceManager, new Identifier(checkPathOldRandomFormat))) {
+            oldRandom = true;
+            keepGoing = true;
+            allTextures.add(checkPathOldRandomFormat);
+        }
+        //texture3.png and further optimized iterations
+        while (keepGoing) {
+            count++;
+            if (isOptifine) {
+                checkPath = vanillaPath.replace(".png", (count + ".png")).replace("textures", "optifine/random");
+            } else if (oldRandom) {
+                checkPath = vanillaPath.replace(".png", (count + ".png")).replace("textures/entity", "optifine/mob");
+            } else {
+                checkPath = vanillaPath.replace(".png", (count + ".png"));
+            }
+
+            if (isExistingFile(resourceManager, new Identifier(checkPath))) {
+                allTextures.add(checkPath);
+            } else {
+                keepGoing = false;
+            }
+
+        }
+
+        if (allTextures.size() > 1) {
 
             int randomReliable = id.hashCode() > 0 ? id.hashCode() : -id.hashCode();
-            data[1] = ((randomReliable)%(count-1))+1;
-           // System.out.println(id.hashCode()+"data"+data[1]);
+            randomReliable %= allTextures.size();
 
-           // data[1] = (new Random()).nextInt(count-1)+1;
-            randomData.put(id,data);
-            return vanillaPath.replace(".png",(data[1]+".png"));
-        }
-        else{
-            randomData.put(id,data);
+            UUID_isRandom.put(id, true);
+             UUID_randomTexture.put(id, new Identifier(allTextures.get(randomReliable)));
+            return allTextures.get(randomReliable);
+        } else {
+            UUID_isRandom.put(id, false);
             return vanillaPath;
         }
     }
-
 
 
 }
