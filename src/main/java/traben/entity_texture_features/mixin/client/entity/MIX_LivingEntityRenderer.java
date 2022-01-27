@@ -15,9 +15,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.GhastEntity;
 import net.minecraft.entity.mob.VexEntity;
-import net.minecraft.entity.passive.IronGolemEntity;
-import net.minecraft.entity.passive.VillagerEntity;
-import net.minecraft.entity.passive.WolfEntity;
+import net.minecraft.entity.passive.*;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
@@ -46,6 +44,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
     private void applyEmissive(T livingEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
         UUID id = livingEntity.getUuid();
         String fileString = getTexture(livingEntity).getPath();
+        System.out.println(fileString);
         if (UUID_isRandom.get(id)) {
             //fileString = fileString.replace(".png", randomData.get(id) + ".png");
             fileString = UUID_randomTexture.get(id).getPath();
@@ -59,8 +58,8 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                         , 15728640
                         , OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
             }
-        } else {
-            Identifier fileName_e = new Identifier(fileString.replace(".png", "_e.png"));
+        } else {//creates and sets emissive for texture if it exists
+            Identifier fileName_e = new Identifier(fileString.replace(".png", emissiveSuffix+".png"));
             if (isExistingFile(MinecraftClient.getInstance().getResourceManager(), fileName_e)) {
                 VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getEyes(fileName_e));
                 Texture_Emissive.put(fileString, fileName_e);
@@ -84,7 +83,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                 && ((LivingEntity) entity).getRandom().nextInt(10) == 0
         ) {//more frequent for hostiles
             resetSingleVisuals(entity.getUuid());
-        }else if (entity instanceof WolfEntity && ((LivingEntity) entity).getRandom().nextInt(64) == 0
+        }else if ((entity instanceof WolfEntity || entity instanceof BeeEntity|| entity instanceof FoxEntity) && ((LivingEntity) entity).getRandom().nextInt(64) == 0
         ) {
             resetSingleVisuals(entity.getUuid());
         }
