@@ -44,10 +44,11 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
     private void applyEmissive(T livingEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
         UUID id = livingEntity.getUuid();
         String fileString = getTexture(livingEntity).getPath();
-        System.out.println(fileString);
-        if (UUID_isRandom.get(id)) {
-            //fileString = fileString.replace(".png", randomData.get(id) + ".png");
-            fileString = UUID_randomTexture.get(id).getPath();
+        //System.out.println(fileString);
+        if (Texture_TotalRandom.containsKey(fileString)) {
+            if (UUID_randomTextureSuffix.get(id) !=0) {
+                fileString = fileString.replace(".png", UUID_randomTextureSuffix.get(id) + ".png");
+            }
         }
         if (Texture_Emissive.containsKey(fileString)) {
             if (Texture_Emissive.get(fileString) != null) {
@@ -76,31 +77,24 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/LivingEntityRenderer;getTexture(Lnet/minecraft/entity/Entity;)Lnet/minecraft/util/Identifier;"))
     private Identifier returnOwnRandomTexture(LivingEntityRenderer instance, Entity entity) {
         Identifier vanilla = getTexture((T) entity);
+        UUID id = entity.getUuid();
 
-        //spread out randomly for lag prevention
-        //reset to detect if texture has changed in base mob and update random assignment
-        if ( (entity instanceof GhastEntity || entity instanceof VexEntity)
-                && ((LivingEntity) entity).getRandom().nextInt(10) == 0
-        ) {//more frequent for hostiles
-            resetSingleVisuals(entity.getUuid());
-        }else if ((entity instanceof WolfEntity || entity instanceof BeeEntity|| entity instanceof FoxEntity) && ((LivingEntity) entity).getRandom().nextInt(64) == 0
-        ) {
-            resetSingleVisuals(entity.getUuid());
+        if (!Texture_TotalRandom.containsKey(vanilla.getPath())) {
+            processNewRandomTextureCandidate(vanilla.getPath(), entity);
         }
-        //checks if random needs to be changed
-        if (!UUID_isRandom.containsKey(entity.getUuid())){
-            //System.out.println("no data - making2");
-            setRandom(MinecraftClient.getInstance().getResourceManager(), vanilla.getPath(), entity.getUuid());
-        }
-        if (UUID_isRandom.get(entity.getUuid())) {
-//                //if(UUID_randomTexture.get(entity.getUuid())[0].getPath().equals(vanilla.getPath()) ){
-//                String[] nameOfFile = vanilla.getPath().replace(".png", "").split("/");
-//                String[] randomToCheck = UUID_randomTexture.get(entity.getUuid()).getPath().replace(".png", "").split("/");
-//                if (randomToCheck[randomToCheck.length-1].replaceAll("[0-9]","").equals(nameOfFile[nameOfFile.length - 1])) {
-//                    UUID_randomTexture.remove(entity.getUuid());
-//                    UUID_isRandom.remove(entity.getUuid());
-//                    setRandom(MinecraftClient.getInstance().getResourceManager(), vanilla.getPath(), entity.getUuid());
-            return UUID_randomTexture.get(entity.getUuid());
+
+        if (Texture_TotalRandom.get(vanilla)>0) {
+            if (!UUID_randomTextureSuffix.containsKey(id)){
+                put in randomizer method
+                    int randomReliable = id.hashCode() > 0 ? id.hashCode() : -id.hashCode();
+                    randomReliable %= Texture_TotalRandom.get(vanilla)+1;
+                    UUID_randomTextureSuffix.put(id,randomReliable );
+            }
+            if (UUID_randomTextureSuffix.get(id)==0){
+                return vanilla;
+            }else {
+                return new Identifier(vanilla.getPath().replace(".png", UUID_randomTextureSuffix.get(id) + ".png"));
+            }
         } else {
             return vanilla;
         }
@@ -108,82 +102,6 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
     }
 
 
-    private String setRandom(ResourceManager resourceManager, String vanillaPath, UUID id) {
-        boolean keepGoing = false;
-        ArrayList<String> allTextures = new ArrayList<String>();
-        String checkPath;
-        String checkPathOptifineFormat;
-        String checkPathOldRandomFormat;
-        boolean isOptifine = false;
-        boolean oldRandom = false;
-
-        //first iteration longer
-        int count = 1;
-        allTextures.add(vanillaPath);
-        //can start from either texture1.png or texture2.png check both first
-        //check if texturename1.png is used
-        checkPath = vanillaPath.replace(".png", (count + ".png"));
-        checkPathOldRandomFormat = vanillaPath.replace(".png", (count + ".png")).replace("textures/entity", "optifine/mob");
-        checkPathOptifineFormat = vanillaPath.replace(".png", (count + ".png")).replace("textures", "optifine/random");
-        if (isExistingFile(resourceManager, new Identifier(checkPath))) {
-            allTextures.add(checkPath);
-        } else if (isExistingFile(resourceManager, new Identifier(checkPathOptifineFormat))) {
-            isOptifine = true;
-            allTextures.add(checkPathOptifineFormat);
-        } else if (isExistingFile(resourceManager, new Identifier(checkPathOldRandomFormat))) {
-            oldRandom = true;
-            allTextures.add(checkPathOldRandomFormat);
-        }
-        count++;
-        //check if texture 2.png is used
-        checkPath = vanillaPath.replace(".png", (count + ".png"));
-        checkPathOldRandomFormat = vanillaPath.replace(".png", (count + ".png")).replace("textures/entity", "optifine/mob");
-        checkPathOptifineFormat = vanillaPath.replace(".png", (count + ".png")).replace("textures", "optifine/random");
-        if (isExistingFile(resourceManager, new Identifier(checkPath))) {
-            allTextures.add(checkPath);
-            keepGoing = true;
-        } else if (isExistingFile(resourceManager, new Identifier(checkPathOptifineFormat))) {
-            isOptifine = true;
-            keepGoing = true;
-            allTextures.add(checkPathOptifineFormat);
-        } else if (isExistingFile(resourceManager, new Identifier(checkPathOldRandomFormat))) {
-            oldRandom = true;
-            keepGoing = true;
-            allTextures.add(checkPathOldRandomFormat);
-        }
-        //texture3.png and further optimized iterations
-        while (keepGoing) {
-            count++;
-            if (isOptifine) {
-                checkPath = vanillaPath.replace(".png", (count + ".png")).replace("textures", "optifine/random");
-            } else if (oldRandom) {
-                checkPath = vanillaPath.replace(".png", (count + ".png")).replace("textures/entity", "optifine/mob");
-            } else {
-                checkPath = vanillaPath.replace(".png", (count + ".png"));
-            }
-
-            if (isExistingFile(resourceManager, new Identifier(checkPath))) {
-                allTextures.add(checkPath);
-            } else {
-                keepGoing = false;
-            }
-
-        }
-
-        if (allTextures.size() > 1) {
-
-            int randomReliable = id.hashCode() > 0 ? id.hashCode() : -id.hashCode();
-            randomReliable %= allTextures.size();
-
-            UUID_isRandom.put(id, true);
-            //Identifier[] toSend = {new Identifier(vanillaPath),new Identifier(allTextures.get(randomReliable))};
-             UUID_randomTexture.put(id,new Identifier(allTextures.get(randomReliable)) );
-            return allTextures.get(randomReliable);
-        } else {
-            UUID_isRandom.put(id, false);
-            return vanillaPath;
-        }
-    }
 
 
 }
