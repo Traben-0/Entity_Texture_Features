@@ -1,5 +1,8 @@
 package traben.entity_texture_features.mixin.client.entity;
 
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.impl.FabricLoaderImpl;
+import net.fabricmc.loader.impl.launch.FabricLauncher;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
@@ -8,8 +11,12 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
+import net.minecraft.client.render.entity.PlayerEntityRenderer;
+import net.minecraft.client.render.entity.feature.CreeperChargeFeatureRenderer;
+import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.EntityModel;
+import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -17,8 +24,12 @@ import net.minecraft.entity.mob.GhastEntity;
 import net.minecraft.entity.mob.VexEntity;
 import net.minecraft.entity.passive.*;
 import net.minecraft.resource.ResourceManager;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import org.spongepowered.asm.mixin.FabricUtil;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -27,12 +38,17 @@ import traben.entity_texture_features.client.entity_texture_features_METHODS;
 import traben.entity_texture_features.client.randomCase;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static traben.entity_texture_features.client.entity_texture_features_CLIENT.*;
 
 @Mixin(LivingEntityRenderer.class)
 public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends EntityModel<T>> extends EntityRenderer<T> implements FeatureRendererContext<T, M>, entity_texture_features_METHODS {
+    @Shadow @Final protected List<FeatureRenderer<T, M>> features;
+
+    @Shadow public abstract M getModel();
+
     protected MIX_LivingEntityRenderer(EntityRendererFactory.Context ctx) {
         super(ctx);
     }
@@ -60,21 +76,46 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
             if (Texture_Emissive.get(fileString) != null) {
                 //VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getEyes(Texture_Emissive.get(fileString)));
                 VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(Texture_Emissive.get(fileString),true));
-
-                this.getModel().render(matrixStack
-                        , textureVert
-                        , 15728640
-                        , OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                //one check most efficient instead of before and after applying
+                if (irisDetected) {
+                    matrixStack.scale(1.015f, 1.015f, 1.015f);
+                    this.getModel().render(matrixStack
+                            , textureVert
+                            , 15728640
+                            , OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                    matrixStack.scale(1f, 1f, 1f);
+                }else{
+                    this.getModel().render(matrixStack
+                            , textureVert
+                            , 15728640
+                            , OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                }
             }
         } else {//creates and sets emissive for texture if it exists
             Identifier fileName_e = new Identifier(fileString.replace(".png", emissiveSuffix+".png"));
             if (isExistingFile( fileName_e)) {
-                VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getEyes(fileName_e));
+                VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(fileName_e,true));
                 Texture_Emissive.put(fileString, fileName_e);
-                this.getModel().render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                //one check most efficient instead of before and after applying
+                if (irisDetected) {
+                    matrixStack.scale(1.015f, 1.015f, 1.015f);
+                    this.getModel().render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                    matrixStack.scale(1f, 1f, 1f);
+                }else{
+                    this.getModel().render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                }
             } else {
                 Texture_Emissive.put(fileString, null);
             }
+        }
+        //cheeky lil fun for the dev
+        //just makes my player look enchanted to others in multiplayer ;P
+        if (livingEntity.getUuid().toString().equals("fd22e573-178c-415a-94fe-e476b328abfd")){
+            //VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(new Identifier("minecraft:textures/misc/enchanted_item_glint"),true));
+            VertexConsumer textureVert = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(this.getTexture(livingEntity)), false, true);
+            //matrixStack.scale(1.015f, 1.015f, 1.015f);
+            this.getModel().render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 0.2F);
+            //matrixStack.scale(1f, 1f, 1f);
         }
     }
 

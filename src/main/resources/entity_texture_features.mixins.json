@@ -4,6 +4,7 @@
   "package": "traben.entity_texture_features.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "client.entity.MIX_ClientPlayerEntity",
     "client.entity.MIX_LivingEntityRenderer",
     "client.entity.MIX_SimpleResourceReload"
   ],
