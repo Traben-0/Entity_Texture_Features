@@ -2,17 +2,14 @@ package traben.entity_texture_features.client;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.NativeImage;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.resource.Resource;
-import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.UUID;
 
 import static traben.entity_texture_features.client.entity_texture_features_CLIENT.*;
 
@@ -43,14 +40,21 @@ public interface entity_texture_features_METHODS {
         System.out.println("Entity Texture Features - Reloading... (this may change all random mobs)");
         Texture_TotalTrueRandom.clear();
         UUID_randomTextureSuffix.clear();
-        Texture_OptifineRandomSettingsPerTexture.clear() ;
+        Texture_OptifineRandomSettingsPerTexture.clear();
         Texture_OptifineOrTrueRandom.clear();
         optifineOldOrVanilla.clear() ;// 0,1,2
         ignoreOnePNG.clear() ;
+        UUID_entityAlreadyCalculated.clear();//only time it clears
+        UUID_entityAwaitingDataClearing.clear();
 
         Texture_Emissive.clear();
         setEmissiveSuffix();
     }
+
+    default void resetSingleData(UUID id){
+        UUID_randomTextureSuffix.remove(id);
+    }
+
 
     default String readProperties(String path){
          try {
@@ -78,7 +82,7 @@ public interface entity_texture_features_METHODS {
         try {
             Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(new Identifier(path));
             try {
-                InputStream in = resource.getInputStream();
+                resource.getInputStream();
                 resource.close();
                 return true;
             } catch (Exception e) {
@@ -90,7 +94,7 @@ public interface entity_texture_features_METHODS {
         }
     }
 
-    default void processNewRandomTextureCandidate(String vanillaTexturePath, Entity entity){
+    default void processNewRandomTextureCandidate(String vanillaTexturePath){
         boolean hasProperties = false;
         String properties="";
         if (checkPropertiesExist(vanillaTexturePath.replace(".png", ".properties").replace("textures", "optifine/random"))){
@@ -115,22 +119,24 @@ public interface entity_texture_features_METHODS {
 
          //no settings just true random
          if (hasProperties){//optifine settings found
-             processOptifineTextureCandidate(vanillaTexturePath,entity,properties);
+             processOptifineTextureCandidate(vanillaTexturePath, properties);
          }else{
-             processTrueRandomCandidate(vanillaTexturePath,entity);
+             processTrueRandomCandidate(vanillaTexturePath);
          }
     }
 
-    private void processOptifineTextureCandidate(String vanillaTexturePath, Entity entity, String properties){
+    private void processOptifineTextureCandidate(String vanillaTexturePath, String properties){
          try {
+             ignoreOnePNG.put(vanillaTexturePath, !(isExistingFile(new Identifier( properties.replace(".properties","1.png")))));
+
              String propertiesRead = readProperties(properties);
              String[] perLine = propertiesRead.split("\n");
-             ArrayList<String[]> eachCaseData = new ArrayList<String[]>();
+             ArrayList<String[]> eachCaseData = new ArrayList<>();
              int count = 1;
-             ArrayList<String> maker = new ArrayList<String>();
+             ArrayList<String> maker = new ArrayList<>();
              for (String line:
                   perLine) {
-                 if (!line.replace(" ", "").isEmpty()) {
+                 if (!line.isBlank()) {
                      if (!line.contains("." + count + "=")) {
                          if (!maker.isEmpty()) {
                              eachCaseData.add(maker.toArray(new String[0]));
@@ -140,7 +146,7 @@ public interface entity_texture_features_METHODS {
                      }
                      if (line.contains("." + count + "=")) {
                          maker.add(line);
-                     } else {
+                     } else if(!line.isBlank()){
                          System.out.println("Entity Texture Features - counting optifine properties failed");
                      }
                  }
@@ -158,13 +164,21 @@ public interface entity_texture_features_METHODS {
                  String[] biomes={};
                  Integer[] heights={};
                  String[] names={};
+                 String[] professions= {};
+                 String[] collarColours= {};
+                  int baby= 0; // 0 1 2 - dont true false
+                  int weather = 0; //0,1,2,3 - no clear rain thunder
+                  String[] health= {};
+                  Integer[] moon= {};
+                  String[] daytime= {};
                  for (String caseLine:
                       caseStrings) {
                      //here every line is data "skins.1=2-4" for all of ".1=" case
                      String[] dataAny = caseLine.split("=");
+                     dataAny[1] = dataAny[1].trim();
                      if (dataAny[0].contains("skins.") || dataAny[0].contains("textures.") ){
                         String[] skinData = dataAny[1].split(" ");
-                        ArrayList<Integer> suffixNumbers = new ArrayList<Integer>();
+                        ArrayList<Integer> suffixNumbers = new ArrayList<>();
                          for (String data:
                               skinData) {
                              //check if range
@@ -188,7 +202,7 @@ public interface entity_texture_features_METHODS {
                          biomes = dataAny[1].toLowerCase().split(" ");
                      }else if (dataAny[0].contains("heights")){
                          String[] heightData = dataAny[1].split(" ");
-                         ArrayList<Integer> heightNumbers = new ArrayList<Integer>();
+                         ArrayList<Integer> heightNumbers = new ArrayList<>();
                          for (String data:
                                  heightData) {
                              //check if range
@@ -200,12 +214,48 @@ public interface entity_texture_features_METHODS {
                          }
                          heights = heightNumbers.toArray(new Integer[0]);
                      }else if (dataAny[0].contains("name")){
-                         names = dataAny[1].split(" ");
+                         if (dataAny[1].contains("regex:") || dataAny[1].contains("pattern:")){
+                            names = new String[]{dataAny[1]};
+                         }else {
+                             names = dataAny[1].split(" ");
+                         }
+                     }else if (dataAny[0].contains("professions")){
+                             professions = dataAny[1].split(" ");
+                     }else if (dataAny[0].contains("collarColors") || dataAny[0].contains("collarColours")){
+                         collarColours = dataAny[1].split(" ");
+                     }else if (dataAny[0].contains("baby")){
+                         switch (dataAny[1]) {
+                             case "true" -> baby = 1;
+                             case "false" -> baby = 2;
+                         }
+                     }else if (dataAny[0].contains("weather")){
+                         switch (dataAny[1]) {
+                             case "clear" -> weather = 1;
+                             case "rain" -> weather = 2;
+                             case "thunder" -> weather = 3;
+                         }
+                     }else if (dataAny[0].contains("health")){
+                         health = dataAny[1].split(" ");
+                     }else if (dataAny[0].contains("moonPhase")){
+                         String[] moonData = dataAny[1].split(" ");
+                         ArrayList<Integer> moonNumbers = new ArrayList<>();
+                         for (String data:
+                                 moonData) {
+                             //check if range
+                             if (data.contains("-")){
+                                 moonNumbers.addAll(Arrays.asList(getIntRange(data)));
+                             }else {
+                                 moonNumbers.add(Integer.parseInt(data.replaceAll("[^0-9]", "")));
+                             }
+                         }
+                         moon = moonNumbers.toArray(new Integer[0]);
+                     }else if (dataAny[0].contains("dayTime")){
+                         daytime = dataAny[1].split(" ");
                      }
                  }
                  //here must create case
                  if (suffixes.length!=0){
-                    allCasesForTexture.add( new randomCase(suffixes,weights,biomes,heights,names));
+                    allCasesForTexture.add( new randomCase(suffixes, weights, biomes, heights, names,professions,collarColours,baby,weather,health,moon,daytime));
                  }
              }
              //done
@@ -222,11 +272,11 @@ public interface entity_texture_features_METHODS {
          }
     }
 
-    private Integer[] getIntRange(String rawRange){
+    default Integer[] getIntRange(String rawRange){
          //assume rawRange =  "20-56"
         String[] split = rawRange.split("-");
         int[] minMax =  {Integer.parseInt( split[0].replaceAll("[^0-9]", "")),Integer.parseInt(split[1].replaceAll("[^0-9]", ""))};
-        ArrayList<Integer> builder = new ArrayList<Integer>();
+        ArrayList<Integer> builder = new ArrayList<>();
         for (int i = minMax[0]; i <= minMax[1]; i++) {
             builder.add(i);
         }
@@ -234,8 +284,7 @@ public interface entity_texture_features_METHODS {
     }
 
 
-    private void processTrueRandomCandidate(String vanillaPath, Entity entity) {
-         UUID id = entity.getUuid();
+    private void processTrueRandomCandidate(String vanillaPath) {
         boolean keepGoing = false;
         //ArrayList<String> allTextures = new ArrayList<String>();
         String checkPath;
@@ -245,7 +294,7 @@ public interface entity_texture_features_METHODS {
         int successCount = 0;
         //allTextures.add(vanillaPath);
         //can start from either texture1.png or texture2.png check both first
-        //check if texturename1.png is used
+        //check if texture1.png is used
         checkPath = vanillaPath.replace(".png", "1.png");
         checkPathOldRandomFormat = vanillaPath.replace(".png", "1.png").replace("textures/entity", "optifine/mob");
         checkPathOptifineFormat = vanillaPath.replace(".png", "1.png").replace("textures", "optifine/random");

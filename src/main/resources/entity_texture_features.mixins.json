@@ -6,7 +6,13 @@
   "mixins": [
     "client.entity.MIX_ClientPlayerEntity",
     "client.entity.MIX_LivingEntityRenderer",
-    "client.entity.MIX_SimpleResourceReload"
+    "client.entity.textureUpdaters.MIX_DyeItem",
+    "client.entity.textureUpdaters.MIX_LivingEntity",
+    "client.entity.textureUpdaters.MIX_NameTagItem",
+    "client.entity.textureUpdaters.MIX_PassiveEntity",
+    "client.entity.textureUpdaters.MIX_PlayerEntity",
+    "client.entity.textureUpdaters.MIX_SimpleResourceReload",
+    "client.entity.textureUpdaters.MIX_VillagerEntity"
   ],
   "client": [
   ],

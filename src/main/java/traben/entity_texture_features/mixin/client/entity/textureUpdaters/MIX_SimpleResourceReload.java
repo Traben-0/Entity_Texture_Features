@@ -1,4 +1,4 @@
-package traben.entity_texture_features.mixin.client.entity;
+package traben.entity_texture_features.mixin.client.entity.textureUpdaters;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;

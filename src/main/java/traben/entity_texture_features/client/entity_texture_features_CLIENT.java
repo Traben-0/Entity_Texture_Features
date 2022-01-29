@@ -13,6 +13,8 @@ public class entity_texture_features_CLIENT implements ModInitializer {
     //0 = vanilla only    1+ is zombie1+.png
     public static Map<String,Integer> Texture_TotalTrueRandom = new HashMap<String, Integer>() ;
     public static Map<UUID,Integer> UUID_randomTextureSuffix = new HashMap<UUID, Integer>() ;
+    public static ArrayList<UUID> UUID_entityAlreadyCalculated = new ArrayList<>() ;//
+    public static Map<UUID,Long> UUID_entityAwaitingDataClearing = new HashMap<>();
     public static Map<String, ArrayList<randomCase>> Texture_OptifineRandomSettingsPerTexture = new HashMap<String,ArrayList<randomCase> >() ;
     public static Map<String,Boolean> Texture_OptifineOrTrueRandom = new HashMap<String, Boolean>() ;
     public static Map<String,Integer> optifineOldOrVanilla = new HashMap<String, Integer>() ;// 0,1,2
