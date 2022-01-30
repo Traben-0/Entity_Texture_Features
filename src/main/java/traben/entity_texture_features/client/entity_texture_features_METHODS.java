@@ -96,6 +96,11 @@ public interface entity_texture_features_METHODS {
 
     default void processNewRandomTextureCandidate(String vanillaTexturePath){
         boolean hasProperties = false;
+        //gonna ignore this for now
+        //if (vanillaTexturePath.contains("wolf")){
+        //    vanillaTexturePath = vanillaTexturePath.replace("wolf_angry","wolf")
+        //    vanillaTexturePath = vanillaTexturePath.replace("wolf_tame","wolf")
+        //}
         String properties="";
         if (checkPropertiesExist(vanillaTexturePath.replace(".png", ".properties").replace("textures", "optifine/random"))){
             properties = vanillaTexturePath.replace(".png", ".properties").replace("textures", "optifine/random");
@@ -127,7 +132,7 @@ public interface entity_texture_features_METHODS {
 
     private void processOptifineTextureCandidate(String vanillaTexturePath, String properties){
          try {
-             ignoreOnePNG.put(vanillaTexturePath, !(isExistingFile(new Identifier( properties.replace(".properties","1.png")))));
+             //ignoreOnePNG.put(vanillaTexturePath, !(isExistingFile(new Identifier( properties.replace(".properties","1.png")))));
 
              String propertiesRead = readProperties(properties);
              String[] perLine = propertiesRead.split("\n");
@@ -136,7 +141,9 @@ public interface entity_texture_features_METHODS {
              ArrayList<String> maker = new ArrayList<>();
              for (String line:
                   perLine) {
-                 if (!line.isBlank()) {
+                 line = line.trim();
+                 //ignore blank lines or comments
+                 if (!line.isBlank() && !line.startsWith("#")) {
                      if (!line.contains("." + count + "=")) {
                          if (!maker.isEmpty()) {
                              eachCaseData.add(maker.toArray(new String[0]));

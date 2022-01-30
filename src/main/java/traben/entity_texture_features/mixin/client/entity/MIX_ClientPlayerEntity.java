@@ -1,21 +1,10 @@
 package traben.entity_texture_features.mixin.client.entity;
 
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.recipebook.ClientRecipeBook;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.resource.SimpleResourceReload;
-import net.minecraft.stat.StatHandler;
-import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import traben.entity_texture_features.client.entity_texture_features_METHODS;
 
 import static traben.entity_texture_features.client.entity_texture_features_CLIENT.irisDetected;
 import static traben.entity_texture_features.client.entity_texture_features_CLIENT.puzzleDetected;

@@ -14,7 +14,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -32,9 +31,8 @@ import static traben.entity_texture_features.client.entity_texture_features_CLIE
 public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends EntityModel<T>> extends EntityRenderer<T> implements FeatureRendererContext<T, M>, entity_texture_features_METHODS {
     @Shadow public abstract M getModel();
 
-    @Shadow protected M model;
 
-    @Shadow @Nullable protected abstract RenderLayer getRenderLayer(T entity, boolean showBody, boolean translucent, boolean showOutline);
+
 
     protected MIX_LivingEntityRenderer(EntityRendererFactory.Context ctx) {
         super(ctx);
@@ -42,7 +40,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
 
 
     //  [0] = total randoms, [1] = self random
-    private static float ticker = 0;
+    //private static float ticker = 0;
 
     @Inject(method = "render(Lnet/minecraft/entity/LivingEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/EntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V", shift = At.Shift.AFTER))
     private void applyEmissive(T livingEntity, float a, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
@@ -65,7 +63,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                 VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(Texture_Emissive.get(fileString),true));
                 //one check most efficient instead of before and after applying
                 if (irisDetected) {
-                    matrixStack.scale(1.015f, 1.015f, 1.015f);
+                    matrixStack.scale(1.01f, 1.01f, 1.01f);
                     this.getModel().render(matrixStack
                             , textureVert
                             , 15728640
@@ -85,7 +83,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                 Texture_Emissive.put(fileString, fileName_e);
                 //one check most efficient instead of before and after applying
                 if (irisDetected) {
-                    matrixStack.scale(1.015f, 1.015f, 1.015f);
+                    matrixStack.scale(1.01f, 1.01f, 1.01f);
                     this.getModel().render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
                     matrixStack.scale(1f, 1f, 1f);
                 }else{
@@ -126,29 +124,32 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
         String path = vanilla.getPath();
         UUID id = entity.getUuid();
         try {
+            if (!Texture_OptifineOrTrueRandom.containsKey(vanilla.getPath())) {
+                processNewRandomTextureCandidate(vanilla.getPath());
+            }
             //if needs to check if change required
             if (UUID_entityAwaitingDataClearing.containsKey(id)){
                 //wait a tick
                 if (UUID_entityAwaitingDataClearing.get(id)+1 < entity.world.getTime()) {
-                    int hold = UUID_randomTextureSuffix.get(id);
-                    resetSingleData(id);
-                    for (randomCase test :
-                            Texture_OptifineRandomSettingsPerTexture.get(path)) {
-                        if (test.testEntity((LivingEntity) entity, UUID_entityAlreadyCalculated.contains(id))) {
-                            UUID_randomTextureSuffix.put(id, test.getWeightedSuffix(id, true));//,ignoreOnePNG.get(path)));
-                            break;
+                    if (Texture_OptifineOrTrueRandom.get(path)) {
+                        int hold = UUID_randomTextureSuffix.get(id);
+                        resetSingleData(id);
+                        for (randomCase test :
+                                Texture_OptifineRandomSettingsPerTexture.get(path)) {
+                            if (test.testEntity((LivingEntity) entity, UUID_entityAlreadyCalculated.contains(id))) {
+                                UUID_randomTextureSuffix.put(id, test.getWeightedSuffix(id, true));//,ignoreOnePNG.get(path)));
+                                break;
+                            }
                         }
-                    }
-                    //if didnt change keep the same
-                    if (!UUID_randomTextureSuffix.containsKey(id)) {
-                        UUID_randomTextureSuffix.put(id, hold);
-                    }
+                        //if didnt change keep the same
+                        if (!UUID_randomTextureSuffix.containsKey(id)) {
+                            UUID_randomTextureSuffix.put(id, hold);
+                        }
+                    }//else here would do something for true random but no need really - may optimise this
                     UUID_entityAwaitingDataClearing.remove(id);
                 }
             }
-            if (!Texture_OptifineOrTrueRandom.containsKey(vanilla.getPath())) {
-                processNewRandomTextureCandidate(vanilla.getPath());
-            }
+
             if (Texture_OptifineOrTrueRandom.get(path)) {//optifine random
                 //if it doesn't have a random already assign one
                 if (!UUID_randomTextureSuffix.containsKey(id)) {

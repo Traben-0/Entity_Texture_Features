@@ -1,7 +1,6 @@
 package traben.entity_texture_features.mixin.client.entity.textureUpdaters;
 
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
