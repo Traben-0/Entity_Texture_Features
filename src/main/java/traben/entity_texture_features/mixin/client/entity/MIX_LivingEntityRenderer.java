@@ -153,7 +153,6 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
             if (Texture_OptifineOrTrueRandom.get(path)) {//optifine random
                 //if it doesn't have a random already assign one
                 if (!UUID_randomTextureSuffix.containsKey(id)) {
-                    System.out.println("doing it");
                     for (randomCase test :
                             Texture_OptifineRandomSettingsPerTexture.get(path)) {
                         if (test.testEntity((LivingEntity) entity, UUID_entityAlreadyCalculated.contains(id))) {

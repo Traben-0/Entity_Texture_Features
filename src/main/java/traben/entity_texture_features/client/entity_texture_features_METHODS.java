@@ -280,14 +280,43 @@ public interface entity_texture_features_METHODS {
     }
 
     default Integer[] getIntRange(String rawRange){
-         //assume rawRange =  "20-56"
-        String[] split = rawRange.split("-");
-        int[] minMax =  {Integer.parseInt( split[0].replaceAll("[^0-9]", "")),Integer.parseInt(split[1].replaceAll("[^0-9]", ""))};
-        ArrayList<Integer> builder = new ArrayList<>();
-        for (int i = minMax[0]; i <= minMax[1]; i++) {
-            builder.add(i);
+         //assume rawRange =  "20-56"  but can be "-64-56"  or "-14"
+        rawRange = rawRange.trim();
+        //sort negatives before split
+        if(rawRange.startsWith("-")){
+            rawRange = rawRange.replaceFirst("-","N");
         }
-        return builder.toArray(new Integer[0]);
+        rawRange =rawRange.replaceAll("--","-N");
+        String[] split = rawRange.split("-");
+        if (split.length > 1) {//sort out range
+            int[] minMax = {Integer.parseInt(split[0].replaceAll("[^0-9]", "")), Integer.parseInt(split[1].replaceAll("[^0-9]", ""))};
+            if (split[0].contains("N")) {
+                minMax[0] = -minMax[0];
+            }
+            if (split[1].contains("N")) {
+                minMax[1] = -minMax[1];
+            }
+            ArrayList<Integer> builder = new ArrayList<>();
+            if (minMax[0] > minMax[1]){
+                //0 must be smaller
+                minMax = new int[] {minMax[1],minMax[0]};
+            }
+            if (minMax[0] < minMax[1]) {
+                for (int i = minMax[0]; i <= minMax[1]; i++) {
+                    builder.add(i);
+                }
+            }else{
+                System.out.println("Entity Texture Features - optifine properties failed to load: Texture heights range has a problem in properties file. this has occurred for value \""+rawRange.replace("N","-")+"\"");
+            }
+            return builder.toArray(new Integer[0]);
+        }else{//only 1 number but method ran because of "-" present
+            if (split[0].contains("N")) {
+                return new Integer[] {-Integer.parseInt(split[0].replaceAll("[^0-9]", ""))};
+            }else{
+                return new Integer[] { Integer.parseInt(split[0].replaceAll("[^0-9]", ""))};
+            }
+
+        }
     }
 
 
@@ -365,19 +394,33 @@ public interface entity_texture_features_METHODS {
                 if (suffix == null){
                     suffix = readProperties("textures/emissive.properties");
                 }
-                if (suffix.contains("suffix.emissive")){
-                    suffix = suffix.replace("suffix.emissive","")
+                String[] lines = suffix.split("\n");
+                boolean alreadyPreferredEntityOption = false;
+                for (String line:
+                     lines) {
+                    line = line.trim();
+                    if (line.contains("entities.suffix.emissive")){
+                        line = line.replace("entities.suffix.emissive","")
                             .replace("=","")
                             .replace(" ","");
-                    emissiveSuffix = suffix;
-                    System.out.println("Entity Texture Features - Custom emissive suffix '"+emissiveSuffix+"' used" );
-                }else{
+                        emissiveSuffix = line;
+                        alreadyPreferredEntityOption=true;
+                        System.out.println("Entity Texture Features - Custom emissive suffix '"+emissiveSuffix+"' used" );
+                    }else if (line.contains("suffix.emissive")){
+                        line = line.replace("suffix.emissive","")
+                                .replace("=","")
+                                .replace(" ","");
+                        if (!alreadyPreferredEntityOption) {
+                            emissiveSuffix = line;
+                            System.out.println("Entity Texture Features - Custom emissive suffix '" + emissiveSuffix + "' used");
+                        }
+                    }
+                }
+                if (emissiveSuffix == null) {
                     System.out.println("Entity Texture Features - Default emissive suffix '_e' used");
                     emissiveSuffix = "_e";
                 }
-
             } catch (Exception e) {
-
                 System.out.println("Entity Texture Features - Default emissive suffix '_e' used");
                 emissiveSuffix = "_e";
             }
