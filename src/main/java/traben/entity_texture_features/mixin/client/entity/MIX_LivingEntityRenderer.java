@@ -49,12 +49,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
         //System.out.println(fileString);
         if (UUID_randomTextureSuffix.containsKey(id)) {
             if (UUID_randomTextureSuffix.get(id) != 0 && optifineOldOrVanilla.containsKey(fileString)) {
-                fileString = switch (optifineOldOrVanilla.get(fileString)) {
-                    case 0 -> fileString.replace("textures", "optifine/random");
-                    case 1 -> fileString.replace("textures/entity", "optifine/mob");
-                    default -> fileString;
-                };
-                fileString = fileString.replace(".png", UUID_randomTextureSuffix.get(id) + ".png");
+                fileString = returnOptifineOrVanillaPath(fileString,UUID_randomTextureSuffix.get(id),"");
             }
         }
         if (Texture_Emissive.containsKey(fileString)) {
@@ -77,19 +72,26 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                 }
             }
         } else {//creates and sets emissive for texture if it exists
-            Identifier fileName_e = new Identifier(fileString.replace(".png", emissiveSuffix+".png"));
-            if (isExistingFile( fileName_e)) {
-                VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(fileName_e,true));
-                Texture_Emissive.put(fileString, fileName_e);
-                //one check most efficient instead of before and after applying
-                if (irisDetected) {
-                    matrixStack.scale(1.01f, 1.01f, 1.01f);
-                    this.getModel().render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
-                    matrixStack.scale(1f, 1f, 1f);
-                }else{
-                    this.getModel().render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+            Identifier fileName_e;
+            boolean found = false;
+            for (String suffix1:
+            emissiveSuffix) {
+                fileName_e = new Identifier(fileString.replace(".png", suffix1+".png"));
+                if(isExistingFile( fileName_e)){
+                        VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(fileName_e,true));
+                        Texture_Emissive.put(fileString, fileName_e);
+                        //one check most efficient instead of before and after applying
+                        if (irisDetected) {
+                            matrixStack.scale(1.01f, 1.01f, 1.01f);
+                            this.getModel().render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                            matrixStack.scale(1f, 1f, 1f);
+                        }else{
+                            this.getModel().render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                        }
+                    break;
                 }
-            } else {
+            }
+            if (!Texture_Emissive.containsKey(fileString)) {
                 Texture_Emissive.put(fileString, null);
             }
         }
@@ -124,42 +126,41 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
         String path = vanilla.getPath();
         UUID id = entity.getUuid();
         try {
-            if (!Texture_OptifineOrTrueRandom.containsKey(vanilla.getPath())) {
-                processNewRandomTextureCandidate(vanilla.getPath());
+            if (!Texture_OptifineOrTrueRandom.containsKey(path)) {
+                processNewRandomTextureCandidate(path);
             }
             //if needs to check if change required
             if (UUID_entityAwaitingDataClearing.containsKey(id)){
-                //wait a tick
-                if (UUID_entityAwaitingDataClearing.get(id)+1 < entity.world.getTime()) {
-                    if (Texture_OptifineOrTrueRandom.get(path)) {
-                        int hold = UUID_randomTextureSuffix.get(id);
-                        resetSingleData(id);
-                        for (randomCase test :
-                                Texture_OptifineRandomSettingsPerTexture.get(path)) {
-                            if (test.testEntity((LivingEntity) entity, UUID_entityAlreadyCalculated.contains(id))) {
-                                UUID_randomTextureSuffix.put(id, test.getWeightedSuffix(id, true));//,ignoreOnePNG.get(path)));
-                                break;
-                            }
-                        }
-                        //if didnt change keep the same
-                        if (!UUID_randomTextureSuffix.containsKey(id)) {
-                            UUID_randomTextureSuffix.put(id, hold);
-                        }
-                    }//else here would do something for true random but no need really - may optimise this
+                if (!hasUpdatableRandomCases.containsKey(id)){
+                    //modMessage("Error - mob will no longer have texture updated",false);
+                    hasUpdatableRandomCases.put(id ,false);
                     UUID_entityAwaitingDataClearing.remove(id);
                 }
-            }
+                if (hasUpdatableRandomCases.get(id)) {
+                    //skip a few ticks
+                    //UUID_entityAwaitingDataClearing.put(id, UUID_entityAwaitingDataClearing.get(id)+1);
+                    if ((UUID_entityAwaitingDataClearing.get(id)/100)+1 < (System.currentTimeMillis()/100)){
+                        if (Texture_OptifineOrTrueRandom.get(path)) {
+                            int hold = UUID_randomTextureSuffix.get(id);
+                            resetSingleData(id);
+                            testCases(path, id, entity);
+                            //if didnt change keep the same
+                            if (!UUID_randomTextureSuffix.containsKey(id)) {
+                                UUID_randomTextureSuffix.put(id, hold);
+                            }
+                        }//else here would do something for true random but no need really - may optimise this
+                        UUID_entityAwaitingDataClearing.remove(id);
+                    }
 
+                }else{
+                    UUID_entityAwaitingDataClearing.remove(id);
+                }
+
+            }
             if (Texture_OptifineOrTrueRandom.get(path)) {//optifine random
                 //if it doesn't have a random already assign one
                 if (!UUID_randomTextureSuffix.containsKey(id)) {
-                    for (randomCase test :
-                            Texture_OptifineRandomSettingsPerTexture.get(path)) {
-                        if (test.testEntity((LivingEntity) entity, UUID_entityAlreadyCalculated.contains(id))) {
-                            UUID_randomTextureSuffix.put(id, test.getWeightedSuffix(id,true));//,ignoreOnePNG.get(path)));
-                            break;
-                        }
-                    }
+                    testCases(path,id ,entity);
                     //if all failed set to vanilla
                     if (!UUID_randomTextureSuffix.containsKey(id)) {
                         //System.out.println("Entity Texture Features - optifine properties failed to assign texture. setting "+entity.getEntityName()+" to vanilla texture");
@@ -170,19 +171,16 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                 if (UUID_randomTextureSuffix.get(id) == 0) {
                     return vanilla;
                 } else {
-                    return switch (optifineOldOrVanilla.get(path)) {
-                        case 0 -> new Identifier(vanilla.getPath().replace(".png", UUID_randomTextureSuffix.get(id) + ".png").replace("textures", "optifine/random"));
-                        case 1 -> new Identifier(vanilla.getPath().replace(".png", UUID_randomTextureSuffix.get(id) + ".png").replace("textures/entity", "optifine/mob"));
-                        default -> new Identifier(vanilla.getPath().replace(".png", UUID_randomTextureSuffix.get(id) + ".png"));
-                    };
+                    return returnOptifineOrVanillaIdentifier(path, UUID_randomTextureSuffix.get(id));
                 }
 
             } else {//true random assign
+                hasUpdatableRandomCases.put(id ,false);
                 if (Texture_TotalTrueRandom.get(path) > 0) {
                     if (!UUID_randomTextureSuffix.containsKey(id)) {
                         int randomReliable = id.hashCode() > 0 ? id.hashCode() : -id.hashCode();
                         randomReliable %= Texture_TotalTrueRandom.get(path) + 1;
-                        if (randomReliable == 1){ //&& ignoreOnePNG.get(path)) {
+                        if (randomReliable == 1 && ignoreOnePNG.get(path)) {
                             randomReliable = 0;
                         }
                         UUID_randomTextureSuffix.put(id, randomReliable);
@@ -191,11 +189,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                     if (UUID_randomTextureSuffix.get(id) == 0) {
                         return vanilla;
                     } else {
-                        return switch (optifineOldOrVanilla.get(path)) {
-                            case 0 -> new Identifier(vanilla.getPath().replace(".png", UUID_randomTextureSuffix.get(id) + ".png").replace("textures", "optifine/random"));
-                            case 1 -> new Identifier(vanilla.getPath().replace(".png", UUID_randomTextureSuffix.get(id) + ".png").replace("textures/entity", "optifine/mob"));
-                            default -> new Identifier(vanilla.getPath().replace(".png", UUID_randomTextureSuffix.get(id) + ".png"));
-                        };
+                        return returnOptifineOrVanillaIdentifier(path, UUID_randomTextureSuffix.get(id));
                     }
                 } else {
                     return vanilla;
@@ -203,11 +197,10 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
             }
 
         }catch(Exception e){
+            modMessage(e.toString(),false);
             return vanilla;
         }
     }
-
-
 }
 
 

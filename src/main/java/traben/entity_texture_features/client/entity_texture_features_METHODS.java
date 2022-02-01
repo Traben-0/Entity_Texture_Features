@@ -2,13 +2,18 @@ package traben.entity_texture_features.client;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.NativeImage;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.resource.Resource;
 import net.minecraft.util.Identifier;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.spi.LoggerRegistry;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import static traben.entity_texture_features.client.entity_texture_features_CLIENT.*;
@@ -37,7 +42,7 @@ public interface entity_texture_features_METHODS {
     }
 
     default void resetVisuals(){
-        System.out.println("Entity Texture Features - Reloading... (this may change all random mobs)");
+        modMessage("Reloading... (this may change all random mobs)",false);
         Texture_TotalTrueRandom.clear();
         UUID_randomTextureSuffix.clear();
         Texture_OptifineRandomSettingsPerTexture.clear();
@@ -132,7 +137,7 @@ public interface entity_texture_features_METHODS {
 
     private void processOptifineTextureCandidate(String vanillaTexturePath, String properties){
          try {
-             //ignoreOnePNG.put(vanillaTexturePath, !(isExistingFile(new Identifier( properties.replace(".properties","1.png")))));
+             ignoreOnePNG.put(vanillaTexturePath, !(isExistingFile(new Identifier( properties.replace(".properties","1.png")))));
 
              String propertiesRead = readProperties(properties);
              String[] perLine = propertiesRead.split("\n");
@@ -154,7 +159,7 @@ public interface entity_texture_features_METHODS {
                      if (line.contains("." + count + "=")) {
                          maker.add(line);
                      } else if(!line.isBlank()){
-                         System.out.println("Entity Texture Features - counting optifine properties failed");
+                         modMessage("counting optifine properties failed",false);
                      }
                  }
              }//add last one if lines ended
@@ -183,7 +188,7 @@ public interface entity_texture_features_METHODS {
                      //here every line is data "skins.1=2-4" for all of ".1=" case
                      String[] dataAny = caseLine.split("=");
                      dataAny[1] = dataAny[1].trim();
-                     if (dataAny[0].contains("skins.") || dataAny[0].contains("textures.") ){
+                     if (dataAny[0].startsWith("skins.") || dataAny[0].startsWith("textures.") ){
                         String[] skinData = dataAny[1].split(" ");
                         ArrayList<Integer> suffixNumbers = new ArrayList<>();
                          for (String data:
@@ -197,7 +202,7 @@ public interface entity_texture_features_METHODS {
                          }
                         suffixes = suffixNumbers.toArray(new Integer[0]);
 
-                     }else if (dataAny[0].contains("weights")){
+                     }else if (dataAny[0].startsWith("weights")){
                          String[] weightData = dataAny[1].split(" ");
                          ArrayList<Integer> builder = new ArrayList<>();
                          for (String s:
@@ -205,9 +210,9 @@ public interface entity_texture_features_METHODS {
                              builder.add(Integer.parseInt(s.replaceAll("[^0-9]", "")));
                          }
                           weights = builder.toArray(new Integer[0]);
-                     }else if (dataAny[0].contains("biomes")){
+                     }else if (dataAny[0].startsWith("biomes")){
                          biomes = dataAny[1].toLowerCase().split(" ");
-                     }else if (dataAny[0].contains("heights")){
+                     }else if (dataAny[0].startsWith("heights")){
                          String[] heightData = dataAny[1].split(" ");
                          ArrayList<Integer> heightNumbers = new ArrayList<>();
                          for (String data:
@@ -220,30 +225,30 @@ public interface entity_texture_features_METHODS {
                              }
                          }
                          heights = heightNumbers.toArray(new Integer[0]);
-                     }else if (dataAny[0].contains("name")){
+                     }else if (dataAny[0].startsWith("name")){
                          if (dataAny[1].contains("regex:") || dataAny[1].contains("pattern:")){
                             names = new String[]{dataAny[1]};
                          }else {
                              names = dataAny[1].split(" ");
                          }
-                     }else if (dataAny[0].contains("professions")){
+                     }else if (dataAny[0].startsWith("professions")){
                              professions = dataAny[1].split(" ");
-                     }else if (dataAny[0].contains("collarColors") || dataAny[0].contains("collarColours")){
+                     }else if (dataAny[0].startsWith("collarColors") || dataAny[0].startsWith("collarColours")){
                          collarColours = dataAny[1].split(" ");
-                     }else if (dataAny[0].contains("baby")){
+                     }else if (dataAny[0].startsWith("baby")){
                          switch (dataAny[1]) {
                              case "true" -> baby = 1;
                              case "false" -> baby = 2;
                          }
-                     }else if (dataAny[0].contains("weather")){
+                     }else if (dataAny[0].startsWith("weather")){
                          switch (dataAny[1]) {
                              case "clear" -> weather = 1;
                              case "rain" -> weather = 2;
                              case "thunder" -> weather = 3;
                          }
-                     }else if (dataAny[0].contains("health")){
+                     }else if (dataAny[0].startsWith("health")){
                          health = dataAny[1].split(" ");
-                     }else if (dataAny[0].contains("moonPhase")){
+                     }else if (dataAny[0].startsWith("moonPhase")){
                          String[] moonData = dataAny[1].split(" ");
                          ArrayList<Integer> moonNumbers = new ArrayList<>();
                          for (String data:
@@ -256,7 +261,7 @@ public interface entity_texture_features_METHODS {
                              }
                          }
                          moon = moonNumbers.toArray(new Integer[0]);
-                     }else if (dataAny[0].contains("dayTime")){
+                     }else if (dataAny[0].startsWith("dayTime")){
                          daytime = dataAny[1].split(" ");
                      }
                  }
@@ -270,12 +275,12 @@ public interface entity_texture_features_METHODS {
                  Texture_OptifineRandomSettingsPerTexture.put(vanillaTexturePath,allCasesForTexture);
                  Texture_OptifineOrTrueRandom.put(vanillaTexturePath, true);
              }else{
-                 System.out.println("Entity Texture Features - reading optifine properties file failed: "+properties);
+                 modMessage("Entity Texture Features - reading optifine properties file failed: "+properties,false);
              }
 
          }catch (Exception e){
              //System.out.println(e);
-             System.out.println("Entity Texture Features - optifine properties failed to load: "+properties);
+             modMessage("Entity Texture Features - optifine properties failed to load: "+properties,false);
          }
     }
 
@@ -306,7 +311,7 @@ public interface entity_texture_features_METHODS {
                     builder.add(i);
                 }
             }else{
-                System.out.println("Entity Texture Features - optifine properties failed to load: Texture heights range has a problem in properties file. this has occurred for value \""+rawRange.replace("N","-")+"\"");
+                modMessage("Optifine properties failed to load: Texture heights range has a problem in properties file. this has occurred for value \""+rawRange.replace("N","-")+"\"",false);
             }
             return builder.toArray(new Integer[0]);
         }else{//only 1 number but method ran because of "-" present
@@ -317,6 +322,41 @@ public interface entity_texture_features_METHODS {
             }
 
         }
+    }
+
+    default void testCases(String vanillaPath,UUID id, Entity entity){
+        for (randomCase test :
+                Texture_OptifineRandomSettingsPerTexture.get(vanillaPath)) {
+            if (test.testEntity((LivingEntity) entity, UUID_entityAlreadyCalculated.contains(id))) {
+                UUID_randomTextureSuffix.put(id, test.getWeightedSuffix(id, ignoreOnePNG.get(vanillaPath)));
+                Identifier tested = returnOptifineOrVanillaIdentifier(vanillaPath, UUID_randomTextureSuffix.get(id));
+                if (!isExistingFile(tested)){
+                    UUID_randomTextureSuffix.put(id, 0);
+                }
+                break;
+            }
+        }
+        if (!hasUpdatableRandomCases.containsKey(id))
+        hasUpdatableRandomCases.put(id ,false);
+    }
+
+    default void modMessage(String message,boolean inChat){
+        //System.out.println("[Entity Texture Features]: "+message);
+        LogManager.getLogger().info("[Entity Texture Features]: " + message);
+    }
+
+    default String returnOptifineOrVanillaPath(String vanillaPath, int randomId, String emissiveSuffx){
+        return switch (optifineOldOrVanilla.get(vanillaPath)) {
+            case 0 -> vanillaPath.replace(".png", randomId +emissiveSuffx+ ".png").replace("textures", "optifine/random");
+            case 1 -> vanillaPath.replace(".png", randomId  +emissiveSuffx+ ".png").replace("textures/entity", "optifine/mob");
+            default -> vanillaPath.replace(".png", randomId  +emissiveSuffx+ ".png");
+        };
+    }
+    default Identifier returnOptifineOrVanillaIdentifier(String vanillaPath, int randomId, String emissiveSuffx){
+         return new Identifier(returnOptifineOrVanillaPath(vanillaPath, randomId, emissiveSuffx));
+    }
+    default Identifier returnOptifineOrVanillaIdentifier(String vanillaPath, int randomId){
+        return new Identifier(returnOptifineOrVanillaPath(vanillaPath, randomId, ""));
     }
 
 
@@ -391,38 +431,28 @@ public interface entity_texture_features_METHODS {
     default void setEmissiveSuffix(){
             try {
                 String suffix = readProperties("optifine/emissive.properties");
-                if (suffix == null){
+                if (suffix == null || suffix.isBlank()){
                     suffix = readProperties("textures/emissive.properties");
                 }
                 String[] lines = suffix.split("\n");
-                boolean alreadyPreferredEntityOption = false;
+                ArrayList<String> builder = new ArrayList<>();
                 for (String line:
                      lines) {
                     line = line.trim();
-                    if (line.contains("entities.suffix.emissive")){
-                        line = line.replace("entities.suffix.emissive","")
-                            .replace("=","")
-                            .replace(" ","");
-                        emissiveSuffix = line;
-                        alreadyPreferredEntityOption=true;
-                        System.out.println("Entity Texture Features - Custom emissive suffix '"+emissiveSuffix+"' used" );
-                    }else if (line.contains("suffix.emissive")){
-                        line = line.replace("suffix.emissive","")
-                                .replace("=","")
-                                .replace(" ","");
-                        if (!alreadyPreferredEntityOption) {
-                            emissiveSuffix = line;
-                            System.out.println("Entity Texture Features - Custom emissive suffix '" + emissiveSuffix + "' used");
-                        }
+                    if (line.contains("suffix.emissive")){
+                        line = line.split("=")[1].trim();
+                        builder.add(line);
+                        modMessage("Custom emissive suffix '" + line + "' added",false);
                     }
                 }
-                if (emissiveSuffix == null) {
-                    System.out.println("Entity Texture Features - Default emissive suffix '_e' used");
-                    emissiveSuffix = "_e";
+                emissiveSuffix = builder.toArray(new String[0]);
+                if (emissiveSuffix.length==0) {
+                    modMessage("Error! Default emissive suffix '_e' used",false);
+                    emissiveSuffix = new String[] {"_e"};
                 }
             } catch (Exception e) {
-                System.out.println("Entity Texture Features - Default emissive suffix '_e' used");
-                emissiveSuffix = "_e";
+                modMessage("Error! default emissive suffix '_e' used",false);
+                emissiveSuffix = new String[] {"_e"};
             }
     }
 }

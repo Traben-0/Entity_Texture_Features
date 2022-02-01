@@ -20,7 +20,7 @@ public abstract class MIX_DyeItem implements entity_texture_features_METHODS {
 
     @Inject(method = "useOnEntity", at = @At("RETURN"))
     private void injected(ItemStack stack, PlayerEntity user, LivingEntity entity, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
-            if (!UUID_entityAwaitingDataClearing.containsKey(entity.getUuid())){ UUID_entityAwaitingDataClearing.put(entity.getUuid(),(entity.world.getTime()));}
+            if (!UUID_entityAwaitingDataClearing.containsKey(entity.getUuid())){ UUID_entityAwaitingDataClearing.put(entity.getUuid(),System.currentTimeMillis());}
 
     }
 

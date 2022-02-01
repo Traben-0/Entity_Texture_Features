@@ -27,13 +27,13 @@ public abstract class MIX_LivingEntity{
     private void injected(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
        // if (((LivingEntity)(Object)this).world.isClient()) {
             UUID id = ((LivingEntity) (Object) this).getUuid();
-            if (!UUID_entityAwaitingDataClearing.containsKey(id)){ UUID_entityAwaitingDataClearing.put(id,((LivingEntity) (Object) this).world.getTime());}
+            if (!UUID_entityAwaitingDataClearing.containsKey(id)){ UUID_entityAwaitingDataClearing.put(id,System.currentTimeMillis());}
         //}
     }
     @Inject(method = "heal", at = @At("TAIL"))
     private void injected2(float amount, CallbackInfo ci) {
             UUID id = ((LivingEntity) (Object) this).getUuid();
-            if (!UUID_entityAwaitingDataClearing.containsKey(id)){ UUID_entityAwaitingDataClearing.put(id,((LivingEntity) (Object) this).world.getTime());}
+            if (!UUID_entityAwaitingDataClearing.containsKey(id)){ UUID_entityAwaitingDataClearing.put(id,System.currentTimeMillis());}
     }
 
 }

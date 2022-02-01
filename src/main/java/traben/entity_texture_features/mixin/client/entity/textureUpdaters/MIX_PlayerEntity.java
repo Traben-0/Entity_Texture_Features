@@ -19,7 +19,7 @@ public abstract class MIX_PlayerEntity {
     @Inject(method = "interact", at = @At("RETURN"))
     private void injected(Entity entity, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
         if (((LivingEntity)(Object)this).world.isClient()) {
-            if (!UUID_entityAwaitingDataClearing.containsKey(entity.getUuid())){ UUID_entityAwaitingDataClearing.put(entity.getUuid(),((LivingEntity) (Object) this).world.getTime());}
+            if (!UUID_entityAwaitingDataClearing.containsKey(entity.getUuid())){ UUID_entityAwaitingDataClearing.put(entity.getUuid(),System.currentTimeMillis());}
         }
     }
 }

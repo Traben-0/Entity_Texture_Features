@@ -1,16 +1,16 @@
 {
   "schemaVersion": 1,
   "id": "entity_texture_features",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "name": "Entity Texture Features",
   "description": "Optifine format compatible",
   "authors": ["Traben"],
   "license": "MIT",
   "icon": "icon.png",
   "website": "https://www.curseforge.com/members/traben_0/projects",
-  "environment": "*",
+  "environment": "client",
   "entrypoints": {
-    "main": [
+    "client": [
     ]
   },
   "mixins": [

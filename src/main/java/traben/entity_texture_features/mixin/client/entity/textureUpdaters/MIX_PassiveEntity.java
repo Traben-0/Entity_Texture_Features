@@ -21,7 +21,7 @@ public abstract class MIX_PassiveEntity implements entity_texture_features_METHO
     private void injected(CallbackInfo ci) {
 
             UUID id = ((LivingEntity) (Object) this).getUuid();
-            if (!UUID_entityAwaitingDataClearing.containsKey(id)){ UUID_entityAwaitingDataClearing.put(id,((LivingEntity) (Object) this).world.getTime());}
+            if (!UUID_entityAwaitingDataClearing.containsKey(id)){ UUID_entityAwaitingDataClearing.put(id,System.currentTimeMillis());}
 
     }
 
