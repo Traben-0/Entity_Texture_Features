@@ -148,13 +148,16 @@ public interface entity_texture_features_METHODS {
                   perLine) {
                  line = line.trim();
                  //ignore blank lines or comments
-                 if (!line.isBlank() && !line.startsWith("#")) {
+                 if (!line.isBlank() && !line.startsWith("#") && line.contains("=") ) {
                      if (!line.contains("." + count + "=")) {
                          if (!maker.isEmpty()) {
                              eachCaseData.add(maker.toArray(new String[0]));
                              maker.clear();
                          }
-                         count++;
+                         //count++;
+                         //set count value from read data for people who write properties and can't count
+                         count = Integer.parseInt(line.split("=")[0].split("\\.")[1].replaceAll("[^0-9]", ""));
+
                      }
                      if (line.contains("." + count + "=")) {
                          maker.add(line);
@@ -187,7 +190,11 @@ public interface entity_texture_features_METHODS {
                       caseStrings) {
                      //here every line is data "skins.1=2-4" for all of ".1=" case
                      String[] dataAny = caseLine.split("=");
-                     dataAny[1] = dataAny[1].trim();
+                     if (!dataAny[1].contains("regex") && !dataAny[1].contains("pattern")) {
+                         dataAny[1] = dataAny[1].trim().replaceAll("\\s+", " ");
+                     }else{
+                         dataAny[1] = dataAny[1].trim();
+                     }
                      if (dataAny[0].startsWith("skins.") || dataAny[0].startsWith("textures.") ){
                         String[] skinData = dataAny[1].split(" ");
                         ArrayList<Integer> suffixNumbers = new ArrayList<>();
@@ -280,7 +287,7 @@ public interface entity_texture_features_METHODS {
 
          }catch (Exception e){
              //System.out.println(e);
-             modMessage("Entity Texture Features - optifine properties failed to load: "+properties,false);
+             modMessage("Entity Texture Features - optifine properties failed to load: @("+properties+") Error:"+e,false);
          }
     }
 

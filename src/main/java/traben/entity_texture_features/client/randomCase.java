@@ -126,61 +126,64 @@ public class randomCase implements entity_texture_features_METHODS {
             }
             allBoolean = check;
         }
-        if (allBoolean && names.length > 0 && entity.hasCustomName()) {
-            String entityName = Objects.requireNonNull(entity.getCustomName()).getString();
-            wasTestedByUpdateable = true;
-            boolean check = false;
-            boolean invert = false;
-            for (String str :
-                    names) {
-                str = str.trim();
-                if (str.startsWith("!")) {
-                    str = str.replaceFirst("!", "");
-                    invert = true;
-                    check = true;
-                }
-                if (str.contains("regex:")) {
-                    if (str.contains("iregex:")) {
-                        str = str.split(":")[1];
-                        if (entityName.matches("(?i)" + str)) {
-                            check = !invert;
-                            break;
+        if (allBoolean && names.length > 0) {
+            if (entity.hasCustomName()) {
+                String entityName = Objects.requireNonNull(entity.getCustomName()).getString();
+                wasTestedByUpdateable = true;
+                boolean check = false;
+                boolean invert = false;
+                for (String str :
+                        names) {
+                    str = str.trim();
+                    if (str.startsWith("!")) {
+                        str = str.replaceFirst("!", "");
+                        invert = true;
+                        check = true;
+                    }
+                    if (str.contains("regex:")) {
+                        if (str.contains("iregex:")) {
+                            str = str.split(":")[1];
+                            if (entityName.matches("(?i)" + str)) {
+                                check = !invert;
+                                break;
+                            }
+                        } else {
+                            str = str.split(":")[1];
+                            if (entityName.matches(str)) {
+                                check = !invert;
+                                break;
+                            }
                         }
-                    } else {
-                        str = str.split(":")[1];
-                        if (entityName.matches(str)) {
+
+                        //am i dumb? is this all pattern was????
+                    } else if (str.contains("pattern:")) {
+                        str = str.replace("?", ".?").replace("*", ".*");
+                        if (str.contains("ipattern:")) {
+                            str = str.replace("ipattern:", "");
+                            if (entityName.matches("(?i)" + str)) {
+                                check = !invert;
+                                break;
+                            }
+                        } else {
+                            str = str.replace("pattern:", "");
+                            if (entityName.matches(str)) {
+                                check = !invert;
+                                break;
+                            }
+                        }
+                    } else {//direct comparison
+                        if (entityName.equals(str)) {
                             check = !invert;
                             break;
                         }
                     }
 
-                    //am i dumb? is this all pattern was????
-                } else if (str.contains("pattern:")) {
-                    str = str.replace("?", ".?").replace("*", ".*");
-                    if (str.contains("ipattern:")) {
-                        str = str.replace("ipattern:", "");
-                        if (entityName.matches("(?i)" + str)) {
-                            check = !invert;
-                            break;
-                        }
-                    } else {
-                        str = str.replace("pattern:", "");
-                        if (entityName.matches(str)) {
-                            check = !invert;
-                            break;
-                        }
-                    }
-                } else {//direct comparison
-                    if (entityName.equals(str)) {
-                        check = !invert;
-                        break;
-                    }
                 }
 
+                allBoolean = check;
+            }else{
+                allBoolean = false;
             }
-
-            allBoolean = check;
-
         }
         if (allBoolean && !onlyUpdatables && heights.length > 0) {
             int entityHeight = entity.getBlockY();
@@ -252,6 +255,7 @@ public class randomCase implements entity_texture_features_METHODS {
         if (allBoolean && baby != 0) {
             wasTestedByUpdateable = true;
             allBoolean = (baby == 1) == entity.isBaby();
+            System.out.println("baby "+allBoolean);
         }
         if (allBoolean && !onlyUpdatables && weather != 0) {
             boolean raining = entity.world.isRaining();
@@ -268,18 +272,13 @@ public class randomCase implements entity_texture_features_METHODS {
         }
         if (allBoolean && health.length > 0) {
             wasTestedByUpdateable = true;
-            float entityHealth = entity.getHealth();
+            //float entityHealth = entity.getHealth();
             boolean check = false;
-
+            //always check percentage
+            float checkValue = entity.getHealth() / entity.getMaxHealth() * 100;
             for (String hlth :
                     health) {
                 if (hlth.contains("-")) {
-                    float checkValue;
-                    if (hlth.contains("%")) {
-                        checkValue = entityHealth / entity.getMaxHealth() * 100;
-                    } else {
-                        checkValue = entityHealth;
-                    }
                     String[] str = hlth.split("-");
                     if (checkValue >= Integer.parseInt(str[0].replaceAll("[^0-9]", ""))
                             && checkValue <= Integer.parseInt(str[1].replaceAll("[^0-9]", ""))) {
@@ -288,7 +287,7 @@ public class randomCase implements entity_texture_features_METHODS {
                     }
 
                 } else {
-                    if (entityHealth == Integer.parseInt(hlth.replaceAll("[^0-9]", ""))) {
+                    if (checkValue == Integer.parseInt(hlth.replaceAll("[^0-9]", ""))) {
                         check = true;
                         break;
                     }
