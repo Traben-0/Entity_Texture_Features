@@ -2,8 +2,9 @@
 Random & Emissive entity textures for Fabric
 Like optifine but compatible with sodium :)
 
-more details & instructions/guides at
+I'm not planning to update the github readme for every version from now:
 
-:modrinth: https://modrinth.com/mod/entitytexturefeatures
+future update File downloads as well as use case details can be found at 
 
-:curseforge: https://www.curseforge.com/minecraft/mc-mods/entity-texture-features-fabric
+1. [CurseForge](https://www.curseforge.com/minecraft/mc-mods/entity-texture-features-fabric)
+2. [Modrinth](https://modrinth.com/mod/entitytexturefeatures)
