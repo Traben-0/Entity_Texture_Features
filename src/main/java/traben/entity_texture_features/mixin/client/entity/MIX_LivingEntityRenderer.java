@@ -179,7 +179,8 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                 if (Texture_TotalTrueRandom.get(path) > 0) {
                     if (!UUID_randomTextureSuffix.containsKey(id)) {
                         int randomReliable = id.hashCode() > 0 ? id.hashCode() : -id.hashCode();
-                        randomReliable %= Texture_TotalTrueRandom.get(path) + 1;
+                        randomReliable %= Texture_TotalTrueRandom.get(path);
+                        randomReliable++;
                         if (randomReliable == 1 && ignoreOnePNG.get(path)) {
                             randomReliable = 0;
                         }

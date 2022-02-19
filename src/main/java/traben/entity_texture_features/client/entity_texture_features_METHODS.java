@@ -384,18 +384,19 @@ public interface entity_texture_features_METHODS {
         if (isExistingFile( new Identifier(checkPathOptifineFormat))) {
             optifineOldOrVanilla.put( vanillaPath,0);
             ignoreOnePNG.put( vanillaPath,false);
-            successCount++;
+            //successCount++;
         } else if (isExistingFile( new Identifier(checkPathOldRandomFormat))) {
             optifineOldOrVanilla.put( vanillaPath,1);
             ignoreOnePNG.put( vanillaPath,false);
-            successCount++;
+            //successCount++;
         }else if (isExistingFile( new Identifier(checkPath))) {
             optifineOldOrVanilla.put( vanillaPath,2);
             ignoreOnePNG.put( vanillaPath,false);
-            successCount++;
+            //successCount++;
         }else{
             ignoreOnePNG.put( vanillaPath,true);
         }
+
         //check if texture 2.png is used
         checkPath = vanillaPath.replace(".png", "2.png");
         checkPathOldRandomFormat = vanillaPath.replace(".png", "2.png").replace("textures/entity", "optifine/mob");
@@ -403,15 +404,15 @@ public interface entity_texture_features_METHODS {
         if (isExistingFile( new Identifier(checkPathOptifineFormat))) {
             optifineOldOrVanilla.put( vanillaPath,0);
             keepGoing = true;
-            successCount++;
+            successCount=2;
         }else if (isExistingFile( new Identifier(checkPathOldRandomFormat))) {
             optifineOldOrVanilla.put( vanillaPath,1);
             keepGoing = true;
-            successCount++;
+            successCount=2;
         }else if (isExistingFile( new Identifier(checkPath))) {
             optifineOldOrVanilla.put( vanillaPath,2);
             keepGoing = true;
-            successCount++;
+            successCount=2;
         }
         //texture3.png and further optimized iterations
         int count = 2;
