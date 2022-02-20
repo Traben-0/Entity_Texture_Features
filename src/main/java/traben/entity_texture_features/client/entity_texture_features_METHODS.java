@@ -1,5 +1,8 @@
 package traben.entity_texture_features.client;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.entity.Entity;
@@ -7,13 +10,13 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.resource.Resource;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.spi.LoggerRegistry;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
 import static traben.entity_texture_features.client.entity_texture_features_CLIENT.*;
@@ -437,7 +440,9 @@ public interface entity_texture_features_METHODS {
 
 
     default void setEmissiveSuffix(){
-            try {
+
+
+        try {
                 String suffix = readProperties("optifine/emissive.properties");
                 if (suffix == null || suffix.isBlank()){
                     suffix = readProperties("textures/emissive.properties");
@@ -452,6 +457,10 @@ public interface entity_texture_features_METHODS {
                         builder.add(line);
                         modMessage("Custom emissive suffix '" + line + "' added",false);
                     }
+                    if(ETFConfigData.alwaysCheckVanillaEmissiveSuffix
+                            && !builder.contains("_e")){
+                        builder.add("_e");
+                    }
                 }
                 emissiveSuffix = builder.toArray(new String[0]);
                 if (emissiveSuffix.length==0) {
@@ -462,5 +471,20 @@ public interface entity_texture_features_METHODS {
                 modMessage("Error! default emissive suffix '_e' used",false);
                 emissiveSuffix = new String[] {"_e"};
             }
+    }
+
+    default void saveConfig() {
+        File config = new File(FabricLoader.getInstance().getConfigDir().toFile(), "entity_texture_features.json");
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        if (!config.getParentFile().exists()) {
+            config.getParentFile().mkdir();
+        }
+        try {
+            FileWriter fileWriter = new FileWriter(config);
+            fileWriter.write(gson.toJson(ETFConfigData));
+            fileWriter.close();
+        } catch (IOException e) {
+            modMessage("Config could not be saved",false);
+        }
     }
 }

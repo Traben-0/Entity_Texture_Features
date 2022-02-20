@@ -1,16 +1,20 @@
 {
   "schemaVersion": 1,
   "id": "entity_texture_features",
-  "version": "2.1.4",
+  "version": "2.2.0",
   "name": "Entity Texture Features",
-  "description": "Optifine format compatible",
+  "description": "- Optifine format compatible\n- Random/alternate textures\n- Emissive textures",
   "authors": ["Traben"],
   "license": "MIT",
   "icon": "icon.png",
   "website": "https://www.curseforge.com/members/traben_0/projects",
   "environment": "client",
   "entrypoints": {
-    "client": [
+    "main": [
+      "traben.entity_texture_features.client.entity_texture_features_CLIENT"
+    ],
+    "modmenu": [
+      "traben.entity_texture_features.config.ETFModMenu"
     ]
   },
   "mixins": [
@@ -20,11 +24,15 @@
     "fabricloader": ">=0.12.12",
     "minecraft": "1.18.1"
   },
+  "suggests": {
+    "modmenu": ">=3.0.1",
+    "clothconfig": ">=6.1.48"
+},
   "custom": {
-  "modmenu": {
-    "links": {
-      "modmenu.website": "https://www.curseforge.com/members/traben_0/projects"
+    "modmenu": {
+      "links": {
+        "modmenu.website": "https://www.curseforge.com/members/traben_0/projects"
+      }
     }
   }
-}
 }

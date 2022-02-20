@@ -15,6 +15,7 @@
     "client.entity.textureUpdaters.MIX_VillagerEntity"
   ],
   "mixins": [
+    "client.entity.MIX_ElytraFeatureRenderer"
   ],
   "injectors": {
     "defaultRequire": 1

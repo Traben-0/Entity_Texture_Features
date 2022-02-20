@@ -31,14 +31,6 @@ public abstract class MIX_SimpleResourceReload implements entity_texture_feature
 //                    }
                     puzzleDetected = true;
                 }
-                if (mod.toString().contains("iris ")){
-//                    try {
-//                        MinecraftClient.getInstance().player.sendMessage(Text.of("\u00A76[Entity Texture Features]\u00A77: Iris shader mod detected!\n Implementing Emissive shader Z-fighting fix.\n Glowing parts will float slightly :/"),false);
-//                    }catch(NullPointerException e) {
-                    modMessage("Entity Texture Features - Iris shader mod detected! Implementing Emissive shader Z-fighting fix",false);
-//                    }
-                    irisDetected = true;
-                }
             }
         }
     }

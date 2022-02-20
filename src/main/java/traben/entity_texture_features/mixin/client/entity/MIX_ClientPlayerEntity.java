@@ -2,13 +2,7 @@ package traben.entity_texture_features.mixin.client.entity;
 
 import net.minecraft.client.network.ClientPlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.client.entity_texture_features_METHODS;
-
-import static traben.entity_texture_features.client.entity_texture_features_CLIENT.irisDetected;
-import static traben.entity_texture_features.client.entity_texture_features_CLIENT.puzzleDetected;
 
 @Mixin(ClientPlayerEntity.class)
 public abstract class MIX_ClientPlayerEntity implements entity_texture_features_METHODS {

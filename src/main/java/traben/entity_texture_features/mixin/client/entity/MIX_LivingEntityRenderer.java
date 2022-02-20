@@ -13,6 +13,7 @@ import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -21,7 +22,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.client.entity_texture_features_METHODS;
-import traben.entity_texture_features.client.randomCase;
+import traben.entity_texture_features.config.ETFConfig;
 
 import java.util.UUID;
 
@@ -29,18 +30,15 @@ import static traben.entity_texture_features.client.entity_texture_features_CLIE
 
 @Mixin(LivingEntityRenderer.class)
 public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends EntityModel<T>> extends EntityRenderer<T> implements FeatureRendererContext<T, M>, entity_texture_features_METHODS {
-    @Shadow public abstract M getModel();
+    @Shadow
+    public abstract M getModel();
 
 
-
+    private float ticker = 0;
 
     protected MIX_LivingEntityRenderer(EntityRendererFactory.Context ctx) {
         super(ctx);
     }
-
-
-    //  [0] = total randoms, [1] = self random
-    //private static float ticker = 0;
 
     @Inject(method = "render(Lnet/minecraft/entity/LivingEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/EntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V", shift = At.Shift.AFTER))
     private void applyEmissive(T livingEntity, float a, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
@@ -49,22 +47,22 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
         //System.out.println(fileString);
         if (UUID_randomTextureSuffix.containsKey(id)) {
             if (UUID_randomTextureSuffix.get(id) != 0 && optifineOldOrVanilla.containsKey(fileString)) {
-                fileString = returnOptifineOrVanillaPath(fileString,UUID_randomTextureSuffix.get(id),"");
+                fileString = returnOptifineOrVanillaPath(fileString, UUID_randomTextureSuffix.get(id), "");
             }
         }
         if (Texture_Emissive.containsKey(fileString)) {
             if (Texture_Emissive.get(fileString) != null) {
                 //VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getEyes(Texture_Emissive.get(fileString)));
-                VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(Texture_Emissive.get(fileString),true));
+                VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(Texture_Emissive.get(fileString), true));
                 //one check most efficient instead of before and after applying
-                if (irisDetected) {
+                if (ETFConfigData.doShadersEmissiveFix) {
                     matrixStack.scale(1.01f, 1.01f, 1.01f);
                     this.getModel().render(matrixStack
                             , textureVert
                             , 15728640
                             , OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
                     matrixStack.scale(1f, 1f, 1f);
-                }else{
+                } else {
                     this.getModel().render(matrixStack
                             , textureVert
                             , 15728640
@@ -74,20 +72,20 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
         } else {//creates and sets emissive for texture if it exists
             Identifier fileName_e;
             boolean found = false;
-            for (String suffix1:
-            emissiveSuffix) {
-                fileName_e = new Identifier(fileString.replace(".png", suffix1+".png"));
-                if(isExistingFile( fileName_e)){
-                        VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(fileName_e,true));
-                        Texture_Emissive.put(fileString, fileName_e);
-                        //one check most efficient instead of before and after applying
-                        if (irisDetected) {
-                            matrixStack.scale(1.01f, 1.01f, 1.01f);
-                            this.getModel().render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
-                            matrixStack.scale(1f, 1f, 1f);
-                        }else{
-                            this.getModel().render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
-                        }
+            for (String suffix1 :
+                    emissiveSuffix) {
+                fileName_e = new Identifier(fileString.replace(".png", suffix1 + ".png"));
+                if (isExistingFile(fileName_e)) {
+                    VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(fileName_e, true));
+                    Texture_Emissive.put(fileString, fileName_e);
+                    //one check most efficient instead of before and after applying
+                    if (ETFConfigData.doShadersEmissiveFix) {
+                        matrixStack.scale(1.01f, 1.01f, 1.01f);
+                        this.getModel().render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                        matrixStack.scale(1f, 1f, 1f);
+                    } else {
+                        this.getModel().render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                    }
                     break;
                 }
             }
@@ -97,7 +95,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
         }
         //cheeky lil fun for the dev
         //just makes my player look enchanted to others in multiplayer ;P
-        if (livingEntity.getUuid().toString().equals("fd22e573-178c-415a-94fe-e476b328abfd")){
+        if (livingEntity.getUuid().toString().equals("fd22e573-178c-415a-94fe-e476b328abfd")) {
             //glow
             //VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(getTexture(livingEntity),true));
 
@@ -113,6 +111,32 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
 //            this.getModel().render(matrixStack, vertexConsumer, 15728640, OverlayTexture.DEFAULT_UV, 0.5F, 0.5F, 0.5F, 0.5F);
 //            matrixStack.scale(1f, 1f, 1f);
 //            if (ticker >640) ticker=0;
+        }
+        if (ETFConfigData.enchantedPotionEffects != ETFConfig.enchantedPotionEffectsEnum.NONE
+                //&&  !livingEntity.getStatusEffects().isEmpty()
+                && !livingEntity.getActiveStatusEffects().isEmpty()
+                && !livingEntity.hasStatusEffect(StatusEffects.INVISIBILITY)
+        ){
+            VertexConsumer textureVert;
+            switch (ETFConfigData.enchantedPotionEffects) {
+                case ENCHANTED -> {
+                    textureVert = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(this.getTexture(livingEntity)), false, true);
+                    this.getModel().render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 0.16F);
+                }
+                case GLOWING -> {
+                    textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(getTexture(livingEntity), true));
+                    this.getModel().render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 0.16F);
+                }
+                case CREEPER_CHARGE -> {
+                    ticker += 0.1;
+                    int f = (int) ticker;
+                    VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEnergySwirl(new Identifier("textures/entity/creeper/creeper_armor.png"), f * 0.01F % 1.0F, f * 0.01F % 1.0F));
+                    matrixStack.scale(1.1f, 1.1f, 1.1f);
+                    this.getModel().render(matrixStack, vertexConsumer, 15728640, OverlayTexture.DEFAULT_UV, 0.5F, 0.5F, 0.5F, 0.5F);
+                    matrixStack.scale(1f, 1f, 1f);
+                    if (ticker > 640) ticker = 0;
+                }
+            }
         }
     }
 
@@ -130,16 +154,16 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                 processNewRandomTextureCandidate(path);
             }
             //if needs to check if change required
-            if (UUID_entityAwaitingDataClearing.containsKey(id)){
-                if (!hasUpdatableRandomCases.containsKey(id)){
+            if (UUID_entityAwaitingDataClearing.containsKey(id)) {
+                if (!hasUpdatableRandomCases.containsKey(id)) {
                     //modMessage("Error - mob will no longer have texture updated",false);
-                    hasUpdatableRandomCases.put(id ,false);
+                    hasUpdatableRandomCases.put(id, false);
                     UUID_entityAwaitingDataClearing.remove(id);
                 }
                 if (hasUpdatableRandomCases.get(id)) {
                     //skip a few ticks
                     //UUID_entityAwaitingDataClearing.put(id, UUID_entityAwaitingDataClearing.get(id)+1);
-                    if ((UUID_entityAwaitingDataClearing.get(id)/100)+1 < (System.currentTimeMillis()/100)){
+                    if ((UUID_entityAwaitingDataClearing.get(id) / 100) + 1 < (System.currentTimeMillis() / 100)) {
                         if (Texture_OptifineOrTrueRandom.get(path)) {
                             int hold = UUID_randomTextureSuffix.get(id);
                             resetSingleData(id);
@@ -152,7 +176,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                         UUID_entityAwaitingDataClearing.remove(id);
                     }
 
-                }else{
+                } else {
                     UUID_entityAwaitingDataClearing.remove(id);
                 }
 
@@ -160,13 +184,15 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
             if (Texture_OptifineOrTrueRandom.get(path)) {//optifine random
                 //if it doesn't have a random already assign one
                 if (!UUID_randomTextureSuffix.containsKey(id)) {
-                    testCases(path,id ,entity);
+                    testCases(path, id, entity);
                     //if all failed set to vanilla
                     if (!UUID_randomTextureSuffix.containsKey(id)) {
                         //System.out.println("Entity Texture Features - optifine properties failed to assign texture. setting "+entity.getEntityName()+" to vanilla texture");
                         UUID_randomTextureSuffix.put(id, 0);
                     }
-                    if (!UUID_entityAlreadyCalculated.contains(id)){UUID_entityAlreadyCalculated.add(id);}
+                    if (!UUID_entityAlreadyCalculated.contains(id)) {
+                        UUID_entityAlreadyCalculated.add(id);
+                    }
                 }
                 if (UUID_randomTextureSuffix.get(id) == 0) {
                     return vanilla;
@@ -175,7 +201,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                 }
 
             } else {//true random assign
-                hasUpdatableRandomCases.put(id ,false);
+                hasUpdatableRandomCases.put(id, false);
                 if (Texture_TotalTrueRandom.get(path) > 0) {
                     if (!UUID_randomTextureSuffix.containsKey(id)) {
                         int randomReliable = id.hashCode() > 0 ? id.hashCode() : -id.hashCode();
@@ -185,7 +211,9 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                             randomReliable = 0;
                         }
                         UUID_randomTextureSuffix.put(id, randomReliable);
-                        if (!UUID_entityAlreadyCalculated.contains(id)){UUID_entityAlreadyCalculated.add(id);}
+                        if (!UUID_entityAlreadyCalculated.contains(id)) {
+                            UUID_entityAlreadyCalculated.add(id);
+                        }
                     }
                     if (UUID_randomTextureSuffix.get(id) == 0) {
                         return vanilla;
@@ -197,8 +225,8 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                 }
             }
 
-        }catch(Exception e){
-            modMessage(e.toString(),false);
+        } catch (Exception e) {
+            modMessage(e.toString(), false);
             return vanilla;
         }
     }
