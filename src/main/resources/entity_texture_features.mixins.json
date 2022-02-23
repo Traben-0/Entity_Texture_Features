@@ -12,10 +12,11 @@
     "client.entity.textureUpdaters.MIX_PassiveEntity",
     "client.entity.textureUpdaters.MIX_PlayerEntity",
     "client.entity.textureUpdaters.MIX_SimpleResourceReload",
-    "client.entity.textureUpdaters.MIX_VillagerEntity"
+    "client.entity.textureUpdaters.MIX_VillagerEntity",
+    "client.entity.MIX_ElytraFeatureRenderer"
   ],
   "mixins": [
-    "client.entity.MIX_ElytraFeatureRenderer"
+
   ],
   "injectors": {
     "defaultRequire": 1

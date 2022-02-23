@@ -6,14 +6,14 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import traben.entity_texture_features.client.entity_texture_features_METHODS;
+import traben.entity_texture_features.client.ETF_METHODS;
 
 import java.util.UUID;
 
-import static traben.entity_texture_features.client.entity_texture_features_CLIENT.UUID_entityAwaitingDataClearing;
+import static traben.entity_texture_features.client.ETF_CLIENT.UUID_entityAwaitingDataClearing;
 
 @Mixin(VillagerEntity.class)
-public abstract class MIX_VillagerEntity implements entity_texture_features_METHODS {
+public abstract class MIX_VillagerEntity implements ETF_METHODS {
 
     @Inject(method = "setVillagerData", at = @At("TAIL"))
     private void injected(CallbackInfo ci) {

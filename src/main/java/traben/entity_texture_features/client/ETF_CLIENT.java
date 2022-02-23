@@ -3,7 +3,6 @@ package traben.entity_texture_features.client;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.fabricmc.api.ModInitializer;
-
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.Identifier;
 import traben.entity_texture_features.config.ETFConfig;
@@ -17,7 +16,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @net.fabricmc.api.Environment(net.fabricmc.api.EnvType.CLIENT)
-public class entity_texture_features_CLIENT implements ModInitializer, entity_texture_features_METHODS {
+public class ETF_CLIENT implements ModInitializer, ETF_METHODS {
     //0 = vanilla only    1+ is zombie1+.png
     public static Map<String, Integer> Texture_TotalTrueRandom = new HashMap<>();
     public static Map<UUID, Integer> UUID_randomTextureSuffix = new HashMap<>();
@@ -29,10 +28,19 @@ public class entity_texture_features_CLIENT implements ModInitializer, entity_te
     public static Map<String, Boolean> ignoreOnePNG = new HashMap<>();
     public static Map<UUID, Boolean> hasUpdatableRandomCases = new HashMap<>();
 
+
+    public static Map<UUID, Boolean> UUID_playerHasFeatures = new HashMap<>();
+    public static Map<UUID, Boolean> UUID_playerHasEnchant = new HashMap<>();
+    public static Map<UUID, Boolean> UUID_playerHasEmissive = new HashMap<>();
+    public static Map<UUID, Boolean> UUID_HasBlink = new HashMap<>();
+    public static Map<UUID, Boolean> UUID_HasBlink2 = new HashMap<>();
+
     public static String[] emissiveSuffix = null;
     public static Map<String, Identifier> Texture_Emissive = new HashMap<>();
     public static boolean puzzleDetected = false;
     public static ETFConfig ETFConfigData;
+
+    public final static String SKIN_NAMESPACE = "etf_skin/";
 
     @Override
     public void onInitialize() {

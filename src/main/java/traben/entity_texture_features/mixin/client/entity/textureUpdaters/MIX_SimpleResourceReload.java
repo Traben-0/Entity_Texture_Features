@@ -7,12 +7,12 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import traben.entity_texture_features.client.entity_texture_features_METHODS;
+import traben.entity_texture_features.client.ETF_METHODS;
 
-import static traben.entity_texture_features.client.entity_texture_features_CLIENT.*;
+import static traben.entity_texture_features.client.ETF_CLIENT.*;
 
 @Mixin(SimpleResourceReload.class)
-public abstract class MIX_SimpleResourceReload implements entity_texture_features_METHODS {
+public abstract class MIX_SimpleResourceReload implements ETF_METHODS {
 
 
 

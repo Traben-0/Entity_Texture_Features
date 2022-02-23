@@ -4,8 +4,6 @@ package traben.entity_texture_features.client;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.passive.WolfEntity;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 
 import java.util.ArrayList;
@@ -13,9 +11,9 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.UUID;
 
-import static traben.entity_texture_features.client.entity_texture_features_CLIENT.hasUpdatableRandomCases;
+import static traben.entity_texture_features.client.ETF_CLIENT.hasUpdatableRandomCases;
 
-public class randomCase implements entity_texture_features_METHODS {
+public class randomCase implements ETF_METHODS {
     //Integer[] suffixes;
     //Integer[] weights;
     private final Integer[] weightedSuffixes;

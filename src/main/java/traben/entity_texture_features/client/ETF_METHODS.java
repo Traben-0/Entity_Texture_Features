@@ -15,13 +15,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.UUID;
+import java.util.*;
 
-import static traben.entity_texture_features.client.entity_texture_features_CLIENT.*;
+import static traben.entity_texture_features.client.ETF_CLIENT.*;
 
-public interface entity_texture_features_METHODS {
+public interface ETF_METHODS {
 
 
 
@@ -54,6 +52,13 @@ public interface entity_texture_features_METHODS {
         ignoreOnePNG.clear() ;
         UUID_entityAlreadyCalculated.clear();//only time it clears
         UUID_entityAwaitingDataClearing.clear();
+
+        UUID_playerHasFeatures.clear();
+        UUID_playerHasEnchant.clear();
+        UUID_playerHasEmissive.clear();
+        UUID_HasBlink.clear();
+        UUID_HasBlink2.clear();
+
 
         Texture_Emissive.clear();
         setEmissiveSuffix();

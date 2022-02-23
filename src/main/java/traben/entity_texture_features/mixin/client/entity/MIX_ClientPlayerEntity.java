@@ -2,10 +2,10 @@ package traben.entity_texture_features.mixin.client.entity;
 
 import net.minecraft.client.network.ClientPlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
-import traben.entity_texture_features.client.entity_texture_features_METHODS;
+import traben.entity_texture_features.client.ETF_METHODS;
 
 @Mixin(ClientPlayerEntity.class)
-public abstract class MIX_ClientPlayerEntity implements entity_texture_features_METHODS {
+public abstract class MIX_ClientPlayerEntity implements ETF_METHODS {
 
 //    private static boolean messageOnce = true;
 

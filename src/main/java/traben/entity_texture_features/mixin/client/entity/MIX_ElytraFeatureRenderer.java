@@ -20,12 +20,12 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import traben.entity_texture_features.client.entity_texture_features_METHODS;
+import traben.entity_texture_features.client.ETF_METHODS;
 
-import static traben.entity_texture_features.client.entity_texture_features_CLIENT.*;
+import static traben.entity_texture_features.client.ETF_CLIENT.*;
 
 @Mixin(ElytraFeatureRenderer.class)
-public abstract class MIX_ElytraFeatureRenderer<T extends LivingEntity, M extends EntityModel<T>> extends FeatureRenderer<T, M> implements  entity_texture_features_METHODS {
+public abstract class MIX_ElytraFeatureRenderer<T extends LivingEntity, M extends EntityModel<T>> extends FeatureRenderer<T, M> implements ETF_METHODS {
     public MIX_ElytraFeatureRenderer(FeatureRendererContext<T, M> context) {
         super(context);
     }
@@ -77,7 +77,6 @@ public abstract class MIX_ElytraFeatureRenderer<T extends LivingEntity, M extend
             for (String suffix1:
             emissiveSuffix) {
                 fileName_e = new Identifier(fileString.replace(".png", suffix1+".png"));
-                System.out.println("checking "+fileName_e);
                 if(isExistingFile( fileName_e)){
                         VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(fileName_e,true));
                         Texture_Emissive.put(fileString, fileName_e);

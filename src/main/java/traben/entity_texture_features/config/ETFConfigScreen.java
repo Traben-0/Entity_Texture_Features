@@ -6,14 +6,14 @@ import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
-import traben.entity_texture_features.client.entity_texture_features_METHODS;
+import traben.entity_texture_features.client.ETF_METHODS;
 
 import java.awt.*;
 
-import static traben.entity_texture_features.client.entity_texture_features_CLIENT.ETFConfigData;
-import static traben.entity_texture_features.client.entity_texture_features_CLIENT.puzzleDetected;
+import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
+import static traben.entity_texture_features.client.ETF_CLIENT.puzzleDetected;
 
-public class ETFConfigScreen implements entity_texture_features_METHODS {
+public class ETFConfigScreen implements ETF_METHODS {
     public Screen getConfigScreen(Screen parent, boolean isTransparent) {
             // Return the screen here with the one you created from Cloth Config Builder
             ConfigBuilder builder = ConfigBuilder.create()
@@ -27,6 +27,22 @@ public class ETFConfigScreen implements entity_texture_features_METHODS {
                     .setColor(new Color(240,195,15).getRGB())
                     .build()); // Builds the option entry for cloth config
         }
+        main.addEntry(entryBuilder.startBooleanToggle(Text.of("Enable Optifine Random mobs"), ETFConfigData.enableRandomTextures)
+                .setDefaultValue(true) // Recommended: Used when user click "Reset"
+                .setTooltip(new TranslatableText("""
+                            Enables Randomized entity textures
+                            works with resource packs 
+                            using the optifine format""")) // Optional: Shown when the user hover over this option
+                .setSaveConsumer(newValue -> ETFConfigData.enableRandomTextures = newValue) // Recommended: Called when user save the config
+                .build()); // Builds the option entry for cloth config
+        main.addEntry(entryBuilder.startBooleanToggle(Text.of("Enable Optifine Emissive entity textures"), ETFConfigData.enableEmissiveTextures)
+                .setDefaultValue(true) // Recommended: Used when user click "Reset"
+                .setTooltip(new TranslatableText("""
+                            Enables Emissive entity textures
+                            works with resource packs 
+                            using the optifine format""")) // Optional: Shown when the user hover over this option
+                .setSaveConsumer(newValue -> ETFConfigData.enableEmissiveTextures = newValue) // Recommended: Called when user save the config
+                .build()); // Builds the option entry for cloth config
             main.addEntry(entryBuilder.startBooleanToggle(Text.of("Always check the 'default' emissive?"), ETFConfigData.alwaysCheckVanillaEmissiveSuffix)
                     .setDefaultValue(true) // Recommended: Used when user click "Reset"
                     .setTooltip(new TranslatableText("""
@@ -37,7 +53,7 @@ public class ETFConfigScreen implements entity_texture_features_METHODS {
                             '_e' suffixes even when set differently by a resource pack""")) // Optional: Shown when the user hover over this option
                     .setSaveConsumer(newValue -> ETFConfigData.alwaysCheckVanillaEmissiveSuffix = newValue) // Recommended: Called when user save the config
                     .build()); // Builds the option entry for cloth config
-            main.addEntry(entryBuilder.startBooleanToggle(Text.of("Emissive texture Z-Fighting / Shader fix"), ETFConfigData.doShadersEmissiveFix)
+            main.addEntry(entryBuilder.startBooleanToggle(Text.of("Emissive texture Z-Fighting / Shader patch"), ETFConfigData.doShadersEmissiveFix)
                 .setDefaultValue(false) // Recommended: Used when user click "Reset"
                 .setTooltip(new TranslatableText("""
                             If true this will make emissive textures float
@@ -47,7 +63,45 @@ public class ETFConfigScreen implements entity_texture_features_METHODS {
                             with the models animation.""")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.doShadersEmissiveFix = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
-
+        main.addEntry(entryBuilder.startBooleanToggle(Text.of("Enable blinking mobs"), ETFConfigData.enableBlinking)
+                .setDefaultValue(false) // Recommended: Used when user click "Reset"
+                .setTooltip(new TranslatableText("""
+                            Sets whether or not mobs will try to blink
+                            The Mob must have a texture with it's eyes
+                            closed named "textureName_blink.png".
+                            And an optional texture with it's eyes half
+                            closed named "textureName_blink2.png".
+                            """)) // Optional: Shown when the user hover over this option
+                .setSaveConsumer(newValue -> ETFConfigData.enableBlinking = newValue) // Recommended: Called when user save the config
+                .build()); // Builds the option entry for cloth config
+        main.addEntry(entryBuilder.startIntSlider(Text.of("Blinking frequency"), ETFConfigData.blinkFrequency,32,1024)
+                .setDefaultValue(150) // Recommended: Used when user click "Reset"
+                        .setMin(32)
+                        .setMax(1024)
+                .setTooltip(new TranslatableText("""
+                            Sets whether or not mobs will try to blink
+                            The Mob must have a texture with it's eyes
+                            closed named "textureName_blink.png".
+                            And an optional texture with it's eyes half
+                            closed named "textureName_blink2.png".
+                            THIS REQUIRES A RESTART OR RELOAD OF TEXTURES
+                            """)) // Optional: Shown when the user hover over this option
+                .setSaveConsumer(newValue -> ETFConfigData.blinkFrequency = newValue) // Recommended: Called when user save the config
+                .build()); // Builds the option entry for cloth config
+        main.addEntry(entryBuilder.startBooleanToggle(Text.of("Player Skin Features"), ETFConfigData.skinFeaturesEnabled)
+                .setDefaultValue(true) // Recommended: Used when user click "Reset"
+                .setTooltip(new TranslatableText("""
+                            Allows player skins to use the features added by this mod.
+                            Features are set in the players skin file.
+                             - Instructions can be found on the mod page
+                            Features include:
+                             - Emissive pixels
+                             - Enchanted pixels
+                             - Blinking & (closed eyes when sleeping)
+                             - maybe more...
+                            """)) // Optional: Shown when the user hover over this option
+                .setSaveConsumer(newValue -> ETFConfigData.skinFeaturesEnabled = newValue) // Recommended: Called when user save the config
+                .build()); // Builds the option entry for cloth config
         main.addEntry(entryBuilder.startEnumSelector(Text.of("Mob potion effects"),ETFConfig.enchantedPotionEffectsEnum.class, ETFConfigData.enchantedPotionEffects)
             .setDefaultValue(ETFConfig.enchantedPotionEffectsEnum.NONE)
                 .setTooltip(new TranslatableText("""

@@ -1,24 +1,16 @@
 package traben.entity_texture_features.mixin.client.entity.textureUpdaters;
 
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.item.ItemStack;
-import net.minecraft.resource.SimpleResourceReload;
-import net.minecraft.text.Text;
-import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import traben.entity_texture_features.client.entity_texture_features_METHODS;
 
 import java.util.UUID;
 
-import static traben.entity_texture_features.client.entity_texture_features_CLIENT.*;
+import static traben.entity_texture_features.client.ETF_CLIENT.*;
 
 @Mixin(LivingEntity.class)
 public abstract class MIX_LivingEntity{
