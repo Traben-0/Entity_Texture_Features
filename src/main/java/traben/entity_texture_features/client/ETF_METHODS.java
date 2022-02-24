@@ -59,6 +59,7 @@ public interface ETF_METHODS {
         UUID_HasBlink.clear();
         UUID_HasBlink2.clear();
 
+        UUID_TridentName.clear();
 
         Texture_Emissive.clear();
         setEmissiveSuffix();

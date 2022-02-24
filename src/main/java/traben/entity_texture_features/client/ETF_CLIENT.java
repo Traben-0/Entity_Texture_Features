@@ -32,6 +32,7 @@ public class ETF_CLIENT implements ModInitializer, ETF_METHODS {
     public static Map<UUID, Boolean> UUID_playerHasFeatures = new HashMap<>();
     public static Map<UUID, Boolean> UUID_playerHasEnchant = new HashMap<>();
     public static Map<UUID, Boolean> UUID_playerHasEmissive = new HashMap<>();
+
     public static Map<UUID, Boolean> UUID_HasBlink = new HashMap<>();
     public static Map<UUID, Boolean> UUID_HasBlink2 = new HashMap<>();
 
@@ -39,6 +40,9 @@ public class ETF_CLIENT implements ModInitializer, ETF_METHODS {
     public static Map<String, Identifier> Texture_Emissive = new HashMap<>();
     public static boolean puzzleDetected = false;
     public static ETFConfig ETFConfigData;
+
+    public static Map<UUID, String> UUID_TridentName = new HashMap<>();
+
 
     public final static String SKIN_NAMESPACE = "etf_skin/";
 

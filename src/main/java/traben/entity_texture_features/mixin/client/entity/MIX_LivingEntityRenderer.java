@@ -110,7 +110,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                 }
             }
         } else if (ETFConfigData.skinFeaturesEnabled) { // is a player
-            renderSkinFeatures(id, (PlayerEntity) livingEntity, a, g, matrixStack, vertexConsumerProvider, i);
+            renderSkinFeatures(id,livingEntity, a, g, matrixStack, vertexConsumerProvider, i);
         }
         //potion effects
         if (ETFConfigData.enchantedPotionEffects != ETFConfig.enchantedPotionEffectsEnum.NONE
@@ -126,12 +126,13 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
     @Redirect(
             method = "getRenderLayer",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/LivingEntityRenderer;getTexture(Lnet/minecraft/entity/Entity;)Lnet/minecraft/util/Identifier;"))
-    private Identifier returnAlteredTexture(@SuppressWarnings("rawtypes") LivingEntityRenderer instance, Entity entity) {
-
-        @SuppressWarnings("unchecked") Identifier vanilla = getTexture((T) entity);
+    private Identifier returnAlteredTexture(@SuppressWarnings("rawtypes") LivingEntityRenderer instance, Entity inEntity) {
+        @SuppressWarnings("unchecked")
+        T entity = (T)inEntity;
+        Identifier vanilla = getTexture((T) entity);
         String path = vanilla.getPath();
         UUID id = entity.getUuid();
-        if (!(entity instanceof PlayerEntity player)) {
+        if (!(entity instanceof PlayerEntity)) {
             if (ETFConfigData.enableRandomTextures) {
                 try {
                     if (!Texture_OptifineOrTrueRandom.containsKey(path)) {
@@ -179,9 +180,9 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                             }
                         }
                         if (UUID_randomTextureSuffix.get(id) == 0) {
-                            return returnBlinkIdOrGiven((LivingEntity) entity, vanilla.getPath(), id);
+                            return returnBlinkIdOrGiven( entity, vanilla.getPath(), id);
                         } else {
-                            return returnBlinkIdOrGiven((LivingEntity) entity, returnOptifineOrVanillaIdentifier(path, UUID_randomTextureSuffix.get(id)).getPath(), id);
+                            return returnBlinkIdOrGiven( entity, returnOptifineOrVanillaIdentifier(path, UUID_randomTextureSuffix.get(id)).getPath(), id);
                         }
 
                     } else {//true random assign
@@ -200,39 +201,39 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                                 }
                             }
                             if (UUID_randomTextureSuffix.get(id) == 0) {
-                                return returnBlinkIdOrGiven((LivingEntity) entity, vanilla.getPath(), id);
+                                return returnBlinkIdOrGiven( entity, vanilla.getPath(), id);
                             } else {
-                                return returnBlinkIdOrGiven((LivingEntity) entity, returnOptifineOrVanillaPath(path, UUID_randomTextureSuffix.get(id), ""), id);
+                                return returnBlinkIdOrGiven( entity, returnOptifineOrVanillaPath(path, UUID_randomTextureSuffix.get(id), ""), id);
                             }
                         } else {
-                            return returnBlinkIdOrGiven((LivingEntity) entity, vanilla.getPath(), id);
+                            return returnBlinkIdOrGiven(entity, vanilla.getPath(), id);
                         }
                     }
 
                 } catch (Exception e) {
                     modMessage(e.toString(), false);
-                    return returnBlinkIdOrGiven((LivingEntity) entity, vanilla.getPath(), id);
+                    return returnBlinkIdOrGiven( entity, vanilla.getPath(), id);
                 }
             }
         } else {
             if (!UUID_playerHasFeatures.containsKey(id)) {
-                checkPlayerForSkinFeatures(id);
+                checkPlayerForSkinFeatures(id,entity);
             }
             if (UUID_playerHasFeatures.get(id)) {
 
-                return returnBlinkIdOrGiven(player, SKIN_NAMESPACE + id + ".png", id, true);
+                return returnBlinkIdOrGiven(entity, SKIN_NAMESPACE + id + ".png", id, true);
             } else {
                 return vanilla;
             }
         }
-        return returnBlinkIdOrGiven((LivingEntity) entity, vanilla.getPath(), id);
+        return returnBlinkIdOrGiven(entity, vanilla.getPath(), id);
     }
 
-    private Identifier returnBlinkIdOrGiven(LivingEntity entity, String givenTexturePath, UUID id) {
+    private Identifier returnBlinkIdOrGiven(T entity, String givenTexturePath, UUID id) {
         return returnBlinkIdOrGiven(entity, givenTexturePath, id, false);
     }
 
-    private Identifier returnBlinkIdOrGiven(LivingEntity entity, String givenTexturePath, UUID id, boolean isPlayer) {
+    private Identifier returnBlinkIdOrGiven(T entity, String givenTexturePath, UUID id, boolean isPlayer) {
         if (ETFConfigData.enableBlinking) {
             if (!UUID_HasBlink.containsKey(id)) {
                 //check for blink textures
@@ -293,13 +294,12 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
         }
     }
 
-    private void renderSkinFeatures(UUID id, PlayerEntity player, float a, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
+    private void renderSkinFeatures(UUID id, T player, float a, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
         //skin http://textures.minecraft.net/texture/a81cd0629057a42f3d8b7b714b1e233a3f89e33faeb67d3796a52df44619e888
 
-        //already have texture
         if (!UUID_playerHasFeatures.containsKey(id)) {
             //check for mark
-            checkPlayerForSkinFeatures(id);
+            checkPlayerForSkinFeatures(id,player);
         }
         if (UUID_playerHasFeatures.get(id)) {
             //perform texture features
@@ -312,15 +312,15 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
             if (UUID_playerHasEmissive.get(id)) {
                 Identifier emissive = new Identifier(SKIN_NAMESPACE + id + "_e.png");
                 VertexConsumer emissVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(emissive, true));
-                this.getModel().render(matrixStack, emissVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 0.16F);
+                this.getModel().render(matrixStack, emissVert, 55728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 0.16F);
             }
         }else if (player.world.getTime() % 512 == 1){
             //randomly recheck skin incase of HTTP protocol error
-            checkPlayerForSkinFeatures(id);
+            checkPlayerForSkinFeatures(id,player );
         }
     }
 
-    private void checkPlayerForSkinFeatures(UUID id) {
+    private void checkPlayerForSkinFeatures(UUID id, T player) {
         NativeImage skin = getSkin(id);
         if (skin != null) {
             if (skin.getColor(1, 16) == -16776961 &&
@@ -341,6 +341,19 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                 UUID_playerHasFeatures.put(id, true);
                 //find what features
 
+                //check for transparency options
+                NativeImage transparentSkin = new NativeImage(64,64,false);
+                transparentSkin.copyFrom(skin);
+                if (skin.getColor(52, 17) == -65281) {
+                    transparentSkin = returnTransparentSkin(skin);
+                    if( transparentSkin == null) {
+                        transparentSkin = new NativeImage(64,64,false);
+                        transparentSkin.copyFrom(skin);
+                    }else {
+                        registerNativeImageToIdentifier(skin, getTexture(player).getPath());
+                    }
+                }
+
                 NativeImage check = getEnchantedTexture(id, skin);
                 if (check != null) {
                     registerNativeImageToIdentifier(check, SKIN_NAMESPACE + id + "_enchant.png");
@@ -354,18 +367,18 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                 //blink 1 frame if either pink or blue optional
                 if (skin.getColor(52, 16) == -65281 || skin.getColor(52, 16) == -256) {
                     UUID_HasBlink.put(id, true);
-                    registerNativeImageToIdentifier(returnBlinkFace(skin, false), SKIN_NAMESPACE + id + "_blink.png");
+                    registerNativeImageToIdentifier(returnBlinkFace(transparentSkin, false), SKIN_NAMESPACE + id + "_blink.png");
                 } else {
                     UUID_HasBlink.put(id, false);
                 }
                 //blink is 2 frames with blue optional
                 if (skin.getColor(52, 16) == -256) {
                     UUID_HasBlink2.put(id, true);
-                    registerNativeImageToIdentifier(returnBlinkFace(skin, true), SKIN_NAMESPACE + id + "_blink2.png");
+                    registerNativeImageToIdentifier(returnBlinkFace(transparentSkin, true), SKIN_NAMESPACE + id + "_blink2.png");
                 } else {
                     UUID_HasBlink2.put(id, false);
                 }
-                System.out.println("player blink =" + UUID_HasBlink.get(id) + UUID_HasBlink2.get(id));
+
             } else {
                 //modMessage("Player has no texture features", false);
                 UUID_playerHasFeatures.put(id, false);
@@ -386,8 +399,46 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
         textureManager.registerTexture(new Identifier(identifierPath), bob);
     }
 
+    private int countTransparentInBox(NativeImage img,int count,int x1,int y1,int x2,int y2) {
+        for (int x = x1; x <= x2; x++) {
+            for (int y = y1; y <= y2; y++) {
+                if (img.getOpacity(x, y) != -1) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    private NativeImage returnTransparentSkin(NativeImage skin){
+        int countTransparent=0;
+        //map of bottom skin layer in cubes
+        countTransparent = countTransparentInBox(skin,countTransparent,8,0,23,15);
+        countTransparent = countTransparentInBox(skin,countTransparent,0,20,55,31);
+        countTransparent = countTransparentInBox(skin,countTransparent,0,8,7,15);
+        countTransparent = countTransparentInBox(skin,countTransparent,24,8,31,15);
+        countTransparent = countTransparentInBox(skin,countTransparent,0,16,11,19);
+        countTransparent = countTransparentInBox(skin,countTransparent,20,16,35,19);
+        countTransparent = countTransparentInBox(skin,countTransparent,44,16,51,19);
+        countTransparent = countTransparentInBox(skin,countTransparent,20,48,27,51);
+        countTransparent = countTransparentInBox(skin,countTransparent,36,48,43,51);
+        countTransparent = countTransparentInBox(skin,countTransparent,16,52,47,63);
+        //do not allow skins over 50% transparent
+        //1648 is total pixels that are not allowed transparent by vanilla
+        if (countTransparent > ((1648)*0.50)){
+            return null;
+        }else{
+            return skin;
+        }
+    }
+
     private NativeImage returnBlinkFace(NativeImage baseSkin, boolean isSecondFrame) {
         NativeImage texture = new NativeImage(64, 64, false);
+//        for (int x = 0; x <= 63; x++) {
+//            for (int y = 0; y <= 63; y++) {
+//                texture.setColor(x,y,0);
+//            }
+//        }
         texture.copyFrom(baseSkin);
         if (isSecondFrame) {
             //copy face 2
@@ -485,7 +536,23 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                 */
             byte[] result = Base64.getDecoder().decode(p.getValue());
             url = new String(result);
-            url = url.split("\n")[6].split("\"")[3].trim();
+            boolean nextIsSkin = false;
+            for (String line:
+                url.split("\n")) {
+                if (nextIsSkin){
+                    //System.out.println(line);
+                    //url = "http:"+line.split("http:")[1].replaceAll("[^a-zA-Z0-9/_.-]","");
+                    try {
+                        url = line.split("\"")[3].trim();
+                    }catch(Exception e){}
+                    break;
+                }
+                if (line.contains("SKIN")){
+                    nextIsSkin=true;
+                }
+            }
+
+
             System.out.println(url);
 
         }

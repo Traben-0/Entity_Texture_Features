@@ -108,6 +108,27 @@ public class ETFConfigScreen implements ETF_METHODS {
                             currently only works when the mob loads""")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.enchantedPotionEffects = newValue)
                     .build());
+        main.addEntry(entryBuilder.startBooleanToggle(Text.of("Enable Tridents"), ETFConfigData.enableTridents)
+                .setDefaultValue(true) // Recommended: Used when user click "Reset"
+                .setTooltip(new TranslatableText("""
+                            Allows tridents to use custom & emissive textures
+                            This toggle is here to support future CIT mod updates that may introduce this feature :)
+                            The trident item name will choose the texture file to use
+                            The texture 'trident_bobbystrident.png; will be chosen by the names:
+                            'Bobby's Trident', ' BoBb%Ys   Trid##en t', & 'bobbystrident'
+                            The texture 'trident_bobbystrident_e.png; will be emissive.""")) // Optional: Shown when the user hover over this option
+                .setSaveConsumer(newValue -> ETFConfigData.enableTridents = newValue) // Recommended: Called when user save the config
+                .build()); // Builds the option entry for cloth config
+        main.addEntry(entryBuilder.startBooleanToggle(Text.of("Enable Elytra Emissives"), ETFConfigData.enableElytra)
+                .setDefaultValue(true) // Recommended: Used when user click "Reset"
+                .setTooltip(new TranslatableText("""
+                            Allows Elytra to use emissive textures
+                            Elytra's only have emissive support as the CIT mod
+                            already handles customizing these and is willing
+                            to become compatible with this Mod's emissive format.
+                            May not be fully compatible yet hence the option.""")) // Optional: Shown when the user hover over this option
+                .setSaveConsumer(newValue -> ETFConfigData.enableElytra = newValue) // Recommended: Called when user save the config
+                .build()); // Builds the option entry for cloth config
 
 //            SubCategoryBuilder dashMobs= entryBuilder.startSubCategory(Text.of("Additional dash settings"));
 //            dashMobs.add(0, entryBuilder.startBooleanToggle(Text.of("Creepers can dash"), config.creeperCanDash)
