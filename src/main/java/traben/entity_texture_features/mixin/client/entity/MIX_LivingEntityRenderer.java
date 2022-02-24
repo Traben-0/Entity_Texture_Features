@@ -38,7 +38,10 @@ import traben.entity_texture_features.config.ETFConfig;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Collection;
+import java.util.UUID;
 
 import static traben.entity_texture_features.client.ETF_CLIENT.*;
 
@@ -321,75 +324,87 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
     }
 
     private void checkPlayerForSkinFeatures(UUID id, T player) {
-        NativeImage skin = getSkin(id);
-        if (skin != null) {
-            if (skin.getColor(1, 16) == -16776961 &&
-                    skin.getColor(0, 16) == -16777089 &&
-                    skin.getColor(0, 17) == -16776961 &&
-                    skin.getColor(2, 16) == -16711936 &&
-                    skin.getColor(3, 16) == -16744704 &&
-                    skin.getColor(3, 17) == -16711936 &&
-                    skin.getColor(0, 18) == -65536 &&
-                    skin.getColor(0, 19) == -8454144 &&
-                    skin.getColor(1, 19) == -65536 &&
-                    skin.getColor(3, 18) == -1 &&
-                    skin.getColor(2, 19) == -1 &&
-                    skin.getColor(3, 18) == -1
-            ) {
-                //this has texture features
-                modMessage("Found Player {" + id + "} with texture features in skin.", false);
-                UUID_playerHasFeatures.put(id, true);
-                //find what features
+        //if on an enemy team option to disable skin features loading
+        if(ETFConfigData.skinFeaturesEnabled
+            &&(ETFConfigData.enableEnemyTeamPlayersSkinFeatures
+                || (player.isTeammate(MinecraftClient.getInstance().player)
+                || player.getScoreboardTeam() == null))
+        ) {
+            NativeImage skin = getSkin(id);
+            if (skin != null) {
+                if (skin.getColor(1, 16) == -16776961 &&
+                        skin.getColor(0, 16) == -16777089 &&
+                        skin.getColor(0, 17) == -16776961 &&
+                        skin.getColor(2, 16) == -16711936 &&
+                        skin.getColor(3, 16) == -16744704 &&
+                        skin.getColor(3, 17) == -16711936 &&
+                        skin.getColor(0, 18) == -65536 &&
+                        skin.getColor(0, 19) == -8454144 &&
+                        skin.getColor(1, 19) == -65536 &&
+                        skin.getColor(3, 18) == -1 &&
+                        skin.getColor(2, 19) == -1 &&
+                        skin.getColor(3, 18) == -1
+                ) {
+                    //this has texture features
+                    modMessage("Found Player {" + id + "} with texture features in skin.", false);
+                    UUID_playerHasFeatures.put(id, true);
+                    //find what features
 
-                //check for transparency options
-                NativeImage transparentSkin = new NativeImage(64,64,false);
-                transparentSkin.copyFrom(skin);
-                if (skin.getColor(52, 17) == -65281) {
-                    transparentSkin = returnTransparentSkin(skin);
-                    if( transparentSkin == null) {
-                        transparentSkin = new NativeImage(64,64,false);
-                        transparentSkin.copyFrom(skin);
-                    }else {
-                        registerNativeImageToIdentifier(skin, getTexture(player).getPath());
+                    //check for transparency options
+                    NativeImage transparentSkin = new NativeImage(64, 64, false);
+                    transparentSkin.copyFrom(skin);
+                    if (ETFConfigData.skinFeaturesEnableTransparency
+
+                    ) {
+                        if (skin.getColor(52, 17) == -65281) {
+                            transparentSkin = returnTransparentSkin(skin);
+                            if (transparentSkin == null) {
+                                transparentSkin = new NativeImage(64, 64, false);
+                                transparentSkin.copyFrom(skin);
+                            } else {
+                                registerNativeImageToIdentifier(skin, getTexture(player).getPath());
+                            }
+                        }
                     }
-                }
 
-                NativeImage check = getEnchantedTexture(id, skin);
-                if (check != null) {
-                    registerNativeImageToIdentifier(check, SKIN_NAMESPACE + id + "_enchant.png");
-                }
+                    NativeImage check = getEnchantedTexture(id, skin);
+                    if (check != null) {
+                        registerNativeImageToIdentifier(check, SKIN_NAMESPACE + id + "_enchant.png");
+                    }
 
-                check = getEmissiveTexture(id, skin);
-                if (check != null) {
-                    registerNativeImageToIdentifier(check, SKIN_NAMESPACE + id + "_e.png");
-                }
-                //pink = -65281, blue = -256
-                //blink 1 frame if either pink or blue optional
-                if (skin.getColor(52, 16) == -65281 || skin.getColor(52, 16) == -256) {
-                    UUID_HasBlink.put(id, true);
-                    registerNativeImageToIdentifier(returnBlinkFace(transparentSkin, false), SKIN_NAMESPACE + id + "_blink.png");
+                    check = getEmissiveTexture(id, skin);
+                    if (check != null) {
+                        registerNativeImageToIdentifier(check, SKIN_NAMESPACE + id + "_e.png");
+                    }
+                    //pink = -65281, blue = -256
+                    //blink 1 frame if either pink or blue optional
+                    if (skin.getColor(52, 16) == -65281 || skin.getColor(52, 16) == -256) {
+                        UUID_HasBlink.put(id, true);
+                        registerNativeImageToIdentifier(returnBlinkFace(transparentSkin, false), SKIN_NAMESPACE + id + "_blink.png");
+                    } else {
+                        UUID_HasBlink.put(id, false);
+                    }
+                    //blink is 2 frames with blue optional
+                    if (skin.getColor(52, 16) == -256) {
+                        UUID_HasBlink2.put(id, true);
+                        registerNativeImageToIdentifier(returnBlinkFace(transparentSkin, true), SKIN_NAMESPACE + id + "_blink2.png");
+                    } else {
+                        UUID_HasBlink2.put(id, false);
+                    }
+
                 } else {
-                    UUID_HasBlink.put(id, false);
+                    //modMessage("Player has no texture features", false);
+                    UUID_playerHasFeatures.put(id, false);
                 }
-                //blink is 2 frames with blue optional
-                if (skin.getColor(52, 16) == -256) {
-                    UUID_HasBlink2.put(id, true);
-                    registerNativeImageToIdentifier(returnBlinkFace(transparentSkin, true), SKIN_NAMESPACE + id + "_blink2.png");
-                } else {
-                    UUID_HasBlink2.put(id, false);
-                }
-
-            } else {
+            } else { //http failed
                 //modMessage("Player has no texture features", false);
+                //UUID_playerHasFeatures.put(id, false);
+
                 UUID_playerHasFeatures.put(id, false);
             }
-        } else { //http failed
-            //modMessage("Player has no texture features", false);
-            //UUID_playerHasFeatures.put(id, false);
-
+        }else{
             UUID_playerHasFeatures.put(id, false);
         }
-
 
     }
 
@@ -399,11 +414,11 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
         textureManager.registerTexture(new Identifier(identifierPath), bob);
     }
 
-    private int countTransparentInBox(NativeImage img,int count,int x1,int y1,int x2,int y2) {
+    private long countTransparentInBox(NativeImage img,long count,int x1,int y1,int x2,int y2) {
         for (int x = x1; x <= x2; x++) {
             for (int y = y1; y <= y2; y++) {
                 if (img.getOpacity(x, y) != -1) {
-                    count++;
+                    count = count + img.getOpacity(x, y);
                 }
             }
         }
@@ -411,7 +426,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
     }
 
     private NativeImage returnTransparentSkin(NativeImage skin){
-        int countTransparent=0;
+        long countTransparent=0;
         //map of bottom skin layer in cubes
         countTransparent = countTransparentInBox(skin,countTransparent,8,0,23,15);
         countTransparent = countTransparentInBox(skin,countTransparent,0,20,55,31);
@@ -423,9 +438,12 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
         countTransparent = countTransparentInBox(skin,countTransparent,20,48,27,51);
         countTransparent = countTransparentInBox(skin,countTransparent,36,48,43,51);
         countTransparent = countTransparentInBox(skin,countTransparent,16,52,47,63);
-        //do not allow skins over 50% transparent
+        //do not allow skins over 66% transparent
         //1648 is total pixels that are not allowed transparent by vanilla
-        if (countTransparent > ((1648)*0.50)){
+        //if (countTransparent > ((1648)*0.66)){
+        int average = (int)(countTransparent/1648);
+        System.out.println("averages"+average +"-"+0x99);
+        if (average > 0x99){
             return null;
         }else{
             return skin;

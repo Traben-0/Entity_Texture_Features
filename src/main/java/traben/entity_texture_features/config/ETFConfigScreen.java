@@ -3,9 +3,11 @@ package traben.entity_texture_features.config;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.registry.Registry;
 import traben.entity_texture_features.client.ETF_METHODS;
 
 import java.awt.*;
@@ -22,6 +24,7 @@ public class ETFConfigScreen implements ETF_METHODS {
             //Screen ModConfigScreen = builder.build();
             ConfigEntryBuilder entryBuilder = builder.entryBuilder();
             ConfigCategory main = builder.getOrCreateCategory(Text.of("Settings"));
+            main.setBackground(Registry.BLOCK.getId(Blocks.CRYING_OBSIDIAN));
         if(puzzleDetected){
             main.addEntry(entryBuilder.startTextDescription(Text.of("@Motschen's Mod 'Puzzle' was detected:\n please ensure you disable emissive entities in that mod's settings!"))
                     .setColor(new Color(240,195,15).getRGB())
@@ -94,6 +97,7 @@ public class ETFConfigScreen implements ETF_METHODS {
                             Allows player skins to use the features added by this mod.
                             Features are set in the players skin file.
                              - Instructions can be found on the mod page
+                             - This can be disabled for enemy team players for PVP
                             Features include:
                              - Emissive pixels
                              - Enchanted pixels
@@ -101,6 +105,27 @@ public class ETFConfigScreen implements ETF_METHODS {
                              - maybe more...
                             """)) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.skinFeaturesEnabled = newValue) // Recommended: Called when user save the config
+                .build()); // Builds the option entry for cloth config
+        main.addEntry(entryBuilder.startBooleanToggle(Text.of("Enable Player Skin Feature for Enemy Teams"), ETFConfigData.enableEnemyTeamPlayersSkinFeatures)
+                .setDefaultValue(true) // Recommended: Used when user click "Reset"
+                .setTooltip(new TranslatableText("""
+                            Allows player skins to be enabled/disabled
+                            for players on opposing teams in PVP games
+                            otherwise they may be harder to see
+                            and may affect balance
+                            ///THIS SETTING REQUIRES A RESTART\\\\\\
+                            """)) // Optional: Shown when the user hover over this option
+                .setSaveConsumer(newValue -> ETFConfigData.enableEnemyTeamPlayersSkinFeatures = newValue) // Recommended: Called when user save the config
+                .build()); // Builds the option entry for cloth config
+        main.addEntry(entryBuilder.startBooleanToggle(Text.of("Player Skin Feature: Transparency"), ETFConfigData.skinFeaturesEnableTransparency)
+                .setDefaultValue(true) // Recommended: Used when user click "Reset"
+                .setTooltip(new TranslatableText("""
+                            Allows player skins to be transparent on the base texture
+                            WARNING: the texture can only be an average of 66% transparent
+                            - must be enabled by pixel rule
+                            - uses transparency in the skin itself
+                            """)) // Optional: Shown when the user hover over this option
+                .setSaveConsumer(newValue -> ETFConfigData.skinFeaturesEnableTransparency = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
         main.addEntry(entryBuilder.startEnumSelector(Text.of("Mob potion effects"),ETFConfig.enchantedPotionEffectsEnum.class, ETFConfigData.enchantedPotionEffects)
             .setDefaultValue(ETFConfig.enchantedPotionEffectsEnum.NONE)
