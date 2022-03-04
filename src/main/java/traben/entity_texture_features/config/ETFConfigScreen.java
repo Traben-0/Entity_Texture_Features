@@ -140,9 +140,9 @@ public class ETFConfigScreen implements ETF_METHODS {
                 .setDefaultValue(true) // Recommended: Used when user click "Reset"
                 .setTooltip(new TranslatableText("""
                             Allows player skins to be transparent on the base texture
-                            WARNING: the texture can only be an average of 66% transparent
-                            - must be enabled by pixel rule
-                            - uses transparency in the skin itself
+                            WARNING: the texture can only be an average of
+                             60% transparent to prevent abuse
+                            - uses transparency in the skin texture itself
                             """)) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.skinFeaturesEnableTransparency = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
