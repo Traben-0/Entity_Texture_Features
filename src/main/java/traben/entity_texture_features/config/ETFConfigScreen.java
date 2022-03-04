@@ -31,8 +31,8 @@ public class ETFConfigScreen implements ETF_METHODS {
                     .build()); // Builds the option entry for cloth config
         }
 
-            //SubCategoryBuilder randoms= entryBuilder.startSubCategory(Text.of("Random / Custom Mobs settings"));
-        optifineOptions.addEntry( entryBuilder.startBooleanToggle(Text.of("Enable Optifine Random mobs"), ETFConfigData.enableRandomTextures)
+        SubCategoryBuilder randoms= entryBuilder.startSubCategory(Text.of("Random / Custom Mobs settings"));
+        randoms.add(0, entryBuilder.startBooleanToggle(Text.of("Enable Optifine Random mobs"), ETFConfigData.enableRandomTextures)
                     .setDefaultValue(true) // Recommended: Used when user click "Reset"
                     .setTooltip(new TranslatableText("""
                             Enables Randomized entity textures
@@ -40,8 +40,21 @@ public class ETFConfigScreen implements ETF_METHODS {
                             using the optifine format""")) // Optional: Shown when the user hover over this option
                     .setSaveConsumer(newValue -> ETFConfigData.enableRandomTextures = newValue) // Recommended: Called when user save the config
                     .build());
-            //randoms.add(1, );
-            //optifineOptions.addEntry(randoms.build());
+            randoms.add(1, entryBuilder.startIntSlider(Text.of("Texture update frequency"), ETFConfigData.textureUpdateFrequency,1,1024)
+                    .setDefaultValue(40) // Recommended: Used when user click "Reset"
+                    .setMin(1)
+                    .setMax(1024)
+                    .setTooltip(new TranslatableText("""
+                            Sets how often mobs textures will update
+                            unprompted for changes like health & age
+                            Lower values WILL cause lag
+                            40 should be roughly once a second
+                            //necessary for servers\\\\
+                            //Not strictly required in Single-Player\\\\
+                            """)) // Optional: Shown when the user hover over this option
+                    .setSaveConsumer(newValue -> ETFConfigData.textureUpdateFrequency = newValue) // Recommended: Called when user save the config
+                    .build());
+            optifineOptions.addEntry(randoms.build());
         SubCategoryBuilder emissives= entryBuilder.startSubCategory(Text.of("Emissive Texture settings"));
          emissives.add(0, entryBuilder.startBooleanToggle(Text.of("Enable Optifine Emissive entity textures"), ETFConfigData.enableEmissiveTextures)
                 .setDefaultValue(true) // Recommended: Used when user click "Reset"

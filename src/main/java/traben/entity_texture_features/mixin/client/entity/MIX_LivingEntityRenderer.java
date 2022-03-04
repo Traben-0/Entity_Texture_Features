@@ -125,6 +125,22 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
         ) {
             renderPotion(livingEntity, matrixStack, vertexConsumerProvider);
         }
+
+        //randomly mark texture for rechecking randomized by UUID
+        long randomizer = ETFConfigData.textureUpdateFrequency* 25L;
+        if (livingEntity.world.isClient()
+                && System.currentTimeMillis() % randomizer == Math.abs(id.hashCode()) % randomizer
+        ) {
+            if (hasUpdatableRandomCases.containsKey(id)) {
+                if (!UUID_entityAwaitingDataClearing.containsKey(id)) {
+                    UUID_entityAwaitingDataClearing.put(id, System.currentTimeMillis());
+                }
+            }else{
+                if (!UUID_entityAwaitingDataClearing.containsKey(id)) {
+                    UUID_entityAwaitingDataClearing.put(id, System.currentTimeMillis());
+                }
+            }
+        }
     }
 
 
