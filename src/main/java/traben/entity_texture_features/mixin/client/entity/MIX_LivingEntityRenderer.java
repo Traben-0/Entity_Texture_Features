@@ -132,7 +132,8 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                 && System.currentTimeMillis() % randomizer == Math.abs(id.hashCode()) % randomizer
         ) {
             if (hasUpdatableRandomCases.containsKey(id)) {
-                if (!UUID_entityAwaitingDataClearing.containsKey(id)) {
+                if (hasUpdatableRandomCases.get(id)
+                        && !UUID_entityAwaitingDataClearing.containsKey(id)) {
                     UUID_entityAwaitingDataClearing.put(id, System.currentTimeMillis());
                 }
             }else{
