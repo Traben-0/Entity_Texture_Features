@@ -11,19 +11,16 @@ import org.apache.logging.log4j.LogManager;
 public class ETFModMenu implements ModMenuApi {
 
 
-
-        @Override
-        public ConfigScreenFactory<?> getModConfigScreenFactory() {
-                try {
-                        ETFConfigScreen configGUI = new ETFConfigScreen();
-                        ConfigScreenFactory<?> screen = parent -> configGUI.getConfigScreen(parent, MinecraftClient.getInstance().world != null);
-                        return screen;
-                }
-                catch(NoClassDefFoundError e) {
-                        //I definitely didn't catch an error, you saw nothing...
-                        LogManager.getLogger().warn("[Entity Texture Features]: Mod settings cannot be edited in Mod Menu without cloth config");
-                        return null;
-                }
-
+    @Override
+    public ConfigScreenFactory<?> getModConfigScreenFactory() {
+        try {
+            ETFConfigScreen configGUI = new ETFConfigScreen();
+            return parent -> configGUI.getConfigScreen(parent, MinecraftClient.getInstance().world != null);
+        } catch (NoClassDefFoundError e) {
+            //I definitely didn't catch an error, you saw nothing...
+            LogManager.getLogger().warn("[Entity Texture Features]: Mod settings cannot be edited in Mod Menu without cloth config");
+            return null;
         }
+
     }
+}

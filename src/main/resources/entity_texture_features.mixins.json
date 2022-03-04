@@ -4,18 +4,16 @@
   "package": "traben.entity_texture_features.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
-    "client.entity.extras.MIX_BuiltinModelItemRenderer",
-    "client.entity.MIX_ClientPlayerEntity",
-    "client.entity.extras.MIX_ElytraFeatureRenderer",
+    "client.entity.MIX_EntityRender",
     "client.entity.MIX_LivingEntityRenderer",
+    "client.entity.extras.MIX_BuiltinModelItemRenderer",
+    "client.entity.extras.MIX_ElytraFeatureRenderer",
     "client.entity.extras.MIX_TridentEntity",
     "client.entity.extras.MIX_TridentEntityRenderer",
     "client.entity.textureUpdaters.MIX_PlayerEntity",
-    "client.entity.textureUpdaters.MIX_SimpleResourceReload",
-    "client.entity.MIX_EntityRender"
+    "client.entity.textureUpdaters.MIX_SimpleResourceReload"
   ],
   "mixins": [
-
   ],
   "injectors": {
     "defaultRequire": 1

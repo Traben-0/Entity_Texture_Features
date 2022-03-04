@@ -14,6 +14,7 @@ public class ETFConfig {
     public int blinkFrequency = 150;
     public boolean enableTridents = true;
     public boolean enableElytra = true;
+
     public enum enchantedPotionEffectsEnum {
         NONE,
         ENCHANTED,

@@ -29,6 +29,7 @@ public abstract class MIX_ElytraFeatureRenderer<T extends LivingEntity, M extend
     public MIX_ElytraFeatureRenderer(FeatureRendererContext<T, M> context) {
         super(context);
     }
+
     @Final
     @Shadow
     private ElytraEntityModel<T> elytra;
@@ -59,7 +60,6 @@ public abstract class MIX_ElytraFeatureRenderer<T extends LivingEntity, M extend
             String fileString = identifier.getPath();
             if (Texture_Emissive.containsKey(fileString)) {
                 if (Texture_Emissive.get(fileString) != null) {
-                    //VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getEyes(Texture_Emissive.get(fileString)));
                     VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(Texture_Emissive.get(fileString), true));
                     //one check most efficient instead of before and after applying
                     if (ETFConfigData.doShadersEmissiveFix) {

@@ -15,11 +15,13 @@ import static traben.entity_texture_features.client.ETF_CLIENT.UUID_entityAwaiti
 @Mixin(PlayerEntity.class)
 public abstract class MIX_PlayerEntity {
 
-    //will force update entity texture at any player interaction this should cover things like nametagging and collar changing
+    //will force update entity texture at any player interaction useful for debugging
     @Inject(method = "interact", at = @At("RETURN"))
     private void injected(Entity entity, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
-        if (((LivingEntity)(Object)this).world.isClient()) {
-            if (!UUID_entityAwaitingDataClearing.containsKey(entity.getUuid())){ UUID_entityAwaitingDataClearing.put(entity.getUuid(),System.currentTimeMillis());}
+        if (((LivingEntity) (Object) this).world.isClient()) {
+            if (!UUID_entityAwaitingDataClearing.containsKey(entity.getUuid())) {
+                UUID_entityAwaitingDataClearing.put(entity.getUuid(), System.currentTimeMillis());
+            }
         }
     }
 }

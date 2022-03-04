@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.Identifier;
+import org.apache.logging.log4j.LogManager;
 import traben.entity_texture_features.config.ETFConfig;
 
 import java.io.File;
@@ -53,7 +54,7 @@ public class ETF_CLIENT implements ModInitializer, ETF_METHODS {
 
     @Override
     public void onInitialize() {
-        System.out.println("[Entity Texture Features]: Loaded!");
+        LogManager.getLogger().info("[Entity Texture Features]: Loading!");
         loadConfig();
     }
 

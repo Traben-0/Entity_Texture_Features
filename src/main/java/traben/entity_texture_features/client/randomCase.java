@@ -13,8 +13,6 @@ import java.util.UUID;
 import static traben.entity_texture_features.client.ETF_CLIENT.hasUpdatableRandomCases;
 
 public class randomCase implements ETF_METHODS {
-    //Integer[] suffixes;
-    //Integer[] weights;
     private final Integer[] weightedSuffixes;
     private final String[] biomes;
     private final Integer[] heights;
@@ -41,8 +39,7 @@ public class randomCase implements ETF_METHODS {
                Integer[] moonX,
                String[] daytimeX
     ) {
-        //Integer[] suffixes = suffixesX;
-        //Integer[] weights = weightsX;
+
         biomes = biomesX;
         heights = heightsX;
         names = namesX;
@@ -118,11 +115,11 @@ public class randomCase implements ETF_METHODS {
             //String entityBiome = entity.world.getBiome(entity.getBlockPos()).getCategory().getName();//has no caps// desert
             //1.18.1 old mapping String entityBiome = Objects.requireNonNull(entity.world.getRegistryManager().get(Registry.BIOME_KEY).getId(entity.world.getBiome(entity.getBlockPos()))).toString();
             String entityBiome = entity.world.getBiome(entity.getBlockPos()).toString();
-            entityBiome = entityBiome.replace("minecraft:","");
+            entityBiome = entityBiome.replace("minecraft:", "");
             boolean check = false;
             for (String str :
                     biomes) {
-                if (str.trim().replace("minecraft:","").toLowerCase().equals(entityBiome)) {
+                if (str.trim().replace("minecraft:", "").toLowerCase().equals(entityBiome)) {
                     check = true;
                     break;
                 }
@@ -184,7 +181,7 @@ public class randomCase implements ETF_METHODS {
                 }
 
                 allBoolean = check;
-            }else{
+            } else {
                 allBoolean = false;
             }
         }
@@ -258,7 +255,7 @@ public class randomCase implements ETF_METHODS {
         if (allBoolean && baby != 0) {
             wasTestedByUpdateable = true;
             allBoolean = (baby == 1) == entity.isBaby();
-            System.out.println("baby "+allBoolean);
+            System.out.println("baby " + allBoolean);
         }
         if (allBoolean && !onlyUpdatables && weather != 0) {
             boolean raining = entity.world.isRaining();
