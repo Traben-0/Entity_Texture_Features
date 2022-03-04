@@ -62,13 +62,15 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
     private void applyRenderFeatures(T livingEntity, float a, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
         UUID id = livingEntity.getUuid();
         if (!(livingEntity instanceof PlayerEntity)) {
-            String fileString = getTexture(livingEntity).getPath();
+            //String fileString = getTexture(livingEntity).getPath();
+            String fileString = returnAlteredTexture((LivingEntityRenderer)(Object)this,livingEntity).getPath();
             //System.out.println(fileString);
-            if (ETFConfigData.enableRandomTextures && UUID_randomTextureSuffix.containsKey(id)) {
-                if (UUID_randomTextureSuffix.get(id) != 0 && optifineOldOrVanilla.containsKey(fileString)) {
-                    fileString = returnOptifineOrVanillaPath(fileString, UUID_randomTextureSuffix.get(id), "");
-                }
-            }
+//            if (ETFConfigData.enableRandomTextures && UUID_randomTextureSuffix.containsKey(id)) {
+//                if (UUID_randomTextureSuffix.get(id) != 0 && optifineOldOrVanilla.containsKey(fileString)) {
+//                    fileString = returnOptifineOrVanillaPath(fileString, UUID_randomTextureSuffix.get(id), "");
+//                }
+//            }
+
             if (ETFConfigData.enableEmissiveTextures) {
                 if (Texture_Emissive.containsKey(fileString)) {
                     if (Texture_Emissive.get(fileString) != null) {
@@ -127,7 +129,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
         }
 
         //randomly mark texture for rechecking randomized by UUID
-        long randomizer = ETFConfigData.textureUpdateFrequency* 25L;
+        long randomizer = ETFConfigData.textureUpdateFrequency* 20L;
         if (livingEntity.world.isClient()
                 && System.currentTimeMillis() % randomizer == Math.abs(id.hashCode()) % randomizer
         ) {

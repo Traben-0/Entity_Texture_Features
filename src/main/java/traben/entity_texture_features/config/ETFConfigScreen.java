@@ -40,17 +40,16 @@ public class ETFConfigScreen implements ETF_METHODS {
                             using the optifine format""")) // Optional: Shown when the user hover over this option
                     .setSaveConsumer(newValue -> ETFConfigData.enableRandomTextures = newValue) // Recommended: Called when user save the config
                     .build());
-            randoms.add(1, entryBuilder.startIntSlider(Text.of("Texture update frequency"), ETFConfigData.textureUpdateFrequency,1,1024)
-                    .setDefaultValue(40) // Recommended: Used when user click "Reset"
+            randoms.add(1, entryBuilder.startIntSlider(Text.of("Texture update frequency"), ETFConfigData.textureUpdateFrequency,1,64)
+                    .setDefaultValue(3) // Recommended: Used when user click "Reset"
                     .setMin(1)
-                    .setMax(1024)
+                    .setMax(64)
                     .setTooltip(new TranslatableText("""
                             Sets how often mobs textures will update
                             unprompted for changes like health & age
-                            Lower values WILL cause lag
-                            40 should be roughly once a second
-                            //necessary for servers\\\\
-                            //Not strictly required in Single-Player\\\\
+                            Lower values MAY cause lag
+                            1 should be fairly instant
+                            64 should be a few seconds delay
                             """)) // Optional: Shown when the user hover over this option
                     .setSaveConsumer(newValue -> ETFConfigData.textureUpdateFrequency = newValue) // Recommended: Called when user save the config
                     .build());
