@@ -2,29 +2,37 @@ package traben.entity_texture_features.client;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
+import com.mojang.authlib.properties.PropertyMap;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.texture.NativeImage;
+import net.minecraft.client.texture.NativeImageBackedTexture;
+import net.minecraft.client.texture.TextureManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.resource.Resource;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 import org.apache.logging.log4j.LogManager;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.UUID;
+import java.net.URL;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 import static traben.entity_texture_features.client.ETF_CLIENT.*;
 
-public interface ETF_METHODS {
+public interface ETF_METHODS<T extends LivingEntity> {
 
 
     default boolean isExistingFile(Identifier id) {
@@ -64,7 +72,9 @@ public interface ETF_METHODS {
         UUID_playerSkinDownloadedYet.clear();
         for (HttpURLConnection h :
                 UUID_HTTPtoDisconnect.values()) {
-            h.disconnect();
+            if (h != null) {
+                h.disconnect();
+            }
         }
         UUID_HTTPtoDisconnect.clear();
 
@@ -512,5 +522,284 @@ public interface ETF_METHODS {
         } catch (IOException e) {
             modMessage("Config could not be saved", false);
         }
+    }
+
+    default void checkPlayerForSkinFeatures(UUID id, T player) {
+        //if on an enemy team option to disable skin features loading
+        if (ETFConfigData.skinFeaturesEnabled
+                && (ETFConfigData.enableEnemyTeamPlayersSkinFeatures
+                || (player.isTeammate(MinecraftClient.getInstance().player)
+                || player.getScoreboardTeam() == null))
+        ) {
+            UUID_playerSkinDownloadedYet.put(id, false);
+            getSkin(id, player);
+        }
+    }
+
+    private void getSkin(UUID id, T player) {
+        try {
+            String url = "";
+            PlayerListEntry playerListEntry = MinecraftClient.getInstance().getNetworkHandler().getPlayerListEntry(id);
+            GameProfile gameProfile = playerListEntry.getProfile();
+            PropertyMap texturesMap = gameProfile.getProperties();
+            Collection<Property> properties = texturesMap.get("textures");
+            for (Property p :
+                    properties) {
+                //System.out.println(p.getValue());
+                /*
+{
+  "timestamp" : 1645524822329,
+  "profileId" : "fd22e573178c415a94fee476b328abfd",
+  "profileName" : "Benjamin",
+  "textures" : {
+    "SKIN" : {
+      "url" : "http://textures.minecraft.net/texture/a81cd0629057a42f3d8b7b714b1e233a3f89e33faeb67d3796a52df44619e888"
+    },
+    "CAPE" : {
+      "url" : "http://textures.minecraft.net/texture/2340c0e03dd24a11b15a8b33c2a7e9e32abb2051b2481d0ba7defd635ca7a933"
+    }
+  }
+}
+                */
+                byte[] result = Base64.getDecoder().decode(p.getValue());
+                url = new String(result);
+                url = url.split("SKIN")[1];
+                url = url.split("http")[1];
+                url = url.split("\"")[0];
+                url = "http" + url.trim();
+
+            }
+
+            String finalUrl = url;
+            //CompletableFuture<?> loader =
+            CompletableFuture.runAsync(() -> {
+                HttpURLConnection httpURLConnection = null;
+                try {
+                    httpURLConnection = (HttpURLConnection) (new URL(finalUrl)).openConnection(MinecraftClient.getInstance().getNetworkProxy());
+                    httpURLConnection.setDoInput(true);
+                    httpURLConnection.setDoOutput(false);
+                    httpURLConnection.connect();
+                    if (httpURLConnection.getResponseCode() / 100 == 2) {
+                        InputStream inputStream = httpURLConnection.getInputStream();
+                        MinecraftClient.getInstance().execute(() -> {
+                            NativeImage nativeImage = this.loadTexture(inputStream);
+                            if (nativeImage != null) {
+                                skinLoaded(nativeImage, id);
+                            } else {
+                                modMessage("Player skin {" + player.getDisplayName().getString() + "} unavailable for feature check", false);
+                                UUID_playerHasFeatures.put(id, false);
+
+                            }
+                            if (UUID_HTTPtoDisconnect.containsKey(id)) {
+                                UUID_HTTPtoDisconnect.get(id).disconnect();
+                                UUID_HTTPtoDisconnect.remove(id);
+                            }
+                        });
+
+                    }
+                } catch (Exception var6) {
+                    UUID_HTTPtoDisconnect.put(id, httpURLConnection);
+                } finally {
+                    UUID_HTTPtoDisconnect.put(id, httpURLConnection);
+                }
+
+            }, Util.getMainWorkerExecutor());
+
+        } catch (Exception e) {
+            //
+        }
+    }
+
+    private NativeImage loadTexture(InputStream stream) {
+        NativeImage nativeImage = null;
+
+        try {
+            nativeImage = NativeImage.read(stream);
+
+        } catch (Exception var4) {
+            System.out.println("failed 165165651" + var4);
+        }
+
+        return nativeImage;
+    }
+
+    private void skinLoaded(NativeImage skin, UUID id) {
+        UUID_playerSkinDownloadedYet.put(id, true);
+        if (skin != null) {
+            if (skin.getColor(1, 16) == -16776961 &&
+                    skin.getColor(0, 16) == -16777089 &&
+                    skin.getColor(0, 17) == -16776961 &&
+                    skin.getColor(2, 16) == -16711936 &&
+                    skin.getColor(3, 16) == -16744704 &&
+                    skin.getColor(3, 17) == -16711936 &&
+                    skin.getColor(0, 18) == -65536 &&
+                    skin.getColor(0, 19) == -8454144 &&
+                    skin.getColor(1, 19) == -65536 &&
+                    skin.getColor(3, 18) == -1 &&
+                    skin.getColor(2, 19) == -1 &&
+                    skin.getColor(3, 18) == -1
+            ) {
+                //this has texture features
+                modMessage("Found Player {" + id + "} with texture features in skin.", false);
+                UUID_playerHasFeatures.put(id, true);
+                //find what features
+
+                //check for transparency options
+                if (ETFConfigData.skinFeaturesEnableTransparency) {
+                    if (canTransparentSkin(skin)) {
+                        Identifier transId = new Identifier(SKIN_NAMESPACE + id + "_transparent.png");
+                        UUID_playerTransparentSkinId.put(id, transId);
+                        registerNativeImageToIdentifier(skin, transId.getPath());
+
+                    } else {
+                        modMessage("Skin was too transparent or had other problems", false);
+                    }
+                }
+
+                NativeImage check = getEnchantedTexture(id, skin);
+                if (check != null) {
+                    registerNativeImageToIdentifier(check, SKIN_NAMESPACE + id + "_enchant.png");
+                }
+
+                check = getEmissiveTexture(id, skin);
+                if (check != null) {
+                    registerNativeImageToIdentifier(check, SKIN_NAMESPACE + id + "_e.png");
+                }
+                //pink = -65281, blue = -256
+                //blink 1 frame if either pink or blue optional
+                if (skin.getColor(52, 16) == -65281 || skin.getColor(52, 16) == -256) {
+                    UUID_HasBlink.put(id, true);
+                    registerNativeImageToIdentifier(returnBlinkFace(skin, false), SKIN_NAMESPACE + id + "_blink.png");
+                } else {
+                    UUID_HasBlink.put(id, false);
+                }
+                //blink is 2 frames with blue optional
+                if (skin.getColor(52, 16) == -256) {
+                    UUID_HasBlink2.put(id, true);
+                    registerNativeImageToIdentifier(returnBlinkFace(skin, true), SKIN_NAMESPACE + id + "_blink2.png");
+                } else {
+                    UUID_HasBlink2.put(id, false);
+                }
+            } else {
+                UUID_playerHasFeatures.put(id, false);
+            }
+        } else { //http failed
+            UUID_playerHasFeatures.put(id, false);
+        }
+    }
+
+    private void registerNativeImageToIdentifier(NativeImage img, String identifierPath) {
+        TextureManager textureManager = MinecraftClient.getInstance().getTextureManager();
+        NativeImageBackedTexture bob = new NativeImageBackedTexture(img);
+        textureManager.registerTexture(new Identifier(identifierPath), bob);
+
+    }
+
+    private int countTransparentInBox(NativeImage img, int x1, int y1, int x2, int y2) {
+        int counter = 0;
+        for (int x = x1; x <= x2; x++) {
+            for (int y = y1; y <= y2; y++) {
+                //ranges from  0 to 127  then wraps around negatively -127 to -1  totalling 0 to 255
+                int i = img.getOpacity(x, y);
+                if (i < 0) {
+                    i += 256;
+                }
+                //adjusted to 0 to 256
+                counter += i;
+
+            }
+        }
+        return counter;
+    }
+
+    private boolean canTransparentSkin(NativeImage skin) {
+        int countTransparent = 0;
+        //map of bottom skin layer in cubes
+        countTransparent += countTransparentInBox(skin, 8, 0, 23, 15);
+        countTransparent += countTransparentInBox(skin, 0, 20, 55, 31);
+        countTransparent += countTransparentInBox(skin, 0, 8, 7, 15);
+        countTransparent += countTransparentInBox(skin, 24, 8, 31, 15);
+        countTransparent += countTransparentInBox(skin, 0, 16, 11, 19);
+        countTransparent += countTransparentInBox(skin, 20, 16, 35, 19);
+        countTransparent += countTransparentInBox(skin, 44, 16, 51, 19);
+        countTransparent += countTransparentInBox(skin, 20, 48, 27, 51);
+        countTransparent += countTransparentInBox(skin, 36, 48, 43, 51);
+        countTransparent += countTransparentInBox(skin, 16, 52, 47, 63);
+        //do not allow skins under 40% ish total opacity
+        //1648 is total pixels that are not allowed transparent by vanilla
+        int average = (countTransparent / 1648); // should be 0 to 256
+        return average >= 100;
+    }
+
+    private NativeImage returnBlinkFace(NativeImage baseSkin, boolean isSecondFrame) {
+        NativeImage texture = new NativeImage(64, 64, false);
+        texture.copyFrom(baseSkin);
+        if (isSecondFrame) {
+            //copy face 2
+            for (int x = 24; x <= 31; x++) {
+                for (int y = 0; y <= 7; y++) {
+                    texture.setColor(x - 16, y + 8, baseSkin.getColor(x, y));
+                }
+            }
+            //copy face overlay 2
+            for (int x = 56; x <= 63; x++) {
+                for (int y = 0; y <= 7; y++) {
+                    texture.setColor(x - 16, y + 8, baseSkin.getColor(x, y));
+                }
+            }
+        } else {
+            //copy face
+            for (int x = 0; x <= 7; x++) {
+                for (int y = 0; y <= 7; y++) {
+                    texture.setColor(x + 8, y + 8, baseSkin.getColor(x, y));
+                }
+            }
+            //copy face overlay
+            for (int x = 32; x <= 39; x++) {
+                for (int y = 0; y <= 7; y++) {
+                    texture.setColor(x + 8, y + 8, baseSkin.getColor(x, y));
+                }
+            }
+        }
+        return texture;
+    }
+
+    private NativeImage getEnchantedTexture(UUID id, NativeImage baseSkin) {
+        NativeImage check = returnMatchPixels(baseSkin, 56, 24, 63, 31);
+        UUID_playerHasEnchant.put(id, check != null);
+        return check;
+    }
+
+    private NativeImage getEmissiveTexture(UUID id, NativeImage baseSkin) {
+        NativeImage check = returnMatchPixels(baseSkin, 56, 16, 63, 23);
+        UUID_playerHasEmissive.put(id, check != null);
+        return check;
+    }
+
+    @Nullable
+    private NativeImage returnMatchPixels(NativeImage baseSkin, int x1, int y1, int x2, int y2) {
+        ArrayList<Integer> matchColors = new ArrayList<>();
+        for (int x = x1; x <= x2; x++) {
+            for (int y = y1; y <= y2; y++) {
+                if (baseSkin.getOpacity(x, y) != 0 && !matchColors.contains(baseSkin.getColor(x, y))) {
+                    matchColors.add(baseSkin.getColor(x, y));
+                }
+            }
+        }
+        if (matchColors.size() == 0) {
+            return null;
+        } else {
+            NativeImage texture = new NativeImage(64, 64, false);
+            texture.copyFrom(baseSkin);
+            for (int x = 0; x <= 63; x++) {
+                for (int y = 0; y <= 63; y++) {
+                    if (!matchColors.contains(baseSkin.getColor(x, y))) {
+                        texture.setColor(x, y, 0);
+                    }
+                }
+            }
+            return texture;
+        }
+
     }
 }

@@ -11,9 +11,11 @@
     "client.entity.extras.MIX_TridentEntity",
     "client.entity.extras.MIX_TridentEntityRenderer",
     "client.entity.textureUpdaters.MIX_PlayerEntity",
-    "client.entity.textureUpdaters.MIX_SimpleResourceReload"
+    "client.entity.textureUpdaters.MIX_SimpleResourceReload",
+    "client.entity.MIX_PlayerEntityRenderer"
   ],
   "mixins": [
+
   ],
   "injectors": {
     "defaultRequire": 1
