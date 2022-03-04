@@ -1,3 +1,15 @@
+# Fabric
+bin
+
+# Fabric's launch configuration for VSCode
+.vscode/launch.json
+*.launch
+
+# Eclipse
+.classpath
+.project
+.settings
+
 # User-specific stuff
 .idea/
 
