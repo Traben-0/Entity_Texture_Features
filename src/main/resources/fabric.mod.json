@@ -5,11 +5,20 @@
   "name": "Entity Texture Features",
   "description": "- Optifine format compatible\n- Random/alternate textures\n- Emissive textures",
   "authors": [
-    "Traben"
+    {
+      "name": "Traben",
+      "contact": {
+        "homepage": "https://www.curseforge.com/members/traben_0/projects"
+      }
+    }
   ],
   "license": "LGPL-3.0",
   "icon": "icon.png",
-  "website": "https://www.curseforge.com/members/traben_0/projects",
+  "contact": {
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/entity-texture-features-fabric",
+    "sources": "https://github.com/Traben-0/EmissiveMod",
+    "issues": "https://github.com/Traben-0/EmissiveMod/issues"
+  },
   "environment": "client",
   "entrypoints": {
     "main": [
