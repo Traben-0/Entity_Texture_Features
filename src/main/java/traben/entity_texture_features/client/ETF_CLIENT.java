@@ -10,6 +10,7 @@ import traben.entity_texture_features.config.ETFConfig;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,8 +31,12 @@ public class ETF_CLIENT implements ModInitializer, ETF_METHODS {
 
 
     public static Map<UUID, Boolean> UUID_playerHasFeatures = new HashMap<>();
+    public static Map<UUID, Boolean> UUID_playerSkinDownloadedYet = new HashMap<>();
     public static Map<UUID, Boolean> UUID_playerHasEnchant = new HashMap<>();
     public static Map<UUID, Boolean> UUID_playerHasEmissive = new HashMap<>();
+    public static Map<UUID, Identifier> UUID_playerTransparentSkinId = new HashMap<>();
+    public static Map<UUID, HttpURLConnection> UUID_HTTPtoDisconnect = new HashMap<>();
+
 
     public static Map<UUID, Boolean> UUID_HasBlink = new HashMap<>();
     public static Map<UUID, Boolean> UUID_HasBlink2 = new HashMap<>();

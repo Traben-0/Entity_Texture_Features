@@ -15,7 +15,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.net.HttpURLConnection;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.UUID;
 
 import static traben.entity_texture_features.client.ETF_CLIENT.*;
 
@@ -56,6 +59,14 @@ public interface ETF_METHODS {
         UUID_playerHasFeatures.clear();
         UUID_playerHasEnchant.clear();
         UUID_playerHasEmissive.clear();
+        UUID_playerTransparentSkinId.clear();
+        UUID_playerSkinDownloadedYet.clear();
+        for (HttpURLConnection h:
+             UUID_HTTPtoDisconnect.values()) {
+                h.disconnect();
+        }
+        UUID_HTTPtoDisconnect.clear();
+
         UUID_HasBlink.clear();
         UUID_HasBlink2.clear();
 

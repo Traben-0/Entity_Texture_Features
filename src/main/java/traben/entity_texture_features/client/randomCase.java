@@ -4,7 +4,6 @@ package traben.entity_texture_features.client;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.passive.WolfEntity;
-import net.minecraft.util.registry.Registry;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -117,7 +116,8 @@ public class randomCase implements ETF_METHODS {
         boolean allBoolean = true;
         if (!onlyUpdatables && biomes.length > 0) {
             //String entityBiome = entity.world.getBiome(entity.getBlockPos()).getCategory().getName();//has no caps// desert
-            String entityBiome = Objects.requireNonNull(entity.world.getRegistryManager().get(Registry.BIOME_KEY).getId(entity.world.getBiome(entity.getBlockPos()))).toString();
+            //1.18.1 old mapping String entityBiome = Objects.requireNonNull(entity.world.getRegistryManager().get(Registry.BIOME_KEY).getId(entity.world.getBiome(entity.getBlockPos()))).toString();
+            String entityBiome = entity.world.getBiome(entity.getBlockPos()).toString();
             entityBiome = entityBiome.replace("minecraft:","");
             boolean check = false;
             for (String str :
