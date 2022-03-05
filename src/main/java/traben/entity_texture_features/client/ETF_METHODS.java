@@ -656,30 +656,60 @@ public interface ETF_METHODS<T extends LivingEntity> {
                     }
                 }
 
+                //pink = -65281, blue = -256
+                //blink 1 frame if either pink or blue optional
+                NativeImage blinkSkinFile = null;
+                if (skin.getColor(52, 16) == -65281 || skin.getColor(52, 16) == -256) {
+                    blinkSkinFile = returnBlinkFace(skin, false);
+                    UUID_HasBlink.put(id, true);
+                    registerNativeImageToIdentifier( blinkSkinFile, SKIN_NAMESPACE + id + "_blink.png");
+                } else {
+                    UUID_HasBlink.put(id, false);
+                }
+                //blink is 2 frames with blue optional
+                NativeImage blinkSkinFile2 = null;
+                if (skin.getColor(52, 16) == -256) {
+                    blinkSkinFile2 = returnBlinkFace(skin, true);
+                    UUID_HasBlink2.put(id, true);
+                    registerNativeImageToIdentifier(blinkSkinFile2, SKIN_NAMESPACE + id + "_blink2.png");
+                } else {
+                    UUID_HasBlink2.put(id, false);
+                }
+
                 NativeImage check = getEnchantedTexture(id, skin);
                 if (check != null) {
                     registerNativeImageToIdentifier(check, SKIN_NAMESPACE + id + "_enchant.png");
+                    if (blinkSkinFile != null){
+                        NativeImage checkBlink = getEnchantedTexture(id, blinkSkinFile);
+                        if (checkBlink != null) {
+                            registerNativeImageToIdentifier(checkBlink, SKIN_NAMESPACE + id + "_blink_enchant.png");
+                        }
+                    }
+                    if (blinkSkinFile2 != null){
+                        NativeImage checkBlink = getEnchantedTexture(id, blinkSkinFile2);
+                        if (checkBlink != null) {
+                            registerNativeImageToIdentifier(checkBlink, SKIN_NAMESPACE + id + "_blink2_enchant.png");
+                        }
+                    }
                 }
 
                 check = getEmissiveTexture(id, skin);
                 if (check != null) {
                     registerNativeImageToIdentifier(check, SKIN_NAMESPACE + id + "_e.png");
+                    if (blinkSkinFile != null){
+                        NativeImage checkBlink = getEmissiveTexture(id, blinkSkinFile);
+                        if (checkBlink != null) {
+                            registerNativeImageToIdentifier(checkBlink, SKIN_NAMESPACE + id + "_blink_e.png");
+                        }
+                    }
+                    if (blinkSkinFile2 != null){
+                        NativeImage checkBlink = getEmissiveTexture(id, blinkSkinFile2);
+                        if (checkBlink != null) {
+                            registerNativeImageToIdentifier(checkBlink, SKIN_NAMESPACE + id + "_blink2_e.png");
+                        }
+                    }
                 }
-                //pink = -65281, blue = -256
-                //blink 1 frame if either pink or blue optional
-                if (skin.getColor(52, 16) == -65281 || skin.getColor(52, 16) == -256) {
-                    UUID_HasBlink.put(id, true);
-                    registerNativeImageToIdentifier(returnBlinkFace(skin, false), SKIN_NAMESPACE + id + "_blink.png");
-                } else {
-                    UUID_HasBlink.put(id, false);
-                }
-                //blink is 2 frames with blue optional
-                if (skin.getColor(52, 16) == -256) {
-                    UUID_HasBlink2.put(id, true);
-                    registerNativeImageToIdentifier(returnBlinkFace(skin, true), SKIN_NAMESPACE + id + "_blink2.png");
-                } else {
-                    UUID_HasBlink2.put(id, false);
-                }
+
             } else {
                 UUID_playerHasFeatures.put(id, false);
             }

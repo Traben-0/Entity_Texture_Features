@@ -306,6 +306,10 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
     private void renderSkinFeatures(UUID id, T player, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider) {
         //skin http://textures.minecraft.net/texture/a81cd0629057a42f3d8b7b714b1e233a3f89e33faeb67d3796a52df44619e888
 
+        String skinPossiblyBlinking = returnAlteredTexture((LivingEntityRenderer)(Object) this,player).getPath();
+        if (skinPossiblyBlinking.contains("_transparent")){
+            skinPossiblyBlinking = skinPossiblyBlinking.replace("_transparent","");
+        }
         if (!UUID_playerHasFeatures.containsKey(id) && !UUID_playerSkinDownloadedYet.containsKey(id)) {
             //check for mark
             //noinspection unchecked
@@ -315,12 +319,16 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
             if (UUID_playerHasFeatures.get(id)) {
                 //perform texture features
                 if (UUID_playerHasEnchant.get(id)) {
-                    Identifier enchant = new Identifier(SKIN_NAMESPACE + id + "_enchant.png");
+                    Identifier enchant = skinPossiblyBlinking.contains(".png")?
+                            new Identifier(skinPossiblyBlinking.replace(".png", "_enchant.png")):
+                            new Identifier(SKIN_NAMESPACE + id + "_enchant.png");
                     VertexConsumer enchantVert = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(enchant), false, true);
                     this.getModel().render(matrixStack, enchantVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 0.16F);
                 }
                 if (UUID_playerHasEmissive.get(id)) {
-                    Identifier emissive = new Identifier(SKIN_NAMESPACE + id + "_e.png");
+                    Identifier emissive = skinPossiblyBlinking.contains(".png")?
+                            new Identifier(skinPossiblyBlinking.replace(".png", "_e.png")):
+                            new Identifier(SKIN_NAMESPACE + id + "_e.png");
                     VertexConsumer emissVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(emissive, true));
                     this.getModel().render(matrixStack, emissVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
                 }
