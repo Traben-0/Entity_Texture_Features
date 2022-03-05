@@ -1,6 +1,9 @@
 package traben.entity_texture_features.client;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
@@ -91,26 +94,41 @@ public interface ETF_METHODS<T extends LivingEntity> {
     }
 
 
-    default String readProperties(String path) {
+    default Properties readProperties(String path) {
+        Properties props = new Properties();
         try {
             Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(new Identifier(path));
             try {
                 InputStream in = resource.getInputStream();
-                StringBuilder str = new StringBuilder();
-                int content;
-                while ((content = in.read()) != -1) {
-                    str.append((char) content);
-                }
+                props.load(in);
                 resource.close();
-                return str.toString();
-
             } catch (Exception e) {
                 resource.close();
-                return "";
             }
         } catch (Exception e) {
-            return "";
+            //
         }
+        System.out.println(props);
+        return props;
+//        try {
+//            Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(new Identifier(path));
+//            try {
+//                InputStream in = resource.getInputStream();
+//                StringBuilder str = new StringBuilder();
+//                int content;
+//                while ((content = in.read()) != -1) {
+//                    str.append((char) content);
+//                }
+//                resource.close();
+//                return str.toString();
+//
+//            } catch (Exception e) {
+//                resource.close();
+//                return "";
+//            }
+//        } catch (Exception e) {
+//            return "";
+//        }
     }
 
     default boolean checkPropertiesExist(String path) {
@@ -165,45 +183,27 @@ public interface ETF_METHODS<T extends LivingEntity> {
         }
     }
 
-    private void processOptifineTextureCandidate(String vanillaTexturePath, String properties) {
+    private void processOptifineTextureCandidate(String vanillaTexturePath, String propertiesPath) {
         try {
-            ignoreOnePNG.put(vanillaTexturePath, !(isExistingFile(new Identifier(properties.replace(".properties", "1.png")))));
+            ignoreOnePNG.put(vanillaTexturePath, !(isExistingFile(new Identifier(propertiesPath.replace(".properties", "1.png")))));
 
-            String propertiesRead = readProperties(properties);
-            String[] perLine = propertiesRead.split("\n");
-            ArrayList<String[]> eachCaseData = new ArrayList<>();
-            int count = 1;
-            ArrayList<String> maker = new ArrayList<>();
-            for (String line :
-                    perLine) {
-                line = line.trim();
-                //ignore blank lines or comments
-                if (!line.isBlank() && !line.startsWith("#") && line.contains("=")) {
-                    if (!line.contains("." + count + "=")) {
-                        if (!maker.isEmpty()) {
-                            eachCaseData.add(maker.toArray(new String[0]));
-                            maker.clear();
-                        }
-                        //count++;
-                        //set count value from read data for people who write properties and can't count
-                        count = Integer.parseInt(line.split("=")[0].split("\\.")[1].replaceAll("[^0-9]", ""));
-
-                    }
-                    if (line.contains("." + count + "=")) {
-                        maker.add(line);
-                    } else if (!line.isBlank()) {
-                        modMessage("counting optifine properties failed", false);
-                    }
-                }
-            }//add last one if lines ended
-            if (!maker.isEmpty()) {
-                eachCaseData.add(maker.toArray(new String[0]));
-                maker.clear();
+            Properties props = readProperties(propertiesPath);
+            Set<String> propIds = props.stringPropertyNames();
+            //set so only 1 of each
+            Set<Integer> numbers = new HashSet<>();
+            //get the numbers we are working with
+            for (String str :
+                    propIds) {
+                numbers.add(Integer.parseInt(str.replaceAll("[^0-9]", "")));
             }
-            //from here each case data can build cases
+            //sort from lowest to largest
+            List<Integer> numbersList = new ArrayList<>(numbers);
+            Collections.sort(numbersList);
             ArrayList<randomCase> allCasesForTexture = new ArrayList<>();
-            for (String[] caseStrings :
-                    eachCaseData) {
+            for (Integer num :
+                    numbersList) {
+                //loops through each known number in properties
+                //all of case 1 ect should be processed here
                 Integer[] suffixes = {};
                 Integer[] weights = {};
                 String[] biomes = {};
@@ -216,108 +216,116 @@ public interface ETF_METHODS<T extends LivingEntity> {
                 String[] health = {};
                 Integer[] moon = {};
                 String[] daytime = {};
-                for (String caseLine :
-                        caseStrings) {
-                    //here every line is data "skins.1=2-4" for all of ".1=" case
-                    String[] dataAny = caseLine.split("=");
-                    if (!dataAny[1].contains("regex") && !dataAny[1].contains("pattern")) {
-                        dataAny[1] = dataAny[1].trim().replaceAll("\\s+", " ");
-                    } else {
-                        dataAny[1] = dataAny[1].trim();
-                    }
-                    if (dataAny[0].startsWith("skins.") || dataAny[0].startsWith("textures.")) {
-                        String[] skinData = dataAny[1].split(" ");
-                        ArrayList<Integer> suffixNumbers = new ArrayList<>();
-                        for (String data :
-                                skinData) {
-                            //check if range
-                            if (data.contains("-")) {
-                                suffixNumbers.addAll(Arrays.asList(getIntRange(data)));
-                            } else {
-                                suffixNumbers.add(Integer.parseInt(data.replaceAll("[^0-9]", "")));
-                            }
-                        }
-                        suffixes = suffixNumbers.toArray(new Integer[0]);
 
-                    } else if (dataAny[0].startsWith("weights")) {
-                        String[] weightData = dataAny[1].split(" ");
-                        ArrayList<Integer> builder = new ArrayList<>();
-                        for (String s :
-                                weightData) {
-                            builder.add(Integer.parseInt(s.replaceAll("[^0-9]", "")));
-                        }
-                        weights = builder.toArray(new Integer[0]);
-                    } else if (dataAny[0].startsWith("biomes")) {
-                        biomes = dataAny[1].toLowerCase().split(" ");
-                    } else if (dataAny[0].startsWith("heights")) {
-                        String[] heightData = dataAny[1].split(" ");
-                        ArrayList<Integer> heightNumbers = new ArrayList<>();
-                        for (String data :
-                                heightData) {
-                            //check if range
-                            if (data.contains("-")) {
-                                heightNumbers.addAll(Arrays.asList(getIntRange(data)));
-                            } else {
-                                heightNumbers.add(Integer.parseInt(data.replaceAll("[^0-9]", "")));
-                            }
-                        }
-                        heights = heightNumbers.toArray(new Integer[0]);
-                    } else if (dataAny[0].startsWith("name")) {
-                        if (dataAny[1].contains("regex:") || dataAny[1].contains("pattern:")) {
-                            names = new String[]{dataAny[1]};
+                if (props.containsKey("skins." + num) || props.containsKey("textures." + num)) {
+                    String dataFromProps = props.containsKey("skins." + num) ? props.getProperty("skins." + num).trim() : props.getProperty("textures." + num).trim();
+                    String[] skinData = dataFromProps.split("\s");
+                    ArrayList<Integer> suffixNumbers = new ArrayList<>();
+                    for (String data :
+                            skinData) {
+                        //check if range
+                        if (data.contains("-")) {
+                            suffixNumbers.addAll(Arrays.asList(getIntRange(data)));
                         } else {
-                            names = dataAny[1].split(" ");
+                            suffixNumbers.add(Integer.parseInt(data.replaceAll("[^0-9]", "")));
                         }
-                    } else if (dataAny[0].startsWith("professions")) {
-                        professions = dataAny[1].split(" ");
-                    } else if (dataAny[0].startsWith("collarColors") || dataAny[0].startsWith("collarColours")) {
-                        collarColours = dataAny[1].split(" ");
-                    } else if (dataAny[0].startsWith("baby")) {
-                        switch (dataAny[1]) {
-                            case "true" -> baby = 1;
-                            case "false" -> baby = 2;
+                    }
+                    suffixes = suffixNumbers.toArray(new Integer[0]);
+                }
+                if (props.containsKey("weights." + num)) {
+                    String dataFromProps = props.getProperty("weights." + num).trim();
+                    String[] weightData = dataFromProps.split("\s");
+                    ArrayList<Integer> builder = new ArrayList<>();
+                    for (String s :
+                            weightData) {
+                        builder.add(Integer.parseInt(s.replaceAll("[^0-9]", "")));
+                    }
+                    weights = builder.toArray(new Integer[0]);
+                }
+                if (props.containsKey("biomes." + num)) {
+                    String dataFromProps = props.getProperty("biomes." + num).trim();
+                    biomes = dataFromProps.toLowerCase().split("\s");
+                }
+                if (props.containsKey("heights." + num)) {
+                    String dataFromProps = props.getProperty("heights." + num).trim();
+                    String[] heightData = dataFromProps.split("\s");
+                    ArrayList<Integer> heightNumbers = new ArrayList<>();
+                    for (String data :
+                            heightData) {
+                        //check if range
+                        if (data.contains("-")) {
+                            heightNumbers.addAll(Arrays.asList(getIntRange(data)));
+                        } else {
+                            heightNumbers.add(Integer.parseInt(data.replaceAll("[^0-9]", "")));
                         }
-                    } else if (dataAny[0].startsWith("weather")) {
-                        switch (dataAny[1]) {
-                            case "clear" -> weather = 1;
-                            case "rain" -> weather = 2;
-                            case "thunder" -> weather = 3;
-                        }
-                    } else if (dataAny[0].startsWith("health")) {
-                        health = dataAny[1].split(" ");
-                    } else if (dataAny[0].startsWith("moonPhase")) {
-                        String[] moonData = dataAny[1].split(" ");
-                        ArrayList<Integer> moonNumbers = new ArrayList<>();
-                        for (String data :
-                                moonData) {
-                            //check if range
-                            if (data.contains("-")) {
-                                moonNumbers.addAll(Arrays.asList(getIntRange(data)));
-                            } else {
-                                moonNumbers.add(Integer.parseInt(data.replaceAll("[^0-9]", "")));
-                            }
-                        }
-                        moon = moonNumbers.toArray(new Integer[0]);
-                    } else if (dataAny[0].startsWith("dayTime")) {
-                        daytime = dataAny[1].split(" ");
+                    }
+                    heights = heightNumbers.toArray(new Integer[0]);
+                }
+
+                if (props.containsKey("names." + num) || props.containsKey("name." + num)) {
+                    String dataFromProps = props.containsKey("name." + num) ? props.getProperty("name." + num).trim() : props.getProperty("names." + num).trim();
+                    if (dataFromProps.contains("regex:") || dataFromProps.contains("pattern:")) {
+                        names = new String[]{dataFromProps};
+                    } else {
+                        names = dataFromProps.split("\s");
                     }
                 }
-                //here must create case
+                if (props.containsKey("professions." + num)) {
+                    professions = props.getProperty("professions." + num).trim().split("\s");
+                }
+                if (props.containsKey("collarColors." + num) || props.containsKey("collarColours." + num)) {
+                    collarColours = props.containsKey("collarColors." + num) ? props.getProperty("collarColors." + num).trim().split("\s") : props.getProperty("collarColours." + num).trim().split("\s");
+                }
+                if (props.containsKey("baby." + num)) {
+                    String dataFromProps = props.getProperty("baby." + num).trim();
+                    switch (dataFromProps) {
+                        case "true" -> baby = 1;
+                        case "false" -> baby = 2;
+                    }
+                }
+                if (props.containsKey("weather." + num)) {
+                    String dataFromProps = props.getProperty("weather." + num).trim();
+                    switch (dataFromProps) {
+                        case "clear" -> weather = 1;
+                        case "rain" -> weather = 2;
+                        case "thunder" -> weather = 3;
+                    }
+                }
+                if (props.containsKey("health." + num)) {
+                    health = props.getProperty("health." + num).trim().split("\s");
+                }
+                if (props.containsKey("moonPhase." + num)) {
+                    String dataFromProps = props.getProperty("moonPhase." + num).trim();
+                    String[] moonData = dataFromProps.split("\s");
+                    ArrayList<Integer> moonNumbers = new ArrayList<>();
+                    for (String data :
+                            moonData) {
+                        //check if range
+                        if (data.contains("-")) {
+                            moonNumbers.addAll(Arrays.asList(getIntRange(data)));
+                        } else {
+                            moonNumbers.add(Integer.parseInt(data.replaceAll("[^0-9]", "")));
+                        }
+                    }
+                    moon = moonNumbers.toArray(new Integer[0]);
+                }
+                if (props.containsKey("dayTime." + num)) {
+                    daytime = props.getProperty("dayTime." + num).trim().split("\s");
+                }
+
                 if (suffixes.length != 0) {
                     allCasesForTexture.add(new randomCase(suffixes, weights, biomes, heights, names, professions, collarColours, baby, weather, health, moon, daytime));
                 }
             }
-            //done
             if (!allCasesForTexture.isEmpty()) {
                 Texture_OptifineRandomSettingsPerTexture.put(vanillaTexturePath, allCasesForTexture);
                 Texture_OptifineOrTrueRandom.put(vanillaTexturePath, true);
             } else {
-                modMessage("Entity Texture Features - reading optifine properties file failed: " + properties, false);
+                modMessage("Entity Texture Features - reading optifine properties file failed: " + propertiesPath, false);
             }
-
         } catch (Exception e) {
             //System.out.println(e);
-            modMessage("Entity Texture Features - optifine properties failed to load: @(" + properties + ") Error:" + e, false);
+            modMessage("Entity Texture Features - optifine properties failed to load: @(" + propertiesPath + ") Error:" + e, false);
         }
     }
 
@@ -477,24 +485,19 @@ public interface ETF_METHODS<T extends LivingEntity> {
 
 
         try {
-            String suffix = readProperties("optifine/emissive.properties");
-            if (suffix == null || suffix.isBlank()) {
+            Properties suffix = readProperties("optifine/emissive.properties");
+            if (suffix.isEmpty()) {
                 suffix = readProperties("textures/emissive.properties");
             }
-            String[] lines = suffix.split("\n");
-            ArrayList<String> builder = new ArrayList<>();
-            for (String line :
-                    lines) {
-                line = line.trim();
-                if (line.contains("suffix.emissive")) {
-                    line = line.split("=")[1].trim();
-                    builder.add(line);
-                    modMessage("Custom emissive suffix '" + line + "' added", false);
-                }
-                if (ETFConfigData.alwaysCheckVanillaEmissiveSuffix
-                        && !builder.contains("_e")) {
-                    builder.add("_e");
-                }
+            Set<String> builder = new HashSet<>();
+            if (suffix.contains("entities.suffix.emissive")) {
+                builder.add(suffix.getProperty("entities.suffix.emissive"));
+            }
+            if (suffix.contains("suffix.emissive")) {
+                builder.add(suffix.getProperty("suffix.emissive"));
+            }
+            if (ETFConfigData.alwaysCheckVanillaEmissiveSuffix) {
+                builder.add("_e");
             }
             emissiveSuffix = builder.toArray(new String[0]);
             if (emissiveSuffix.length == 0) {
@@ -546,7 +549,8 @@ public interface ETF_METHODS<T extends LivingEntity> {
                     properties) {
                 JsonObject props = JsonParser.parseString(new String(Base64.getDecoder().decode((p.getValue())))).getAsJsonObject();
                 url = ((JsonObject) ((JsonObject) props.get("textures")).get("SKIN")).get("url").getAsString();
-                //System.out.println(url);
+                //maybe one day if the EULA allows
+                //capeurl = ((JsonObject) ((JsonObject) props.get("textures")).get("CAPE")).get("url").getAsString();
                 break;
             }
                 /*System.out.println(p.getValue());
@@ -657,7 +661,7 @@ public interface ETF_METHODS<T extends LivingEntity> {
                 if (skin.getColor(52, 16) == -65281 || skin.getColor(52, 16) == -256) {
                     blinkSkinFile = returnBlinkFace(skin, false);
                     UUID_HasBlink.put(id, true);
-                    registerNativeImageToIdentifier( blinkSkinFile, SKIN_NAMESPACE + id + "_blink.png");
+                    registerNativeImageToIdentifier(blinkSkinFile, SKIN_NAMESPACE + id + "_blink.png");
                 } else {
                     UUID_HasBlink.put(id, false);
                 }
@@ -674,13 +678,13 @@ public interface ETF_METHODS<T extends LivingEntity> {
                 NativeImage check = getEnchantedTexture(id, skin);
                 if (check != null) {
                     registerNativeImageToIdentifier(check, SKIN_NAMESPACE + id + "_enchant.png");
-                    if (blinkSkinFile != null){
+                    if (blinkSkinFile != null) {
                         NativeImage checkBlink = getEnchantedTexture(id, blinkSkinFile);
                         if (checkBlink != null) {
                             registerNativeImageToIdentifier(checkBlink, SKIN_NAMESPACE + id + "_blink_enchant.png");
                         }
                     }
-                    if (blinkSkinFile2 != null){
+                    if (blinkSkinFile2 != null) {
                         NativeImage checkBlink = getEnchantedTexture(id, blinkSkinFile2);
                         if (checkBlink != null) {
                             registerNativeImageToIdentifier(checkBlink, SKIN_NAMESPACE + id + "_blink2_enchant.png");
@@ -691,13 +695,13 @@ public interface ETF_METHODS<T extends LivingEntity> {
                 check = getEmissiveTexture(id, skin);
                 if (check != null) {
                     registerNativeImageToIdentifier(check, SKIN_NAMESPACE + id + "_e.png");
-                    if (blinkSkinFile != null){
+                    if (blinkSkinFile != null) {
                         NativeImage checkBlink = getEmissiveTexture(id, blinkSkinFile);
                         if (checkBlink != null) {
                             registerNativeImageToIdentifier(checkBlink, SKIN_NAMESPACE + id + "_blink_e.png");
                         }
                     }
-                    if (blinkSkinFile2 != null){
+                    if (blinkSkinFile2 != null) {
                         NativeImage checkBlink = getEmissiveTexture(id, blinkSkinFile2);
                         if (checkBlink != null) {
                             registerNativeImageToIdentifier(checkBlink, SKIN_NAMESPACE + id + "_blink2_e.png");
