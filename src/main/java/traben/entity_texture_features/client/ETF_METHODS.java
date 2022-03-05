@@ -1,7 +1,6 @@
 package traben.entity_texture_features.client;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
@@ -545,8 +544,12 @@ public interface ETF_METHODS<T extends LivingEntity> {
             Collection<Property> properties = texturesMap.get("textures");
             for (Property p :
                     properties) {
-                //System.out.println(p.getValue());
-                /*
+                JsonObject props = JsonParser.parseString(new String(Base64.getDecoder().decode((p.getValue())))).getAsJsonObject();
+                url = ((JsonObject) ((JsonObject) props.get("textures")).get("SKIN")).get("url").getAsString();
+                //System.out.println(url);
+                break;
+            }
+                /*System.out.println(p.getValue());
 {
   "timestamp" : 1645524822329,
   "profileId" : "fd22e573178c415a94fee476b328abfd",
@@ -561,14 +564,6 @@ public interface ETF_METHODS<T extends LivingEntity> {
   }
 }
                 */
-                byte[] result = Base64.getDecoder().decode(p.getValue());
-                url = new String(result);
-                url = url.split("SKIN")[1];
-                url = url.split("http")[1];
-                url = url.split("\"")[0];
-                url = "http" + url.trim();
-
-            }
 
             String finalUrl = url;
             //CompletableFuture<?> loader =
