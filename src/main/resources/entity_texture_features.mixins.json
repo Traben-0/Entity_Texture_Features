@@ -15,7 +15,6 @@
     "client.entity.MIX_PlayerEntityRenderer"
   ],
   "mixins": [
-
   ],
   "injectors": {
     "defaultRequire": 1

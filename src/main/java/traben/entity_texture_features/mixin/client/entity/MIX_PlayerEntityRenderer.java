@@ -51,7 +51,6 @@ public abstract class MIX_PlayerEntityRenderer extends LivingEntityRenderer<Abst
 
                 if (!UUID_playerHasFeatures.containsKey(id) && !UUID_playerSkinDownloadedYet.containsKey(id)) {
                     //check for mark
-                    //noinspection unchecked
                     checkPlayerForSkinFeatures(id, player);
                 }
                 if (UUID_playerSkinDownloadedYet.get(id)) {

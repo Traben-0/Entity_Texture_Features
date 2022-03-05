@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "id": "entity_texture_features",
-  "version": "2.3.3",
+  "version": "2.3.4",
   "name": "Entity Texture Features",
-  "description": "- Optifine format compatible\n- Random/alternate textures\n- Emissive textures",
+  "description": "- Optifine format compatible\n- Random/Custom textures\n- Emissive textures\n- Blinking textures\n- Player Skin textures",
   "authors": [
     {
       "name": "Traben",

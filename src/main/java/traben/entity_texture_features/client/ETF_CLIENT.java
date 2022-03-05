@@ -12,10 +12,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @net.fabricmc.api.Environment(net.fabricmc.api.EnvType.CLIENT)
 public class ETF_CLIENT implements ModInitializer, ETF_METHODS {
@@ -48,6 +45,7 @@ public class ETF_CLIENT implements ModInitializer, ETF_METHODS {
     public static ETFConfig ETFConfigData;
 
     public static Map<UUID, String> UUID_TridentName = new HashMap<>();
+    public static Set<String> PATH_FailedPropertiesToIgnore = new HashSet<>();
 
 
     public final static String SKIN_NAMESPACE = "etf_skin/";

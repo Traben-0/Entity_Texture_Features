@@ -24,7 +24,7 @@ public class ETFConfigScreen implements ETF_METHODS {
         //Screen ModConfigScreen = builder.build();
         ConfigEntryBuilder entryBuilder = builder.entryBuilder();
         ConfigCategory optifineOptions = builder.getOrCreateCategory(Text.of("Optifine Options"));
-        optifineOptions.setBackground(new Identifier("textures/block/crying_obsidian.png"));
+        optifineOptions.setBackground(new Identifier("textures/block/light_gray_wool.png"));
         if (puzzleDetected) {
             optifineOptions.addEntry(entryBuilder.startTextDescription(Text.of("@Motschen's Mod 'Puzzle' was detected:\n please ensure you disable emissive entities in that mod's settings!"))
                     .setColor(new Color(240, 195, 15).getRGB())
@@ -177,15 +177,6 @@ public class ETFConfigScreen implements ETF_METHODS {
                         The texture 'trident_bobbystrident_e.png; will be emissive.""")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.enableTridents = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
-
-
-//            SubCategoryBuilder dashMobs= entryBuilder.startSubCategory(Text.of("Additional dash settings"));
-//            dashMobs.add(0, entryBuilder.startBooleanToggle(Text.of("Creepers can dash"), config.creeperCanDash)
-//                    .setDefaultValue(true).setSaveConsumer(newValue -> config.creeperCanDash = newValue).build());
-//            dashMobs.add(1, entryBuilder.startBooleanToggle(Text.of("Skeletons can dash"), config.skeletonCanDash)
-//                    .setDefaultValue(true).setSaveConsumer(newValue -> config.skeletonCanDash = newValue).build());
-//            Hostiles.addEntry(dashMobs.build());
-
 
         builder.setSavingRunnable(() -> {
             // Serialise the config into the config file. This will be called last after all variables are updated.

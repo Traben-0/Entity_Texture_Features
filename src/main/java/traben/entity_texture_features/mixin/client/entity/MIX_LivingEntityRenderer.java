@@ -172,7 +172,6 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                             testCases(path, id, entity);
                             //if all failed set to vanilla
                             if (!UUID_randomTextureSuffix.containsKey(id)) {
-                                //System.out.println("Entity Texture Features - optifine properties failed to assign texture. setting "+entity.getEntityName()+" to vanilla texture");
                                 UUID_randomTextureSuffix.put(id, 0);
                             }
                             if (!UUID_entityAlreadyCalculated.contains(id)) {
@@ -217,7 +216,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
             }
         } else {
             if (!UUID_playerHasFeatures.containsKey(id) && !UUID_playerSkinDownloadedYet.containsKey(id)) {
-                checkPlayerForSkinFeatures(id, entity);
+                checkPlayerForSkinFeatures(id, (PlayerEntity)entity);
             }
             if (UUID_playerSkinDownloadedYet.get(id)) {
                 if (UUID_playerHasFeatures.get(id)) {
@@ -259,7 +258,6 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
 
 
                     if (timer >= blinkTimeVariedByUUID - 1 && timer <= blinkTimeVariedByUUID + 1) {
-                        //System.out.println("blinking");
                         if (UUID_HasBlink2.get(id)) {
                             if (timer == blinkTimeVariedByUUID) {
                                 return new Identifier(givenTexturePath.replace(".png", "_blink.png"));
@@ -312,8 +310,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
         }
         if (!UUID_playerHasFeatures.containsKey(id) && !UUID_playerSkinDownloadedYet.containsKey(id)) {
             //check for mark
-            //noinspection unchecked
-            checkPlayerForSkinFeatures(id, player);
+            checkPlayerForSkinFeatures(id, (PlayerEntity)player);
         }
         if (UUID_playerSkinDownloadedYet.get(id)) {
             if (UUID_playerHasFeatures.get(id)) {

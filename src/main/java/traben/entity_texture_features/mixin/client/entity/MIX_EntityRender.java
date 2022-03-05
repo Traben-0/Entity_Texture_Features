@@ -29,11 +29,13 @@ public abstract class MIX_EntityRender<T extends Entity> {
     @ModifyArgs(method = "renderLabelIfPresent", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;draw(Lnet/minecraft/text/Text;FFIZLnet/minecraft/util/math/Matrix4f;Lnet/minecraft/client/render/VertexConsumerProvider;ZII)I"))
     public void injected(Args args) {
         //just some fun for the dev's accounts, makes username display bounce
-        //fd22e573-178c-415a-94fe-e476b328abfd
-        //bc2d6979-ddde-4452-8c7d-caefa4aceb01
+        //fd22e573-178c-415a-94fe-e476b328abfd B1
+        //bc2d6979-ddde-4452-8c7d-caefa4aceb01 B2
+        //cab7d2e2-519f-4b34-afbd-b65f4542b8a1 J
 
         if (recentID.toString().equals("fd22e573-178c-415a-94fe-e476b328abfd")
-                || recentID.toString().equals("bc2d6979-ddde-4452-8c7d-caefa4aceb01")) {
+                || recentID.toString().equals("bc2d6979-ddde-4452-8c7d-caefa4aceb01")
+                || recentID.toString().equals("cab7d2e2-519f-4b34-afbd-b65f4542b8a1")) {
             animateHeight();
             args.set(2, (animateHeightOfName >= 10 ? 20 - animateHeightOfName : animateHeightOfName) - 3);
         }
