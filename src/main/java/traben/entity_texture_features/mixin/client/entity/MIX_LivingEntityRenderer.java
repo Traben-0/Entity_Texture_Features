@@ -152,7 +152,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                                 if (Texture_OptifineOrTrueRandom.get(path)) {
                                     int hold = UUID_randomTextureSuffix.get(id);
                                     resetSingleData(id);
-                                    testCases(path, id, entity);
+                                    testCases(path, id, entity,true);
                                     //if didnt change keep the same
                                     if (!UUID_randomTextureSuffix.containsKey(id)) {
                                         UUID_randomTextureSuffix.put(id, hold);
@@ -169,7 +169,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                     if (Texture_OptifineOrTrueRandom.get(path)) {//optifine random
                         //if it doesn't have a random already assign one
                         if (!UUID_randomTextureSuffix.containsKey(id)) {
-                            testCases(path, id, entity);
+                            testCases(path, id, entity,false);
                             //if all failed set to vanilla
                             if (!UUID_randomTextureSuffix.containsKey(id)) {
                                 UUID_randomTextureSuffix.put(id, 0);

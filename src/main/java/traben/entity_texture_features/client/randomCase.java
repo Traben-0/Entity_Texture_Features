@@ -25,6 +25,9 @@ public class randomCase implements ETF_METHODS {
     private final Integer[] moon;
     private final String[] daytime;
 
+    //whether case should be ignored by updates
+    public boolean caseHasNonUpdatables;
+
 
     randomCase(Integer[] suffixesX,
                Integer[] weightsX,
@@ -50,6 +53,12 @@ public class randomCase implements ETF_METHODS {
         health = healthX;
         moon = moonX;
         daytime = daytimeX;
+
+        caseHasNonUpdatables = moon.length > 0
+                || biomes.length > 0
+                || heights.length > 0
+                || weather != 0
+                || daytime.length > 0;
 
         if (weightsX.length > 0) {
             if (weightsX.length == suffixesX.length) {
@@ -114,12 +123,13 @@ public class randomCase implements ETF_METHODS {
         if (!onlyUpdatables && biomes.length > 0) {
             //String entityBiome = entity.world.getBiome(entity.getBlockPos()).getCategory().getName();//has no caps// desert
             //1.18.1 old mapping String entityBiome = Objects.requireNonNull(entity.world.getRegistryManager().get(Registry.BIOME_KEY).getId(entity.world.getBiome(entity.getBlockPos()))).toString();
+            //not an exact grabbing of the name but it works for the contains check so no need for more processing
+            //example "Reference{ResourceKey[minecraft:worldgen/biome / minecraft:river]=net.minecraft.class_1959@373fe79a}"
             String entityBiome = entity.world.getBiome(entity.getBlockPos()).toString();
-            entityBiome = entityBiome.replace("minecraft:", "");
             boolean check = false;
             for (String str :
                     biomes) {
-                if (str.trim().replace("minecraft:", "").toLowerCase().equals(entityBiome)) {
+                if (entityBiome.contains(str.trim().toLowerCase())) {
                     check = true;
                     break;
                 }
@@ -255,7 +265,7 @@ public class randomCase implements ETF_METHODS {
         if (allBoolean && baby != 0) {
             wasTestedByUpdateable = true;
             allBoolean = (baby == 1) == entity.isBaby();
-            System.out.println("baby " + allBoolean);
+            //System.out.println("baby " + allBoolean);
         }
         if (allBoolean && !onlyUpdatables && weather != 0) {
             boolean raining = entity.world.isRaining();
@@ -330,7 +340,7 @@ public class randomCase implements ETF_METHODS {
             }
             allBoolean = check;
         }
-        if (wasTestedByUpdateable) {
+        if (wasTestedByUpdateable && !caseHasNonUpdatables) {
             hasUpdatableRandomCases.put(entity.getUuid(), true);
         }
         return allBoolean;

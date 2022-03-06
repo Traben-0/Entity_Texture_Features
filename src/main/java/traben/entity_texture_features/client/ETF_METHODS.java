@@ -345,16 +345,20 @@ public interface ETF_METHODS {
         }
     }
 
-    default void testCases(String vanillaPath, UUID id, Entity entity) {
+    default void testCases(String vanillaPath, UUID id, Entity entity, boolean isUpdate) {
         for (randomCase test :
                 Texture_OptifineRandomSettingsPerTexture.get(vanillaPath)) {
-            if (test.testEntity((LivingEntity) entity, UUID_entityAlreadyCalculated.contains(id))) {
-                UUID_randomTextureSuffix.put(id, test.getWeightedSuffix(id, ignoreOnePNG.get(vanillaPath)));
-                Identifier tested = returnOptifineOrVanillaIdentifier(vanillaPath, UUID_randomTextureSuffix.get(id));
-                if (!isExistingFile(tested)) {
-                    UUID_randomTextureSuffix.put(id, 0);
+
+            //skip if its only an update and case is not updatables
+            if (!(isUpdate && test.caseHasNonUpdatables)) {
+                if (test.testEntity((LivingEntity) entity, UUID_entityAlreadyCalculated.contains(id))) {
+                    UUID_randomTextureSuffix.put(id, test.getWeightedSuffix(id, ignoreOnePNG.get(vanillaPath)));
+                    Identifier tested = returnOptifineOrVanillaIdentifier(vanillaPath, UUID_randomTextureSuffix.get(id));
+                    if (!isExistingFile(tested)) {
+                        UUID_randomTextureSuffix.put(id, 0);
+                    }
+                    break;
                 }
-                break;
             }
         }
         if (!hasUpdatableRandomCases.containsKey(id))
