@@ -11,6 +11,7 @@ import traben.entity_texture_features.client.ETF_METHODS;
 
 import static traben.entity_texture_features.client.ETF_CLIENT.puzzleDetected;
 
+
 @Mixin(SimpleResourceReload.class)
 public abstract class MIX_SimpleResourceReload implements ETF_METHODS {
 
