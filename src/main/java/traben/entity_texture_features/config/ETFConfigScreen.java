@@ -158,6 +158,18 @@ public class ETFConfigScreen implements ETF_METHODS {
                         """)) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.skinFeaturesEnableTransparency = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
+        players.add(3, entryBuilder.startBooleanToggle(Text.of("Player Skin Feature: FULL Transparency"), ETFConfigData.skinFeaturesEnableFullTransparency)
+                .setDefaultValue(false) // Recommended: Used when user click "Reset"
+                .setTooltip(new TranslatableText("""
+                        Allows player skins to be FULLY transparent
+                        WARNING: this overrides the 60% transparency check
+                         for player skins so they can be completely invisible
+                         this option only changes what you can see and will
+                         not make you invisible to others, it is meant for fun.
+                        //REQUIRES RESTART\\\\
+                        """)) // Optional: Shown when the user hover over this option
+                .setSaveConsumer(newValue -> ETFConfigData.skinFeaturesEnableFullTransparency = newValue) // Recommended: Called when user save the config
+                .build()); // Builds the option entry for cloth config
         optifineOptions.addEntry(players.build());
 
         optifineOptions.addEntry(entryBuilder.startEnumSelector(Text.of("Custom potion effects"), ETFConfig.enchantedPotionEffectsEnum.class, ETFConfigData.enchantedPotionEffects)

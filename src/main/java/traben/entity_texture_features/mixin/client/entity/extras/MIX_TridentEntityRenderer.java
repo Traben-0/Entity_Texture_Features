@@ -33,7 +33,7 @@ public abstract class MIX_TridentEntityRenderer implements SynchronousResourceRe
     private void changeEmissiveTexture(TridentEntity tridentEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
         if (ETFConfigData.enableTridents && ETFConfigData.enableEmissiveTextures) {
             UUID id = tridentEntity.getUuid();
-            String path = TridentEntityModel.TEXTURE.getPath();
+            String path = TridentEntityModel.TEXTURE.toString();
             String name = UUID_TridentName.get(id) != null ? "_" + UUID_TridentName.get(id).toLowerCase().replaceAll("[^a-z0-9/_.-]", "") : "";
             String fileString = UUID_TridentName.get(id) != null ? path.replace(".png", "_" + name + ".png") : path;
             if (!Texture_Emissive.containsKey(fileString)) {
@@ -62,7 +62,7 @@ public abstract class MIX_TridentEntityRenderer implements SynchronousResourceRe
         if (ETFConfigData.enableTridents && ETFConfigData.enableRandomTextures) {
             UUID id = tridentEntity.getUuid();
             if (UUID_TridentName.get(id) != null) {
-                String path = TridentEntityModel.TEXTURE.getPath();
+                String path = TridentEntityModel.TEXTURE.toString();
                 String name = UUID_TridentName.get(id).toLowerCase().replaceAll("[^a-z0-9/_.-]", "");
                 Identifier possibleId = new Identifier(path.replace(".png", "_" + name + ".png"));
                 if (isExistingFile(possibleId)) {

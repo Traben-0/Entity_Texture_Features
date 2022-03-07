@@ -47,7 +47,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
         UUID id = livingEntity.getUuid();
         if (!(livingEntity instanceof PlayerEntity)) {
 
-            String fileString = returnAlteredTexture((LivingEntityRenderer) (Object) this, livingEntity).getPath();
+            String fileString = returnAlteredTexture((LivingEntityRenderer) (Object) this, livingEntity).toString();
 
             if (ETFConfigData.enableEmissiveTextures) {
                 if (Texture_Emissive.containsKey(fileString)) {
@@ -130,7 +130,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
         @SuppressWarnings("unchecked")
         T entity = (T) inEntity;
         Identifier vanilla = getTexture(entity);
-        String path = vanilla.getPath();
+        String path = vanilla.toString();
         UUID id = entity.getUuid();
         if (!(entity instanceof PlayerEntity)) {
             if (ETFConfigData.enableRandomTextures) {
@@ -179,9 +179,9 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                             }
                         }
                         if (UUID_randomTextureSuffix.get(id) == 0) {
-                            return returnBlinkIdOrGiven(entity, vanilla.getPath(), id);
+                            return returnBlinkIdOrGiven(entity, vanilla.toString(), id);
                         } else {
-                            return returnBlinkIdOrGiven(entity, returnOptifineOrVanillaIdentifier(path, UUID_randomTextureSuffix.get(id)).getPath(), id);
+                            return returnBlinkIdOrGiven(entity, returnOptifineOrVanillaIdentifier(path, UUID_randomTextureSuffix.get(id)).toString(), id);
                         }
 
                     } else {//true random assign
@@ -200,18 +200,18 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                                 }
                             }
                             if (UUID_randomTextureSuffix.get(id) == 0) {
-                                return returnBlinkIdOrGiven(entity, vanilla.getPath(), id);
+                                return returnBlinkIdOrGiven(entity, vanilla.toString(), id);
                             } else {
                                 return returnBlinkIdOrGiven(entity, returnOptifineOrVanillaPath(path, UUID_randomTextureSuffix.get(id), ""), id);
                             }
                         } else {
-                            return returnBlinkIdOrGiven(entity, vanilla.getPath(), id);
+                            return returnBlinkIdOrGiven(entity, vanilla.toString(), id);
                         }
                     }
 
                 } catch (Exception e) {
                     modMessage(e.toString(), false);
-                    return returnBlinkIdOrGiven(entity, vanilla.getPath(), id);
+                    return returnBlinkIdOrGiven(entity, vanilla.toString(), id);
                 }
             }
         } else {
@@ -227,7 +227,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                 }
             }
         }
-        return returnBlinkIdOrGiven(entity, vanilla.getPath(), id);
+        return returnBlinkIdOrGiven(entity, vanilla.toString(), id);
     }
 
     private Identifier returnBlinkIdOrGiven(T entity, String givenTexturePath, UUID id) {
@@ -304,7 +304,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
     private void renderSkinFeatures(UUID id, T player, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider) {
         //skin http://textures.minecraft.net/texture/a81cd0629057a42f3d8b7b714b1e233a3f89e33faeb67d3796a52df44619e888
 
-        String skinPossiblyBlinking = returnAlteredTexture((LivingEntityRenderer)(Object) this,player).getPath();
+        String skinPossiblyBlinking = returnAlteredTexture((LivingEntityRenderer)(Object) this,player).toString();
         if (skinPossiblyBlinking.contains("_transparent")){
             skinPossiblyBlinking = skinPossiblyBlinking.replace("_transparent","");
         }

@@ -627,7 +627,7 @@ public interface ETF_METHODS {
                     if (canTransparentSkin(skin)) {
                         Identifier transId = new Identifier(SKIN_NAMESPACE + id + "_transparent.png");
                         UUID_playerTransparentSkinId.put(id, transId);
-                        registerNativeImageToIdentifier(skin, transId.getPath());
+                        registerNativeImageToIdentifier(skin, transId.toString());
 
                     } else {
                         modMessage("Skin was too transparent or had other problems", false);
@@ -721,22 +721,26 @@ public interface ETF_METHODS {
     }
 
     private boolean canTransparentSkin(NativeImage skin) {
-        int countTransparent = 0;
-        //map of bottom skin layer in cubes
-        countTransparent += countTransparentInBox(skin, 8, 0, 23, 15);
-        countTransparent += countTransparentInBox(skin, 0, 20, 55, 31);
-        countTransparent += countTransparentInBox(skin, 0, 8, 7, 15);
-        countTransparent += countTransparentInBox(skin, 24, 8, 31, 15);
-        countTransparent += countTransparentInBox(skin, 0, 16, 11, 19);
-        countTransparent += countTransparentInBox(skin, 20, 16, 35, 19);
-        countTransparent += countTransparentInBox(skin, 44, 16, 51, 19);
-        countTransparent += countTransparentInBox(skin, 20, 48, 27, 51);
-        countTransparent += countTransparentInBox(skin, 36, 48, 43, 51);
-        countTransparent += countTransparentInBox(skin, 16, 52, 47, 63);
-        //do not allow skins under 40% ish total opacity
-        //1648 is total pixels that are not allowed transparent by vanilla
-        int average = (countTransparent / 1648); // should be 0 to 256
-        return average >= 100;
+        if (ETFConfigData.skinFeaturesEnableFullTransparency) {
+            return true;
+        }else {
+            int countTransparent = 0;
+            //map of bottom skin layer in cubes
+            countTransparent += countTransparentInBox(skin, 8, 0, 23, 15);
+            countTransparent += countTransparentInBox(skin, 0, 20, 55, 31);
+            countTransparent += countTransparentInBox(skin, 0, 8, 7, 15);
+            countTransparent += countTransparentInBox(skin, 24, 8, 31, 15);
+            countTransparent += countTransparentInBox(skin, 0, 16, 11, 19);
+            countTransparent += countTransparentInBox(skin, 20, 16, 35, 19);
+            countTransparent += countTransparentInBox(skin, 44, 16, 51, 19);
+            countTransparent += countTransparentInBox(skin, 20, 48, 27, 51);
+            countTransparent += countTransparentInBox(skin, 36, 48, 43, 51);
+            countTransparent += countTransparentInBox(skin, 16, 52, 47, 63);
+            //do not allow skins under 40% ish total opacity
+            //1648 is total pixels that are not allowed transparent by vanilla
+            int average = (countTransparent / 1648); // should be 0 to 256
+            return average >= 100;
+        }
     }
 
     private NativeImage returnBlinkFace(NativeImage baseSkin, boolean isSecondFrame) {

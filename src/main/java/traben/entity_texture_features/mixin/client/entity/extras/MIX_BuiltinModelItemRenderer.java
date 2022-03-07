@@ -45,7 +45,7 @@ public abstract class MIX_BuiltinModelItemRenderer implements SynchronousResourc
         if (stack.isOf(Items.TRIDENT) && ETFConfigData.enableTridents) {
             if (ETFConfigData.enableRandomTextures) {
                 if (stack.hasCustomName()) {
-                    String path = TridentEntityModel.TEXTURE.getPath();
+                    String path = TridentEntityModel.TEXTURE.toString();
                     String name = stack.getName().getString().toLowerCase().replaceAll("[^a-z0-9/_.-]", "");
                     Identifier possibleId = new Identifier(path.replace(".png", "_" + name + ".png"));
                     if (isExistingFile(possibleId)) {
@@ -76,7 +76,7 @@ public abstract class MIX_BuiltinModelItemRenderer implements SynchronousResourc
                 matrices.pop();
             }
             if (ETFConfigData.enableEmissiveTextures) {
-                String path = TridentEntityModel.TEXTURE.getPath();
+                String path = TridentEntityModel.TEXTURE.toString();
                 String name = stack.hasCustomName() ? "_" + stack.getName().getString().toLowerCase().replaceAll("[^a-z0-9/_.-]", "") : "";
                 String fileString = path.replace(".png", "_" + name + ".png");
                 if (!Texture_Emissive.containsKey(fileString)) {

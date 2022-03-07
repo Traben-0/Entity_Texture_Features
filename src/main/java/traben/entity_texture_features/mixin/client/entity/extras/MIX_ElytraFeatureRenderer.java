@@ -57,7 +57,7 @@ public abstract class MIX_ElytraFeatureRenderer<T extends LivingEntity, M extend
                 identifier = SKIN;
             }
 
-            String fileString = identifier.getPath();
+            String fileString = identifier.toString();
             if (Texture_Emissive.containsKey(fileString)) {
                 if (Texture_Emissive.get(fileString) != null) {
                     VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(Texture_Emissive.get(fileString), true));
