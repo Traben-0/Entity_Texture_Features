@@ -42,6 +42,46 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
         super(ctx);
     }
 
+    @Inject(method = "render(Lnet/minecraft/entity/LivingEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/LivingEntityRenderer;getRenderLayer(Lnet/minecraft/entity/LivingEntity;ZZZ)Lnet/minecraft/client/render/RenderLayer;", shift = At.Shift.AFTER))
+    private void applyCoat(T livingEntity, float a, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
+        //TODO actually do this right at some point instead of the lazy / dirty way of copying player model
+        if (livingEntity instanceof PlayerEntity player) {
+            UUID id = player.getUuid();
+            String coat = SKIN_NAMESPACE + id + "_coat.png";
+            if (!UUID_playerHasFeatures.containsKey(id) && !UUID_playerSkinDownloadedYet.containsKey(id)) {
+                //check for mark
+                checkPlayerForSkinFeatures(id, player);
+            }
+            if (UUID_playerSkinDownloadedYet.get(id) && UUID_playerHasCoat.containsKey(id)) {
+                if (UUID_playerHasFeatures.get(id) && UUID_playerHasCoat.get(id)) {
+                    //perform texture features
+                    VertexConsumer coatVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(new Identifier(coat)));
+                    if (player.isSneaking() && !player.getAbilities().flying) {
+                        matrixStack.translate(0, ((3.65 / 16)*1.5), (2.0 / 16)*1.5);
+                    } else {
+                        matrixStack.translate(0, 0.26*1.5, 0);
+                    }
+                    this.getModel().render(matrixStack, coatVert, i, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                    if (UUID_playerHasEnchant.get(id)) {
+                        Identifier enchant = new Identifier(coat.replace(".png", "_enchant.png"));
+                        VertexConsumer enchantVert = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(enchant), false, true);
+                        this.getModel().render(matrixStack, enchantVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 0.16F);
+                    }
+                    if (UUID_playerHasEmissive.get(id)) {
+                        Identifier emissive = new Identifier(coat.replace(".png", "_e.png"));
+                        VertexConsumer emissVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(emissive, true));
+                        this.getModel().render(matrixStack, emissVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                    }
+                    if (player.isSneaking() && !player.getAbilities().flying) {
+                        matrixStack.translate(0, -((3.65 / 16)*1.5), -(2.0 / 16)*1.5);
+                    } else {
+                        matrixStack.translate(0, -0.26*1.5, 0);
+                    }
+                }
+            }
+        }
+    }
+
     @Inject(method = "render(Lnet/minecraft/entity/LivingEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/EntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V", shift = At.Shift.AFTER))
     private void applyRenderFeatures(T livingEntity, float a, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
         UUID id = livingEntity.getUuid();
@@ -94,7 +134,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                 }
             }
         } else if (ETFConfigData.skinFeaturesEnabled) { // is a player
-            renderSkinFeatures(id, livingEntity, matrixStack, vertexConsumerProvider);
+            renderSkinFeatures(id, livingEntity, matrixStack, vertexConsumerProvider, i);
         }
         //potion effects
         if (ETFConfigData.enchantedPotionEffects != ETFConfig.enchantedPotionEffectsEnum.NONE
@@ -152,7 +192,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                                 if (Texture_OptifineOrTrueRandom.get(path)) {
                                     int hold = UUID_randomTextureSuffix.get(id);
                                     resetSingleData(id);
-                                    testCases(path, id, entity,true);
+                                    testCases(path, id, entity, true);
                                     //if didnt change keep the same
                                     if (!UUID_randomTextureSuffix.containsKey(id)) {
                                         UUID_randomTextureSuffix.put(id, hold);
@@ -169,7 +209,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                     if (Texture_OptifineOrTrueRandom.get(path)) {//optifine random
                         //if it doesn't have a random already assign one
                         if (!UUID_randomTextureSuffix.containsKey(id)) {
-                            testCases(path, id, entity,false);
+                            testCases(path, id, entity, false);
                             //if all failed set to vanilla
                             if (!UUID_randomTextureSuffix.containsKey(id)) {
                                 UUID_randomTextureSuffix.put(id, 0);
@@ -216,7 +256,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
             }
         } else {
             if (!UUID_playerHasFeatures.containsKey(id) && !UUID_playerSkinDownloadedYet.containsKey(id)) {
-                checkPlayerForSkinFeatures(id, (PlayerEntity)entity);
+                checkPlayerForSkinFeatures(id, (PlayerEntity) entity);
             }
             if (UUID_playerSkinDownloadedYet.get(id)) {
                 if (UUID_playerHasFeatures.get(id)) {
@@ -301,45 +341,38 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
         }
     }
 
-    private void renderSkinFeatures(UUID id, T player, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider) {
+    private void renderSkinFeatures(UUID id, T player, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light) {
         //skin http://textures.minecraft.net/texture/a81cd0629057a42f3d8b7b714b1e233a3f89e33faeb67d3796a52df44619e888
 
-        String skinPossiblyBlinking = returnAlteredTexture((LivingEntityRenderer)(Object) this,player).toString();
-        if (skinPossiblyBlinking.contains("_transparent")){
-            skinPossiblyBlinking = skinPossiblyBlinking.replace("_transparent","");
+        String skinPossiblyBlinking = returnAlteredTexture((LivingEntityRenderer) (Object) this, player).toString();
+        if (skinPossiblyBlinking.contains("_transparent")) {
+            skinPossiblyBlinking = skinPossiblyBlinking.replace("_transparent", "");
         }
         if (!UUID_playerHasFeatures.containsKey(id) && !UUID_playerSkinDownloadedYet.containsKey(id)) {
             //check for mark
-            checkPlayerForSkinFeatures(id, (PlayerEntity)player);
+            checkPlayerForSkinFeatures(id, (PlayerEntity) player);
         }
         if (UUID_playerSkinDownloadedYet.get(id)) {
             if (UUID_playerHasFeatures.get(id)) {
                 //perform texture features
                 if (UUID_playerHasEnchant.get(id)) {
-                    Identifier enchant = skinPossiblyBlinking.contains(".png")?
-                            new Identifier(skinPossiblyBlinking.replace(".png", "_enchant.png")):
+                    Identifier enchant = skinPossiblyBlinking.contains(".png") ?
+                            new Identifier(skinPossiblyBlinking.replace(".png", "_enchant.png")) :
                             new Identifier(SKIN_NAMESPACE + id + "_enchant.png");
                     VertexConsumer enchantVert = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(enchant), false, true);
                     this.getModel().render(matrixStack, enchantVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 0.16F);
                 }
                 if (UUID_playerHasEmissive.get(id)) {
-                    Identifier emissive = skinPossiblyBlinking.contains(".png")?
-                            new Identifier(skinPossiblyBlinking.replace(".png", "_e.png")):
+                    Identifier emissive = skinPossiblyBlinking.contains(".png") ?
+                            new Identifier(skinPossiblyBlinking.replace(".png", "_e.png")) :
                             new Identifier(SKIN_NAMESPACE + id + "_e.png");
                     VertexConsumer emissVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(emissive, true));
                     this.getModel().render(matrixStack, emissVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
                 }
             }
         }
+
     }
-
-
-
-
-
-
-
-
 
 
 }

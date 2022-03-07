@@ -81,6 +81,7 @@ public interface ETF_METHODS {
                 h.disconnect();
             }
         }
+        UUID_playerHasCoat.clear();
         UUID_HTTPtoDisconnect.clear();
 
         PATH_FailedPropertiesToIgnore.clear();
@@ -601,6 +602,22 @@ public interface ETF_METHODS {
         return nativeImage;
     }
 
+    private int getSkinPixelColourToNumber(int color){
+        //            pink   cyan     red       green      brown    blue     orange     yellow
+        //colours = -65281, -256, -16776961, -16711936, -16760705, -65536, -16744449, -14483457
+        return switch (color){
+            case -65281 ->  1;
+            case -256 ->  2;
+            case -16776961 ->  3;
+            case -16711936 ->  4;
+            case -16760705 ->  5;
+            case -65536 ->  6;
+            case -16744449 ->  7;
+            case -14483457 ->  8;
+            default -> 0;
+        }-1;
+    }
+
     private void skinLoaded(NativeImage skin, UUID id) {
         UUID_playerSkinDownloadedYet.put(id, true);
         if (skin != null) {
@@ -621,7 +638,28 @@ public interface ETF_METHODS {
                 modMessage("Found Player {" + id + "} with texture features in skin.", false);
                 UUID_playerHasFeatures.put(id, true);
                 //find what features
+                //pink = -65281, blue = -256
+                //            pink   cyan     red       green      brown    blue     orange     yellow
+                //colours = -65281, -256, -16776961, -16711936, -16760705, -65536, -16744449, -14483457
 
+                //check for coat bottom
+                //pink to copy coat    light blue to remove from legs
+                NativeImage coatSkin = null;
+                if (skin.getColor(52, 17) == -65281 || skin.getColor(52, 17) == -256) {
+                    int lengthOfCoat =getSkinPixelColourToNumber(skin.getColor(52, 18));
+                    Identifier coatID = new Identifier(SKIN_NAMESPACE + id + "_coat.png");
+                    coatSkin = getOrRemoveCoatTexture(skin, lengthOfCoat);
+                    registerNativeImageToIdentifier(coatSkin, coatID.toString());
+                    UUID_playerHasCoat.put(id, true);
+                    if (skin.getColor(52, 17) == -256) {
+                        //delete original pixel from skin
+                        deletePixels(skin, 0, 36, 7, 36+lengthOfCoat);
+                        deletePixels(skin, 12, 36, 15, 36+lengthOfCoat);
+                        deletePixels(skin, 4, 52, 15, 52+lengthOfCoat);
+                    }
+                }else{
+                    UUID_playerHasCoat.put(id, false);
+                }
                 //check for transparency options
                 if (ETFConfigData.skinFeaturesEnableTransparency) {
                     if (canTransparentSkin(skin)) {
@@ -634,7 +672,6 @@ public interface ETF_METHODS {
                     }
                 }
 
-                //pink = -65281, blue = -256
                 //blink 1 frame if either pink or blue optional
                 NativeImage blinkSkinFile = null;
                 if (skin.getColor(52, 16) == -65281 || skin.getColor(52, 16) == -256) {
@@ -669,6 +706,12 @@ public interface ETF_METHODS {
                             registerNativeImageToIdentifier(checkBlink, SKIN_NAMESPACE + id + "_blink2_enchant.png");
                         }
                     }
+                    if(coatSkin!=null){
+                        NativeImage checkBlink = getEnchantedTexture(id, coatSkin);
+                        if (checkBlink != null) {
+                            registerNativeImageToIdentifier(checkBlink, SKIN_NAMESPACE + id + "_coat_enchant.png");
+                        }
+                    }
                 }
 
                 check = getEmissiveTexture(id, skin);
@@ -686,6 +729,12 @@ public interface ETF_METHODS {
                             registerNativeImageToIdentifier(checkBlink, SKIN_NAMESPACE + id + "_blink2_e.png");
                         }
                     }
+                    if(coatSkin!=null){
+                        NativeImage checkBlink = getEmissiveTexture(id, coatSkin);
+                        if (checkBlink != null) {
+                            registerNativeImageToIdentifier(checkBlink, SKIN_NAMESPACE + id + "_coat_e.png");
+                        }
+                    }
                 }
 
             } else {
@@ -693,6 +742,38 @@ public interface ETF_METHODS {
             }
         } else { //http failed
             UUID_playerHasFeatures.put(id, false);
+        }
+    }
+
+
+    private NativeImage getOrRemoveCoatTexture(NativeImage skin,int lengthOfCoat){
+
+            NativeImage coat = new NativeImage(64, 64, false);
+            coat.fillRect(0,0,64,64,0);
+            copyPixels(skin, coat, 0, 36, 7, 36+lengthOfCoat, 16, 6);
+            copyPixels(skin, coat, 12, 36, 15, 36+lengthOfCoat, 24, 6);
+            copyPixels(skin, coat, 4, 52, 15, 52+lengthOfCoat, 20, -10);
+            //ENCHANT AND EMISSIVES
+            copyPixels(skin,coat,56,16,63,31,0,0);
+            return coat;
+
+    }
+
+    // modifiers are distance from x1,y1 to copy
+    private void copyPixels(NativeImage source,NativeImage dest,int x1,int y1,int x2,int y2,int xToModifier,int yToModifier){
+
+        for (int x = x1; x <= x2; x++) {
+            for (int y = y1; y <= y2; y++) {
+                dest.setColor(x+xToModifier,y+yToModifier,source.getColor(x,y));
+            }
+        }
+
+    }
+    private void deletePixels(NativeImage source,int x1,int y1,int x2,int y2){
+        for (int x = x1; x <= x2; x++) {
+            for (int y = y1; y <= y2; y++) {
+                source.setColor(x,y,0);
+            }
         }
     }
 

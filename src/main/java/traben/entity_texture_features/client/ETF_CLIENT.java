@@ -34,6 +34,7 @@ public class ETF_CLIENT implements ModInitializer, ETF_METHODS {
     public static Map<UUID, Boolean> UUID_playerHasEmissive = new HashMap<>();
     public static Map<UUID, Identifier> UUID_playerTransparentSkinId = new HashMap<>();
     public static Map<UUID, HttpURLConnection> UUID_HTTPtoDisconnect = new HashMap<>();
+    public static Map<UUID, Boolean> UUID_playerHasCoat = new HashMap<>();
 
 
     public static Map<UUID, Boolean> UUID_HasBlink = new HashMap<>();
