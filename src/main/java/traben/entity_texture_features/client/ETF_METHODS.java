@@ -217,6 +217,18 @@ public interface ETF_METHODS {
                         String dataFromProps = props.getProperty("biomes." + num).trim();
                         biomes = dataFromProps.toLowerCase().split("\s");
                     }
+                    //add legacy height support
+                    if(!props.containsKey("heights." + num) && (props.containsKey("minHeight." + num) || props.containsKey("maxHeight." + num))) {
+                        String min = "-64";
+                        String max = "319";
+                        if(props.containsKey("minHeight." + num)){
+                            min = props.getProperty("minHeight." + num).trim();
+                        }
+                        if(props.containsKey("maxHeight." + num)){
+                            max = props.getProperty("maxHeight." + num).trim();
+                        }
+                        props.put("heights." + num,min+"-"+max);
+                    }
                     if (props.containsKey("heights." + num)) {
                         String dataFromProps = props.getProperty("heights." + num).trim();
                         String[] heightData = dataFromProps.split("\s");
