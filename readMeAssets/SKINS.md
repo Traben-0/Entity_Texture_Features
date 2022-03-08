@@ -75,7 +75,7 @@ if you have selected a 2 frame blink repeat this process with the dark green box
 <img src="jacket.png" alt="img" width="400"/>
 
 - This feature provides extension options for how minecraft renders the 'Jacket' layer of your minecraft 
-- skin *(the second layer that floats above your body)* and allows it to go up to 8 pixels further down
+skin *(the second layer that floats above your body)* and allows it to go up to 8 pixels further down
 - Typical uses could be for Jackets, Dresses, Villager cloaks and Robes.
 - The texturing is extremely straight forward, if enabled this feature will copy the contents of the top of the
 Legs floating skin layers and use them to build the extension *(these pixels are marked by a checkerboard pattern in the example image above)*.
