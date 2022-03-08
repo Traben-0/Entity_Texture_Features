@@ -54,6 +54,7 @@ public class ETF_CLIENT implements ModInitializer, ETF_METHODS {
 
     @Override
     public void onInitialize() {
+        //testing
         LogManager.getLogger().info("[Entity Texture Features]: Loading!");
         loadConfig();
     }
