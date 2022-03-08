@@ -50,12 +50,12 @@ public class ETF_CLIENT implements ModInitializer, ETF_METHODS {
     public static Set<String> PATH_FailedPropertiesToIgnore = new HashSet<>();
 
 
-    public final static String SKIN_NAMESPACE = "etf_skin/";
+    public final static String SKIN_NAMESPACE = "etf_skin:";
 
     @Override
     public void onInitialize() {
         //testing
-        LogManager.getLogger().info("[Entity Texture Features]: Loading!");
+        LogManager.getLogger().info("[Entity Texture Features]: Loading! 1.18.2");
         loadConfig();
     }
 

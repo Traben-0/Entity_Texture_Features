@@ -22,9 +22,8 @@ public class PlayerCoatEntityModel<T extends LivingEntity> extends BipedEntityMo
         super(root, RenderLayer::getEntityTranslucent);
 
         this.jacket = root.getChild("jacket");
-        this.parts = (List)root.traverse().filter((part) -> {
-            return !part.isEmpty();
-        }).collect(ImmutableList.toImmutableList());
+
+        this.parts = List.of(this.jacket);
     }
 
     public static ModelData getTexturedModelData(Dilation dilation, boolean slim) {
@@ -40,7 +39,7 @@ public class PlayerCoatEntityModel<T extends LivingEntity> extends BipedEntityMo
     }
 
     protected Iterable<ModelPart> getBodyParts() {
-        return Iterables.concat(super.getBodyParts(), ImmutableList.of(this.jacket));
+        return Iterables.concat(/*super.getBodyParts(),*/ ImmutableList.of(this.jacket));
     }
     public void setAngles(T livingEntity, float f, float g, float h, float i, float j) {
         super.setAngles(livingEntity, f, g, h, i, j);
@@ -52,6 +51,6 @@ public class PlayerCoatEntityModel<T extends LivingEntity> extends BipedEntityMo
     }
 
     public ModelPart getRandomPart(Random random) {
-        return (ModelPart)this.parts.get(random.nextInt(this.parts.size()));
+        return jacket;
     }
 }
