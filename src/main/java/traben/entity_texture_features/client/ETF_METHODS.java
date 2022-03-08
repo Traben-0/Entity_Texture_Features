@@ -631,7 +631,6 @@ public interface ETF_METHODS {
     }
 
     private void skinLoaded(NativeImage skin, UUID id) {
-        UUID_playerSkinDownloadedYet.put(id, true);
         if (skin != null) {
             if (skin.getColor(1, 16) == -16776961 &&
                     skin.getColor(0, 16) == -16777089 &&
@@ -654,12 +653,18 @@ public interface ETF_METHODS {
                 //            pink   cyan     red       green      brown    blue     orange     yellow
                 //colours = -65281, -256, -16776961, -16711936, -16760705, -65536, -16744449, -14483457
 
+                //check Choice Box
+                int[] choiceBoxChoices = {getSkinPixelColourToNumber(skin.getColor(52, 16)),
+                        getSkinPixelColourToNumber(skin.getColor(52, 17)),
+                        getSkinPixelColourToNumber(skin.getColor(52, 18))};
+
+
                 //check for coat bottom
                 //pink to copy coat    light blue to remove from legs
                 NativeImage coatSkin = null;
-                int controllerCoat = getSkinPixelColourToNumber(skin.getColor(52, 17));
+                int controllerCoat = choiceBoxChoices[1];
                 if (controllerCoat >= 1 && controllerCoat <= 4) {
-                    int lengthOfCoat =getSkinPixelColourToNumber(skin.getColor(52, 18) )- 1;
+                    int lengthOfCoat = choiceBoxChoices[2] - 1;
                     Identifier coatID = new Identifier(SKIN_NAMESPACE + id + "_coat.png");
                     coatSkin = getOrRemoveCoatTexture(skin, lengthOfCoat);
                     registerNativeImageToIdentifier(coatSkin, coatID.toString());
@@ -680,7 +685,7 @@ public interface ETF_METHODS {
                     UUID_playerHasCoat.put(id, false);
                 }
                 //check for transparency options
-                System.out.println("about to check");
+                //System.out.println("about to check");
                 if (ETFConfigData.skinFeaturesEnableTransparency) {
                     if (canTransparentSkin(skin)) {
                         Identifier transId = new Identifier(SKIN_NAMESPACE + id + "_transparent.png");
@@ -694,7 +699,8 @@ public interface ETF_METHODS {
 
                 //blink 1 frame if either pink or blue optional
                 NativeImage blinkSkinFile = null;
-                if (skin.getColor(52, 16) == -65281 || skin.getColor(52, 16) == -256) {
+                int blinkChoice = choiceBoxChoices[0];
+                if (blinkChoice == 1 || blinkChoice == 2) {
                     blinkSkinFile = returnBlinkFace(skin, false);
                     UUID_HasBlink.put(id, true);
                     registerNativeImageToIdentifier(blinkSkinFile, SKIN_NAMESPACE + id + "_blink.png");
@@ -703,7 +709,7 @@ public interface ETF_METHODS {
                 }
                 //blink is 2 frames with blue optional
                 NativeImage blinkSkinFile2 = null;
-                if (skin.getColor(52, 16) == -256) {
+                if (blinkChoice == 2) {
                     blinkSkinFile2 = returnBlinkFace(skin, true);
                     UUID_HasBlink2.put(id, true);
                     registerNativeImageToIdentifier(blinkSkinFile2, SKIN_NAMESPACE + id + "_blink2.png");
@@ -711,50 +717,75 @@ public interface ETF_METHODS {
                     UUID_HasBlink2.put(id, false);
                 }
 
-                NativeImage check = getEnchantedTexture(id, skin);
-                if (check != null) {
-                    registerNativeImageToIdentifier(check, SKIN_NAMESPACE + id + "_enchant.png");
-                    if (blinkSkinFile != null) {
-                        NativeImage checkBlink = getEnchantedTexture(id, blinkSkinFile);
-                        if (checkBlink != null) {
-                            registerNativeImageToIdentifier(checkBlink, SKIN_NAMESPACE + id + "_blink_enchant.png");
-                        }
-                    }
-                    if (blinkSkinFile2 != null) {
-                        NativeImage checkBlink = getEnchantedTexture(id, blinkSkinFile2);
-                        if (checkBlink != null) {
-                            registerNativeImageToIdentifier(checkBlink, SKIN_NAMESPACE + id + "_blink2_enchant.png");
-                        }
-                    }
-                    if(coatSkin!=null){
-                        NativeImage checkBlink = getEnchantedTexture(id, coatSkin);
-                        if (checkBlink != null) {
-                            registerNativeImageToIdentifier(checkBlink, SKIN_NAMESPACE + id + "_coat_enchant.png");
-                        }
-                    }
-                }
 
-                check = getEmissiveTexture(id, skin);
-                if (check != null) {
-                    registerNativeImageToIdentifier(check, SKIN_NAMESPACE + id + "_e.png");
-                    if (blinkSkinFile != null) {
-                        NativeImage checkBlink = getEmissiveTexture(id, blinkSkinFile);
-                        if (checkBlink != null) {
-                            registerNativeImageToIdentifier(checkBlink, SKIN_NAMESPACE + id + "_blink_e.png");
+
+                //check for marker choices
+                //  1 = Emissives,  2 = Enchanted
+                List<Integer> markerChoices = List.of(getSkinPixelColourToNumber(skin.getColor(1, 17)),
+                        getSkinPixelColourToNumber(skin.getColor(1, 18)),
+                        getSkinPixelColourToNumber(skin.getColor(2, 17)),
+                        getSkinPixelColourToNumber(skin.getColor(2, 18)));
+
+                //enchanted
+                UUID_playerHasEnchant.put(id,markerChoices.contains(2));
+                if(markerChoices.contains(2)) {
+                    System.out.println("choice "+(markerChoices.indexOf(2)+1));
+                    int[] boxChosenBounds = getBounds(markerChoices.indexOf(2)+1);
+                        NativeImage check = returnMatchPixels( skin,boxChosenBounds);
+                        if (check != null) {
+                            registerNativeImageToIdentifier(check, SKIN_NAMESPACE + id + "_enchant.png");
+                            if (blinkSkinFile != null) {
+                                NativeImage checkBlink = returnMatchPixels( blinkSkinFile,boxChosenBounds);
+                                if (checkBlink != null) {
+                                    registerNativeImageToIdentifier(checkBlink, SKIN_NAMESPACE + id + "_blink_enchant.png");
+                                }
+                            }
+                            if (blinkSkinFile2 != null) {
+                                NativeImage checkBlink = returnMatchPixels( blinkSkinFile2,boxChosenBounds);
+                                if (checkBlink != null) {
+                                    registerNativeImageToIdentifier(checkBlink, SKIN_NAMESPACE + id + "_blink2_enchant.png");
+                                }
+                            }
+                            if (coatSkin != null) {
+                                NativeImage checkBlink = returnMatchPixels( coatSkin,boxChosenBounds);
+                                if (checkBlink != null) {
+                                    registerNativeImageToIdentifier(checkBlink, SKIN_NAMESPACE + id + "_coat_enchant.png");
+                                }
+                            }
+                        }else{
+                            UUID_playerHasEnchant.put(id,false);
                         }
-                    }
-                    if (blinkSkinFile2 != null) {
-                        NativeImage checkBlink = getEmissiveTexture(id, blinkSkinFile2);
-                        if (checkBlink != null) {
-                            registerNativeImageToIdentifier(checkBlink, SKIN_NAMESPACE + id + "_blink2_e.png");
+
+                }
+                //emissives
+                UUID_playerHasEmissive.put(id,markerChoices.contains(1));
+                if(markerChoices.contains(1)) {
+                    int[] boxChosenBounds = getBounds(markerChoices.indexOf(1) + 1);
+                        NativeImage check = returnMatchPixels( skin,boxChosenBounds);
+                        if (check != null) {
+                            registerNativeImageToIdentifier(check, SKIN_NAMESPACE + id + "_e.png");
+                            if (blinkSkinFile != null) {
+                                NativeImage checkBlink = returnMatchPixels( blinkSkinFile,boxChosenBounds);
+                                if (checkBlink != null) {
+                                    registerNativeImageToIdentifier(checkBlink, SKIN_NAMESPACE + id + "_blink_e.png");
+                                }
+                            }
+                            if (blinkSkinFile2 != null) {
+                                NativeImage checkBlink = returnMatchPixels( blinkSkinFile2,boxChosenBounds);
+                                if (checkBlink != null) {
+                                    registerNativeImageToIdentifier(checkBlink, SKIN_NAMESPACE + id + "_blink2_e.png");
+                                }
+                            }
+                            if (coatSkin != null) {
+                                NativeImage checkBlink = returnMatchPixels( coatSkin,boxChosenBounds);
+                                if (checkBlink != null) {
+                                    registerNativeImageToIdentifier(checkBlink, SKIN_NAMESPACE + id + "_coat_e.png");
+                                }
+                            }
+                        }else{
+                            UUID_playerHasEmissive.put(id,false);
                         }
-                    }
-                    if(coatSkin!=null){
-                        NativeImage checkBlink = getEmissiveTexture(id, coatSkin);
-                        if (checkBlink != null) {
-                            registerNativeImageToIdentifier(checkBlink, SKIN_NAMESPACE + id + "_coat_e.png");
-                        }
-                    }
+
                 }
 
             } else {
@@ -763,6 +794,7 @@ public interface ETF_METHODS {
         } else { //http failed
             UUID_playerHasFeatures.put(id, false);
         }
+        UUID_playerSkinDownloadedYet.put(id, true);
     }
 
 
@@ -840,7 +872,7 @@ public interface ETF_METHODS {
             //do not allow skins under 40% ish total opacity
             //1648 is total pixels that are not allowed transparent by vanilla
             int average = (countTransparent / 1648); // should be 0 to 256
-            System.out.println("average ="+average);
+            //System.out.println("average ="+average);
             return average >= 100;
         }
     }
@@ -878,24 +910,22 @@ public interface ETF_METHODS {
         return texture;
     }
 
-    private NativeImage getEnchantedTexture(UUID id, NativeImage baseSkin) {
-        NativeImage check = returnMatchPixels(baseSkin, 56, 24, 63, 31);
-        UUID_playerHasEnchant.put(id, check != null);
-        return check;
+    private int[] getBounds(int choiceArea){
+        return switch (choiceArea){
+            case 1 -> new int[]{56, 16, 63, 23};
+            case 2 -> new int[]{56, 24, 63, 31};
+            case 3 -> new int[]{56, 32, 63, 39};
+            case 4 -> new int[]{56, 40, 63, 47};
+            default -> new int[]{0, 0, 0, 0};
+
+        };
     }
 
-    private NativeImage getEmissiveTexture(UUID id, NativeImage baseSkin) {
-        NativeImage check = returnMatchPixels(baseSkin, 56, 16, 63, 23);
-        UUID_playerHasEmissive.put(id, check != null);
-        return check;
-    }
-
-    @SuppressWarnings("SameParameterValue")
     @Nullable
-    private NativeImage returnMatchPixels(NativeImage baseSkin, int x1, int y1, int x2, int y2) {
+    private NativeImage returnMatchPixels(NativeImage baseSkin,  int[] boundsToCheck) {
         ArrayList<Integer> matchColors = new ArrayList<>();
-        for (int x = x1; x <= x2; x++) {
-            for (int y = y1; y <= y2; y++) {
+        for (int x = boundsToCheck[0]; x <= boundsToCheck[2]; x++) {
+            for (int y = boundsToCheck[1]; y <= boundsToCheck[3]; y++) {
                 if (baseSkin.getOpacity(x, y) != 0 && !matchColors.contains(baseSkin.getColor(x, y))) {
                     matchColors.add(baseSkin.getColor(x, y));
                 }
@@ -917,4 +947,6 @@ public interface ETF_METHODS {
         }
 
     }
+
+
 }
