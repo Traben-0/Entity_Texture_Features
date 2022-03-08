@@ -615,7 +615,7 @@ public interface ETF_METHODS {
             case -16744449 ->  7;
             case -14483457 ->  8;
             default -> 0;
-        }-1;
+        };
     }
 
     private void skinLoaded(NativeImage skin, UUID id) {
@@ -645,22 +645,30 @@ public interface ETF_METHODS {
                 //check for coat bottom
                 //pink to copy coat    light blue to remove from legs
                 NativeImage coatSkin = null;
-                if (skin.getColor(52, 17) == -65281 || skin.getColor(52, 17) == -256) {
-                    int lengthOfCoat =getSkinPixelColourToNumber(skin.getColor(52, 18));
+                int controllerCoat = getSkinPixelColourToNumber(skin.getColor(52, 17));
+                if (controllerCoat >= 1 && controllerCoat <= 4) {
+                    int lengthOfCoat =getSkinPixelColourToNumber(skin.getColor(52, 18) )- 1;
                     Identifier coatID = new Identifier(SKIN_NAMESPACE + id + "_coat.png");
                     coatSkin = getOrRemoveCoatTexture(skin, lengthOfCoat);
                     registerNativeImageToIdentifier(coatSkin, coatID.toString());
                     UUID_playerHasCoat.put(id, true);
-                    if (skin.getColor(52, 17) == -256) {
+                    if (controllerCoat == 2 || controllerCoat == 4) {
                         //delete original pixel from skin
-                        deletePixels(skin, 0, 36, 7, 36+lengthOfCoat);
-                        deletePixels(skin, 12, 36, 15, 36+lengthOfCoat);
-                        deletePixels(skin, 4, 52, 15, 52+lengthOfCoat);
+                        //
+                        deletePixels(skin, 4, 32, 7, 35);
+                        deletePixels(skin, 4, 48, 7, 51);
+                        deletePixels(skin, 0, 36, 15, 36+lengthOfCoat);
+                        deletePixels(skin, 0, 52, 15, 52+lengthOfCoat);
                     }
+                    //red or green make fat coat
+                    UUID_playerHasFatCoat.put(id,controllerCoat == 3 || controllerCoat == 4);
+
+
                 }else{
                     UUID_playerHasCoat.put(id, false);
                 }
                 //check for transparency options
+                System.out.println("about to check");
                 if (ETFConfigData.skinFeaturesEnableTransparency) {
                     if (canTransparentSkin(skin)) {
                         Identifier transId = new Identifier(SKIN_NAMESPACE + id + "_transparent.png");
@@ -820,6 +828,7 @@ public interface ETF_METHODS {
             //do not allow skins under 40% ish total opacity
             //1648 is total pixels that are not allowed transparent by vanilla
             int average = (countTransparent / 1648); // should be 0 to 256
+            System.out.println("average ="+average);
             return average >= 100;
         }
     }
