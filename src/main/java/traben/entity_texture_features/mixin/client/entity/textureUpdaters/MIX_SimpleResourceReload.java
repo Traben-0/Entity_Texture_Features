@@ -29,6 +29,7 @@ public abstract class MIX_SimpleResourceReload implements ETF_METHODS {
                     if (mod.toString().contains("puzzle")) {
                         modMessage("Entity Texture Features - @Motschen's Mod 'Puzzle' was detected: please ensure you disable emissive entities in that mod!", false);
                         puzzleDetected = true;
+                        break;
                     }
                 }
             }

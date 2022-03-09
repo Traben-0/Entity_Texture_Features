@@ -4,7 +4,6 @@ import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
@@ -14,7 +13,8 @@ import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.*;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.client.ETF_METHODS;
 
@@ -30,16 +30,25 @@ public abstract class MIX_PlayerEntityRenderer extends LivingEntityRenderer<Abst
         super(ctx, model, shadowRadius);
     }
 
-    @Redirect(method = "renderArm",
-            at = @At(value = "INVOKE",
-                    target = "Lnet/minecraft/client/model/ModelPart;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;II)V",ordinal = 0)
-            )
-    private void injected3(ModelPart instance, MatrixStack matrices, VertexConsumer vertices, int light, int overlay) {
-        //do nothing
+    @Inject(method = "renderArm",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/PlayerEntityModel;setAngles(Lnet/minecraft/entity/LivingEntity;FFFFF)V",
+                    shift = At.Shift.AFTER), cancellable = true)
+    private void redirectNicely(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, AbstractClientPlayerEntity player, ModelPart arm, ModelPart sleeve, CallbackInfo ci) {
+        //redirect the method but more mod compatible
+        UUID id = player.getUuid();
+        if (ETFConfigData.skinFeaturesEnabled && !UUID_playerHasFeatures.containsKey(id) && !UUID_playerSkinDownloadedYet.containsKey(id)) {
+            if (UUID_playerHasFeatures.get(id) && UUID_playerSkinDownloadedYet.get(id)){
+                renderSkinFeaturesOverlays(matrices,  vertexConsumers,  light,  player,  arm,  sleeve);
+                ci.cancel();
+            }
+        }
     }
 
-    @Inject(method = "renderArm", at = @At(value = "TAIL"))
-    private void renderSkinFeaturesOverlays(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, AbstractClientPlayerEntity player, ModelPart arm, ModelPart sleeve, CallbackInfo ci) {
+
+    private void renderSkinFeaturesOverlays(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, AbstractClientPlayerEntity player, ModelPart arm, ModelPart sleeve) {
+        arm.pitch = 0.0F;
+        sleeve.pitch = 0.0F;
+
         //I haven't nailed down exactly why, but it cannot attempt to grab the skin until a bit of time has passed
         if (ETFConfigData.skinFeaturesEnabled) {
             if (timerBeforeTrySkin > 0) {
