@@ -17,7 +17,7 @@ This allows most Optifine Resourcepacks to be used on Fabric, as long as they ch
 [Custom Entity Models Mod](https://www.curseforge.com/minecraft/mc-mods/custom-entity-models-cem) 
 and it's Dependencies.  
 For more Fabric Optifine alternatives Click 
-[[here]](https://www.curseforge.com/linkout?remoteUrl=https%253a%252f%252flambdaurora.dev%252foptifine_alternatives%252f)
+[[here]](https://lambdaurora.dev/optifine_alternatives/)
 ###The features of this mod so far:
 - 🎲 Custom & Random entity textures just like Optifine & compatible with Optifine Resourcepacks. (Customised just like Optifine)
 - 💡 Emissive/Glowing entity textures just like Optifine & compatible with Optifine Resourcepacks.
