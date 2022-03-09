@@ -127,13 +127,14 @@ public class randomCase implements ETF_METHODS {
                 //example "Reference{ResourceKey[minecraft:worldgen/biome / minecraft:river]=net.minecraft.class_1959@373fe79a}"
                 //String entityBiome = entity.world.getBiome(entity.getBlockPos()).toString();
             //example  "Optional[minecraft:worldgen/biome / minecraft:river]"
-            String entityBiome = entity.world.getBiome(entity.getBlockPos()).getKey().toString().split("\s/\s")[1];
-           // System.out.println("biome="+entityBiome);
+            String entityBiome = entity.world.getBiome(entity.getBlockPos()).getKey().toString().split("\s/\s")[1].replaceAll("[^0-9a-zA-Z_:-]","");
+            System.out.println("biome="+entityBiome);
                 boolean check = false;
 
                     for (String str :
                             biomes) {
-                        if (entityBiome.contains(str.trim().toLowerCase())) {
+                        System.out.println("biometest="+str);
+                        if (entityBiome.replace("minecraft:","").equals(str.trim().toLowerCase().replace("minecraft:",""))) {
                             check = true;
                             break;
                         }
@@ -345,7 +346,8 @@ public class randomCase implements ETF_METHODS {
             }
             allBoolean = check;
         }
-        if (wasTestedByUpdateable && !caseHasNonUpdatables) {
+        if (//wasTestedByUpdateable &&
+                !caseHasNonUpdatables) {
             hasUpdatableRandomCases.put(entity.getUuid(), true);
         }
         return allBoolean;
