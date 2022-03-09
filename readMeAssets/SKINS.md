@@ -1,13 +1,15 @@
+<img src="title.png" alt="Entity Texture Features Title" width="650"/>
+
+___
+### [[Discord]](https://discord.gg/rURmwrzUcz) - [[CurseForge]](https://www.curseforge.com/minecraft/mc-mods/entity-texture-features-fabric) - [[Modrinth]](https://modrinth.com/mod/entitytexturefeatures) - [[~~Compatability List~~]]() - [[Report Issues]](https://github.com/Traben-0/EmissiveMod/issues) - [[Donate]](https://www.paypal.com/donate/?business=PLB862YH8UXML&no_recurring=0&currency_code=AUD)
+___
 # 🎨  Player skin features Guide
-<img src="skins1.png" alt="img" width="325"/>  
+<img src="skins1.png" alt="img" width="450"/>
+<img src="skins2.png" alt="img" width="450"/>
+<img src="skins3.png" alt="img" width="450"/>
+<img src="jacket.png" alt="img" width="450"/>
 
-<img src="skins2.png" alt="img" width="325"/>  
-
-<img src="skins3.png" alt="img" width="325"/>
-
-<img src="jacket.png" alt="img" width="260"/>
-
-all of these examples are downloadable [[HERE]](https://github.com/Traben-0/EmissiveMod/raw/master/Skin_Feature_Examples.ZIP)
+most of these examples are downloadable [[HERE]](https://github.com/Traben-0/EmissiveMod/raw/master/Skin_Feature_Examples.ZIP)
 - Player skins can use emissive, blinking, enchanted, and transparency texture features and more...
 - 100% optional, controlled by the skin file you upload to Mojang, and options to prevent abuse of features in PVP
 
@@ -95,9 +97,20 @@ be one from the Color Guide.
 The number for that color in the Color Guide will be the extension length from 1 to 8 pixels.
 
 
+# To confusing or not working?
+join the [[Discord]](https://discord.gg/rURmwrzUcz) and i'll be happy to help
 
-
-
+.  
+.  
+.  
+.  
+.  
+.  
+.  
+.  
+.  
+.  
+.
 .  
 .  
 .  
