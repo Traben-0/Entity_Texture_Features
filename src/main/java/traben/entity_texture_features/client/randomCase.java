@@ -128,12 +128,12 @@ public class randomCase implements ETF_METHODS {
                 //String entityBiome = entity.world.getBiome(entity.getBlockPos()).toString();
             //example  "Optional[minecraft:worldgen/biome / minecraft:river]"
             String entityBiome = entity.world.getBiome(entity.getBlockPos()).getKey().toString().split("\s/\s")[1].replaceAll("[^0-9a-zA-Z_:-]","");
-            System.out.println("biome="+entityBiome);
+            //System.out.println("biome="+entityBiome);
                 boolean check = false;
 
                     for (String str :
                             biomes) {
-                        System.out.println("biometest="+str);
+                        //System.out.println("biometest="+str);
                         if (entityBiome.replace("minecraft:","").equals(str.trim().toLowerCase().replace("minecraft:",""))) {
                             check = true;
                             break;

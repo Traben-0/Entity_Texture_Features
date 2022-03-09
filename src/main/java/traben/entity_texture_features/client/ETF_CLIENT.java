@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.*;
 
+
+
 @net.fabricmc.api.Environment(net.fabricmc.api.EnvType.CLIENT)
 public class ETF_CLIENT implements ModInitializer, ETF_METHODS {
     //0 = vanilla only    1+ is zombie1+.png
@@ -51,6 +53,8 @@ public class ETF_CLIENT implements ModInitializer, ETF_METHODS {
 
 
     public final static String SKIN_NAMESPACE = "etf_skin:";
+
+    //public static final EntityModelLayer COATEXTENSION = new EntityModelLayer(new Identifier(SKIN_NAMESPACE, "coatExtensionModelLayer"), "main");
 
     @Override
     public void onInitialize() {

@@ -802,11 +802,16 @@ public interface ETF_METHODS {
 
             NativeImage coat = new NativeImage(64, 64, false);
             coat.fillRect(0,0,64,64,0);
-            copyPixels(skin, coat, 0, 36, 7, 36+lengthOfCoat, 16, 6);
-            copyPixels(skin, coat, 12, 36, 15, 36+lengthOfCoat, 24, 6);
-            copyPixels(skin, coat, 4, 52, 15, 52+lengthOfCoat, 20, -10);
+
+            //top
+        copyPixels(skin, coat, 4, 32, 7, 35+lengthOfCoat, 16, 0);
+        copyPixels(skin, coat, 4, 48, 7, 51+lengthOfCoat, 20, -16);
+            //sides
+            copyPixels(skin, coat, 0, 36, 7, 36+lengthOfCoat, 16, 0);
+            copyPixels(skin, coat, 12, 36, 15, 36+lengthOfCoat, 24, 0);
+            copyPixels(skin, coat, 4, 52, 15, 52+lengthOfCoat, 20, -16);
             //ENCHANT AND EMISSIVES
-            copyPixels(skin,coat,56,16,63,31,0,0);
+            copyPixels(skin,coat,56,16,63,47,0,0);
             return coat;
 
     }
