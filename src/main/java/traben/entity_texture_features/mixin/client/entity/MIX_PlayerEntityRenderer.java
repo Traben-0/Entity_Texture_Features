@@ -24,7 +24,7 @@ import static traben.entity_texture_features.client.ETF_CLIENT.*;
 
 @Mixin(PlayerEntityRenderer.class)
 public abstract class MIX_PlayerEntityRenderer extends LivingEntityRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> implements ETF_METHODS {
-    public int timerBeforeTrySkin = 120;
+    public int timerBeforeTrySkin = 200;
 
     public MIX_PlayerEntityRenderer(EntityRendererFactory.Context ctx, PlayerEntityModel<AbstractClientPlayerEntity> model, float shadowRadius) {
         super(ctx, model, shadowRadius);
@@ -36,19 +36,8 @@ public abstract class MIX_PlayerEntityRenderer extends LivingEntityRenderer<Abst
     private void redirectNicely(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, AbstractClientPlayerEntity player, ModelPart arm, ModelPart sleeve, CallbackInfo ci) {
         //redirect the method but more mod compatible
         UUID id = player.getUuid();
-        if (ETFConfigData.skinFeaturesEnabled && UUID_playerHasFeatures.containsKey(id) && UUID_playerSkinDownloadedYet.containsKey(id)) {
-            if (UUID_playerHasFeatures.get(id) && UUID_playerSkinDownloadedYet.get(id)){
-                renderSkinFeaturesOverlays(matrices,  vertexConsumers,  light,  player,  arm,  sleeve);
-                ci.cancel();
-            }
-        }
-    }
-
-
-    private void renderSkinFeaturesOverlays(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, AbstractClientPlayerEntity player, ModelPart arm, ModelPart sleeve) {
         arm.pitch = 0.0F;
         sleeve.pitch = 0.0F;
-
         //I haven't nailed down exactly why, but it cannot attempt to grab the skin until a bit of time has passed
         if (ETFConfigData.skinFeaturesEnabled) {
             if (timerBeforeTrySkin > 0) {
@@ -57,8 +46,6 @@ public abstract class MIX_PlayerEntityRenderer extends LivingEntityRenderer<Abst
                 timerBeforeTrySkin--;
             } else {
                 try {
-                    UUID id = player.getUuid();
-
                     if (!UUID_playerHasFeatures.containsKey(id) && !UUID_playerSkinDownloadedYet.containsKey(id)) {
                         //check for mark
                         checkPlayerForSkinFeatures(id, player);
@@ -67,10 +54,8 @@ public abstract class MIX_PlayerEntityRenderer extends LivingEntityRenderer<Abst
                         if (UUID_playerHasFeatures.get(id)) {
                             if (ETFConfigData.skinFeaturesEnableTransparency
                                     && UUID_playerTransparentSkinId.containsKey(id)) {
+                                ci.cancel();
                                 arm.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(UUID_playerTransparentSkinId.get(id))), light, OverlayTexture.DEFAULT_UV);
-                                sleeve.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(player.getSkinTexture())), light, OverlayTexture.DEFAULT_UV);
-                            } else {
-                                arm.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntitySolid(player.getSkinTexture())), light, OverlayTexture.DEFAULT_UV);
                                 sleeve.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(player.getSkinTexture())), light, OverlayTexture.DEFAULT_UV);
                             }
                             if (UUID_playerHasEmissive.get(id)) {
@@ -81,22 +66,13 @@ public abstract class MIX_PlayerEntityRenderer extends LivingEntityRenderer<Abst
                                 arm.render(matrices, ItemRenderer.getArmorGlintConsumer(vertexConsumers, RenderLayer.getArmorCutoutNoCull(new Identifier(SKIN_NAMESPACE + id + "_enchant.png")), false, true), 15728640, OverlayTexture.DEFAULT_UV);
                                 sleeve.render(matrices, ItemRenderer.getArmorGlintConsumer(vertexConsumers, RenderLayer.getArmorCutoutNoCull(new Identifier(SKIN_NAMESPACE + id + "_enchant.png")), false, true), 15728640, OverlayTexture.DEFAULT_UV);
                             }
-                        } else {
-                            arm.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntitySolid(player.getSkinTexture())), light, OverlayTexture.DEFAULT_UV);
-                            sleeve.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(player.getSkinTexture())), light, OverlayTexture.DEFAULT_UV);
+                            //ci.cancel();
                         }
-                    } else {
-                        arm.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntitySolid(player.getSkinTexture())), light, OverlayTexture.DEFAULT_UV);
-                        sleeve.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(player.getSkinTexture())), light, OverlayTexture.DEFAULT_UV);
                     }
                 } catch (Exception e) {
                     modMessage(e.toString(), false);
                 }
             }
-        }else{
-            arm.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntitySolid(player.getSkinTexture())), light, OverlayTexture.DEFAULT_UV);
-            sleeve.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(player.getSkinTexture())), light, OverlayTexture.DEFAULT_UV);
         }
     }
-
 }
