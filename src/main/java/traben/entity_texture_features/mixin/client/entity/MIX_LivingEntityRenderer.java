@@ -333,7 +333,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
         if (UUID_playerSkinDownloadedYet.get(id)) {
             if (UUID_playerHasFeatures.get(id)) {
                 ItemStack armour = player.getInventory().getArmorStack(1);
-                System.out.println(armour.getName());
+                //System.out.println(armour.getName());
                 if (UUID_playerHasCoat.get(id) &&
                         player.isPartVisible(PlayerModelPart.JACKET ) &&
                         !(armour.isOf(Items.CHAINMAIL_LEGGINGS) ||
@@ -353,10 +353,11 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                         VertexConsumer coatVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(new Identifier(coat)));
                         matrixStack.push();
                         if (UUID_playerHasFatCoat.get(id)) {
+                            matrixStack.translate(0,-2.0 / 16,0);
                             if (player.isSneaking() && !player.getAbilities().flying) {
                                 matrixStack.translate(0, 0.125 / 16, 0.075 / 16 + (16 / 4.5) / 10);
                             }
-                            matrixStack.scale(1.25f, 1.25f, 1.25f);
+                            matrixStack.scale(1.125f, 1.125f, 1.125f);
                         } else {
                             if (player.isSneaking() && !player.getAbilities().flying) {
                                 matrixStack.translate(0, 0.125 / 16, 0.075 / 16 + (16 / 4.5) / 10);

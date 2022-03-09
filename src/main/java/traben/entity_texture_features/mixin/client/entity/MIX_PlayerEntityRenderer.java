@@ -36,7 +36,7 @@ public abstract class MIX_PlayerEntityRenderer extends LivingEntityRenderer<Abst
     private void redirectNicely(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, AbstractClientPlayerEntity player, ModelPart arm, ModelPart sleeve, CallbackInfo ci) {
         //redirect the method but more mod compatible
         UUID id = player.getUuid();
-        if (ETFConfigData.skinFeaturesEnabled && !UUID_playerHasFeatures.containsKey(id) && !UUID_playerSkinDownloadedYet.containsKey(id)) {
+        if (ETFConfigData.skinFeaturesEnabled && UUID_playerHasFeatures.containsKey(id) && UUID_playerSkinDownloadedYet.containsKey(id)) {
             if (UUID_playerHasFeatures.get(id) && UUID_playerSkinDownloadedYet.get(id)){
                 renderSkinFeaturesOverlays(matrices,  vertexConsumers,  light,  player,  arm,  sleeve);
                 ci.cancel();
