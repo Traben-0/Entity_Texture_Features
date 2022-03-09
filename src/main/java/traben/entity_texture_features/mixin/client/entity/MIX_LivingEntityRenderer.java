@@ -147,7 +147,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
         String path = vanilla.toString();
         UUID id = entity.getUuid();
         if (!(entity instanceof PlayerEntity)) {
-            if (ETFConfigData.enableRandomTextures) {
+            if (ETFConfigData.enableCustomTextures) {
                 try {
                     if (!Texture_OptifineOrTrueRandom.containsKey(path)) {
                         processNewRandomTextureCandidate(path);

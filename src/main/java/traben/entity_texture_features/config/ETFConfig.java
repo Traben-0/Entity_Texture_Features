@@ -1,7 +1,7 @@
 package traben.entity_texture_features.config;
 
 public class ETFConfig {
-    public boolean enableRandomTextures = true;
+    public boolean enableCustomTextures = true;
     public int textureUpdateFrequency = 3;
     public boolean enableEmissiveTextures = true;
     public boolean alwaysCheckVanillaEmissiveSuffix = true;

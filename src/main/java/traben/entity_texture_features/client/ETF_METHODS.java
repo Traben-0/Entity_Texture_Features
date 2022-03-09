@@ -93,6 +93,9 @@ public interface ETF_METHODS {
 
         Texture_Emissive.clear();
         setEmissiveSuffix();
+
+        mooshroomRedCustomShroom = 0;
+        mooshroomBrownCustomShroom = 0;
     }
 
     default void resetSingleData(UUID id) {

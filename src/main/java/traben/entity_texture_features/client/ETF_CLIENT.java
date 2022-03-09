@@ -51,6 +51,8 @@ public class ETF_CLIENT implements ModInitializer, ETF_METHODS {
     public static Map<UUID, String> UUID_TridentName = new HashMap<>();
     public static Set<String> PATH_FailedPropertiesToIgnore = new HashSet<>();
 
+    public static int mooshroomRedCustomShroom = 0;
+    public static int mooshroomBrownCustomShroom = 0;
 
     public final static String SKIN_NAMESPACE = "etf_skin:";
 

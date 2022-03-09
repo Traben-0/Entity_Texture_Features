@@ -32,13 +32,13 @@ public class ETFConfigScreen implements ETF_METHODS {
         }
 
         SubCategoryBuilder randoms = entryBuilder.startSubCategory(Text.of("Random / Custom Mobs settings"));
-        randoms.add(0, entryBuilder.startBooleanToggle(Text.of("Enable Optifine Random mobs"), ETFConfigData.enableRandomTextures)
+        randoms.add(0, entryBuilder.startBooleanToggle(Text.of("Enable Optifine Random mobs"), ETFConfigData.enableCustomTextures)
                 .setDefaultValue(true) // Recommended: Used when user click "Reset"
                 .setTooltip(new TranslatableText("""
                         Enables Randomized entity textures
                         works with resource packs
                         using the optifine format""")) // Optional: Shown when the user hover over this option
-                .setSaveConsumer(newValue -> ETFConfigData.enableRandomTextures = newValue) // Recommended: Called when user save the config
+                .setSaveConsumer(newValue -> ETFConfigData.enableCustomTextures = newValue) // Recommended: Called when user save the config
                 .build());
         randoms.add(1, entryBuilder.startIntSlider(Text.of("Texture update frequency"), ETFConfigData.textureUpdateFrequency, 1, 64)
                 .setDefaultValue(3) // Recommended: Used when user click "Reset"

@@ -43,7 +43,7 @@ public abstract class MIX_BuiltinModelItemRenderer implements SynchronousResourc
     private void changeElytraTexture(ItemStack stack, ModelTransformation.Mode mode, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, CallbackInfo ci) {
         //at this point trident has already rendered we just have to render alterations over it :/
         if (stack.isOf(Items.TRIDENT) && ETFConfigData.enableTridents) {
-            if (ETFConfigData.enableRandomTextures) {
+            if (ETFConfigData.enableCustomTextures) {
                 if (stack.hasCustomName()) {
                     String path = TridentEntityModel.TEXTURE.toString();
                     String name = stack.getName().getString().toLowerCase().replaceAll("[^a-z0-9/_.-]", "");

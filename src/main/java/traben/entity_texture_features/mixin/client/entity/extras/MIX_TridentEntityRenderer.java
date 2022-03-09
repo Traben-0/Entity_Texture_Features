@@ -59,7 +59,7 @@ public abstract class MIX_TridentEntityRenderer implements SynchronousResourceRe
     @Redirect(method = "render(Lnet/minecraft/entity/projectile/TridentEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/TridentEntityRenderer;getTexture(Lnet/minecraft/entity/projectile/TridentEntity;)Lnet/minecraft/util/Identifier;"))
     private Identifier returnTexture(TridentEntityRenderer instance, TridentEntity tridentEntity) {
-        if (ETFConfigData.enableTridents && ETFConfigData.enableRandomTextures) {
+        if (ETFConfigData.enableTridents && ETFConfigData.enableCustomTextures) {
             UUID id = tridentEntity.getUuid();
             if (UUID_TridentName.get(id) != null) {
                 String path = TridentEntityModel.TEXTURE.toString();
