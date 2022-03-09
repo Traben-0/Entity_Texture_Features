@@ -44,7 +44,7 @@ Everything can be enabled or disabled in the config or Mod Menu settings
 <img src="readMeAssets/randoms.png" alt="img" width="650"/>
 
 - For custom & random entity textures to work you can use a resource-pack that supports the **Optifine format** for custom / random textures.  
-- [~~***-> Random / Custom entity textures guide <-***~~](readMeAssets/RANDOM_GUIDE.md)
+- [***-> Random / Custom entity textures guide <-***](readMeAssets/RANDOM_GUIDE.md)
 
 ## 💡 Emissive entity textures - [Optifine]
 <img src="readMeAssets/emissives.png" alt="img" width="650"/>
