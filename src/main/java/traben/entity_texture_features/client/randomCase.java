@@ -1,6 +1,7 @@
 package traben.entity_texture_features.client;
 
 
+import net.minecraft.MinecraftVersion;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.passive.WolfEntity;
@@ -127,8 +128,14 @@ public class randomCase implements ETF_METHODS {
                 //example "Reference{ResourceKey[minecraft:worldgen/biome / minecraft:river]=net.minecraft.class_1959@373fe79a}"
                 //String entityBiome = entity.world.getBiome(entity.getBlockPos()).toString();
             //example  "Optional[minecraft:worldgen/biome / minecraft:river]"
-            String entityBiome = entity.world.getBiome(entity.getBlockPos()).getKey().toString().split("\s/\s")[1].replaceAll("[^0-9a-zA-Z_:-]","");
-            //System.out.println("biome="+entityBiome);
+            String entityBiome;
+            if (MinecraftVersion.CURRENT.getName().equals("1.18") || MinecraftVersion.CURRENT.getName().equals("1.18.1")){
+                entityBiome = traben.entity_texture_features.client.ETF_1_18_1_versionPatch.getBiome(entity.world,entity.getBlockPos());
+            }else{
+                entityBiome = ETF_1_18_2_versionPatch.getBiome(entity.world,entity.getBlockPos());
+            }
+
+            System.out.println("biome="+entityBiome);
                 boolean check = false;
 
                     for (String str :
