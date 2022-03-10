@@ -36,7 +36,7 @@ if you have stray pixels filled they may trigger future features
 
 - I will promise now. As long as you leave unused parts of your skin file 
 blank and transparent no future update will impact your skin unexpectedly.
-
+___
 ## Transparency - [V2.3.0+]
 - If the marker is present in your skin, you will then be able to use transparency in
 the head, body,RLeg, LLeg,RArm, and LArm, body parts (this is disabled in vanilla).
@@ -44,6 +44,7 @@ the head, body,RLeg, LLeg,RArm, and LArm, body parts (this is disabled in vanill
 an option may be added to override this for fun in future
 - See examples above in the Ghost, Slime, Steve, Chicken, Skeleton, and Among us skins
 can be seperately Disabled for enemy team players so as to not be abused in PVP settings
+---
 ## Emissiveness - [V2.3.0+]
 - If the marker is present in your skin, you will then be able to use emissiveness in your skin
 - To enable Emissiveness you **must** choose **only one** numbered pixel 
@@ -53,6 +54,7 @@ in the marker and give it the Emissive color *(the pink in the marker choices li
 square of the same number, to the right of the skin, will be matched against
 the rest of the skin, and any matching pixels of the exact same colour & opacity will glow
 - See examples above in the Ghost, Robot, and Thanos's gauntlet
+---
 ## Enchanting - [V2.3.0+]
 - If the marker is present in your skin, you will then be able to use enchanting visuals in your skin
 - To enable Enchanted visuals you **must** choose **only one** numbered pixel
@@ -62,6 +64,7 @@ the rest of the skin, and any matching pixels of the exact same colour & opacity
   square of the same number, to the right of the skin, will be matched against
 the rest of the skin, and any matching pixels of the exact same colour & opacity will appear enchanted on your skin
 - See examples above in the Alex, robed figure, and Thano's arm skins
+---
 ## Blinking - [V2.3.0+]
 - If the marker is present in your skin, you will then be able to have your skin blink periodically
 but you must also choose what style of blinking,
@@ -134,7 +137,7 @@ make this face have it's eyes completely closed
 just incase you have popout eyes
 - if you have selected a 2 frame blink repeat this process with purple boxes #2 & #4 except this time make the eyes half closed
 - In the [example skins download pack](https://github.com/Traben-0/EmissiveMod/raw/master/Skin_Feature_Examples.ZIP) you can see this in the Chicken & Slime Tuxedo
-
+---
 ## Jacket / Dress Extensions - [V2.4.0+]
 <img src="jacket.png" alt="img" width="400"/>
 
@@ -161,30 +164,22 @@ Next you **must** choose what ***Length*** of extension you want.
 This is done by putting a pixel of your choice in Choice Box #3, The color of pixel you choose must
 be one from the Color Guide.
 The number for that color in the Color Guide will be the extension length from 1 to 8 pixels.
-
-
+---
 # To confusing or not working?
 join the [[Discord]](https://discord.gg/rURmwrzUcz) and i'll be happy to help
 
-.  
-.  
-.  
-.  
-.  
-.  
-.  
-.  
-.  
-.  
-.
-.  
-.  
-.  
-.  
-.  
-.  
-.  
-.  
-.  
-.  
-.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
