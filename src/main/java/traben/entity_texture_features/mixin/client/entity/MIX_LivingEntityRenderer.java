@@ -231,15 +231,19 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
             }
         } else { // is player
             if (ETFConfigData.skinFeaturesEnabled) {
-                if (!UUID_playerHasFeatures.containsKey(id) && !UUID_playerSkinDownloadedYet.containsKey(id)) {
-                    checkPlayerForSkinFeatures(id, (PlayerEntity) entity);
-                }
-                if (UUID_playerSkinDownloadedYet.containsKey(id) && UUID_playerHasFeatures.containsKey(id)) {
-                    if (UUID_playerSkinDownloadedYet.get(id)) {
-                        if (UUID_playerHasFeatures.get(id)) {
-                            return returnBlinkIdOrGiven(entity, SKIN_NAMESPACE + id + ".png", id, true);
-                        } else {
-                            return vanilla;
+                if (timerBeforeTrySkin > 0) {
+                    timerBeforeTrySkin--;
+                } else {
+                    if (!UUID_playerHasFeatures.containsKey(id) && !UUID_playerSkinDownloadedYet.containsKey(id)) {
+                        checkPlayerForSkinFeatures(id, (PlayerEntity) entity);
+                    }
+                    if (UUID_playerSkinDownloadedYet.containsKey(id) && UUID_playerHasFeatures.containsKey(id)) {
+                        if (UUID_playerSkinDownloadedYet.get(id)) {
+                            if (UUID_playerHasFeatures.get(id)) {
+                                return returnBlinkIdOrGiven(entity, SKIN_NAMESPACE + id + ".png", id, true);
+                            } else {
+                                return vanilla;
+                            }
                         }
                     }
                 }
@@ -319,7 +323,8 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
         }
     }
 
-    private int timerBeforeTrySkin = 150;
+    //double it
+    private int timerBeforeTrySkin = 300;
 
     private void renderSkinFeatures(UUID id, PlayerEntity player, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light) {
         //skin http://textures.minecraft.net/texture/a81cd0629057a42f3d8b7b714b1e233a3f89e33faeb67d3796a52df44619e888
