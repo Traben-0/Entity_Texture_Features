@@ -29,7 +29,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.client.ETF_METHODS;
-import traben.entity_texture_features.client.PlayerCoatExtensionModel;
+import traben.entity_texture_features.client.customPlayerFeatureModel;
 import traben.entity_texture_features.config.ETFConfig;
 
 import java.util.UUID;
@@ -42,7 +42,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
     @Shadow
     public abstract M getModel();
 
-    private PlayerCoatExtensionModel coatModel = null;
+    private customPlayerFeatureModel customPlayerModel = new customPlayerFeatureModel<>();
     private EntityRendererFactory.Context CONTEXT = null;
 
     protected MIX_LivingEntityRenderer(EntityRendererFactory.Context ctx) {
@@ -329,6 +329,11 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
     private void renderSkinFeatures(UUID id, PlayerEntity player, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light) {
         //skin http://textures.minecraft.net/texture/a81cd0629057a42f3d8b7b714b1e233a3f89e33faeb67d3796a52df44619e888
 
+        //test area
+
+
+
+        /////////////////////////////////////////////
         String skinPossiblyBlinking = returnAlteredTexture((LivingEntityRenderer) (Object) this, player).toString();
         if (skinPossiblyBlinking.contains("_transparent")) {
             skinPossiblyBlinking = skinPossiblyBlinking.replace("_transparent", "");
@@ -342,8 +347,18 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
             }
             if (UUID_playerSkinDownloadedYet.get(id)) {
                 if (UUID_playerHasFeatures.get(id)) {
+
+                    //villager nose
+                    if(UUID_playerHasVillagerNose.get(id)){
+
+                        customPlayerModel.nose.copyTransform(((PlayerEntityModel) this.getModel()).head);
+                        Identifier villager = new Identifier("textures/entity/villager/villager.png");
+                        VertexConsumer villagerVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(villager));
+                        customPlayerModel.nose.render(matrixStack, villagerVert, light, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                    }
+
+                    //coat features
                     ItemStack armour = player.getInventory().getArmorStack(1);
-                    //System.out.println(armour.getName());
                     if (UUID_playerHasCoat.get(id) &&
                             player.isPartVisible(PlayerModelPart.JACKET) &&
                             !(armour.isOf(Items.CHAINMAIL_LEGGINGS) ||
@@ -353,42 +368,44 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                                     armour.isOf(Items.IRON_LEGGINGS) ||
                                     armour.isOf(Items.NETHERITE_LEGGINGS))
                     ) {
-
-                        if (coatModel == null) {
-                            coatModel = new PlayerCoatExtensionModel();
-                        }
                         String coat = SKIN_NAMESPACE + id + "_coat.png";
-                        coatModel.jacket.copyTransform(((PlayerEntityModel) this.getModel()).jacket);
+
+                        if (UUID_playerHasFatCoat.get(id)) {
+                            customPlayerModel.fatJacket.copyTransform(((PlayerEntityModel) this.getModel()).jacket);
+                        }else {
+                            customPlayerModel.jacket.copyTransform(((PlayerEntityModel) this.getModel()).jacket);
+                        }
                         //perform texture features
                         VertexConsumer coatVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(new Identifier(coat)));
                         matrixStack.push();
+
+
                         if (UUID_playerHasFatCoat.get(id)) {
-                            matrixStack.translate(0, -2.0 / 16, 0);
-                            if (player.isSneaking() && !player.getAbilities().flying) {
-                                matrixStack.translate(0, 0.125 / 16, 0.075 / 16 + (16 / 4.5) / 10);
+                            customPlayerModel.fatJacket.render(matrixStack, coatVert, light, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                        }else {
+                            customPlayerModel.jacket.render(matrixStack, coatVert, light, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                        }
+                            if (UUID_playerHasEnchant.get(id)) {
+                                Identifier enchant = new Identifier(coat.replace(".png", "_enchant.png"));
+                                VertexConsumer enchantVert = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(enchant), false, true);
+                                if (UUID_playerHasFatCoat.get(id)) {
+                                    customPlayerModel.fatJacket.render(matrixStack, enchantVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 0.16F);
+                                }else{
+                                    customPlayerModel.jacket.render(matrixStack, enchantVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 0.16F);
+                                }
                             }
-                            matrixStack.scale(1.125f, 1.125f, 1.125f);
-                        } else {
-                            if (player.isSneaking() && !player.getAbilities().flying) {
-                                matrixStack.translate(0, 0.125 / 16, 0.075 / 16 + (16 / 4.5) / 10);
+                            if (UUID_playerHasEmissive.get(id)) {
+                                Identifier emissive = new Identifier(coat.replace(".png", "_e.png"));
+                                VertexConsumer emissVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(emissive, true));
+                                if (UUID_playerHasFatCoat.get(id)) {
+                                    customPlayerModel.fatJacket.render(matrixStack, emissVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                                }else {
+                                    customPlayerModel.jacket.render(matrixStack, emissVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                                }
+
                             }
-                        }
 
-                        coatModel.render(matrixStack, coatVert, light, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
-
-                        if (UUID_playerHasEnchant.get(id)) {
-                            Identifier enchant = new Identifier(coat.replace(".png", "_enchant.png"));
-                            VertexConsumer enchantVert = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(enchant), false, true);
-                            coatModel.render(matrixStack, enchantVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 0.16F);
-                        }
-                        if (UUID_playerHasEmissive.get(id)) {
-                            Identifier emissive = new Identifier(coat.replace(".png", "_e.png"));
-                            VertexConsumer emissVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(emissive, true));
-                            coatModel.render(matrixStack, emissVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
-                        }
                         matrixStack.pop();
-
-
                     }
 
                     //perform texture features

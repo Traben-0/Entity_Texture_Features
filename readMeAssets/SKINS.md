@@ -165,6 +165,14 @@ This is done by putting a pixel of your choice in Choice Box #3, The color of pi
 be one from the Color Guide.
 The number for that color in the Color Guide will be the extension length from 1 to 8 pixels.
 ---
+## Villager Nose - [V2.4.5+]
+<img src="villagerNose.png" alt="img" width="300"/>
+<img src="steveVillager.png" alt="img" width="64"/>
+
+- This feature provides the option to have a Villager nose
+- All you need to do is add a villager nose *(six villager nose colored pixels)* into you skin's face or floating face section  
+*(There is an example skin, above to the right, you can copy from, this example also has a working villager cloak using the jacket extension features)*
+---
 # To confusing or not working?
 join the [[Discord]](https://discord.gg/rURmwrzUcz) and i'll be happy to help
 
