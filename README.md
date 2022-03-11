@@ -18,7 +18,7 @@ This allows most Optifine Resourcepacks to be used on Fabric, as long as they ch
 and it's Dependencies.  
 For more Fabric Optifine alternatives Click 
 [[here]](https://lambdaurora.dev/optifine_alternatives/)
-###The features of this mod so far:
+### The features of this mod so far:
 - 🎲 Custom & Random entity textures just like Optifine & compatible with Optifine Resourcepacks. 
 (Customised just like Optifine, by Biome, Name, Height, etc)
 - 💡 Emissive/Glowing entity textures just like Optifine & compatible with Optifine Resourcepacks.
@@ -30,7 +30,7 @@ Everything can be enabled or disabled in the config or Mod Menu settings
 
 
 ---
-##Compatability
+## Compatability
 - ✅ALL! Optifine Random / Custom or Emissive Entity resourcepacks
 - ✅[@Motschen's Puzzle Mod](https://www.curseforge.com/members/motschen) **(fully compatible)**  
 *(just make sure to disable Puzzle's emissive texture in it's settings)*
