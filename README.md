@@ -29,7 +29,7 @@ For more Fabric Optifine alternatives Click
 Everything can be enabled or disabled in the config or Mod Menu settings
 
 
-
+---
 ##Compatability
 - ✅ALL! Optifine Random / Custom or Emissive Entity resourcepacks
 - ✅[@Motschen's Puzzle Mod](https://www.curseforge.com/members/motschen) **(fully compatible)**  
@@ -41,8 +41,10 @@ Everything can be enabled or disabled in the config or Mod Menu settings
 - ✅[Iris Shaders](https://www.curseforge.com/minecraft/mc-mods/irisshaders) **(fully compatible)** 
 *(Support varies depending on the shader)*
 - ✅Mod added entities *(only if the mod creator used the vanilla rendering code to render their mobs)*
-
+---
 # Wiki / How to guides
+
+---
 
 ## 🎲 Random / Custom entity textures - [Optifine]
 <img src="readMeAssets/randoms.png" alt="img" width="650"/>
@@ -51,6 +53,7 @@ Everything can be enabled or disabled in the config or Mod Menu settings
 **Optifine format** for custom / random textures, including all Biome, Height, Name, e.g properties settings.  
   - [***-> Random / Custom entity textures guide <-***](readMeAssets/RANDOM_GUIDE.md)
 
+---
 ## 💡 Emissive entity textures - [Optifine]
 <img src="readMeAssets/emissives.png" alt="img" width="650"/>
 
@@ -58,6 +61,7 @@ Everything can be enabled or disabled in the config or Mod Menu settings
 **Optifine format** for emissive textures.   
   - [***-> Emissive entity textures guide <-***](readMeAssets/EMISSIVE_GUIDE.md)
 
+---
 ## 🎨  Player skin features
 <img src="readMeAssets/skins1.png" alt="img" width="650"/>  
 
@@ -71,6 +75,7 @@ abuse of features in PVP
 - Follow this guide to use these skin features
   - [***-> Player Skin Features guide <-***](readMeAssets/SKINS.md)
 
+---
 ## 😑 Blinking feature
 <img src="readMeAssets/blink.png" alt="img" width="650"/>
 
@@ -84,6 +89,7 @@ have a smoother animation for large eyes like creepers
 depending on what is available
 - Player skins can support blinking, see player skin features...
 
+---
 ## 🔱 Custom Trident textures
 <img src="readMeAssets/tridents.png" alt="img" width="650"/>
 
@@ -92,11 +98,13 @@ depending on what is available
 use the texture "trident_bobbys_trident.png", ignoring non-letters and chaning spaces to "_"
 - Option to disable it as CIT resewn mod may implement in the future, and this is only a quick implementation
 
+---
 ## ⚗️ Alternate potion effects
 - A setting in the config/mod menu settings, allows you to make it so mobs with potions effects can Glow, 
 appear enchanted, or have creeper charge fields around them
 - Mostly inspired by enchanted mobs in Minecraft Dungeons
 
+---
 ## Settings & Configuration
 - Settings can be changed in-game with Mod Menu, or the config file can be found at 
 config/entity_texture_features.json

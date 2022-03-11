@@ -1,13 +1,14 @@
 # 🎲 Custom / Random / Varied Entity Textures Guide:
 <img src="randoms.png" alt="img" width="650"/>
 
-
-#### This mod is completely Optifine format compatible!!!!
+---
+### This mod is completely Optifine format compatible!!!!
 
 - It supports all optifine properties present in the link below including Biomes, Names, Heights, etc...
 - you can directly use the [Optifine Random Entities Format Guide](https://github.com/sp614x/optifine/blob/master/OptiFineDoc/doc/random_entities.properties)
 or any optifine random mob resource-packs and it will work.
 
+---
 ## Guide & how it works:
 - Random textures are applied to each mob on the client-side  
 *(based on it's UUID, meaning that mob will always have the same random texture unless texture packs are 
@@ -25,6 +26,7 @@ and if one isn't present the game will instead pick randomly from the available 
 - The properties file functions just as it does with [optifine]((https://github.com/sp614x/optifine/blob/master/OptiFineDoc/doc/random_entities.properties)))
 and if a specific entity does not match any of 
 the conditions in the properties file it will default to the vanilla texture.
+---
 ## Example properties file
 <img src="format_example.png" alt="img" width="650"/>
 
@@ -43,6 +45,7 @@ right clicking it or reloading the game/resourcepacks)*
 Entities with multiple textures like Wolves should have the same amount of ranom variant textures for 
 each texture variant
 
+---
 ## Special Cases
 - Tridents support custom textures, as of *[V2.3.0]*, a trident item named *"Bobby's Trident"* will use the 
 texture *"trident_bobbys_trident.png"*

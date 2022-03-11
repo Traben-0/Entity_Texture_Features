@@ -1,10 +1,12 @@
 # 💡Emissive Textures Guide:
 <img src="emissives.png" alt="img" width="650"/>
 
+---
 ### This mod is completely Optifine format compatible!!!!
 
 - It supports all optifine Emissive Texture Resource-packs
 
+---
 ## The Guide:
 
 - Emissive textures allow parts of a mob / entity's texture to glow as in the above image
@@ -17,6 +19,7 @@ will otherwise default to "_e" meaning the file name should be (TextureName_e.pn
 
 - Player Skin Features support emissive textures, see [Player Skin Features Guide](SKINS.md)
 
+---
 ## Example Emissive Textures
 <img src="format_example.png" alt="img" width="650"/>
 
