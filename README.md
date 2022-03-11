@@ -5,7 +5,7 @@ ___
 ### mostly using the Optifine Format but compatible with Sodium :)
 #### ~ Now with 1.16.5  -> 1.18.2
 ___
-### [[Discord]](https://discord.gg/rURmwrzUcz) - [[CurseForge]](https://www.curseforge.com/minecraft/mc-mods/entity-texture-features-fabric) - [[Modrinth]](https://modrinth.com/mod/entitytexturefeatures) - [[~~Compatability List~~]]() - [[Report Issues]](https://github.com/Traben-0/EmissiveMod/issues) - [[Donate (Ko-Fi)]](https://ko-fi.com/traben)
+### [[Discord]](https://discord.gg/rURmwrzUcz) - [[CurseForge]](https://www.curseforge.com/minecraft/mc-mods/entity-texture-features-fabric) - [[Modrinth]](https://modrinth.com/mod/entitytexturefeatures) - [[~~Compatibility List~~]]() - [[Report Issues]](https://github.com/Traben-0/EmissiveMod/issues) - [[Donate (Ko-Fi)]](https://ko-fi.com/traben)
 ___
 <img src="readMeAssets/main.png" alt="img" width="650"/>
 
@@ -30,7 +30,7 @@ Everything can be enabled or disabled in the config or Mod Menu settings
 
 
 ---
-## Compatability
+## Compatibility
 - ✅ALL! Optifine Random / Custom or Emissive Entity resourcepacks
 - ✅[@Motschen's Puzzle Mod](https://www.curseforge.com/members/motschen) **(fully compatible)**  
 *(just make sure to disable Puzzle's emissive texture in it's settings)*
