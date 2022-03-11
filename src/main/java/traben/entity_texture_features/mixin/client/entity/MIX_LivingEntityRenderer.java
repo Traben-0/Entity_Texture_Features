@@ -42,19 +42,12 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
     @Shadow
     public abstract M getModel();
 
-    private customPlayerFeatureModel customPlayerModel = new customPlayerFeatureModel<>();
-    private EntityRendererFactory.Context CONTEXT = null;
+    private final customPlayerFeatureModel customPlayerModel = new customPlayerFeatureModel<>();
 
     protected MIX_LivingEntityRenderer(EntityRendererFactory.Context ctx) {
         super(ctx);
 
     }
-
-    @Inject(method = "<init>", at = @At("TAIL"))
-    public void contextGrabber(EntityRendererFactory.Context ctx, EntityModel model, float shadowRadius, CallbackInfo ci) {
-        CONTEXT = ctx;
-    }
-
 
     @Inject(method = "render(Lnet/minecraft/entity/LivingEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/EntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V", shift = At.Shift.AFTER))
@@ -332,7 +325,6 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
         //test area
 
 
-
         /////////////////////////////////////////////
         String skinPossiblyBlinking = returnAlteredTexture((LivingEntityRenderer) (Object) this, player).toString();
         if (skinPossiblyBlinking.contains("_transparent")) {
@@ -343,7 +335,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
         } else {
             if (!UUID_playerHasFeatures.containsKey(id) && !UUID_playerSkinDownloadedYet.containsKey(id)) {
                 //check for mark
-                checkPlayerForSkinFeatures(id, (PlayerEntity) player);
+                checkPlayerForSkinFeatures(id, player);
             }
             if (UUID_playerSkinDownloadedYet.get(id)) {
                 if (UUID_playerHasFeatures.get(id)) {
