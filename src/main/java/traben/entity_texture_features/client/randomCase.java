@@ -135,7 +135,7 @@ public class randomCase implements ETF_METHODS {
                 entityBiome = ETF_1_18_2_versionPatch.getBiome(entity.world,entity.getBlockPos());
             }
 
-            System.out.println("biome="+entityBiome);
+            //System.out.println("biome="+entityBiome);
                 boolean check = false;
 
                     for (String str :

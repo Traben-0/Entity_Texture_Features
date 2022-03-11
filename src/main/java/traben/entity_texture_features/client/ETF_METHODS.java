@@ -628,7 +628,7 @@ public interface ETF_METHODS {
             case -65536 -> 6;
             case -16744449 -> 7;
             case -14483457 -> 8;
-            case -12362096 -> 666;//villager nose
+            case -12362096 -> 666; //villager nose color
             default -> 0;
         };
     }
@@ -661,7 +661,6 @@ public interface ETF_METHODS {
                         getSkinPixelColourToNumber(skin.getColor(52, 17)),
                         getSkinPixelColourToNumber(skin.getColor(52, 18)),
                         getSkinPixelColourToNumber(skin.getColor(52, 19))};
-                System.out.println("villager"+skin.getColor(11,13));
 
                 //villager nose check
                 boolean noseUpper =(getSkinPixelColourToNumber(skin.getColor(43, 13)) == 666 && getSkinPixelColourToNumber(skin.getColor(44, 13))==666 &&

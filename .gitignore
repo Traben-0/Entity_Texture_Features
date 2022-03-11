@@ -128,5 +128,3 @@ run/
 
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
 !gradle-wrapper.jar
-/src/main/java/assets/fresh_mob_behaviours/textures/entity/zombie/drowned_outer_layer.png
-/src/main/java/assets/fresh_mob_behaviours/textures/entity/zombie/drowned.png
