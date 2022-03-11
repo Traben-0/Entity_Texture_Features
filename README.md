@@ -50,7 +50,7 @@ Everything can be enabled or disabled in the config or Mod Menu settings
 <img src="readMeAssets/randoms.png" alt="img" width="650"/>
 
 - For custom & random entity textures to work you can use a resource-pack that supports the 
-**Optifine format** for custom / random textures, including all Biome, Height, Name, e.g properties settings.  
+**Optifine format** for custom / random textures, including all Biome, Height, Name, etc properties settings.  
   - [***-> Random / Custom entity textures guide <-***](readMeAssets/RANDOM_GUIDE.md)
 
 ---
