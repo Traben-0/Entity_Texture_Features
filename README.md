@@ -89,6 +89,9 @@ have a smoother animation for large eyes like creepers
 - Mobs with the Blindness potion effect will have either their eyes closed or half closed 
 depending on what is available
 - Player skins can support blinking, see player skin features...
+- Resource-packs can set specific blinking length and frequency per texture via properties files
+next to the blinking texture, see below:  
+  <img src="readMeAssets/blinkProperties.png" alt="img" width="300"/>
 
 ---
 ## 🔱 Custom Trident textures
