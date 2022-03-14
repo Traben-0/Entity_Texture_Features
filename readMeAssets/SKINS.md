@@ -4,10 +4,13 @@ ___
 ### [[Discord]](https://discord.gg/rURmwrzUcz) - [[CurseForge]](https://www.curseforge.com/minecraft/mc-mods/entity-texture-features-fabric) - [[Modrinth]](https://modrinth.com/mod/entitytexturefeatures) - [[~~Compatability List~~]]() - [[Report Issues]](https://github.com/Traben-0/EmissiveMod/issues) - [[Donate]](https://www.paypal.com/donate/?business=PLB862YH8UXML&no_recurring=0&currency_code=AUD)
 ___
 # 🎨  Player skin features Guide
-<img src="skins1.png" alt="img" width="450"/>
-<img src="skins2.png" alt="img" width="450"/>
-<img src="skins3.png" alt="img" width="450"/>
-<img src="jacket.png" alt="img" width="450"/>
+<img src="skins1.png" alt="img" width="450"/><br>
+<img src="skins2.png" alt="img" width="450"/><br>
+<img src="skins3.png" alt="img" width="450"/><br>
+<img src="jacket.png" alt="img" width="450"/><br>
+<img src="villagerNose.png" alt="img" width="225"/>
+<img src="customCape.png" alt="img" width="146"/>
+<img src="capeex.png" alt="img" width="185"/>
 
 most of these examples are downloadable [[HERE]](https://github.com/Traben-0/EmissiveMod/raw/master/Skin_Feature_Examples.ZIP)
 - Player skins can use emissive, blinking, enchanted, and transparency texture features and more...

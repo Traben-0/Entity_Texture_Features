@@ -64,17 +64,21 @@ Everything can be enabled or disabled in the config or Mod Menu settings
 
 ---
 ## 🎨  Player skin features
-<img src="readMeAssets/skins1.png" alt="img" width="650"/>  
+<img src="readMeAssets/skins1.png" alt="img" width="650"/><br>
+<img src="readMeAssets/skins2.png" alt="img" width="650"/><br>
+<img src="readMeAssets/skins3.png" alt="img" width="650"/><br>
+<img src="readMeAssets/jacket.png" alt="img" width="650"/><br>
+<img src="readMeAssets/villagerNose.png" alt="img" width="275"/>
+<img src="readMeAssets/customCape.png" alt="img" width="180"/>
+<img src="readMeAssets/capeex.png" alt="img" width="228"/>
 
-<img src="readMeAssets/skins2.png" alt="img" width="650"/>  
-
-<img src="readMeAssets/skins3.png" alt="img" width="650"/>
-
-- Player skins can use emissive, blinking, enchanted, and transparency texture features.
-- 100% optional, controlled by the skin file you upload to Mojang, and options to prevent 
+- Player skins can use emissive, blinking, enchanted, transparency texture features, 
+as well as other things like capes & jacket / dress extensions.
+- these are 100% optional, controlled by the skin file you upload to Mojang, and options to prevent 
 abuse of features in PVP
 - Follow this guide to use these skin features
   - [***-> Player Skin Features guide <-***](readMeAssets/SKINS.md)
+  - join the [[Discord]](https://discord.gg/rURmwrzUcz) if you still need help :)
 
 ---
 ## 😑 Blinking feature
