@@ -13,8 +13,10 @@ public class ETFConfig {
     public boolean enableEnemyTeamPlayersSkinFeatures = true;
     public boolean enableBlinking = true;
     public int blinkFrequency = 150;
+    public int blinkLength = 1;
     public boolean enableTridents = true;
     public boolean enableElytra = true;
+    public boolean elytraThicknessFix = true;
 
     public enum enchantedPotionEffectsEnum {
         NONE,

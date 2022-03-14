@@ -7,13 +7,16 @@
     "client.entity.MIX_EntityRender",
     "client.entity.MIX_LivingEntityRenderer",
     "client.entity.MIX_PlayerEntityRenderer",
+    "client.entity.extras.MIX_AbstractClientPlayerEntity",
     "client.entity.extras.MIX_BuiltinModelItemRenderer",
     "client.entity.extras.MIX_ElytraFeatureRenderer",
+    "client.entity.extras.MIX_MooshroomMushroomFeatureRenderer",
+    "client.entity.extras.MIX_SlimeOverlayFeatureRenderer",
     "client.entity.extras.MIX_TridentEntity",
     "client.entity.extras.MIX_TridentEntityRenderer",
     "client.entity.textureUpdaters.MIX_PlayerEntity",
     "client.entity.textureUpdaters.MIX_SimpleResourceReload",
-    "client.entity.extras.MIX_MooshroomMushroomFeatureRenderer"
+    "client.entity.extras.MIX_ElytraEntityModel"
   ],
   "mixins": [
 

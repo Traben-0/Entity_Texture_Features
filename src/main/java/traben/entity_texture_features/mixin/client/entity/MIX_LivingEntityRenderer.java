@@ -32,6 +32,7 @@ import traben.entity_texture_features.client.ETF_METHODS;
 import traben.entity_texture_features.client.customPlayerFeatureModel;
 import traben.entity_texture_features.config.ETFConfig;
 
+import java.util.Properties;
 import java.util.UUID;
 
 import static traben.entity_texture_features.client.ETF_CLIENT.*;
@@ -189,7 +190,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                         if (UUID_randomTextureSuffix.get(id) == 0) {
                             return returnBlinkIdOrGiven(entity, vanilla.toString(), id);
                         } else {
-                            return returnBlinkIdOrGiven(entity, returnOptifineOrVanillaIdentifier(path, UUID_randomTextureSuffix.get(id)).toString(), id);
+                            return returnBlinkIdOrGiven(entity, ETF_METHODS.returnOptifineOrVanillaIdentifier(path, UUID_randomTextureSuffix.get(id)).toString(), id);
                         }
 
                     } else {//true random assign
@@ -210,7 +211,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                             if (UUID_randomTextureSuffix.get(id) == 0) {
                                 return returnBlinkIdOrGiven(entity, vanilla.toString(), id);
                             } else {
-                                return returnBlinkIdOrGiven(entity, returnOptifineOrVanillaPath(path, UUID_randomTextureSuffix.get(id), ""), id);
+                                return returnBlinkIdOrGiven(entity, ETF_METHODS.returnOptifineOrVanillaPath(path, UUID_randomTextureSuffix.get(id), ""), id);
                             }
                         } else {
                             return returnBlinkIdOrGiven(entity, vanilla.toString(), id);
@@ -251,30 +252,49 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
 
     private Identifier returnBlinkIdOrGiven(T entity, String givenTexturePath, UUID id, boolean isPlayer) {
         if (ETFConfigData.enableBlinking) {
-            if (!UUID_HasBlink.containsKey(id)) {
+            if (!TEXTURE_HasBlink.containsKey(givenTexturePath)) {
                 //check for blink textures
-                UUID_HasBlink.put(id, isExistingFile(new Identifier(givenTexturePath.replace(".png", "_blink.png"))));
-                UUID_HasBlink2.put(id, isExistingFile(new Identifier(givenTexturePath.replace(".png", "_blink2.png"))));
+                TEXTURE_HasBlink.put(givenTexturePath, isExistingFile(new Identifier(givenTexturePath.replace(".png", "_blink.png"))));
+                TEXTURE_HasBlink2.put(givenTexturePath, isExistingFile(new Identifier(givenTexturePath.replace(".png", "_blink2.png"))));
+                TEXTURE_BlinkProps.put(givenTexturePath, readProperties(givenTexturePath.replace(".png", "_blink.properties")));
             }
-            if (UUID_HasBlink.get(id)) {
+            if (TEXTURE_HasBlink.get(givenTexturePath)) {
                 if (entity.getPose() == EntityPose.SLEEPING) {
                     return new Identifier(givenTexturePath.replace(".png", "_blink.png"));
                 }
                 //force eyes closed if blinded
                 else if (entity.hasStatusEffect(StatusEffects.BLINDNESS)) {
-                    return new Identifier(givenTexturePath.replace(".png", (UUID_HasBlink2.get(id) ? "_blink2.png" : "_blink.png")));
+                    return new Identifier(givenTexturePath.replace(".png", (TEXTURE_HasBlink2.get(givenTexturePath) ? "_blink2.png" : "_blink.png")));
                 } else {
                     //do regular blinking
-                    long timer = entity.world.getTime() % ETFConfigData.blinkFrequency;
-                    int blinkTimeVariedByUUID = Math.abs(id.hashCode()) % ETFConfigData.blinkFrequency;
-                    if (blinkTimeVariedByUUID < 2) blinkTimeVariedByUUID = 2;
-                    if (blinkTimeVariedByUUID > ETFConfigData.blinkFrequency - 2)
-                        blinkTimeVariedByUUID = ETFConfigData.blinkFrequency - 2;
+                    Properties props = TEXTURE_BlinkProps.get(givenTexturePath);
+                    int blinkLength;
+                    int blinkFrequency;
+                    if (props != null){
+                            blinkLength = props.containsKey("blinkLength") ?
+                                    Integer.parseInt(props.getProperty("blinkLength").replaceAll("[^0-9]", "")) :
+                                    ETFConfigData.blinkLength;
+                            blinkFrequency = props.containsKey("blinkFrequency") ?
+                                    Integer.parseInt(props.getProperty("blinkFrequency").replaceAll("[^0-9]", "")) :
+                                    ETFConfigData.blinkFrequency;
+                    }else{
+                        blinkLength = ETFConfigData.blinkLength ;
+                        blinkFrequency = ETFConfigData.blinkFrequency;
+                    }
 
 
-                    if (timer >= blinkTimeVariedByUUID - 1 && timer <= blinkTimeVariedByUUID + 1) {
-                        if (UUID_HasBlink2.get(id)) {
-                            if (timer == blinkTimeVariedByUUID) {
+
+                    long timer = entity.world.getTime() % blinkFrequency;
+                    int blinkTimeVariedByUUID = Math.abs(id.hashCode()) % blinkFrequency;
+                    //make blink timer not overlap the wrap around to 0
+                    if (blinkTimeVariedByUUID < blinkLength) blinkTimeVariedByUUID = blinkLength;
+                    if (blinkTimeVariedByUUID > blinkFrequency - blinkLength)
+                        blinkTimeVariedByUUID = blinkFrequency - blinkLength;
+
+
+                    if (timer >= blinkTimeVariedByUUID - blinkLength && timer <= blinkTimeVariedByUUID + blinkLength) {
+                        if (TEXTURE_HasBlink2.get(givenTexturePath)) {
+                            if (timer >= blinkTimeVariedByUUID - (blinkLength / 3 ) && timer <= blinkTimeVariedByUUID + (blinkLength / 3 )) {
                                 return new Identifier(givenTexturePath.replace(".png", "_blink.png"));
                             }
                             return new Identifier(givenTexturePath.replace(".png", "_blink2.png"));
@@ -294,6 +314,8 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                 ) ? UUID_playerTransparentSkinId.get(id) : getTexture(entity))
                 : new Identifier(givenTexturePath);
     }
+
+
 
     private void renderPotion(T livingEntity, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider) {
         VertexConsumer textureVert;

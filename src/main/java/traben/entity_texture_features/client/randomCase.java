@@ -25,6 +25,7 @@ public class randomCase implements ETF_METHODS {
     private final String[] health;
     private final Integer[] moon;
     private final String[] daytime;
+    private final String[] blocks;
 
     //whether case should be ignored by updates
     public boolean caseHasNonUpdatables;
@@ -41,7 +42,8 @@ public class randomCase implements ETF_METHODS {
                int weather0123,
                String[] healthX,
                Integer[] moonX,
-               String[] daytimeX
+               String[] daytimeX,
+               String[] blocksX
     ) {
 
         biomes = biomesX;
@@ -54,12 +56,14 @@ public class randomCase implements ETF_METHODS {
         health = healthX;
         moon = moonX;
         daytime = daytimeX;
+        blocks = blocksX;
 
         caseHasNonUpdatables = moon.length > 0
                 || biomes.length > 0
                 || heights.length > 0
                 || weather != 0
-                || daytime.length > 0;
+                || daytime.length > 0
+                || blocks.length > 0;
 
         if (weightsX.length > 0) {
             if (weightsX.length == suffixesX.length) {
@@ -106,6 +110,7 @@ public class randomCase implements ETF_METHODS {
                 && health.length == 0
                 && moon.length == 0
                 && daytime.length == 0
+                && blocks.length == 0
         ) {
             return true;
         } else if (//check if no updatables
@@ -150,7 +155,7 @@ public class randomCase implements ETF_METHODS {
                 allBoolean = check;
         }
         if (allBoolean && names.length > 0) {
-            if (entity.hasCustomName()) {
+            if (entity.hasCustomName() ) {
                 String entityName = Objects.requireNonNull(entity.getCustomName()).getString();
                 wasTestedByUpdateable = true;
                 boolean check = false;
@@ -163,6 +168,7 @@ public class randomCase implements ETF_METHODS {
                         invert = true;
                         check = true;
                     }
+
                     if (str.contains("regex:")) {
                         if (str.contains("iregex:")) {
                             str = str.split(":")[1];
@@ -349,6 +355,21 @@ public class randomCase implements ETF_METHODS {
                         check = true;
                         break;
                     }
+                }
+            }
+            allBoolean = check;
+        }
+        if (allBoolean && !onlyUpdatables && blocks.length > 0) {
+            String entityOnBlock = entity.world.getBlockState(entity.getBlockPos().down()).toString()
+                    .replaceFirst("minecraft:","")
+                    .replaceFirst("Block\\{","")
+                    .replaceFirst("}","");
+            boolean check = false;
+            for (String block :
+                    blocks) {
+                if (block.replace("minecraft:","").equalsIgnoreCase(entityOnBlock)) {
+                    check = true;
+                    break;
                 }
             }
             allBoolean = check;

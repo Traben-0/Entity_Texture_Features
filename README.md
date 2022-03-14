@@ -25,10 +25,11 @@ For more Fabric Optifine alternatives Click
 - 😑️ Blinking mobs
 - 🔱 Custom Trident textures
 - ⚗️ Alternate potion visuals for mobs
-- 🎨 Player Skin Features & Additions, including support for most of the above features   
+- 🎨 Player Skin Features & Additions, including support for most of the above features 
+
 Everything can be enabled or disabled in the config or Mod Menu settings
 
- 
+
 ---
 ## Compatibility
 - ✅ALL! Optifine Random / Custom or Emissive Entity resourcepacks

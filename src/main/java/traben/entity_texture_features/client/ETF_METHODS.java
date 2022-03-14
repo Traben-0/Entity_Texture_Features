@@ -9,6 +9,7 @@ import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.texture.NativeImage;
@@ -30,8 +31,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static traben.entity_texture_features.client.ETF_CLIENT.*;
 
@@ -76,18 +80,24 @@ public interface ETF_METHODS {
         UUID_playerTransparentSkinId.clear();
         UUID_playerSkinDownloadedYet.clear();
         for (HttpURLConnection h :
-                UUID_HTTPtoDisconnect.values()) {
+                URL_HTTPtoDisconnect1.values()) {
+            if (h != null) {
+                h.disconnect();
+            }
+        }
+        for (HttpURLConnection h :
+                URL_HTTPtoDisconnect2.values()) {
             if (h != null) {
                 h.disconnect();
             }
         }
         UUID_playerHasCoat.clear();
-        UUID_HTTPtoDisconnect.clear();
+        URL_HTTPtoDisconnect1.clear();
 
         PATH_FailedPropertiesToIgnore.clear();
 
-        UUID_HasBlink.clear();
-        UUID_HasBlink2.clear();
+        TEXTURE_HasBlink.clear();
+        TEXTURE_HasBlink2.clear();
 
         UUID_TridentName.clear();
 
@@ -121,6 +131,24 @@ public interface ETF_METHODS {
         // Example return
         // {skins.4=3, skins.5=1-3, skins.2=2, skins.3=3, weights.5=1 1 , biomes.2=desert, health.3=1-50%, names.4=iregex:mob name.*}
         return props;
+    }
+
+    default NativeImage getNativeImageFromID(Identifier identifier) {
+        NativeImage img;
+        try {
+            Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(identifier);
+            try {
+                InputStream in = resource.getInputStream();
+                img = NativeImage.read(in);
+                resource.close();
+            } catch (Exception e) {
+                resource.close();
+                return null;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        return img;
     }
 
 
@@ -189,6 +217,7 @@ public interface ETF_METHODS {
                     String[] health = {};
                     Integer[] moon = {};
                     String[] daytime = {};
+                    String[] blocks = {};
 
                     if (props.containsKey("skins." + num) || props.containsKey("textures." + num)) {
                         String dataFromProps = props.containsKey("skins." + num) ? props.getProperty("skins." + num).trim() : props.getProperty("textures." + num).trim();
@@ -252,7 +281,14 @@ public interface ETF_METHODS {
                         if (dataFromProps.contains("regex:") || dataFromProps.contains("pattern:")) {
                             names = new String[]{dataFromProps};
                         } else {
-                            names = dataFromProps.split("\s");
+                            //names = dataFromProps.split("\s");
+                            //allow    "multiple names" among "other"
+                            List<String> list = new ArrayList<String>();
+                            Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(dataFromProps);
+                            while (m.find()) {
+                                list.add(m.group(1).replace("\"", ""));
+                            }
+                            names = list.toArray(new String[0]);
                         }
                     }
                     if (props.containsKey("professions." + num)) {
@@ -297,11 +333,16 @@ public interface ETF_METHODS {
                     if (props.containsKey("dayTime." + num)) {
                         daytime = props.getProperty("dayTime." + num).trim().split("\s");
                     }
-
-                    if (suffixes.length != 0) {
-                        allCasesForTexture.add(new randomCase(suffixes, weights, biomes, heights, names, professions, collarColours, baby, weather, health, moon, daytime));
+                    if (props.containsKey("blocks." + num)) {
+                        blocks = props.getProperty("blocks." + num).trim().split("\s");
+                    }else if (props.containsKey("block." + num)) {
+                        blocks = props.getProperty("block." + num).trim().split("\s");
                     }
 
+
+                    if (suffixes.length != 0) {
+                        allCasesForTexture.add(new randomCase(suffixes, weights, biomes, heights, names, professions, collarColours, baby, weather, health, moon, daytime,blocks));
+                    }
                 }
                 if (!allCasesForTexture.isEmpty()) {
                     Texture_OptifineRandomSettingsPerTexture.put(vanillaTexturePath, allCasesForTexture);
@@ -393,7 +434,7 @@ public interface ETF_METHODS {
         }
     }
 
-    default String returnOptifineOrVanillaPath(String vanillaPath, int randomId, String emissiveSuffx) {
+    static String returnOptifineOrVanillaPath(String vanillaPath, int randomId, String emissiveSuffx) {
         return switch (optifineOldOrVanilla.get(vanillaPath)) {
             case 0 -> vanillaPath.replace(".png", randomId + emissiveSuffx + ".png").replace("textures", "optifine/random");
             case 1 -> vanillaPath.replace(".png", randomId + emissiveSuffx + ".png").replace("textures/entity", "optifine/mob");
@@ -401,7 +442,7 @@ public interface ETF_METHODS {
         };
     }
 
-    default Identifier returnOptifineOrVanillaIdentifier(String vanillaPath, int randomId) {
+    static Identifier returnOptifineOrVanillaIdentifier(String vanillaPath, int randomId) {
         return new Identifier(returnOptifineOrVanillaPath(vanillaPath, randomId, ""));
     }
 
@@ -526,13 +567,17 @@ public interface ETF_METHODS {
                 || player.getScoreboardTeam() == null))
         ) {
             UUID_playerSkinDownloadedYet.put(id, false);
-            getSkin(id, player);
+            UUID_playerHasCape.put(id, ((AbstractClientPlayerEntity) player).canRenderCapeTexture());
+            getSkin(player);
         }
     }
 
-    private void getSkin(UUID id, PlayerEntity player) {
+    private void getSkin(PlayerEntity player) {
+        UUID id = player.getUuid();
         try {
+            boolean hasCape = ((AbstractClientPlayerEntity) player).canRenderCapeTexture();
             String url = "";
+            String capeurl = null;
             @SuppressWarnings("ConstantConditions")
             PlayerListEntry playerListEntry = MinecraftClient.getInstance().getNetworkHandler().getPlayerListEntry(id);
             @SuppressWarnings("ConstantConditions")
@@ -543,10 +588,19 @@ public interface ETF_METHODS {
                     properties) {
                 JsonObject props = JsonParser.parseString(new String(Base64.getDecoder().decode((p.getValue())))).getAsJsonObject();
                 url = ((JsonObject) ((JsonObject) props.get("textures")).get("SKIN")).get("url").getAsString();
-                //maybe one day if the EULA allows
-                //capeurl = ((JsonObject) ((JsonObject) props.get("textures")).get("CAPE")).get("url").getAsString();
+                //le cape
+                if (hasCape) {
+                    try {
+                        capeurl = ((JsonObject) ((JsonObject) props.get("textures")).get("CAPE")).get("url").getAsString();
+                    }catch(Exception e){
+                        modMessage("no cape",false);
+                    }
+                }
+
                 break;
             }
+
+
                 /*System.out.println(p.getValue());
 {
   "timestamp" : 1645524822329,
@@ -563,37 +617,90 @@ public interface ETF_METHODS {
 }
                 */
 
-            String finalUrl = url;
-            //CompletableFuture<?> loader =
+            downloadImageFromUrl(player, url, "VANILLA_SKIN", capeurl);
+        } catch (Exception e) {
+            //
+            modMessage("Player skin {" + id + "} unavailable for feature check. "+e, false);
+            UUID_playerHasFeatures.put(id, false);
+        }
+    }
+
+    private void downloadImageFromUrl(PlayerEntity player, String url, String sendFileToMethodKey) {
+        downloadImageFromUrl(player, url, sendFileToMethodKey, null, false);
+    }
+
+    private void downloadImageFromUrl(PlayerEntity player, String url, String sendFileToMethodKey, String url2) {
+        downloadImageFromUrl(player, url, sendFileToMethodKey, url2, false);
+    }
+
+    private void downloadImageFromUrl(PlayerEntity player, String url, String sendFileToMethodKey, @Nullable String url2, boolean isFile) {
+        try {
+            //required for vanilla cape
+            boolean do2urls = url2 != null;
             CompletableFuture.runAsync(() -> {
                 HttpURLConnection httpURLConnection = null;
+                HttpURLConnection httpURLConnection2 = null;
                 try {
-                    httpURLConnection = (HttpURLConnection) (new URL(finalUrl)).openConnection(MinecraftClient.getInstance().getNetworkProxy());
+                    httpURLConnection = (HttpURLConnection) (new URL(url)).openConnection(MinecraftClient.getInstance().getNetworkProxy());
                     httpURLConnection.setDoInput(true);
                     httpURLConnection.setDoOutput(false);
                     httpURLConnection.connect();
+                    if (do2urls) {
+                        httpURLConnection2 = (HttpURLConnection) (new URL(url2)).openConnection(MinecraftClient.getInstance().getNetworkProxy());
+                        httpURLConnection2.setDoInput(true);
+                        httpURLConnection2.setDoOutput(false);
+                        httpURLConnection2.connect();
+                    }
+                    boolean newHas2 = do2urls && httpURLConnection2.getResponseCode() / 100 == 2;
                     if (httpURLConnection.getResponseCode() / 100 == 2) {
                         InputStream inputStream = httpURLConnection.getInputStream();
+                        InputStream inputStreamCape = null;
+                        if (newHas2) {
+                            inputStreamCape = httpURLConnection2.getInputStream();
+                        }
+                        InputStream finalInputStreamCape = inputStreamCape;
                         MinecraftClient.getInstance().execute(() -> {
-                            NativeImage nativeImage = this.loadTexture(inputStream);
-                            if (nativeImage != null) {
-                                skinLoaded(nativeImage, id);
+                            if (isFile) {
+                                String read;
+                                try {
+                                    read = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+                                } catch (Exception e) {
+                                    read = null;
+                                }
+                                directFileFromUrlToMethod(player, read, sendFileToMethodKey);
                             } else {
-                                modMessage("Player skin {" + player.getDisplayName().getString() + "} unavailable for feature check", false);
-                                UUID_playerHasFeatures.put(id, false);
-
+                                NativeImage one = this.loadTexture(inputStream);
+                                NativeImage two = null;
+                                if (newHas2) {
+                                    two = this.loadTexture(finalInputStreamCape);
+                                }
+                                if (one != null) {
+                                    directImageFromUrlToMethod(player, one, sendFileToMethodKey, two);
+                                } else {
+                                    modMessage("downloading image failed", false);
+                                }
                             }
-                            if (UUID_HTTPtoDisconnect.containsKey(id)) {
-                                UUID_HTTPtoDisconnect.get(id).disconnect();
-                                UUID_HTTPtoDisconnect.remove(id);
+                            if (URL_HTTPtoDisconnect1.containsKey(url)) {
+                                if (URL_HTTPtoDisconnect1.get(url) != null) {
+                                    URL_HTTPtoDisconnect1.get(url).disconnect();
+                                }
+                                URL_HTTPtoDisconnect1.remove(url);
+                            }
+                            if (URL_HTTPtoDisconnect2.containsKey(url2)) {
+                                if (URL_HTTPtoDisconnect2.get(url2) != null) {
+                                    URL_HTTPtoDisconnect2.get(url2).disconnect();
+                                }
+                                URL_HTTPtoDisconnect2.remove(url2);
                             }
                         });
 
                     }
                 } catch (Exception var6) {
-                    UUID_HTTPtoDisconnect.put(id, httpURLConnection);
+                    URL_HTTPtoDisconnect1.put(url, httpURLConnection);
+                    URL_HTTPtoDisconnect2.put(url2, httpURLConnection2);
                 } finally {
-                    UUID_HTTPtoDisconnect.put(id, httpURLConnection);
+                    URL_HTTPtoDisconnect1.put(url, httpURLConnection);
+                    URL_HTTPtoDisconnect2.put(url2, httpURLConnection2);
                 }
 
             }, Util.getMainWorkerExecutor());
@@ -601,6 +708,58 @@ public interface ETF_METHODS {
         } catch (Exception e) {
             //
         }
+    }
+
+    private void directFileFromUrlToMethod(PlayerEntity player, String fileString, String sendFileToMethodKey) {
+        //switch
+        if (fileString != null) {
+            if (sendFileToMethodKey.equals("ETF_CAPE")) {
+                System.out.println(fileString);
+            }
+        }
+
+    }
+
+    private void directImageFromUrlToMethod(PlayerEntity player, NativeImage image, String sendFileToMethodKey, @Nullable NativeImage image2) {
+        //switch
+        UUID id = player.getUuid();
+        if (sendFileToMethodKey.equals("VANILLA_SKIN")) {
+            if (image != null) {
+                skinLoaded(player, image, image2);
+            } else {
+                modMessage("Player skin {" + player.getName().getString() + "} unavailable for feature check", false);
+                UUID_playerHasFeatures.put(id, false);
+            }
+        }else if (sendFileToMethodKey.equals("THIRD_PARTY_CAPE")) {
+            if (image != null) {
+                //optifine resizes them for space cause expensive servers I guess
+                if (image.getWidth() % image.getHeight() != 0){
+                    registerNativeImageToIdentifier(resizeOptifineImage(image), SKIN_NAMESPACE + id + "_cape.png");
+                }else {
+                    registerNativeImageToIdentifier(image, SKIN_NAMESPACE + id + "_cape.png");
+                }
+            } else {
+                modMessage("Player skin {" + player.getName().getString() + "} no THIRD_PARTY_CAPE Found", false);
+                registerNativeImageToIdentifier(getNativeImageFromID(new Identifier("etf:capes/error.png")), SKIN_NAMESPACE + id + "_cape.png");
+
+            }
+            UUID_playerHasCustomCape.put(id, true);
+        }
+    }
+
+    private NativeImage resizeOptifineImage(NativeImage image){
+        int newWidth = 64;
+        while (newWidth < image.getWidth()){
+            newWidth = newWidth + newWidth;
+        }
+        int newHeight = newWidth / 2;
+        NativeImage resizedImage = emptyNativeImage(newWidth,newHeight);
+        for (int x = 0; x < image.getWidth(); x++) {
+            for (int y = 0; y < image.getHeight(); y++) {
+                resizedImage.setColor(x,y,image.getColor(x,y));
+            }
+        }
+        return resizedImage;
     }
 
     private NativeImage loadTexture(InputStream stream) {
@@ -615,6 +774,7 @@ public interface ETF_METHODS {
 
         return nativeImage;
     }
+
 
     private int getSkinPixelColourToNumber(int color) {
         //            pink   cyan     red       green      brown    blue     orange     yellow
@@ -633,7 +793,8 @@ public interface ETF_METHODS {
         };
     }
 
-    private void skinLoaded(NativeImage skin, UUID id) {
+    private void skinLoaded(PlayerEntity player, NativeImage skin, @Nullable NativeImage cape) {
+        UUID id = player.getUuid();
         if (skin != null) {
             if (skin.getColor(1, 16) == -16776961 &&
                     skin.getColor(0, 16) == -16777089 &&
@@ -660,19 +821,21 @@ public interface ETF_METHODS {
                 int[] choiceBoxChoices = {getSkinPixelColourToNumber(skin.getColor(52, 16)),
                         getSkinPixelColourToNumber(skin.getColor(52, 17)),
                         getSkinPixelColourToNumber(skin.getColor(52, 18)),
-                        getSkinPixelColourToNumber(skin.getColor(52, 19))};
+                        getSkinPixelColourToNumber(skin.getColor(52, 19)),
+                        getSkinPixelColourToNumber(skin.getColor(53, 16)),
+                        getSkinPixelColourToNumber(skin.getColor(53, 17))};
 
                 //villager nose check
-                boolean noseUpper =(getSkinPixelColourToNumber(skin.getColor(43, 13)) == 666 && getSkinPixelColourToNumber(skin.getColor(44, 13))==666 &&
-                                    getSkinPixelColourToNumber(skin.getColor(43, 14)) == 666 && getSkinPixelColourToNumber(skin.getColor(44, 14))==666 &&
-                                    getSkinPixelColourToNumber(skin.getColor(43, 15)) == 666 && getSkinPixelColourToNumber(skin.getColor(44, 15))==666 );
-                boolean noseLower =(getSkinPixelColourToNumber(skin.getColor(11, 13)) == 666 && getSkinPixelColourToNumber(skin.getColor(12, 13))==666 &&
-                                    getSkinPixelColourToNumber(skin.getColor(11, 14)) == 666 && getSkinPixelColourToNumber(skin.getColor(12, 14))==666 &&
-                                    getSkinPixelColourToNumber(skin.getColor(11, 15)) == 666 && getSkinPixelColourToNumber(skin.getColor(12, 15))==666 );
-                if (noseUpper){
-                    deletePixels(skin,43,13,44,15);
+                boolean noseUpper = (getSkinPixelColourToNumber(skin.getColor(43, 13)) == 666 && getSkinPixelColourToNumber(skin.getColor(44, 13)) == 666 &&
+                        getSkinPixelColourToNumber(skin.getColor(43, 14)) == 666 && getSkinPixelColourToNumber(skin.getColor(44, 14)) == 666 &&
+                        getSkinPixelColourToNumber(skin.getColor(43, 15)) == 666 && getSkinPixelColourToNumber(skin.getColor(44, 15)) == 666);
+                boolean noseLower = (getSkinPixelColourToNumber(skin.getColor(11, 13)) == 666 && getSkinPixelColourToNumber(skin.getColor(12, 13)) == 666 &&
+                        getSkinPixelColourToNumber(skin.getColor(11, 14)) == 666 && getSkinPixelColourToNumber(skin.getColor(12, 14)) == 666 &&
+                        getSkinPixelColourToNumber(skin.getColor(11, 15)) == 666 && getSkinPixelColourToNumber(skin.getColor(12, 15)) == 666);
+                if (noseUpper) {
+                    deletePixels(skin, 43, 13, 44, 15);
                 }
-                UUID_playerHasVillagerNose.put(id,noseLower || noseUpper);
+                UUID_playerHasVillagerNose.put(id, noseLower || noseUpper);
 
                 //check for coat bottom
                 //pink to copy coat    light blue to remove from legs
@@ -717,53 +880,97 @@ public interface ETF_METHODS {
                 int blinkChoice = choiceBoxChoices[0];
                 if (blinkChoice >= 1 && blinkChoice <= 5) {
                     //check if lazy blink
-                    UUID_HasBlink.put(id, true);
-                    if( blinkChoice <= 2) {
+                    TEXTURE_HasBlink.put(SKIN_NAMESPACE + id + ".png", true);
+                    if (blinkChoice <= 2) {
                         //blink 1 frame if either pink or blue optional
-                            blinkSkinFile = returnOptimizedBlinkFace(skin,getSkinPixelBounds("face1"),1,getSkinPixelBounds("face3"));
+                        blinkSkinFile = returnOptimizedBlinkFace(skin, getSkinPixelBounds("face1"), 1, getSkinPixelBounds("face3"));
 
-                            registerNativeImageToIdentifier(blinkSkinFile, SKIN_NAMESPACE + id + "_blink.png");
+                        registerNativeImageToIdentifier(blinkSkinFile, SKIN_NAMESPACE + id + "_blink.png");
 
                         //blink is 2 frames with blue optional
                         if (blinkChoice == 2) {
-                            blinkSkinFile2 = returnOptimizedBlinkFace(skin,getSkinPixelBounds("face2"),1,getSkinPixelBounds("face4"));
-                            UUID_HasBlink2.put(id, true);
+                            blinkSkinFile2 = returnOptimizedBlinkFace(skin, getSkinPixelBounds("face2"), 1, getSkinPixelBounds("face4"));
+                            TEXTURE_HasBlink2.put(SKIN_NAMESPACE + id + ".png", true);
                             registerNativeImageToIdentifier(blinkSkinFile2, SKIN_NAMESPACE + id + "_blink2.png");
                         } else {
-                            UUID_HasBlink2.put(id, false);
+                            TEXTURE_HasBlink2.put(SKIN_NAMESPACE + id + ".png", false);
                         }
-                    }else {//optimized blink
+                    } else {//optimized blink
                         int eyeHeightTopDown = choiceBoxChoices[3];
                         //optimized 1p high eyes
-                        if( blinkChoice == 3) {
-                            blinkSkinFile = returnOptimizedBlinkFace(skin, getSkinPixelBounds("optimizedEyeSmall"),eyeHeightTopDown);
+                        if (blinkChoice == 3) {
+                            blinkSkinFile = returnOptimizedBlinkFace(skin, getSkinPixelBounds("optimizedEyeSmall"), eyeHeightTopDown);
 
                             registerNativeImageToIdentifier(blinkSkinFile, SKIN_NAMESPACE + id + "_blink.png");
 
-                        }else if( blinkChoice == 4) {
-                            blinkSkinFile = returnOptimizedBlinkFace(skin, getSkinPixelBounds("optimizedEye2High"),eyeHeightTopDown);
-                            blinkSkinFile2 = returnOptimizedBlinkFace(skin, getSkinPixelBounds("optimizedEye2High_second"),eyeHeightTopDown);
-                            UUID_HasBlink2.put(id, true);
-
-                            registerNativeImageToIdentifier(blinkSkinFile, SKIN_NAMESPACE + id + "_blink.png");
-                            registerNativeImageToIdentifier(blinkSkinFile2, SKIN_NAMESPACE + id + "_blink2.png");
-                            //            case "optimizedEye2High"  -> new int[]{12, 16, 19, 17};
-                            //            case "optimizedEye2High_second"  -> new int[]{12, 18, 19, 19};
-                        }else /*if( blinkChoice == 5)*/ {
-                            blinkSkinFile = returnOptimizedBlinkFace(skin, getSkinPixelBounds("optimizedEye4High"),eyeHeightTopDown);
-                            blinkSkinFile2 = returnOptimizedBlinkFace(skin, getSkinPixelBounds("optimizedEye4High_second"),eyeHeightTopDown);
-                            UUID_HasBlink2.put(id, true);
+                        } else if (blinkChoice == 4) {
+                            blinkSkinFile = returnOptimizedBlinkFace(skin, getSkinPixelBounds("optimizedEye2High"), eyeHeightTopDown);
+                            blinkSkinFile2 = returnOptimizedBlinkFace(skin, getSkinPixelBounds("optimizedEye2High_second"), eyeHeightTopDown);
+                            TEXTURE_HasBlink2.put(SKIN_NAMESPACE + id + ".png", true);
 
                             registerNativeImageToIdentifier(blinkSkinFile, SKIN_NAMESPACE + id + "_blink.png");
                             registerNativeImageToIdentifier(blinkSkinFile2, SKIN_NAMESPACE + id + "_blink2.png");
-                            //            case "optimizedEye2High"  -> new int[]{12, 16, 19, 17};
-                            //            case "optimizedEye2High_second"  -> new int[]{12, 18, 19, 19};
+                        } else /*if( blinkChoice == 5)*/ {
+                            blinkSkinFile = returnOptimizedBlinkFace(skin, getSkinPixelBounds("optimizedEye4High"), eyeHeightTopDown);
+                            blinkSkinFile2 = returnOptimizedBlinkFace(skin, getSkinPixelBounds("optimizedEye4High_second"), eyeHeightTopDown);
+                            TEXTURE_HasBlink2.put(SKIN_NAMESPACE + id + ".png", true);
+                            registerNativeImageToIdentifier(blinkSkinFile, SKIN_NAMESPACE + id + "_blink.png");
+                            registerNativeImageToIdentifier(blinkSkinFile2, SKIN_NAMESPACE + id + "_blink2.png");
                         }
                     }
 
 
-                }else {
-                    UUID_HasBlink.put(id, false);
+                } else {
+                    TEXTURE_HasBlink.put(SKIN_NAMESPACE + id + ".png", false);
+                }
+
+                //check for cape recolor
+                int capeChoice1 = choiceBoxChoices[4];
+                int capeChoice2 = choiceBoxChoices[5];
+                // custom cape data experiment
+                // https://drive.google.com/uc?export=download&id=1rn1swLadqdMiLirz9Nrae0_VHFrTaJQe
+                //downloadImageFromUrl(player, "https://drive.google.com/uc?export=download&id=1rn1swLadqdMiLirz9Nrae0_VHFrTaJQe", "ETF_CAPE",null,true);
+                if ((capeChoice1 >= 1 && capeChoice1 <= 3) || capeChoice1 == 666) {
+                    switch (capeChoice1) {
+                        case 1 -> {//custom in skin
+                            cape = returnCustomTexturedCape(skin);
+                        }
+                        case 2 -> {
+                            cape = null;
+                            // minecraft capes mod
+                            //https://minecraftcapes.net/profile/fd22e573178c415a94fee476b328abfd/cape/
+                            downloadImageFromUrl(player, "https://minecraftcapes.net/profile/" + player.getUuidAsString().replace("-", "") + "/cape/", "THIRD_PARTY_CAPE");
+                        }
+                        case 3 -> {
+                            cape = null;
+                            //  https://optifine.net/capes/Benjamin.png
+                            downloadImageFromUrl(player, "https://optifine.net/capes/" + player.getName().getString() + ".png", "THIRD_PARTY_CAPE");
+                        }
+                        case 666 -> {
+                            cape = getNativeImageFromID(new Identifier("etf:capes/error.png"));
+                        }
+                        default -> {
+                            //cape = getNativeImageFromID(new Identifier("etf:capes/blank.png"));
+                        }
+                    }
+                }
+                if (cape != null){
+//                    if((capeChoice2 == 1 || capeChoice2 == 2 ) && capeChoice1 != 1) {
+//                        int[] boundsOriginal = capeChoice2 == 1 ? getSkinPixelBounds("cape1") : getSkinPixelBounds("cape3");
+//                        int[] boundsNew = capeChoice2 == 1 ? getSkinPixelBounds("cape2") : getSkinPixelBounds("cape4");
+//                        NativeImage recoloredCape = recolorCape(skin, cape, boundsOriginal, boundsNew);
+//                        if (recoloredCape != null) {
+//                            registerNativeImageToIdentifier(recoloredCape, SKIN_NAMESPACE + id + "_cape.png");
+//                            UUID_playerHasCustomCape.put(id, true);
+//                        }
+//                    }else
+                        if ((capeChoice1 >= 1 && capeChoice1 <= 3) || capeChoice1 == 666){//custom chosen
+                        registerNativeImageToIdentifier(cape, SKIN_NAMESPACE + id + "_cape.png");
+                        UUID_playerHasCustomCape.put(id, true);
+                    }
+                }
+                if (!UUID_playerHasCustomCape.containsKey(id)) {
+                    UUID_playerHasCustomCape.put(id, false);
                 }
 
 
@@ -778,7 +985,7 @@ public interface ETF_METHODS {
                 UUID_playerHasEnchant.put(id, markerChoices.contains(2));
                 if (markerChoices.contains(2)) {
                     System.out.println("choice " + (markerChoices.indexOf(2) + 1));
-                    int[] boxChosenBounds = getSkinPixelBounds("marker"+(markerChoices.indexOf(2) + 1));
+                    int[] boxChosenBounds = getSkinPixelBounds("marker" + (markerChoices.indexOf(2) + 1));
                     NativeImage check = returnMatchPixels(skin, boxChosenBounds);
                     if (check != null) {
                         registerNativeImageToIdentifier(check, SKIN_NAMESPACE + id + "_enchant.png");
@@ -794,6 +1001,10 @@ public interface ETF_METHODS {
                             NativeImage checkCoat = returnMatchPixels(coatSkin, boxChosenBounds);
                             registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkCoat, this::emptyNativeImage), SKIN_NAMESPACE + id + "_coat_enchant.png");
                         }
+
+                       // NativeImage checkCape = returnMatchPixels(skin, boxChosenBounds,cape);
+                       // registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkCape, this::emptyNativeImage), SKIN_NAMESPACE + id + "_cape_enchant.png");
+
                     } else {
                         UUID_playerHasEnchant.put(id, false);
                     }
@@ -802,7 +1013,7 @@ public interface ETF_METHODS {
                 //emissives
                 UUID_playerHasEmissive.put(id, markerChoices.contains(1));
                 if (markerChoices.contains(1)) {
-                    int[] boxChosenBounds = getSkinPixelBounds("marker"+(markerChoices.indexOf(1) + 1));
+                    int[] boxChosenBounds = getSkinPixelBounds("marker" + (markerChoices.indexOf(1) + 1));
                     NativeImage check = returnMatchPixels(skin, boxChosenBounds);
                     if (check != null) {
                         registerNativeImageToIdentifier(check, SKIN_NAMESPACE + id + "_e.png");
@@ -818,6 +1029,10 @@ public interface ETF_METHODS {
                             NativeImage checkCoat = returnMatchPixels(coatSkin, boxChosenBounds);
                             registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkCoat, this::emptyNativeImage), SKIN_NAMESPACE + id + "_coat_e.png");
                         }
+
+                      //  NativeImage checkCape = returnMatchPixels(skin, boxChosenBounds,cape);
+                       // registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkCape, this::emptyNativeImage), SKIN_NAMESPACE + id + "_cape_e.png");
+
                     } else {
                         UUID_playerHasEmissive.put(id, false);
                     }
@@ -832,10 +1047,12 @@ public interface ETF_METHODS {
         }
         UUID_playerSkinDownloadedYet.put(id, true);
     }
-    private NativeImage emptyNativeImage(){
-        return emptyNativeImage(64,64);
+
+    private NativeImage emptyNativeImage() {
+        return emptyNativeImage(64, 64);
     }
-    private NativeImage emptyNativeImage(int Width,int Height){
+
+    private NativeImage emptyNativeImage(int Width, int Height) {
         NativeImage empty = new NativeImage(Width, Height, false);
         empty.fillRect(0, 0, Width, Height, 0);
         return empty;
@@ -844,23 +1061,86 @@ public interface ETF_METHODS {
     private int[] getSkinPixelBounds(String choiceKey) {
         return switch (choiceKey) {
             case "marker1" -> new int[]{56, 16, 63, 23};
-            case "marker2"  -> new int[]{56, 24, 63, 31};
-            case "marker3"  -> new int[]{56, 32, 63, 39};
-            case "marker4"  -> new int[]{56, 40, 63, 47};
-            case "optimizedEyeSmall"  -> new int[]{12, 16, 19, 16};
-            case "optimizedEye2High"  -> new int[]{12, 16, 19, 17};
-            case "optimizedEye2High_second"  -> new int[]{12, 18, 19, 19};
-            case "optimizedEye4High"  -> new int[]{12, 16, 19, 19};
-            case "optimizedEye4High_second"  -> new int[]{36, 16, 43, 19};
-            case "face1"  -> new int[]{0, 0, 7, 7};
-            case "face2"  -> new int[]{24, 0, 31, 7};
-            case "face3"  -> new int[]{32, 0, 39, 7};
-            case "face4"  -> new int[]{56, 0, 63, 7};
+            case "marker2" -> new int[]{56, 24, 63, 31};
+            case "marker3" -> new int[]{56, 32, 63, 39};
+            case "marker4" -> new int[]{56, 40, 63, 47};
+            case "optimizedEyeSmall" -> new int[]{12, 16, 19, 16};
+            case "optimizedEye2High" -> new int[]{12, 16, 19, 17};
+            case "optimizedEye2High_second" -> new int[]{12, 18, 19, 19};
+            case "optimizedEye4High" -> new int[]{12, 16, 19, 19};
+            case "optimizedEye4High_second" -> new int[]{36, 16, 43, 19};
+            case "face1" -> new int[]{0, 0, 7, 7};
+            case "face2" -> new int[]{24, 0, 31, 7};
+            case "face3" -> new int[]{32, 0, 39, 7};
+            case "face4" -> new int[]{56, 0, 63, 7};
+            case "cape1" -> new int[]{12, 32, 19, 35};
+            case "cape2" -> new int[]{36, 32, 43, 35};
+            case "cape3" -> new int[]{12, 48, 19, 51};
+            case "cape4" -> new int[]{28, 48, 35, 51};
+            case "cape5.1" -> new int[]{44, 48, 45, 51};
+            case "cape5.2" -> new int[]{46, 48, 47, 51};
+            case "cape5.3" -> new int[]{48, 48, 49, 51};
+            case "cape5.4" -> new int[]{50, 48, 51, 51};
+            case "capeVertL" -> new int[]{1, 1, 1, 16};
+            case "capeVertR" -> new int[]{10, 1, 10, 16};
+            case "capeHorizL" -> new int[]{1, 1, 10, 1};
+            case "capeHorizR" -> new int[]{1, 16, 10, 16};
             default -> new int[]{0, 0, 0, 0};
-
         };
     }
 
+    private NativeImage returnCustomTexturedCape(NativeImage skin){
+        NativeImage cape = emptyNativeImage(64,32);
+        cape.copyFrom(getNativeImageFromID(new Identifier("etf:capes/default_elytra.png")));
+        copyToPixels(skin,cape,getSkinPixelBounds("cape1"),1,1);
+        copyToPixels(skin,cape,getSkinPixelBounds("cape1"),12,1);
+        copyToPixels(skin,cape,getSkinPixelBounds("cape2"),1,5);
+        copyToPixels(skin,cape,getSkinPixelBounds("cape2"),12,5);
+        copyToPixels(skin,cape,getSkinPixelBounds("cape3"),1,9);
+        copyToPixels(skin,cape,getSkinPixelBounds("cape3"),12,9);
+        copyToPixels(skin,cape,getSkinPixelBounds("cape4"),1,13);
+        copyToPixels(skin,cape,getSkinPixelBounds("cape4"),12,13);
+        copyToPixels(skin,cape,getSkinPixelBounds("cape5.1"),9,1);
+        copyToPixels(skin,cape,getSkinPixelBounds("cape5.1"),20,1);
+        copyToPixels(skin,cape,getSkinPixelBounds("cape5.2"),9,5);
+        copyToPixels(skin,cape,getSkinPixelBounds("cape5.2"),20,5);
+        copyToPixels(skin,cape,getSkinPixelBounds("cape5.3"),9,9);
+        copyToPixels(skin,cape,getSkinPixelBounds("cape5.3"),20,9);
+        copyToPixels(skin,cape,getSkinPixelBounds("cape5.4"),9,13);
+        copyToPixels(skin,cape,getSkinPixelBounds("cape5.4"),20,13);
+
+        copyToPixels(cape,cape,getSkinPixelBounds("capeVertL"),0,1);
+        copyToPixels(cape,cape,getSkinPixelBounds("capeVertR"),11,1);
+        copyToPixels(cape,cape,getSkinPixelBounds("capeHorizL"),1,0);
+        copyToPixels(cape,cape,getSkinPixelBounds("capeHorizR"),11,0);
+
+        return cape;
+    }
+
+    private NativeImage recolorCape(NativeImage skin, NativeImage cape, int[] originalColorBounds, int[] newColorBounds) {
+        NativeImage newCape = emptyNativeImage(cape.getWidth(), cape.getHeight());
+        newCape.copyFrom(cape);
+        Map<Integer, Integer> originalsToNew = new HashMap<>();
+        for (int x = originalColorBounds[0]; x <= originalColorBounds[2]; x++) {
+            for (int y = originalColorBounds[1]; y <= originalColorBounds[3]; y++) {
+                if (skin.getColor(x, y) != 0) {
+                    originalsToNew.put(skin.getColor(x, y), skin.getColor(x - originalColorBounds[0] + newColorBounds[0], y - originalColorBounds[1] + newColorBounds[1]));
+                }
+            }
+        }
+        if (originalsToNew.isEmpty()) {
+            return null;
+        }
+        for (int x = 0; x <= cape.getWidth() - 1; x++) {
+            for (int y = 0; y <= cape.getHeight() - 1; y++) {
+                int color = cape.getColor(x, y);
+                if (color != 0 && originalsToNew.containsKey(color)) {
+                    newCape.setColor(x, y, originalsToNew.get(color));
+                }
+            }
+        }
+        return newCape;
+    }
 
     private NativeImage getOrRemoveCoatTexture(NativeImage skin, int lengthOfCoat, boolean ignoreTopTexture) {
 
@@ -884,11 +1164,12 @@ public interface ETF_METHODS {
 
     // modifiers are distance from x1,y1 to copy
     private void copyToPixels(NativeImage source, NativeImage dest, int[] bounds, int copyToX, int CopyToY) {
-        copyToPixels(source,dest,bounds[0],bounds[1],bounds[2],bounds[3],copyToX,CopyToY);
+        copyToPixels(source, dest, bounds[0], bounds[1], bounds[2], bounds[3], copyToX, CopyToY);
     }
+
     private void copyToPixels(NativeImage source, NativeImage dest, int x1, int y1, int x2, int y2, int copyToX, int copyToY) {
-        int copyToXRelative = copyToX-x1;
-        int copyToYRelative = copyToY-y1;
+        int copyToXRelative = copyToX - x1;
+        int copyToYRelative = copyToY - y1;
         for (int x = x1; x <= x2; x++) {
             for (int y = y1; y <= y2; y++) {
                 dest.setColor(x + copyToXRelative, y + copyToYRelative, source.getColor(x, y));
@@ -952,27 +1233,36 @@ public interface ETF_METHODS {
         }
     }
 
-    private NativeImage returnOptimizedBlinkFace(NativeImage baseSkin, int[] eyeBounds,int eyeHeightFromTopDown) {
-        return returnOptimizedBlinkFace( baseSkin,  eyeBounds, eyeHeightFromTopDown, null);
+    private NativeImage returnOptimizedBlinkFace(NativeImage baseSkin, int[] eyeBounds, int eyeHeightFromTopDown) {
+        return returnOptimizedBlinkFace(baseSkin, eyeBounds, eyeHeightFromTopDown, null);
     }
-    private NativeImage returnOptimizedBlinkFace(NativeImage baseSkin, int[] eyeBounds,int eyeHeightFromTopDown, int[] secondLayerBounds) {
+
+    private NativeImage returnOptimizedBlinkFace(NativeImage baseSkin, int[] eyeBounds, int eyeHeightFromTopDown, int[] secondLayerBounds) {
         NativeImage texture = new NativeImage(64, 64, false);
         texture.copyFrom(baseSkin);
         //copy face
-        copyToPixels(baseSkin,texture,eyeBounds,8,8+(eyeHeightFromTopDown-1));
+        copyToPixels(baseSkin, texture, eyeBounds, 8, 8 + (eyeHeightFromTopDown - 1));
         //copy face overlay
         if (secondLayerBounds != null) {
-            copyToPixels(baseSkin,texture,secondLayerBounds,40,8+(eyeHeightFromTopDown-1));
+            copyToPixels(baseSkin, texture, secondLayerBounds, 40, 8 + (eyeHeightFromTopDown - 1));
         }
         return texture;
     }
 
     @Nullable
     private NativeImage returnMatchPixels(NativeImage baseSkin, int[] boundsToCheck) {
-        ArrayList<Integer> matchColors = new ArrayList<>();
+        return  returnMatchPixels( baseSkin, boundsToCheck, null);
+    }
+
+    @Nullable
+    private NativeImage returnMatchPixels(NativeImage baseSkin, int[] boundsToCheck,@Nullable NativeImage second) {
+        if (baseSkin == null) return null;
+
+        boolean secondImage = second != null;
+        Set<Integer> matchColors = new HashSet<>();
         for (int x = boundsToCheck[0]; x <= boundsToCheck[2]; x++) {
             for (int y = boundsToCheck[1]; y <= boundsToCheck[3]; y++) {
-                if (baseSkin.getOpacity(x, y) != 0 && !matchColors.contains(baseSkin.getColor(x, y))) {
+                if (baseSkin.getOpacity(x, y) != 0) {
                     matchColors.add(baseSkin.getColor(x, y));
                 }
             }
@@ -980,10 +1270,14 @@ public interface ETF_METHODS {
         if (matchColors.size() == 0) {
             return null;
         } else {
-            NativeImage texture = new NativeImage(64, 64, false);
-            texture.copyFrom(baseSkin);
-            for (int x = 0; x <= 63; x++) {
-                for (int y = 0; y <= 63; y++) {
+            NativeImage texture = !secondImage ? new NativeImage(64, 64, false) : new NativeImage(64, 32, false);
+            if (!secondImage){
+                texture.copyFrom(baseSkin);
+            }else{
+                texture.copyFrom(second);
+            }
+            for (int x = 0; x < texture.getWidth(); x++) {
+                for (int y = 0; y < texture.getHeight(); y++) {
                     if (!matchColors.contains(baseSkin.getColor(x, y))) {
                         texture.setColor(x, y, 0);
                     }
@@ -993,6 +1287,4 @@ public interface ETF_METHODS {
         }
 
     }
-
-
 }

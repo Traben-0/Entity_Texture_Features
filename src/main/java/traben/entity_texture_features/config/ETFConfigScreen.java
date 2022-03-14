@@ -107,7 +107,7 @@ public class ETFConfigScreen implements ETF_METHODS {
                 .setSaveConsumer(newValue -> ETFConfigData.enableBlinking = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
         blinking.add(1, entryBuilder.startIntSlider(Text.of("Blinking frequency"), ETFConfigData.blinkFrequency, 32, 1024)
-                .setDefaultValue(150) // Recommended: Used when user click "Reset"
+                .setDefaultValue(200) // Recommended: Used when user click "Reset"
                 .setMin(32)
                 .setMax(1024)
                 .setTooltip(new TranslatableText("""
@@ -119,6 +119,31 @@ public class ETFConfigScreen implements ETF_METHODS {
                         THIS REQUIRES A RESTART OR RELOAD OF TEXTURES
                         """)) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.blinkFrequency = newValue) // Recommended: Called when user save the config
+                .build()); // Builds the option entry for cloth config
+        blinking.add(1, entryBuilder.startIntSlider(Text.of("Blinking frequency"), ETFConfigData.blinkFrequency, 41, 200)
+                .setDefaultValue(200) // Recommended: Used when user click "Reset"
+                .setMin(41)
+                .setMax(1024)
+                .setTooltip(new TranslatableText("""
+                        sets how often textures will blink
+                        This can be set / overridden per mob
+                        by the resource-pack
+                        See the mod download page for details
+                        """)) // Optional: Shown when the user hover over this option
+                .setSaveConsumer(newValue -> ETFConfigData.blinkFrequency = newValue) // Recommended: Called when user save the config
+                .build()); // Builds the option entry for cloth config
+        blinking.add(1, entryBuilder.startIntSlider(Text.of("Blinking Length"), ETFConfigData.blinkLength, 0, 20)
+                .setDefaultValue(1) // Recommended: Used when user click "Reset"
+                .setMin(0)
+                .setMax(20)
+                .setTooltip(new TranslatableText("""
+                        sets how long textures will blink for
+                        0 = 1 tick, 20 = 20 ticks / 1 second
+                        This can be set / overridden per mob
+                        by the resource-pack
+                        See the mod download page for details
+                        """)) // Optional: Shown when the user hover over this option
+                .setSaveConsumer(newValue -> ETFConfigData.blinkLength = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
         optifineOptions.addEntry(blinking.build());
         SubCategoryBuilder players = entryBuilder.startSubCategory(Text.of("Player Skin settings"));
@@ -189,7 +214,16 @@ public class ETFConfigScreen implements ETF_METHODS {
                         The texture 'trident_bobbystrident_e.png; will be emissive.""")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.enableTridents = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
-
+        optifineOptions.addEntry(entryBuilder.startBooleanToggle(Text.of("Elytra size fix"), ETFConfigData.elytraThicknessFix)
+                .setDefaultValue(true) // Recommended: Used when user click "Reset"
+                .setTooltip(new TranslatableText("""
+                        The thickness of Elytra is a bit larger than
+                        the 2 pixels it is meant to be.
+                        This option will 'fix' the scaling of the Elytra to
+                        be more consistent.
+                        REQUIRES a restart or reload (F3 + T)""")) // Optional: Shown when the user hover over this option
+                .setSaveConsumer(newValue -> ETFConfigData.elytraThicknessFix = newValue) // Recommended: Called when user save the config
+                .build()); // Builds the option entry for cloth config
         builder.setSavingRunnable(() -> {
             // Serialise the config into the config file. This will be called last after all variables are updated.
             saveConfig();

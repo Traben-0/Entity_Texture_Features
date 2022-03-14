@@ -4,9 +4,12 @@
 ---
 ### This mod is completely Optifine format compatible!!!!
 
-- It supports all optifine properties present in the link below including Biomes, Names, Heights, etc...
+- It supports all optifine properties present in the link below including Biomes, Names, Heights, etc... 
+*(It also adds some of it's own)*
 - you can directly use the [Optifine Random Entities Format Guide](https://github.com/sp614x/optifine/blob/master/OptiFineDoc/doc/random_entities.properties)
 or any optifine random mob resource-packs and it will work.
+- This mod also adds a few extra features that Optifine does not have, 
+Most notably you can put everything in the default *"minecraft/textures/entity"* directory as well as Optifine's
 
 ---
 ## Guide & how it works:
@@ -22,10 +25,16 @@ texture, the vanilla texture can also be manually called by using the number 0)*
 for different random textures to be selected, this properties file must 
 support the [optifine format](https://github.com/sp614x/optifine/blob/master/OptiFineDoc/doc/random_entities.properties) 
 and if one isn't present the game will instead pick randomly from the available random textures present.
-- This mod supports **ALL** the settings that may be used in the properties file.
 - The properties file functions just as it does with [optifine]((https://github.com/sp614x/optifine/blob/master/OptiFineDoc/doc/random_entities.properties)))
 and if a specific entity does not match any of 
 the conditions in the properties file it will default to the vanilla texture.
+- This mod also adds the Property "blocks" it works exactly the same as the "biomes" property
+except it will allow you to set the texture of the entity based on the block it spawned on 
+*(or first rendered on)*    
+an example of the "blocks" property follows:  
+*blocks.1= Stone stone minecraft:stone modname:marble*
+- Additionally the Names property support grouping names that have spaces within double quotes e.g "John Smith" 
+
 ---
 ## Example properties file
 <img src="format_example.png" alt="img" width="650"/>
