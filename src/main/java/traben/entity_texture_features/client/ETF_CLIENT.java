@@ -47,9 +47,11 @@ public class ETF_CLIENT implements ModInitializer, ETF_METHODS {
     public static HashMap<String, Boolean> TEXTURE_HasBlink2 = new HashMap<>();
     public static HashMap<String, Properties> TEXTURE_BlinkProps = new HashMap<>();
 
+    public static HashMap<String, Boolean> TEXTURE_VillagerIsExistingFeature = new HashMap<>();
+
     public static String[] emissiveSuffix = null;
     public static HashMap<String, Identifier> Texture_Emissive = new HashMap<>();
-    public static boolean puzzleDetected = false;
+    public static boolean irisDetected = false;
     public static ETFConfig ETFConfigData;
 
     public static HashMap<UUID, String> UUID_TridentName = new HashMap<>();

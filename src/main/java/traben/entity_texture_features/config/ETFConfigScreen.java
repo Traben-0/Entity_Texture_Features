@@ -12,8 +12,7 @@ import traben.entity_texture_features.client.ETF_METHODS;
 
 import java.awt.*;
 
-import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
-import static traben.entity_texture_features.client.ETF_CLIENT.puzzleDetected;
+import static traben.entity_texture_features.client.ETF_CLIENT.*;
 
 public class ETFConfigScreen implements ETF_METHODS {
     public Screen getConfigScreen(Screen parent, boolean isTransparent) {
@@ -25,8 +24,8 @@ public class ETFConfigScreen implements ETF_METHODS {
         ConfigEntryBuilder entryBuilder = builder.entryBuilder();
         ConfigCategory optifineOptions = builder.getOrCreateCategory(Text.of("Optifine Options"));
         optifineOptions.setBackground(new Identifier("textures/block/light_gray_wool.png"));
-        if (puzzleDetected) {
-            optifineOptions.addEntry(entryBuilder.startTextDescription(Text.of("@Motschen's Mod 'Puzzle' was detected:\n please ensure you disable emissive entities in that mod's settings!"))
+        if (irisDetected) {
+            optifineOptions.addEntry(entryBuilder.startTextDescription(Text.of("Iris Shaders Mod was detected:\n If your emissive textures are flickering with shaders try the\nZ-Fighting fix in Emissive Texture Settings!"))
                     .setColor(new Color(240, 195, 15).getRGB())
                     .build()); // Builds the option entry for cloth config
         }
@@ -105,20 +104,6 @@ public class ETFConfigScreen implements ETF_METHODS {
                         closed named "textureName_blink2.png".
                         """)) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.enableBlinking = newValue) // Recommended: Called when user save the config
-                .build()); // Builds the option entry for cloth config
-        blinking.add(1, entryBuilder.startIntSlider(Text.of("Blinking frequency"), ETFConfigData.blinkFrequency, 32, 1024)
-                .setDefaultValue(200) // Recommended: Used when user click "Reset"
-                .setMin(32)
-                .setMax(1024)
-                .setTooltip(new TranslatableText("""
-                        Sets whether or not mobs will try to blink
-                        The Mob must have a texture with it's eyes
-                        closed named "textureName_blink.png".
-                        And an optional texture with it's eyes half
-                        closed named "textureName_blink2.png".
-                        THIS REQUIRES A RESTART OR RELOAD OF TEXTURES
-                        """)) // Optional: Shown when the user hover over this option
-                .setSaveConsumer(newValue -> ETFConfigData.blinkFrequency = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
         blinking.add(1, entryBuilder.startIntSlider(Text.of("Blinking frequency"), ETFConfigData.blinkFrequency, 41, 200)
                 .setDefaultValue(200) // Recommended: Used when user click "Reset"

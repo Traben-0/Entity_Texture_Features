@@ -104,6 +104,8 @@ public interface ETF_METHODS {
         Texture_Emissive.clear();
         setEmissiveSuffix();
 
+        TEXTURE_VillagerIsExistingFeature.clear();
+
         mooshroomRedCustomShroom = 0;
         mooshroomBrownCustomShroom = 0;
     }
@@ -221,32 +223,38 @@ public interface ETF_METHODS {
 
                     if (props.containsKey("skins." + num) || props.containsKey("textures." + num)) {
                         String dataFromProps = props.containsKey("skins." + num) ? props.getProperty("skins." + num).trim() : props.getProperty("textures." + num).trim();
-                        String[] skinData = dataFromProps.split("\s");
+                        String[] skinData = dataFromProps.split("\s*");
                         ArrayList<Integer> suffixNumbers = new ArrayList<>();
                         for (String data :
                                 skinData) {
                             //check if range
-                            if (data.contains("-")) {
-                                suffixNumbers.addAll(Arrays.asList(getIntRange(data)));
-                            } else {
-                                suffixNumbers.add(Integer.parseInt(data.replaceAll("[^0-9]", "")));
+                            data = data.trim();
+                            if(!data.replaceAll("[^0-9]", "").isEmpty()) {
+                                if (data.contains("-")) {
+                                    suffixNumbers.addAll(Arrays.asList(getIntRange(data)));
+                                } else {
+                                    suffixNumbers.add(Integer.parseInt(data.replaceAll("[^0-9]", "")));
+                                }
                             }
                         }
                         suffixes = suffixNumbers.toArray(new Integer[0]);
                     }
                     if (props.containsKey("weights." + num)) {
                         String dataFromProps = props.getProperty("weights." + num).trim();
-                        String[] weightData = dataFromProps.split("\s");
+                        String[] weightData = dataFromProps.split("\s*");
                         ArrayList<Integer> builder = new ArrayList<>();
                         for (String s :
                                 weightData) {
-                            builder.add(Integer.parseInt(s.replaceAll("[^0-9]", "")));
+                            s = s.trim();
+                            if(!s.replaceAll("[^0-9]", "").isEmpty()) {
+                                builder.add(Integer.parseInt(s.replaceAll("[^0-9]", "")));
+                            }
                         }
                         weights = builder.toArray(new Integer[0]);
                     }
                     if (props.containsKey("biomes." + num)) {
                         String dataFromProps = props.getProperty("biomes." + num).trim();
-                        biomes = dataFromProps.toLowerCase().split("\s");
+                        biomes = dataFromProps.toLowerCase().split("\s*");
                     }
                     //add legacy height support
                     if (!props.containsKey("heights." + num) && (props.containsKey("minHeight." + num) || props.containsKey("maxHeight." + num))) {
@@ -262,15 +270,18 @@ public interface ETF_METHODS {
                     }
                     if (props.containsKey("heights." + num)) {
                         String dataFromProps = props.getProperty("heights." + num).trim();
-                        String[] heightData = dataFromProps.split("\s");
+                        String[] heightData = dataFromProps.split("\s*");
                         ArrayList<Integer> heightNumbers = new ArrayList<>();
                         for (String data :
                                 heightData) {
                             //check if range
-                            if (data.contains("-")) {
-                                heightNumbers.addAll(Arrays.asList(getIntRange(data)));
-                            } else {
-                                heightNumbers.add(Integer.parseInt(data.replaceAll("[^0-9]", "")));
+                            data = data.trim();
+                            if(!data.replaceAll("[^0-9]", "").isEmpty()) {
+                                if (data.contains("-")) {
+                                    heightNumbers.addAll(Arrays.asList(getIntRange(data)));
+                                } else {
+                                    heightNumbers.add(Integer.parseInt(data.replaceAll("[^0-9]", "")));
+                                }
                             }
                         }
                         heights = heightNumbers.toArray(new Integer[0]);
@@ -281,7 +292,7 @@ public interface ETF_METHODS {
                         if (dataFromProps.contains("regex:") || dataFromProps.contains("pattern:")) {
                             names = new String[]{dataFromProps};
                         } else {
-                            //names = dataFromProps.split("\s");
+                            //names = dataFromProps.split("\s*");
                             //allow    "multiple names" among "other"
                             List<String> list = new ArrayList<String>();
                             Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(dataFromProps);
@@ -292,10 +303,10 @@ public interface ETF_METHODS {
                         }
                     }
                     if (props.containsKey("professions." + num)) {
-                        professions = props.getProperty("professions." + num).trim().split("\s");
+                        professions = props.getProperty("professions." + num).trim().split("\s*");
                     }
                     if (props.containsKey("collarColors." + num) || props.containsKey("collarColours." + num)) {
-                        collarColours = props.containsKey("collarColors." + num) ? props.getProperty("collarColors." + num).trim().split("\s") : props.getProperty("collarColours." + num).trim().split("\s");
+                        collarColours = props.containsKey("collarColors." + num) ? props.getProperty("collarColors." + num).trim().split("\s*") : props.getProperty("collarColours." + num).trim().split("\s*");
                     }
                     if (props.containsKey("baby." + num)) {
                         String dataFromProps = props.getProperty("baby." + num).trim();
@@ -313,30 +324,33 @@ public interface ETF_METHODS {
                         }
                     }
                     if (props.containsKey("health." + num)) {
-                        health = props.getProperty("health." + num).trim().split("\s");
+                        health = props.getProperty("health." + num).trim().split("\s*");
                     }
                     if (props.containsKey("moonPhase." + num)) {
                         String dataFromProps = props.getProperty("moonPhase." + num).trim();
-                        String[] moonData = dataFromProps.split("\s");
+                        String[] moonData = dataFromProps.split("\s*");
                         ArrayList<Integer> moonNumbers = new ArrayList<>();
                         for (String data :
                                 moonData) {
                             //check if range
-                            if (data.contains("-")) {
-                                moonNumbers.addAll(Arrays.asList(getIntRange(data)));
-                            } else {
-                                moonNumbers.add(Integer.parseInt(data.replaceAll("[^0-9]", "")));
+                            data = data.trim();
+                            if(!data.replaceAll("[^0-9]", "").isEmpty()) {
+                                if (data.contains("-")) {
+                                    moonNumbers.addAll(Arrays.asList(getIntRange(data)));
+                                } else{
+                                    moonNumbers.add(Integer.parseInt(data.replaceAll("[^0-9]", "")));
+                                }
                             }
                         }
                         moon = moonNumbers.toArray(new Integer[0]);
                     }
                     if (props.containsKey("dayTime." + num)) {
-                        daytime = props.getProperty("dayTime." + num).trim().split("\s");
+                        daytime = props.getProperty("dayTime." + num).trim().split("\s*");
                     }
                     if (props.containsKey("blocks." + num)) {
-                        blocks = props.getProperty("blocks." + num).trim().split("\s");
+                        blocks = props.getProperty("blocks." + num).trim().split("\s*");
                     }else if (props.containsKey("block." + num)) {
-                        blocks = props.getProperty("block." + num).trim().split("\s");
+                        blocks = props.getProperty("block." + num).trim().split("\s*");
                     }
 
 
@@ -348,15 +362,15 @@ public interface ETF_METHODS {
                     Texture_OptifineRandomSettingsPerTexture.put(vanillaTexturePath, allCasesForTexture);
                     Texture_OptifineOrTrueRandom.put(vanillaTexturePath, true);
                 } else {
-                    modMessage("Ignoring properties file that failed to load @ " + propertiesPath, false);
+                    modMessage("Ignoring properties file that failed to load any cases @ " + propertiesPath, false);
                     PATH_FailedPropertiesToIgnore.add(propertiesPath);
                 }
             } else {//properties file is null
-                modMessage("Ignoring properties file that failed to load @ " + propertiesPath, false);
+                modMessage("Ignoring properties file that was null @ " + propertiesPath, false);
                 PATH_FailedPropertiesToIgnore.add(propertiesPath);
             }
         } catch (Exception e) {
-            modMessage("Ignoring properties file that failed to load @ " + propertiesPath, false);
+            modMessage("Ignoring properties file that caused Exception @ " + propertiesPath+e, false);
             PATH_FailedPropertiesToIgnore.add(propertiesPath);
         }
     }

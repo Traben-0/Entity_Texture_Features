@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import traben.entity_texture_features.client.ETF_METHODS;
 
-import static traben.entity_texture_features.client.ETF_CLIENT.puzzleDetected;
+import static traben.entity_texture_features.client.ETF_CLIENT.irisDetected;
 
 
 @Mixin(SimpleResourceReload.class)
@@ -26,9 +26,9 @@ public abstract class MIX_SimpleResourceReload implements ETF_METHODS {
                 resetVisuals();
                 for (ModContainer mod :
                         FabricLoader.getInstance().getAllMods()) {
-                    if (mod.toString().contains("puzzle")) {
-                        modMessage("Entity Texture Features - @Motschen's Mod 'Puzzle' was detected: please ensure you disable emissive entities in that mod!", false);
-                        puzzleDetected = true;
+                    if (mod.toString().contains("iris")) {
+                        modMessage("Entity Texture Features - Iris mod detected : message will be shown in settings", false);
+                        irisDetected = true;
                         break;
                     }
                 }

@@ -364,10 +364,22 @@ public class randomCase implements ETF_METHODS {
                     .replaceFirst("minecraft:","")
                     .replaceFirst("Block\\{","")
                     .replaceFirst("}","");
-            boolean check = false;
+
+           boolean check = false;
             for (String block :
                     blocks) {
-                if (block.replace("minecraft:","").equalsIgnoreCase(entityOnBlock)) {
+                block = block.trim();
+                if (block.startsWith("!")){
+                    block = block.replaceFirst("!","");
+                    if (!block.replace("minecraft:","").equalsIgnoreCase(entityOnBlock)) {
+                        //can continue to check cases
+                        check = true;
+                    }else{
+                        //will prevent future checking
+                        check = false;
+                        break;
+                    }
+                }else if (block.replace("minecraft:","").equalsIgnoreCase(entityOnBlock)) {
                     check = true;
                     break;
                 }
