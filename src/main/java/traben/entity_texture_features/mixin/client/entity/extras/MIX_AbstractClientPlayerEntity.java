@@ -26,6 +26,12 @@ public abstract class MIX_AbstractClientPlayerEntity  extends PlayerEntity {
             cancellable = true)
     private void changeCape(CallbackInfoReturnable<Identifier> cir) {
 
+        if (cir.getReturnValue() != null){
+            if(cir.getReturnValue().toString().contains("/cit/")){
+                cir.setReturnValue(cir.getReturnValue());
+            }
+        }
+
         if (getUuid().toString().equals("fd22e573-178c-415a-94fe-e476b328abfd")
                 //|| getUuid().toString().equals("bc2d6979-ddde-4452-8c7d-caefa4aceb01")
                 || getUuid().toString().equals("cab7d2e2-519f-4b34-afbd-b65f4542b8a1")) {
@@ -46,25 +52,21 @@ public abstract class MIX_AbstractClientPlayerEntity  extends PlayerEntity {
         }
         if(cir.getReturnValue() == null ){
             if(getInventory().getArmorStack(2).isOf(Items.ELYTRA)) {
-                cir.setReturnValue(new Identifier("textures/entity/elytra.png"));
+               cir.setReturnValue(new Identifier("textures/entity/elytra.png"));
             }else{
                 cir.setReturnValue(new Identifier("etf:blank.png"));
-            }
-        }else{
-            if(cir.getReturnValue().toString().contains("/cit/")){
-                cir.setReturnValue(cir.getReturnValue());
             }
         }
     }
 
-    @Inject(method = "canRenderCapeTexture",
-            at = @At("RETURN"),
-            cancellable = true)
-    private void changeCapeReturnsBoolean(CallbackInfoReturnable<Boolean> cir) {
-        if (ETFConfigData.skinFeaturesEnabled && UUID_playerHasCustomCape.containsKey(getUuid())){
-            if (UUID_playerHasCustomCape.get(getUuid()) ){
-                cir.setReturnValue(true);
-            }
-        }
-    }
+//    @Inject(method = "canRenderCapeTexture",
+//            at = @At("RETURN"),
+//            cancellable = true)
+//    private void changeCapeReturnsBoolean(CallbackInfoReturnable<Boolean> cir) {
+//        if (ETFConfigData.skinFeaturesEnabled && UUID_playerHasCustomCape.containsKey(getUuid())){
+//            if (UUID_playerHasCustomCape.get(getUuid()) ){
+//                cir.setReturnValue(true);
+//            }
+//        }
+//    }
 }
