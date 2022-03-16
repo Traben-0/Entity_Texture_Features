@@ -54,7 +54,7 @@ public abstract class MIX_VillagerClothingFeatureRenderer<T extends LivingEntity
             }else if (optifineOldOrVanilla.containsKey(vanillaTexture.toString())) {
                 if (UUID_randomTextureSuffix.containsKey(id)) {
                     if (UUID_randomTextureSuffix.get(id) != 0) {
-                        Identifier randomTexture = ETF_METHODS.returnOptifineOrVanillaIdentifier(vanillaTexture.toString(), UUID_randomTextureSuffix.get(id));
+                        Identifier randomTexture = returnOptifineOrVanillaIdentifier(vanillaTexture.toString(), UUID_randomTextureSuffix.get(id));
                         if (!TEXTURE_VillagerIsExistingFeature.containsKey(randomTexture.toString())) {
                             TEXTURE_VillagerIsExistingFeature.put(randomTexture.toString(), isExistingFile(randomTexture));
                         }

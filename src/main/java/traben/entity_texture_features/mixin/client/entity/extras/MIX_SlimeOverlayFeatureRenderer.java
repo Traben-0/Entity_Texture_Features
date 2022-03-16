@@ -82,7 +82,7 @@ public abstract class MIX_SlimeOverlayFeatureRenderer<T extends LivingEntity> ex
             if (ETFConfigData.enableCustomTextures) {
                     if (UUID_randomTextureSuffix.containsKey(id)) {
                         if (UUID_randomTextureSuffix.get(id) != 0) {
-                            return  ETF_METHODS.returnOptifineOrVanillaIdentifier(texture.toString(), UUID_randomTextureSuffix.get(id));
+                            return  returnOptifineOrVanillaIdentifier(texture.toString(), UUID_randomTextureSuffix.get(id));
                         }
                     }
             }

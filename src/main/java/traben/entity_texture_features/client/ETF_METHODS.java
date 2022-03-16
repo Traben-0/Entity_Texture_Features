@@ -108,6 +108,8 @@ public interface ETF_METHODS {
 
         mooshroomRedCustomShroom = 0;
         mooshroomBrownCustomShroom = 0;
+
+        registerNativeImageToIdentifier(emptyNativeImage(1,1),"etf:blank.png");
     }
 
     default void resetSingleData(UUID id) {
@@ -448,7 +450,7 @@ public interface ETF_METHODS {
         }
     }
 
-    static String returnOptifineOrVanillaPath(String vanillaPath, int randomId, String emissiveSuffx) {
+    default String returnOptifineOrVanillaPath(String vanillaPath, int randomId, String emissiveSuffx) {
         return switch (optifineOldOrVanilla.get(vanillaPath)) {
             case 0 -> vanillaPath.replace(".png", randomId + emissiveSuffx + ".png").replace("textures", "optifine/random");
             case 1 -> vanillaPath.replace(".png", randomId + emissiveSuffx + ".png").replace("textures/entity", "optifine/mob");
@@ -456,7 +458,7 @@ public interface ETF_METHODS {
         };
     }
 
-    static Identifier returnOptifineOrVanillaIdentifier(String vanillaPath, int randomId) {
+    default Identifier returnOptifineOrVanillaIdentifier(String vanillaPath, int randomId) {
         return new Identifier(returnOptifineOrVanillaPath(vanillaPath, randomId, ""));
     }
 
@@ -607,7 +609,7 @@ public interface ETF_METHODS {
                     try {
                         capeurl = ((JsonObject) ((JsonObject) props.get("textures")).get("CAPE")).get("url").getAsString();
                     }catch(Exception e){
-                        modMessage("no cape",false);
+                        //modMessage("no cape",false);
                     }
                 }
 
@@ -752,12 +754,13 @@ public interface ETF_METHODS {
                 }else {
                     registerNativeImageToIdentifier(image, SKIN_NAMESPACE + id + "_cape.png");
                 }
+                UUID_playerHasCustomCape.put(id, true);
             } else {
                 modMessage("Player skin {" + player.getName().getString() + "} no THIRD_PARTY_CAPE Found", false);
-                registerNativeImageToIdentifier(getNativeImageFromID(new Identifier("etf:capes/error.png")), SKIN_NAMESPACE + id + "_cape.png");
-
+                //registerNativeImageToIdentifier(getNativeImageFromID(new Identifier("etf:capes/error.png")), SKIN_NAMESPACE + id + "_cape.png");
+                UUID_playerHasCustomCape.put(id, false);
             }
-            UUID_playerHasCustomCape.put(id, true);
+
         }
     }
 
@@ -934,8 +937,12 @@ public interface ETF_METHODS {
                     }
 
 
-                } else {
+                }
+                if(!TEXTURE_HasBlink.containsKey(SKIN_NAMESPACE + id + ".png")) {
                     TEXTURE_HasBlink.put(SKIN_NAMESPACE + id + ".png", false);
+                }
+                if(!TEXTURE_HasBlink2.containsKey(SKIN_NAMESPACE + id + ".png")){
+                    TEXTURE_HasBlink2.put(SKIN_NAMESPACE + id + ".png", false);
                 }
 
                 //check for cape recolor
@@ -969,15 +976,6 @@ public interface ETF_METHODS {
                     }
                 }
                 if (cape != null){
-//                    if((capeChoice2 == 1 || capeChoice2 == 2 ) && capeChoice1 != 1) {
-//                        int[] boundsOriginal = capeChoice2 == 1 ? getSkinPixelBounds("cape1") : getSkinPixelBounds("cape3");
-//                        int[] boundsNew = capeChoice2 == 1 ? getSkinPixelBounds("cape2") : getSkinPixelBounds("cape4");
-//                        NativeImage recoloredCape = recolorCape(skin, cape, boundsOriginal, boundsNew);
-//                        if (recoloredCape != null) {
-//                            registerNativeImageToIdentifier(recoloredCape, SKIN_NAMESPACE + id + "_cape.png");
-//                            UUID_playerHasCustomCape.put(id, true);
-//                        }
-//                    }else
                         if ((capeChoice1 >= 1 && capeChoice1 <= 3) || capeChoice1 == 666){//custom chosen
                         registerNativeImageToIdentifier(cape, SKIN_NAMESPACE + id + "_cape.png");
                         UUID_playerHasCustomCape.put(id, true);

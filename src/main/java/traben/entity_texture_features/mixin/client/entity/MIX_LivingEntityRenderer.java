@@ -147,63 +147,48 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                     if (!Texture_OptifineOrTrueRandom.containsKey(path)) {
                         processNewRandomTextureCandidate(path);
                     }
-                    //if needs to check if change required
-                    if (UUID_entityAwaitingDataClearing.containsKey(id)) {
-                        if (!hasUpdatableRandomCases.containsKey(id)) {
-                            //modMessage("Error - mob will no longer have texture updated",false);
-                            hasUpdatableRandomCases.put(id, false);
-                            UUID_entityAwaitingDataClearing.remove(id);
-                        }
-                        if (hasUpdatableRandomCases.get(id)) {
-                            //skip a few ticks
-                            //UUID_entityAwaitingDataClearing.put(id, UUID_entityAwaitingDataClearing.get(id)+1);
-                            if ((UUID_entityAwaitingDataClearing.get(id) / 100) + 1 < (System.currentTimeMillis() / 100)) {
-                                if (Texture_OptifineOrTrueRandom.get(path)) {
-                                    int hold = UUID_randomTextureSuffix.get(id);
-                                    resetSingleData(id);
-                                    testCases(path, id, entity, true);
-                                    //if didnt change keep the same
-                                    if (!UUID_randomTextureSuffix.containsKey(id)) {
-                                        UUID_randomTextureSuffix.put(id, hold);
+                    if (Texture_OptifineOrTrueRandom.containsKey(path)) {
+                        //if needs to check if change required
+                        if (UUID_entityAwaitingDataClearing.containsKey(id)) {
+                            if (!hasUpdatableRandomCases.containsKey(id)) {
+                                //modMessage("Error - mob will no longer have texture updated",false);
+                                hasUpdatableRandomCases.put(id, false);
+                                UUID_entityAwaitingDataClearing.remove(id);
+                            }
+                            if (hasUpdatableRandomCases.containsKey(id)) {
+                                if (hasUpdatableRandomCases.get(id)) {
+                                    //skip a few ticks
+                                    //UUID_entityAwaitingDataClearing.put(id, UUID_entityAwaitingDataClearing.get(id)+1);
+                                    if ((UUID_entityAwaitingDataClearing.get(id) / 100) + 1 < (System.currentTimeMillis() / 100)) {
+
+                                        if (Texture_OptifineOrTrueRandom.get(path)) {
+                                            if (UUID_randomTextureSuffix.containsKey(id)) {
+                                                int hold = UUID_randomTextureSuffix.get(id);
+                                                resetSingleData(id);
+                                                testCases(path, id, entity, true);
+                                                //if didnt change keep the same
+                                                if (!UUID_randomTextureSuffix.containsKey(id)) {
+                                                    UUID_randomTextureSuffix.put(id, hold);
+                                                }
+                                            }
+                                        }//else here would do something for true random but no need really - may optimise this
+
+                                        UUID_entityAwaitingDataClearing.remove(id);
                                     }
-                                }//else here would do something for true random but no need really - may optimise this
+                                }
+                            } else {
                                 UUID_entityAwaitingDataClearing.remove(id);
                             }
 
-                        } else {
-                            UUID_entityAwaitingDataClearing.remove(id);
                         }
-
-                    }
-                    if (Texture_OptifineOrTrueRandom.get(path)) {//optifine random
-                        //if it doesn't have a random already assign one
-                        if (!UUID_randomTextureSuffix.containsKey(id)) {
-                            testCases(path, id, entity, false);
-                            //if all failed set to vanilla
+                        if (Texture_OptifineOrTrueRandom.get(path)) {//optifine random
+                            //if it doesn't have a random already assign one
                             if (!UUID_randomTextureSuffix.containsKey(id)) {
-                                UUID_randomTextureSuffix.put(id, 0);
-                            }
-                            if (!UUID_entityAlreadyCalculated.contains(id)) {
-                                UUID_entityAlreadyCalculated.add(id);
-                            }
-                        }
-                        if (UUID_randomTextureSuffix.get(id) == 0) {
-                            return returnBlinkIdOrGiven(entity, vanilla.toString(), id);
-                        } else {
-                            return returnBlinkIdOrGiven(entity, ETF_METHODS.returnOptifineOrVanillaIdentifier(path, UUID_randomTextureSuffix.get(id)).toString(), id);
-                        }
-
-                    } else {//true random assign
-                        hasUpdatableRandomCases.put(id, false);
-                        if (Texture_TotalTrueRandom.get(path) > 0) {
-                            if (!UUID_randomTextureSuffix.containsKey(id)) {
-                                int randomReliable = Math.abs(id.hashCode());
-                                randomReliable %= Texture_TotalTrueRandom.get(path);
-                                randomReliable++;
-                                if (randomReliable == 1 && ignoreOnePNG.get(path)) {
-                                    randomReliable = 0;
+                                testCases(path, id, entity, false);
+                                //if all failed set to vanilla
+                                if (!UUID_randomTextureSuffix.containsKey(id)) {
+                                    UUID_randomTextureSuffix.put(id, 0);
                                 }
-                                UUID_randomTextureSuffix.put(id, randomReliable);
                                 if (!UUID_entityAlreadyCalculated.contains(id)) {
                                     UUID_entityAlreadyCalculated.add(id);
                                 }
@@ -211,10 +196,32 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                             if (UUID_randomTextureSuffix.get(id) == 0) {
                                 return returnBlinkIdOrGiven(entity, vanilla.toString(), id);
                             } else {
-                                return returnBlinkIdOrGiven(entity, ETF_METHODS.returnOptifineOrVanillaPath(path, UUID_randomTextureSuffix.get(id), ""), id);
+                                return returnBlinkIdOrGiven(entity, returnOptifineOrVanillaIdentifier(path, UUID_randomTextureSuffix.get(id)).toString(), id);
                             }
-                        } else {
-                            return returnBlinkIdOrGiven(entity, vanilla.toString(), id);
+
+                        } else {//true random assign
+                            hasUpdatableRandomCases.put(id, false);
+                            if (Texture_TotalTrueRandom.get(path) > 0) {
+                                if (!UUID_randomTextureSuffix.containsKey(id)) {
+                                    int randomReliable = Math.abs(id.hashCode());
+                                    randomReliable %= Texture_TotalTrueRandom.get(path);
+                                    randomReliable++;
+                                    if (randomReliable == 1 && ignoreOnePNG.get(path)) {
+                                        randomReliable = 0;
+                                    }
+                                    UUID_randomTextureSuffix.put(id, randomReliable);
+                                    if (!UUID_entityAlreadyCalculated.contains(id)) {
+                                        UUID_entityAlreadyCalculated.add(id);
+                                    }
+                                }
+                                if (UUID_randomTextureSuffix.get(id) == 0) {
+                                    return returnBlinkIdOrGiven(entity, vanilla.toString(), id);
+                                } else {
+                                    return returnBlinkIdOrGiven(entity, returnOptifineOrVanillaPath(path, UUID_randomTextureSuffix.get(id), ""), id);
+                                }
+                            } else {
+                                return returnBlinkIdOrGiven(entity, vanilla.toString(), id);
+                            }
                         }
                     }
 
@@ -258,48 +265,49 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                 TEXTURE_HasBlink2.put(givenTexturePath, isExistingFile(new Identifier(givenTexturePath.replace(".png", "_blink2.png"))));
                 TEXTURE_BlinkProps.put(givenTexturePath, readProperties(givenTexturePath.replace(".png", "_blink.properties")));
             }
-            if (TEXTURE_HasBlink.get(givenTexturePath)) {
-                if (entity.getPose() == EntityPose.SLEEPING) {
-                    return new Identifier(givenTexturePath.replace(".png", "_blink.png"));
-                }
-                //force eyes closed if blinded
-                else if (entity.hasStatusEffect(StatusEffects.BLINDNESS)) {
-                    return new Identifier(givenTexturePath.replace(".png", (TEXTURE_HasBlink2.get(givenTexturePath) ? "_blink2.png" : "_blink.png")));
-                } else {
-                    //do regular blinking
-                    Properties props = TEXTURE_BlinkProps.get(givenTexturePath);
-                    int blinkLength;
-                    int blinkFrequency;
-                    if (props != null){
+            if (TEXTURE_HasBlink.containsKey(givenTexturePath)) {
+                if (TEXTURE_HasBlink.get(givenTexturePath)) {
+                    if (entity.getPose() == EntityPose.SLEEPING) {
+                        return new Identifier(givenTexturePath.replace(".png", "_blink.png"));
+                    }
+                    //force eyes closed if blinded
+                    else if (entity.hasStatusEffect(StatusEffects.BLINDNESS)) {
+                        return new Identifier(givenTexturePath.replace(".png", (TEXTURE_HasBlink2.get(givenTexturePath) ? "_blink2.png" : "_blink.png")));
+                    } else {
+                        //do regular blinking
+                        Properties props = TEXTURE_BlinkProps.get(givenTexturePath);
+                        int blinkLength;
+                        int blinkFrequency;
+                        if (props != null) {
                             blinkLength = props.containsKey("blinkLength") ?
                                     Integer.parseInt(props.getProperty("blinkLength").replaceAll("[^0-9]", "")) :
                                     ETFConfigData.blinkLength;
                             blinkFrequency = props.containsKey("blinkFrequency") ?
                                     Integer.parseInt(props.getProperty("blinkFrequency").replaceAll("[^0-9]", "")) :
                                     ETFConfigData.blinkFrequency;
-                    }else{
-                        blinkLength = ETFConfigData.blinkLength ;
-                        blinkFrequency = ETFConfigData.blinkFrequency;
-                    }
+                        } else {
+                            blinkLength = ETFConfigData.blinkLength;
+                            blinkFrequency = ETFConfigData.blinkFrequency;
+                        }
 
 
+                        long timer = entity.world.getTime() % blinkFrequency;
+                        int blinkTimeVariedByUUID = Math.abs(id.hashCode()) % blinkFrequency;
+                        //make blink timer not overlap the wrap around to 0
+                        if (blinkTimeVariedByUUID < blinkLength) blinkTimeVariedByUUID = blinkLength;
+                        if (blinkTimeVariedByUUID > blinkFrequency - blinkLength)
+                            blinkTimeVariedByUUID = blinkFrequency - blinkLength;
 
-                    long timer = entity.world.getTime() % blinkFrequency;
-                    int blinkTimeVariedByUUID = Math.abs(id.hashCode()) % blinkFrequency;
-                    //make blink timer not overlap the wrap around to 0
-                    if (blinkTimeVariedByUUID < blinkLength) blinkTimeVariedByUUID = blinkLength;
-                    if (blinkTimeVariedByUUID > blinkFrequency - blinkLength)
-                        blinkTimeVariedByUUID = blinkFrequency - blinkLength;
 
-
-                    if (timer >= blinkTimeVariedByUUID - blinkLength && timer <= blinkTimeVariedByUUID + blinkLength) {
-                        if (TEXTURE_HasBlink2.get(givenTexturePath)) {
-                            if (timer >= blinkTimeVariedByUUID - (blinkLength / 3 ) && timer <= blinkTimeVariedByUUID + (blinkLength / 3 )) {
+                        if (timer >= blinkTimeVariedByUUID - blinkLength && timer <= blinkTimeVariedByUUID + blinkLength) {
+                            if (TEXTURE_HasBlink2.get(givenTexturePath)) {
+                                if (timer >= blinkTimeVariedByUUID - (blinkLength / 3) && timer <= blinkTimeVariedByUUID + (blinkLength / 3)) {
+                                    return new Identifier(givenTexturePath.replace(".png", "_blink.png"));
+                                }
+                                return new Identifier(givenTexturePath.replace(".png", "_blink2.png"));
+                            } else if (!(timer > blinkTimeVariedByUUID)) {
                                 return new Identifier(givenTexturePath.replace(".png", "_blink.png"));
                             }
-                            return new Identifier(givenTexturePath.replace(".png", "_blink2.png"));
-                        } else if (!(timer > blinkTimeVariedByUUID)) {
-                            return new Identifier(givenTexturePath.replace(".png", "_blink.png"));
                         }
                     }
                 }
@@ -359,52 +367,53 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                 //check for mark
                 checkPlayerForSkinFeatures(id, player);
             }
-            if (UUID_playerSkinDownloadedYet.get(id)) {
-                if (UUID_playerHasFeatures.get(id)) {
+            if (UUID_playerHasFeatures.containsKey(id) && UUID_playerSkinDownloadedYet.containsKey(id)) {
+                if (UUID_playerSkinDownloadedYet.get(id)) {
+                    if (UUID_playerHasFeatures.get(id)) {
 
-                    //villager nose
-                    if(UUID_playerHasVillagerNose.get(id)){
+                        //villager nose
+                        if (UUID_playerHasVillagerNose.get(id)) {
 
-                        customPlayerModel.nose.copyTransform(((PlayerEntityModel) this.getModel()).head);
-                        Identifier villager = new Identifier("textures/entity/villager/villager.png");
-                        VertexConsumer villagerVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(villager));
-                        customPlayerModel.nose.render(matrixStack, villagerVert, light, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
-                    }
-
-                    //coat features
-                    ItemStack armour = player.getInventory().getArmorStack(1);
-                    if (UUID_playerHasCoat.get(id) &&
-                            player.isPartVisible(PlayerModelPart.JACKET) &&
-                            !(armour.isOf(Items.CHAINMAIL_LEGGINGS) ||
-                                    armour.isOf(Items.LEATHER_LEGGINGS) ||
-                                    armour.isOf(Items.DIAMOND_LEGGINGS) ||
-                                    armour.isOf(Items.GOLDEN_LEGGINGS) ||
-                                    armour.isOf(Items.IRON_LEGGINGS) ||
-                                    armour.isOf(Items.NETHERITE_LEGGINGS))
-                    ) {
-                        String coat = SKIN_NAMESPACE + id + "_coat.png";
-
-                        if (UUID_playerHasFatCoat.get(id)) {
-                            customPlayerModel.fatJacket.copyTransform(((PlayerEntityModel) this.getModel()).jacket);
-                        }else {
-                            customPlayerModel.jacket.copyTransform(((PlayerEntityModel) this.getModel()).jacket);
+                            customPlayerModel.nose.copyTransform(((PlayerEntityModel) this.getModel()).head);
+                            Identifier villager = new Identifier("textures/entity/villager/villager.png");
+                            VertexConsumer villagerVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(villager));
+                            customPlayerModel.nose.render(matrixStack, villagerVert, light, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
                         }
-                        //perform texture features
-                        VertexConsumer coatVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(new Identifier(coat)));
-                        matrixStack.push();
+
+                        //coat features
+                        ItemStack armour = player.getInventory().getArmorStack(1);
+                        if (UUID_playerHasCoat.get(id) &&
+                                player.isPartVisible(PlayerModelPart.JACKET) &&
+                                !(armour.isOf(Items.CHAINMAIL_LEGGINGS) ||
+                                        armour.isOf(Items.LEATHER_LEGGINGS) ||
+                                        armour.isOf(Items.DIAMOND_LEGGINGS) ||
+                                        armour.isOf(Items.GOLDEN_LEGGINGS) ||
+                                        armour.isOf(Items.IRON_LEGGINGS) ||
+                                        armour.isOf(Items.NETHERITE_LEGGINGS))
+                        ) {
+                            String coat = SKIN_NAMESPACE + id + "_coat.png";
+
+                            if (UUID_playerHasFatCoat.get(id)) {
+                                customPlayerModel.fatJacket.copyTransform(((PlayerEntityModel) this.getModel()).jacket);
+                            } else {
+                                customPlayerModel.jacket.copyTransform(((PlayerEntityModel) this.getModel()).jacket);
+                            }
+                            //perform texture features
+                            VertexConsumer coatVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(new Identifier(coat)));
+                            matrixStack.push();
 
 
-                        if (UUID_playerHasFatCoat.get(id)) {
-                            customPlayerModel.fatJacket.render(matrixStack, coatVert, light, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
-                        }else {
-                            customPlayerModel.jacket.render(matrixStack, coatVert, light, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
-                        }
+                            if (UUID_playerHasFatCoat.get(id)) {
+                                customPlayerModel.fatJacket.render(matrixStack, coatVert, light, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                            } else {
+                                customPlayerModel.jacket.render(matrixStack, coatVert, light, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                            }
                             if (UUID_playerHasEnchant.get(id)) {
                                 Identifier enchant = new Identifier(coat.replace(".png", "_enchant.png"));
                                 VertexConsumer enchantVert = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(enchant), false, true);
                                 if (UUID_playerHasFatCoat.get(id)) {
                                     customPlayerModel.fatJacket.render(matrixStack, enchantVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 0.16F);
-                                }else{
+                                } else {
                                     customPlayerModel.jacket.render(matrixStack, enchantVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 0.16F);
                                 }
                             }
@@ -413,29 +422,30 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                                 VertexConsumer emissVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(emissive, true));
                                 if (UUID_playerHasFatCoat.get(id)) {
                                     customPlayerModel.fatJacket.render(matrixStack, emissVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
-                                }else {
+                                } else {
                                     customPlayerModel.jacket.render(matrixStack, emissVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
                                 }
 
                             }
 
-                        matrixStack.pop();
-                    }
+                            matrixStack.pop();
+                        }
 
-                    //perform texture features
-                    if (UUID_playerHasEnchant.get(id)) {
-                        Identifier enchant = skinPossiblyBlinking.contains(".png") ?
-                                new Identifier(skinPossiblyBlinking.replace(".png", "_enchant.png")) :
-                                new Identifier(SKIN_NAMESPACE + id + "_enchant.png");
-                        VertexConsumer enchantVert = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(enchant), false, true);
-                        this.getModel().render(matrixStack, enchantVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 0.16F);
-                    }
-                    if (UUID_playerHasEmissive.get(id)) {
-                        Identifier emissive = skinPossiblyBlinking.contains(".png") ?
-                                new Identifier(skinPossiblyBlinking.replace(".png", "_e.png")) :
-                                new Identifier(SKIN_NAMESPACE + id + "_e.png");
-                        VertexConsumer emissVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(emissive, true));
-                        this.getModel().render(matrixStack, emissVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                        //perform texture features
+                        if (UUID_playerHasEnchant.get(id)) {
+                            Identifier enchant = skinPossiblyBlinking.contains(".png") ?
+                                    new Identifier(skinPossiblyBlinking.replace(".png", "_enchant.png")) :
+                                    new Identifier(SKIN_NAMESPACE + id + "_enchant.png");
+                            VertexConsumer enchantVert = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(enchant), false, true);
+                            this.getModel().render(matrixStack, enchantVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 0.16F);
+                        }
+                        if (UUID_playerHasEmissive.get(id)) {
+                            Identifier emissive = skinPossiblyBlinking.contains(".png") ?
+                                    new Identifier(skinPossiblyBlinking.replace(".png", "_e.png")) :
+                                    new Identifier(SKIN_NAMESPACE + id + "_e.png");
+                            VertexConsumer emissVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(emissive, true));
+                            this.getModel().render(matrixStack, emissVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                        }
                     }
                 }
             }
