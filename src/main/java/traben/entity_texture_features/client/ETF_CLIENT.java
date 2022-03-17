@@ -46,6 +46,7 @@ public class ETF_CLIENT implements ModInitializer, ETF_METHODS {
     public static HashMap<String, Boolean> TEXTURE_HasBlink = new HashMap<>();
     public static HashMap<String, Boolean> TEXTURE_HasBlink2 = new HashMap<>();
     public static HashMap<String, Properties> TEXTURE_BlinkProps = new HashMap<>();
+    public static HashMap<String, Boolean> TEXTURE_HasOptifineDefaultReplacement = new HashMap<>();
 
     public static HashMap<String, Boolean> TEXTURE_VillagerIsExistingFeature = new HashMap<>();
 

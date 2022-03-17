@@ -225,7 +225,7 @@ public interface ETF_METHODS {
 
                     if (props.containsKey("skins." + num) || props.containsKey("textures." + num)) {
                         String dataFromProps = props.containsKey("skins." + num) ? props.getProperty("skins." + num).trim() : props.getProperty("textures." + num).trim();
-                        String[] skinData = dataFromProps.split("\s*");
+                        String[] skinData = dataFromProps.split("\s+");
                         ArrayList<Integer> suffixNumbers = new ArrayList<>();
                         for (String data :
                                 skinData) {
@@ -243,7 +243,7 @@ public interface ETF_METHODS {
                     }
                     if (props.containsKey("weights." + num)) {
                         String dataFromProps = props.getProperty("weights." + num).trim();
-                        String[] weightData = dataFromProps.split("\s*");
+                        String[] weightData = dataFromProps.split("\s+");
                         ArrayList<Integer> builder = new ArrayList<>();
                         for (String s :
                                 weightData) {
@@ -256,7 +256,7 @@ public interface ETF_METHODS {
                     }
                     if (props.containsKey("biomes." + num)) {
                         String dataFromProps = props.getProperty("biomes." + num).trim();
-                        biomes = dataFromProps.toLowerCase().split("\s*");
+                        biomes = dataFromProps.toLowerCase().split("\s+");
                     }
                     //add legacy height support
                     if (!props.containsKey("heights." + num) && (props.containsKey("minHeight." + num) || props.containsKey("maxHeight." + num))) {
@@ -272,7 +272,7 @@ public interface ETF_METHODS {
                     }
                     if (props.containsKey("heights." + num)) {
                         String dataFromProps = props.getProperty("heights." + num).trim();
-                        String[] heightData = dataFromProps.split("\s*");
+                        String[] heightData = dataFromProps.split("\s+");
                         ArrayList<Integer> heightNumbers = new ArrayList<>();
                         for (String data :
                                 heightData) {
@@ -294,7 +294,7 @@ public interface ETF_METHODS {
                         if (dataFromProps.contains("regex:") || dataFromProps.contains("pattern:")) {
                             names = new String[]{dataFromProps};
                         } else {
-                            //names = dataFromProps.split("\s*");
+                            //names = dataFromProps.split("\s+");
                             //allow    "multiple names" among "other"
                             List<String> list = new ArrayList<String>();
                             Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(dataFromProps);
@@ -305,10 +305,10 @@ public interface ETF_METHODS {
                         }
                     }
                     if (props.containsKey("professions." + num)) {
-                        professions = props.getProperty("professions." + num).trim().split("\s*");
+                        professions = props.getProperty("professions." + num).trim().split("\s+");
                     }
                     if (props.containsKey("collarColors." + num) || props.containsKey("collarColours." + num)) {
-                        collarColours = props.containsKey("collarColors." + num) ? props.getProperty("collarColors." + num).trim().split("\s*") : props.getProperty("collarColours." + num).trim().split("\s*");
+                        collarColours = props.containsKey("collarColors." + num) ? props.getProperty("collarColors." + num).trim().split("\s+") : props.getProperty("collarColours." + num).trim().split("\s+");
                     }
                     if (props.containsKey("baby." + num)) {
                         String dataFromProps = props.getProperty("baby." + num).trim();
@@ -326,11 +326,11 @@ public interface ETF_METHODS {
                         }
                     }
                     if (props.containsKey("health." + num)) {
-                        health = props.getProperty("health." + num).trim().split("\s*");
+                        health = props.getProperty("health." + num).trim().split("\s+");
                     }
                     if (props.containsKey("moonPhase." + num)) {
                         String dataFromProps = props.getProperty("moonPhase." + num).trim();
-                        String[] moonData = dataFromProps.split("\s*");
+                        String[] moonData = dataFromProps.split("\s+");
                         ArrayList<Integer> moonNumbers = new ArrayList<>();
                         for (String data :
                                 moonData) {
@@ -347,12 +347,12 @@ public interface ETF_METHODS {
                         moon = moonNumbers.toArray(new Integer[0]);
                     }
                     if (props.containsKey("dayTime." + num)) {
-                        daytime = props.getProperty("dayTime." + num).trim().split("\s*");
+                        daytime = props.getProperty("dayTime." + num).trim().split("\s+");
                     }
                     if (props.containsKey("blocks." + num)) {
-                        blocks = props.getProperty("blocks." + num).trim().split("\s*");
+                        blocks = props.getProperty("blocks." + num).trim().split("\s+");
                     }else if (props.containsKey("block." + num)) {
-                        blocks = props.getProperty("block." + num).trim().split("\s*");
+                        blocks = props.getProperty("block." + num).trim().split("\s+");
                     }
 
 
@@ -426,6 +426,7 @@ public interface ETF_METHODS {
                 if (test.testEntity((LivingEntity) entity, UUID_entityAlreadyCalculated.contains(id))) {
                     UUID_randomTextureSuffix.put(id, test.getWeightedSuffix(id, ignoreOnePNG.get(vanillaPath)));
                     Identifier tested = returnOptifineOrVanillaIdentifier(vanillaPath, UUID_randomTextureSuffix.get(id));
+                    System.out.println("testing"+tested.toString());
                     if (!isExistingFile(tested)) {
                         UUID_randomTextureSuffix.put(id, 0);
                     }
@@ -451,17 +452,22 @@ public interface ETF_METHODS {
     }
 
     default String returnOptifineOrVanillaPath(String vanillaPath, int randomId, String emissiveSuffx) {
+
+
+        String append = (randomId == 0 ? "":randomId) + emissiveSuffx + ".png";
         return switch (optifineOldOrVanilla.get(vanillaPath)) {
-            case 0 -> vanillaPath.replace(".png", randomId + emissiveSuffx + ".png").replace("textures", "optifine/random");
-            case 1 -> vanillaPath.replace(".png", randomId + emissiveSuffx + ".png").replace("textures/entity", "optifine/mob");
-            default -> vanillaPath.replace(".png", randomId + emissiveSuffx + ".png");
+            case 0 -> vanillaPath.replace(".png",append ).replace("textures", "optifine/random");
+            case 1 -> vanillaPath.replace(".png", append).replace("textures/entity", "optifine/mob");
+            default -> vanillaPath.replace(".png", append);
         };
     }
 
     default Identifier returnOptifineOrVanillaIdentifier(String vanillaPath, int randomId) {
         return new Identifier(returnOptifineOrVanillaPath(vanillaPath, randomId, ""));
     }
-
+    default Identifier returnOptifineOrVanillaIdentifier(String vanillaPath) {
+        return new Identifier(returnOptifineOrVanillaPath(vanillaPath, 0, ""));
+    }
 
     private void processTrueRandomCandidate(String vanillaPath) {
         boolean keepGoing = false;
@@ -914,6 +920,9 @@ public interface ETF_METHODS {
                         }
                     } else {//optimized blink
                         int eyeHeightTopDown = choiceBoxChoices[3];
+                        if(eyeHeightTopDown > 8 || eyeHeightTopDown < 1){
+                            eyeHeightTopDown = 1;
+                        }
                         //optimized 1p high eyes
                         if (blinkChoice == 3) {
                             blinkSkinFile = returnOptimizedBlinkFace(skin, getSkinPixelBounds("optimizedEyeSmall"), eyeHeightTopDown);

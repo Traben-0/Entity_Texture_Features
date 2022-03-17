@@ -82,7 +82,7 @@ public class ETFConfigScreen implements ETF_METHODS {
                         with the models animation.""")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.doShadersEmissiveFix = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
-        emissives.add(3, entryBuilder.startBooleanToggle(Text.of("Enable Emissive Elytras"), ETFConfigData.enableElytra)
+        emissives.add(3, entryBuilder.startBooleanToggle(Text.of("Enable Emissive Elytras - [CIT support broken]"), ETFConfigData.enableElytra)
                 .setDefaultValue(true) // Recommended: Used when user click "Reset"
                 .setTooltip(new TranslatableText("""
                         Allows Elytra to use emissive textures

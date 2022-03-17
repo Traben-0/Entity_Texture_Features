@@ -3,7 +3,6 @@ package traben.entity_texture_features.mixin.client.entity.extras;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Items;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -50,13 +49,13 @@ public abstract class MIX_AbstractClientPlayerEntity  extends PlayerEntity {
                 cir.setReturnValue(new Identifier(SKIN_NAMESPACE + getUuid() + "_cape.png"));
             }
         }
-        if(cir.getReturnValue() == null ){
-            if(getInventory().getArmorStack(2).isOf(Items.ELYTRA)) {
-               cir.setReturnValue(new Identifier("textures/entity/elytra.png"));
-            }else{
-                cir.setReturnValue(new Identifier("etf:blank.png"));
-            }
-        }
+//        if(cir.getReturnValue() == null ){
+//            if(getInventory().getArmorStack(2).isOf(Items.ELYTRA)) {
+//               cir.setReturnValue(new Identifier("textures/entity/elytra.png"));
+//            }else{
+//                cir.setReturnValue(new Identifier("etf:blank.png"));
+//            }
+//        }
     }
 
 //    @Inject(method = "canRenderCapeTexture",

@@ -386,7 +386,7 @@ public class randomCase implements ETF_METHODS {
             }
             allBoolean = check;
         }
-        if (//wasTestedByUpdateable &&
+        if (wasTestedByUpdateable &&
                 !caseHasNonUpdatables) {
             hasUpdatableRandomCases.put(entity.getUuid(), true);
         }
@@ -395,9 +395,15 @@ public class randomCase implements ETF_METHODS {
 
     public int getWeightedSuffix(UUID id, boolean ignoreOne) {
         int randomReliable = id.hashCode() > 0 ? id.hashCode() : -id.hashCode();
+
         randomReliable %= weightedSuffixes.length;
+
         randomReliable = weightedSuffixes[randomReliable];
-        if (randomReliable == 1 && ignoreOne) randomReliable = 0;
+
+        if (randomReliable == 1 && ignoreOne){
+            randomReliable = 0;
+        }
+
         return randomReliable;
     }
 }
