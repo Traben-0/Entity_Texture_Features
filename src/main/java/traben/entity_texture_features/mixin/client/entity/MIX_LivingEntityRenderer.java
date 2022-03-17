@@ -1,5 +1,6 @@
 package traben.entity_texture_features.mixin.client.entity;
 
+import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
@@ -141,6 +142,12 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
         Identifier vanilla = getTexture(entity);
         String path = vanilla.toString();
         UUID id = entity.getUuid();
+
+        //this is to support inspectio or other abstract rendering mods
+        if(inEntity.getBlockStateAtPos() == null || inEntity.getBlockStateAtPos().isOf(Blocks.VOID_AIR)){
+            return vanilla;
+        }
+
         if (!(entity instanceof PlayerEntity)) {
             if (ETFConfigData.enableCustomTextures) {
                 try {
@@ -259,7 +266,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                 }
             }
         }
-        System.out.println("end return");
+
         return returnBlinkIdOrGiven(entity, vanilla.toString(), id);
     }
 

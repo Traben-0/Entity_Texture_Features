@@ -426,7 +426,7 @@ public interface ETF_METHODS {
                 if (test.testEntity((LivingEntity) entity, UUID_entityAlreadyCalculated.contains(id))) {
                     UUID_randomTextureSuffix.put(id, test.getWeightedSuffix(id, ignoreOnePNG.get(vanillaPath)));
                     Identifier tested = returnOptifineOrVanillaIdentifier(vanillaPath, UUID_randomTextureSuffix.get(id));
-                    System.out.println("testing"+tested.toString());
+
                     if (!isExistingFile(tested)) {
                         UUID_randomTextureSuffix.put(id, 0);
                     }
@@ -1005,7 +1005,7 @@ public interface ETF_METHODS {
                 //enchanted
                 UUID_playerHasEnchant.put(id, markerChoices.contains(2));
                 if (markerChoices.contains(2)) {
-                    System.out.println("choice " + (markerChoices.indexOf(2) + 1));
+                    //System.out.println("choice " + (markerChoices.indexOf(2) + 1));
                     int[] boxChosenBounds = getSkinPixelBounds("marker" + (markerChoices.indexOf(2) + 1));
                     NativeImage check = returnMatchPixels(skin, boxChosenBounds);
                     if (check != null) {
