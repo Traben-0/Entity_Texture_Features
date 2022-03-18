@@ -69,18 +69,6 @@ public class customPlayerFeatureModel<T extends LivingEntity>  extends EntityMod
 
         this.fatJacket.copyTransform(this.jacket);
     }
-//    public void setVisible(boolean visible) {
-//        this.jacket.visible = visible;
-//    }
-//
-//    public void setAttributes(PlayerCoatExtensionModel<T> model) {
-//        super.copyStateTo(model);
-//        model.sneaking = this.sneaking;
-//        model.jacket.copyTransform(this.jacket);
-//    }
-//
-//    public ModelPart getRandomPart(Random random) {
-//        return jacket;
-//    }
+
 
 }

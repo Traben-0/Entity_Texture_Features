@@ -193,9 +193,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                                 if (!UUID_randomTextureSuffix.containsKey(id)) {
                                     UUID_randomTextureSuffix.put(id, 0);
                                 }
-                                if (!UUID_entityAlreadyCalculated.contains(id)) {
-                                    UUID_entityAlreadyCalculated.add(id);
-                                }
+                                UUID_entityAlreadyCalculated.add(id);
                             }
                            // System.out.println("suffix was ="+UUID_randomTextureSuffix.get(id));
                             if (UUID_randomTextureSuffix.get(id) == 0) {
@@ -223,9 +221,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                                         randomReliable = 0;
                                     }
                                     UUID_randomTextureSuffix.put(id, randomReliable);
-                                    if (!UUID_entityAlreadyCalculated.contains(id)) {
-                                        UUID_entityAlreadyCalculated.add(id);
-                                    }
+                                    UUID_entityAlreadyCalculated.add(id);
                                 }
                                 if (UUID_randomTextureSuffix.get(id) == 0) {
                                     return returnBlinkIdOrGiven(entity, vanilla.toString(), id);
@@ -373,7 +369,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
     }
 
     //double it
-    private int timerBeforeTrySkin = 300;
+    private int timerBeforeTrySkin = 400;
 
     private void renderSkinFeatures(UUID id, PlayerEntity player, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light) {
         //skin http://textures.minecraft.net/texture/a81cd0629057a42f3d8b7b714b1e233a3f89e33faeb67d3796a52df44619e888

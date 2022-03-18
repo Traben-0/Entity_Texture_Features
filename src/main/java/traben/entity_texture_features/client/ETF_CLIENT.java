@@ -43,6 +43,9 @@ public class ETF_CLIENT implements ModInitializer, ETF_METHODS {
     public static HashMap<UUID, Boolean> UUID_playerHasCape = new HashMap<>();
     public static HashMap<UUID, Boolean> UUID_playerHasCustomCape = new HashMap<>();
 
+    public static HashMap<UUID, Long> UUID_playerLastSkinCheck = new HashMap<>();
+    public static HashMap<UUID, Integer> UUID_playerLastSkinCheckCount = new HashMap<>();
+
     public static HashMap<String, Boolean> TEXTURE_HasBlink = new HashMap<>();
     public static HashMap<String, Boolean> TEXTURE_HasBlink2 = new HashMap<>();
     public static HashMap<String, Properties> TEXTURE_BlinkProps = new HashMap<>();

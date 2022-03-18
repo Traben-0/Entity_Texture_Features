@@ -296,7 +296,7 @@ public interface ETF_METHODS {
                         } else {
                             //names = dataFromProps.split("\s+");
                             //allow    "multiple names" among "other"
-                            List<String> list = new ArrayList<String>();
+                            List<String> list = new ArrayList<>();
                             Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(dataFromProps);
                             while (m.find()) {
                                 list.add(m.group(1).replace("\"", ""));
@@ -588,14 +588,24 @@ public interface ETF_METHODS {
                 || (player.isTeammate(MinecraftClient.getInstance().player)
                 || player.getScoreboardTeam() == null))
         ) {
+            // skip if tried to recently
+            if (UUID_playerLastSkinCheck.containsKey(id)){
+                if(UUID_playerLastSkinCheck.get(id)+6000 > System.currentTimeMillis()){
+                    return;
+                }
+            }
             UUID_playerSkinDownloadedYet.put(id, false);
             UUID_playerHasCape.put(id, ((AbstractClientPlayerEntity) player).canRenderCapeTexture());
             getSkin(player);
         }
     }
 
+
     private void getSkin(PlayerEntity player) {
         UUID id = player.getUuid();
+
+
+
         try {
             boolean hasCape = ((AbstractClientPlayerEntity) player).canRenderCapeTexture();
             String url = "";
@@ -641,21 +651,20 @@ public interface ETF_METHODS {
 
             downloadImageFromUrl(player, url, "VANILLA_SKIN", capeurl);
         } catch (Exception e) {
-            //
-            modMessage("Player skin {" + id + "} unavailable for feature check. "+e, false);
-            UUID_playerHasFeatures.put(id, false);
+            skinFailed(id);
         }
+
     }
 
-    private void downloadImageFromUrl(PlayerEntity player, String url, String sendFileToMethodKey) {
+    private void downloadImageFromUrl(PlayerEntity player, String url, @SuppressWarnings("SameParameterValue") String sendFileToMethodKey) {
         downloadImageFromUrl(player, url, sendFileToMethodKey, null, false);
     }
 
-    private void downloadImageFromUrl(PlayerEntity player, String url, String sendFileToMethodKey, String url2) {
+    private void downloadImageFromUrl(PlayerEntity player, String url, @SuppressWarnings("SameParameterValue") String sendFileToMethodKey, String url2) {
         downloadImageFromUrl(player, url, sendFileToMethodKey, url2, false);
     }
 
-    private void downloadImageFromUrl(PlayerEntity player, String url, String sendFileToMethodKey, @Nullable String url2, boolean isFile) {
+    private void downloadImageFromUrl(PlayerEntity player, String url, String sendFileToMethodKey, @Nullable String url2, @SuppressWarnings("SameParameterValue") boolean isFile) {
         try {
             //required for vanilla cape
             boolean do2urls = url2 != null;
@@ -689,7 +698,7 @@ public interface ETF_METHODS {
                                 } catch (Exception e) {
                                     read = null;
                                 }
-                                directFileFromUrlToMethod(player, read, sendFileToMethodKey);
+                                directFileFromUrlToMethod( read, sendFileToMethodKey);
                             } else {
                                 NativeImage one = this.loadTexture(inputStream);
                                 NativeImage two = null;
@@ -699,7 +708,8 @@ public interface ETF_METHODS {
                                 if (one != null) {
                                     directImageFromUrlToMethod(player, one, sendFileToMethodKey, two);
                                 } else {
-                                    modMessage("downloading image failed", false);
+                                    //modMessage("downloading image failed", false);
+                                    skinFailed(player.getUuid());
                                 }
                             }
                             if (URL_HTTPtoDisconnect1.containsKey(url)) {
@@ -732,7 +742,7 @@ public interface ETF_METHODS {
         }
     }
 
-    private void directFileFromUrlToMethod(PlayerEntity player, String fileString, String sendFileToMethodKey) {
+    private void directFileFromUrlToMethod( String fileString, String sendFileToMethodKey) {
         //switch
         if (fileString != null) {
             if (sendFileToMethodKey.equals("ETF_CAPE")) {
@@ -742,6 +752,22 @@ public interface ETF_METHODS {
 
     }
 
+    private void skinFailed(UUID id){
+        UUID_playerLastSkinCheck.put(id,System.currentTimeMillis());
+        if (!UUID_playerLastSkinCheckCount.containsKey(id)){
+            UUID_playerLastSkinCheckCount.put(id,0);
+        }else{
+            UUID_playerLastSkinCheckCount.put(id,UUID_playerLastSkinCheckCount.get(id) + 1);
+        }
+
+        //modMessage("Player skin {" + name + "} unavailable for feature check. try number "+UUID_playerLastSkinCheckCount.get(id)+". Reason failed = "+(reason+1), false);
+        ///give up after a few checks
+        if (UUID_playerLastSkinCheckCount.get(id) > 5) {
+            UUID_playerHasFeatures.put(id, false);
+        }
+        UUID_playerSkinDownloadedYet.remove(id);
+    }
+
     private void directImageFromUrlToMethod(PlayerEntity player, NativeImage image, String sendFileToMethodKey, @Nullable NativeImage image2) {
         //switch
         UUID id = player.getUuid();
@@ -749,8 +775,8 @@ public interface ETF_METHODS {
             if (image != null) {
                 skinLoaded(player, image, image2);
             } else {
-                modMessage("Player skin {" + player.getName().getString() + "} unavailable for feature check", false);
-                UUID_playerHasFeatures.put(id, false);
+                //modMessage("Player skin {" + player.getName().getString() + "} unavailable for feature check", false);
+                skinFailed(id);
             }
         }else if (sendFileToMethodKey.equals("THIRD_PARTY_CAPE")) {
             if (image != null) {
@@ -792,7 +818,7 @@ public interface ETF_METHODS {
             nativeImage = NativeImage.read(stream);
 
         } catch (Exception var4) {
-            modMessage("failed 165165651" + var4, false);
+            //modMessage("failed 165165651" + var4, false);
         }
 
         return nativeImage;
@@ -956,15 +982,13 @@ public interface ETF_METHODS {
 
                 //check for cape recolor
                 int capeChoice1 = choiceBoxChoices[4];
-                int capeChoice2 = choiceBoxChoices[5];
                 // custom cape data experiment
                 // https://drive.google.com/uc?export=download&id=1rn1swLadqdMiLirz9Nrae0_VHFrTaJQe
                 //downloadImageFromUrl(player, "https://drive.google.com/uc?export=download&id=1rn1swLadqdMiLirz9Nrae0_VHFrTaJQe", "ETF_CAPE",null,true);
                 if ((capeChoice1 >= 1 && capeChoice1 <= 3) || capeChoice1 == 666) {
                     switch (capeChoice1) {
-                        case 1 -> {//custom in skin
-                            cape = returnCustomTexturedCape(skin);
-                        }
+                        case 1 -> //custom in skin
+                                cape = returnCustomTexturedCape(skin);
                         case 2 -> {
                             cape = null;
                             // minecraft capes mod
@@ -976,9 +1000,7 @@ public interface ETF_METHODS {
                             //  https://optifine.net/capes/Benjamin.png
                             downloadImageFromUrl(player, "https://optifine.net/capes/" + player.getName().getString() + ".png", "THIRD_PARTY_CAPE");
                         }
-                        case 666 -> {
-                            cape = getNativeImageFromID(new Identifier("etf:capes/error.png"));
-                        }
+                        case 666 -> cape = getNativeImageFromID(new Identifier("etf:capes/error.png"));
                         default -> {
                             //cape = getNativeImageFromID(new Identifier("etf:capes/blank.png"));
                         }
@@ -1062,9 +1084,11 @@ public interface ETF_METHODS {
 
             } else {
                 UUID_playerHasFeatures.put(id, false);
+                System.out.println("worked but no features");
             }
         } else { //http failed
-            UUID_playerHasFeatures.put(id, false);
+            //UUID_playerHasFeatures.put(id, false);
+            skinFailed(id);
         }
         UUID_playerSkinDownloadedYet.put(id, true);
     }
@@ -1136,31 +1160,6 @@ public interface ETF_METHODS {
         copyToPixels(cape,cape,getSkinPixelBounds("capeHorizR"),11,0);
 
         return cape;
-    }
-
-    private NativeImage recolorCape(NativeImage skin, NativeImage cape, int[] originalColorBounds, int[] newColorBounds) {
-        NativeImage newCape = emptyNativeImage(cape.getWidth(), cape.getHeight());
-        newCape.copyFrom(cape);
-        Map<Integer, Integer> originalsToNew = new HashMap<>();
-        for (int x = originalColorBounds[0]; x <= originalColorBounds[2]; x++) {
-            for (int y = originalColorBounds[1]; y <= originalColorBounds[3]; y++) {
-                if (skin.getColor(x, y) != 0) {
-                    originalsToNew.put(skin.getColor(x, y), skin.getColor(x - originalColorBounds[0] + newColorBounds[0], y - originalColorBounds[1] + newColorBounds[1]));
-                }
-            }
-        }
-        if (originalsToNew.isEmpty()) {
-            return null;
-        }
-        for (int x = 0; x <= cape.getWidth() - 1; x++) {
-            for (int y = 0; y <= cape.getHeight() - 1; y++) {
-                int color = cape.getColor(x, y);
-                if (color != 0 && originalsToNew.containsKey(color)) {
-                    newCape.setColor(x, y, originalsToNew.get(color));
-                }
-            }
-        }
-        return newCape;
     }
 
     private NativeImage getOrRemoveCoatTexture(NativeImage skin, int lengthOfCoat, boolean ignoreTopTexture) {
@@ -1276,7 +1275,7 @@ public interface ETF_METHODS {
     }
 
     @Nullable
-    private NativeImage returnMatchPixels(NativeImage baseSkin, int[] boundsToCheck,@Nullable NativeImage second) {
+    private NativeImage returnMatchPixels(NativeImage baseSkin, int[] boundsToCheck, @SuppressWarnings("SameParameterValue") @Nullable NativeImage second) {
         if (baseSkin == null) return null;
 
         boolean secondImage = second != null;
