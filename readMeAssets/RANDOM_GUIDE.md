@@ -33,7 +33,12 @@ except it will allow you to set the texture of the entity based on the block it 
 *(or first rendered on)*    
 an example of the "blocks" property follows:  
 *blocks.1= Stone stone minecraft:stone modname:marble*
-- Additionally the Names property support grouping names that have spaces within double quotes e.g "John Smith" 
+- This mod also adds the Property "teams" it works exactly the same as the "names" property
+except it will allow you to set the texture of the entity based on the scoreboard team it is in
+*(this will be use-full for datapack creators or map makers who do not want the mob to display a custom name)*    
+an example of the "teams" property follows:  
+*teams.1= !red_team "Blue Team" blue_team*
+- Additionally the Names & Teams property support grouping names that have spaces within double quotes e.g "John Smith" 
 
 ---
 ## Example properties file
