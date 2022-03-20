@@ -26,6 +26,7 @@ public class ETF_CLIENT implements ModInitializer, ETF_METHODS {
     public static HashMap<UUID, Integer> UUID_randomTextureSuffix4 = new HashMap<>();
     public static Set<UUID> UUID_entityAlreadyCalculated = new HashSet<>();//
     public static HashMap<UUID, Long> UUID_entityAwaitingDataClearing = new HashMap<>();
+    public static HashMap<UUID, Long> UUID_entityAwaitingDataClearing2 = new HashMap<>();
     public static HashMap<String, ArrayList<randomCase>> Texture_OptifineRandomSettingsPerTexture = new HashMap<>();
     public static HashMap<String, Boolean> Texture_OptifineOrTrueRandom = new HashMap<>();
     public static HashMap<String, Integer> optifineOldOrVanilla = new HashMap<>();// 0,1,2

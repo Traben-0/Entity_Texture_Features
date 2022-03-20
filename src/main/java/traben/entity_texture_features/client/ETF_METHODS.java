@@ -16,7 +16,9 @@ import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.resource.Resource;
 import net.minecraft.text.Text;
@@ -82,6 +84,7 @@ public interface ETF_METHODS {
         ignoreOnePNG.clear();
         UUID_entityAlreadyCalculated.clear();//only time it clears
         UUID_entityAwaitingDataClearing.clear();
+        UUID_entityAwaitingDataClearing2.clear();
 
         UUID_playerHasFeatures.clear();
         UUID_playerHasEnchant.clear();
@@ -1341,4 +1344,83 @@ public interface ETF_METHODS {
         }
 
     }
+    default Identifier returnBlinkIdOrGiven(LivingEntity entity, String givenTexturePath, UUID id) {
+        return returnBlinkIdOrGiven(entity, givenTexturePath, id, false);
+    }
+
+    default Identifier returnBlinkIdOrGiven(LivingEntity entity, String givenTexturePath, UUID id, boolean isPlayer) {
+        if (ETFConfigData.enableBlinking) {
+            if (!TEXTURE_HasBlink.containsKey(givenTexturePath)) {
+                //check for blink textures
+                TEXTURE_HasBlink.put(givenTexturePath, isExistingFile(new Identifier(givenTexturePath.replace(".png", "_blink.png"))));
+                TEXTURE_HasBlink2.put(givenTexturePath, isExistingFile(new Identifier(givenTexturePath.replace(".png", "_blink2.png"))));
+                TEXTURE_BlinkProps.put(givenTexturePath, readProperties(givenTexturePath.replace(".png", "_blink.properties")));
+                TEXTURE_HasBlink.putIfAbsent(givenTexturePath, false);
+                TEXTURE_HasBlink2.putIfAbsent(givenTexturePath, false);
+            }
+            if (TEXTURE_HasBlink.containsKey(givenTexturePath)) {
+                if (TEXTURE_HasBlink.get(givenTexturePath)) {
+                    if (entity.getPose() == EntityPose.SLEEPING) {
+                        return new Identifier(givenTexturePath.replace(".png", "_blink.png"));
+                    }
+                    //force eyes closed if blinded
+                    else if (entity.hasStatusEffect(StatusEffects.BLINDNESS)) {
+                        if(TEXTURE_HasBlink2.containsKey(givenTexturePath)) {
+                            return new Identifier(givenTexturePath.replace(".png", (TEXTURE_HasBlink2.get(givenTexturePath) ? "_blink2.png" : "_blink.png")));
+                        }else{
+                            return new Identifier(givenTexturePath.replace(".png",  "_blink.png"));
+                        }
+                    } else {
+                        //do regular blinking
+                        Properties props = TEXTURE_BlinkProps.get(givenTexturePath);
+                        int blinkLength;
+                        int blinkFrequency;
+                        if (props != null) {
+                            blinkLength = props.containsKey("blinkLength") ?
+                                    Integer.parseInt(props.getProperty("blinkLength").replaceAll("[^0-9]", "")) :
+                                    ETFConfigData.blinkLength;
+                            blinkFrequency = props.containsKey("blinkFrequency") ?
+                                    Integer.parseInt(props.getProperty("blinkFrequency").replaceAll("[^0-9]", "")) :
+                                    ETFConfigData.blinkFrequency;
+                        } else {
+                            blinkLength = ETFConfigData.blinkLength;
+                            blinkFrequency = ETFConfigData.blinkFrequency;
+                        }
+
+
+                        long timer = entity.world.getTime() % blinkFrequency;
+                        int blinkTimeVariedByUUID = Math.abs(id.hashCode()) % blinkFrequency;
+                        //make blink timer not overlap the wrap around to 0
+                        if (blinkTimeVariedByUUID < blinkLength) blinkTimeVariedByUUID = blinkLength;
+                        if (blinkTimeVariedByUUID > blinkFrequency - blinkLength)
+                            blinkTimeVariedByUUID = blinkFrequency - blinkLength;
+
+
+                        if (timer >= blinkTimeVariedByUUID - blinkLength && timer <= blinkTimeVariedByUUID + blinkLength) {
+                            if(TEXTURE_HasBlink2.containsKey(givenTexturePath)) {
+                                if (TEXTURE_HasBlink2.get(givenTexturePath)) {
+                                    if (timer >= blinkTimeVariedByUUID - (blinkLength / 3) && timer <= blinkTimeVariedByUUID + (blinkLength / 3)) {
+                                        return new Identifier(givenTexturePath.replace(".png", "_blink.png"));
+                                    }
+                                    return new Identifier(givenTexturePath.replace(".png", "_blink2.png"));
+                                }
+                            }
+                            if (!(timer > blinkTimeVariedByUUID)) {
+                                return new Identifier(givenTexturePath.replace(".png", "_blink.png"));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return isPlayer ?
+                ((ETFConfigData.skinFeaturesEnabled
+                        && UUID_playerTransparentSkinId.containsKey(id)
+                        && (ETFConfigData.enableEnemyTeamPlayersSkinFeatures
+                        || (entity.isTeammate(MinecraftClient.getInstance().player)
+                        || entity.getScoreboardTeam() == null))
+                ) ? UUID_playerTransparentSkinId.get(id) : new Identifier( givenTexturePath))  //getTexture(entity))
+                : new Identifier(givenTexturePath);
+    }
+
 }

@@ -18,7 +18,8 @@
     "client.entity.extras.MIX_TridentEntityRenderer",
     "client.entity.extras.MIX_VillagerClothingFeatureRenderer",
     "client.entity.textureUpdaters.MIX_PlayerEntity",
-    "client.entity.textureUpdaters.MIX_SimpleResourceReload"
+    "client.entity.textureUpdaters.MIX_SimpleResourceReload",
+    "client.entity.extras.MIX_EyesFeatureRenderer"
   ],
   "mixins": [
 

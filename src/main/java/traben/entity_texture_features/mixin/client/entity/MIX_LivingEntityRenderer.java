@@ -1,7 +1,6 @@
 package traben.entity_texture_features.mixin.client.entity;
 
 import net.minecraft.block.Blocks;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
@@ -16,7 +15,6 @@ import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
@@ -33,7 +31,6 @@ import traben.entity_texture_features.client.ETF_METHODS;
 import traben.entity_texture_features.client.customPlayerFeatureModel;
 import traben.entity_texture_features.config.ETFConfig;
 
-import java.util.Properties;
 import java.util.UUID;
 
 import static traben.entity_texture_features.client.ETF_CLIENT.*;
@@ -122,6 +119,11 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                 if (!UUID_entityAwaitingDataClearing.containsKey(id)) {
                     UUID_entityAwaitingDataClearing.put(id, System.currentTimeMillis());
                 }
+                if(UUID_randomTextureSuffix2.containsKey(id)){
+                    if (!UUID_entityAwaitingDataClearing2.containsKey(id)) {
+                        UUID_entityAwaitingDataClearing2.put(id, System.currentTimeMillis());
+                    }
+            }
         }
     }
 
@@ -259,84 +261,9 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
         return returnBlinkIdOrGiven(entity, vanilla.toString(), id);
     }
 
-    private Identifier returnBlinkIdOrGiven(T entity, String givenTexturePath, UUID id) {
-        return returnBlinkIdOrGiven(entity, givenTexturePath, id, false);
-    }
-
-    private Identifier returnBlinkIdOrGiven(T entity, String givenTexturePath, UUID id, boolean isPlayer) {
-        if (ETFConfigData.enableBlinking) {
-            if (!TEXTURE_HasBlink.containsKey(givenTexturePath)) {
-                //check for blink textures
-                TEXTURE_HasBlink.put(givenTexturePath, isExistingFile(new Identifier(givenTexturePath.replace(".png", "_blink.png"))));
-                TEXTURE_HasBlink2.put(givenTexturePath, isExistingFile(new Identifier(givenTexturePath.replace(".png", "_blink2.png"))));
-                TEXTURE_BlinkProps.put(givenTexturePath, readProperties(givenTexturePath.replace(".png", "_blink.properties")));
-                TEXTURE_HasBlink.putIfAbsent(givenTexturePath, false);
-                TEXTURE_HasBlink2.putIfAbsent(givenTexturePath, false);
-            }
-            if (TEXTURE_HasBlink.containsKey(givenTexturePath)) {
-                if (TEXTURE_HasBlink.get(givenTexturePath)) {
-                    if (entity.getPose() == EntityPose.SLEEPING) {
-                        return new Identifier(givenTexturePath.replace(".png", "_blink.png"));
-                    }
-                    //force eyes closed if blinded
-                    else if (entity.hasStatusEffect(StatusEffects.BLINDNESS)) {
-                        if(TEXTURE_HasBlink2.containsKey(givenTexturePath)) {
-                            return new Identifier(givenTexturePath.replace(".png", (TEXTURE_HasBlink2.get(givenTexturePath) ? "_blink2.png" : "_blink.png")));
-                        }else{
-                            return new Identifier(givenTexturePath.replace(".png",  "_blink.png"));
-                        }
-                    } else {
-                        //do regular blinking
-                        Properties props = TEXTURE_BlinkProps.get(givenTexturePath);
-                        int blinkLength;
-                        int blinkFrequency;
-                        if (props != null) {
-                            blinkLength = props.containsKey("blinkLength") ?
-                                    Integer.parseInt(props.getProperty("blinkLength").replaceAll("[^0-9]", "")) :
-                                    ETFConfigData.blinkLength;
-                            blinkFrequency = props.containsKey("blinkFrequency") ?
-                                    Integer.parseInt(props.getProperty("blinkFrequency").replaceAll("[^0-9]", "")) :
-                                    ETFConfigData.blinkFrequency;
-                        } else {
-                            blinkLength = ETFConfigData.blinkLength;
-                            blinkFrequency = ETFConfigData.blinkFrequency;
-                        }
 
 
-                        long timer = entity.world.getTime() % blinkFrequency;
-                        int blinkTimeVariedByUUID = Math.abs(id.hashCode()) % blinkFrequency;
-                        //make blink timer not overlap the wrap around to 0
-                        if (blinkTimeVariedByUUID < blinkLength) blinkTimeVariedByUUID = blinkLength;
-                        if (blinkTimeVariedByUUID > blinkFrequency - blinkLength)
-                            blinkTimeVariedByUUID = blinkFrequency - blinkLength;
 
-
-                        if (timer >= blinkTimeVariedByUUID - blinkLength && timer <= blinkTimeVariedByUUID + blinkLength) {
-                            if(TEXTURE_HasBlink2.containsKey(givenTexturePath)) {
-                                if (TEXTURE_HasBlink2.get(givenTexturePath)) {
-                                    if (timer >= blinkTimeVariedByUUID - (blinkLength / 3) && timer <= blinkTimeVariedByUUID + (blinkLength / 3)) {
-                                        return new Identifier(givenTexturePath.replace(".png", "_blink.png"));
-                                    }
-                                    return new Identifier(givenTexturePath.replace(".png", "_blink2.png"));
-                                }
-                            }
-                            if (!(timer > blinkTimeVariedByUUID)) {
-                                return new Identifier(givenTexturePath.replace(".png", "_blink.png"));
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return isPlayer ?
-                ((ETFConfigData.skinFeaturesEnabled
-                        && UUID_playerTransparentSkinId.containsKey(id)
-                        && (ETFConfigData.enableEnemyTeamPlayersSkinFeatures
-                        || (entity.isTeammate(MinecraftClient.getInstance().player)
-                        || entity.getScoreboardTeam() == null))
-                ) ? UUID_playerTransparentSkinId.get(id) : getTexture(entity))
-                : new Identifier(givenTexturePath);
-    }
 
 
 
