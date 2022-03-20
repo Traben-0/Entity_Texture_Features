@@ -21,6 +21,9 @@ public class ETF_CLIENT implements ModInitializer, ETF_METHODS {
     //0 = vanilla only    1+ is zombie1+.png
     public static HashMap<String, Integer> Texture_TotalTrueRandom = new HashMap<>();
     public static HashMap<UUID, Integer> UUID_randomTextureSuffix = new HashMap<>();
+    public static HashMap<UUID, Integer> UUID_randomTextureSuffix2 = new HashMap<>();
+    public static HashMap<UUID, Integer> UUID_randomTextureSuffix3 = new HashMap<>();
+    public static HashMap<UUID, Integer> UUID_randomTextureSuffix4 = new HashMap<>();
     public static Set<UUID> UUID_entityAlreadyCalculated = new HashSet<>();//
     public static HashMap<UUID, Long> UUID_entityAwaitingDataClearing = new HashMap<>();
     public static HashMap<String, ArrayList<randomCase>> Texture_OptifineRandomSettingsPerTexture = new HashMap<>();
@@ -28,6 +31,9 @@ public class ETF_CLIENT implements ModInitializer, ETF_METHODS {
     public static HashMap<String, Integer> optifineOldOrVanilla = new HashMap<>();// 0,1,2
     public static HashMap<String, Boolean> ignoreOnePNG = new HashMap<>();
     public static HashMap<UUID, Boolean> hasUpdatableRandomCases = new HashMap<>();
+    public static HashMap<UUID, Boolean> hasUpdatableRandomCases2 = new HashMap<>();
+    public static HashMap<UUID, Boolean> hasUpdatableRandomCases3 = new HashMap<>();
+    public static HashMap<UUID, Boolean> hasUpdatableRandomCases4 = new HashMap<>();
 
 
     public static HashMap<UUID, Boolean> UUID_playerHasFeatures = new HashMap<>();

@@ -66,7 +66,16 @@ public interface ETF_METHODS {
     default void resetVisuals() {
         modMessage("Reloading...", false);
         Texture_TotalTrueRandom.clear();
+
         UUID_randomTextureSuffix.clear();
+        UUID_randomTextureSuffix2.clear();
+        UUID_randomTextureSuffix3.clear();
+        UUID_randomTextureSuffix4.clear();
+        hasUpdatableRandomCases.clear();
+        hasUpdatableRandomCases2.clear();
+        hasUpdatableRandomCases3.clear();
+        hasUpdatableRandomCases4.clear();
+
         Texture_OptifineRandomSettingsPerTexture.clear();
         Texture_OptifineOrTrueRandom.clear();
         optifineOldOrVanilla.clear();// 0,1,2
@@ -114,6 +123,11 @@ public interface ETF_METHODS {
 
     default void resetSingleData(UUID id) {
         UUID_randomTextureSuffix.remove(id);
+        UUID_randomTextureSuffix2.remove(id);
+        UUID_randomTextureSuffix3.remove(id);
+        UUID_randomTextureSuffix4.remove(id);
+
+
     }
 
 
@@ -222,6 +236,7 @@ public interface ETF_METHODS {
                     Integer[] moon = {};
                     String[] daytime = {};
                     String[] blocks = {};
+                    String[] teams = {};
 
                     if (props.containsKey("skins." + num) || props.containsKey("textures." + num)) {
                         String dataFromProps = props.containsKey("skins." + num) ? props.getProperty("skins." + num).trim() : props.getProperty("textures." + num).trim();
@@ -354,10 +369,26 @@ public interface ETF_METHODS {
                     }else if (props.containsKey("block." + num)) {
                         blocks = props.getProperty("block." + num).trim().split("\s+");
                     }
-
+                    if (props.containsKey("teams." + num)) {
+                        String teamData = props.getProperty("teams." + num).trim();
+                        List<String> list = new ArrayList<>();
+                        Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(teamData);
+                        while (m.find()) {
+                            list.add(m.group(1).replace("\"", ""));
+                        }
+                        teams = list.toArray(new String[0]);
+                    }else if (props.containsKey("team." + num)) {
+                        String teamData = props.getProperty("team." + num).trim();
+                        List<String> list = new ArrayList<>();
+                        Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(teamData);
+                        while (m.find()) {
+                            list.add(m.group(1).replace("\"", ""));
+                        }
+                        teams = list.toArray(new String[0]);
+                    }
 
                     if (suffixes.length != 0) {
-                        allCasesForTexture.add(new randomCase(suffixes, weights, biomes, heights, names, professions, collarColours, baby, weather, health, moon, daytime,blocks));
+                        allCasesForTexture.add(new randomCase(suffixes, weights, biomes, heights, names, professions, collarColours, baby, weather, health, moon, daytime,blocks,teams));
                     }
                 }
                 if (!allCasesForTexture.isEmpty()) {
@@ -418,24 +449,27 @@ public interface ETF_METHODS {
     }
 
     default void testCases(String vanillaPath, UUID id, Entity entity, boolean isUpdate) {
+        testCases( vanillaPath,  id, entity, isUpdate, UUID_randomTextureSuffix,hasUpdatableRandomCases);
+    }
+    default void testCases(String vanillaPath, UUID id, Entity entity, boolean isUpdate, HashMap<UUID,Integer> UUID_RandomSuffixMap, HashMap<UUID,Boolean> UUID_CaseHasUpdateablesCustom) {
         for (randomCase test :
                 Texture_OptifineRandomSettingsPerTexture.get(vanillaPath)) {
 
-            //skip if its only an update and case is not updatables
+            //skip if its only an update and case is not updatable
             if (!(isUpdate && test.caseHasNonUpdatables)) {
-                if (test.testEntity((LivingEntity) entity, UUID_entityAlreadyCalculated.contains(id))) {
-                    UUID_randomTextureSuffix.put(id, test.getWeightedSuffix(id, ignoreOnePNG.get(vanillaPath)));
-                    Identifier tested = returnOptifineOrVanillaIdentifier(vanillaPath, UUID_randomTextureSuffix.get(id));
+                if (test.testEntity((LivingEntity) entity, UUID_entityAlreadyCalculated.contains(id),UUID_CaseHasUpdateablesCustom)) {
+                    UUID_RandomSuffixMap.put(id, test.getWeightedSuffix(id, ignoreOnePNG.get(vanillaPath)));
+                    Identifier tested = returnOptifineOrVanillaIdentifier(vanillaPath, UUID_RandomSuffixMap.get(id));
 
                     if (!isExistingFile(tested)) {
-                        UUID_randomTextureSuffix.put(id, 0);
+                        UUID_RandomSuffixMap.put(id, 0);
                     }
                     break;
                 }
             }
         }
-        if (!hasUpdatableRandomCases.containsKey(id))
-            hasUpdatableRandomCases.put(id, false);
+        if (!UUID_CaseHasUpdateablesCustom.containsKey(id))
+            UUID_CaseHasUpdateablesCustom.put(id, false);
     }
 
     default void modMessage(String message, boolean inChat) {
@@ -1084,7 +1118,7 @@ public interface ETF_METHODS {
 
             } else {
                 UUID_playerHasFeatures.put(id, false);
-                System.out.println("worked but no features");
+               // System.out.println("worked but no features");
             }
         } else { //http failed
             //UUID_playerHasFeatures.put(id, false);

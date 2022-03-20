@@ -119,16 +119,9 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
         if (livingEntity.world.isClient()
                 && System.currentTimeMillis() % randomizer == Math.abs(id.hashCode()) % randomizer
         ) {
-            if (hasUpdatableRandomCases.containsKey(id)) {
-                if (hasUpdatableRandomCases.get(id)
-                        && !UUID_entityAwaitingDataClearing.containsKey(id)) {
-                    UUID_entityAwaitingDataClearing.put(id, System.currentTimeMillis());
-                }
-            } else {
                 if (!UUID_entityAwaitingDataClearing.containsKey(id)) {
                     UUID_entityAwaitingDataClearing.put(id, System.currentTimeMillis());
                 }
-            }
         }
     }
 
@@ -157,18 +150,16 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                     if (Texture_OptifineOrTrueRandom.containsKey(path)) {
                         //if needs to check if change required
                         if (UUID_entityAwaitingDataClearing.containsKey(id)) {
-                            if (!hasUpdatableRandomCases.containsKey(id)) {
-                                //modMessage("Error - mob will no longer have texture updated",false);
-                                hasUpdatableRandomCases.put(id, false);
-                                UUID_entityAwaitingDataClearing.remove(id);
-                            }else{
+                            if (UUID_randomTextureSuffix.containsKey(id)) {
+                                if (!hasUpdatableRandomCases.containsKey(id)) {
+                                    hasUpdatableRandomCases.put(id, true);
+                                }
                                 if (hasUpdatableRandomCases.get(id)) {
                                     //skip a few ticks
                                     //UUID_entityAwaitingDataClearing.put(id, UUID_entityAwaitingDataClearing.get(id)+1);
-                                    if ((UUID_entityAwaitingDataClearing.get(id) / 100) + 1 < (System.currentTimeMillis() / 100)) {
-
+                                    if (UUID_entityAwaitingDataClearing.get(id) + 100 < System.currentTimeMillis()) {
                                         if (Texture_OptifineOrTrueRandom.get(path)) {
-                                            if (UUID_randomTextureSuffix.containsKey(id)) {
+                                            //if (UUID_randomTextureSuffix.containsKey(id)) {
                                                 int hold = UUID_randomTextureSuffix.get(id);
                                                 resetSingleData(id);
                                                 testCases(path, id, entity, true);
@@ -176,11 +167,13 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                                                 if (!UUID_randomTextureSuffix.containsKey(id)) {
                                                     UUID_randomTextureSuffix.put(id, hold);
                                                 }
-                                            }
+                                            //}
                                         }//else here would do something for true random but no need really - may optimise this
 
                                         UUID_entityAwaitingDataClearing.remove(id);
                                     }
+                                } else {
+                                    UUID_entityAwaitingDataClearing.remove(id);
                                 }
                             }
 

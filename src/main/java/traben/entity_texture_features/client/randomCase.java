@@ -6,10 +6,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.passive.WolfEntity;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 import static traben.entity_texture_features.client.ETF_CLIENT.hasUpdatableRandomCases;
 
@@ -26,6 +23,7 @@ public class randomCase implements ETF_METHODS {
     private final Integer[] moon;
     private final String[] daytime;
     private final String[] blocks;
+    private final String[] teams;
 
     //whether case should be ignored by updates
     public boolean caseHasNonUpdatables;
@@ -43,7 +41,8 @@ public class randomCase implements ETF_METHODS {
                String[] healthX,
                Integer[] moonX,
                String[] daytimeX,
-               String[] blocksX
+               String[] blocksX,
+               String[] teamsX
     ) {
 
         biomes = biomesX;
@@ -57,6 +56,7 @@ public class randomCase implements ETF_METHODS {
         moon = moonX;
         daytime = daytimeX;
         blocks = blocksX;
+        teams = teamsX;
 
         caseHasNonUpdatables = moon.length > 0
                 || biomes.length > 0
@@ -100,6 +100,11 @@ public class randomCase implements ETF_METHODS {
     }
 
     public boolean testEntity(LivingEntity entity, boolean onlyUpdatables) {
+        return testEntity(entity,onlyUpdatables,hasUpdatableRandomCases);
+    }
+
+
+    public boolean testEntity(LivingEntity entity, boolean onlyUpdatables, HashMap<UUID,Boolean> UUID_CaseHasUpdateablesCustom) {
         if (biomes.length == 0
                 && names.length == 0
                 && heights.length == 0
@@ -111,6 +116,7 @@ public class randomCase implements ETF_METHODS {
                 && moon.length == 0
                 && daytime.length == 0
                 && blocks.length == 0
+                && teams.length == 0
         ) {
             return true;
         } else if (//check if no updatables
@@ -120,6 +126,7 @@ public class randomCase implements ETF_METHODS {
                         && collarColours.length == 0
                         && baby == 0
                         && health.length == 0
+                        && teams.length == 0
         ) {
             return false;//failed because no updatables but are other criteria
         }
@@ -155,9 +162,10 @@ public class randomCase implements ETF_METHODS {
                 allBoolean = check;
         }
         if (allBoolean && names.length > 0) {
+            wasTestedByUpdateable = true;
             if (entity.hasCustomName() ) {
                 String entityName = Objects.requireNonNull(entity.getCustomName()).getString();
-                wasTestedByUpdateable = true;
+
                 boolean check = false;
                 boolean invert = false;
                 for (String str :
@@ -386,9 +394,36 @@ public class randomCase implements ETF_METHODS {
             }
             allBoolean = check;
         }
+        if (allBoolean && teams.length > 0) {
+            wasTestedByUpdateable = true;
+            if (entity.getScoreboardTeam() != null ) {
+                String teamName = entity.getScoreboardTeam().getName();
+
+                boolean check = false;
+                boolean invert = false;
+                for (String str :
+                        teams) {
+                    str = str.trim();
+                    if (str.startsWith("!")) {
+                        str = str.replaceFirst("!", "");
+                        invert = true;
+                        check = true;
+                    }
+                    if (teamName.equals(str)) {
+                        check = !invert;
+                        break;
+                    }
+                }
+                allBoolean = check;
+            } else {
+                allBoolean = false;
+            }
+        }
+
+
         if (wasTestedByUpdateable &&
                 !caseHasNonUpdatables) {
-            hasUpdatableRandomCases.put(entity.getUuid(), true);
+            UUID_CaseHasUpdateablesCustom.put(entity.getUuid(), true);
         }
         return allBoolean;
     }
