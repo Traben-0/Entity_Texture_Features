@@ -1171,9 +1171,17 @@ public interface ETF_METHODS {
         };
     }
 
+
+
     private NativeImage returnCustomTexturedCape(NativeImage skin){
         NativeImage cape = emptyNativeImage(64,32);
-        cape.copyFrom(getNativeImageFromID(new Identifier("etf:capes/default_elytra.png")));
+        NativeImage elytra = getNativeImageFromID(new Identifier("etf:capes/default_elytra.png"));
+        if (elytra == null){
+            elytra = getNativeImageFromID(new Identifier("textures/entity/elytra.png"));
+        }//not else
+        if (elytra != null){
+            cape.copyFrom(elytra);
+        }
         copyToPixels(skin,cape,getSkinPixelBounds("cape1"),1,1);
         copyToPixels(skin,cape,getSkinPixelBounds("cape1"),12,1);
         copyToPixels(skin,cape,getSkinPixelBounds("cape2"),1,5);
@@ -1355,9 +1363,11 @@ public interface ETF_METHODS {
                 TEXTURE_HasBlink.put(givenTexturePath, isExistingFile(new Identifier(givenTexturePath.replace(".png", "_blink.png"))));
                 TEXTURE_HasBlink2.put(givenTexturePath, isExistingFile(new Identifier(givenTexturePath.replace(".png", "_blink2.png"))));
                 TEXTURE_BlinkProps.put(givenTexturePath, readProperties(givenTexturePath.replace(".png", "_blink.properties")));
-                TEXTURE_HasBlink.putIfAbsent(givenTexturePath, false);
-                TEXTURE_HasBlink2.putIfAbsent(givenTexturePath, false);
+
             }
+            TEXTURE_BlinkProps.putIfAbsent(givenTexturePath, null);
+            TEXTURE_HasBlink.putIfAbsent(givenTexturePath, false);
+            TEXTURE_HasBlink2.putIfAbsent(givenTexturePath, false);
             if (TEXTURE_HasBlink.containsKey(givenTexturePath)) {
                 if (TEXTURE_HasBlink.get(givenTexturePath)) {
                     if (entity.getPose() == EntityPose.SLEEPING) {
@@ -1413,14 +1423,15 @@ public interface ETF_METHODS {
                 }
             }
         }
-        return isPlayer ?
-                ((ETFConfigData.skinFeaturesEnabled
-                        && UUID_playerTransparentSkinId.containsKey(id)
-                        && (ETFConfigData.enableEnemyTeamPlayersSkinFeatures
-                        || (entity.isTeammate(MinecraftClient.getInstance().player)
-                        || entity.getScoreboardTeam() == null))
-                ) ? UUID_playerTransparentSkinId.get(id) : new Identifier( givenTexturePath))  //getTexture(entity))
-                : new Identifier(givenTexturePath);
-    }
 
+        if(isPlayer && ETFConfigData.skinFeaturesEnabled
+                        && UUID_playerTransparentSkinId.containsKey(id) && (ETFConfigData.enableEnemyTeamPlayersSkinFeatures
+                        || (entity.isTeammate(MinecraftClient.getInstance().player) || entity.getScoreboardTeam() == null))){
+                Identifier ident = UUID_playerTransparentSkinId.get(id);
+                if(ident != null){
+                    return ident;
+                }
+        }
+        return new Identifier(givenTexturePath);
+    }
 }
