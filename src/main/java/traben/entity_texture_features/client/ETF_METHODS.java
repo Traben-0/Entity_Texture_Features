@@ -43,6 +43,21 @@ import static traben.entity_texture_features.client.ETF_CLIENT.*;
 
 public interface ETF_METHODS {
 
+    default boolean isExistingFileAndSameResourcepackAs(Identifier id,Identifier vanillaIdToMatch){
+        if(isExistingFile(id)){
+            try {
+                Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(id);
+                Resource resource2 = MinecraftClient.getInstance().getResourceManager().getResource(vanillaIdToMatch);
+                if (resource.getResourcePackName().equals(resource2.getResourcePackName())){
+                    return true;
+                }
+            }catch (Exception e){
+                //
+            }
+        }
+        return false;
+    }
+
 
     default boolean isExistingFile(Identifier id) {
         try {
@@ -80,7 +95,7 @@ public interface ETF_METHODS {
 
         Texture_OptifineRandomSettingsPerTexture.clear();
         Texture_OptifineOrTrueRandom.clear();
-        optifineOldOrVanilla.clear();// 0,1,2
+        PATH_OptifineOldVanillaETF_0123.clear();// 0,1,2
         ignoreOnePNG.clear();
         UUID_entityAlreadyCalculated.clear();//only time it clears
         UUID_entityAwaitingDataClearing.clear();
@@ -132,12 +147,22 @@ public interface ETF_METHODS {
 
 
     }
-
-
     default Properties readProperties(String path) {
+        return readProperties(path,null);
+    }
+
+    default Properties readProperties(String path, String pathOfTextureToUseForResourcepackCheck) {
         Properties props = new Properties();
         try {
             Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(new Identifier(path));
+            //skip if needs to be same resourcepack
+            if (pathOfTextureToUseForResourcepackCheck != null){
+                Resource resourceOriginal = MinecraftClient.getInstance().getResourceManager().getResource(new Identifier(pathOfTextureToUseForResourcepackCheck));
+                if (!resource.getResourcePackName().equals(resourceOriginal.getResourcePackName())){
+                    System.out.println("not same pack "+path+" // "+pathOfTextureToUseForResourcepackCheck);
+                    return null;
+                }
+            }
             try {
                 InputStream in = resource.getInputStream();
                 props.load(in);
@@ -176,24 +201,30 @@ public interface ETF_METHODS {
     default void processNewRandomTextureCandidate(String vanillaTexturePath) {
         boolean hasProperties = false;
         String properties = "";
-        if (checkPathExist(vanillaTexturePath.replace(".png", ".properties").replace("textures", "optifine/random"))) {
+        if (checkPathExist(vanillaTexturePath.replace(".png", ".properties").replace("textures", "etf/random"))) {
+            properties = vanillaTexturePath.replace(".png", ".properties").replace("textures", "etf/random");
+            hasProperties = true;
+            PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 3);
+        } else if (isExistingFile(new Identifier(vanillaTexturePath.replace(".png", "2.png").replace("textures", "etf/random")))) {
+            PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 3);
+        } else if (checkPathExist(vanillaTexturePath.replace(".png", ".properties").replace("textures", "optifine/random"))) {
             properties = vanillaTexturePath.replace(".png", ".properties").replace("textures", "optifine/random");
             hasProperties = true;
-            optifineOldOrVanilla.put(vanillaTexturePath, 0);
+            PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 0);
         } else if (isExistingFile(new Identifier(vanillaTexturePath.replace(".png", "2.png").replace("textures", "optifine/random")))) {
-            optifineOldOrVanilla.put(vanillaTexturePath, 0);
+            PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 0);
         } else if (checkPathExist(vanillaTexturePath.replace(".png", ".properties").replace("textures/entity", "optifine/mob"))) {
             properties = vanillaTexturePath.replace(".png", ".properties").replace("textures/entity", "optifine/mob");
             hasProperties = true;
-            optifineOldOrVanilla.put(vanillaTexturePath, 1);
+            PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 1);
         } else if (isExistingFile(new Identifier(vanillaTexturePath.replace(".png", "2.png").replace("textures/entity", "optifine/mob")))) {
-            optifineOldOrVanilla.put(vanillaTexturePath, 1);
+            PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 1);
         } else if (checkPathExist(vanillaTexturePath.replace(".png", ".properties"))) {
             properties = vanillaTexturePath.replace(".png", ".properties");
             hasProperties = true;
-            optifineOldOrVanilla.put(vanillaTexturePath, 2);
+            PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 2);
         } else if (isExistingFile(new Identifier(vanillaTexturePath.replace(".png", "2.png")))) {
-            optifineOldOrVanilla.put(vanillaTexturePath, 2);
+            PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 2);
         }
 
         //no settings just true random
@@ -208,7 +239,7 @@ public interface ETF_METHODS {
         try {
             ignoreOnePNG.put(vanillaTexturePath, !(isExistingFile(new Identifier(propertiesPath.replace(".properties", "1.png")))));
 
-            Properties props = readProperties(propertiesPath);
+            Properties props = readProperties(propertiesPath,vanillaTexturePath);
             if (props != null) {
                 Set<String> propIds = props.stringPropertyNames();
                 //set so only 1 of each
@@ -492,7 +523,7 @@ public interface ETF_METHODS {
 
 
         String append = (randomId == 0 ? "":randomId) + emissiveSuffx + ".png";
-        return switch (optifineOldOrVanilla.get(vanillaPath)) {
+        return switch (PATH_OptifineOldVanillaETF_0123.get(vanillaPath)) {
             case 0 -> vanillaPath.replace(".png",append ).replace("textures", "optifine/random");
             case 1 -> vanillaPath.replace(".png", append).replace("textures/entity", "optifine/mob");
             default -> vanillaPath.replace(".png", append);
@@ -508,28 +539,29 @@ public interface ETF_METHODS {
 
     private void processTrueRandomCandidate(String vanillaPath) {
         boolean keepGoing = false;
-        //ArrayList<String> allTextures = new ArrayList<String>();
-        String checkPath;
-        String checkPathOptifineFormat;
-        String checkPathOldRandomFormat;
         //first iteration longer
         int successCount = 0;
         //allTextures.add(vanillaPath);
         //can start from either texture1.png or texture2.png check both first
         //check if texture1.png is used
-        checkPath = vanillaPath.replace(".png", "1.png");
-        checkPathOldRandomFormat = vanillaPath.replace(".png", "1.png").replace("textures/entity", "optifine/mob");
-        checkPathOptifineFormat = vanillaPath.replace(".png", "1.png").replace("textures", "optifine/random");
-        if (isExistingFile(new Identifier(checkPathOptifineFormat))) {
-            optifineOldOrVanilla.put(vanillaPath, 0);
+        String checkPath = vanillaPath.replace(".png", "1.png");
+        String checkPathOldRandomFormat = vanillaPath.replace(".png", "1.png").replace("textures/entity", "optifine/mob");
+        String checkPathOptifineFormat = vanillaPath.replace(".png", "1.png").replace("textures", "optifine/random");
+        String checkPathETFFormat = vanillaPath.replace(".png", "1.png").replace("textures", "etf/random");
+        if (isExistingFile(new Identifier(checkPathETFFormat))) {
+            PATH_OptifineOldVanillaETF_0123.put(vanillaPath, 3);
+            ignoreOnePNG.put(vanillaPath, false);
+            //successCount++;
+        } else if (isExistingFile(new Identifier(checkPathOptifineFormat))) {
+            PATH_OptifineOldVanillaETF_0123.put(vanillaPath, 0);
             ignoreOnePNG.put(vanillaPath, false);
             //successCount++;
         } else if (isExistingFile(new Identifier(checkPathOldRandomFormat))) {
-            optifineOldOrVanilla.put(vanillaPath, 1);
+            PATH_OptifineOldVanillaETF_0123.put(vanillaPath, 1);
             ignoreOnePNG.put(vanillaPath, false);
             //successCount++;
         } else if (isExistingFile(new Identifier(checkPath))) {
-            optifineOldOrVanilla.put(vanillaPath, 2);
+            PATH_OptifineOldVanillaETF_0123.put(vanillaPath, 2);
             ignoreOnePNG.put(vanillaPath, false);
             //successCount++;
         } else {
@@ -540,16 +572,21 @@ public interface ETF_METHODS {
         checkPath = vanillaPath.replace(".png", "2.png");
         checkPathOldRandomFormat = vanillaPath.replace(".png", "2.png").replace("textures/entity", "optifine/mob");
         checkPathOptifineFormat = vanillaPath.replace(".png", "2.png").replace("textures", "optifine/random");
-        if (isExistingFile(new Identifier(checkPathOptifineFormat))) {
-            optifineOldOrVanilla.put(vanillaPath, 0);
+        checkPathETFFormat = vanillaPath.replace(".png", "2.png").replace("textures", "etf/random");
+        if (isExistingFile(new Identifier(checkPathETFFormat))) {
+            PATH_OptifineOldVanillaETF_0123.put(vanillaPath, 3);
+            keepGoing = true;
+            successCount = 2;
+        } else if (isExistingFile(new Identifier(checkPathOptifineFormat))) {
+            PATH_OptifineOldVanillaETF_0123.put(vanillaPath, 0);
             keepGoing = true;
             successCount = 2;
         } else if (isExistingFile(new Identifier(checkPathOldRandomFormat))) {
-            optifineOldOrVanilla.put(vanillaPath, 1);
+            PATH_OptifineOldVanillaETF_0123.put(vanillaPath, 1);
             keepGoing = true;
             successCount = 2;
         } else if (isExistingFile(new Identifier(checkPath))) {
-            optifineOldOrVanilla.put(vanillaPath, 2);
+            PATH_OptifineOldVanillaETF_0123.put(vanillaPath, 2);
             keepGoing = true;
             successCount = 2;
         }
@@ -557,11 +594,13 @@ public interface ETF_METHODS {
         int count = 2;
         while (keepGoing) {
             count++;
-            if (optifineOldOrVanilla.get(vanillaPath) == 0) {
+            if (PATH_OptifineOldVanillaETF_0123.get(vanillaPath) == 3) {
+                checkPath = vanillaPath.replace(".png", (count + ".png")).replace("textures", "etf/random");
+            } else if (PATH_OptifineOldVanillaETF_0123.get(vanillaPath) == 0) {
                 checkPath = vanillaPath.replace(".png", (count + ".png")).replace("textures", "optifine/random");
-            } else if (optifineOldOrVanilla.get(vanillaPath) == 1) {
+            } else if (PATH_OptifineOldVanillaETF_0123.get(vanillaPath) == 1) {
                 checkPath = vanillaPath.replace(".png", (count + ".png")).replace("textures/entity", "optifine/mob");
-            } else {
+            } else if (PATH_OptifineOldVanillaETF_0123.get(vanillaPath) == 2)  {
                 checkPath = vanillaPath.replace(".png", (count + ".png"));
             }
             keepGoing = isExistingFile(new Identifier(checkPath));
@@ -1360,9 +1399,9 @@ public interface ETF_METHODS {
         if (ETFConfigData.enableBlinking) {
             if (!TEXTURE_HasBlink.containsKey(givenTexturePath)) {
                 //check for blink textures
-                TEXTURE_HasBlink.put(givenTexturePath, isExistingFile(new Identifier(givenTexturePath.replace(".png", "_blink.png"))));
-                TEXTURE_HasBlink2.put(givenTexturePath, isExistingFile(new Identifier(givenTexturePath.replace(".png", "_blink2.png"))));
-                TEXTURE_BlinkProps.put(givenTexturePath, readProperties(givenTexturePath.replace(".png", "_blink.properties")));
+                TEXTURE_HasBlink.put(givenTexturePath, isExistingFileAndSameResourcepackAs(new Identifier(givenTexturePath.replace(".png", "_blink.png")),new Identifier(givenTexturePath)));
+                TEXTURE_HasBlink2.put(givenTexturePath, isExistingFileAndSameResourcepackAs(new Identifier(givenTexturePath.replace(".png", "_blink2.png")),new Identifier(givenTexturePath)));
+                TEXTURE_BlinkProps.put(givenTexturePath, readProperties(givenTexturePath.replace(".png", "_blink.properties"),givenTexturePath));
 
             }
             TEXTURE_BlinkProps.putIfAbsent(givenTexturePath, null);

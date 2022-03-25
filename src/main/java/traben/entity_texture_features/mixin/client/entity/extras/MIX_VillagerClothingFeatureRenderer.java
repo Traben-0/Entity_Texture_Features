@@ -62,25 +62,48 @@ public abstract class MIX_VillagerClothingFeatureRenderer<T extends LivingEntity
         if (ETFConfigData.enableCustomTextures) {
             if (!Texture_OptifineOrTrueRandom.containsKey(vanillaTexture.toString())) {
                 processNewRandomTextureCandidate(vanillaTexture.toString());
-            }else if (optifineOldOrVanilla.containsKey(vanillaTexture.toString())) {
-                if (!UUID_RandomSuffixMap.containsKey(id)) {
-                    testCases(vanillaTexture.toString(), id, villager, false,UUID_RandomSuffixMap,UUID_HasUpdateables);
-                    //if all failed set to vanilla
+            }else if (PATH_OptifineOldVanillaETF_0123.containsKey(vanillaTexture.toString())) {
+                if (Texture_OptifineOrTrueRandom.get(vanillaTexture.toString())) {
                     if (!UUID_RandomSuffixMap.containsKey(id)) {
-                        UUID_RandomSuffixMap.put(id, 0);
+                        testCases(vanillaTexture.toString(), id, villager, false, UUID_RandomSuffixMap, UUID_HasUpdateables);
+                        //if all failed set to vanilla
+                        if (!UUID_RandomSuffixMap.containsKey(id)) {
+                            UUID_RandomSuffixMap.put(id, 0);
+                        }
+                        //UUID_entityAlreadyCalculated.add(id);
                     }
-                    UUID_entityAlreadyCalculated.add(id);
-                }
-                if (UUID_RandomSuffixMap.containsKey(id)) {
-                    if (UUID_RandomSuffixMap.get(id) != 0) {
-                        Identifier randomTexture = returnOptifineOrVanillaIdentifier(vanillaTexture.toString(), UUID_RandomSuffixMap.get(id));
-                        if (!TEXTURE_VillagerIsExistingFeature.containsKey(randomTexture.toString())) {
-                            TEXTURE_VillagerIsExistingFeature.put(randomTexture.toString(), isExistingFile(randomTexture));
+                    if (UUID_RandomSuffixMap.containsKey(id)) {
+                        if (UUID_RandomSuffixMap.get(id) != 0) {
+                            Identifier randomTexture = returnOptifineOrVanillaIdentifier(vanillaTexture.toString(), UUID_RandomSuffixMap.get(id));
+                            if (!TEXTURE_VillagerIsExistingFeature.containsKey(randomTexture.toString())) {
+                                TEXTURE_VillagerIsExistingFeature.put(randomTexture.toString(), isExistingFile(randomTexture));
+                            }
+                            if (TEXTURE_VillagerIsExistingFeature.get(randomTexture.toString())) {
+                                //can use random texture
+                                return randomTexture;
+                            }
                         }
-                        if (TEXTURE_VillagerIsExistingFeature.get(randomTexture.toString())) {
-                            //can use random texture
-                            return randomTexture;
+                    }
+                }else{
+                    UUID_HasUpdateables.put(id, false);
+                    if (Texture_TotalTrueRandom.get(vanillaTexture.toString()) > 0) {
+                        if (!UUID_RandomSuffixMap.containsKey(id)) {
+                            int randomReliable = Math.abs(id.hashCode());
+                            randomReliable %= Texture_TotalTrueRandom.get(vanillaTexture.toString());
+                            randomReliable++;
+                            if (randomReliable == 1 && ignoreOnePNG.get(vanillaTexture.toString())) {
+                                randomReliable = 0;
+                            }
+                            UUID_RandomSuffixMap.put(id, randomReliable);
+                            //UUID_entityAlreadyCalculated.add(id);
                         }
+                        if (UUID_RandomSuffixMap.get(id) == 0) {
+                            return returnBlinkIdOrGiven(villager, vanillaTexture.toString(), id);
+                        } else {
+                            return returnBlinkIdOrGiven(villager, returnOptifineOrVanillaPath(vanillaTexture.toString(), UUID_RandomSuffixMap.get(id), ""), id);
+                        }
+                    } else {
+                        return returnBlinkIdOrGiven(villager, vanillaTexture.toString(), id);
                     }
                 }
             }

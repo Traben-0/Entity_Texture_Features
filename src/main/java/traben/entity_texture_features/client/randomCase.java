@@ -45,18 +45,18 @@ public class randomCase implements ETF_METHODS {
                String[] teamsX
     ) {
 
-        biomes = biomesX;
-        heights = heightsX;
-        names = namesX;
-        professions = professionsX;
-        collarColours = collarColoursX;
-        baby = baby012;
-        weather = weather0123;
-        health = healthX;
-        moon = moonX;
-        daytime = daytimeX;
-        blocks = blocksX;
-        teams = teamsX;
+        biomes          = biomesX != null       ? biomesX       : new String[0];
+        heights         = heightsX != null      ? heightsX      : new Integer[0];
+        names           = namesX != null        ? namesX        : new String[0];
+        professions     = professionsX != null  ? professionsX  : new String[0];
+        collarColours   = collarColoursX != null? collarColoursX: new String[0];
+        baby            = baby012;
+        weather         = weather0123;
+        health          = healthX != null       ? healthX       : new String[0];
+        moon            = moonX != null         ? moonX         : new Integer[0];
+        daytime         = daytimeX != null      ? daytimeX      : new String[0];
+        blocks          = blocksX != null       ? blocksX       : new String[0];
+        teams           = teamsX != null        ? teamsX        : new String[0];
 
         caseHasNonUpdatables = moon.length > 0
                 || biomes.length > 0
@@ -64,6 +64,10 @@ public class randomCase implements ETF_METHODS {
                 || weather != 0
                 || daytime.length > 0
                 || blocks.length > 0;
+
+        if (weightsX == null){
+            weightsX = new Integer[0];
+        }
 
         if (weightsX.length > 0) {
             if (weightsX.length == suffixesX.length) {
@@ -80,7 +84,7 @@ public class randomCase implements ETF_METHODS {
                 weightedSuffixes = buildWeighted.toArray(new Integer[0]);
 
             } else {
-                modMessage("random texture weights dont match", false);
+                modMessage("random texture weights don't match", false);
                 weightedSuffixes = suffixesX;
             }
         } else {

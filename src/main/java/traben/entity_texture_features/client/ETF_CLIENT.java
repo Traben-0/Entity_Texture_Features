@@ -29,7 +29,7 @@ public class ETF_CLIENT implements ModInitializer, ETF_METHODS {
     public static HashMap<UUID, Long> UUID_entityAwaitingDataClearing2 = new HashMap<>();
     public static HashMap<String, ArrayList<randomCase>> Texture_OptifineRandomSettingsPerTexture = new HashMap<>();
     public static HashMap<String, Boolean> Texture_OptifineOrTrueRandom = new HashMap<>();
-    public static HashMap<String, Integer> optifineOldOrVanilla = new HashMap<>();// 0,1,2
+    public static HashMap<String, Integer> PATH_OptifineOldVanillaETF_0123 = new HashMap<>();// 0,1,2
     public static HashMap<String, Boolean> ignoreOnePNG = new HashMap<>();
     public static HashMap<UUID, Boolean> hasUpdatableRandomCases = new HashMap<>();
     public static HashMap<UUID, Boolean> hasUpdatableRandomCases2 = new HashMap<>();

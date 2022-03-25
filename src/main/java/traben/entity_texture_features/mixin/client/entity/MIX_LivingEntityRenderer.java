@@ -49,7 +49,8 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
     }
 
     @Inject(method = "render(Lnet/minecraft/entity/LivingEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/EntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V", shift = At.Shift.AFTER))
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/EntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V", shift = At.Shift.AFTER)
+                       )
     private void applyRenderFeatures(T livingEntity, float a, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
         UUID id = livingEntity.getUuid();
         if (!(livingEntity instanceof PlayerEntity)) {
@@ -73,8 +74,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                             this.getModel().render(matrixStack
                                     , textureVert
                                     , 15728640
-                                    , OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
-                        }
+                                    , OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);}
                     }
                 } else {//creates and sets emissive for texture if it exists
                     Identifier fileName_e;
@@ -135,13 +135,20 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
         @SuppressWarnings("unchecked")
         T entity = (T) inEntity;
         Identifier vanilla = getTexture(entity);
-        String path = vanilla.toString();
-        UUID id = entity.getUuid();
 
         //this is to support inspectio or other abstract rendering mods
-        if(inEntity.getBlockStateAtPos() == null || inEntity.getBlockStateAtPos().isOf(Blocks.VOID_AIR)){
+        if(inEntity.getBlockStateAtPos() == null){
+            return vanilla;
+        }else if(inEntity.getBlockStateAtPos().isOf(Blocks.VOID_AIR) ){
+            return vanilla;
+        }else if(entity.world == null ){
+            return vanilla;
+        }else if(!entity.isPartOfGame()){
             return vanilla;
         }
+
+        String path = vanilla.toString();
+        UUID id = entity.getUuid();
 
         if (!(entity instanceof PlayerEntity)) {
             if (ETFConfigData.enableCustomTextures) {
