@@ -159,7 +159,7 @@ public interface ETF_METHODS {
             if (pathOfTextureToUseForResourcepackCheck != null){
                 Resource resourceOriginal = MinecraftClient.getInstance().getResourceManager().getResource(new Identifier(pathOfTextureToUseForResourcepackCheck));
                 if (!resource.getResourcePackName().equals(resourceOriginal.getResourcePackName())){
-                    System.out.println("not same pack "+path+" // "+pathOfTextureToUseForResourcepackCheck);
+                    //System.out.println("not same pack "+path+" // "+pathOfTextureToUseForResourcepackCheck);
                     return null;
                 }
             }
