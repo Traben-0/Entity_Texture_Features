@@ -51,7 +51,7 @@ public abstract class MIX_ArmorFeatureRenderer<T extends LivingEntity, M extends
                     for (String suffix1 :
                             emissiveSuffix) {
                         fileName_e = new Identifier(fileString.replace(".png", suffix1 + ".png"));
-                        if (isExistingFile(fileName_e)) {
+                        if (ETF_isExistingFile(fileName_e)) {
                             Texture_Emissive.put(fileString, fileName_e);
                             break;
                         }

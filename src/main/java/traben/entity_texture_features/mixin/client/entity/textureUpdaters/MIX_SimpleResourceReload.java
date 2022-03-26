@@ -23,11 +23,11 @@ public abstract class MIX_SimpleResourceReload implements ETF_METHODS {
         if (cir.getReturnValue() == 1.0) {
             if (falseAfterFirstRun) {
                 falseAfterFirstRun = false;
-                resetVisuals();
+                ETF_resetVisuals();
                 for (ModContainer mod :
                         FabricLoader.getInstance().getAllMods()) {
                     if (mod.toString().contains("iris")) {
-                        modMessage("Entity Texture Features - Iris mod detected : message will be shown in settings", false);
+                        ETF_modMessage("Entity Texture Features - Iris mod detected : message will be shown in settings", false);
                         irisDetected = true;
                         break;
                     }

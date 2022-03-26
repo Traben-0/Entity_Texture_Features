@@ -55,51 +55,9 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
         UUID id = livingEntity.getUuid();
         if (!(livingEntity instanceof PlayerEntity)) {
 
-            String fileString = returnAlteredTexture((LivingEntityRenderer) (Object) this, livingEntity).toString();
+            Identifier texture = returnAlteredTexture((LivingEntityRenderer) (Object) this, livingEntity);
+            ETF_GeneralEmissiveRender(matrixStack,vertexConsumerProvider, texture, this.getModel());
 
-            if (ETFConfigData.enableEmissiveTextures) {
-                if (Texture_Emissive.containsKey(fileString)) {
-                    if (Texture_Emissive.get(fileString) != null) {
-                        //VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getEyes(Texture_Emissive.get(fileString)));
-                        VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(Texture_Emissive.get(fileString), true));
-                        //one check most efficient instead of before and after applying
-                        if (ETFConfigData.doShadersEmissiveFix) {
-                            matrixStack.scale(1.01f, 1.01f, 1.01f);
-                            this.getModel().render(matrixStack
-                                    , textureVert
-                                    , 15728640
-                                    , OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
-                            matrixStack.scale(1f, 1f, 1f);
-                        } else {
-                            this.getModel().render(matrixStack
-                                    , textureVert
-                                    , 15728640
-                                    , OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);}
-                    }
-                } else {//creates and sets emissive for texture if it exists
-                    Identifier fileName_e;
-                    for (String suffix1 :
-                            emissiveSuffix) {
-                        fileName_e = new Identifier(fileString.replace(".png", suffix1 + ".png"));
-                        if (isExistingFile(fileName_e)) {
-                            VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(fileName_e, true));
-                            Texture_Emissive.put(fileString, fileName_e);
-                            //one check most efficient instead of before and after applying
-                            if (ETFConfigData.doShadersEmissiveFix) {
-                                matrixStack.scale(1.01f, 1.01f, 1.01f);
-                                this.getModel().render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
-                                matrixStack.scale(1f, 1f, 1f);
-                            } else {
-                                this.getModel().render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
-                            }
-                            break;
-                        }
-                    }
-                    if (!Texture_Emissive.containsKey(fileString)) {
-                        Texture_Emissive.put(fileString, null);
-                    }
-                }
-            }
         } else if (ETFConfigData.skinFeaturesEnabled) { // is a player
             renderSkinFeatures(id, (PlayerEntity) livingEntity, matrixStack, vertexConsumerProvider, i);
         }
@@ -139,13 +97,14 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
         //this is to support inspectio or other abstract rendering mods
         if(inEntity.getBlockStateAtPos() == null){
             return vanilla;
-        }else if(inEntity.getBlockStateAtPos().isOf(Blocks.VOID_AIR) ){
-            return vanilla;
-        }else if(entity.world == null ){
-            return vanilla;
-        }else if(!entity.isPartOfGame()){
+        }else if(inEntity.getBlockStateAtPos().isOf(Blocks.VOID_AIR) ) {
             return vanilla;
         }
+//        else if(entity.world == null ){
+//            return vanilla;
+//        }else if(!entity.isPartOfGame()){
+//            return vanilla;
+//        }
 
         String path = vanilla.toString();
         UUID id = entity.getUuid();
@@ -154,7 +113,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
             if (ETFConfigData.enableCustomTextures) {
                 try {
                     if (!Texture_OptifineOrTrueRandom.containsKey(path)) {
-                        processNewRandomTextureCandidate(path);
+                        ETF_processNewRandomTextureCandidate(path);
                     }
                     if (Texture_OptifineOrTrueRandom.containsKey(path)) {
                         //if needs to check if change required
@@ -170,8 +129,8 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                                         if (Texture_OptifineOrTrueRandom.get(path)) {
                                             //if (UUID_randomTextureSuffix.containsKey(id)) {
                                                 int hold = UUID_randomTextureSuffix.get(id);
-                                                resetSingleData(id);
-                                                testCases(path, id, entity, true);
+                                                ETF_resetSingleData(id);
+                                                ETF_testCases(path, id, entity, true,UUID_randomTextureSuffix,hasUpdatableRandomCases);
                                                 //if didnt change keep the same
                                                 if (!UUID_randomTextureSuffix.containsKey(id)) {
                                                     UUID_randomTextureSuffix.put(id, hold);
@@ -190,7 +149,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                         if (Texture_OptifineOrTrueRandom.get(path)) {//optifine random
                             //if it doesn't have a random already assign one
                             if (!UUID_randomTextureSuffix.containsKey(id)) {
-                                testCases(path, id, entity, false);
+                                ETF_testCases(path, id, entity, false);
                                 //if all failed set to vanilla
                                 if (!UUID_randomTextureSuffix.containsKey(id)) {
                                     UUID_randomTextureSuffix.put(id, 0);
@@ -200,16 +159,16 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                            // System.out.println("suffix was ="+UUID_randomTextureSuffix.get(id));
                             if (UUID_randomTextureSuffix.get(id) == 0) {
                                 if (!TEXTURE_HasOptifineDefaultReplacement.containsKey(vanilla.toString())){
-                                       TEXTURE_HasOptifineDefaultReplacement.put(vanilla.toString(),isExistingFile(returnOptifineOrVanillaIdentifier(path)));
+                                       TEXTURE_HasOptifineDefaultReplacement.put(vanilla.toString(), ETF_isExistingFile(ETF_returnOptifineOrVanillaIdentifier(path)));
                                 }
                                 if (TEXTURE_HasOptifineDefaultReplacement.get(vanilla.toString())){
-                                    return returnBlinkIdOrGiven(entity, returnOptifineOrVanillaIdentifier(path).toString(), id);
+                                    return ETF_returnBlinkIdOrGiven(entity, ETF_returnOptifineOrVanillaIdentifier(path).toString(), id);
                                 }else{
-                                    return returnBlinkIdOrGiven(entity, vanilla.toString(), id);
+                                    return ETF_returnBlinkIdOrGiven(entity, vanilla.toString(), id);
                                 }
 
                             } else {
-                                return returnBlinkIdOrGiven(entity, returnOptifineOrVanillaIdentifier(path, UUID_randomTextureSuffix.get(id)).toString(), id);
+                                return ETF_returnBlinkIdOrGiven(entity, ETF_returnOptifineOrVanillaIdentifier(path, UUID_randomTextureSuffix.get(id)).toString(), id);
                             }
 
                         } else {//true random assign
@@ -226,22 +185,22 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                                     UUID_entityAlreadyCalculated.add(id);
                                 }
                                 if (UUID_randomTextureSuffix.get(id) == 0) {
-                                    return returnBlinkIdOrGiven(entity, vanilla.toString(), id);
+                                    return ETF_returnBlinkIdOrGiven(entity, vanilla.toString(), id);
                                 } else {
-                                    return returnBlinkIdOrGiven(entity, returnOptifineOrVanillaPath(path, UUID_randomTextureSuffix.get(id), ""), id);
+                                    return ETF_returnBlinkIdOrGiven(entity, ETF_returnOptifineOrVanillaPath(path, UUID_randomTextureSuffix.get(id), ""), id);
                                 }
                             } else {
-                                return returnBlinkIdOrGiven(entity, vanilla.toString(), id);
+                                return ETF_returnBlinkIdOrGiven(entity, vanilla.toString(), id);
                             }
                         }
                     } else {
-                        modMessage("not random", false);
-                        return returnBlinkIdOrGiven(entity, vanilla.toString(), id);
+                        ETF_modMessage("not random", false);
+                        return ETF_returnBlinkIdOrGiven(entity, vanilla.toString(), id);
                     }
 
                 } catch (Exception e) {
-                    modMessage(e.toString(), false);
-                    return returnBlinkIdOrGiven(entity, vanilla.toString(), id);
+                    ETF_modMessage(e.toString(), false);
+                    return ETF_returnBlinkIdOrGiven(entity, vanilla.toString(), id);
                 }
             }
         } else { // is player
@@ -250,12 +209,12 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                     timerBeforeTrySkin--;
                 } else {
                     if (!UUID_playerHasFeatures.containsKey(id) && !UUID_playerSkinDownloadedYet.containsKey(id)) {
-                        checkPlayerForSkinFeatures(id, (PlayerEntity) entity);
+                        ETF_checkPlayerForSkinFeatures(id, (PlayerEntity) entity);
                     }
                     if (UUID_playerSkinDownloadedYet.containsKey(id) && UUID_playerHasFeatures.containsKey(id)) {
                         if (UUID_playerSkinDownloadedYet.get(id)) {
                             if (UUID_playerHasFeatures.get(id)) {
-                                return returnBlinkIdOrGiven(entity, SKIN_NAMESPACE + id + ".png", id, true);
+                                return ETF_returnBlinkIdOrGiven(entity, SKIN_NAMESPACE + id + ".png", id, true);
                             } else {
                                 return vanilla;
                             }
@@ -265,7 +224,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
             }
         }
 
-        return returnBlinkIdOrGiven(entity, vanilla.toString(), id);
+        return ETF_returnBlinkIdOrGiven(entity, vanilla.toString(), id);
     }
 
 
@@ -314,7 +273,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
         } else {
             if (!UUID_playerHasFeatures.containsKey(id) && !UUID_playerSkinDownloadedYet.containsKey(id)) {
                 //check for mark
-                checkPlayerForSkinFeatures(id, player);
+                ETF_checkPlayerForSkinFeatures(id, player);
             }
             if (UUID_playerHasFeatures.containsKey(id) && UUID_playerSkinDownloadedYet.containsKey(id)) {
                 if (UUID_playerSkinDownloadedYet.get(id)) {

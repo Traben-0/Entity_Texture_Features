@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "entity_texture_features",
-  "version": "2.5.11",
+  "version": "2.5.12",
   "name": "Entity Texture Features",
   "description": "- Optifine format compatible\n- Random/Custom textures\n- Emissive textures\n- Blinking textures\n- Player Skin textures",
   "authors": [
@@ -21,7 +21,7 @@
   },
   "environment": "client",
   "entrypoints": {
-    "main": [
+    "client": [
       "traben.entity_texture_features.client.ETF_CLIENT"
     ],
     "modmenu": [

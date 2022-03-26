@@ -84,7 +84,7 @@ public class randomCase implements ETF_METHODS {
                 weightedSuffixes = buildWeighted.toArray(new Integer[0]);
 
             } else {
-                modMessage("random texture weights don't match", false);
+                ETF_modMessage("random texture weights don't match", false);
                 weightedSuffixes = suffixesX;
             }
         } else {
@@ -256,7 +256,7 @@ public class randomCase implements ETF_METHODS {
                         for (String lvls :
                                 levels) {
                             if (lvls.contains("-")) {
-                                levelData.addAll(Arrays.asList(getIntRange(lvls)));
+                                levelData.addAll(Arrays.asList(ETF_getIntRange(lvls)));
                             } else {
                                 levelData.add(Integer.parseInt(lvls.replaceAll("[^0-9]", "")));
                             }

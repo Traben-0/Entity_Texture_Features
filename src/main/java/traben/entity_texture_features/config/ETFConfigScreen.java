@@ -211,8 +211,8 @@ public class ETFConfigScreen implements ETF_METHODS {
                 .build()); // Builds the option entry for cloth config
         builder.setSavingRunnable(() -> {
             // Serialise the config into the config file. This will be called last after all variables are updated.
-            saveConfig();
-            resetVisuals();
+            ETF_saveConfig();
+            ETF_resetVisuals();
 
         });
         //MinecraftClient.getInstance().openScreen(screen);

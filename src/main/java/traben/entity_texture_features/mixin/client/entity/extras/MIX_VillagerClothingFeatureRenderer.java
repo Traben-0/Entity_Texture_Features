@@ -29,7 +29,7 @@ public abstract class MIX_VillagerClothingFeatureRenderer<T extends LivingEntity
         super(context);
     }
 
-    @Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
+    @Inject(method = "render*",
             at = @At(value = "HEAD"))
     private void getEntity(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
         villager = livingEntity;
@@ -61,11 +61,11 @@ public abstract class MIX_VillagerClothingFeatureRenderer<T extends LivingEntity
         UUID id = villager.getUuid();
         if (ETFConfigData.enableCustomTextures) {
             if (!Texture_OptifineOrTrueRandom.containsKey(vanillaTexture.toString())) {
-                processNewRandomTextureCandidate(vanillaTexture.toString());
+                ETF_processNewRandomTextureCandidate(vanillaTexture.toString());
             }else if (PATH_OptifineOldVanillaETF_0123.containsKey(vanillaTexture.toString())) {
                 if (Texture_OptifineOrTrueRandom.get(vanillaTexture.toString())) {
                     if (!UUID_RandomSuffixMap.containsKey(id)) {
-                        testCases(vanillaTexture.toString(), id, villager, false, UUID_RandomSuffixMap, UUID_HasUpdateables);
+                        ETF_testCases(vanillaTexture.toString(), id, villager, false, UUID_RandomSuffixMap, UUID_HasUpdateables);
                         //if all failed set to vanilla
                         if (!UUID_RandomSuffixMap.containsKey(id)) {
                             UUID_RandomSuffixMap.put(id, 0);
@@ -74,9 +74,9 @@ public abstract class MIX_VillagerClothingFeatureRenderer<T extends LivingEntity
                     }
                     if (UUID_RandomSuffixMap.containsKey(id)) {
                         if (UUID_RandomSuffixMap.get(id) != 0) {
-                            Identifier randomTexture = returnOptifineOrVanillaIdentifier(vanillaTexture.toString(), UUID_RandomSuffixMap.get(id));
+                            Identifier randomTexture = ETF_returnOptifineOrVanillaIdentifier(vanillaTexture.toString(), UUID_RandomSuffixMap.get(id));
                             if (!TEXTURE_VillagerIsExistingFeature.containsKey(randomTexture.toString())) {
-                                TEXTURE_VillagerIsExistingFeature.put(randomTexture.toString(), isExistingFile(randomTexture));
+                                TEXTURE_VillagerIsExistingFeature.put(randomTexture.toString(), ETF_isExistingFile(randomTexture));
                             }
                             if (TEXTURE_VillagerIsExistingFeature.get(randomTexture.toString())) {
                                 //can use random texture
@@ -98,12 +98,12 @@ public abstract class MIX_VillagerClothingFeatureRenderer<T extends LivingEntity
                             //UUID_entityAlreadyCalculated.add(id);
                         }
                         if (UUID_RandomSuffixMap.get(id) == 0) {
-                            return returnBlinkIdOrGiven(villager, vanillaTexture.toString(), id);
+                            return ETF_returnBlinkIdOrGiven(villager, vanillaTexture.toString(), id);
                         } else {
-                            return returnBlinkIdOrGiven(villager, returnOptifineOrVanillaPath(vanillaTexture.toString(), UUID_RandomSuffixMap.get(id), ""), id);
+                            return ETF_returnBlinkIdOrGiven(villager, ETF_returnOptifineOrVanillaPath(vanillaTexture.toString(), UUID_RandomSuffixMap.get(id), ""), id);
                         }
                     } else {
-                        return returnBlinkIdOrGiven(villager, vanillaTexture.toString(), id);
+                        return ETF_returnBlinkIdOrGiven(villager, vanillaTexture.toString(), id);
                     }
                 }
             }

@@ -38,7 +38,7 @@ public abstract class MIX_EyesFeatureRenderer<T extends Entity, M extends Entity
     private void mixin(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, T entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch, CallbackInfo ci) {
 
         Identifier check = this.getAlteredEyesTexture((LivingEntity) entity);
-        if (isExistingFile(check)) {
+        if (ETF_isExistingFile(check)) {
             VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEyes(check));
             this.getContextModel().render(matrices, vertexConsumer, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
             ci.cancel();
@@ -60,7 +60,7 @@ public abstract class MIX_EyesFeatureRenderer<T extends Entity, M extends Entity
 
             try {
             if (!Texture_OptifineOrTrueRandom.containsKey(path)) {
-                processNewRandomTextureCandidate(path);
+                ETF_processNewRandomTextureCandidate(path);
             }
             if (Texture_OptifineOrTrueRandom.containsKey(path)) {
                 //if needs to check if change required
@@ -76,8 +76,8 @@ public abstract class MIX_EyesFeatureRenderer<T extends Entity, M extends Entity
                                 if (Texture_OptifineOrTrueRandom.get(path)) {
                                     //if (UUID_randomTextureSuffix.containsKey(id)) {
                                     int hold = UUID_randomTextureSuffix2.get(id);
-                                    resetSingleData(id);
-                                    testCases(path, id, entity, true,UUID_randomTextureSuffix2,hasUpdatableRandomCases2);
+                                    ETF_resetSingleData(id);
+                                    ETF_testCases(path, id, entity, true,UUID_randomTextureSuffix2,hasUpdatableRandomCases2);
                                     //if didnt change keep the same
                                     if (!UUID_randomTextureSuffix2.containsKey(id)) {
                                         UUID_randomTextureSuffix2.put(id, hold);
@@ -96,7 +96,7 @@ public abstract class MIX_EyesFeatureRenderer<T extends Entity, M extends Entity
                 if (Texture_OptifineOrTrueRandom.get(path)) {//optifine random
                     //if it doesn't have a random already assign one
                     if (!UUID_randomTextureSuffix2.containsKey(id)) {
-                        testCases(path, id, entity, false,UUID_randomTextureSuffix2,hasUpdatableRandomCases2);
+                        ETF_testCases(path, id, entity, false,UUID_randomTextureSuffix2,hasUpdatableRandomCases2);
                         //if all failed set to vanilla
                         if (!UUID_randomTextureSuffix2.containsKey(id)) {
                             UUID_randomTextureSuffix2.put(id, 0);
@@ -106,16 +106,16 @@ public abstract class MIX_EyesFeatureRenderer<T extends Entity, M extends Entity
                     // System.out.println("suffix was ="+UUID_randomTextureSuffix.get(id));
                     if (UUID_randomTextureSuffix2.get(id) == 0) {
                         if (!TEXTURE_HasOptifineDefaultReplacement.containsKey(vanilla.toString())){
-                            TEXTURE_HasOptifineDefaultReplacement.put(vanilla.toString(),isExistingFile(returnOptifineOrVanillaIdentifier(path)));
+                            TEXTURE_HasOptifineDefaultReplacement.put(vanilla.toString(), ETF_isExistingFile(ETF_returnOptifineOrVanillaIdentifier(path)));
                         }
                         if (TEXTURE_HasOptifineDefaultReplacement.get(vanilla.toString())){
-                            return returnBlinkIdOrGiven(entity, returnOptifineOrVanillaIdentifier(path).toString(), id);
+                            return ETF_returnBlinkIdOrGiven(entity, ETF_returnOptifineOrVanillaIdentifier(path).toString(), id);
                         }else{
-                            return returnBlinkIdOrGiven(entity, vanilla.toString(), id);
+                            return ETF_returnBlinkIdOrGiven(entity, vanilla.toString(), id);
                         }
 
                     } else {
-                        return returnBlinkIdOrGiven(entity, returnOptifineOrVanillaIdentifier(path, UUID_randomTextureSuffix2.get(id)).toString(), id);
+                        return ETF_returnBlinkIdOrGiven(entity, ETF_returnOptifineOrVanillaIdentifier(path, UUID_randomTextureSuffix2.get(id)).toString(), id);
                     }
 
                 } else {//true random assign
@@ -132,22 +132,22 @@ public abstract class MIX_EyesFeatureRenderer<T extends Entity, M extends Entity
                             UUID_entityAlreadyCalculated.add(id);
                         }
                         if (UUID_randomTextureSuffix2.get(id) == 0) {
-                            return returnBlinkIdOrGiven(entity, vanilla.toString(), id);
+                            return ETF_returnBlinkIdOrGiven(entity, vanilla.toString(), id);
                         } else {
-                            return returnBlinkIdOrGiven(entity, returnOptifineOrVanillaPath(path, UUID_randomTextureSuffix2.get(id), ""), id);
+                            return ETF_returnBlinkIdOrGiven(entity, ETF_returnOptifineOrVanillaPath(path, UUID_randomTextureSuffix2.get(id), ""), id);
                         }
                     } else {
-                        return returnBlinkIdOrGiven(entity, vanilla.toString(), id);
+                        return ETF_returnBlinkIdOrGiven(entity, vanilla.toString(), id);
                     }
                 }
             } else {
-                modMessage("not random", false);
-                return returnBlinkIdOrGiven(entity, vanilla.toString(), id);
+                ETF_modMessage("not random", false);
+                return ETF_returnBlinkIdOrGiven(entity, vanilla.toString(), id);
             }
 
         } catch (Exception e) {
-            modMessage(e.toString(), false);
-            return returnBlinkIdOrGiven(entity, vanilla.toString(), id);
+            ETF_modMessage(e.toString(), false);
+            return ETF_returnBlinkIdOrGiven(entity, vanilla.toString(), id);
         }
     }
 

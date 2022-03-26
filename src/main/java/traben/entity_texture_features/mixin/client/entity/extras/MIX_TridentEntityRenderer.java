@@ -1,8 +1,5 @@
 package traben.entity_texture_features.mixin.client.entity.extras;
 
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.TridentEntityRenderer;
 import net.minecraft.client.render.entity.model.TridentEntityModel;
@@ -21,7 +18,8 @@ import traben.entity_texture_features.client.ETF_METHODS;
 
 import java.util.UUID;
 
-import static traben.entity_texture_features.client.ETF_CLIENT.*;
+import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
+import static traben.entity_texture_features.client.ETF_CLIENT.UUID_TridentName;
 
 @Mixin(TridentEntityRenderer.class)
 public abstract class MIX_TridentEntityRenderer implements SynchronousResourceReloader, ETF_METHODS {
@@ -36,22 +34,8 @@ public abstract class MIX_TridentEntityRenderer implements SynchronousResourceRe
             String path = TridentEntityModel.TEXTURE.toString();
             String name = UUID_TridentName.get(id) != null ? "_" + UUID_TridentName.get(id).toLowerCase().replaceAll("[^a-z0-9/_.-]", "") : "";
             String fileString = UUID_TridentName.get(id) != null ? path.replace(".png", "_" + name + ".png") : path;
-            if (!Texture_Emissive.containsKey(fileString)) {
-                for (String suffix :
-                        emissiveSuffix) {
-                    Identifier possibleId = new Identifier(fileString.replace(".png", suffix + ".png"));
-                    if (isExistingFile(possibleId)) {
-                        Texture_Emissive.put(fileString, possibleId);
-                    }
-                }
-                if (!Texture_Emissive.containsKey(fileString)) {
-                    Texture_Emissive.put(fileString, null);
-                }
-            }
-            if (Texture_Emissive.get(fileString) != null) {
-                VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(Texture_Emissive.get(fileString), true));
-                this.model.render(matrixStack, vertexConsumer, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
-            }
+            ETF_GeneralEmissiveRender(matrixStack,vertexConsumerProvider,fileString,this.model);
+
 
         }
     }
@@ -65,7 +49,7 @@ public abstract class MIX_TridentEntityRenderer implements SynchronousResourceRe
                 String path = TridentEntityModel.TEXTURE.toString();
                 String name = UUID_TridentName.get(id).toLowerCase().replaceAll("[^a-z0-9/_.-]", "");
                 Identifier possibleId = new Identifier(path.replace(".png", "_" + name + ".png"));
-                if (isExistingFile(possibleId)) {
+                if (ETF_isExistingFile(possibleId)) {
                     return possibleId;
                 }
             }

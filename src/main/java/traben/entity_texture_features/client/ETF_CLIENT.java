@@ -2,7 +2,7 @@ package traben.entity_texture_features.client;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import net.fabricmc.api.ModInitializer;
+import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
@@ -17,7 +17,7 @@ import java.util.*;
 
 
 @net.fabricmc.api.Environment(net.fabricmc.api.EnvType.CLIENT)
-public class ETF_CLIENT implements ModInitializer, ETF_METHODS {
+public class ETF_CLIENT implements ClientModInitializer, ETF_METHODS {
     //0 = vanilla only    1+ is zombie1+.png
     public static HashMap<String, Integer> Texture_TotalTrueRandom = new HashMap<>();
     public static HashMap<UUID, Integer> UUID_randomTextureSuffix = new HashMap<>();
@@ -75,16 +75,16 @@ public class ETF_CLIENT implements ModInitializer, ETF_METHODS {
 
 
     @Override
-    public void onInitialize() {
+    public void onInitializeClient() {
         //testing
         LogManager.getLogger().info("[Entity Texture Features]: Loading! 1.18.x");
-        loadConfig();
+        ETF_loadConfig();
     }
 
     // config code based on bedrockify & actually unbreaking fabric config code
     // https://github.com/juancarloscp52/BedrockIfy/blob/1.17.x/src/main/java/me/juancarloscp52/bedrockify/Bedrockify.java
     // https://github.com/wutdahack/ActuallyUnbreakingFabric/blob/1.18.1/src/main/java/wutdahack/actuallyunbreaking/ActuallyUnbreaking.java
-    public void loadConfig() {
+    public void ETF_loadConfig() {
         File config = new File(FabricLoader.getInstance().getConfigDir().toFile(), "entity_texture_features.json");
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         if (config.exists()) {
@@ -92,13 +92,13 @@ public class ETF_CLIENT implements ModInitializer, ETF_METHODS {
                 FileReader fileReader = new FileReader(config);
                 ETFConfigData = gson.fromJson(fileReader, ETFConfig.class);
                 fileReader.close();
-                saveConfig();
+                ETF_saveConfig();
             } catch (IOException e) {
-                modMessage("Config could not be loaded, using defaults", false);
+                ETF_modMessage("Config could not be loaded, using defaults", false);
             }
         } else {
             ETFConfigData = new ETFConfig();
-            saveConfig();
+            ETF_saveConfig();
         }
     }
 

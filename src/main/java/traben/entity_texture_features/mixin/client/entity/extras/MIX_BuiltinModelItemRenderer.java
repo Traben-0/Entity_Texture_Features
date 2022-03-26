@@ -48,7 +48,7 @@ public abstract class MIX_BuiltinModelItemRenderer implements SynchronousResourc
                     String path = TridentEntityModel.TEXTURE.toString();
                     String name = stack.getName().getString().toLowerCase().replaceAll("[^a-z0-9/_.-]", "");
                     Identifier possibleId = new Identifier(path.replace(".png", "_" + name + ".png"));
-                    if (isExistingFile(possibleId)) {
+                    if (ETF_isExistingFile(possibleId)) {
                         matrices.push();
                         matrices.scale(1.0F, -1.0F, -1.0F);
                         VertexConsumer block = ItemRenderer.getDirectItemGlintConsumer(vertexConsumers, this.modelTrident.getLayer(possibleId), false, stack.hasGlint());
@@ -83,7 +83,7 @@ public abstract class MIX_BuiltinModelItemRenderer implements SynchronousResourc
                     for (String suffix :
                             emissiveSuffix) {
                         Identifier possibleId = new Identifier(path.replace(".png", name + suffix + ".png"));
-                        if (isExistingFile(possibleId)) {
+                        if (ETF_isExistingFile(possibleId)) {
                             Texture_Emissive.put(fileString, possibleId);
                         }
                     }

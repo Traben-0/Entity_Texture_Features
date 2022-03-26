@@ -9,12 +9,18 @@ import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.model.Model;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
+import net.minecraft.client.render.OverlayTexture;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.client.texture.TextureManager;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.LivingEntity;
@@ -43,8 +49,8 @@ import static traben.entity_texture_features.client.ETF_CLIENT.*;
 
 public interface ETF_METHODS {
 
-    default boolean isExistingFileAndSameResourcepackAs(Identifier id,Identifier vanillaIdToMatch){
-        if(isExistingFile(id)){
+    default boolean ETF_isExistingFileAndSameResourcepackAs(Identifier id, Identifier vanillaIdToMatch){
+        if(ETF_isExistingFile(id)){
             try {
                 Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(id);
                 Resource resource2 = MinecraftClient.getInstance().getResourceManager().getResource(vanillaIdToMatch);
@@ -59,7 +65,7 @@ public interface ETF_METHODS {
     }
 
 
-    default boolean isExistingFile(Identifier id) {
+    default boolean ETF_isExistingFile(Identifier id) {
         try {
             Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(id);
             try {
@@ -76,12 +82,13 @@ public interface ETF_METHODS {
         }
     }
 
-    default boolean checkPathExist(String path) {
-        return isExistingFile(new Identifier(path));
+
+    private boolean ETF_checkPathExist(String path) {
+        return ETF_isExistingFile(new Identifier(path));
     }
 
-    default void resetVisuals() {
-        modMessage("Reloading...", false);
+    default void ETF_resetVisuals() {
+        ETF_modMessage("Reloading...", false);
         Texture_TotalTrueRandom.clear();
 
         UUID_randomTextureSuffix.clear();
@@ -129,17 +136,17 @@ public interface ETF_METHODS {
         UUID_TridentName.clear();
 
         Texture_Emissive.clear();
-        setEmissiveSuffix();
+        ETF_setEmissiveSuffix();
 
         TEXTURE_VillagerIsExistingFeature.clear();
 
         mooshroomRedCustomShroom = 0;
         mooshroomBrownCustomShroom = 0;
 
-        registerNativeImageToIdentifier(emptyNativeImage(1,1),"etf:blank.png");
+        ETF_registerNativeImageToIdentifier(ETF_emptyNativeImage(1,1),"etf:blank.png");
     }
 
-    default void resetSingleData(UUID id) {
+    default void ETF_resetSingleData(UUID id) {
         UUID_randomTextureSuffix.remove(id);
         UUID_randomTextureSuffix2.remove(id);
         UUID_randomTextureSuffix3.remove(id);
@@ -147,11 +154,11 @@ public interface ETF_METHODS {
 
 
     }
-    default Properties readProperties(String path) {
-        return readProperties(path,null);
+    default Properties ETF_readProperties(String path) {
+        return ETF_readProperties(path,null);
     }
 
-    default Properties readProperties(String path, String pathOfTextureToUseForResourcepackCheck) {
+    default Properties ETF_readProperties(String path, String pathOfTextureToUseForResourcepackCheck) {
         Properties props = new Properties();
         try {
             Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(new Identifier(path));
@@ -179,7 +186,7 @@ public interface ETF_METHODS {
         return props;
     }
 
-    default NativeImage getNativeImageFromID(Identifier identifier) {
+    default NativeImage ETF_getNativeImageFromID(Identifier identifier) {
         NativeImage img;
         try {
             Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(identifier);
@@ -198,48 +205,48 @@ public interface ETF_METHODS {
     }
 
 
-    default void processNewRandomTextureCandidate(String vanillaTexturePath) {
+    default void ETF_processNewRandomTextureCandidate(String vanillaTexturePath) {
         boolean hasProperties = false;
         String properties = "";
-        if (checkPathExist(vanillaTexturePath.replace(".png", ".properties").replace("textures", "etf/random"))) {
+        if (ETF_checkPathExist(vanillaTexturePath.replace(".png", ".properties").replace("textures", "etf/random"))) {
             properties = vanillaTexturePath.replace(".png", ".properties").replace("textures", "etf/random");
             hasProperties = true;
             PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 3);
-        } else if (isExistingFile(new Identifier(vanillaTexturePath.replace(".png", "2.png").replace("textures", "etf/random")))) {
+        } else if (ETF_isExistingFile(new Identifier(vanillaTexturePath.replace(".png", "2.png").replace("textures", "etf/random")))) {
             PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 3);
-        } else if (checkPathExist(vanillaTexturePath.replace(".png", ".properties").replace("textures", "optifine/random"))) {
+        } else if (ETF_checkPathExist(vanillaTexturePath.replace(".png", ".properties").replace("textures", "optifine/random"))) {
             properties = vanillaTexturePath.replace(".png", ".properties").replace("textures", "optifine/random");
             hasProperties = true;
             PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 0);
-        } else if (isExistingFile(new Identifier(vanillaTexturePath.replace(".png", "2.png").replace("textures", "optifine/random")))) {
+        } else if (ETF_isExistingFile(new Identifier(vanillaTexturePath.replace(".png", "2.png").replace("textures", "optifine/random")))) {
             PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 0);
-        } else if (checkPathExist(vanillaTexturePath.replace(".png", ".properties").replace("textures/entity", "optifine/mob"))) {
+        } else if (ETF_checkPathExist(vanillaTexturePath.replace(".png", ".properties").replace("textures/entity", "optifine/mob"))) {
             properties = vanillaTexturePath.replace(".png", ".properties").replace("textures/entity", "optifine/mob");
             hasProperties = true;
             PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 1);
-        } else if (isExistingFile(new Identifier(vanillaTexturePath.replace(".png", "2.png").replace("textures/entity", "optifine/mob")))) {
+        } else if (ETF_isExistingFile(new Identifier(vanillaTexturePath.replace(".png", "2.png").replace("textures/entity", "optifine/mob")))) {
             PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 1);
-        } else if (checkPathExist(vanillaTexturePath.replace(".png", ".properties"))) {
+        } else if (ETF_checkPathExist(vanillaTexturePath.replace(".png", ".properties"))) {
             properties = vanillaTexturePath.replace(".png", ".properties");
             hasProperties = true;
             PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 2);
-        } else if (isExistingFile(new Identifier(vanillaTexturePath.replace(".png", "2.png")))) {
+        } else if (ETF_isExistingFile(new Identifier(vanillaTexturePath.replace(".png", "2.png")))) {
             PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 2);
         }
 
         //no settings just true random
         if (hasProperties && !PATH_FailedPropertiesToIgnore.contains(properties)) {//optifine settings found
-            processOptifineTextureCandidate(vanillaTexturePath, properties);
+            ETF_processOptifineTextureCandidate(vanillaTexturePath, properties);
         } else {
-            processTrueRandomCandidate(vanillaTexturePath);
+            ETF_processTrueRandomCandidate(vanillaTexturePath);
         }
     }
 
-    private void processOptifineTextureCandidate(String vanillaTexturePath, String propertiesPath) {
+    private void ETF_processOptifineTextureCandidate(String vanillaTexturePath, String propertiesPath) {
         try {
-            ignoreOnePNG.put(vanillaTexturePath, !(isExistingFile(new Identifier(propertiesPath.replace(".properties", "1.png")))));
+            ignoreOnePNG.put(vanillaTexturePath, !(ETF_isExistingFile(new Identifier(propertiesPath.replace(".properties", "1.png")))));
 
-            Properties props = readProperties(propertiesPath,vanillaTexturePath);
+            Properties props = ETF_readProperties(propertiesPath,vanillaTexturePath);
             if (props != null) {
                 Set<String> propIds = props.stringPropertyNames();
                 //set so only 1 of each
@@ -282,7 +289,7 @@ public interface ETF_METHODS {
                             data = data.trim();
                             if(!data.replaceAll("[^0-9]", "").isEmpty()) {
                                 if (data.contains("-")) {
-                                    suffixNumbers.addAll(Arrays.asList(getIntRange(data)));
+                                    suffixNumbers.addAll(Arrays.asList(ETF_getIntRange(data)));
                                 } else {
                                     suffixNumbers.add(Integer.parseInt(data.replaceAll("[^0-9]", "")));
                                 }
@@ -329,7 +336,7 @@ public interface ETF_METHODS {
                             data = data.trim();
                             if(!data.replaceAll("[^0-9]", "").isEmpty()) {
                                 if (data.contains("-")) {
-                                    heightNumbers.addAll(Arrays.asList(getIntRange(data)));
+                                    heightNumbers.addAll(Arrays.asList(ETF_getIntRange(data)));
                                 } else {
                                     heightNumbers.add(Integer.parseInt(data.replaceAll("[^0-9]", "")));
                                 }
@@ -387,7 +394,7 @@ public interface ETF_METHODS {
                             data = data.trim();
                             if(!data.replaceAll("[^0-9]", "").isEmpty()) {
                                 if (data.contains("-")) {
-                                    moonNumbers.addAll(Arrays.asList(getIntRange(data)));
+                                    moonNumbers.addAll(Arrays.asList(ETF_getIntRange(data)));
                                 } else{
                                     moonNumbers.add(Integer.parseInt(data.replaceAll("[^0-9]", "")));
                                 }
@@ -429,20 +436,20 @@ public interface ETF_METHODS {
                     Texture_OptifineRandomSettingsPerTexture.put(vanillaTexturePath, allCasesForTexture);
                     Texture_OptifineOrTrueRandom.put(vanillaTexturePath, true);
                 } else {
-                    modMessage("Ignoring properties file that failed to load any cases @ " + propertiesPath, false);
+                    ETF_modMessage("Ignoring properties file that failed to load any cases @ " + propertiesPath, false);
                     PATH_FailedPropertiesToIgnore.add(propertiesPath);
                 }
             } else {//properties file is null
-                modMessage("Ignoring properties file that was null @ " + propertiesPath, false);
+                ETF_modMessage("Ignoring properties file that was null @ " + propertiesPath, false);
                 PATH_FailedPropertiesToIgnore.add(propertiesPath);
             }
         } catch (Exception e) {
-            modMessage("Ignoring properties file that caused Exception @ " + propertiesPath+e, false);
+            ETF_modMessage("Ignoring properties file that caused Exception @ " + propertiesPath+e, false);
             PATH_FailedPropertiesToIgnore.add(propertiesPath);
         }
     }
 
-    default Integer[] getIntRange(String rawRange) {
+    default Integer[] ETF_getIntRange(String rawRange) {
         //assume rawRange =  "20-56"  but can be "-64-56"  or "-14"
         rawRange = rawRange.trim();
         //sort negatives before split
@@ -469,7 +476,7 @@ public interface ETF_METHODS {
                     builder.add(i);
                 }
             } else {
-                modMessage("Optifine properties failed to load: Texture heights range has a problem in properties file. this has occurred for value \"" + rawRange.replace("N", "-") + "\"", false);
+                ETF_modMessage("Optifine properties failed to load: Texture heights range has a problem in properties file. this has occurred for value \"" + rawRange.replace("N", "-") + "\"", false);
             }
             return builder.toArray(new Integer[0]);
         } else {//only 1 number but method ran because of "-" present
@@ -482,10 +489,10 @@ public interface ETF_METHODS {
         }
     }
 
-    default void testCases(String vanillaPath, UUID id, Entity entity, boolean isUpdate) {
-        testCases( vanillaPath,  id, entity, isUpdate, UUID_randomTextureSuffix,hasUpdatableRandomCases);
+    default void ETF_testCases(String vanillaPath, UUID id, Entity entity, boolean isUpdate) {
+        ETF_testCases( vanillaPath,  id, entity, isUpdate, UUID_randomTextureSuffix,hasUpdatableRandomCases);
     }
-    default void testCases(String vanillaPath, UUID id, Entity entity, boolean isUpdate, HashMap<UUID,Integer> UUID_RandomSuffixMap, HashMap<UUID,Boolean> UUID_CaseHasUpdateablesCustom) {
+    default void ETF_testCases(String vanillaPath, UUID id, Entity entity, boolean isUpdate, HashMap<UUID,Integer> UUID_RandomSuffixMap, HashMap<UUID,Boolean> UUID_CaseHasUpdateablesCustom) {
         for (randomCase test :
                 Texture_OptifineRandomSettingsPerTexture.get(vanillaPath)) {
 
@@ -493,9 +500,9 @@ public interface ETF_METHODS {
             if (!(isUpdate && test.caseHasNonUpdatables)) {
                 if (test.testEntity((LivingEntity) entity, UUID_entityAlreadyCalculated.contains(id),UUID_CaseHasUpdateablesCustom)) {
                     UUID_RandomSuffixMap.put(id, test.getWeightedSuffix(id, ignoreOnePNG.get(vanillaPath)));
-                    Identifier tested = returnOptifineOrVanillaIdentifier(vanillaPath, UUID_RandomSuffixMap.get(id));
+                    Identifier tested = ETF_returnOptifineOrVanillaIdentifier(vanillaPath, UUID_RandomSuffixMap.get(id));
 
-                    if (!isExistingFile(tested)) {
+                    if (!ETF_isExistingFile(tested) && !isUpdate) {
                         UUID_RandomSuffixMap.put(id, 0);
                     }
                     break;
@@ -506,7 +513,7 @@ public interface ETF_METHODS {
             UUID_CaseHasUpdateablesCustom.put(id, false);
     }
 
-    default void modMessage(String message, boolean inChat) {
+    default void ETF_modMessage(String message, boolean inChat) {
         if (inChat) {
             ClientPlayerEntity plyr = MinecraftClient.getInstance().player;
             if (plyr != null) {
@@ -519,7 +526,7 @@ public interface ETF_METHODS {
         }
     }
 
-    default String returnOptifineOrVanillaPath(String vanillaPath, int randomId, String emissiveSuffx) {
+    default String ETF_returnOptifineOrVanillaPath(String vanillaPath, int randomId, String emissiveSuffx) {
 
 
         String append = (randomId == 0 ? "":randomId) + emissiveSuffx + ".png";
@@ -530,14 +537,14 @@ public interface ETF_METHODS {
         };
     }
 
-    default Identifier returnOptifineOrVanillaIdentifier(String vanillaPath, int randomId) {
-        return new Identifier(returnOptifineOrVanillaPath(vanillaPath, randomId, ""));
+    default Identifier ETF_returnOptifineOrVanillaIdentifier(String vanillaPath, int randomId) {
+        return new Identifier(ETF_returnOptifineOrVanillaPath(vanillaPath, randomId, ""));
     }
-    default Identifier returnOptifineOrVanillaIdentifier(String vanillaPath) {
-        return new Identifier(returnOptifineOrVanillaPath(vanillaPath, 0, ""));
+    default Identifier ETF_returnOptifineOrVanillaIdentifier(String vanillaPath) {
+        return new Identifier(ETF_returnOptifineOrVanillaPath(vanillaPath, 0, ""));
     }
 
-    private void processTrueRandomCandidate(String vanillaPath) {
+    private void ETF_processTrueRandomCandidate(String vanillaPath) {
         boolean keepGoing = false;
         //first iteration longer
         int successCount = 0;
@@ -548,19 +555,19 @@ public interface ETF_METHODS {
         String checkPathOldRandomFormat = vanillaPath.replace(".png", "1.png").replace("textures/entity", "optifine/mob");
         String checkPathOptifineFormat = vanillaPath.replace(".png", "1.png").replace("textures", "optifine/random");
         String checkPathETFFormat = vanillaPath.replace(".png", "1.png").replace("textures", "etf/random");
-        if (isExistingFile(new Identifier(checkPathETFFormat))) {
+        if (ETF_isExistingFile(new Identifier(checkPathETFFormat))) {
             PATH_OptifineOldVanillaETF_0123.put(vanillaPath, 3);
             ignoreOnePNG.put(vanillaPath, false);
             //successCount++;
-        } else if (isExistingFile(new Identifier(checkPathOptifineFormat))) {
+        } else if (ETF_isExistingFile(new Identifier(checkPathOptifineFormat))) {
             PATH_OptifineOldVanillaETF_0123.put(vanillaPath, 0);
             ignoreOnePNG.put(vanillaPath, false);
             //successCount++;
-        } else if (isExistingFile(new Identifier(checkPathOldRandomFormat))) {
+        } else if (ETF_isExistingFile(new Identifier(checkPathOldRandomFormat))) {
             PATH_OptifineOldVanillaETF_0123.put(vanillaPath, 1);
             ignoreOnePNG.put(vanillaPath, false);
             //successCount++;
-        } else if (isExistingFile(new Identifier(checkPath))) {
+        } else if (ETF_isExistingFile(new Identifier(checkPath))) {
             PATH_OptifineOldVanillaETF_0123.put(vanillaPath, 2);
             ignoreOnePNG.put(vanillaPath, false);
             //successCount++;
@@ -573,19 +580,19 @@ public interface ETF_METHODS {
         checkPathOldRandomFormat = vanillaPath.replace(".png", "2.png").replace("textures/entity", "optifine/mob");
         checkPathOptifineFormat = vanillaPath.replace(".png", "2.png").replace("textures", "optifine/random");
         checkPathETFFormat = vanillaPath.replace(".png", "2.png").replace("textures", "etf/random");
-        if (isExistingFile(new Identifier(checkPathETFFormat))) {
+        if (ETF_isExistingFile(new Identifier(checkPathETFFormat))) {
             PATH_OptifineOldVanillaETF_0123.put(vanillaPath, 3);
             keepGoing = true;
             successCount = 2;
-        } else if (isExistingFile(new Identifier(checkPathOptifineFormat))) {
+        } else if (ETF_isExistingFile(new Identifier(checkPathOptifineFormat))) {
             PATH_OptifineOldVanillaETF_0123.put(vanillaPath, 0);
             keepGoing = true;
             successCount = 2;
-        } else if (isExistingFile(new Identifier(checkPathOldRandomFormat))) {
+        } else if (ETF_isExistingFile(new Identifier(checkPathOldRandomFormat))) {
             PATH_OptifineOldVanillaETF_0123.put(vanillaPath, 1);
             keepGoing = true;
             successCount = 2;
-        } else if (isExistingFile(new Identifier(checkPath))) {
+        } else if (ETF_isExistingFile(new Identifier(checkPath))) {
             PATH_OptifineOldVanillaETF_0123.put(vanillaPath, 2);
             keepGoing = true;
             successCount = 2;
@@ -603,7 +610,7 @@ public interface ETF_METHODS {
             } else if (PATH_OptifineOldVanillaETF_0123.get(vanillaPath) == 2)  {
                 checkPath = vanillaPath.replace(".png", (count + ".png"));
             }
-            keepGoing = isExistingFile(new Identifier(checkPath));
+            keepGoing = ETF_isExistingFile(new Identifier(checkPath));
             if (keepGoing) successCount++;
         }
         //true if any random textures at all
@@ -614,11 +621,11 @@ public interface ETF_METHODS {
     }
 
 
-    default void setEmissiveSuffix() {
+    default void ETF_setEmissiveSuffix() {
         try {
-            Properties suffix = readProperties("optifine/emissive.properties");
+            Properties suffix = ETF_readProperties("optifine/emissive.properties");
             if (suffix.isEmpty()) {
-                suffix = readProperties("textures/emissive.properties");
+                suffix = ETF_readProperties("textures/emissive.properties");
             }
             Set<String> builder = new HashSet<>();
             if (suffix.contains("entities.suffix.emissive")) {
@@ -632,16 +639,16 @@ public interface ETF_METHODS {
             }
             emissiveSuffix = builder.toArray(new String[0]);
             if (emissiveSuffix.length == 0) {
-                modMessage("Error! Default emissive suffix '_e' used", false);
+                ETF_modMessage("Error! Default emissive suffix '_e' used", false);
                 emissiveSuffix = new String[]{"_e"};
             }
         } catch (Exception e) {
-            modMessage("Error! default emissive suffix '_e' used", false);
+            ETF_modMessage("Error! default emissive suffix '_e' used", false);
             emissiveSuffix = new String[]{"_e"};
         }
     }
 
-    default void saveConfig() {
+    default void ETF_saveConfig() {
         File config = new File(FabricLoader.getInstance().getConfigDir().toFile(), "entity_texture_features.json");
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         if (!config.getParentFile().exists()) {
@@ -653,11 +660,11 @@ public interface ETF_METHODS {
             fileWriter.write(gson.toJson(ETFConfigData));
             fileWriter.close();
         } catch (IOException e) {
-            modMessage("Config could not be saved", false);
+            ETF_modMessage("Config could not be saved", false);
         }
     }
 
-    default void checkPlayerForSkinFeatures(UUID id, PlayerEntity player) {
+    default void ETF_checkPlayerForSkinFeatures(UUID id, PlayerEntity player) {
         //if on an enemy team option to disable skin features loading
         if (ETFConfigData.skinFeaturesEnabled
                 && (ETFConfigData.enableEnemyTeamPlayersSkinFeatures
@@ -672,12 +679,12 @@ public interface ETF_METHODS {
             }
             UUID_playerSkinDownloadedYet.put(id, false);
             UUID_playerHasCape.put(id, ((AbstractClientPlayerEntity) player).canRenderCapeTexture());
-            getSkin(player);
+            ETF_getSkin(player);
         }
     }
 
 
-    private void getSkin(PlayerEntity player) {
+    private void ETF_getSkin(PlayerEntity player) {
         UUID id = player.getUuid();
 
 
@@ -725,22 +732,22 @@ public interface ETF_METHODS {
 }
                 */
 
-            downloadImageFromUrl(player, url, "VANILLA_SKIN", capeurl);
+            ETF_downloadImageFromUrl(player, url, "VANILLA_SKIN", capeurl);
         } catch (Exception e) {
-            skinFailed(id);
+            ETF_skinFailed(id);
         }
 
     }
 
-    private void downloadImageFromUrl(PlayerEntity player, String url, @SuppressWarnings("SameParameterValue") String sendFileToMethodKey) {
-        downloadImageFromUrl(player, url, sendFileToMethodKey, null, false);
+    private void ETF_downloadImageFromUrl(PlayerEntity player, String url, @SuppressWarnings("SameParameterValue") String sendFileToMethodKey) {
+        ETF_downloadImageFromUrl(player, url, sendFileToMethodKey, null, false);
     }
 
-    private void downloadImageFromUrl(PlayerEntity player, String url, @SuppressWarnings("SameParameterValue") String sendFileToMethodKey, String url2) {
-        downloadImageFromUrl(player, url, sendFileToMethodKey, url2, false);
+    private void ETF_downloadImageFromUrl(PlayerEntity player, String url, @SuppressWarnings("SameParameterValue") String sendFileToMethodKey, String url2) {
+        ETF_downloadImageFromUrl(player, url, sendFileToMethodKey, url2, false);
     }
 
-    private void downloadImageFromUrl(PlayerEntity player, String url, String sendFileToMethodKey, @Nullable String url2, @SuppressWarnings("SameParameterValue") boolean isFile) {
+    private void ETF_downloadImageFromUrl(PlayerEntity player, String url, String sendFileToMethodKey, @Nullable String url2, @SuppressWarnings("SameParameterValue") boolean isFile) {
         try {
             //required for vanilla cape
             boolean do2urls = url2 != null;
@@ -774,18 +781,18 @@ public interface ETF_METHODS {
                                 } catch (Exception e) {
                                     read = null;
                                 }
-                                directFileFromUrlToMethod( read, sendFileToMethodKey);
+                                ETF_directFileFromUrlToMethod( read, sendFileToMethodKey);
                             } else {
-                                NativeImage one = this.loadTexture(inputStream);
+                                NativeImage one = this.ETF_loadTexture(inputStream);
                                 NativeImage two = null;
                                 if (newHas2) {
-                                    two = this.loadTexture(finalInputStreamCape);
+                                    two = this.ETF_loadTexture(finalInputStreamCape);
                                 }
                                 if (one != null) {
-                                    directImageFromUrlToMethod(player, one, sendFileToMethodKey, two);
+                                    ETF_directImageFromUrlToMethod(player, one, sendFileToMethodKey, two);
                                 } else {
                                     //modMessage("downloading image failed", false);
-                                    skinFailed(player.getUuid());
+                                    ETF_skinFailed(player.getUuid());
                                 }
                             }
                             if (URL_HTTPtoDisconnect1.containsKey(url)) {
@@ -818,7 +825,7 @@ public interface ETF_METHODS {
         }
     }
 
-    private void directFileFromUrlToMethod( String fileString, String sendFileToMethodKey) {
+    private void ETF_directFileFromUrlToMethod(String fileString, String sendFileToMethodKey) {
         //switch
         if (fileString != null) {
             if (sendFileToMethodKey.equals("ETF_CAPE")) {
@@ -828,7 +835,7 @@ public interface ETF_METHODS {
 
     }
 
-    private void skinFailed(UUID id){
+    private void ETF_skinFailed(UUID id){
         UUID_playerLastSkinCheck.put(id,System.currentTimeMillis());
         if (!UUID_playerLastSkinCheckCount.containsKey(id)){
             UUID_playerLastSkinCheckCount.put(id,0);
@@ -844,27 +851,27 @@ public interface ETF_METHODS {
         UUID_playerSkinDownloadedYet.remove(id);
     }
 
-    private void directImageFromUrlToMethod(PlayerEntity player, NativeImage image, String sendFileToMethodKey, @Nullable NativeImage image2) {
+    private void ETF_directImageFromUrlToMethod(PlayerEntity player, NativeImage image, String sendFileToMethodKey, @Nullable NativeImage image2) {
         //switch
         UUID id = player.getUuid();
         if (sendFileToMethodKey.equals("VANILLA_SKIN")) {
             if (image != null) {
-                skinLoaded(player, image, image2);
+                ETF_skinLoaded(player, image, image2);
             } else {
                 //modMessage("Player skin {" + player.getName().getString() + "} unavailable for feature check", false);
-                skinFailed(id);
+                ETF_skinFailed(id);
             }
         }else if (sendFileToMethodKey.equals("THIRD_PARTY_CAPE")) {
             if (image != null) {
                 //optifine resizes them for space cause expensive servers I guess
                 if (image.getWidth() % image.getHeight() != 0){
-                    registerNativeImageToIdentifier(resizeOptifineImage(image), SKIN_NAMESPACE + id + "_cape.png");
+                    ETF_registerNativeImageToIdentifier(ETF_resizeOptifineImage(image), SKIN_NAMESPACE + id + "_cape.png");
                 }else {
-                    registerNativeImageToIdentifier(image, SKIN_NAMESPACE + id + "_cape.png");
+                    ETF_registerNativeImageToIdentifier(image, SKIN_NAMESPACE + id + "_cape.png");
                 }
                 UUID_playerHasCustomCape.put(id, true);
             } else {
-                modMessage("Player skin {" + player.getName().getString() + "} no THIRD_PARTY_CAPE Found", false);
+                ETF_modMessage("Player skin {" + player.getName().getString() + "} no THIRD_PARTY_CAPE Found", false);
                 //registerNativeImageToIdentifier(getNativeImageFromID(new Identifier("etf:capes/error.png")), SKIN_NAMESPACE + id + "_cape.png");
                 UUID_playerHasCustomCape.put(id, false);
             }
@@ -872,13 +879,13 @@ public interface ETF_METHODS {
         }
     }
 
-    private NativeImage resizeOptifineImage(NativeImage image){
+    private NativeImage ETF_resizeOptifineImage(NativeImage image){
         int newWidth = 64;
         while (newWidth < image.getWidth()){
             newWidth = newWidth + newWidth;
         }
         int newHeight = newWidth / 2;
-        NativeImage resizedImage = emptyNativeImage(newWidth,newHeight);
+        NativeImage resizedImage = ETF_emptyNativeImage(newWidth,newHeight);
         for (int x = 0; x < image.getWidth(); x++) {
             for (int y = 0; y < image.getHeight(); y++) {
                 resizedImage.setColor(x,y,image.getColor(x,y));
@@ -887,7 +894,7 @@ public interface ETF_METHODS {
         return resizedImage;
     }
 
-    private NativeImage loadTexture(InputStream stream) {
+    private NativeImage ETF_loadTexture(InputStream stream) {
         NativeImage nativeImage = null;
 
         try {
@@ -901,7 +908,7 @@ public interface ETF_METHODS {
     }
 
 
-    private int getSkinPixelColourToNumber(int color) {
+    private int ETF_getSkinPixelColourToNumber(int color) {
         //            pink   cyan     red       green      brown    blue     orange     yellow
         //colours = -65281, -256, -16776961, -16711936, -16760705, -65536, -16744449, -14483457
         return switch (color) {
@@ -918,7 +925,7 @@ public interface ETF_METHODS {
         };
     }
 
-    private void skinLoaded(PlayerEntity player, NativeImage skin, @Nullable NativeImage cape) {
+    private void ETF_skinLoaded(PlayerEntity player, NativeImage skin, @Nullable NativeImage cape) {
         UUID id = player.getUuid();
         if (skin != null) {
             if (skin.getColor(1, 16) == -16776961 &&
@@ -935,7 +942,7 @@ public interface ETF_METHODS {
                     skin.getColor(3, 18) == -1
             ) {
                 //this has texture features
-                modMessage("Found Player {" + id + "} with texture features in skin.", false);
+                ETF_modMessage("Found Player {" + id + "} with texture features in skin.", false);
                 UUID_playerHasFeatures.put(id, true);
                 //find what features
                 //pink = -65281, blue = -256
@@ -943,22 +950,22 @@ public interface ETF_METHODS {
                 //colours = -65281, -256, -16776961, -16711936, -16760705, -65536, -16744449, -14483457
 
                 //check Choice Box
-                int[] choiceBoxChoices = {getSkinPixelColourToNumber(skin.getColor(52, 16)),
-                        getSkinPixelColourToNumber(skin.getColor(52, 17)),
-                        getSkinPixelColourToNumber(skin.getColor(52, 18)),
-                        getSkinPixelColourToNumber(skin.getColor(52, 19)),
-                        getSkinPixelColourToNumber(skin.getColor(53, 16)),
-                        getSkinPixelColourToNumber(skin.getColor(53, 17))};
+                int[] choiceBoxChoices = {ETF_getSkinPixelColourToNumber(skin.getColor(52, 16)),
+                        ETF_getSkinPixelColourToNumber(skin.getColor(52, 17)),
+                        ETF_getSkinPixelColourToNumber(skin.getColor(52, 18)),
+                        ETF_getSkinPixelColourToNumber(skin.getColor(52, 19)),
+                        ETF_getSkinPixelColourToNumber(skin.getColor(53, 16)),
+                        ETF_getSkinPixelColourToNumber(skin.getColor(53, 17))};
 
                 //villager nose check
-                boolean noseUpper = (getSkinPixelColourToNumber(skin.getColor(43, 13)) == 666 && getSkinPixelColourToNumber(skin.getColor(44, 13)) == 666 &&
-                        getSkinPixelColourToNumber(skin.getColor(43, 14)) == 666 && getSkinPixelColourToNumber(skin.getColor(44, 14)) == 666 &&
-                        getSkinPixelColourToNumber(skin.getColor(43, 15)) == 666 && getSkinPixelColourToNumber(skin.getColor(44, 15)) == 666);
-                boolean noseLower = (getSkinPixelColourToNumber(skin.getColor(11, 13)) == 666 && getSkinPixelColourToNumber(skin.getColor(12, 13)) == 666 &&
-                        getSkinPixelColourToNumber(skin.getColor(11, 14)) == 666 && getSkinPixelColourToNumber(skin.getColor(12, 14)) == 666 &&
-                        getSkinPixelColourToNumber(skin.getColor(11, 15)) == 666 && getSkinPixelColourToNumber(skin.getColor(12, 15)) == 666);
+                boolean noseUpper = (ETF_getSkinPixelColourToNumber(skin.getColor(43, 13)) == 666 && ETF_getSkinPixelColourToNumber(skin.getColor(44, 13)) == 666 &&
+                        ETF_getSkinPixelColourToNumber(skin.getColor(43, 14)) == 666 && ETF_getSkinPixelColourToNumber(skin.getColor(44, 14)) == 666 &&
+                        ETF_getSkinPixelColourToNumber(skin.getColor(43, 15)) == 666 && ETF_getSkinPixelColourToNumber(skin.getColor(44, 15)) == 666);
+                boolean noseLower = (ETF_getSkinPixelColourToNumber(skin.getColor(11, 13)) == 666 && ETF_getSkinPixelColourToNumber(skin.getColor(12, 13)) == 666 &&
+                        ETF_getSkinPixelColourToNumber(skin.getColor(11, 14)) == 666 && ETF_getSkinPixelColourToNumber(skin.getColor(12, 14)) == 666 &&
+                        ETF_getSkinPixelColourToNumber(skin.getColor(11, 15)) == 666 && ETF_getSkinPixelColourToNumber(skin.getColor(12, 15)) == 666);
                 if (noseUpper) {
-                    deletePixels(skin, 43, 13, 44, 15);
+                    ETF_deletePixels(skin, 43, 13, 44, 15);
                 }
                 UUID_playerHasVillagerNose.put(id, noseLower || noseUpper);
 
@@ -969,15 +976,15 @@ public interface ETF_METHODS {
                 if (controllerCoat >= 1 && controllerCoat <= 8) {
                     int lengthOfCoat = choiceBoxChoices[2] - 1;
                     Identifier coatID = new Identifier(SKIN_NAMESPACE + id + "_coat.png");
-                    coatSkin = getOrRemoveCoatTexture(skin, lengthOfCoat, controllerCoat >= 5);
-                    registerNativeImageToIdentifier(coatSkin, coatID.toString());
+                    coatSkin = ETF_getOrRemoveCoatTexture(skin, lengthOfCoat, controllerCoat >= 5);
+                    ETF_registerNativeImageToIdentifier(coatSkin, coatID.toString());
                     UUID_playerHasCoat.put(id, true);
                     if (controllerCoat == 2 || controllerCoat == 4 || controllerCoat == 6 || controllerCoat == 8) {
                         //delete original pixel from skin
-                        deletePixels(skin, 4, 32, 7, 35);
-                        deletePixels(skin, 4, 48, 7, 51);
-                        deletePixels(skin, 0, 36, 15, 36 + lengthOfCoat);
-                        deletePixels(skin, 0, 52, 15, 52 + lengthOfCoat);
+                        ETF_deletePixels(skin, 4, 32, 7, 35);
+                        ETF_deletePixels(skin, 4, 48, 7, 51);
+                        ETF_deletePixels(skin, 0, 36, 15, 36 + lengthOfCoat);
+                        ETF_deletePixels(skin, 0, 52, 15, 52 + lengthOfCoat);
                     }
                     //red or green make fat coat
                     UUID_playerHasFatCoat.put(id, controllerCoat == 3 || controllerCoat == 4 || controllerCoat == 7 || controllerCoat == 8);
@@ -989,13 +996,13 @@ public interface ETF_METHODS {
                 //check for transparency options
                 //System.out.println("about to check");
                 if (ETFConfigData.skinFeaturesEnableTransparency) {
-                    if (canTransparentSkin(skin)) {
+                    if (ETF_canTransparentSkin(skin)) {
                         Identifier transId = new Identifier(SKIN_NAMESPACE + id + "_transparent.png");
                         UUID_playerTransparentSkinId.put(id, transId);
-                        registerNativeImageToIdentifier(skin, transId.toString());
+                        ETF_registerNativeImageToIdentifier(skin, transId.toString());
 
                     } else {
-                        modMessage("Skin was too transparent or had other problems", false);
+                        ETF_modMessage("Skin was too transparent or had other problems", false);
                     }
                 }
 
@@ -1008,15 +1015,15 @@ public interface ETF_METHODS {
                     TEXTURE_HasBlink.put(SKIN_NAMESPACE + id + ".png", true);
                     if (blinkChoice <= 2) {
                         //blink 1 frame if either pink or blue optional
-                        blinkSkinFile = returnOptimizedBlinkFace(skin, getSkinPixelBounds("face1"), 1, getSkinPixelBounds("face3"));
+                        blinkSkinFile = ETF_returnOptimizedBlinkFace(skin, ETF_getSkinPixelBounds("face1"), 1, ETF_getSkinPixelBounds("face3"));
 
-                        registerNativeImageToIdentifier(blinkSkinFile, SKIN_NAMESPACE + id + "_blink.png");
+                        ETF_registerNativeImageToIdentifier(blinkSkinFile, SKIN_NAMESPACE + id + "_blink.png");
 
                         //blink is 2 frames with blue optional
                         if (blinkChoice == 2) {
-                            blinkSkinFile2 = returnOptimizedBlinkFace(skin, getSkinPixelBounds("face2"), 1, getSkinPixelBounds("face4"));
+                            blinkSkinFile2 = ETF_returnOptimizedBlinkFace(skin, ETF_getSkinPixelBounds("face2"), 1, ETF_getSkinPixelBounds("face4"));
                             TEXTURE_HasBlink2.put(SKIN_NAMESPACE + id + ".png", true);
-                            registerNativeImageToIdentifier(blinkSkinFile2, SKIN_NAMESPACE + id + "_blink2.png");
+                            ETF_registerNativeImageToIdentifier(blinkSkinFile2, SKIN_NAMESPACE + id + "_blink2.png");
                         } else {
                             TEXTURE_HasBlink2.put(SKIN_NAMESPACE + id + ".png", false);
                         }
@@ -1027,23 +1034,23 @@ public interface ETF_METHODS {
                         }
                         //optimized 1p high eyes
                         if (blinkChoice == 3) {
-                            blinkSkinFile = returnOptimizedBlinkFace(skin, getSkinPixelBounds("optimizedEyeSmall"), eyeHeightTopDown);
+                            blinkSkinFile = ETF_returnOptimizedBlinkFace(skin, ETF_getSkinPixelBounds("optimizedEyeSmall"), eyeHeightTopDown);
 
-                            registerNativeImageToIdentifier(blinkSkinFile, SKIN_NAMESPACE + id + "_blink.png");
+                            ETF_registerNativeImageToIdentifier(blinkSkinFile, SKIN_NAMESPACE + id + "_blink.png");
 
                         } else if (blinkChoice == 4) {
-                            blinkSkinFile = returnOptimizedBlinkFace(skin, getSkinPixelBounds("optimizedEye2High"), eyeHeightTopDown);
-                            blinkSkinFile2 = returnOptimizedBlinkFace(skin, getSkinPixelBounds("optimizedEye2High_second"), eyeHeightTopDown);
+                            blinkSkinFile = ETF_returnOptimizedBlinkFace(skin, ETF_getSkinPixelBounds("optimizedEye2High"), eyeHeightTopDown);
+                            blinkSkinFile2 = ETF_returnOptimizedBlinkFace(skin, ETF_getSkinPixelBounds("optimizedEye2High_second"), eyeHeightTopDown);
                             TEXTURE_HasBlink2.put(SKIN_NAMESPACE + id + ".png", true);
 
-                            registerNativeImageToIdentifier(blinkSkinFile, SKIN_NAMESPACE + id + "_blink.png");
-                            registerNativeImageToIdentifier(blinkSkinFile2, SKIN_NAMESPACE + id + "_blink2.png");
+                            ETF_registerNativeImageToIdentifier(blinkSkinFile, SKIN_NAMESPACE + id + "_blink.png");
+                            ETF_registerNativeImageToIdentifier(blinkSkinFile2, SKIN_NAMESPACE + id + "_blink2.png");
                         } else /*if( blinkChoice == 5)*/ {
-                            blinkSkinFile = returnOptimizedBlinkFace(skin, getSkinPixelBounds("optimizedEye4High"), eyeHeightTopDown);
-                            blinkSkinFile2 = returnOptimizedBlinkFace(skin, getSkinPixelBounds("optimizedEye4High_second"), eyeHeightTopDown);
+                            blinkSkinFile = ETF_returnOptimizedBlinkFace(skin, ETF_getSkinPixelBounds("optimizedEye4High"), eyeHeightTopDown);
+                            blinkSkinFile2 = ETF_returnOptimizedBlinkFace(skin, ETF_getSkinPixelBounds("optimizedEye4High_second"), eyeHeightTopDown);
                             TEXTURE_HasBlink2.put(SKIN_NAMESPACE + id + ".png", true);
-                            registerNativeImageToIdentifier(blinkSkinFile, SKIN_NAMESPACE + id + "_blink.png");
-                            registerNativeImageToIdentifier(blinkSkinFile2, SKIN_NAMESPACE + id + "_blink2.png");
+                            ETF_registerNativeImageToIdentifier(blinkSkinFile, SKIN_NAMESPACE + id + "_blink.png");
+                            ETF_registerNativeImageToIdentifier(blinkSkinFile2, SKIN_NAMESPACE + id + "_blink2.png");
                         }
                     }
 
@@ -1064,19 +1071,19 @@ public interface ETF_METHODS {
                 if ((capeChoice1 >= 1 && capeChoice1 <= 3) || capeChoice1 == 666) {
                     switch (capeChoice1) {
                         case 1 -> //custom in skin
-                                cape = returnCustomTexturedCape(skin);
+                                cape = ETF_returnCustomTexturedCape(skin);
                         case 2 -> {
                             cape = null;
                             // minecraft capes mod
                             //https://minecraftcapes.net/profile/fd22e573178c415a94fee476b328abfd/cape/
-                            downloadImageFromUrl(player, "https://minecraftcapes.net/profile/" + player.getUuidAsString().replace("-", "") + "/cape/", "THIRD_PARTY_CAPE");
+                            ETF_downloadImageFromUrl(player, "https://minecraftcapes.net/profile/" + player.getUuidAsString().replace("-", "") + "/cape/", "THIRD_PARTY_CAPE");
                         }
                         case 3 -> {
                             cape = null;
                             //  https://optifine.net/capes/Benjamin.png
-                            downloadImageFromUrl(player, "https://optifine.net/capes/" + player.getName().getString() + ".png", "THIRD_PARTY_CAPE");
+                            ETF_downloadImageFromUrl(player, "https://optifine.net/capes/" + player.getName().getString() + ".png", "THIRD_PARTY_CAPE");
                         }
-                        case 666 -> cape = getNativeImageFromID(new Identifier("etf:capes/error.png"));
+                        case 666 -> cape = ETF_getNativeImageFromID(new Identifier("etf:capes/error.png"));
                         default -> {
                             //cape = getNativeImageFromID(new Identifier("etf:capes/blank.png"));
                         }
@@ -1084,7 +1091,7 @@ public interface ETF_METHODS {
                 }
                 if (cape != null){
                         if ((capeChoice1 >= 1 && capeChoice1 <= 3) || capeChoice1 == 666){//custom chosen
-                        registerNativeImageToIdentifier(cape, SKIN_NAMESPACE + id + "_cape.png");
+                        ETF_registerNativeImageToIdentifier(cape, SKIN_NAMESPACE + id + "_cape.png");
                         UUID_playerHasCustomCape.put(id, true);
                     }
                 }
@@ -1095,30 +1102,30 @@ public interface ETF_METHODS {
 
                 //check for marker choices
                 //  1 = Emissives,  2 = Enchanted
-                List<Integer> markerChoices = List.of(getSkinPixelColourToNumber(skin.getColor(1, 17)),
-                        getSkinPixelColourToNumber(skin.getColor(1, 18)),
-                        getSkinPixelColourToNumber(skin.getColor(2, 17)),
-                        getSkinPixelColourToNumber(skin.getColor(2, 18)));
+                List<Integer> markerChoices = List.of(ETF_getSkinPixelColourToNumber(skin.getColor(1, 17)),
+                        ETF_getSkinPixelColourToNumber(skin.getColor(1, 18)),
+                        ETF_getSkinPixelColourToNumber(skin.getColor(2, 17)),
+                        ETF_getSkinPixelColourToNumber(skin.getColor(2, 18)));
 
                 //enchanted
                 UUID_playerHasEnchant.put(id, markerChoices.contains(2));
                 if (markerChoices.contains(2)) {
                     //System.out.println("choice " + (markerChoices.indexOf(2) + 1));
-                    int[] boxChosenBounds = getSkinPixelBounds("marker" + (markerChoices.indexOf(2) + 1));
-                    NativeImage check = returnMatchPixels(skin, boxChosenBounds);
+                    int[] boxChosenBounds = ETF_getSkinPixelBounds("marker" + (markerChoices.indexOf(2) + 1));
+                    NativeImage check = ETF_returnMatchPixels(skin, boxChosenBounds);
                     if (check != null) {
-                        registerNativeImageToIdentifier(check, SKIN_NAMESPACE + id + "_enchant.png");
+                        ETF_registerNativeImageToIdentifier(check, SKIN_NAMESPACE + id + "_enchant.png");
                         if (blinkSkinFile != null) {
-                            NativeImage checkBlink = returnMatchPixels(blinkSkinFile, boxChosenBounds);
-                            registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkBlink, this::emptyNativeImage), SKIN_NAMESPACE + id + "_blink_enchant.png");
+                            NativeImage checkBlink = ETF_returnMatchPixels(blinkSkinFile, boxChosenBounds);
+                            ETF_registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkBlink, this::ETF_emptyNativeImage), SKIN_NAMESPACE + id + "_blink_enchant.png");
                         }
                         if (blinkSkinFile2 != null) {
-                            NativeImage checkBlink = returnMatchPixels(blinkSkinFile2, boxChosenBounds);
-                            registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkBlink, this::emptyNativeImage), SKIN_NAMESPACE + id + "_blink2_enchant.png");
+                            NativeImage checkBlink = ETF_returnMatchPixels(blinkSkinFile2, boxChosenBounds);
+                            ETF_registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkBlink, this::ETF_emptyNativeImage), SKIN_NAMESPACE + id + "_blink2_enchant.png");
                         }
                         if (coatSkin != null) {
-                            NativeImage checkCoat = returnMatchPixels(coatSkin, boxChosenBounds);
-                            registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkCoat, this::emptyNativeImage), SKIN_NAMESPACE + id + "_coat_enchant.png");
+                            NativeImage checkCoat = ETF_returnMatchPixels(coatSkin, boxChosenBounds);
+                            ETF_registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkCoat, this::ETF_emptyNativeImage), SKIN_NAMESPACE + id + "_coat_enchant.png");
                         }
 
                        // NativeImage checkCape = returnMatchPixels(skin, boxChosenBounds,cape);
@@ -1132,21 +1139,21 @@ public interface ETF_METHODS {
                 //emissives
                 UUID_playerHasEmissive.put(id, markerChoices.contains(1));
                 if (markerChoices.contains(1)) {
-                    int[] boxChosenBounds = getSkinPixelBounds("marker" + (markerChoices.indexOf(1) + 1));
-                    NativeImage check = returnMatchPixels(skin, boxChosenBounds);
+                    int[] boxChosenBounds = ETF_getSkinPixelBounds("marker" + (markerChoices.indexOf(1) + 1));
+                    NativeImage check = ETF_returnMatchPixels(skin, boxChosenBounds);
                     if (check != null) {
-                        registerNativeImageToIdentifier(check, SKIN_NAMESPACE + id + "_e.png");
+                        ETF_registerNativeImageToIdentifier(check, SKIN_NAMESPACE + id + "_e.png");
                         if (blinkSkinFile != null) {
-                            NativeImage checkBlink = returnMatchPixels(blinkSkinFile, boxChosenBounds);
-                            registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkBlink, this::emptyNativeImage), SKIN_NAMESPACE + id + "_blink_e.png");
+                            NativeImage checkBlink = ETF_returnMatchPixels(blinkSkinFile, boxChosenBounds);
+                            ETF_registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkBlink, this::ETF_emptyNativeImage), SKIN_NAMESPACE + id + "_blink_e.png");
                         }
                         if (blinkSkinFile2 != null) {
-                            NativeImage checkBlink = returnMatchPixels(blinkSkinFile2, boxChosenBounds);
-                            registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkBlink, this::emptyNativeImage), SKIN_NAMESPACE + id + "_blink2_e.png");
+                            NativeImage checkBlink = ETF_returnMatchPixels(blinkSkinFile2, boxChosenBounds);
+                            ETF_registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkBlink, this::ETF_emptyNativeImage), SKIN_NAMESPACE + id + "_blink2_e.png");
                         }
                         if (coatSkin != null) {
-                            NativeImage checkCoat = returnMatchPixels(coatSkin, boxChosenBounds);
-                            registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkCoat, this::emptyNativeImage), SKIN_NAMESPACE + id + "_coat_e.png");
+                            NativeImage checkCoat = ETF_returnMatchPixels(coatSkin, boxChosenBounds);
+                            ETF_registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkCoat, this::ETF_emptyNativeImage), SKIN_NAMESPACE + id + "_coat_e.png");
                         }
 
                       //  NativeImage checkCape = returnMatchPixels(skin, boxChosenBounds,cape);
@@ -1164,22 +1171,22 @@ public interface ETF_METHODS {
             }
         } else { //http failed
             //UUID_playerHasFeatures.put(id, false);
-            skinFailed(id);
+            ETF_skinFailed(id);
         }
         UUID_playerSkinDownloadedYet.put(id, true);
     }
 
-    private NativeImage emptyNativeImage() {
-        return emptyNativeImage(64, 64);
+    private NativeImage ETF_emptyNativeImage() {
+        return ETF_emptyNativeImage(64, 64);
     }
 
-    private NativeImage emptyNativeImage(int Width, int Height) {
+    private NativeImage ETF_emptyNativeImage(int Width, int Height) {
         NativeImage empty = new NativeImage(Width, Height, false);
         empty.fillRect(0, 0, Width, Height, 0);
         return empty;
     }
 
-    private int[] getSkinPixelBounds(String choiceKey) {
+    private int[] ETF_getSkinPixelBounds(String choiceKey) {
         return switch (choiceKey) {
             case "marker1" -> new int[]{56, 16, 63, 23};
             case "marker2" -> new int[]{56, 24, 63, 31};
@@ -1212,66 +1219,66 @@ public interface ETF_METHODS {
 
 
 
-    private NativeImage returnCustomTexturedCape(NativeImage skin){
-        NativeImage cape = emptyNativeImage(64,32);
-        NativeImage elytra = getNativeImageFromID(new Identifier("etf:capes/default_elytra.png"));
+    private NativeImage ETF_returnCustomTexturedCape(NativeImage skin){
+        NativeImage cape = ETF_emptyNativeImage(64,32);
+        NativeImage elytra = ETF_getNativeImageFromID(new Identifier("etf:capes/default_elytra.png"));
         if (elytra == null){
-            elytra = getNativeImageFromID(new Identifier("textures/entity/elytra.png"));
+            elytra = ETF_getNativeImageFromID(new Identifier("textures/entity/elytra.png"));
         }//not else
         if (elytra != null){
             cape.copyFrom(elytra);
         }
-        copyToPixels(skin,cape,getSkinPixelBounds("cape1"),1,1);
-        copyToPixels(skin,cape,getSkinPixelBounds("cape1"),12,1);
-        copyToPixels(skin,cape,getSkinPixelBounds("cape2"),1,5);
-        copyToPixels(skin,cape,getSkinPixelBounds("cape2"),12,5);
-        copyToPixels(skin,cape,getSkinPixelBounds("cape3"),1,9);
-        copyToPixels(skin,cape,getSkinPixelBounds("cape3"),12,9);
-        copyToPixels(skin,cape,getSkinPixelBounds("cape4"),1,13);
-        copyToPixels(skin,cape,getSkinPixelBounds("cape4"),12,13);
-        copyToPixels(skin,cape,getSkinPixelBounds("cape5.1"),9,1);
-        copyToPixels(skin,cape,getSkinPixelBounds("cape5.1"),20,1);
-        copyToPixels(skin,cape,getSkinPixelBounds("cape5.2"),9,5);
-        copyToPixels(skin,cape,getSkinPixelBounds("cape5.2"),20,5);
-        copyToPixels(skin,cape,getSkinPixelBounds("cape5.3"),9,9);
-        copyToPixels(skin,cape,getSkinPixelBounds("cape5.3"),20,9);
-        copyToPixels(skin,cape,getSkinPixelBounds("cape5.4"),9,13);
-        copyToPixels(skin,cape,getSkinPixelBounds("cape5.4"),20,13);
+        ETF_copyToPixels(skin,cape, ETF_getSkinPixelBounds("cape1"),1,1);
+        ETF_copyToPixels(skin,cape, ETF_getSkinPixelBounds("cape1"),12,1);
+        ETF_copyToPixels(skin,cape, ETF_getSkinPixelBounds("cape2"),1,5);
+        ETF_copyToPixels(skin,cape, ETF_getSkinPixelBounds("cape2"),12,5);
+        ETF_copyToPixels(skin,cape, ETF_getSkinPixelBounds("cape3"),1,9);
+        ETF_copyToPixels(skin,cape, ETF_getSkinPixelBounds("cape3"),12,9);
+        ETF_copyToPixels(skin,cape, ETF_getSkinPixelBounds("cape4"),1,13);
+        ETF_copyToPixels(skin,cape, ETF_getSkinPixelBounds("cape4"),12,13);
+        ETF_copyToPixels(skin,cape, ETF_getSkinPixelBounds("cape5.1"),9,1);
+        ETF_copyToPixels(skin,cape, ETF_getSkinPixelBounds("cape5.1"),20,1);
+        ETF_copyToPixels(skin,cape, ETF_getSkinPixelBounds("cape5.2"),9,5);
+        ETF_copyToPixels(skin,cape, ETF_getSkinPixelBounds("cape5.2"),20,5);
+        ETF_copyToPixels(skin,cape, ETF_getSkinPixelBounds("cape5.3"),9,9);
+        ETF_copyToPixels(skin,cape, ETF_getSkinPixelBounds("cape5.3"),20,9);
+        ETF_copyToPixels(skin,cape, ETF_getSkinPixelBounds("cape5.4"),9,13);
+        ETF_copyToPixels(skin,cape, ETF_getSkinPixelBounds("cape5.4"),20,13);
 
-        copyToPixels(cape,cape,getSkinPixelBounds("capeVertL"),0,1);
-        copyToPixels(cape,cape,getSkinPixelBounds("capeVertR"),11,1);
-        copyToPixels(cape,cape,getSkinPixelBounds("capeHorizL"),1,0);
-        copyToPixels(cape,cape,getSkinPixelBounds("capeHorizR"),11,0);
+        ETF_copyToPixels(cape,cape, ETF_getSkinPixelBounds("capeVertL"),0,1);
+        ETF_copyToPixels(cape,cape, ETF_getSkinPixelBounds("capeVertR"),11,1);
+        ETF_copyToPixels(cape,cape, ETF_getSkinPixelBounds("capeHorizL"),1,0);
+        ETF_copyToPixels(cape,cape, ETF_getSkinPixelBounds("capeHorizR"),11,0);
 
         return cape;
     }
 
-    private NativeImage getOrRemoveCoatTexture(NativeImage skin, int lengthOfCoat, boolean ignoreTopTexture) {
+    private NativeImage ETF_getOrRemoveCoatTexture(NativeImage skin, int lengthOfCoat, boolean ignoreTopTexture) {
 
         NativeImage coat = new NativeImage(64, 64, false);
         coat.fillRect(0, 0, 64, 64, 0);
 
         //top
         if (!ignoreTopTexture) {
-            copyToPixels(skin, coat, 4, 32, 7, 35 + lengthOfCoat, 20, 32);
-            copyToPixels(skin, coat, 4, 48, 7, 51 + lengthOfCoat, 24, 32);
+            ETF_copyToPixels(skin, coat, 4, 32, 7, 35 + lengthOfCoat, 20, 32);
+            ETF_copyToPixels(skin, coat, 4, 48, 7, 51 + lengthOfCoat, 24, 32);
         }
         //sides
-        copyToPixels(skin, coat, 0, 36, 7, 36 + lengthOfCoat, 16, 36);
-        copyToPixels(skin, coat, 12, 36, 15, 36 + lengthOfCoat, 36, 36);
-        copyToPixels(skin, coat, 4, 52, 15, 52 + lengthOfCoat, 24, 36);
+        ETF_copyToPixels(skin, coat, 0, 36, 7, 36 + lengthOfCoat, 16, 36);
+        ETF_copyToPixels(skin, coat, 12, 36, 15, 36 + lengthOfCoat, 36, 36);
+        ETF_copyToPixels(skin, coat, 4, 52, 15, 52 + lengthOfCoat, 24, 36);
         //ENCHANT AND EMISSIVES
-        copyToPixels(skin, coat, 56, 16, 63, 47, 0, 0);
+        ETF_copyToPixels(skin, coat, 56, 16, 63, 47, 0, 0);
         return coat;
 
     }
 
     // modifiers are distance from x1,y1 to copy
-    private void copyToPixels(NativeImage source, NativeImage dest, int[] bounds, int copyToX, int CopyToY) {
-        copyToPixels(source, dest, bounds[0], bounds[1], bounds[2], bounds[3], copyToX, CopyToY);
+    private void ETF_copyToPixels(NativeImage source, NativeImage dest, int[] bounds, int copyToX, int CopyToY) {
+        ETF_copyToPixels(source, dest, bounds[0], bounds[1], bounds[2], bounds[3], copyToX, CopyToY);
     }
 
-    private void copyToPixels(NativeImage source, NativeImage dest, int x1, int y1, int x2, int y2, int copyToX, int copyToY) {
+    private void ETF_copyToPixels(NativeImage source, NativeImage dest, int x1, int y1, int x2, int y2, int copyToX, int copyToY) {
         int copyToXRelative = copyToX - x1;
         int copyToYRelative = copyToY - y1;
         for (int x = x1; x <= x2; x++) {
@@ -1281,7 +1288,7 @@ public interface ETF_METHODS {
         }
     }
 
-    private void deletePixels(NativeImage source, int x1, int y1, int x2, int y2) {
+    private void ETF_deletePixels(NativeImage source, int x1, int y1, int x2, int y2) {
         for (int x = x1; x <= x2; x++) {
             for (int y = y1; y <= y2; y++) {
                 source.setColor(x, y, 0);
@@ -1289,14 +1296,14 @@ public interface ETF_METHODS {
         }
     }
 
-    private void registerNativeImageToIdentifier(NativeImage img, String identifierPath) {
+    private void ETF_registerNativeImageToIdentifier(NativeImage img, String identifierPath) {
         TextureManager textureManager = MinecraftClient.getInstance().getTextureManager();
         NativeImageBackedTexture bob = new NativeImageBackedTexture(img);
         textureManager.registerTexture(new Identifier(identifierPath), bob);
 
     }
 
-    private int countTransparentInBox(NativeImage img, int x1, int y1, int x2, int y2) {
+    private int ETF_countTransparentInBox(NativeImage img, int x1, int y1, int x2, int y2) {
         int counter = 0;
         for (int x = x1; x <= x2; x++) {
             for (int y = y1; y <= y2; y++) {
@@ -1313,22 +1320,22 @@ public interface ETF_METHODS {
         return counter;
     }
 
-    private boolean canTransparentSkin(NativeImage skin) {
+    private boolean ETF_canTransparentSkin(NativeImage skin) {
         if (ETFConfigData.skinFeaturesEnableFullTransparency) {
             return true;
         } else {
             int countTransparent = 0;
             //map of bottom skin layer in cubes
-            countTransparent += countTransparentInBox(skin, 8, 0, 23, 15);
-            countTransparent += countTransparentInBox(skin, 0, 20, 55, 31);
-            countTransparent += countTransparentInBox(skin, 0, 8, 7, 15);
-            countTransparent += countTransparentInBox(skin, 24, 8, 31, 15);
-            countTransparent += countTransparentInBox(skin, 0, 16, 11, 19);
-            countTransparent += countTransparentInBox(skin, 20, 16, 35, 19);
-            countTransparent += countTransparentInBox(skin, 44, 16, 51, 19);
-            countTransparent += countTransparentInBox(skin, 20, 48, 27, 51);
-            countTransparent += countTransparentInBox(skin, 36, 48, 43, 51);
-            countTransparent += countTransparentInBox(skin, 16, 52, 47, 63);
+            countTransparent += ETF_countTransparentInBox(skin, 8, 0, 23, 15);
+            countTransparent += ETF_countTransparentInBox(skin, 0, 20, 55, 31);
+            countTransparent += ETF_countTransparentInBox(skin, 0, 8, 7, 15);
+            countTransparent += ETF_countTransparentInBox(skin, 24, 8, 31, 15);
+            countTransparent += ETF_countTransparentInBox(skin, 0, 16, 11, 19);
+            countTransparent += ETF_countTransparentInBox(skin, 20, 16, 35, 19);
+            countTransparent += ETF_countTransparentInBox(skin, 44, 16, 51, 19);
+            countTransparent += ETF_countTransparentInBox(skin, 20, 48, 27, 51);
+            countTransparent += ETF_countTransparentInBox(skin, 36, 48, 43, 51);
+            countTransparent += ETF_countTransparentInBox(skin, 16, 52, 47, 63);
             //do not allow skins under 40% ish total opacity
             //1648 is total pixels that are not allowed transparent by vanilla
             int average = (countTransparent / 1648); // should be 0 to 256
@@ -1337,29 +1344,29 @@ public interface ETF_METHODS {
         }
     }
 
-    private NativeImage returnOptimizedBlinkFace(NativeImage baseSkin, int[] eyeBounds, int eyeHeightFromTopDown) {
-        return returnOptimizedBlinkFace(baseSkin, eyeBounds, eyeHeightFromTopDown, null);
+    private NativeImage ETF_returnOptimizedBlinkFace(NativeImage baseSkin, int[] eyeBounds, int eyeHeightFromTopDown) {
+        return ETF_returnOptimizedBlinkFace(baseSkin, eyeBounds, eyeHeightFromTopDown, null);
     }
 
-    private NativeImage returnOptimizedBlinkFace(NativeImage baseSkin, int[] eyeBounds, int eyeHeightFromTopDown, int[] secondLayerBounds) {
+    private NativeImage ETF_returnOptimizedBlinkFace(NativeImage baseSkin, int[] eyeBounds, int eyeHeightFromTopDown, int[] secondLayerBounds) {
         NativeImage texture = new NativeImage(64, 64, false);
         texture.copyFrom(baseSkin);
         //copy face
-        copyToPixels(baseSkin, texture, eyeBounds, 8, 8 + (eyeHeightFromTopDown - 1));
+        ETF_copyToPixels(baseSkin, texture, eyeBounds, 8, 8 + (eyeHeightFromTopDown - 1));
         //copy face overlay
         if (secondLayerBounds != null) {
-            copyToPixels(baseSkin, texture, secondLayerBounds, 40, 8 + (eyeHeightFromTopDown - 1));
+            ETF_copyToPixels(baseSkin, texture, secondLayerBounds, 40, 8 + (eyeHeightFromTopDown - 1));
         }
         return texture;
     }
 
     @Nullable
-    private NativeImage returnMatchPixels(NativeImage baseSkin, int[] boundsToCheck) {
-        return  returnMatchPixels( baseSkin, boundsToCheck, null);
+    private NativeImage ETF_returnMatchPixels(NativeImage baseSkin, int[] boundsToCheck) {
+        return  ETF_returnMatchPixels( baseSkin, boundsToCheck, null);
     }
 
     @Nullable
-    private NativeImage returnMatchPixels(NativeImage baseSkin, int[] boundsToCheck, @SuppressWarnings("SameParameterValue") @Nullable NativeImage second) {
+    private NativeImage ETF_returnMatchPixels(NativeImage baseSkin, int[] boundsToCheck, @SuppressWarnings("SameParameterValue") @Nullable NativeImage second) {
         if (baseSkin == null) return null;
 
         boolean secondImage = second != null;
@@ -1391,17 +1398,17 @@ public interface ETF_METHODS {
         }
 
     }
-    default Identifier returnBlinkIdOrGiven(LivingEntity entity, String givenTexturePath, UUID id) {
-        return returnBlinkIdOrGiven(entity, givenTexturePath, id, false);
+    default Identifier ETF_returnBlinkIdOrGiven(LivingEntity entity, String givenTexturePath, UUID id) {
+        return ETF_returnBlinkIdOrGiven(entity, givenTexturePath, id, false);
     }
 
-    default Identifier returnBlinkIdOrGiven(LivingEntity entity, String givenTexturePath, UUID id, boolean isPlayer) {
+    default Identifier ETF_returnBlinkIdOrGiven(LivingEntity entity, String givenTexturePath, UUID id, boolean isPlayer) {
         if (ETFConfigData.enableBlinking) {
             if (!TEXTURE_HasBlink.containsKey(givenTexturePath)) {
                 //check for blink textures
-                TEXTURE_HasBlink.put(givenTexturePath, isExistingFileAndSameResourcepackAs(new Identifier(givenTexturePath.replace(".png", "_blink.png")),new Identifier(givenTexturePath)));
-                TEXTURE_HasBlink2.put(givenTexturePath, isExistingFileAndSameResourcepackAs(new Identifier(givenTexturePath.replace(".png", "_blink2.png")),new Identifier(givenTexturePath)));
-                TEXTURE_BlinkProps.put(givenTexturePath, readProperties(givenTexturePath.replace(".png", "_blink.properties"),givenTexturePath));
+                TEXTURE_HasBlink.put(givenTexturePath, ETF_isExistingFileAndSameResourcepackAs(new Identifier(givenTexturePath.replace(".png", "_blink.png")),new Identifier(givenTexturePath)));
+                TEXTURE_HasBlink2.put(givenTexturePath, ETF_isExistingFileAndSameResourcepackAs(new Identifier(givenTexturePath.replace(".png", "_blink2.png")),new Identifier(givenTexturePath)));
+                TEXTURE_BlinkProps.put(givenTexturePath, ETF_readProperties(givenTexturePath.replace(".png", "_blink.properties"),givenTexturePath));
 
             }
             TEXTURE_BlinkProps.putIfAbsent(givenTexturePath, null);
@@ -1473,4 +1480,55 @@ public interface ETF_METHODS {
         }
         return new Identifier(givenTexturePath);
     }
+
+    default Identifier ETF_GeneralReturnAlteredTexture( Identifier texture, Entity entity){
+        if (entity == null) return texture;
+        UUID id = entity.getUuid();
+        if (ETFConfigData.enableCustomTextures) {
+            if (UUID_randomTextureSuffix.containsKey(id)) {
+                if (UUID_randomTextureSuffix.get(id) != 0) {
+                    return  ETF_returnOptifineOrVanillaIdentifier(texture.toString(), UUID_randomTextureSuffix.get(id));
+                }
+            }
+        }
+        return texture;
+    }
+    default void ETF_GeneralEmissiveRender(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, String texturePath, Model model){
+        ETF_GeneralEmissiveRender(matrixStack, vertexConsumerProvider, new Identifier(texturePath),  model);
+    }
+
+    default void ETF_GeneralEmissiveRender(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, Identifier texture, Model model){
+        if (ETFConfigData.enableEmissiveTextures) {
+            String fileString = texture.toString();
+            if (!Texture_Emissive.containsKey(fileString)) {
+                //creates and sets emissive for texture if it exists
+                Identifier fileName_e;
+                for (String suffix1 :
+                        emissiveSuffix) {
+                    fileName_e = new Identifier(fileString.replace(".png", suffix1 + ".png"));
+                    if (ETF_isExistingFile(fileName_e)) {
+                        Texture_Emissive.put(fileString, fileName_e);
+                        break;
+                    }
+                }
+                if (!Texture_Emissive.containsKey(fileString)) {
+                    Texture_Emissive.put(fileString, null);
+                }
+            }
+            if (Texture_Emissive.containsKey(fileString)) {
+                if (Texture_Emissive.get(fileString) != null) {
+                    VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(Texture_Emissive.get(fileString), true));
+                    //one check most efficient instead of before and after applying
+                    if (ETFConfigData.doShadersEmissiveFix) {
+                        matrixStack.scale(1.01f, 1.01f, 1.01f);
+                        model.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
+                        matrixStack.scale(1f, 1f, 1f);
+                    } else {
+                        model.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
+                    }
+                }
+            }
+        }
+    }
+
 }

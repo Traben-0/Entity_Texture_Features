@@ -1,9 +1,6 @@
 package traben.entity_texture_features.mixin.client.entity.extras;
 
 import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.PlayerModelPart;
 import net.minecraft.client.render.entity.feature.ElytraFeatureRenderer;
@@ -22,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.client.ETF_METHODS;
 
-import static traben.entity_texture_features.client.ETF_CLIENT.*;
+import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
 
 @Mixin(ElytraFeatureRenderer.class)
 public abstract class MIX_ElytraFeatureRenderer<T extends LivingEntity, M extends EntityModel<T>> extends FeatureRenderer<T, M> implements ETF_METHODS {
@@ -60,49 +57,7 @@ public abstract class MIX_ElytraFeatureRenderer<T extends LivingEntity, M extend
                 identifier = SKIN;
             }
 
-            String fileString = identifier.toString();
-
-            if (Texture_Emissive.containsKey(fileString)) {
-                if (Texture_Emissive.get(fileString) != null) {
-                    VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(Texture_Emissive.get(fileString), true));
-                    //one check most efficient instead of before and after applying
-                    if (ETFConfigData.doShadersEmissiveFix) {
-                        matrixStack.scale(1.01f, 1.01f, 1.01f);
-                        elytra.render(matrixStack
-                                , textureVert
-                                , 15728640
-                                , OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
-                        matrixStack.scale(1f, 1f, 1f);
-                    } else {
-                        elytra.render(matrixStack
-                                , textureVert
-                                , 15728640
-                                , OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
-                    }
-                }
-            } else {//creates and sets emissive for texture if it exists
-                Identifier fileName_e;
-                for (String suffix1 :
-                        emissiveSuffix) {
-                    fileName_e = new Identifier(fileString.replace(".png", suffix1 + ".png"));
-                    if (isExistingFile(fileName_e)) {
-                        VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(fileName_e, true));
-                        Texture_Emissive.put(fileString, fileName_e);
-                        //one check most efficient instead of before and after applying
-                        if (ETFConfigData.doShadersEmissiveFix) {
-                            matrixStack.scale(1.01f, 1.01f, 1.01f);
-                            elytra.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
-                            matrixStack.scale(1f, 1f, 1f);
-                        } else {
-                            elytra.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
-                        }
-                        break;
-                    }
-                }
-                if (!Texture_Emissive.containsKey(fileString)) {
-                    Texture_Emissive.put(fileString, null);
-                }
-            }
+            ETF_GeneralEmissiveRender(matrixStack,vertexConsumerProvider,identifier,elytra);
         }
     }
 }

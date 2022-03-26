@@ -48,7 +48,7 @@ public abstract class MIX_PlayerEntityRenderer extends LivingEntityRenderer<Abst
                 try {
                     if (!UUID_playerHasFeatures.containsKey(id) && !UUID_playerSkinDownloadedYet.containsKey(id)) {
                         //check for mark
-                        checkPlayerForSkinFeatures(id, player);
+                        ETF_checkPlayerForSkinFeatures(id, player);
                     }
                     if (UUID_playerSkinDownloadedYet.get(id)) {
                         if (UUID_playerHasFeatures.get(id)) {
@@ -70,7 +70,7 @@ public abstract class MIX_PlayerEntityRenderer extends LivingEntityRenderer<Abst
                         }
                     }
                 } catch (Exception e) {
-                    modMessage(e.toString(), false);
+                    ETF_modMessage(e.toString(), false);
                 }
             }
         }
