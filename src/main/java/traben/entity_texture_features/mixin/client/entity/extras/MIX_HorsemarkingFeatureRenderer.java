@@ -31,22 +31,23 @@ public abstract class MIX_HorsemarkingFeatureRenderer extends FeatureRenderer<Ho
 
     private void applyEmissive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, HorseEntity horseEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci, Identifier identifier, VertexConsumer vertexConsumer) {
         //UUID id = livingEntity.getUuid();
-        ETF_GeneralEmissiveRender(matrixStack,vertexConsumerProvider,returnAlteredTexture(identifier),((HorseEntityModel)this.getContextModel()));
+        ETF_GeneralEmissiveRender(matrixStack, vertexConsumerProvider, returnAlteredTexture(identifier), (this.getContextModel()));
     }
 
     @Inject(
             method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/passive/HorseEntity;FFFFFF)V",
             at = @At(value = "HEAD"))
-    private void getEntity(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, HorseEntity horseEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci){
+    private void getEntity(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, HorseEntity horseEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
         entity = horseEntity;
     }
+
     HorseEntity entity = null;
 
     @ModifyArg(
             method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/passive/HorseEntity;FFFFFF)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/RenderLayer;getEntityTranslucent(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;"))
     private Identifier returnAlteredTexture(Identifier texture) {
-        return ETF_GeneralReturnAlteredTexture(texture,entity);
+        return ETF_GeneralReturnAlteredTexture(texture, entity);
     }
 }
 

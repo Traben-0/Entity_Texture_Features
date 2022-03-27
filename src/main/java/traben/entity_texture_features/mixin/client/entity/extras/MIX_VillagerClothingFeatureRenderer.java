@@ -42,13 +42,13 @@ public abstract class MIX_VillagerClothingFeatureRenderer<T extends LivingEntity
     private void returnAlteredTexture(String keyType, Identifier keyId, CallbackInfoReturnable<Identifier> cir) {
         if (villager != null) {
             cir.setReturnValue(
-                    switch (keyType){
+                    switch (keyType) {
                         //base villager uses  suffix1
-                case "type" -> returnAltered(cir.getReturnValue(),UUID_randomTextureSuffix2,hasUpdatableRandomCases2);
-                case "profession" -> returnAltered(cir.getReturnValue(),UUID_randomTextureSuffix3,hasUpdatableRandomCases3);
-                case "profession_level" -> returnAltered(cir.getReturnValue(),UUID_randomTextureSuffix4,hasUpdatableRandomCases4);
-                default -> cir.getReturnValue();
-            });
+                        case "type" -> returnAltered(cir.getReturnValue(), UUID_randomTextureSuffix2, hasUpdatableRandomCases2);
+                        case "profession" -> returnAltered(cir.getReturnValue(), UUID_randomTextureSuffix3, hasUpdatableRandomCases3);
+                        case "profession_level" -> returnAltered(cir.getReturnValue(), UUID_randomTextureSuffix4, hasUpdatableRandomCases4);
+                        default -> cir.getReturnValue();
+                    });
 
 
         }
@@ -57,12 +57,12 @@ public abstract class MIX_VillagerClothingFeatureRenderer<T extends LivingEntity
     }
 
 
-    private Identifier returnAltered(Identifier vanillaTexture, HashMap<UUID,Integer> UUID_RandomSuffixMap, HashMap<UUID,Boolean> UUID_HasUpdateables) {
+    private Identifier returnAltered(Identifier vanillaTexture, HashMap<UUID, Integer> UUID_RandomSuffixMap, HashMap<UUID, Boolean> UUID_HasUpdateables) {
         UUID id = villager.getUuid();
         if (ETFConfigData.enableCustomTextures) {
             if (!Texture_OptifineOrTrueRandom.containsKey(vanillaTexture.toString())) {
                 ETF_processNewRandomTextureCandidate(vanillaTexture.toString());
-            }else if (PATH_OptifineOldVanillaETF_0123.containsKey(vanillaTexture.toString())) {
+            } else if (PATH_OptifineOldVanillaETF_0123.containsKey(vanillaTexture.toString())) {
                 if (Texture_OptifineOrTrueRandom.get(vanillaTexture.toString())) {
                     if (!UUID_RandomSuffixMap.containsKey(id)) {
                         ETF_testCases(vanillaTexture.toString(), id, villager, false, UUID_RandomSuffixMap, UUID_HasUpdateables);
@@ -84,7 +84,7 @@ public abstract class MIX_VillagerClothingFeatureRenderer<T extends LivingEntity
                             }
                         }
                     }
-                }else{
+                } else {
                     UUID_HasUpdateables.put(id, false);
                     if (Texture_TotalTrueRandom.get(vanillaTexture.toString()) > 0) {
                         if (!UUID_RandomSuffixMap.containsKey(id)) {

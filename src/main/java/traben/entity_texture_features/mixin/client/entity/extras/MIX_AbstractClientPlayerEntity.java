@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import static traben.entity_texture_features.client.ETF_CLIENT.*;
 
 @Mixin(AbstractClientPlayerEntity.class)
-public abstract class MIX_AbstractClientPlayerEntity  extends PlayerEntity {
+public abstract class MIX_AbstractClientPlayerEntity extends PlayerEntity {
 
     public MIX_AbstractClientPlayerEntity(World world, BlockPos pos, float yaw, GameProfile profile) {
         super(world, pos, yaw, profile);
@@ -25,8 +25,8 @@ public abstract class MIX_AbstractClientPlayerEntity  extends PlayerEntity {
             cancellable = true)
     private void changeCape(CallbackInfoReturnable<Identifier> cir) {
 
-        if (cir.getReturnValue() != null){
-            if(cir.getReturnValue().toString().contains("/cit/")){
+        if (cir.getReturnValue() != null) {
+            if (cir.getReturnValue().toString().contains("/cit/")) {
                 cir.setReturnValue(cir.getReturnValue());
             }
         }
@@ -44,8 +44,8 @@ public abstract class MIX_AbstractClientPlayerEntity  extends PlayerEntity {
                 }
             }
         }
-        if(ETFConfigData.skinFeaturesEnabled && UUID_playerHasCustomCape.containsKey(getUuid())){
-            if(UUID_playerHasCustomCape.get(getUuid())){
+        if (ETFConfigData.skinFeaturesEnabled && UUID_playerHasCustomCape.containsKey(getUuid())) {
+            if (UUID_playerHasCustomCape.get(getUuid())) {
                 cir.setReturnValue(new Identifier(SKIN_NAMESPACE + getUuid() + "_cape.png"));
             }
         }

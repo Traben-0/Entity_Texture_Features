@@ -34,7 +34,7 @@ public abstract class MIX_TridentEntityRenderer implements SynchronousResourceRe
             String path = TridentEntityModel.TEXTURE.toString();
             String name = UUID_TridentName.get(id) != null ? "_" + UUID_TridentName.get(id).toLowerCase().replaceAll("[^a-z0-9/_.-]", "") : "";
             String fileString = UUID_TridentName.get(id) != null ? path.replace(".png", "_" + name + ".png") : path;
-            ETF_GeneralEmissiveRender(matrixStack,vertexConsumerProvider,fileString,this.model);
+            ETF_GeneralEmissiveRender(matrixStack, vertexConsumerProvider, fileString, this.model);
 
 
         }

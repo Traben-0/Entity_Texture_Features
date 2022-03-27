@@ -3,7 +3,7 @@ package traben.entity_texture_features.config;
 public class ETFConfig {
     public boolean allowIllegalTexturePaths = true;
     public boolean enableCustomTextures = true;
-    public int textureUpdateFrequency = 3;
+    public updateFrequency textureUpdateFrequency_V2 = updateFrequency.Fast;
     public boolean restrictUpdateProperties = true;
     public boolean restrictBiome = true;
     public boolean restrictHeight = true;
@@ -14,7 +14,7 @@ public class ETFConfig {
     public boolean enableEmissiveTextures = true;
     public boolean alwaysCheckVanillaEmissiveSuffix = true;
     public boolean doShadersEmissiveFix = false;
-    public enchantedPotionEffectsEnum enchantedPotionEffects = enchantedPotionEffectsEnum.NONE;
+    public enchantedPotionEffectsEnum enchantedPotionEffects = enchantedPotionEffectsEnum.None;
     public boolean skinFeaturesEnabled = true;
     public boolean skinFeaturesEnableTransparency = true;
     public boolean skinFeaturesEnableFullTransparency = false;
@@ -27,10 +27,17 @@ public class ETFConfig {
     public boolean elytraThicknessFix = true;
 
     public enum enchantedPotionEffectsEnum {
-        NONE,
-        ENCHANTED,
-        GLOWING,
-        CREEPER_CHARGE
+        None,
+        Enchanted,
+        Glowing,
+        Creeper_Charge
+    }
+
+    public enum updateFrequency {
+        Never,
+        Slow,
+        Fast,
+        Instant
     }
 
 }

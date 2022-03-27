@@ -27,6 +27,8 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.resource.Resource;
+import net.minecraft.resource.ResourceManager;
+import net.minecraft.resource.ResourcePack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
@@ -49,15 +51,30 @@ import static traben.entity_texture_features.client.ETF_CLIENT.*;
 
 public interface ETF_METHODS {
 
-    default boolean ETF_isExistingFileAndSameResourcepackAs(Identifier id, Identifier vanillaIdToMatch){
-        if(ETF_isExistingFile(id)){
+    //checks if files exists and is in the same or higher resourcepack as id 2
+    default boolean ETF_isExistingFileAndSameOrHigherResourcepackAs(Identifier id, Identifier vanillaIdToMatch) {
+        if (ETF_isExistingFile(id)) {
             try {
-                Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(id);
-                Resource resource2 = MinecraftClient.getInstance().getResourceManager().getResource(vanillaIdToMatch);
-                if (resource.getResourcePackName().equals(resource2.getResourcePackName())){
+                ResourceManager resource = MinecraftClient.getInstance().getResourceManager();
+                String packname = resource.getResource(id).getResourcePackName();
+                String packname2 = resource.getResource(vanillaIdToMatch).getResourcePackName();
+                if (packname.equals(packname2)) {
                     return true;
+                } else {
+                    for (ResourcePack pack :
+                            resource.streamResourcePacks().toList()) {
+                        //loops through all resourcepacks from bottom "default" to top
+                        if (packname.equals(pack.getName())) {
+                            //if first id is reached first it is lower and must be false
+                            return false;
+                        }
+                        if (packname2.equals(pack.getName())) {
+                            //if the second file is reached first it must be lower thus id 1 is higher return true
+                            return true;
+                        }
+                    }
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 //
             }
         }
@@ -69,7 +86,6 @@ public interface ETF_METHODS {
         try {
             Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(id);
             try {
-                //NativeImage.read(resource.getInputStream());
                 resource.getInputStream();
                 resource.close();
                 return true;
@@ -82,12 +98,8 @@ public interface ETF_METHODS {
         }
     }
 
-
-    private boolean ETF_checkPathExist(String path) {
-        return ETF_isExistingFile(new Identifier(path));
-    }
-    private boolean ETF_checkPathExistAndSameResourcepackAs(String path, String path2) {
-        return ETF_isExistingFileAndSameResourcepackAs(new Identifier(path),new Identifier(path2));
+    private boolean ETF_checkPathExistAndSameOrHigherResourcepackAs(String path, String path2) {
+        return ETF_isExistingFileAndSameOrHigherResourcepackAs(new Identifier(path), new Identifier(path2));
     }
 
     default void ETF_resetVisuals() {
@@ -148,7 +160,7 @@ public interface ETF_METHODS {
         mooshroomRedCustomShroom = 0;
         mooshroomBrownCustomShroom = 0;
 
-        ETF_registerNativeImageToIdentifier(ETF_emptyNativeImage(1,1),"etf:blank.png");
+        ETF_registerNativeImageToIdentifier(ETF_emptyNativeImage(1, 1), "etf:blank.png");
     }
 
     default void ETF_resetSingleData(UUID id) {
@@ -159,8 +171,9 @@ public interface ETF_METHODS {
 
 
     }
+
     default Properties ETF_readProperties(String path) {
-        return ETF_readProperties(path,null);
+        return ETF_readProperties(path, null);
     }
 
     default Properties ETF_readProperties(String path, String pathOfTextureToUseForResourcepackCheck) {
@@ -168,11 +181,24 @@ public interface ETF_METHODS {
         try {
             Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(new Identifier(path));
             //skip if needs to be same resourcepack
-            if (pathOfTextureToUseForResourcepackCheck != null){
-                Resource resourceOriginal = MinecraftClient.getInstance().getResourceManager().getResource(new Identifier(pathOfTextureToUseForResourcepackCheck));
-                if (!resource.getResourcePackName().equals(resourceOriginal.getResourcePackName())){
-                    //System.out.println("not same pack "+path+" // "+pathOfTextureToUseForResourcepackCheck);
-                    return null;
+            if (pathOfTextureToUseForResourcepackCheck != null) {
+                ResourceManager resourceManager = MinecraftClient.getInstance().getResourceManager();
+                String packname1 = resource.getResourcePackName();
+                String packname2 = resourceManager.getResource(new Identifier(pathOfTextureToUseForResourcepackCheck)).getResourcePackName();
+                if (!packname1.equals(packname2)) {
+                    //not same pack check it is a higher pack and only continue if packname1 is higher
+                    for (ResourcePack pack :
+                            resourceManager.streamResourcePacks().toList()) {
+                        //loops through all resourcepacks from bottom "default" to top
+                        if (packname1.equals(pack.getName())) {
+                            //if first id is reached first it is lower and must not be used return null
+                            return null;
+                        }
+                        if (packname2.equals(pack.getName())) {
+                            //if the second file is reached first it must be lower thus id 1 is higher so break to continue
+                            break;
+                        }
+                    }
                 }
             }
             try {
@@ -213,25 +239,25 @@ public interface ETF_METHODS {
     default void ETF_processNewRandomTextureCandidate(String vanillaTexturePath) {
         boolean hasProperties = false;
         String properties = "";
-        if (ETF_checkPathExistAndSameResourcepackAs(vanillaTexturePath.replace(".png", ".properties").replace("textures", "etf/random"),vanillaTexturePath.replace(".png", "2.png").replace("textures", "etf/random"))) {
+        if (ETF_checkPathExistAndSameOrHigherResourcepackAs(vanillaTexturePath.replace(".png", ".properties").replace("textures", "etf/random"), vanillaTexturePath.replace(".png", "2.png").replace("textures", "etf/random"))) {
             properties = vanillaTexturePath.replace(".png", ".properties").replace("textures", "etf/random");
             hasProperties = true;
             PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 3);
         } else if (ETF_isExistingFile(new Identifier(vanillaTexturePath.replace(".png", "2.png").replace("textures", "etf/random")))) {
             PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 3);
-        } else if (ETF_checkPathExistAndSameResourcepackAs(vanillaTexturePath.replace(".png", ".properties").replace("textures", "optifine/random"),vanillaTexturePath.replace(".png", "2.png").replace("textures", "optifine/random"))) {
+        } else if (ETF_checkPathExistAndSameOrHigherResourcepackAs(vanillaTexturePath.replace(".png", ".properties").replace("textures", "optifine/random"), vanillaTexturePath.replace(".png", "2.png").replace("textures", "optifine/random"))) {
             properties = vanillaTexturePath.replace(".png", ".properties").replace("textures", "optifine/random");
             hasProperties = true;
             PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 0);
         } else if (ETF_isExistingFile(new Identifier(vanillaTexturePath.replace(".png", "2.png").replace("textures", "optifine/random")))) {
             PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 0);
-        } else if (ETF_checkPathExistAndSameResourcepackAs(vanillaTexturePath.replace(".png", ".properties").replace("textures/entity", "optifine/mob"),vanillaTexturePath.replace(".png", "2.png").replace("textures/entity", "optifine/mob"))) {
+        } else if (ETF_checkPathExistAndSameOrHigherResourcepackAs(vanillaTexturePath.replace(".png", ".properties").replace("textures/entity", "optifine/mob"), vanillaTexturePath.replace(".png", "2.png").replace("textures/entity", "optifine/mob"))) {
             properties = vanillaTexturePath.replace(".png", ".properties").replace("textures/entity", "optifine/mob");
             hasProperties = true;
             PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 1);
         } else if (ETF_isExistingFile(new Identifier(vanillaTexturePath.replace(".png", "2.png").replace("textures/entity", "optifine/mob")))) {
             PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 1);
-        } else if (ETF_checkPathExistAndSameResourcepackAs(vanillaTexturePath.replace(".png", ".properties"),vanillaTexturePath.replace(".png", "2.png"))) {
+        } else if (ETF_checkPathExistAndSameOrHigherResourcepackAs(vanillaTexturePath.replace(".png", ".properties"), vanillaTexturePath.replace(".png", "2.png"))) {
             properties = vanillaTexturePath.replace(".png", ".properties");
             hasProperties = true;
             PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 2);
@@ -251,8 +277,8 @@ public interface ETF_METHODS {
         try {
             ignoreOnePNG.put(vanillaTexturePath, !(ETF_isExistingFile(new Identifier(propertiesPath.replace(".properties", "1.png")))));
 
-            String twoPngPath = ETF_returnOptifineOrVanillaPath(vanillaTexturePath,2,"");
-            Properties props = ETF_readProperties(propertiesPath,twoPngPath);
+            String twoPngPath = ETF_returnOptifineOrVanillaPath(vanillaTexturePath, 2, "");
+            Properties props = ETF_readProperties(propertiesPath, twoPngPath);
 
             if (props != null) {
                 Set<String> propIds = props.stringPropertyNames();
@@ -294,7 +320,7 @@ public interface ETF_METHODS {
                                 skinData) {
                             //check if range
                             data = data.trim();
-                            if(!data.replaceAll("[^0-9]", "").isEmpty()) {
+                            if (!data.replaceAll("[^0-9]", "").isEmpty()) {
                                 if (data.contains("-")) {
                                     suffixNumbers.addAll(Arrays.asList(ETF_getIntRange(data)));
                                 } else {
@@ -311,7 +337,7 @@ public interface ETF_METHODS {
                         for (String s :
                                 weightData) {
                             s = s.trim();
-                            if(!s.replaceAll("[^0-9]", "").isEmpty()) {
+                            if (!s.replaceAll("[^0-9]", "").isEmpty()) {
                                 builder.add(Integer.parseInt(s.replaceAll("[^0-9]", "")));
                             }
                         }
@@ -341,7 +367,7 @@ public interface ETF_METHODS {
                                 heightData) {
                             //check if range
                             data = data.trim();
-                            if(!data.replaceAll("[^0-9]", "").isEmpty()) {
+                            if (!data.replaceAll("[^0-9]", "").isEmpty()) {
                                 if (data.contains("-")) {
                                     heightNumbers.addAll(Arrays.asList(ETF_getIntRange(data)));
                                 } else {
@@ -399,10 +425,10 @@ public interface ETF_METHODS {
                                 moonData) {
                             //check if range
                             data = data.trim();
-                            if(!data.replaceAll("[^0-9]", "").isEmpty()) {
+                            if (!data.replaceAll("[^0-9]", "").isEmpty()) {
                                 if (data.contains("-")) {
                                     moonNumbers.addAll(Arrays.asList(ETF_getIntRange(data)));
-                                } else{
+                                } else {
                                     moonNumbers.add(Integer.parseInt(data.replaceAll("[^0-9]", "")));
                                 }
                             }
@@ -414,7 +440,7 @@ public interface ETF_METHODS {
                     }
                     if (props.containsKey("blocks." + num)) {
                         blocks = props.getProperty("blocks." + num).trim().split("\s+");
-                    }else if (props.containsKey("block." + num)) {
+                    } else if (props.containsKey("block." + num)) {
                         blocks = props.getProperty("block." + num).trim().split("\s+");
                     }
                     if (props.containsKey("teams." + num)) {
@@ -425,7 +451,7 @@ public interface ETF_METHODS {
                             list.add(m.group(1).replace("\"", ""));
                         }
                         teams = list.toArray(new String[0]);
-                    }else if (props.containsKey("team." + num)) {
+                    } else if (props.containsKey("team." + num)) {
                         String teamData = props.getProperty("team." + num).trim();
                         List<String> list = new ArrayList<>();
                         Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(teamData);
@@ -436,7 +462,7 @@ public interface ETF_METHODS {
                     }
 
                     if (suffixes.length != 0) {
-                        allCasesForTexture.add(new randomCase(suffixes, weights, biomes, heights, names, professions, collarColours, baby, weather, health, moon, daytime,blocks,teams));
+                        allCasesForTexture.add(new randomCase(suffixes, weights, biomes, heights, names, professions, collarColours, baby, weather, health, moon, daytime, blocks, teams));
                     }
                 }
                 if (!allCasesForTexture.isEmpty()) {
@@ -451,7 +477,7 @@ public interface ETF_METHODS {
                 PATH_FailedPropertiesToIgnore.add(propertiesPath);
             }
         } catch (Exception e) {
-            ETF_modMessage("Ignoring properties file that caused Exception @ " + propertiesPath+e, false);
+            ETF_modMessage("Ignoring properties file that caused Exception @ " + propertiesPath + e, false);
             PATH_FailedPropertiesToIgnore.add(propertiesPath);
         }
     }
@@ -497,22 +523,23 @@ public interface ETF_METHODS {
     }
 
     default void ETF_testCases(String vanillaPath, UUID id, Entity entity, boolean isUpdate) {
-        ETF_testCases( vanillaPath,  id, entity, isUpdate, UUID_randomTextureSuffix,hasUpdatableRandomCases);
+        ETF_testCases(vanillaPath, id, entity, isUpdate, UUID_randomTextureSuffix, hasUpdatableRandomCases);
     }
-    default void ETF_testCases(String vanillaPath, UUID id, Entity entity, boolean isUpdate, HashMap<UUID,Integer> UUID_RandomSuffixMap, HashMap<UUID,Boolean> UUID_CaseHasUpdateablesCustom) {
+
+    default void ETF_testCases(String vanillaPath, UUID id, Entity entity, boolean isUpdate, HashMap<UUID, Integer> UUID_RandomSuffixMap, HashMap<UUID, Boolean> UUID_CaseHasUpdateablesCustom) {
         for (randomCase test :
                 Texture_OptifineRandomSettingsPerTexture.get(vanillaPath)) {
 
             //skip if its only an update and case is not updatable
-                if (test.testEntity((LivingEntity) entity, UUID_entityAlreadyCalculated.contains(id),UUID_CaseHasUpdateablesCustom)) {
-                    UUID_RandomSuffixMap.put(id, test.getWeightedSuffix(id, ignoreOnePNG.get(vanillaPath)));
-                    Identifier tested = ETF_returnOptifineOrVanillaIdentifier(vanillaPath, UUID_RandomSuffixMap.get(id));
+            if (test.testEntity((LivingEntity) entity, UUID_entityAlreadyCalculated.contains(id), UUID_CaseHasUpdateablesCustom)) {
+                UUID_RandomSuffixMap.put(id, test.getWeightedSuffix(id, ignoreOnePNG.get(vanillaPath)));
+                Identifier tested = ETF_returnOptifineOrVanillaIdentifier(vanillaPath, UUID_RandomSuffixMap.get(id));
 
-                    if (!ETF_isExistingFile(tested) && !isUpdate) {
-                        UUID_RandomSuffixMap.put(id, 0);
-                    }
-                    break;
+                if (!ETF_isExistingFile(tested) && !isUpdate) {
+                    UUID_RandomSuffixMap.put(id, 0);
                 }
+                break;
+            }
         }
         if (!UUID_CaseHasUpdateablesCustom.containsKey(id))
             UUID_CaseHasUpdateablesCustom.put(id, false);
@@ -534,9 +561,9 @@ public interface ETF_METHODS {
     default String ETF_returnOptifineOrVanillaPath(String vanillaPath, int randomId, String emissiveSuffx) {
 
 
-        String append = (randomId == 0 ? "":randomId) + emissiveSuffx + ".png";
+        String append = (randomId == 0 ? "" : randomId) + emissiveSuffx + ".png";
         return switch (PATH_OptifineOldVanillaETF_0123.get(vanillaPath)) {
-            case 0 -> vanillaPath.replace(".png",append ).replace("textures", "optifine/random");
+            case 0 -> vanillaPath.replace(".png", append).replace("textures", "optifine/random");
             case 1 -> vanillaPath.replace(".png", append).replace("textures/entity", "optifine/mob");
             default -> vanillaPath.replace(".png", append);
         };
@@ -545,6 +572,7 @@ public interface ETF_METHODS {
     default Identifier ETF_returnOptifineOrVanillaIdentifier(String vanillaPath, int randomId) {
         return new Identifier(ETF_returnOptifineOrVanillaPath(vanillaPath, randomId, ""));
     }
+
     default Identifier ETF_returnOptifineOrVanillaIdentifier(String vanillaPath) {
         return new Identifier(ETF_returnOptifineOrVanillaPath(vanillaPath, 0, ""));
     }
@@ -611,7 +639,7 @@ public interface ETF_METHODS {
                 checkPath = vanillaPath.replace(".png", (count + ".png")).replace("textures", "optifine/random");
             } else if (PATH_OptifineOldVanillaETF_0123.get(vanillaPath) == 1) {
                 checkPath = vanillaPath.replace(".png", (count + ".png")).replace("textures/entity", "optifine/mob");
-            } else if (PATH_OptifineOldVanillaETF_0123.get(vanillaPath) == 2)  {
+            } else if (PATH_OptifineOldVanillaETF_0123.get(vanillaPath) == 2) {
                 checkPath = vanillaPath.replace(".png", (count + ".png"));
             }
             keepGoing = ETF_isExistingFile(new Identifier(checkPath));
@@ -676,8 +704,8 @@ public interface ETF_METHODS {
                 || player.getScoreboardTeam() == null))
         ) {
             // skip if tried to recently
-            if (UUID_playerLastSkinCheck.containsKey(id)){
-                if(UUID_playerLastSkinCheck.get(id)+6000 > System.currentTimeMillis()){
+            if (UUID_playerLastSkinCheck.containsKey(id)) {
+                if (UUID_playerLastSkinCheck.get(id) + 6000 > System.currentTimeMillis()) {
                     return;
                 }
             }
@@ -690,7 +718,6 @@ public interface ETF_METHODS {
 
     private void ETF_getSkin(PlayerEntity player) {
         UUID id = player.getUuid();
-
 
 
         try {
@@ -711,7 +738,7 @@ public interface ETF_METHODS {
                 if (hasCape) {
                     try {
                         capeurl = ((JsonObject) ((JsonObject) props.get("textures")).get("CAPE")).get("url").getAsString();
-                    }catch(Exception e){
+                    } catch (Exception e) {
                         //modMessage("no cape",false);
                     }
                 }
@@ -785,7 +812,7 @@ public interface ETF_METHODS {
                                 } catch (Exception e) {
                                     read = null;
                                 }
-                                ETF_directFileFromUrlToMethod( read, sendFileToMethodKey);
+                                ETF_directFileFromUrlToMethod(read, sendFileToMethodKey);
                             } else {
                                 NativeImage one = this.ETF_loadTexture(inputStream);
                                 NativeImage two = null;
@@ -839,12 +866,12 @@ public interface ETF_METHODS {
 
     }
 
-    private void ETF_skinFailed(UUID id){
-        UUID_playerLastSkinCheck.put(id,System.currentTimeMillis());
-        if (!UUID_playerLastSkinCheckCount.containsKey(id)){
-            UUID_playerLastSkinCheckCount.put(id,0);
-        }else{
-            UUID_playerLastSkinCheckCount.put(id,UUID_playerLastSkinCheckCount.get(id) + 1);
+    private void ETF_skinFailed(UUID id) {
+        UUID_playerLastSkinCheck.put(id, System.currentTimeMillis());
+        if (!UUID_playerLastSkinCheckCount.containsKey(id)) {
+            UUID_playerLastSkinCheckCount.put(id, 0);
+        } else {
+            UUID_playerLastSkinCheckCount.put(id, UUID_playerLastSkinCheckCount.get(id) + 1);
         }
 
         //modMessage("Player skin {" + name + "} unavailable for feature check. try number "+UUID_playerLastSkinCheckCount.get(id)+". Reason failed = "+(reason+1), false);
@@ -865,12 +892,12 @@ public interface ETF_METHODS {
                 //modMessage("Player skin {" + player.getName().getString() + "} unavailable for feature check", false);
                 ETF_skinFailed(id);
             }
-        }else if (sendFileToMethodKey.equals("THIRD_PARTY_CAPE")) {
+        } else if (sendFileToMethodKey.equals("THIRD_PARTY_CAPE")) {
             if (image != null) {
                 //optifine resizes them for space cause expensive servers I guess
-                if (image.getWidth() % image.getHeight() != 0){
+                if (image.getWidth() % image.getHeight() != 0) {
                     ETF_registerNativeImageToIdentifier(ETF_resizeOptifineImage(image), SKIN_NAMESPACE + id + "_cape.png");
-                }else {
+                } else {
                     ETF_registerNativeImageToIdentifier(image, SKIN_NAMESPACE + id + "_cape.png");
                 }
                 UUID_playerHasCustomCape.put(id, true);
@@ -883,16 +910,16 @@ public interface ETF_METHODS {
         }
     }
 
-    private NativeImage ETF_resizeOptifineImage(NativeImage image){
+    private NativeImage ETF_resizeOptifineImage(NativeImage image) {
         int newWidth = 64;
-        while (newWidth < image.getWidth()){
+        while (newWidth < image.getWidth()) {
             newWidth = newWidth + newWidth;
         }
         int newHeight = newWidth / 2;
-        NativeImage resizedImage = ETF_emptyNativeImage(newWidth,newHeight);
+        NativeImage resizedImage = ETF_emptyNativeImage(newWidth, newHeight);
         for (int x = 0; x < image.getWidth(); x++) {
             for (int y = 0; y < image.getHeight(); y++) {
-                resizedImage.setColor(x,y,image.getColor(x,y));
+                resizedImage.setColor(x, y, image.getColor(x, y));
             }
         }
         return resizedImage;
@@ -1033,7 +1060,7 @@ public interface ETF_METHODS {
                         }
                     } else {//optimized blink
                         int eyeHeightTopDown = choiceBoxChoices[3];
-                        if(eyeHeightTopDown > 8 || eyeHeightTopDown < 1){
+                        if (eyeHeightTopDown > 8 || eyeHeightTopDown < 1) {
                             eyeHeightTopDown = 1;
                         }
                         //optimized 1p high eyes
@@ -1060,10 +1087,10 @@ public interface ETF_METHODS {
 
 
                 }
-                if(!TEXTURE_HasBlink.containsKey(SKIN_NAMESPACE + id + ".png")) {
+                if (!TEXTURE_HasBlink.containsKey(SKIN_NAMESPACE + id + ".png")) {
                     TEXTURE_HasBlink.put(SKIN_NAMESPACE + id + ".png", false);
                 }
-                if(!TEXTURE_HasBlink2.containsKey(SKIN_NAMESPACE + id + ".png")){
+                if (!TEXTURE_HasBlink2.containsKey(SKIN_NAMESPACE + id + ".png")) {
                     TEXTURE_HasBlink2.put(SKIN_NAMESPACE + id + ".png", false);
                 }
 
@@ -1093,8 +1120,8 @@ public interface ETF_METHODS {
                         }
                     }
                 }
-                if (cape != null){
-                        if ((capeChoice1 >= 1 && capeChoice1 <= 3) || capeChoice1 == 666){//custom chosen
+                if (cape != null) {
+                    if ((capeChoice1 >= 1 && capeChoice1 <= 3) || capeChoice1 == 666) {//custom chosen
                         ETF_registerNativeImageToIdentifier(cape, SKIN_NAMESPACE + id + "_cape.png");
                         UUID_playerHasCustomCape.put(id, true);
                     }
@@ -1114,7 +1141,6 @@ public interface ETF_METHODS {
                 //enchanted
                 UUID_playerHasEnchant.put(id, markerChoices.contains(2));
                 if (markerChoices.contains(2)) {
-                    //System.out.println("choice " + (markerChoices.indexOf(2) + 1));
                     int[] boxChosenBounds = ETF_getSkinPixelBounds("marker" + (markerChoices.indexOf(2) + 1));
                     NativeImage check = ETF_returnMatchPixels(skin, boxChosenBounds);
                     if (check != null) {
@@ -1132,8 +1158,8 @@ public interface ETF_METHODS {
                             ETF_registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkCoat, this::ETF_emptyNativeImage), SKIN_NAMESPACE + id + "_coat_enchant.png");
                         }
 
-                       // NativeImage checkCape = returnMatchPixels(skin, boxChosenBounds,cape);
-                       // registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkCape, this::emptyNativeImage), SKIN_NAMESPACE + id + "_cape_enchant.png");
+                        // NativeImage checkCape = returnMatchPixels(skin, boxChosenBounds,cape);
+                        // registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkCape, this::emptyNativeImage), SKIN_NAMESPACE + id + "_cape_enchant.png");
 
                     } else {
                         UUID_playerHasEnchant.put(id, false);
@@ -1160,8 +1186,8 @@ public interface ETF_METHODS {
                             ETF_registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkCoat, this::ETF_emptyNativeImage), SKIN_NAMESPACE + id + "_coat_e.png");
                         }
 
-                      //  NativeImage checkCape = returnMatchPixels(skin, boxChosenBounds,cape);
-                       // registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkCape, this::emptyNativeImage), SKIN_NAMESPACE + id + "_cape_e.png");
+                        //  NativeImage checkCape = returnMatchPixels(skin, boxChosenBounds,cape);
+                        // registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkCape, this::emptyNativeImage), SKIN_NAMESPACE + id + "_cape_e.png");
 
                     } else {
                         UUID_playerHasEmissive.put(id, false);
@@ -1171,7 +1197,7 @@ public interface ETF_METHODS {
 
             } else {
                 UUID_playerHasFeatures.put(id, false);
-               // System.out.println("worked but no features");
+                // System.out.println("worked but no features");
             }
         } else { //http failed
             //UUID_playerHasFeatures.put(id, false);
@@ -1222,37 +1248,36 @@ public interface ETF_METHODS {
     }
 
 
-
-    private NativeImage ETF_returnCustomTexturedCape(NativeImage skin){
-        NativeImage cape = ETF_emptyNativeImage(64,32);
+    private NativeImage ETF_returnCustomTexturedCape(NativeImage skin) {
+        NativeImage cape = ETF_emptyNativeImage(64, 32);
         NativeImage elytra = ETF_getNativeImageFromID(new Identifier("etf:capes/default_elytra.png"));
-        if (elytra == null){
+        if (elytra == null) {
             elytra = ETF_getNativeImageFromID(new Identifier("textures/entity/elytra.png"));
         }//not else
-        if (elytra != null){
+        if (elytra != null) {
             cape.copyFrom(elytra);
         }
-        ETF_copyToPixels(skin,cape, ETF_getSkinPixelBounds("cape1"),1,1);
-        ETF_copyToPixels(skin,cape, ETF_getSkinPixelBounds("cape1"),12,1);
-        ETF_copyToPixels(skin,cape, ETF_getSkinPixelBounds("cape2"),1,5);
-        ETF_copyToPixels(skin,cape, ETF_getSkinPixelBounds("cape2"),12,5);
-        ETF_copyToPixels(skin,cape, ETF_getSkinPixelBounds("cape3"),1,9);
-        ETF_copyToPixels(skin,cape, ETF_getSkinPixelBounds("cape3"),12,9);
-        ETF_copyToPixels(skin,cape, ETF_getSkinPixelBounds("cape4"),1,13);
-        ETF_copyToPixels(skin,cape, ETF_getSkinPixelBounds("cape4"),12,13);
-        ETF_copyToPixels(skin,cape, ETF_getSkinPixelBounds("cape5.1"),9,1);
-        ETF_copyToPixels(skin,cape, ETF_getSkinPixelBounds("cape5.1"),20,1);
-        ETF_copyToPixels(skin,cape, ETF_getSkinPixelBounds("cape5.2"),9,5);
-        ETF_copyToPixels(skin,cape, ETF_getSkinPixelBounds("cape5.2"),20,5);
-        ETF_copyToPixels(skin,cape, ETF_getSkinPixelBounds("cape5.3"),9,9);
-        ETF_copyToPixels(skin,cape, ETF_getSkinPixelBounds("cape5.3"),20,9);
-        ETF_copyToPixels(skin,cape, ETF_getSkinPixelBounds("cape5.4"),9,13);
-        ETF_copyToPixels(skin,cape, ETF_getSkinPixelBounds("cape5.4"),20,13);
+        ETF_copyToPixels(skin, cape, ETF_getSkinPixelBounds("cape1"), 1, 1);
+        ETF_copyToPixels(skin, cape, ETF_getSkinPixelBounds("cape1"), 12, 1);
+        ETF_copyToPixels(skin, cape, ETF_getSkinPixelBounds("cape2"), 1, 5);
+        ETF_copyToPixels(skin, cape, ETF_getSkinPixelBounds("cape2"), 12, 5);
+        ETF_copyToPixels(skin, cape, ETF_getSkinPixelBounds("cape3"), 1, 9);
+        ETF_copyToPixels(skin, cape, ETF_getSkinPixelBounds("cape3"), 12, 9);
+        ETF_copyToPixels(skin, cape, ETF_getSkinPixelBounds("cape4"), 1, 13);
+        ETF_copyToPixels(skin, cape, ETF_getSkinPixelBounds("cape4"), 12, 13);
+        ETF_copyToPixels(skin, cape, ETF_getSkinPixelBounds("cape5.1"), 9, 1);
+        ETF_copyToPixels(skin, cape, ETF_getSkinPixelBounds("cape5.1"), 20, 1);
+        ETF_copyToPixels(skin, cape, ETF_getSkinPixelBounds("cape5.2"), 9, 5);
+        ETF_copyToPixels(skin, cape, ETF_getSkinPixelBounds("cape5.2"), 20, 5);
+        ETF_copyToPixels(skin, cape, ETF_getSkinPixelBounds("cape5.3"), 9, 9);
+        ETF_copyToPixels(skin, cape, ETF_getSkinPixelBounds("cape5.3"), 20, 9);
+        ETF_copyToPixels(skin, cape, ETF_getSkinPixelBounds("cape5.4"), 9, 13);
+        ETF_copyToPixels(skin, cape, ETF_getSkinPixelBounds("cape5.4"), 20, 13);
 
-        ETF_copyToPixels(cape,cape, ETF_getSkinPixelBounds("capeVertL"),0,1);
-        ETF_copyToPixels(cape,cape, ETF_getSkinPixelBounds("capeVertR"),11,1);
-        ETF_copyToPixels(cape,cape, ETF_getSkinPixelBounds("capeHorizL"),1,0);
-        ETF_copyToPixels(cape,cape, ETF_getSkinPixelBounds("capeHorizR"),11,0);
+        ETF_copyToPixels(cape, cape, ETF_getSkinPixelBounds("capeVertL"), 0, 1);
+        ETF_copyToPixels(cape, cape, ETF_getSkinPixelBounds("capeVertR"), 11, 1);
+        ETF_copyToPixels(cape, cape, ETF_getSkinPixelBounds("capeHorizL"), 1, 0);
+        ETF_copyToPixels(cape, cape, ETF_getSkinPixelBounds("capeHorizR"), 11, 0);
 
         return cape;
     }
@@ -1366,7 +1391,7 @@ public interface ETF_METHODS {
 
     @Nullable
     private NativeImage ETF_returnMatchPixels(NativeImage baseSkin, int[] boundsToCheck) {
-        return  ETF_returnMatchPixels( baseSkin, boundsToCheck, null);
+        return ETF_returnMatchPixels(baseSkin, boundsToCheck, null);
     }
 
     @Nullable
@@ -1386,9 +1411,9 @@ public interface ETF_METHODS {
             return null;
         } else {
             NativeImage texture = !secondImage ? new NativeImage(64, 64, false) : new NativeImage(64, 32, false);
-            if (!secondImage){
+            if (!secondImage) {
                 texture.copyFrom(baseSkin);
-            }else{
+            } else {
                 texture.copyFrom(second);
             }
             for (int x = 0; x < texture.getWidth(); x++) {
@@ -1402,19 +1427,19 @@ public interface ETF_METHODS {
         }
 
     }
+
     default Identifier ETF_returnBlinkIdOrGiven(LivingEntity entity, String givenTexturePath, UUID id) {
         return ETF_returnBlinkIdOrGiven(entity, givenTexturePath, id, false);
     }
-
 
 
     default Identifier ETF_returnBlinkIdOrGiven(LivingEntity entity, String givenTexturePath, UUID id, boolean isPlayer) {
         if (ETFConfigData.enableBlinking) {
             if (!TEXTURE_HasBlink.containsKey(givenTexturePath)) {
                 //check for blink textures
-                TEXTURE_HasBlink.put(givenTexturePath, ETF_isExistingFileAndSameResourcepackAs(new Identifier(givenTexturePath.replace(".png", "_blink.png")),new Identifier(givenTexturePath)));
-                TEXTURE_HasBlink2.put(givenTexturePath, ETF_isExistingFileAndSameResourcepackAs(new Identifier(givenTexturePath.replace(".png", "_blink2.png")),new Identifier(givenTexturePath)));
-                TEXTURE_BlinkProps.put(givenTexturePath, ETF_readProperties(givenTexturePath.replace(".png", "_blink.properties"),givenTexturePath));
+                TEXTURE_HasBlink.put(givenTexturePath, ETF_isExistingFileAndSameOrHigherResourcepackAs(new Identifier(givenTexturePath.replace(".png", "_blink.png")), new Identifier(givenTexturePath)));
+                TEXTURE_HasBlink2.put(givenTexturePath, ETF_isExistingFileAndSameOrHigherResourcepackAs(new Identifier(givenTexturePath.replace(".png", "_blink2.png")), new Identifier(givenTexturePath)));
+                TEXTURE_BlinkProps.put(givenTexturePath, ETF_readProperties(givenTexturePath.replace(".png", "_blink.properties"), givenTexturePath));
 
             }
             TEXTURE_BlinkProps.putIfAbsent(givenTexturePath, null);
@@ -1427,10 +1452,10 @@ public interface ETF_METHODS {
                     }
                     //force eyes closed if blinded
                     else if (entity.hasStatusEffect(StatusEffects.BLINDNESS)) {
-                        if(TEXTURE_HasBlink2.containsKey(givenTexturePath)) {
+                        if (TEXTURE_HasBlink2.containsKey(givenTexturePath)) {
                             return new Identifier(givenTexturePath.replace(".png", (TEXTURE_HasBlink2.get(givenTexturePath) ? "_blink2.png" : "_blink.png")));
-                        }else{
-                            return new Identifier(givenTexturePath.replace(".png",  "_blink.png"));
+                        } else {
+                            return new Identifier(givenTexturePath.replace(".png", "_blink.png"));
                         }
                     } else {
                         //do regular blinking
@@ -1450,21 +1475,21 @@ public interface ETF_METHODS {
                         }
 
 
-                       // long timer = entity.world.getTime() % blinkFrequency;
+                        // long timer = entity.world.getTime() % blinkFrequency;
                         //int blinkTimeVariedByUUID = Math.abs(id.hashCode()) % blinkFrequency;
                         //make blink timer not overlap the wrap around to 0
                         //if (blinkTimeVariedByUUID < blinkLength) blinkTimeVariedByUUID = blinkLength;
                         //if (blinkTimeVariedByUUID > blinkFrequency - blinkLength)
-                          //  blinkTimeVariedByUUID = blinkFrequency - blinkLength;
+                        //  blinkTimeVariedByUUID = blinkFrequency - blinkLength;
 
-                        if (!UUID_NextBlinkTime.containsKey(id)){
-                            UUID_NextBlinkTime.put(id,entity.world.getTime() + blinkLength + 1);
+                        if (!UUID_NextBlinkTime.containsKey(id)) {
+                            UUID_NextBlinkTime.put(id, entity.world.getTime() + blinkLength + 1);
                         }
                         long nextBlink = UUID_NextBlinkTime.get(id);
                         long currentTime = entity.world.getTime();
 
                         if (currentTime >= nextBlink - blinkLength && currentTime <= nextBlink + blinkLength) {
-                            if(TEXTURE_HasBlink2.containsKey(givenTexturePath)) {
+                            if (TEXTURE_HasBlink2.containsKey(givenTexturePath)) {
                                 if (TEXTURE_HasBlink2.get(givenTexturePath)) {
                                     if (currentTime >= nextBlink - (blinkLength / 3) && currentTime <= nextBlink + (blinkLength / 3)) {
                                         return new Identifier(givenTexturePath.replace(".png", "_blink.png"));
@@ -1475,42 +1500,42 @@ public interface ETF_METHODS {
                             if (!(currentTime > nextBlink)) {
                                 return new Identifier(givenTexturePath.replace(".png", "_blink.png"));
                             }
-                        }else if(currentTime > nextBlink + blinkLength){
+                        } else if (currentTime > nextBlink + blinkLength) {
                             //calculate new next blink
-                            UUID_NextBlinkTime.put(id,currentTime + entity.getRandom().nextInt(blinkFrequency)+20);
+                            UUID_NextBlinkTime.put(id, currentTime + entity.getRandom().nextInt(blinkFrequency) + 20);
                         }
                     }
                 }
             }
         }
 
-        if(isPlayer && ETFConfigData.skinFeaturesEnabled
-                        && UUID_playerTransparentSkinId.containsKey(id) && (ETFConfigData.enableEnemyTeamPlayersSkinFeatures
-                        || (entity.isTeammate(MinecraftClient.getInstance().player) || entity.getScoreboardTeam() == null))){
-                Identifier ident = UUID_playerTransparentSkinId.get(id);
-                if(ident != null){
-                    return ident;
-                }
+        if (isPlayer && ETFConfigData.skinFeaturesEnabled
+                && UUID_playerTransparentSkinId.containsKey(id) && (ETFConfigData.enableEnemyTeamPlayersSkinFeatures
+                || (entity.isTeammate(MinecraftClient.getInstance().player) || entity.getScoreboardTeam() == null))) {
+            Identifier ident = UUID_playerTransparentSkinId.get(id);
+            if (ident != null) {
+                return ident;
+            }
         }
         return new Identifier(givenTexturePath);
     }
 
     //assume random texture is fully calculated and applied already for UUID
     //no update logic as that will be kept to living entity renderer to reset only once per UUID
-    default Identifier ETF_GeneralReturnAlteredTexture( Identifier texture, Entity entity){
+    default Identifier ETF_GeneralReturnAlteredTexture(Identifier texture, Entity entity) {
         if (entity == null) return texture;
         UUID id = entity.getUuid();
         if (ETFConfigData.enableCustomTextures) {
             if (UUID_randomTextureSuffix.containsKey(id)) {
                 if (UUID_randomTextureSuffix.get(id) != 0) {
-                    return ETF_returnBlinkIdOrGiven((LivingEntity) entity, ETF_returnOptifineOrVanillaIdentifier(texture.toString(), UUID_randomTextureSuffix.get(id)).toString(),id);
-                }else{
-                    if (!TEXTURE_HasOptifineDefaultReplacement.containsKey(texture.toString())){
+                    return ETF_returnBlinkIdOrGiven((LivingEntity) entity, ETF_returnOptifineOrVanillaIdentifier(texture.toString(), UUID_randomTextureSuffix.get(id)).toString(), id);
+                } else {
+                    if (!TEXTURE_HasOptifineDefaultReplacement.containsKey(texture.toString())) {
                         TEXTURE_HasOptifineDefaultReplacement.put(texture.toString(), ETF_isExistingFile(ETF_returnOptifineOrVanillaIdentifier(texture.toString())));
                     }
-                    if (TEXTURE_HasOptifineDefaultReplacement.get(texture.toString())){
+                    if (TEXTURE_HasOptifineDefaultReplacement.get(texture.toString())) {
                         return ETF_returnBlinkIdOrGiven((LivingEntity) entity, ETF_returnOptifineOrVanillaIdentifier(texture.toString()).toString(), id);
-                    }else{
+                    } else {
                         return ETF_returnBlinkIdOrGiven((LivingEntity) entity, texture.toString(), id);
                     }
                 }
@@ -1518,12 +1543,13 @@ public interface ETF_METHODS {
         }
         return ETF_returnBlinkIdOrGiven((LivingEntity) entity, texture.toString(), id);
     }
-    default void ETF_GeneralEmissiveRender(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, String texturePath, Model model){
-        ETF_GeneralEmissiveRender(matrixStack, vertexConsumerProvider, new Identifier(texturePath),  model);
+
+    default void ETF_GeneralEmissiveRender(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, String texturePath, Model model) {
+        ETF_GeneralEmissiveRender(matrixStack, vertexConsumerProvider, new Identifier(texturePath), model);
     }
 
     //will set and render emissive texture for any texture and model
-    default void ETF_GeneralEmissiveRender(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, Identifier texture, Model model){
+    default void ETF_GeneralEmissiveRender(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, Identifier texture, Model model) {
         if (ETFConfigData.enableEmissiveTextures) {
             String fileString = texture.toString();
             if (!Texture_Emissive.containsKey(fileString)) {

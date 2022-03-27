@@ -46,19 +46,19 @@ public abstract class MIX_EyesFeatureRenderer<T extends Entity, M extends Entity
     }
 
 
-    private Identifier getAlteredEyesTexture(LivingEntity entity){
+    private Identifier getAlteredEyesTexture(LivingEntity entity) {
         String path = "";
-        if(entity instanceof EndermanEntity){
+        if (entity instanceof EndermanEntity) {
             path = "textures/entity/enderman/enderman_eyes.png";
-        }else if(entity instanceof SpiderEntity){
+        } else if (entity instanceof SpiderEntity) {
             path = "textures/entity/spider_eyes.png";
-        }else if(entity instanceof PhantomEntity){
+        } else if (entity instanceof PhantomEntity) {
             path = "textures/entity/phantom_eyes.png";
         }
         Identifier vanilla = new Identifier(path);
         UUID id = entity.getUuid();
 
-            try {
+        try {
             if (!Texture_OptifineOrTrueRandom.containsKey(path)) {
                 ETF_processNewRandomTextureCandidate(path);
             }
@@ -77,7 +77,7 @@ public abstract class MIX_EyesFeatureRenderer<T extends Entity, M extends Entity
                                     //if (UUID_randomTextureSuffix.containsKey(id)) {
                                     int hold = UUID_randomTextureSuffix2.get(id);
                                     ETF_resetSingleData(id);
-                                    ETF_testCases(path, id, entity, true,UUID_randomTextureSuffix2,hasUpdatableRandomCases2);
+                                    ETF_testCases(path, id, entity, true, UUID_randomTextureSuffix2, hasUpdatableRandomCases2);
                                     //if didnt change keep the same
                                     if (!UUID_randomTextureSuffix2.containsKey(id)) {
                                         UUID_randomTextureSuffix2.put(id, hold);
@@ -96,7 +96,7 @@ public abstract class MIX_EyesFeatureRenderer<T extends Entity, M extends Entity
                 if (Texture_OptifineOrTrueRandom.get(path)) {//optifine random
                     //if it doesn't have a random already assign one
                     if (!UUID_randomTextureSuffix2.containsKey(id)) {
-                        ETF_testCases(path, id, entity, false,UUID_randomTextureSuffix2,hasUpdatableRandomCases2);
+                        ETF_testCases(path, id, entity, false, UUID_randomTextureSuffix2, hasUpdatableRandomCases2);
                         //if all failed set to vanilla
                         if (!UUID_randomTextureSuffix2.containsKey(id)) {
                             UUID_randomTextureSuffix2.put(id, 0);
@@ -105,12 +105,12 @@ public abstract class MIX_EyesFeatureRenderer<T extends Entity, M extends Entity
                     }
                     // System.out.println("suffix was ="+UUID_randomTextureSuffix.get(id));
                     if (UUID_randomTextureSuffix2.get(id) == 0) {
-                        if (!TEXTURE_HasOptifineDefaultReplacement.containsKey(vanilla.toString())){
+                        if (!TEXTURE_HasOptifineDefaultReplacement.containsKey(vanilla.toString())) {
                             TEXTURE_HasOptifineDefaultReplacement.put(vanilla.toString(), ETF_isExistingFile(ETF_returnOptifineOrVanillaIdentifier(path)));
                         }
-                        if (TEXTURE_HasOptifineDefaultReplacement.get(vanilla.toString())){
+                        if (TEXTURE_HasOptifineDefaultReplacement.get(vanilla.toString())) {
                             return ETF_returnBlinkIdOrGiven(entity, ETF_returnOptifineOrVanillaIdentifier(path).toString(), id);
-                        }else{
+                        } else {
                             return ETF_returnBlinkIdOrGiven(entity, vanilla.toString(), id);
                         }
 

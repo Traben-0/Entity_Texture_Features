@@ -13,7 +13,7 @@ import net.minecraft.util.Identifier;
 import java.util.function.Function;
 
 @Environment(EnvType.CLIENT)
-public class customPlayerFeatureModel<T extends LivingEntity>  extends EntityModel<T> {
+public class customPlayerFeatureModel<T extends LivingEntity> extends EntityModel<T> {
     public final ModelPart nose;
     public final ModelPart jacket;
     public final ModelPart fatJacket;
@@ -27,10 +27,10 @@ public class customPlayerFeatureModel<T extends LivingEntity>  extends EntityMod
     public customPlayerFeatureModel(Function<Identifier, RenderLayer> renderLayerFactory) {
         super(renderLayerFactory);
 
-        ModelPartData data =  getModelData(new Dilation(0)).getRoot();
-        this.jacket = data.getChild("jacket").createPart(64,64);
-        this.fatJacket = data.getChild("fatJacket").createPart(64,64);
-        this.nose = data.getChild("nose").createPart(64,64); //23   15
+        ModelPartData data = getModelData(new Dilation(0)).getRoot();
+        this.jacket = data.getChild("jacket").createPart(64, 64);
+        this.fatJacket = data.getChild("fatJacket").createPart(64, 64);
+        this.nose = data.getChild("nose").createPart(64, 64); //23   15
     }
 
     @Override

@@ -34,7 +34,8 @@ public abstract class MIX_ArmorFeatureRenderer<T extends LivingEntity, M extends
 
 
     @Final
-    @Shadow private static Map<String, Identifier> ARMOR_TEXTURE_CACHE;
+    @Shadow
+    private static Map<String, Identifier> ARMOR_TEXTURE_CACHE;
 
 
     @Inject(method = "renderArmorParts",
@@ -45,20 +46,20 @@ public abstract class MIX_ArmorFeatureRenderer<T extends LivingEntity, M extends
 
             String fileString = getArmorTexture(item, legs, overlay).toString();
 
-            if (!Texture_Emissive.containsKey(fileString)){
-                 //creates and sets emissive for texture if it exists
-                    Identifier fileName_e;
-                    for (String suffix1 :
-                            emissiveSuffix) {
-                        fileName_e = new Identifier(fileString.replace(".png", suffix1 + ".png"));
-                        if (ETF_isExistingFile(fileName_e)) {
-                            Texture_Emissive.put(fileString, fileName_e);
-                            break;
-                        }
+            if (!Texture_Emissive.containsKey(fileString)) {
+                //creates and sets emissive for texture if it exists
+                Identifier fileName_e;
+                for (String suffix1 :
+                        emissiveSuffix) {
+                    fileName_e = new Identifier(fileString.replace(".png", suffix1 + ".png"));
+                    if (ETF_isExistingFile(fileName_e)) {
+                        Texture_Emissive.put(fileString, fileName_e);
+                        break;
                     }
-                    if (!Texture_Emissive.containsKey(fileString)) {
-                        Texture_Emissive.put(fileString, null);
-                    }
+                }
+                if (!Texture_Emissive.containsKey(fileString)) {
+                    Texture_Emissive.put(fileString, null);
+                }
             }
             if (Texture_Emissive.containsKey(fileString)) {
                 if (Texture_Emissive.get(fileString) != null) {
@@ -80,7 +81,7 @@ public abstract class MIX_ArmorFeatureRenderer<T extends LivingEntity, M extends
     private Identifier getArmorTexture(ArmorItem item, boolean legs, @Nullable String overlay) {
         String var10000 = item.getMaterial().getName();
         String string = "textures/models/armor/" + var10000 + "_layer_" + (legs ? 2 : 1) + (overlay == null ? "" : "_" + overlay) + ".png";
-        return (Identifier)ARMOR_TEXTURE_CACHE.computeIfAbsent(string, Identifier::new);
+        return ARMOR_TEXTURE_CACHE.computeIfAbsent(string, Identifier::new);
     }
 
 }

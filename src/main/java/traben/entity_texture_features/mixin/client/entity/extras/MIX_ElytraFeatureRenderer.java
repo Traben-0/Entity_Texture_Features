@@ -45,10 +45,10 @@ public abstract class MIX_ElytraFeatureRenderer<T extends LivingEntity, M extend
             Identifier identifier;
             if (livingEntity instanceof AbstractClientPlayerEntity abstractClientPlayerEntity) {
                 if (abstractClientPlayerEntity.canRenderElytraTexture() && abstractClientPlayerEntity.getElytraTexture() != null) {
-                   identifier = abstractClientPlayerEntity.getElytraTexture();
+                    identifier = abstractClientPlayerEntity.getElytraTexture();
 
                 } else if (abstractClientPlayerEntity.canRenderCapeTexture() && abstractClientPlayerEntity.getCapeTexture() != null && abstractClientPlayerEntity.isPartVisible(PlayerModelPart.CAPE)) {
-                   identifier = abstractClientPlayerEntity.getCapeTexture();
+                    identifier = abstractClientPlayerEntity.getCapeTexture();
 
                 } else {
                     identifier = SKIN;
@@ -57,7 +57,7 @@ public abstract class MIX_ElytraFeatureRenderer<T extends LivingEntity, M extend
                 identifier = SKIN;
             }
 
-            ETF_GeneralEmissiveRender(matrixStack,vertexConsumerProvider,identifier,elytra);
+            ETF_GeneralEmissiveRender(matrixStack, vertexConsumerProvider, identifier, elytra);
         }
     }
 }

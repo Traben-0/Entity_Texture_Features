@@ -28,7 +28,6 @@ public class randomCase implements ETF_METHODS {
     //whether case should be ignored by updates
 
 
-
     randomCase(Integer[] suffixesX,
                Integer[] weightsX,
                String[] biomesX,
@@ -45,21 +44,21 @@ public class randomCase implements ETF_METHODS {
                String[] teamsX
     ) {
 
-        biomes          = biomesX != null       ? biomesX       : new String[0];
-        heights         = heightsX != null      ? heightsX      : new Integer[0];
-        names           = namesX != null        ? namesX        : new String[0];
-        professions     = professionsX != null  ? professionsX  : new String[0];
-        collarColours   = collarColoursX != null? collarColoursX: new String[0];
-        baby            = baby012;
-        weather         = weather0123;
-        health          = healthX != null       ? healthX       : new String[0];
-        moon            = moonX != null         ? moonX         : new Integer[0];
-        daytime         = daytimeX != null      ? daytimeX      : new String[0];
-        blocks          = blocksX != null       ? blocksX       : new String[0];
-        teams           = teamsX != null        ? teamsX        : new String[0];
+        biomes = biomesX != null ? biomesX : new String[0];
+        heights = heightsX != null ? heightsX : new Integer[0];
+        names = namesX != null ? namesX : new String[0];
+        professions = professionsX != null ? professionsX : new String[0];
+        collarColours = collarColoursX != null ? collarColoursX : new String[0];
+        baby = baby012;
+        weather = weather0123;
+        health = healthX != null ? healthX : new String[0];
+        moon = moonX != null ? moonX : new Integer[0];
+        daytime = daytimeX != null ? daytimeX : new String[0];
+        blocks = blocksX != null ? blocksX : new String[0];
+        teams = teamsX != null ? teamsX : new String[0];
 
 
-        if (weightsX == null){
+        if (weightsX == null) {
             weightsX = new Integer[0];
         }
 
@@ -98,11 +97,11 @@ public class randomCase implements ETF_METHODS {
     }
 
     public boolean testEntity(LivingEntity entity, boolean onlyUpdatables) {
-        return testEntity(entity,onlyUpdatables,hasUpdatableRandomCases);
+        return testEntity(entity, onlyUpdatables, hasUpdatableRandomCases);
     }
 
 
-    public boolean testEntity(LivingEntity entity, boolean isUpdate, HashMap<UUID,Boolean> UUID_CaseHasUpdateablesCustom) {
+    public boolean testEntity(LivingEntity entity, boolean isUpdate, HashMap<UUID, Boolean> UUID_CaseHasUpdateablesCustom) {
         if (biomes.length == 0
                 && names.length == 0
                 && heights.length == 0
@@ -119,49 +118,49 @@ public class randomCase implements ETF_METHODS {
             return true;
         }
 
-        if(!ETFConfigData.restrictUpdateProperties){
+        if (!ETFConfigData.restrictUpdateProperties) {
             isUpdate = false;
         }
 
-        if (!UUID_OriginalNonUpdatePropertyStrings.containsKey(entity.getUuid())){
-            UUID_OriginalNonUpdatePropertyStrings.put(entity.getUuid(),getNonUpdateables(entity));
+        if (!UUID_OriginalNonUpdatePropertyStrings.containsKey(entity.getUuid())) {
+            UUID_OriginalNonUpdatePropertyStrings.put(entity.getUuid(), getNonUpdateables(entity));
         }
 
         boolean wasTestedByUpdateable = false;
         boolean allBoolean = true;
-        if ( biomes.length > 0) {
-                //String entityBiome = entity.world.getBiome(entity.getBlockPos()).getCategory().getName();//has no caps// desert
-                //1.18.1 old mapping String entityBiome = Objects.requireNonNull(entity.world.getRegistryManager().get(Registry.BIOME_KEY).getId(entity.world.getBiome(entity.getBlockPos()))).toString();
-                //not an exact grabbing of the name but it works for the contains check so no need for more processing
-                //example "Reference{ResourceKey[minecraft:worldgen/biome / minecraft:river]=net.minecraft.class_1959@373fe79a}"
-                //String entityBiome = entity.world.getBiome(entity.getBlockPos()).toString();
+        if (biomes.length > 0) {
+            //String entityBiome = entity.world.getBiome(entity.getBlockPos()).getCategory().getName();//has no caps// desert
+            //1.18.1 old mapping String entityBiome = Objects.requireNonNull(entity.world.getRegistryManager().get(Registry.BIOME_KEY).getId(entity.world.getBiome(entity.getBlockPos()))).toString();
+            //not an exact grabbing of the name but it works for the contains check so no need for more processing
+            //example "Reference{ResourceKey[minecraft:worldgen/biome / minecraft:river]=net.minecraft.class_1959@373fe79a}"
+            //String entityBiome = entity.world.getBiome(entity.getBlockPos()).toString();
             //example  "Optional[minecraft:worldgen/biome / minecraft:river]"
             String entityBiome;
-            if (isUpdate && ETFConfigData.restrictBiome){
+            if (isUpdate && ETFConfigData.restrictBiome) {
                 entityBiome = UUID_OriginalNonUpdatePropertyStrings.get(entity.getUuid())[0].trim();
-            }else if (MinecraftVersion.CURRENT.getName().equals("1.18") || MinecraftVersion.CURRENT.getName().equals("1.18.1")){
-                entityBiome = traben.entity_texture_features.client.ETF_1_18_1_versionPatch.getBiome(entity.world,entity.getBlockPos());
-            }else{
-                entityBiome = ETF_1_18_2_versionPatch.getBiome(entity.world,entity.getBlockPos());
+            } else if (MinecraftVersion.CURRENT.getName().equals("1.18") || MinecraftVersion.CURRENT.getName().equals("1.18.1")) {
+                entityBiome = traben.entity_texture_features.client.ETF_1_18_1_versionPatch.getBiome(entity.world, entity.getBlockPos());
+            } else {
+                entityBiome = ETF_1_18_2_versionPatch.getBiome(entity.world, entity.getBlockPos());
             }
 
             //System.out.println("biome="+entityBiome);
-                boolean check = false;
+            boolean check = false;
 
-                    for (String str :
-                            biomes) {
-                        //System.out.println("biometest="+str);
-                        if (entityBiome.replace("minecraft:","").equals(str.trim().toLowerCase().replace("minecraft:",""))) {
-                            check = true;
-                            break;
-                        }
-                    }
+            for (String str :
+                    biomes) {
+                //System.out.println("biometest="+str);
+                if (entityBiome.replace("minecraft:", "").equals(str.trim().toLowerCase().replace("minecraft:", ""))) {
+                    check = true;
+                    break;
+                }
+            }
 
-                allBoolean = check;
+            allBoolean = check;
         }
         if (allBoolean && names.length > 0) {
             wasTestedByUpdateable = true;
-            if (entity.hasCustomName() ) {
+            if (entity.hasCustomName()) {
                 String entityName = Objects.requireNonNull(entity.getCustomName()).getString();
 
                 boolean check = false;
@@ -222,7 +221,7 @@ public class randomCase implements ETF_METHODS {
         }
         if (allBoolean && heights.length > 0) {
             int entityHeight = entity.getBlockY();
-            if (isUpdate && ETFConfigData.restrictHeight){
+            if (isUpdate && ETFConfigData.restrictHeight) {
                 entityHeight = Integer.parseInt(UUID_OriginalNonUpdatePropertyStrings.get(entity.getUuid())[1].trim());
             }
             boolean check = false;
@@ -298,7 +297,7 @@ public class randomCase implements ETF_METHODS {
         if (allBoolean && weather != 0) {
             boolean raining = entity.world.isRaining();
             boolean thundering = entity.world.isThundering();
-            if (isUpdate && ETFConfigData.restrictWeather){
+            if (isUpdate && ETFConfigData.restrictWeather) {
                 String[] data = UUID_OriginalNonUpdatePropertyStrings.get(entity.getUuid())[3].split("-");
                 raining = data[0].trim().equals("1");
                 thundering = data[1].trim().equals("1");
@@ -340,7 +339,7 @@ public class randomCase implements ETF_METHODS {
         }
         if (allBoolean && moon.length > 0) {
             int moonPhase = entity.world.getMoonPhase();
-            if (isUpdate && ETFConfigData.restrictMoonPhase){
+            if (isUpdate && ETFConfigData.restrictMoonPhase) {
                 moonPhase = Integer.parseInt(UUID_OriginalNonUpdatePropertyStrings.get(entity.getUuid())[5].trim());
             }
             boolean check = false;
@@ -356,7 +355,7 @@ public class randomCase implements ETF_METHODS {
         if (allBoolean && daytime.length > 0) {
             long time = entity.world.getTimeOfDay();
             boolean check = false;
-            if (isUpdate && ETFConfigData.restrictDayTime){
+            if (isUpdate && ETFConfigData.restrictDayTime) {
                 time = Long.parseLong(UUID_OriginalNonUpdatePropertyStrings.get(entity.getUuid())[4].trim());
             }
             for (String rangeOfTime :
@@ -380,28 +379,28 @@ public class randomCase implements ETF_METHODS {
         }
         if (allBoolean && blocks.length > 0) {
             String entityOnBlock = entity.world.getBlockState(entity.getBlockPos().down()).toString()
-                    .replaceFirst("minecraft:","")
-                    .replaceFirst("Block\\{","")
-                    .replaceFirst("}","");
-            if (isUpdate && ETFConfigData.restrictBlock){
+                    .replaceFirst("minecraft:", "")
+                    .replaceFirst("Block\\{", "")
+                    .replaceFirst("}", "");
+            if (isUpdate && ETFConfigData.restrictBlock) {
                 entityOnBlock = UUID_OriginalNonUpdatePropertyStrings.get(entity.getUuid())[2].trim();
             }
 
-           boolean check = false;
+            boolean check = false;
             for (String block :
                     blocks) {
                 block = block.trim();
-                if (block.startsWith("!")){
-                    block = block.replaceFirst("!","");
-                    if (!block.replace("minecraft:","").equalsIgnoreCase(entityOnBlock)) {
+                if (block.startsWith("!")) {
+                    block = block.replaceFirst("!", "");
+                    if (!block.replace("minecraft:", "").equalsIgnoreCase(entityOnBlock)) {
                         //can continue to check cases
                         check = true;
-                    }else{
+                    } else {
                         //will prevent future checking
                         check = false;
                         break;
                     }
-                }else if (block.replace("minecraft:","").equalsIgnoreCase(entityOnBlock)) {
+                } else if (block.replace("minecraft:", "").equalsIgnoreCase(entityOnBlock)) {
                     check = true;
                     break;
                 }
@@ -410,7 +409,7 @@ public class randomCase implements ETF_METHODS {
         }
         if (allBoolean && teams.length > 0) {
             wasTestedByUpdateable = true;
-            if (entity.getScoreboardTeam() != null ) {
+            if (entity.getScoreboardTeam() != null) {
                 String teamName = entity.getScoreboardTeam().getName();
 
                 boolean check = false;
@@ -435,7 +434,7 @@ public class randomCase implements ETF_METHODS {
         }
 
 
-        if (wasTestedByUpdateable ) {
+        if (wasTestedByUpdateable) {
             UUID_CaseHasUpdateablesCustom.put(entity.getUuid(), true);
         }
         return allBoolean;
@@ -448,14 +447,14 @@ public class randomCase implements ETF_METHODS {
 
         randomReliable = weightedSuffixes[randomReliable];
 
-        if (randomReliable == 1 && ignoreOne){
+        if (randomReliable == 1 && ignoreOne) {
             randomReliable = 0;
         }
 
         return randomReliable;
     }
 
-    private String[] getNonUpdateables(LivingEntity entity){
+    private String[] getNonUpdateables(LivingEntity entity) {
         //must be 6 length
         // 0 biome
         // 1 height
@@ -464,17 +463,17 @@ public class randomCase implements ETF_METHODS {
         // 4 daytime
         // 5 moonphase
         String biome;
-        if (MinecraftVersion.CURRENT.getName().equals("1.18") || MinecraftVersion.CURRENT.getName().equals("1.18.1")){
-            biome = traben.entity_texture_features.client.ETF_1_18_1_versionPatch.getBiome(entity.world,entity.getBlockPos());
-        }else{
-            biome = ETF_1_18_2_versionPatch.getBiome(entity.world,entity.getBlockPos());
+        if (MinecraftVersion.CURRENT.getName().equals("1.18") || MinecraftVersion.CURRENT.getName().equals("1.18.1")) {
+            biome = traben.entity_texture_features.client.ETF_1_18_1_versionPatch.getBiome(entity.world, entity.getBlockPos());
+        } else {
+            biome = ETF_1_18_2_versionPatch.getBiome(entity.world, entity.getBlockPos());
         }
         String height = "" + entity.getBlockY();
         String block = entity.world.getBlockState(entity.getBlockPos().down()).toString()
-                .replaceFirst("minecraft:","")
-                .replaceFirst("Block\\{","")
-                .replaceFirst("}","");
-        String weather = (entity.world.isRaining()?"1":"0") + "-" + (entity.world.isThundering()?"1":"0");
+                .replaceFirst("minecraft:", "")
+                .replaceFirst("Block\\{", "")
+                .replaceFirst("}", "");
+        String weather = (entity.world.isRaining() ? "1" : "0") + "-" + (entity.world.isThundering() ? "1" : "0");
         String time = "" + entity.world.getTimeOfDay();
         String moon = "" + entity.world.getMoonPhase();
         return new String[]{biome, height, block, weather, time, moon};

@@ -28,21 +28,22 @@ public abstract class MIX_ShulkerHeadFeatureRenderer extends FeatureRenderer<Shu
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/ModelPart;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;II)V",
                     shift = At.Shift.AFTER))
     private void applyRenderFeatures(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, ShulkerEntity shulkerEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
-            ETF_GeneralEmissiveRender(matrixStack,vertexConsumerProvider,returnAlteredTexture(ShulkerEntityRenderer.getTexture(shulkerEntity.getColor())),((ShulkerEntityModel)this.getContextModel()));
+        ETF_GeneralEmissiveRender(matrixStack, vertexConsumerProvider, returnAlteredTexture(ShulkerEntityRenderer.getTexture(shulkerEntity.getColor())), (this.getContextModel()));
     }
 
     @Inject(
             method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/mob/ShulkerEntity;FFFFFF)V",
             at = @At(value = "HEAD"))
-    private void getEntity(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, ShulkerEntity shulkerEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci){
+    private void getEntity(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, ShulkerEntity shulkerEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
         shulker = shulkerEntity;
     }
+
     ShulkerEntity shulker = null;
 
     @ModifyArg(
             method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/mob/ShulkerEntity;FFFFFF)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/RenderLayer;getEntitySolid(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;"))
     private Identifier returnAlteredTexture(Identifier texture) {
-        return ETF_GeneralReturnAlteredTexture(texture,shulker);
+        return ETF_GeneralReturnAlteredTexture(texture, shulker);
     }
 }

@@ -43,20 +43,20 @@ public abstract class MIX_HorseArmorFeatureRenderer extends FeatureRenderer<Hors
 
             String fileString = horseArmorItem.getEntityTexture().toString();
 
-            if (!Texture_Emissive.containsKey(fileString)){
-                 //creates and sets emissive for texture if it exists
-                    Identifier fileName_e;
-                    for (String suffix1 :
-                            emissiveSuffix) {
-                        fileName_e = new Identifier(fileString.replace(".png", suffix1 + ".png"));
-                        if (ETF_isExistingFile(fileName_e)) {
-                            Texture_Emissive.put(fileString, fileName_e);
-                            break;
-                        }
+            if (!Texture_Emissive.containsKey(fileString)) {
+                //creates and sets emissive for texture if it exists
+                Identifier fileName_e;
+                for (String suffix1 :
+                        emissiveSuffix) {
+                    fileName_e = new Identifier(fileString.replace(".png", suffix1 + ".png"));
+                    if (ETF_isExistingFile(fileName_e)) {
+                        Texture_Emissive.put(fileString, fileName_e);
+                        break;
                     }
-                    if (!Texture_Emissive.containsKey(fileString)) {
-                        Texture_Emissive.put(fileString, null);
-                    }
+                }
+                if (!Texture_Emissive.containsKey(fileString)) {
+                    Texture_Emissive.put(fileString, null);
+                }
             }
             if (Texture_Emissive.containsKey(fileString)) {
                 if (Texture_Emissive.get(fileString) != null) {

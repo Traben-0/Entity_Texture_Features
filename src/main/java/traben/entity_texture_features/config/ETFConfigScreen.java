@@ -12,7 +12,8 @@ import traben.entity_texture_features.client.ETF_METHODS;
 
 import java.awt.*;
 
-import static traben.entity_texture_features.client.ETF_CLIENT.*;
+import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
+import static traben.entity_texture_features.client.ETF_CLIENT.irisDetected;
 
 public class ETFConfigScreen implements ETF_METHODS {
     public Screen getConfigScreen(Screen parent, boolean isTransparent) {
@@ -34,11 +35,10 @@ public class ETFConfigScreen implements ETF_METHODS {
                 .setDefaultValue(true) // Recommended: Used when user click "Reset"
                 .setTooltip(new TranslatableText("""
                         This setting allows you to overwrite the
-                        Vanilla behaviours that doesn't allow
+                        Vanilla behaviour of prohibiting all
                         non [a-z0-9/._-] characters in texture paths.
                         this means textures with spaces or capitals
-                        are allowed to be used.
-                        """)) // Optional: Shown when the user hover over this option
+                        are allowed to be used.""")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.allowIllegalTexturePaths = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
         SubCategoryBuilder randoms = entryBuilder.startSubCategory(Text.of("Random / Custom Mobs settings"));
@@ -47,21 +47,20 @@ public class ETFConfigScreen implements ETF_METHODS {
                 .setTooltip(new TranslatableText("""
                         Enables Randomized entity textures
                         works with resource packs
+                        Allows for entity texture customization
                         using the optifine format""")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.enableCustomTextures = newValue) // Recommended: Called when user save the config
                 .build());
-        randoms.add(1, entryBuilder.startIntSlider(Text.of("Texture update frequency"), ETFConfigData.textureUpdateFrequency, 1, 64)
-                .setDefaultValue(3) // Recommended: Used when user click "Reset"
-                .setMin(1)
-                .setMax(64)
+        randoms.add(1, entryBuilder.startEnumSelector(Text.of("Texture update frequency"), ETFConfig.updateFrequency.class, ETFConfigData.textureUpdateFrequency_V2)
+                .setDefaultValue(ETFConfig.updateFrequency.Fast)
                 .setTooltip(new TranslatableText("""
-                        Sets how often mobs textures will update
-                        unprompted for changes like health & age
-                        Lower values MAY cause lag
-                        1 should be fairly instant
-                        64 should be a few seconds delay
-                        """)) // Optional: Shown when the user hover over this option
-                .setSaveConsumer(newValue -> ETFConfigData.textureUpdateFrequency = newValue) // Recommended: Called when user save the config
+                        Sets how often a mobs textures will
+                        update for changes like health & age
+                        Never = never update
+                        Slow = 3-5 seconds
+                        Fast = less than a second
+                        Instant = instant (possible lag with hundred of mobs)""")) // Optional: Shown when the user hover over this option
+                .setSaveConsumer(newValue -> ETFConfigData.textureUpdateFrequency_V2 = newValue)
                 .build());
         randoms.add(2, entryBuilder.startBooleanToggle(Text.of("Restrict some property updates"), ETFConfigData.restrictUpdateProperties)
                 .setDefaultValue(true)
@@ -73,8 +72,7 @@ public class ETFConfigScreen implements ETF_METHODS {
                         E.G a zombie spawned in a desert will keep it's
                         desert skin even if it leaves the desert.
                         This will not effect other properties such as:
-                        Health, Name, Team, etc.
-                        """)) // Optional: Shown when the user hover over this option
+                        Health, Name, Team, etc.""")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.restrictUpdateProperties = newValue) // Recommended: Called when user save the config
                 .build());
         SubCategoryBuilder restrictions = entryBuilder.startSubCategory(Text.of("Restricted Properties"));
@@ -118,17 +116,17 @@ public class ETFConfigScreen implements ETF_METHODS {
                         slightly above the model.
                         This can fix Z-Fighting present in some shaders.
                         This will not always look right and can desync
-                        with the models animation.""")) // Optional: Shown when the user hover over this option
+                        with the models animation.
+                        It is recommended to disable this if shaders are disabled""")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.doShadersEmissiveFix = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
-        emissives.add(3, entryBuilder.startBooleanToggle(Text.of("Enable Emissive Elytras - [CIT support broken]"), ETFConfigData.enableElytra)
+        emissives.add(3, entryBuilder.startBooleanToggle(Text.of("Enable Emissive Elytras"), ETFConfigData.enableElytra)
                 .setDefaultValue(true) // Recommended: Used when user click "Reset"
                 .setTooltip(new TranslatableText("""
                         Allows Elytra to use emissive textures
-                        Elytra's only have emissive support as the CIT mod
-                        already handles customizing these and is willing
-                        to become compatible with this Mod's emissive format.
-                        May not be fully compatible yet hence the option.""")) // Optional: Shown when the user hover over this option
+                        Elytras only have emissive support as the CIT mod
+                        already handles customizing these and is fully
+                        compatible with ETF's emissive textures.""")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.enableElytra = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
         optifineOptions.addEntry(emissives.build());
@@ -140,8 +138,7 @@ public class ETFConfigScreen implements ETF_METHODS {
                         The Mob must have a texture with it's eyes
                         closed named "textureName_blink.png".
                         And an optional texture with it's eyes half
-                        closed named "textureName_blink2.png".
-                        """)) // Optional: Shown when the user hover over this option
+                        closed named "textureName_blink2.png".""")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.enableBlinking = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
         blinking.add(1, entryBuilder.startIntSlider(Text.of("Blinking frequency"), ETFConfigData.blinkFrequency, 1, 200)
@@ -155,8 +152,7 @@ public class ETFConfigScreen implements ETF_METHODS {
                         1 to 100 ticks (0-5 seconds)
                         This can be set / overridden per mob
                         by the resource-pack
-                        See the mod download page for details
-                        """)) // Optional: Shown when the user hover over this option
+                        See the mod download page for details""")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.blinkFrequency = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
         blinking.add(2, entryBuilder.startIntSlider(Text.of("Blinking Length"), ETFConfigData.blinkLength, 0, 20)
@@ -165,11 +161,10 @@ public class ETFConfigScreen implements ETF_METHODS {
                 .setMax(20)
                 .setTooltip(new TranslatableText("""
                         sets how long textures will blink for
-                        0 = 1 tick, 20 = 20 ticks / 1 second
+                        0 = 1 tick, 19 = 20 ticks / 1 second
                         This can be set / overridden per mob
                         by the resource-pack
-                        See the mod download page for details
-                        """)) // Optional: Shown when the user hover over this option
+                        See the mod download page for details""")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.blinkLength = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
         optifineOptions.addEntry(blinking.build());
@@ -185,8 +180,7 @@ public class ETFConfigScreen implements ETF_METHODS {
                          - Emissive pixels
                          - Enchanted pixels
                          - Blinking & (closed eyes when sleeping)
-                         - maybe more...
-                        """)) // Optional: Shown when the user hover over this option
+                         - maybe more...""")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.skinFeaturesEnabled = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
         players.add(1, entryBuilder.startBooleanToggle(Text.of("Enable Player Skin Feature for Enemy Teams"), ETFConfigData.enableEnemyTeamPlayersSkinFeatures)
@@ -196,18 +190,16 @@ public class ETFConfigScreen implements ETF_METHODS {
                         for players on opposing teams in PVP games
                         otherwise they may be harder to see
                         and may affect balance
-                        ///THIS SETTING REQUIRES A RESTART\\\\\\
-                        """)) // Optional: Shown when the user hover over this option
+                        ///THIS SETTING REQUIRES A RESTART\\\\\\""")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.enableEnemyTeamPlayersSkinFeatures = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
         players.add(2, entryBuilder.startBooleanToggle(Text.of("Player Skin Feature: Transparency"), ETFConfigData.skinFeaturesEnableTransparency)
                 .setDefaultValue(true) // Recommended: Used when user click "Reset"
                 .setTooltip(new TranslatableText("""
                         Allows player skins to be transparent on the base texture
-                        WARNING: the texture can only be an average of
+                        the texture can only be an average of
                          60% transparent to prevent abuse
-                        - uses transparency in the skin texture itself
-                        """)) // Optional: Shown when the user hover over this option
+                        - uses transparency in the skin texture itself""")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.skinFeaturesEnableTransparency = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
         players.add(3, entryBuilder.startBooleanToggle(Text.of("Player Skin Feature: FULL Transparency"), ETFConfigData.skinFeaturesEnableFullTransparency)
@@ -218,16 +210,17 @@ public class ETFConfigScreen implements ETF_METHODS {
                          for player skins so they can be completely invisible
                          this option only changes what you can see and will
                          not make you invisible to others, it is meant for fun.
-                        //REQUIRES RESTART\\\\
-                        """)) // Optional: Shown when the user hover over this option
+                        //REQUIRES RESTART\\\\""")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.skinFeaturesEnableFullTransparency = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
         optifineOptions.addEntry(players.build());
 
         optifineOptions.addEntry(entryBuilder.startEnumSelector(Text.of("Custom potion effects"), ETFConfig.enchantedPotionEffectsEnum.class, ETFConfigData.enchantedPotionEffects)
-                .setDefaultValue(ETFConfig.enchantedPotionEffectsEnum.NONE)
+                .setDefaultValue(ETFConfig.enchantedPotionEffectsEnum.None)
                 .setTooltip(new TranslatableText("""
-                        currently only works when the mob loads""")) // Optional: Shown when the user hover over this option
+                        currently only works when the mob first loads
+                        Will display enchanted mobs with different
+                        effects other than just particles""")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.enchantedPotionEffects = newValue)
                 .build());
         optifineOptions.addEntry(entryBuilder.startBooleanToggle(Text.of("Enable Custom Tridents"), ETFConfigData.enableTridents)

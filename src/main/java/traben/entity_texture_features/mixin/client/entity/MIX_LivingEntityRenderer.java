@@ -50,19 +50,19 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
 
     @Inject(method = "render(Lnet/minecraft/entity/LivingEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/EntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V", shift = At.Shift.AFTER)
-                       )
+    )
     private void applyRenderFeatures(T livingEntity, float a, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
         UUID id = livingEntity.getUuid();
         if (!(livingEntity instanceof PlayerEntity)) {
 
             Identifier texture = returnAlteredTexture((LivingEntityRenderer) (Object) this, livingEntity);
-            ETF_GeneralEmissiveRender(matrixStack,vertexConsumerProvider, texture, this.getModel());
+            ETF_GeneralEmissiveRender(matrixStack, vertexConsumerProvider, texture, this.getModel());
 
         } else if (ETFConfigData.skinFeaturesEnabled) { // is a player
             renderSkinFeatures(id, (PlayerEntity) livingEntity, matrixStack, vertexConsumerProvider, i);
         }
         //potion effects
-        if (ETFConfigData.enchantedPotionEffects != ETFConfig.enchantedPotionEffectsEnum.NONE
+        if (ETFConfigData.enchantedPotionEffects != ETFConfig.enchantedPotionEffectsEnum.None
                 && !livingEntity.getActiveStatusEffects().isEmpty()
                 && !livingEntity.hasStatusEffect(StatusEffects.INVISIBILITY)
         ) {
@@ -70,17 +70,26 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
         }
 
         //randomly mark texture for rechecking randomized by UUID
-        long randomizer = ETFConfigData.textureUpdateFrequency * 20L;
-        if (livingEntity.world.isClient()
-                && System.currentTimeMillis() % randomizer == Math.abs(id.hashCode()) % randomizer
-        ) {
+        if (ETFConfigData.enableCustomTextures && ETFConfigData.textureUpdateFrequency_V2 != ETFConfig.updateFrequency.Never) {
+
+            int delay = switch (ETFConfigData.textureUpdateFrequency_V2) {
+                case Fast -> 5;
+                case Slow -> 80;
+                case Instant -> 1;
+                default -> -1;
+            };
+            long randomizer = delay * 20L;
+            if (livingEntity.world.isClient()
+                    && System.currentTimeMillis() % randomizer == Math.abs(id.hashCode()) % randomizer
+            ) {
                 if (!UUID_entityAwaitingDataClearing.containsKey(id)) {
                     UUID_entityAwaitingDataClearing.put(id, System.currentTimeMillis());
                 }
-                if(UUID_randomTextureSuffix2.containsKey(id)){
+                if (UUID_randomTextureSuffix2.containsKey(id)) {
                     if (!UUID_entityAwaitingDataClearing2.containsKey(id)) {
                         UUID_entityAwaitingDataClearing2.put(id, System.currentTimeMillis());
                     }
+                }
             }
         }
     }
@@ -95,16 +104,12 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
         Identifier vanilla = getTexture(entity);
 
         //this is to support inspectio or other abstract rendering mods
-        if(inEntity.getBlockStateAtPos() == null){
+        if (inEntity.getBlockStateAtPos() == null) {
             return vanilla;
-        }else if(inEntity.getBlockStateAtPos().isOf(Blocks.VOID_AIR) ) {
+        } else if (inEntity.getBlockStateAtPos().isOf(Blocks.VOID_AIR)) {
             return vanilla;
         }
-//        else if(entity.world == null ){
-//            return vanilla;
-//        }else if(!entity.isPartOfGame()){
-//            return vanilla;
-//        }
+
 
         String path = vanilla.toString();
         UUID id = entity.getUuid();
@@ -128,13 +133,13 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                                     if (UUID_entityAwaitingDataClearing.get(id) + 100 < System.currentTimeMillis()) {
                                         if (Texture_OptifineOrTrueRandom.get(path)) {
                                             //if (UUID_randomTextureSuffix.containsKey(id)) {
-                                                int hold = UUID_randomTextureSuffix.get(id);
-                                                ETF_resetSingleData(id);
-                                                ETF_testCases(path, id, entity, true,UUID_randomTextureSuffix,hasUpdatableRandomCases);
-                                                //if didnt change keep the same
-                                                if (!UUID_randomTextureSuffix.containsKey(id)) {
-                                                    UUID_randomTextureSuffix.put(id, hold);
-                                                }
+                                            int hold = UUID_randomTextureSuffix.get(id);
+                                            ETF_resetSingleData(id);
+                                            ETF_testCases(path, id, entity, true, UUID_randomTextureSuffix, hasUpdatableRandomCases);
+                                            //if didnt change keep the same
+                                            if (!UUID_randomTextureSuffix.containsKey(id)) {
+                                                UUID_randomTextureSuffix.put(id, hold);
+                                            }
                                             //}
                                         }//else here would do something for true random but no need really - may optimise this
 
@@ -156,14 +161,14 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                                 }
                                 UUID_entityAlreadyCalculated.add(id);
                             }
-                           // System.out.println("suffix was ="+UUID_randomTextureSuffix.get(id));
+                            // System.out.println("suffix was ="+UUID_randomTextureSuffix.get(id));
                             if (UUID_randomTextureSuffix.get(id) == 0) {
-                                if (!TEXTURE_HasOptifineDefaultReplacement.containsKey(vanilla.toString())){
-                                       TEXTURE_HasOptifineDefaultReplacement.put(vanilla.toString(), ETF_isExistingFile(ETF_returnOptifineOrVanillaIdentifier(path)));
+                                if (!TEXTURE_HasOptifineDefaultReplacement.containsKey(vanilla.toString())) {
+                                    TEXTURE_HasOptifineDefaultReplacement.put(vanilla.toString(), ETF_isExistingFile(ETF_returnOptifineOrVanillaIdentifier(path)));
                                 }
-                                if (TEXTURE_HasOptifineDefaultReplacement.get(vanilla.toString())){
+                                if (TEXTURE_HasOptifineDefaultReplacement.get(vanilla.toString())) {
                                     return ETF_returnBlinkIdOrGiven(entity, ETF_returnOptifineOrVanillaIdentifier(path).toString(), id);
-                                }else{
+                                } else {
                                     return ETF_returnBlinkIdOrGiven(entity, vanilla.toString(), id);
                                 }
 
@@ -228,23 +233,18 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
     }
 
 
-
-
-
-
-
     private void renderPotion(T livingEntity, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider) {
         VertexConsumer textureVert;
         switch (ETFConfigData.enchantedPotionEffects) {
-            case ENCHANTED -> {
+            case Enchanted -> {
                 textureVert = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(returnAlteredTexture((LivingEntityRenderer) (Object) this, livingEntity)), false, true);
                 this.getModel().render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 0.16F);
             }
-            case GLOWING -> {
+            case Glowing -> {
                 textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(returnAlteredTexture((LivingEntityRenderer) (Object) this, livingEntity), true));
                 this.getModel().render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 0.16F);
             }
-            case CREEPER_CHARGE -> {
+            case Creeper_Charge -> {
                 int f = (int) ((float) livingEntity.world.getTime() / 10);
                 VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEnergySwirl(new Identifier("textures/entity/creeper/creeper_armor.png"), f * 0.01F % 1.0F, f * 0.01F % 1.0F));
                 matrixStack.scale(1.1f, 1.1f, 1.1f);
@@ -362,7 +362,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                                 matrixStack.scale(1.01f, 1.01f, 1.01f);
                                 this.getModel().render(matrixStack, emissVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
                                 matrixStack.scale(1f, 1f, 1f);
-                            }else{
+                            } else {
                                 this.getModel().render(matrixStack, emissVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
                             }
 

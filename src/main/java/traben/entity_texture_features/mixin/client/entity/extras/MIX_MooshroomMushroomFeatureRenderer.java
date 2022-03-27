@@ -7,8 +7,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import traben.entity_texture_features.client.ETF_METHODS;
 
-import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
-import static traben.entity_texture_features.client.ETF_CLIENT.mooshroomRedCustomShroom;
+import static traben.entity_texture_features.client.ETF_CLIENT.*;
 
 @Mixin(MooshroomMushroomFeatureRenderer.class)
 public abstract class MIX_MooshroomMushroomFeatureRenderer implements ETF_METHODS {
@@ -16,7 +15,7 @@ public abstract class MIX_MooshroomMushroomFeatureRenderer implements ETF_METHOD
     @ModifyArg(method = "renderMushroom", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/RenderLayer;getOutline(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;"), index = 0)
     private Identifier injected(Identifier texture) {
         //enable custom mooshroom mushrooms
-        if(ETFConfigData.enableCustomTextures) {
+        if (ETFConfigData.enableCustomTextures) {
             if (texture.toString().equals("minecraft:textures/block/red_mushroom.png")) {
                 switch (mooshroomRedCustomShroom) {
                     case 1:
@@ -35,7 +34,7 @@ public abstract class MIX_MooshroomMushroomFeatureRenderer implements ETF_METHOD
                 }
             }
             if (texture.toString().equals("minecraft:textures/block/brown_mushroom.png")) {
-                switch (mooshroomRedCustomShroom) {
+                switch (mooshroomBrownCustomShroom) {
                     case 1:
                         return texture;
                     case 2:
@@ -43,10 +42,10 @@ public abstract class MIX_MooshroomMushroomFeatureRenderer implements ETF_METHOD
                     default: {
                         Identifier test = new Identifier("minecraft:textures/entity/cow/brown_mushroom.png");
                         if (ETF_isExistingFile(test)) {
-                            mooshroomRedCustomShroom = 2;
+                            mooshroomBrownCustomShroom = 2;
                             return test;
                         } else {
-                            mooshroomRedCustomShroom = 1;
+                            mooshroomBrownCustomShroom = 1;
                         }
                     }
                 }

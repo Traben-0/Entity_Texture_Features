@@ -17,9 +17,9 @@ public abstract class MIX_TridentEntity {
     @Inject(method = "<init>(Lnet/minecraft/world/World;Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;)V", at = @At("TAIL"))
     public void injected(World world, LivingEntity owner, ItemStack stack, CallbackInfo ci) {
         if (stack.hasCustomName()) {
-            UUID_TridentName.put(((TridentEntity)(Object)this).getUuid(), stack.getName().getString());
+            UUID_TridentName.put(((TridentEntity) (Object) this).getUuid(), stack.getName().getString());
         } else {
-            UUID_TridentName.put(((TridentEntity)(Object)this).getUuid(), null);
+            UUID_TridentName.put(((TridentEntity) (Object) this).getUuid(), null);
         }
     }
 }
