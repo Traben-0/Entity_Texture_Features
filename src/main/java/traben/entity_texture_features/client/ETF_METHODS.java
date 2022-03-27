@@ -86,6 +86,9 @@ public interface ETF_METHODS {
     private boolean ETF_checkPathExist(String path) {
         return ETF_isExistingFile(new Identifier(path));
     }
+    private boolean ETF_checkPathExistAndSameResourcepackAs(String path, String path2) {
+        return ETF_isExistingFileAndSameResourcepackAs(new Identifier(path),new Identifier(path2));
+    }
 
     default void ETF_resetVisuals() {
         ETF_modMessage("Reloading...", false);
@@ -107,6 +110,8 @@ public interface ETF_METHODS {
         UUID_entityAlreadyCalculated.clear();//only time it clears
         UUID_entityAwaitingDataClearing.clear();
         UUID_entityAwaitingDataClearing2.clear();
+
+        UUID_OriginalNonUpdatePropertyStrings.clear();
 
         UUID_playerHasFeatures.clear();
         UUID_playerHasEnchant.clear();
@@ -208,25 +213,25 @@ public interface ETF_METHODS {
     default void ETF_processNewRandomTextureCandidate(String vanillaTexturePath) {
         boolean hasProperties = false;
         String properties = "";
-        if (ETF_checkPathExist(vanillaTexturePath.replace(".png", ".properties").replace("textures", "etf/random"))) {
+        if (ETF_checkPathExistAndSameResourcepackAs(vanillaTexturePath.replace(".png", ".properties").replace("textures", "etf/random"),vanillaTexturePath.replace(".png", "2.png").replace("textures", "etf/random"))) {
             properties = vanillaTexturePath.replace(".png", ".properties").replace("textures", "etf/random");
             hasProperties = true;
             PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 3);
         } else if (ETF_isExistingFile(new Identifier(vanillaTexturePath.replace(".png", "2.png").replace("textures", "etf/random")))) {
             PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 3);
-        } else if (ETF_checkPathExist(vanillaTexturePath.replace(".png", ".properties").replace("textures", "optifine/random"))) {
+        } else if (ETF_checkPathExistAndSameResourcepackAs(vanillaTexturePath.replace(".png", ".properties").replace("textures", "optifine/random"),vanillaTexturePath.replace(".png", "2.png").replace("textures", "optifine/random"))) {
             properties = vanillaTexturePath.replace(".png", ".properties").replace("textures", "optifine/random");
             hasProperties = true;
             PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 0);
         } else if (ETF_isExistingFile(new Identifier(vanillaTexturePath.replace(".png", "2.png").replace("textures", "optifine/random")))) {
             PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 0);
-        } else if (ETF_checkPathExist(vanillaTexturePath.replace(".png", ".properties").replace("textures/entity", "optifine/mob"))) {
+        } else if (ETF_checkPathExistAndSameResourcepackAs(vanillaTexturePath.replace(".png", ".properties").replace("textures/entity", "optifine/mob"),vanillaTexturePath.replace(".png", "2.png").replace("textures/entity", "optifine/mob"))) {
             properties = vanillaTexturePath.replace(".png", ".properties").replace("textures/entity", "optifine/mob");
             hasProperties = true;
             PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 1);
         } else if (ETF_isExistingFile(new Identifier(vanillaTexturePath.replace(".png", "2.png").replace("textures/entity", "optifine/mob")))) {
             PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 1);
-        } else if (ETF_checkPathExist(vanillaTexturePath.replace(".png", ".properties"))) {
+        } else if (ETF_checkPathExistAndSameResourcepackAs(vanillaTexturePath.replace(".png", ".properties"),vanillaTexturePath.replace(".png", "2.png"))) {
             properties = vanillaTexturePath.replace(".png", ".properties");
             hasProperties = true;
             PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 2);
@@ -246,7 +251,9 @@ public interface ETF_METHODS {
         try {
             ignoreOnePNG.put(vanillaTexturePath, !(ETF_isExistingFile(new Identifier(propertiesPath.replace(".properties", "1.png")))));
 
-            Properties props = ETF_readProperties(propertiesPath,vanillaTexturePath);
+            String twoPngPath = ETF_returnOptifineOrVanillaPath(vanillaTexturePath,2,"");
+            Properties props = ETF_readProperties(propertiesPath,twoPngPath);
+
             if (props != null) {
                 Set<String> propIds = props.stringPropertyNames();
                 //set so only 1 of each
@@ -355,7 +362,7 @@ public interface ETF_METHODS {
                             List<String> list = new ArrayList<>();
                             Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(dataFromProps);
                             while (m.find()) {
-                                list.add(m.group(1).replace("\"", ""));
+                                list.add(m.group(1).replace("\"", "").trim());
                             }
                             names = list.toArray(new String[0]);
                         }
@@ -497,7 +504,6 @@ public interface ETF_METHODS {
                 Texture_OptifineRandomSettingsPerTexture.get(vanillaPath)) {
 
             //skip if its only an update and case is not updatable
-            if (!(isUpdate && test.caseHasNonUpdatables)) {
                 if (test.testEntity((LivingEntity) entity, UUID_entityAlreadyCalculated.contains(id),UUID_CaseHasUpdateablesCustom)) {
                     UUID_RandomSuffixMap.put(id, test.getWeightedSuffix(id, ignoreOnePNG.get(vanillaPath)));
                     Identifier tested = ETF_returnOptifineOrVanillaIdentifier(vanillaPath, UUID_RandomSuffixMap.get(id));
@@ -507,7 +513,6 @@ public interface ETF_METHODS {
                     }
                     break;
                 }
-            }
         }
         if (!UUID_CaseHasUpdateablesCustom.containsKey(id))
             UUID_CaseHasUpdateablesCustom.put(id, false);
@@ -545,6 +550,7 @@ public interface ETF_METHODS {
     }
 
     private void ETF_processTrueRandomCandidate(String vanillaPath) {
+        ignoreOnePNG.put(vanillaPath, true);
         boolean keepGoing = false;
         //first iteration longer
         int successCount = 0;
@@ -571,8 +577,6 @@ public interface ETF_METHODS {
             PATH_OptifineOldVanillaETF_0123.put(vanillaPath, 2);
             ignoreOnePNG.put(vanillaPath, false);
             //successCount++;
-        } else {
-            ignoreOnePNG.put(vanillaPath, true);
         }
 
         //check if texture 2.png is used
@@ -1402,6 +1406,8 @@ public interface ETF_METHODS {
         return ETF_returnBlinkIdOrGiven(entity, givenTexturePath, id, false);
     }
 
+
+
     default Identifier ETF_returnBlinkIdOrGiven(LivingEntity entity, String givenTexturePath, UUID id, boolean isPlayer) {
         if (ETFConfigData.enableBlinking) {
             if (!TEXTURE_HasBlink.containsKey(givenTexturePath)) {
@@ -1444,26 +1450,34 @@ public interface ETF_METHODS {
                         }
 
 
-                        long timer = entity.world.getTime() % blinkFrequency;
-                        int blinkTimeVariedByUUID = Math.abs(id.hashCode()) % blinkFrequency;
+                       // long timer = entity.world.getTime() % blinkFrequency;
+                        //int blinkTimeVariedByUUID = Math.abs(id.hashCode()) % blinkFrequency;
                         //make blink timer not overlap the wrap around to 0
-                        if (blinkTimeVariedByUUID < blinkLength) blinkTimeVariedByUUID = blinkLength;
-                        if (blinkTimeVariedByUUID > blinkFrequency - blinkLength)
-                            blinkTimeVariedByUUID = blinkFrequency - blinkLength;
+                        //if (blinkTimeVariedByUUID < blinkLength) blinkTimeVariedByUUID = blinkLength;
+                        //if (blinkTimeVariedByUUID > blinkFrequency - blinkLength)
+                          //  blinkTimeVariedByUUID = blinkFrequency - blinkLength;
 
+                        if (!UUID_NextBlinkTime.containsKey(id)){
+                            UUID_NextBlinkTime.put(id,entity.world.getTime() + blinkLength + 1);
+                        }
+                        long nextBlink = UUID_NextBlinkTime.get(id);
+                        long currentTime = entity.world.getTime();
 
-                        if (timer >= blinkTimeVariedByUUID - blinkLength && timer <= blinkTimeVariedByUUID + blinkLength) {
+                        if (currentTime >= nextBlink - blinkLength && currentTime <= nextBlink + blinkLength) {
                             if(TEXTURE_HasBlink2.containsKey(givenTexturePath)) {
                                 if (TEXTURE_HasBlink2.get(givenTexturePath)) {
-                                    if (timer >= blinkTimeVariedByUUID - (blinkLength / 3) && timer <= blinkTimeVariedByUUID + (blinkLength / 3)) {
+                                    if (currentTime >= nextBlink - (blinkLength / 3) && currentTime <= nextBlink + (blinkLength / 3)) {
                                         return new Identifier(givenTexturePath.replace(".png", "_blink.png"));
                                     }
                                     return new Identifier(givenTexturePath.replace(".png", "_blink2.png"));
                                 }
                             }
-                            if (!(timer > blinkTimeVariedByUUID)) {
+                            if (!(currentTime > nextBlink)) {
                                 return new Identifier(givenTexturePath.replace(".png", "_blink.png"));
                             }
+                        }else if(currentTime > nextBlink + blinkLength){
+                            //calculate new next blink
+                            UUID_NextBlinkTime.put(id,currentTime + entity.getRandom().nextInt(blinkFrequency)+20);
                         }
                     }
                 }
@@ -1481,22 +1495,34 @@ public interface ETF_METHODS {
         return new Identifier(givenTexturePath);
     }
 
+    //assume random texture is fully calculated and applied already for UUID
+    //no update logic as that will be kept to living entity renderer to reset only once per UUID
     default Identifier ETF_GeneralReturnAlteredTexture( Identifier texture, Entity entity){
         if (entity == null) return texture;
         UUID id = entity.getUuid();
         if (ETFConfigData.enableCustomTextures) {
             if (UUID_randomTextureSuffix.containsKey(id)) {
                 if (UUID_randomTextureSuffix.get(id) != 0) {
-                    return  ETF_returnOptifineOrVanillaIdentifier(texture.toString(), UUID_randomTextureSuffix.get(id));
+                    return ETF_returnBlinkIdOrGiven((LivingEntity) entity, ETF_returnOptifineOrVanillaIdentifier(texture.toString(), UUID_randomTextureSuffix.get(id)).toString(),id);
+                }else{
+                    if (!TEXTURE_HasOptifineDefaultReplacement.containsKey(texture.toString())){
+                        TEXTURE_HasOptifineDefaultReplacement.put(texture.toString(), ETF_isExistingFile(ETF_returnOptifineOrVanillaIdentifier(texture.toString())));
+                    }
+                    if (TEXTURE_HasOptifineDefaultReplacement.get(texture.toString())){
+                        return ETF_returnBlinkIdOrGiven((LivingEntity) entity, ETF_returnOptifineOrVanillaIdentifier(texture.toString()).toString(), id);
+                    }else{
+                        return ETF_returnBlinkIdOrGiven((LivingEntity) entity, texture.toString(), id);
+                    }
                 }
             }
         }
-        return texture;
+        return ETF_returnBlinkIdOrGiven((LivingEntity) entity, texture.toString(), id);
     }
     default void ETF_GeneralEmissiveRender(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, String texturePath, Model model){
         ETF_GeneralEmissiveRender(matrixStack, vertexConsumerProvider, new Identifier(texturePath),  model);
     }
 
+    //will set and render emissive texture for any texture and model
     default void ETF_GeneralEmissiveRender(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, Identifier texture, Model model){
         if (ETFConfigData.enableEmissiveTextures) {
             String fileString = texture.toString();

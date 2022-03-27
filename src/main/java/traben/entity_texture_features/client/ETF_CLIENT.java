@@ -36,6 +36,15 @@ public class ETF_CLIENT implements ClientModInitializer, ETF_METHODS {
     public static HashMap<UUID, Boolean> hasUpdatableRandomCases3 = new HashMap<>();
     public static HashMap<UUID, Boolean> hasUpdatableRandomCases4 = new HashMap<>();
 
+    //must be 6 length
+    // 0 biome
+    // 1 height
+    // 2 block
+    // 3 weather
+    // 4 daytime
+    // 5 moonphase
+    public static HashMap<UUID, String[]> UUID_OriginalNonUpdatePropertyStrings = new HashMap<>();
+
 
     public static HashMap<UUID, Boolean> UUID_playerHasFeatures = new HashMap<>();
     public static HashMap<UUID, Boolean> UUID_playerSkinDownloadedYet = new HashMap<>();
@@ -53,6 +62,7 @@ public class ETF_CLIENT implements ClientModInitializer, ETF_METHODS {
     public static HashMap<UUID, Long> UUID_playerLastSkinCheck = new HashMap<>();
     public static HashMap<UUID, Integer> UUID_playerLastSkinCheckCount = new HashMap<>();
 
+    public static HashMap<UUID, Long> UUID_NextBlinkTime = new HashMap<>();
     public static HashMap<String, Boolean> TEXTURE_HasBlink = new HashMap<>();
     public static HashMap<String, Boolean> TEXTURE_HasBlink2 = new HashMap<>();
     public static HashMap<String, Properties> TEXTURE_BlinkProps = new HashMap<>();

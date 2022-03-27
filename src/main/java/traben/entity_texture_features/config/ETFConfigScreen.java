@@ -30,6 +30,17 @@ public class ETFConfigScreen implements ETF_METHODS {
                     .build()); // Builds the option entry for cloth config
         }
 
+        optifineOptions.addEntry(entryBuilder.startBooleanToggle(Text.of("Allow non [a-z0-9/._-] characters in texture paths"), ETFConfigData.allowIllegalTexturePaths)
+                .setDefaultValue(true) // Recommended: Used when user click "Reset"
+                .setTooltip(new TranslatableText("""
+                        This setting allows you to overwrite the
+                        Vanilla behaviours that doesn't allow
+                        non [a-z0-9/._-] characters in texture paths.
+                        this means textures with spaces or capitals
+                        are allowed to be used.
+                        """)) // Optional: Shown when the user hover over this option
+                .setSaveConsumer(newValue -> ETFConfigData.allowIllegalTexturePaths = newValue) // Recommended: Called when user save the config
+                .build()); // Builds the option entry for cloth config
         SubCategoryBuilder randoms = entryBuilder.startSubCategory(Text.of("Random / Custom Mobs settings"));
         randoms.add(0, entryBuilder.startBooleanToggle(Text.of("Enable Optifine Random mobs"), ETFConfigData.enableCustomTextures)
                 .setDefaultValue(true) // Recommended: Used when user click "Reset"
@@ -52,6 +63,34 @@ public class ETFConfigScreen implements ETF_METHODS {
                         """)) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.textureUpdateFrequency = newValue) // Recommended: Called when user save the config
                 .build());
+        randoms.add(2, entryBuilder.startBooleanToggle(Text.of("Restrict some property updates"), ETFConfigData.restrictUpdateProperties)
+                .setDefaultValue(true)
+                .setTooltip(new TranslatableText("""
+                        If enabled this will prevent changes in:
+                        Biome, Height, Block, Weather, DayTime or MoonPhase
+                        from effecting mobs that have already had
+                        a random texture applied.
+                        E.G a zombie spawned in a desert will keep it's
+                        desert skin even if it leaves the desert.
+                        This will not effect other properties such as:
+                        Health, Name, Team, etc.
+                        """)) // Optional: Shown when the user hover over this option
+                .setSaveConsumer(newValue -> ETFConfigData.restrictUpdateProperties = newValue) // Recommended: Called when user save the config
+                .build());
+        SubCategoryBuilder restrictions = entryBuilder.startSubCategory(Text.of("Restricted Properties"));
+        restrictions.add(0, entryBuilder.startBooleanToggle(Text.of("Restrict Biome property updates"), ETFConfigData.restrictBiome).setDefaultValue(true)
+                .setTooltip(new TranslatableText("Restrict Biome property updates\nMust enable 'Restrict some property updates' first")).setSaveConsumer(newValue -> ETFConfigData.restrictBiome = newValue).build());
+        restrictions.add(1, entryBuilder.startBooleanToggle(Text.of("Restrict Height property updates"), ETFConfigData.restrictHeight).setDefaultValue(true)
+                .setTooltip(new TranslatableText("Restrict Height property updates\nMust enable 'Restrict some property updates' first")).setSaveConsumer(newValue -> ETFConfigData.restrictHeight = newValue).build());
+        restrictions.add(2, entryBuilder.startBooleanToggle(Text.of("Restrict Block property updates"), ETFConfigData.restrictBlock).setDefaultValue(true)
+                .setTooltip(new TranslatableText("Restrict Block property updates\nMust enable 'Restrict some property updates' first")).setSaveConsumer(newValue -> ETFConfigData.restrictBlock = newValue).build());
+        restrictions.add(3, entryBuilder.startBooleanToggle(Text.of("Restrict Weather property updates"), ETFConfigData.restrictWeather).setDefaultValue(true)
+                .setTooltip(new TranslatableText("Restrict Weather property updates\nMust enable 'Restrict some property updates' first")).setSaveConsumer(newValue -> ETFConfigData.restrictWeather = newValue).build());
+        restrictions.add(4, entryBuilder.startBooleanToggle(Text.of("Restrict Day Time property updates"), ETFConfigData.restrictDayTime).setDefaultValue(true)
+                .setTooltip(new TranslatableText("Restrict Day Time property updates\nMust enable 'Restrict some property updates' first")).setSaveConsumer(newValue -> ETFConfigData.restrictDayTime = newValue).build());
+        restrictions.add(5, entryBuilder.startBooleanToggle(Text.of("Restrict Moon Phase property updates"), ETFConfigData.restrictMoonPhase).setDefaultValue(true)
+                .setTooltip(new TranslatableText("Restrict Moon Phase property updates\nMust enable 'Restrict some property updates' first")).setSaveConsumer(newValue -> ETFConfigData.restrictMoonPhase = newValue).build());
+        randoms.add(restrictions.build());
         optifineOptions.addEntry(randoms.build());
         SubCategoryBuilder emissives = entryBuilder.startSubCategory(Text.of("Emissive Texture settings"));
         emissives.add(0, entryBuilder.startBooleanToggle(Text.of("Enable Optifine Emissive entity textures"), ETFConfigData.enableEmissiveTextures)
@@ -105,19 +144,22 @@ public class ETFConfigScreen implements ETF_METHODS {
                         """)) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.enableBlinking = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
-        blinking.add(1, entryBuilder.startIntSlider(Text.of("Blinking frequency"), ETFConfigData.blinkFrequency, 41, 200)
+        blinking.add(1, entryBuilder.startIntSlider(Text.of("Blinking frequency"), ETFConfigData.blinkFrequency, 1, 200)
                 .setDefaultValue(200) // Recommended: Used when user click "Reset"
-                .setMin(41)
+                .setMin(1)
                 .setMax(1024)
                 .setTooltip(new TranslatableText("""
-                        sets how often textures will blink
+                        sets how often textures will randomly blink
+                        if set to 100 mobs will blink randomly after
+                        1 second delay and then at a random time from
+                        1 to 100 ticks (0-5 seconds)
                         This can be set / overridden per mob
                         by the resource-pack
                         See the mod download page for details
                         """)) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.blinkFrequency = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
-        blinking.add(1, entryBuilder.startIntSlider(Text.of("Blinking Length"), ETFConfigData.blinkLength, 0, 20)
+        blinking.add(2, entryBuilder.startIntSlider(Text.of("Blinking Length"), ETFConfigData.blinkLength, 0, 20)
                 .setDefaultValue(1) // Recommended: Used when user click "Reset"
                 .setMin(0)
                 .setMax(20)
