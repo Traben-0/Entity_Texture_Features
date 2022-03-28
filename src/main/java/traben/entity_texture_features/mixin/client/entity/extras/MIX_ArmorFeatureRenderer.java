@@ -40,33 +40,33 @@ public abstract class MIX_ArmorFeatureRenderer<T extends LivingEntity, M extends
 
     @Inject(method = "renderArmorParts",
             at = @At(value = "TAIL"))
-    private void applyEmissive(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ArmorItem item, boolean usesSecondLayer, A model, boolean legs, float red, float green, float blue, String overlay, CallbackInfo ci) {
+    private void ETF_applyEmissive(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ArmorItem item, boolean usesSecondLayer, A model, boolean legs, float red, float green, float blue, String overlay, CallbackInfo ci) {
         //UUID id = livingEntity.getUuid();
-        if (ETFConfigData.enableEmissiveTextures) {
+        if (ETF_ConfigData.enableEmissiveTextures) {
 
-            String fileString = getArmorTexture(item, legs, overlay).toString();
+            String fileString = ETF_getArmorTexture(item, legs, overlay).toString();
 
-            if (!Texture_Emissive.containsKey(fileString)) {
+            if (!ETF_PATH_EmissiveTextureIdentifier.containsKey(fileString)) {
                 //creates and sets emissive for texture if it exists
                 Identifier fileName_e;
                 for (String suffix1 :
-                        emissiveSuffix) {
+                        ETF_emissiveSuffixes) {
                     fileName_e = new Identifier(fileString.replace(".png", suffix1 + ".png"));
                     if (ETF_isExistingFile(fileName_e)) {
-                        Texture_Emissive.put(fileString, fileName_e);
+                        ETF_PATH_EmissiveTextureIdentifier.put(fileString, fileName_e);
                         break;
                     }
                 }
-                if (!Texture_Emissive.containsKey(fileString)) {
-                    Texture_Emissive.put(fileString, null);
+                if (!ETF_PATH_EmissiveTextureIdentifier.containsKey(fileString)) {
+                    ETF_PATH_EmissiveTextureIdentifier.put(fileString, null);
                 }
             }
-            if (Texture_Emissive.containsKey(fileString)) {
-                if (Texture_Emissive.get(fileString) != null) {
+            if (ETF_PATH_EmissiveTextureIdentifier.containsKey(fileString)) {
+                if (ETF_PATH_EmissiveTextureIdentifier.get(fileString) != null) {
                     //VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(Texture_Emissive.get(fileString), true));
-                    VertexConsumer textureVert = ItemRenderer.getArmorGlintConsumer(vertexConsumers, RenderLayer.getBeaconBeam(Texture_Emissive.get(fileString), true), false, usesSecondLayer);
+                    VertexConsumer textureVert = ItemRenderer.getArmorGlintConsumer(vertexConsumers, RenderLayer.getBeaconBeam(ETF_PATH_EmissiveTextureIdentifier.get(fileString), true), false, usesSecondLayer);
                     //one check most efficient instead of before and after applying
-                    if (ETFConfigData.doShadersEmissiveFix) {
+                    if (ETF_ConfigData.doShadersEmissiveFix) {
                         matrices.scale(1.01f, 1.01f, 1.01f);
                         model.render(matrices, textureVert, 15728640, OverlayTexture.DEFAULT_UV, red, green, blue, 1.0F);
                         matrices.scale(1f, 1f, 1f);
@@ -78,7 +78,7 @@ public abstract class MIX_ArmorFeatureRenderer<T extends LivingEntity, M extends
         }
     }
 
-    private Identifier getArmorTexture(ArmorItem item, boolean legs, @Nullable String overlay) {
+    private Identifier ETF_getArmorTexture(ArmorItem item, boolean legs, @Nullable String overlay) {
         String var10000 = item.getMaterial().getName();
         String string = "textures/models/armor/" + var10000 + "_layer_" + (legs ? 2 : 1) + (overlay == null ? "" : "_" + overlay) + ".png";
         return ARMOR_TEXTURE_CACHE.computeIfAbsent(string, Identifier::new);

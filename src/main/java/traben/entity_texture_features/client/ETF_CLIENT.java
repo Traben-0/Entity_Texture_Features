@@ -18,22 +18,22 @@ import java.util.*;
 @net.fabricmc.api.Environment(net.fabricmc.api.EnvType.CLIENT)
 public class ETF_CLIENT implements ClientModInitializer, ETF_METHODS {
     //0 = vanilla only    1+ is zombie1+.png
-    public static final HashMap<String, Integer> Texture_TotalTrueRandom = new HashMap<>();
-    public static final HashMap<UUID, Integer> UUID_randomTextureSuffix = new HashMap<>();
-    public static final HashMap<UUID, Integer> UUID_randomTextureSuffix2 = new HashMap<>();
-    public static final HashMap<UUID, Integer> UUID_randomTextureSuffix3 = new HashMap<>();
-    public static final HashMap<UUID, Integer> UUID_randomTextureSuffix4 = new HashMap<>();
-    public static final Set<UUID> UUID_entityAlreadyCalculated = new HashSet<>();//
-    public static final HashMap<UUID, Long> UUID_entityAwaitingDataClearing = new HashMap<>();
-    public static final HashMap<UUID, Long> UUID_entityAwaitingDataClearing2 = new HashMap<>();
-    public static final HashMap<String, ArrayList<randomCase>> Texture_OptifineRandomSettingsPerTexture = new HashMap<>();
-    public static final HashMap<String, Boolean> Texture_OptifineOrTrueRandom = new HashMap<>();
-    public static final HashMap<String, Integer> PATH_OptifineOldVanillaETF_0123 = new HashMap<>();// 0,1,2
-    public static final HashMap<String, Boolean> ignoreOnePNG = new HashMap<>();
-    public static final HashMap<UUID, Boolean> hasUpdatableRandomCases = new HashMap<>();
-    public static final HashMap<UUID, Boolean> hasUpdatableRandomCases2 = new HashMap<>();
-    public static final HashMap<UUID, Boolean> hasUpdatableRandomCases3 = new HashMap<>();
-    public static final HashMap<UUID, Boolean> hasUpdatableRandomCases4 = new HashMap<>();
+    public static final HashMap<String, Integer> ETF_PATH_TotalTrueRandom = new HashMap<>();
+    public static final HashMap<UUID, Integer> ETF_UUID_randomTextureSuffix = new HashMap<>();
+    public static final HashMap<UUID, Integer> ETF_UUID_randomTextureSuffix2 = new HashMap<>();
+    public static final HashMap<UUID, Integer> ETF_UUID_randomTextureSuffix3 = new HashMap<>();
+    public static final HashMap<UUID, Integer> ETF_UUID_randomTextureSuffix4 = new HashMap<>();
+    public static final Set<UUID> ETF_UUID_entityAlreadyCalculated = new HashSet<>();//
+    public static final HashMap<UUID, Long> ETF_UUID_entityAwaitingDataClearing = new HashMap<>();
+    public static final HashMap<UUID, Long> ETF_UUID_entityAwaitingDataClearing2 = new HashMap<>();
+    public static final HashMap<String, ArrayList<randomCase>> ETF_PATH_OptifineRandomSettingsPerTexture = new HashMap<>();
+    public static final HashMap<String, Boolean> ETF_PATH_OptifineOrTrueRandom = new HashMap<>();
+    public static final HashMap<String, Integer> ETF_PATH_OptifineOldVanillaETF_0123 = new HashMap<>();// 0,1,2
+    public static final HashMap<String, Boolean> ETF_PATH_ignoreOnePNG = new HashMap<>();
+    public static final HashMap<UUID, Boolean> ETF_UUID_hasUpdatableRandomCases = new HashMap<>();
+    public static final HashMap<UUID, Boolean> ETF_UUID_hasUpdatableRandomCases2 = new HashMap<>();
+    public static final HashMap<UUID, Boolean> ETF_UUID_hasUpdatableRandomCases3 = new HashMap<>();
+    public static final HashMap<UUID, Boolean> ETF_UUID_hasUpdatableRandomCases4 = new HashMap<>();
 
     //must be 6 length
     // 0 biome
@@ -42,45 +42,45 @@ public class ETF_CLIENT implements ClientModInitializer, ETF_METHODS {
     // 3 weather
     // 4 daytime
     // 5 moonphase
-    public static final HashMap<UUID, String[]> UUID_OriginalNonUpdatePropertyStrings = new HashMap<>();
+    public static final HashMap<UUID, String[]> ETF_UUID_OriginalNonUpdatePropertyStrings = new HashMap<>();
 
 
-    public static final HashMap<UUID, Boolean> UUID_playerHasFeatures = new HashMap<>();
-    public static final HashMap<UUID, Boolean> UUID_playerSkinDownloadedYet = new HashMap<>();
-    public static final HashMap<UUID, Boolean> UUID_playerHasEnchant = new HashMap<>();
-    public static final HashMap<UUID, Boolean> UUID_playerHasEmissive = new HashMap<>();
-    public static final HashMap<UUID, Identifier> UUID_playerTransparentSkinId = new HashMap<>();
-    public static final HashMap<String, HttpURLConnection> URL_HTTPtoDisconnect1 = new HashMap<>();
-    public static final HashMap<String, HttpURLConnection> URL_HTTPtoDisconnect2 = new HashMap<>();
-    public static final HashMap<UUID, Boolean> UUID_playerHasCoat = new HashMap<>();
-    public static final HashMap<UUID, Boolean> UUID_playerHasFatCoat = new HashMap<>();
-    public static final HashMap<UUID, Boolean> UUID_playerHasVillagerNose = new HashMap<>();
-    public static final HashMap<UUID, Boolean> UUID_playerHasCape = new HashMap<>();
-    public static final HashMap<UUID, Boolean> UUID_playerHasCustomCape = new HashMap<>();
+    public static final HashMap<UUID, Boolean> ETF_UUID_playerHasFeatures = new HashMap<>();
+    public static final HashMap<UUID, Boolean> ETF_UUID_playerSkinDownloadedYet = new HashMap<>();
+    public static final HashMap<UUID, Boolean> ETF_UUID_playerHasEnchant = new HashMap<>();
+    public static final HashMap<UUID, Boolean> ETF_UUID_playerHasEmissive = new HashMap<>();
+    public static final HashMap<UUID, Identifier> ETF_UUID_playerTransparentSkinId = new HashMap<>();
+    public static final HashMap<String, HttpURLConnection> ETF_URL_HTTPtoDisconnect1 = new HashMap<>();
+    public static final HashMap<String, HttpURLConnection> ETF_URL_HTTPtoDisconnect2 = new HashMap<>();
+    public static final HashMap<UUID, Boolean> ETF_UUID_playerHasCoat = new HashMap<>();
+    public static final HashMap<UUID, Boolean> ETF_UUID_playerHasFatCoat = new HashMap<>();
+    public static final HashMap<UUID, Boolean> ETF_UUID_playerHasVillagerNose = new HashMap<>();
+    public static final HashMap<UUID, Boolean> ETF_UUID_playerHasCape = new HashMap<>();
+    public static final HashMap<UUID, Boolean> ETF_UUID_playerHasCustomCape = new HashMap<>();
 
-    public static final HashMap<UUID, Long> UUID_playerLastSkinCheck = new HashMap<>();
-    public static final HashMap<UUID, Integer> UUID_playerLastSkinCheckCount = new HashMap<>();
+    public static final HashMap<UUID, Long> ETF_UUID_playerLastSkinCheck = new HashMap<>();
+    public static final HashMap<UUID, Integer> ETF_UUID_playerLastSkinCheckCount = new HashMap<>();
 
-    public static final HashMap<UUID, Long> UUID_NextBlinkTime = new HashMap<>();
-    public static final HashMap<String, Boolean> TEXTURE_HasBlink = new HashMap<>();
-    public static final HashMap<String, Boolean> TEXTURE_HasBlink2 = new HashMap<>();
-    public static final HashMap<String, Properties> TEXTURE_BlinkProps = new HashMap<>();
-    public static final HashMap<String, Boolean> TEXTURE_HasOptifineDefaultReplacement = new HashMap<>();
+    public static final HashMap<UUID, Long> ETF_UUID_NextBlinkTime = new HashMap<>();
+    public static final HashMap<String, Boolean> ETF_PATH_HasBlink = new HashMap<>();
+    public static final HashMap<String, Boolean> ETF_PATH_HasBlink2 = new HashMap<>();
+    public static final HashMap<String, Properties> ETF_PATH_BlinkProps = new HashMap<>();
+    public static final HashMap<String, Boolean> ETF_PATH_HasOptifineDefaultReplacement = new HashMap<>();
 
-    public static final HashMap<String, Boolean> TEXTURE_VillagerIsExistingFeature = new HashMap<>();
+    public static final HashMap<String, Boolean> ETF_PATH_VillagerIsExistingFeature = new HashMap<>();
 
-    public static String[] emissiveSuffix = null;
-    public static final HashMap<String, Identifier> Texture_Emissive = new HashMap<>();
-    public static boolean irisDetected = false;
-    public static ETFConfig ETFConfigData;
+    public static String[] ETF_emissiveSuffixes = null;
+    public static final HashMap<String, Identifier> ETF_PATH_EmissiveTextureIdentifier = new HashMap<>();
+    public static boolean ETF_irisDetected = false;
+    public static ETFConfig ETF_ConfigData;
 
-    public static final HashMap<UUID, String> UUID_TridentName = new HashMap<>();
-    public static final Set<String> PATH_FailedPropertiesToIgnore = new HashSet<>();
+    public static final HashMap<UUID, String> ETF_UUID_TridentName = new HashMap<>();
+    public static final Set<String> ETF_PATH_FailedPropertiesToIgnore = new HashSet<>();
 
-    public static int mooshroomRedCustomShroom = 0;
-    public static int mooshroomBrownCustomShroom = 0;
+    public static int ETF_mooshroomRedCustomShroom = 0;
+    public static int ETF_mooshroomBrownCustomShroom = 0;
 
-    public final static String SKIN_NAMESPACE = "etf_skin:";
+    public final static String ETF_SKIN_NAMESPACE = "etf_skin:";
 
 
     @Override
@@ -99,14 +99,14 @@ public class ETF_CLIENT implements ClientModInitializer, ETF_METHODS {
         if (config.exists()) {
             try {
                 FileReader fileReader = new FileReader(config);
-                ETFConfigData = gson.fromJson(fileReader, ETFConfig.class);
+                ETF_ConfigData = gson.fromJson(fileReader, ETFConfig.class);
                 fileReader.close();
                 ETF_saveConfig();
             } catch (IOException e) {
                 ETF_modMessage("Config could not be loaded, using defaults", false);
             }
         } else {
-            ETFConfigData = new ETFConfig();
+            ETF_ConfigData = new ETFConfig();
             ETF_saveConfig();
         }
     }

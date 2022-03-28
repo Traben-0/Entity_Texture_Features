@@ -14,7 +14,7 @@ public class ETFConfig {
     public boolean enableEmissiveTextures = true;
     public boolean alwaysCheckVanillaEmissiveSuffix = true;
     public boolean doShadersEmissiveFix = false;
-    public enchantedPotionEffectsEnum enchantedPotionEffects = enchantedPotionEffectsEnum.None;
+    public enchantedPotionEffectsEnum enchantedPotionEffects_V2 = enchantedPotionEffectsEnum.None;
     public boolean skinFeaturesEnabled = true;
     public boolean skinFeaturesEnableTransparency = true;
     public boolean skinFeaturesEnableFullTransparency = false;

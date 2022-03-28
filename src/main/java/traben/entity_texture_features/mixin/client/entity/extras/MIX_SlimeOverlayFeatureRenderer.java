@@ -34,24 +34,24 @@ public abstract class MIX_SlimeOverlayFeatureRenderer<T extends LivingEntity> ex
     @Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/EntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V",
                     shift = At.Shift.AFTER))
-    private void applyRenderFeatures(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
-        ETF_GeneralEmissiveRender(matrixStack, vertexConsumerProvider, returnAlteredTexture(getTexture(livingEntity)), this.model);
+    private void ETF_applyRenderFeatures(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
+        ETF_GeneralEmissiveRender(matrixStack, vertexConsumerProvider, ETF_returnAlteredTexture(getTexture(livingEntity)), this.model);
     }
 
     @Inject(
             method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
             at = @At(value = "HEAD"))
-    private void getEntity(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
-        slime = livingEntity;
+    private void ETF_etEntity(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
+        ETF_slime = livingEntity;
     }
 
-    T slime = null;
+    T ETF_slime = null;
 
     @ModifyArg(
             method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/RenderLayer;getEntityTranslucent(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;",
                     ordinal = 0))
-    private Identifier returnAlteredTexture(Identifier texture) {
-        return ETF_GeneralReturnAlteredTexture(texture, slime);
+    private Identifier ETF_returnAlteredTexture(Identifier texture) {
+        return ETF_GeneralReturnAlteredTexture(texture, ETF_slime);
     }
 }

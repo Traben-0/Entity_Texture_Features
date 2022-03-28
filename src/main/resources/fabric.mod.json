@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "entity_texture_features",
-  "version": "2.5.16",
+  "version": "2.6.RC1",
   "name": "Entity Texture Features",
   "description": "- Optifine format compatible\n- Random/Custom textures\n- Emissive textures\n- Blinking textures\n- Player Skin textures",
   "authors": [
@@ -37,7 +37,7 @@
   },
   "suggests": {
     "modmenu": ">=3.1.0",
-    "clothconfig": ">=6.1.48"
+    "clothconfig": ">=6.2.0"
   },
   "custom": {
     "modmenu": {

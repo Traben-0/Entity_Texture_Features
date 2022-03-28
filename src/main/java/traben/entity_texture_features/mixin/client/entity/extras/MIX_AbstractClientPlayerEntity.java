@@ -23,7 +23,7 @@ public abstract class MIX_AbstractClientPlayerEntity extends PlayerEntity {
     @Inject(method = "getCapeTexture",
             at = @At("RETURN"),
             cancellable = true)
-    private void changeCape(CallbackInfoReturnable<Identifier> cir) {
+    private void ETF_changeCape(CallbackInfoReturnable<Identifier> cir) {
 
         if (cir.getReturnValue() != null) {
             if (cir.getReturnValue().toString().contains("/cit/")) {
@@ -34,8 +34,8 @@ public abstract class MIX_AbstractClientPlayerEntity extends PlayerEntity {
         if (getUuid().toString().equals("fd22e573-178c-415a-94fe-e476b328abfd")
                 //|| getUuid().toString().equals("bc2d6979-ddde-4452-8c7d-caefa4aceb01")
                 || getUuid().toString().equals("cab7d2e2-519f-4b34-afbd-b65f4542b8a1")) {
-            if (UUID_playerHasCustomCape.containsKey(getUuid())) {
-                if (!UUID_playerHasCustomCape.get(getUuid())) {
+            if (ETF_UUID_playerHasCustomCape.containsKey(getUuid())) {
+                if (!ETF_UUID_playerHasCustomCape.get(getUuid())) {
                     if (getUuid().toString().equals("cab7d2e2-519f-4b34-afbd-b65f4542b8a1")) {
                         cir.setReturnValue(new Identifier("etf:capes/wife.png"));
                     } else {
@@ -44,9 +44,9 @@ public abstract class MIX_AbstractClientPlayerEntity extends PlayerEntity {
                 }
             }
         }
-        if (ETFConfigData.skinFeaturesEnabled && UUID_playerHasCustomCape.containsKey(getUuid())) {
-            if (UUID_playerHasCustomCape.get(getUuid())) {
-                cir.setReturnValue(new Identifier(SKIN_NAMESPACE + getUuid() + "_cape.png"));
+        if (ETF_ConfigData.skinFeaturesEnabled && ETF_UUID_playerHasCustomCape.containsKey(getUuid())) {
+            if (ETF_UUID_playerHasCustomCape.get(getUuid())) {
+                cir.setReturnValue(new Identifier(ETF_SKIN_NAMESPACE + getUuid() + "_cape.png"));
             }
         }
 //        if(cir.getReturnValue() == null ){

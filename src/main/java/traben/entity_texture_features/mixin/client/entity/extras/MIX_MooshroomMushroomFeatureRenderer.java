@@ -13,11 +13,11 @@ import static traben.entity_texture_features.client.ETF_CLIENT.*;
 public abstract class MIX_MooshroomMushroomFeatureRenderer implements ETF_METHODS {
 
     @ModifyArg(method = "renderMushroom", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/RenderLayer;getOutline(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;"), index = 0)
-    private Identifier injected(Identifier texture) {
+    private Identifier ETF_injected(Identifier texture) {
         //enable custom mooshroom mushrooms
-        if (ETFConfigData.enableCustomTextures) {
+        if (ETF_ConfigData.enableCustomTextures) {
             if (texture.toString().equals("minecraft:textures/block/red_mushroom.png")) {
-                switch (mooshroomRedCustomShroom) {
+                switch (ETF_mooshroomRedCustomShroom) {
                     case 1:
                         return texture;
                     case 2:
@@ -25,16 +25,16 @@ public abstract class MIX_MooshroomMushroomFeatureRenderer implements ETF_METHOD
                     default: {
                         Identifier test = new Identifier("minecraft:textures/entity/cow/red_mushroom.png");
                         if (ETF_isExistingFile(test)) {
-                            mooshroomRedCustomShroom = 2;
+                            ETF_mooshroomRedCustomShroom = 2;
                             return test;
                         } else {
-                            mooshroomRedCustomShroom = 1;
+                            ETF_mooshroomRedCustomShroom = 1;
                         }
                     }
                 }
             }
             if (texture.toString().equals("minecraft:textures/block/brown_mushroom.png")) {
-                switch (mooshroomBrownCustomShroom) {
+                switch (ETF_mooshroomBrownCustomShroom) {
                     case 1:
                         return texture;
                     case 2:
@@ -42,10 +42,10 @@ public abstract class MIX_MooshroomMushroomFeatureRenderer implements ETF_METHOD
                     default: {
                         Identifier test = new Identifier("minecraft:textures/entity/cow/brown_mushroom.png");
                         if (ETF_isExistingFile(test)) {
-                            mooshroomBrownCustomShroom = 2;
+                            ETF_mooshroomBrownCustomShroom = 2;
                             return test;
                         } else {
-                            mooshroomBrownCustomShroom = 1;
+                            ETF_mooshroomBrownCustomShroom = 1;
                         }
                     }
                 }

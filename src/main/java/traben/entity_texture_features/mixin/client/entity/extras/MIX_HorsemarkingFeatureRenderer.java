@@ -29,25 +29,25 @@ public abstract class MIX_HorsemarkingFeatureRenderer extends FeatureRenderer<Ho
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/HorseEntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V",
                     shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILSOFT)
 
-    private void applyEmissive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, HorseEntity horseEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci, Identifier identifier, VertexConsumer vertexConsumer) {
+    private void ETF_applyEmissive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, HorseEntity horseEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci, Identifier identifier, VertexConsumer vertexConsumer) {
         //UUID id = livingEntity.getUuid();
-        ETF_GeneralEmissiveRender(matrixStack, vertexConsumerProvider, returnAlteredTexture(identifier), (this.getContextModel()));
+        ETF_GeneralEmissiveRender(matrixStack, vertexConsumerProvider, ETF_returnAlteredTexture(identifier), (this.getContextModel()));
     }
 
     @Inject(
             method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/passive/HorseEntity;FFFFFF)V",
             at = @At(value = "HEAD"))
-    private void getEntity(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, HorseEntity horseEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
-        entity = horseEntity;
+    private void ETF_getEntity(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, HorseEntity horseEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
+        ETF_entity = horseEntity;
     }
 
-    HorseEntity entity = null;
+    HorseEntity ETF_entity = null;
 
     @ModifyArg(
             method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/passive/HorseEntity;FFFFFF)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/RenderLayer;getEntityTranslucent(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;"))
-    private Identifier returnAlteredTexture(Identifier texture) {
-        return ETF_GeneralReturnAlteredTexture(texture, entity);
+    private Identifier ETF_returnAlteredTexture(Identifier texture) {
+        return ETF_GeneralReturnAlteredTexture(texture, ETF_entity);
     }
 }
 

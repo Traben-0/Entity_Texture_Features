@@ -30,7 +30,7 @@ public abstract class MIX_BuiltinModelItemRenderer implements SynchronousResourc
 
     //first cancel vanilla render
     @ModifyArg(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z"), index = 0)
-    private Item injected(Item item) {
+    private Item ETF_injected(Item item) {
         if (item == Items.TRIDENT) {
             //this will automatically fail as blocks do not get processed here
             return Items.DIRT;
@@ -40,10 +40,10 @@ public abstract class MIX_BuiltinModelItemRenderer implements SynchronousResourc
     }
 
     @Inject(method = "render", at = @At(value = "TAIL"))
-    private void changeElytraTexture(ItemStack stack, ModelTransformation.Mode mode, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, CallbackInfo ci) {
+    private void ETF_changeElytraTexture(ItemStack stack, ModelTransformation.Mode mode, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, CallbackInfo ci) {
         //at this point trident has already rendered we just have to render alterations over it :/
-        if (stack.isOf(Items.TRIDENT) && ETFConfigData.enableTridents) {
-            if (ETFConfigData.enableCustomTextures) {
+        if (stack.isOf(Items.TRIDENT) && ETF_ConfigData.enableTridents) {
+            if (ETF_ConfigData.enableCustomTextures) {
                 if (stack.hasCustomName()) {
                     String path = TridentEntityModel.TEXTURE.toString();
                     String name = stack.getName().getString().toLowerCase().replaceAll("[^a-z0-9/_.-]", "");
@@ -75,26 +75,26 @@ public abstract class MIX_BuiltinModelItemRenderer implements SynchronousResourc
                 this.modelTrident.render(matrices, block, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
                 matrices.pop();
             }
-            if (ETFConfigData.enableEmissiveTextures) {
+            if (ETF_ConfigData.enableEmissiveTextures) {
                 String path = TridentEntityModel.TEXTURE.toString();
                 String name = stack.hasCustomName() ? "_" + stack.getName().getString().toLowerCase().replaceAll("[^a-z0-9/_.-]", "") : "";
                 String fileString = path.replace(".png", "_" + name + ".png");
-                if (!Texture_Emissive.containsKey(fileString)) {
+                if (!ETF_PATH_EmissiveTextureIdentifier.containsKey(fileString)) {
                     for (String suffix :
-                            emissiveSuffix) {
+                            ETF_emissiveSuffixes) {
                         Identifier possibleId = new Identifier(path.replace(".png", name + suffix + ".png"));
                         if (ETF_isExistingFile(possibleId)) {
-                            Texture_Emissive.put(fileString, possibleId);
+                            ETF_PATH_EmissiveTextureIdentifier.put(fileString, possibleId);
                         }
                     }
-                    if (!Texture_Emissive.containsKey(fileString)) {
-                        Texture_Emissive.put(fileString, null);
+                    if (!ETF_PATH_EmissiveTextureIdentifier.containsKey(fileString)) {
+                        ETF_PATH_EmissiveTextureIdentifier.put(fileString, null);
                     }
                 }
-                if (Texture_Emissive.get(fileString) != null) {
+                if (ETF_PATH_EmissiveTextureIdentifier.get(fileString) != null) {
                     matrices.push();
                     matrices.scale(1.0F, -1.0F, -1.0F);
-                    VertexConsumer block = vertexConsumers.getBuffer(RenderLayer.getBeaconBeam(Texture_Emissive.get(fileString), true));
+                    VertexConsumer block = vertexConsumers.getBuffer(RenderLayer.getBeaconBeam(ETF_PATH_EmissiveTextureIdentifier.get(fileString), true));
                     this.modelTrident.render(matrices, block, 15728640, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
                     matrices.pop();
 

@@ -37,32 +37,32 @@ public abstract class MIX_HorseArmorFeatureRenderer extends FeatureRenderer<Hors
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/HorseEntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V",
                     shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILSOFT)
 
-    private void applyEmissive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, HorseEntity horseEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci, ItemStack itemStack, HorseArmorItem horseArmorItem, float n, float o, float p, VertexConsumer vertexConsumer) {
+    private void ETF_applyEmissive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, HorseEntity horseEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci, ItemStack itemStack, HorseArmorItem horseArmorItem, float n, float o, float p, VertexConsumer vertexConsumer) {
         //UUID id = livingEntity.getUuid();
-        if (ETFConfigData.enableEmissiveTextures) {
+        if (ETF_ConfigData.enableEmissiveTextures) {
 
             String fileString = horseArmorItem.getEntityTexture().toString();
 
-            if (!Texture_Emissive.containsKey(fileString)) {
+            if (!ETF_PATH_EmissiveTextureIdentifier.containsKey(fileString)) {
                 //creates and sets emissive for texture if it exists
                 Identifier fileName_e;
                 for (String suffix1 :
-                        emissiveSuffix) {
+                        ETF_emissiveSuffixes) {
                     fileName_e = new Identifier(fileString.replace(".png", suffix1 + ".png"));
                     if (ETF_isExistingFile(fileName_e)) {
-                        Texture_Emissive.put(fileString, fileName_e);
+                        ETF_PATH_EmissiveTextureIdentifier.put(fileString, fileName_e);
                         break;
                     }
                 }
-                if (!Texture_Emissive.containsKey(fileString)) {
-                    Texture_Emissive.put(fileString, null);
+                if (!ETF_PATH_EmissiveTextureIdentifier.containsKey(fileString)) {
+                    ETF_PATH_EmissiveTextureIdentifier.put(fileString, null);
                 }
             }
-            if (Texture_Emissive.containsKey(fileString)) {
-                if (Texture_Emissive.get(fileString) != null) {
-                    VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(Texture_Emissive.get(fileString), true));
+            if (ETF_PATH_EmissiveTextureIdentifier.containsKey(fileString)) {
+                if (ETF_PATH_EmissiveTextureIdentifier.get(fileString) != null) {
+                    VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(ETF_PATH_EmissiveTextureIdentifier.get(fileString), true));
                     //one check most efficient instead of before and after applying
-                    if (ETFConfigData.doShadersEmissiveFix) {
+                    if (ETF_ConfigData.doShadersEmissiveFix) {
                         matrixStack.scale(1.01f, 1.01f, 1.01f);
                         this.model.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, n, o, p, 1.0F);
                         matrixStack.scale(1f, 1f, 1f);
