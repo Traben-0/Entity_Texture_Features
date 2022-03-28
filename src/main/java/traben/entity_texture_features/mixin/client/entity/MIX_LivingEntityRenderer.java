@@ -58,11 +58,11 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
             Identifier texture = ETF_returnAlteredTexture((LivingEntityRenderer) (Object) this, livingEntity);
             ETF_GeneralEmissiveRender(matrixStack, vertexConsumerProvider, texture, this.getModel());
 
-        } else if (ETF_ConfigData.skinFeaturesEnabled) { // is a player
+        } else if (ETFConfigData.skinFeaturesEnabled) { // is a player
             ETF_renderSkinFeatures(id, (PlayerEntity) livingEntity, matrixStack, vertexConsumerProvider, i);
         }
         //potion effects
-        if (ETF_ConfigData.enchantedPotionEffects_V2 != ETFConfig.enchantedPotionEffectsEnum.None
+        if (ETFConfigData.enchantedPotionEffects != ETFConfig.enchantedPotionEffectsEnum.NONE
                 && !livingEntity.getActiveStatusEffects().isEmpty()
                 && !livingEntity.hasStatusEffect(StatusEffects.INVISIBILITY)
         ) {
@@ -70,9 +70,9 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
         }
 
         //randomly mark texture for rechecking randomized by UUID
-        if (ETF_ConfigData.enableCustomTextures && ETF_ConfigData.textureUpdateFrequency_V2 != ETFConfig.updateFrequency.Never) {
+        if (ETFConfigData.enableCustomTextures && ETFConfigData.textureUpdateFrequency_V2 != ETFConfig.updateFrequency.Never) {
 
-            int delay = switch (ETF_ConfigData.textureUpdateFrequency_V2) {
+            int delay = switch (ETFConfigData.textureUpdateFrequency_V2) {
                 case Fast -> 5;
                 case Slow -> 80;
                 case Instant -> 1;
@@ -115,7 +115,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
         UUID id = entity.getUuid();
 
         if (!(entity instanceof PlayerEntity)) {
-            if (ETF_ConfigData.enableCustomTextures) {
+            if (ETFConfigData.enableCustomTextures) {
                 try {
                     if (!ETF_PATH_OptifineOrTrueRandom.containsKey(path)) {
                         ETF_processNewRandomTextureCandidate(path);
@@ -209,7 +209,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                 }
             }
         } else { // is player
-            if (ETF_ConfigData.skinFeaturesEnabled) {
+            if (ETFConfigData.skinFeaturesEnabled) {
                 if (ETF_timerBeforeTrySkin > 0) {
                     ETF_timerBeforeTrySkin--;
                 } else {
@@ -235,16 +235,16 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
 
     private void ETF_renderPotion(T livingEntity, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider) {
         VertexConsumer textureVert;
-        switch (ETF_ConfigData.enchantedPotionEffects_V2) {
-            case Enchanted -> {
+        switch (ETFConfigData.enchantedPotionEffects) {
+            case ENCHANTED -> {
                 textureVert = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(ETF_returnAlteredTexture((LivingEntityRenderer) (Object) this, livingEntity)), false, true);
                 this.getModel().render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 0.16F);
             }
-            case Glowing -> {
+            case GLOWING -> {
                 textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(ETF_returnAlteredTexture((LivingEntityRenderer) (Object) this, livingEntity), true));
                 this.getModel().render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 0.16F);
             }
-            case Creeper_Charge -> {
+            case CREEPER_CHARGE -> {
                 int f = (int) ((float) livingEntity.world.getTime() / 10);
                 VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEnergySwirl(new Identifier("textures/entity/creeper/creeper_armor.png"), f * 0.01F % 1.0F, f * 0.01F % 1.0F));
                 matrixStack.scale(1.1f, 1.1f, 1.1f);
@@ -329,7 +329,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                             if (ETF_UUID_playerHasEmissive.get(id)) {
                                 Identifier emissive = new Identifier(coat.replace(".png", "_e.png"));
                                 VertexConsumer emissVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(emissive, true));
-                                if (ETF_ConfigData.doShadersEmissiveFix) {
+                                if (ETFConfigData.doShadersEmissiveFix) {
                                     matrixStack.scale(1.01f, 1.01f, 1.01f);
                                 }
                                 if (ETF_UUID_playerHasFatCoat.get(id)) {
@@ -337,7 +337,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                                 } else {
                                     customPlayerModel.jacket.render(matrixStack, emissVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
                                 }
-                                if (ETF_ConfigData.doShadersEmissiveFix) {
+                                if (ETFConfigData.doShadersEmissiveFix) {
                                     matrixStack.scale(1f, 1f, 1f);
                                 }
 
@@ -358,7 +358,7 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                                     new Identifier(skinPossiblyBlinking.replace(".png", "_e.png")) :
                                     new Identifier(ETF_SKIN_NAMESPACE + id + "_e.png");
                             VertexConsumer emissVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(emissive, true));
-                            if (ETF_ConfigData.doShadersEmissiveFix) {
+                            if (ETFConfigData.doShadersEmissiveFix) {
                                 matrixStack.scale(1.01f, 1.01f, 1.01f);
                                 this.getModel().render(matrixStack, emissVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
                                 matrixStack.scale(1f, 1f, 1f);

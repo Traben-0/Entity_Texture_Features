@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.client.ETF_METHODS;
 
-import static traben.entity_texture_features.client.ETF_CLIENT.ETF_ConfigData;
+import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
 
 @Mixin(ElytraFeatureRenderer.class)
 public abstract class MIX_ElytraFeatureRenderer<T extends LivingEntity, M extends EntityModel<T>> extends FeatureRenderer<T, M> implements ETF_METHODS {
@@ -41,7 +41,7 @@ public abstract class MIX_ElytraFeatureRenderer<T extends LivingEntity, M extend
                     shift = At.Shift.AFTER))
     private void ETF_applyEmissive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
         //UUID id = livingEntity.getUuid();
-        if (ETF_ConfigData.enableElytra && ETF_ConfigData.enableEmissiveTextures) {
+        if (ETFConfigData.enableElytra && ETFConfigData.enableEmissiveTextures) {
             Identifier identifier;
             if (livingEntity instanceof AbstractClientPlayerEntity abstractClientPlayerEntity) {
                 if (abstractClientPlayerEntity.canRenderElytraTexture() && abstractClientPlayerEntity.getElytraTexture() != null) {

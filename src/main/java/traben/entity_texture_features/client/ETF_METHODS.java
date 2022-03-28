@@ -672,7 +672,7 @@ public interface ETF_METHODS {
             if (suffix.contains("suffix.emissive")) {
                 builder.add(suffix.getProperty("suffix.emissive"));
             }
-            if (ETF_ConfigData.alwaysCheckVanillaEmissiveSuffix) {
+            if (ETFConfigData.alwaysCheckVanillaEmissiveSuffix) {
                 builder.add("_e");
             }
             ETF_emissiveSuffixes = builder.toArray(new String[0]);
@@ -695,7 +695,7 @@ public interface ETF_METHODS {
         }
         try {
             FileWriter fileWriter = new FileWriter(config);
-            fileWriter.write(gson.toJson(ETF_ConfigData));
+            fileWriter.write(gson.toJson(ETFConfigData));
             fileWriter.close();
         } catch (IOException e) {
             ETF_modMessage("Config could not be saved", false);
@@ -704,8 +704,8 @@ public interface ETF_METHODS {
 
     default void ETF_checkPlayerForSkinFeatures(UUID id, PlayerEntity player) {
         //if on an enemy team option to disable skin features loading
-        if (ETF_ConfigData.skinFeaturesEnabled
-                && (ETF_ConfigData.enableEnemyTeamPlayersSkinFeatures
+        if (ETFConfigData.skinFeaturesEnabled
+                && (ETFConfigData.enableEnemyTeamPlayersSkinFeatures
                 || (player.isTeammate(MinecraftClient.getInstance().player)
                 || player.getScoreboardTeam() == null))
         ) {
@@ -1032,7 +1032,7 @@ public interface ETF_METHODS {
                 }
                 //check for transparency options
                 //System.out.println("about to check");
-                if (ETF_ConfigData.skinFeaturesEnableTransparency) {
+                if (ETFConfigData.skinFeaturesEnableTransparency) {
                     if (ETF_canTransparentSkin(skin)) {
                         Identifier transId = new Identifier(ETF_SKIN_NAMESPACE + id + "_transparent.png");
                         ETF_UUID_playerTransparentSkinId.put(id, transId);
@@ -1356,7 +1356,7 @@ public interface ETF_METHODS {
     }
 
     private boolean ETF_canTransparentSkin(NativeImage skin) {
-        if (ETF_ConfigData.skinFeaturesEnableFullTransparency) {
+        if (ETFConfigData.skinFeaturesEnableFullTransparency) {
             return true;
         } else {
             int countTransparent = 0;
@@ -1440,7 +1440,7 @@ public interface ETF_METHODS {
 
 
     default Identifier ETF_returnBlinkIdOrGiven(LivingEntity entity, String givenTexturePath, UUID id, boolean isPlayer) {
-        if (ETF_ConfigData.enableBlinking) {
+        if (ETFConfigData.enableBlinking) {
             if (!ETF_PATH_HasBlink.containsKey(givenTexturePath)) {
                 //check for blink textures
                 ETF_PATH_HasBlink.put(givenTexturePath, ETF_isExistingFileAndSameOrHigherResourcepackAs(new Identifier(givenTexturePath.replace(".png", "_blink.png")), new Identifier(givenTexturePath)));
@@ -1471,13 +1471,13 @@ public interface ETF_METHODS {
                         if (props != null) {
                             blinkLength = props.containsKey("blinkLength") ?
                                     Integer.parseInt(props.getProperty("blinkLength").replaceAll("[^0-9]", "")) :
-                                    ETF_ConfigData.blinkLength;
+                                    ETFConfigData.blinkLength;
                             blinkFrequency = props.containsKey("blinkFrequency") ?
                                     Integer.parseInt(props.getProperty("blinkFrequency").replaceAll("[^0-9]", "")) :
-                                    ETF_ConfigData.blinkFrequency;
+                                    ETFConfigData.blinkFrequency;
                         } else {
-                            blinkLength = ETF_ConfigData.blinkLength;
-                            blinkFrequency = ETF_ConfigData.blinkFrequency;
+                            blinkLength = ETFConfigData.blinkLength;
+                            blinkFrequency = ETFConfigData.blinkFrequency;
                         }
 
 
@@ -1515,8 +1515,8 @@ public interface ETF_METHODS {
             }
         }
 
-        if (isPlayer && ETF_ConfigData.skinFeaturesEnabled
-                && ETF_UUID_playerTransparentSkinId.containsKey(id) && (ETF_ConfigData.enableEnemyTeamPlayersSkinFeatures
+        if (isPlayer && ETFConfigData.skinFeaturesEnabled
+                && ETF_UUID_playerTransparentSkinId.containsKey(id) && (ETFConfigData.enableEnemyTeamPlayersSkinFeatures
                 || (entity.isTeammate(MinecraftClient.getInstance().player) || entity.getScoreboardTeam() == null))) {
             Identifier ident = ETF_UUID_playerTransparentSkinId.get(id);
             if (ident != null) {
@@ -1531,7 +1531,7 @@ public interface ETF_METHODS {
     default Identifier ETF_GeneralReturnAlteredTexture(Identifier texture, Entity entity) {
         if (entity == null) return texture;
         UUID id = entity.getUuid();
-        if (ETF_ConfigData.enableCustomTextures) {
+        if (ETFConfigData.enableCustomTextures) {
             if (ETF_UUID_randomTextureSuffix.containsKey(id)) {
                 if (ETF_UUID_randomTextureSuffix.get(id) != 0) {
                     return ETF_returnBlinkIdOrGiven((LivingEntity) entity, ETF_returnOptifineOrVanillaIdentifier(texture.toString(), ETF_UUID_randomTextureSuffix.get(id)).toString(), id);
@@ -1556,7 +1556,7 @@ public interface ETF_METHODS {
 
     //will set and render emissive texture for any texture and model
     default void ETF_GeneralEmissiveRender(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, Identifier texture, Model model) {
-        if (ETF_ConfigData.enableEmissiveTextures) {
+        if (ETFConfigData.enableEmissiveTextures) {
             String fileString = texture.toString();
             if (!ETF_PATH_EmissiveTextureIdentifier.containsKey(fileString)) {
                 //creates and sets emissive for texture if it exists
@@ -1577,7 +1577,7 @@ public interface ETF_METHODS {
                 if (ETF_PATH_EmissiveTextureIdentifier.get(fileString) != null) {
                     VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(ETF_PATH_EmissiveTextureIdentifier.get(fileString), true));
                     //one check most efficient instead of before and after applying
-                    if (ETF_ConfigData.doShadersEmissiveFix) {
+                    if (ETFConfigData.doShadersEmissiveFix) {
                         matrixStack.scale(1.01f, 1.01f, 1.01f);
                         model.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
                         matrixStack.scale(1f, 1f, 1f);

@@ -59,7 +59,7 @@ public abstract class MIX_VillagerClothingFeatureRenderer<T extends LivingEntity
 
     private Identifier ETF_returnAltered(Identifier vanillaTexture, HashMap<UUID, Integer> UUID_RandomSuffixMap, HashMap<UUID, Boolean> UUID_HasUpdateables) {
         UUID id = ETF_villager.getUuid();
-        if (ETF_ConfigData.enableCustomTextures) {
+        if (ETFConfigData.enableCustomTextures) {
             if (!ETF_PATH_OptifineOrTrueRandom.containsKey(vanillaTexture.toString())) {
                 ETF_processNewRandomTextureCandidate(vanillaTexture.toString());
             } else if (ETF_PATH_OptifineOldVanillaETF_0123.containsKey(vanillaTexture.toString())) {

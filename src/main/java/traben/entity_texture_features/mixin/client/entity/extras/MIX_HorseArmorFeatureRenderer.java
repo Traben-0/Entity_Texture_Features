@@ -39,7 +39,7 @@ public abstract class MIX_HorseArmorFeatureRenderer extends FeatureRenderer<Hors
 
     private void ETF_applyEmissive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, HorseEntity horseEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci, ItemStack itemStack, HorseArmorItem horseArmorItem, float n, float o, float p, VertexConsumer vertexConsumer) {
         //UUID id = livingEntity.getUuid();
-        if (ETF_ConfigData.enableEmissiveTextures) {
+        if (ETFConfigData.enableEmissiveTextures) {
 
             String fileString = horseArmorItem.getEntityTexture().toString();
 
@@ -62,7 +62,7 @@ public abstract class MIX_HorseArmorFeatureRenderer extends FeatureRenderer<Hors
                 if (ETF_PATH_EmissiveTextureIdentifier.get(fileString) != null) {
                     VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(ETF_PATH_EmissiveTextureIdentifier.get(fileString), true));
                     //one check most efficient instead of before and after applying
-                    if (ETF_ConfigData.doShadersEmissiveFix) {
+                    if (ETFConfigData.doShadersEmissiveFix) {
                         matrixStack.scale(1.01f, 1.01f, 1.01f);
                         this.model.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, n, o, p, 1.0F);
                         matrixStack.scale(1f, 1f, 1f);

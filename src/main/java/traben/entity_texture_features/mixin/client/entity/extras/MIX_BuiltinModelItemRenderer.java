@@ -42,8 +42,8 @@ public abstract class MIX_BuiltinModelItemRenderer implements SynchronousResourc
     @Inject(method = "render", at = @At(value = "TAIL"))
     private void ETF_changeElytraTexture(ItemStack stack, ModelTransformation.Mode mode, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, CallbackInfo ci) {
         //at this point trident has already rendered we just have to render alterations over it :/
-        if (stack.isOf(Items.TRIDENT) && ETF_ConfigData.enableTridents) {
-            if (ETF_ConfigData.enableCustomTextures) {
+        if (stack.isOf(Items.TRIDENT) && ETFConfigData.enableTridents) {
+            if (ETFConfigData.enableCustomTextures) {
                 if (stack.hasCustomName()) {
                     String path = TridentEntityModel.TEXTURE.toString();
                     String name = stack.getName().getString().toLowerCase().replaceAll("[^a-z0-9/_.-]", "");
@@ -75,7 +75,7 @@ public abstract class MIX_BuiltinModelItemRenderer implements SynchronousResourc
                 this.modelTrident.render(matrices, block, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
                 matrices.pop();
             }
-            if (ETF_ConfigData.enableEmissiveTextures) {
+            if (ETFConfigData.enableEmissiveTextures) {
                 String path = TridentEntityModel.TEXTURE.toString();
                 String name = stack.hasCustomName() ? "_" + stack.getName().getString().toLowerCase().replaceAll("[^a-z0-9/_.-]", "") : "";
                 String fileString = path.replace(".png", "_" + name + ".png");

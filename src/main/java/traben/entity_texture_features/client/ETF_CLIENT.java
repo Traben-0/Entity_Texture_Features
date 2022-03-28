@@ -72,7 +72,7 @@ public class ETF_CLIENT implements ClientModInitializer, ETF_METHODS {
     public static String[] ETF_emissiveSuffixes = null;
     public static final HashMap<String, Identifier> ETF_PATH_EmissiveTextureIdentifier = new HashMap<>();
     public static boolean ETF_irisDetected = false;
-    public static ETFConfig ETF_ConfigData;
+    public static ETFConfig ETFConfigData;
 
     public static final HashMap<UUID, String> ETF_UUID_TridentName = new HashMap<>();
     public static final Set<String> ETF_PATH_FailedPropertiesToIgnore = new HashSet<>();
@@ -99,14 +99,14 @@ public class ETF_CLIENT implements ClientModInitializer, ETF_METHODS {
         if (config.exists()) {
             try {
                 FileReader fileReader = new FileReader(config);
-                ETF_ConfigData = gson.fromJson(fileReader, ETFConfig.class);
+                ETFConfigData = gson.fromJson(fileReader, ETFConfig.class);
                 fileReader.close();
                 ETF_saveConfig();
             } catch (IOException e) {
                 ETF_modMessage("Config could not be loaded, using defaults", false);
             }
         } else {
-            ETF_ConfigData = new ETFConfig();
+            ETFConfigData = new ETFConfig();
             ETF_saveConfig();
         }
     }

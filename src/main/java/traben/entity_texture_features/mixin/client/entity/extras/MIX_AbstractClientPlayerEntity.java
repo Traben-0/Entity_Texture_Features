@@ -44,7 +44,7 @@ public abstract class MIX_AbstractClientPlayerEntity extends PlayerEntity {
                 }
             }
         }
-        if (ETF_ConfigData.skinFeaturesEnabled && ETF_UUID_playerHasCustomCape.containsKey(getUuid())) {
+        if (ETFConfigData.skinFeaturesEnabled && ETF_UUID_playerHasCustomCape.containsKey(getUuid())) {
             if (ETF_UUID_playerHasCustomCape.get(getUuid())) {
                 cir.setReturnValue(new Identifier(ETF_SKIN_NAMESPACE + getUuid() + "_cape.png"));
             }

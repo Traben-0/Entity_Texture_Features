@@ -14,7 +14,7 @@ public class ETFConfig {
     public boolean enableEmissiveTextures = true;
     public boolean alwaysCheckVanillaEmissiveSuffix = true;
     public boolean doShadersEmissiveFix = false;
-    public enchantedPotionEffectsEnum enchantedPotionEffects_V2 = enchantedPotionEffectsEnum.None;
+    public enchantedPotionEffectsEnum enchantedPotionEffects = enchantedPotionEffectsEnum.NONE;
     public boolean skinFeaturesEnabled = true;
     public boolean skinFeaturesEnableTransparency = true;
     public boolean skinFeaturesEnableFullTransparency = false;
@@ -26,11 +26,22 @@ public class ETFConfig {
     public boolean enableElytra = true;
     public boolean elytraThicknessFix = true;
 
+    //string name stuff more indepth than other enum for backwards compatiblity
     public enum enchantedPotionEffectsEnum {
-        None,
-        Enchanted,
-        Glowing,
-        Creeper_Charge
+        NONE("None"),
+        ENCHANTED("Enchanted"),
+        GLOWING("Glowing"),
+        CREEPER_CHARGE("Creeper Charge");
+
+        private final String name;
+        enchantedPotionEffectsEnum(String namex) {
+            this.name = namex;
+        }
+
+        @Override
+        public String toString(){
+            return name;
+        }
     }
 
     public enum updateFrequency {

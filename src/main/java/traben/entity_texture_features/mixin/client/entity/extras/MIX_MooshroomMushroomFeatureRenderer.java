@@ -15,7 +15,7 @@ public abstract class MIX_MooshroomMushroomFeatureRenderer implements ETF_METHOD
     @ModifyArg(method = "renderMushroom", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/RenderLayer;getOutline(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;"), index = 0)
     private Identifier ETF_injected(Identifier texture) {
         //enable custom mooshroom mushrooms
-        if (ETF_ConfigData.enableCustomTextures) {
+        if (ETFConfigData.enableCustomTextures) {
             if (texture.toString().equals("minecraft:textures/block/red_mushroom.png")) {
                 switch (ETF_mooshroomRedCustomShroom) {
                     case 1:

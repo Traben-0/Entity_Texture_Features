@@ -39,7 +39,7 @@ public abstract class MIX_PlayerEntityRenderer extends LivingEntityRenderer<Abst
         arm.pitch = 0.0F;
         sleeve.pitch = 0.0F;
         //I haven't nailed down exactly why, but it cannot attempt to grab the skin until a bit of time has passed
-        if (ETF_ConfigData.skinFeaturesEnabled) {
+        if (ETFConfigData.skinFeaturesEnabled) {
             if (timerBeforeTrySkin > 0) {
                 arm.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntitySolid(player.getSkinTexture())), light, OverlayTexture.DEFAULT_UV);
                 sleeve.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(player.getSkinTexture())), light, OverlayTexture.DEFAULT_UV);
@@ -52,7 +52,7 @@ public abstract class MIX_PlayerEntityRenderer extends LivingEntityRenderer<Abst
                     }
                     if (ETF_UUID_playerSkinDownloadedYet.get(id)) {
                         if (ETF_UUID_playerHasFeatures.get(id)) {
-                            if (ETF_ConfigData.skinFeaturesEnableTransparency
+                            if (ETFConfigData.skinFeaturesEnableTransparency
                                     && ETF_UUID_playerTransparentSkinId.containsKey(id)) {
                                 ci.cancel();
                                 arm.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(ETF_UUID_playerTransparentSkinId.get(id))), light, OverlayTexture.DEFAULT_UV);

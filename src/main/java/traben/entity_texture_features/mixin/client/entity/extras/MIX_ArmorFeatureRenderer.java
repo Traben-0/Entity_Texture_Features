@@ -42,7 +42,7 @@ public abstract class MIX_ArmorFeatureRenderer<T extends LivingEntity, M extends
             at = @At(value = "TAIL"))
     private void ETF_applyEmissive(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ArmorItem item, boolean usesSecondLayer, A model, boolean legs, float red, float green, float blue, String overlay, CallbackInfo ci) {
         //UUID id = livingEntity.getUuid();
-        if (ETF_ConfigData.enableEmissiveTextures) {
+        if (ETFConfigData.enableEmissiveTextures) {
 
             String fileString = ETF_getArmorTexture(item, legs, overlay).toString();
 
@@ -66,7 +66,7 @@ public abstract class MIX_ArmorFeatureRenderer<T extends LivingEntity, M extends
                     //VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(Texture_Emissive.get(fileString), true));
                     VertexConsumer textureVert = ItemRenderer.getArmorGlintConsumer(vertexConsumers, RenderLayer.getBeaconBeam(ETF_PATH_EmissiveTextureIdentifier.get(fileString), true), false, usesSecondLayer);
                     //one check most efficient instead of before and after applying
-                    if (ETF_ConfigData.doShadersEmissiveFix) {
+                    if (ETFConfigData.doShadersEmissiveFix) {
                         matrices.scale(1.01f, 1.01f, 1.01f);
                         model.render(matrices, textureVert, 15728640, OverlayTexture.DEFAULT_UV, red, green, blue, 1.0F);
                         matrices.scale(1f, 1f, 1f);

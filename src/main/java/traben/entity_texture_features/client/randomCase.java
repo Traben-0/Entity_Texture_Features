@@ -118,7 +118,7 @@ public class randomCase implements ETF_METHODS {
             return true;
         }
 
-        if (!ETF_ConfigData.restrictUpdateProperties) {
+        if (!ETFConfigData.restrictUpdateProperties) {
             isUpdate = false;
         }
 
@@ -136,7 +136,7 @@ public class randomCase implements ETF_METHODS {
             //String entityBiome = entity.world.getBiome(entity.getBlockPos()).toString();
             //example  "Optional[minecraft:worldgen/biome / minecraft:river]"
             String entityBiome;
-            if (isUpdate && ETF_ConfigData.restrictBiome) {
+            if (isUpdate && ETFConfigData.restrictBiome) {
                 entityBiome = ETF_UUID_OriginalNonUpdatePropertyStrings.get(entity.getUuid())[0].trim();
             } else if (MinecraftVersion.CURRENT.getName().equals("1.18") || MinecraftVersion.CURRENT.getName().equals("1.18.1")) {
                 entityBiome = traben.entity_texture_features.client.ETF_1_18_1_versionPatch.getBiome(entity.world, entity.getBlockPos());
@@ -221,7 +221,7 @@ public class randomCase implements ETF_METHODS {
         }
         if (allBoolean && heights.length > 0) {
             int entityHeight = entity.getBlockY();
-            if (isUpdate && ETF_ConfigData.restrictHeight) {
+            if (isUpdate && ETFConfigData.restrictHeight) {
                 entityHeight = Integer.parseInt(ETF_UUID_OriginalNonUpdatePropertyStrings.get(entity.getUuid())[1].trim());
             }
             boolean check = false;
@@ -297,7 +297,7 @@ public class randomCase implements ETF_METHODS {
         if (allBoolean && weather != 0) {
             boolean raining = entity.world.isRaining();
             boolean thundering = entity.world.isThundering();
-            if (isUpdate && ETF_ConfigData.restrictWeather) {
+            if (isUpdate && ETFConfigData.restrictWeather) {
                 String[] data = ETF_UUID_OriginalNonUpdatePropertyStrings.get(entity.getUuid())[3].split("-");
                 raining = data[0].trim().equals("1");
                 thundering = data[1].trim().equals("1");
@@ -339,7 +339,7 @@ public class randomCase implements ETF_METHODS {
         }
         if (allBoolean && moon.length > 0) {
             int moonPhase = entity.world.getMoonPhase();
-            if (isUpdate && ETF_ConfigData.restrictMoonPhase) {
+            if (isUpdate && ETFConfigData.restrictMoonPhase) {
                 moonPhase = Integer.parseInt(ETF_UUID_OriginalNonUpdatePropertyStrings.get(entity.getUuid())[5].trim());
             }
             boolean check = false;
@@ -355,7 +355,7 @@ public class randomCase implements ETF_METHODS {
         if (allBoolean && daytime.length > 0) {
             long time = entity.world.getTimeOfDay();
             boolean check = false;
-            if (isUpdate && ETF_ConfigData.restrictDayTime) {
+            if (isUpdate && ETFConfigData.restrictDayTime) {
                 time = Long.parseLong(ETF_UUID_OriginalNonUpdatePropertyStrings.get(entity.getUuid())[4].trim());
             }
             for (String rangeOfTime :
@@ -382,7 +382,7 @@ public class randomCase implements ETF_METHODS {
                     .replaceFirst("minecraft:", "")
                     .replaceFirst("Block\\{", "")
                     .replaceFirst("}", "");
-            if (isUpdate && ETF_ConfigData.restrictBlock) {
+            if (isUpdate && ETFConfigData.restrictBlock) {
                 entityOnBlock = ETF_UUID_OriginalNonUpdatePropertyStrings.get(entity.getUuid())[2].trim();
             }
 
