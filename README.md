@@ -119,7 +119,20 @@ config/entity_texture_features.json
 <img src="readMeAssets/options.png" alt="img" width="650"/>
 
 
+## Mod Support
+- This mod should be compatible with any Mod added entities as long as they extend LivingEntityRenderer.class for rendering and utilise it correctly
+- Any mod displaying an entity in a custom gui can force the default texture by having the entity.getblockstate be either null or of type VOID_AIR
+- Settings can be altered ingame with Mod Menu
+- fully supports iris but can vary between shaders
+- fully sodium compatible
 
+
+## Known Bugs
+- if you are experiencing LAG please check your most recent log file to see if any errors are being logged, sometimes an incorrectly written properties file or missing textures may lag the system.
+- Please check any issue is not actually a problem in the properties file, a few packs seem to be pointing to textures that don't exist.
+
+- So far all Mob Entities support Random & Emissive textures though there may still be some quirks, if you find bugs you can reach me on the mod's [Discord](https://discord.gg/rURmwrzUcz)
+- Complimentary shaders has it's own inbuilt emissive textures that usually work fine but will conflict with some resource-packs *(you can disable either complimentarys emissives or my mods emissives to fix this).*
 
 
 
