@@ -17,6 +17,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.mob.ShulkerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -95,32 +96,42 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
     }
 
 
+
     @Redirect(
             method = "getRenderLayer",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/LivingEntityRenderer;getTexture(Lnet/minecraft/entity/Entity;)Lnet/minecraft/util/Identifier;"))
     private Identifier ETF_returnAlteredTexture(@SuppressWarnings("rawtypes") LivingEntityRenderer instance, Entity inEntity) {
         @SuppressWarnings("unchecked")
         T entity = (T) inEntity;
-        Identifier vanilla = getTexture(entity);
+        Identifier textureIdentifier =  getTexture(entity);
 
         //this is to support inspectio or other abstract rendering mods
         if (inEntity.getBlockStateAtPos() == null) {
-            return vanilla;
+            return textureIdentifier;
         } else if (inEntity.getBlockStateAtPos().isOf(Blocks.VOID_AIR)) {
-            return vanilla;
+            return textureIdentifier;
         }
 
+        Identifier originalIdentifierToBeUsedIfChanged = null;
+        String texturePath = textureIdentifier.toString();
 
-        String path = vanilla.toString();
         UUID id = entity.getUuid();
 
         if (!(entity instanceof PlayerEntity)) {
+            if (entity instanceof ShulkerEntity){
+                //set to use vanilla shulker properties if color has been changed
+                //setting the below will trigger a return to the original coloured shulker if no random is applied
+                originalIdentifierToBeUsedIfChanged = new Identifier(texturePath);
+                texturePath = "minecraft:textures/entity/shulker/shulker.png";
+                textureIdentifier = new Identifier(texturePath);
+            }
             if (ETFConfigData.enableCustomTextures) {
                 try {
-                    if (!ETF_PATH_OptifineOrTrueRandom.containsKey(path)) {
-                        ETF_processNewRandomTextureCandidate(path);
+                    if (!ETF_PATH_OptifineOrTrueRandom.containsKey(texturePath)) {
+
+                        ETF_processNewRandomTextureCandidate(texturePath);
                     }
-                    if (ETF_PATH_OptifineOrTrueRandom.containsKey(path)) {
+                    if (ETF_PATH_OptifineOrTrueRandom.containsKey(texturePath)) {
                         //if needs to check if change required
                         if (ETF_UUID_entityAwaitingDataClearing.containsKey(id)) {
                             if (ETF_UUID_randomTextureSuffix.containsKey(id)) {
@@ -131,11 +142,11 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                                     //skip a few ticks
                                     //UUID_entityAwaitingDataClearing.put(id, UUID_entityAwaitingDataClearing.get(id)+1);
                                     if (ETF_UUID_entityAwaitingDataClearing.get(id) + 100 < System.currentTimeMillis()) {
-                                        if (ETF_PATH_OptifineOrTrueRandom.get(path)) {
+                                        if (ETF_PATH_OptifineOrTrueRandom.get(texturePath)) {
                                             //if (UUID_randomTextureSuffix.containsKey(id)) {
                                             int hold = ETF_UUID_randomTextureSuffix.get(id);
                                             ETF_resetSingleData(id);
-                                            ETF_testCases(path, id, entity, true, ETF_UUID_randomTextureSuffix, ETF_UUID_hasUpdatableRandomCases);
+                                            ETF_testCases(texturePath, id, entity, true, ETF_UUID_randomTextureSuffix, ETF_UUID_hasUpdatableRandomCases);
                                             //if didnt change keep the same
                                             if (!ETF_UUID_randomTextureSuffix.containsKey(id)) {
                                                 ETF_UUID_randomTextureSuffix.put(id, hold);
@@ -151,10 +162,10 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                             }
 
                         }
-                        if (ETF_PATH_OptifineOrTrueRandom.get(path)) {//optifine random
+                        if (ETF_PATH_OptifineOrTrueRandom.get(texturePath)) {//optifine random
                             //if it doesn't have a random already assign one
                             if (!ETF_UUID_randomTextureSuffix.containsKey(id)) {
-                                ETF_testCases(path, id, entity, false);
+                                ETF_testCases(texturePath, id, entity, false);
                                 //if all failed set to vanilla
                                 if (!ETF_UUID_randomTextureSuffix.containsKey(id)) {
                                     ETF_UUID_randomTextureSuffix.put(id, 0);
@@ -163,49 +174,45 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                             }
                             // System.out.println("suffix was ="+UUID_randomTextureSuffix.get(id));
                             if (ETF_UUID_randomTextureSuffix.get(id) == 0) {
-                                if (!ETF_PATH_HasOptifineDefaultReplacement.containsKey(vanilla.toString())) {
-                                    ETF_PATH_HasOptifineDefaultReplacement.put(vanilla.toString(), ETF_isExistingFile(ETF_returnOptifineOrVanillaIdentifier(path)));
+                                if (!ETF_PATH_HasOptifineDefaultReplacement.containsKey(textureIdentifier.toString())) {
+                                    ETF_PATH_HasOptifineDefaultReplacement.put(textureIdentifier.toString(), ETF_isExistingNativeImageFile(ETF_returnOptifineOrVanillaIdentifier(texturePath)));
                                 }
-                                if (ETF_PATH_HasOptifineDefaultReplacement.get(vanilla.toString())) {
-                                    return ETF_returnBlinkIdOrGiven(entity, ETF_returnOptifineOrVanillaIdentifier(path).toString(), id);
-                                } else {
-                                    return ETF_returnBlinkIdOrGiven(entity, vanilla.toString(), id);
-                                }
+                                if (ETF_PATH_HasOptifineDefaultReplacement.get(textureIdentifier.toString())) {
+                                    return ETF_returnBlinkIdOrGiven(entity, ETF_returnOptifineOrVanillaIdentifier(texturePath).toString(), id);
+                                }//elses to vanilla
 
                             } else {
-                                return ETF_returnBlinkIdOrGiven(entity, ETF_returnOptifineOrVanillaIdentifier(path, ETF_UUID_randomTextureSuffix.get(id)).toString(), id);
+                                return ETF_returnBlinkIdOrGiven(entity, ETF_returnOptifineOrVanillaIdentifier(texturePath, ETF_UUID_randomTextureSuffix.get(id)).toString(), id);
                             }
 
                         } else {//true random assign
                             ETF_UUID_hasUpdatableRandomCases.put(id, false);
-                            if (ETF_PATH_TotalTrueRandom.get(path) > 0) {
+                            if (ETF_PATH_TotalTrueRandom.get(texturePath) > 0) {
                                 if (!ETF_UUID_randomTextureSuffix.containsKey(id)) {
                                     int randomReliable = Math.abs(id.hashCode());
-                                    randomReliable %= ETF_PATH_TotalTrueRandom.get(path);
+                                    randomReliable %= ETF_PATH_TotalTrueRandom.get(texturePath);
                                     randomReliable++;
-                                    if (randomReliable == 1 && ETF_PATH_ignoreOnePNG.get(path)) {
+                                    if (randomReliable == 1 && ETF_PATH_ignoreOnePNG.get(texturePath)) {
                                         randomReliable = 0;
                                     }
                                     ETF_UUID_randomTextureSuffix.put(id, randomReliable);
                                     ETF_UUID_entityAlreadyCalculated.add(id);
                                 }
                                 if (ETF_UUID_randomTextureSuffix.get(id) == 0) {
-                                    return ETF_returnBlinkIdOrGiven(entity, vanilla.toString(), id);
+                                    return ETF_returnBlinkIdOrGiven(entity, textureIdentifier.toString(), id);
                                 } else {
-                                    return ETF_returnBlinkIdOrGiven(entity, ETF_returnOptifineOrVanillaPath(path, ETF_UUID_randomTextureSuffix.get(id), ""), id);
+                                    return ETF_returnBlinkIdOrGiven(entity, ETF_returnOptifineOrVanillaPath(texturePath, ETF_UUID_randomTextureSuffix.get(id), ""), id);
                                 }
-                            } else {
-                                return ETF_returnBlinkIdOrGiven(entity, vanilla.toString(), id);
-                            }
+                            }//elses to vanilla
+
                         }
                     } else {
                         ETF_modMessage("not random", false);
-                        return ETF_returnBlinkIdOrGiven(entity, vanilla.toString(), id);
+
                     }
 
                 } catch (Exception e) {
                     ETF_modMessage(e.toString(), false);
-                    return ETF_returnBlinkIdOrGiven(entity, vanilla.toString(), id);
                 }
             }
         } else { // is player
@@ -221,15 +228,19 @@ public abstract class MIX_LivingEntityRenderer<T extends LivingEntity, M extends
                             if (ETF_UUID_playerHasFeatures.get(id)) {
                                 return ETF_returnBlinkIdOrGiven(entity, ETF_SKIN_NAMESPACE + id + ".png", id, true);
                             } else {
-                                return vanilla;
+                                return textureIdentifier;
                             }
                         }
                     }
                 }
             }
         }
-
-        return ETF_returnBlinkIdOrGiven(entity, vanilla.toString(), id);
+        //return original if it was changed and should be set back to original
+        if (originalIdentifierToBeUsedIfChanged == null) {
+            return ETF_returnBlinkIdOrGiven(entity, textureIdentifier.toString(), id);
+        }else{
+            return ETF_returnBlinkIdOrGiven(entity, originalIdentifierToBeUsedIfChanged.toString(), id);
+        }
     }
 
 

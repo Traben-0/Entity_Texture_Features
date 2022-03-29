@@ -38,7 +38,7 @@ public abstract class MIX_EyesFeatureRenderer<T extends Entity, M extends Entity
     private void ETF_mixin(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, T entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch, CallbackInfo ci) {
 
         Identifier check = this.ETF_getAlteredEyesTexture((LivingEntity) entity);
-        if (ETF_isExistingFile(check)) {
+        if (ETF_isExistingNativeImageFile(check)) {
             VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEyes(check));
             this.getContextModel().render(matrices, vertexConsumer, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
             ci.cancel();
@@ -106,7 +106,7 @@ public abstract class MIX_EyesFeatureRenderer<T extends Entity, M extends Entity
                     // System.out.println("suffix was ="+UUID_randomTextureSuffix.get(id));
                     if (ETF_UUID_randomTextureSuffix2.get(id) == 0) {
                         if (!ETF_PATH_HasOptifineDefaultReplacement.containsKey(vanilla.toString())) {
-                            ETF_PATH_HasOptifineDefaultReplacement.put(vanilla.toString(), ETF_isExistingFile(ETF_returnOptifineOrVanillaIdentifier(path)));
+                            ETF_PATH_HasOptifineDefaultReplacement.put(vanilla.toString(), ETF_isExistingNativeImageFile(ETF_returnOptifineOrVanillaIdentifier(path)));
                         }
                         if (ETF_PATH_HasOptifineDefaultReplacement.get(vanilla.toString())) {
                             return ETF_returnBlinkIdOrGiven(entity, ETF_returnOptifineOrVanillaIdentifier(path).toString(), id);

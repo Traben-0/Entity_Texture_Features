@@ -20,7 +20,7 @@ For more Fabric Optifine alternatives Click
 [[here]](https://lambdaurora.dev/optifine_alternatives/)
 ### The features of this mod so far:
 - 🎲 Custom & Random entity textures just like Optifine & compatible with Optifine Resourcepacks. 
-(Customised just like Optifine, by Biome, Name, Height, etc)
+(Customised just like Optifine, by Biome, Name, Height, etc. with even more properties)
 - 💡 Emissive/Glowing entity textures just like Optifine & compatible with Optifine Resourcepacks.
 - 😑️ Blinking mobs
 - 🔱 Custom Trident textures
@@ -33,8 +33,6 @@ Everything can be enabled or disabled in the config or Mod Menu settings
 ---
 ## Compatibility
 - ✅ALL! Optifine Random / Custom or Emissive Entity resourcepacks
-- ✅[@Motschen's Puzzle Mod](https://www.curseforge.com/members/motschen) **(fully compatible)**  
-*(just make sure to disable Puzzle's emissive texture in it's settings)*
 - ✅[Custom Entity Models **(CEM)**](https://www.curseforge.com/minecraft/mc-mods/custom-entity-models-cem) 
 **(fully compatible)** *(keep in mind CEM is in ALPHA and doen't support every model)*
 - ✅[Sodium](https://www.curseforge.com/minecraft/mc-mods/sodium) **(fully compatible)**
@@ -43,7 +41,7 @@ Everything can be enabled or disabled in the config or Mod Menu settings
 *(Support varies depending on the shader)*
 - ✅Mod added entities *(only if the mod creator used the vanilla rendering code to render their mobs)*
 ---
-# Wiki / How to guides
+# Wiki & How to guides
 
 ---
 
@@ -51,7 +49,7 @@ Everything can be enabled or disabled in the config or Mod Menu settings
 <img src="readMeAssets/randoms.png" alt="img" width="650"/>
 
 - For custom & random entity textures to work you can use a resource-pack that supports the 
-**Optifine format** for custom / random textures, including all Biome, Height, Name, etc properties settings.  
+**Optifine format** for custom / random textures, including all Biome, Height, Name, etc properties settings. and even more added by ETF  
   - [***-> Random / Custom entity textures guide <-***](readMeAssets/RANDOM_GUIDE.md)
 
 ---
@@ -84,11 +82,11 @@ abuse of features in PVP
 ## 😑 Blinking feature
 <img src="readMeAssets/blink.png" alt="img" width="650"/>
 
-- Allows a textures to be set by a Resource-pack so that mobs can Blink periodically
+- Allows a textures to be set by a Resource-pack so that mobs can Blink randomly over a set period
 - Mobs will blink periodically if they have a texture named "TEXTURE_blink.png"
 - Optionally you can also use a texture named TEXTURE_blink2.png" with the eyes half closed to 
 have a smoother animation for large eyes like creepers
-- Blinking frequency can be altered in settings
+- Random blinking frequency can be altered in settings
 - Sleeping mobs will have their eyes closed if possible
 - Mobs with the Blindness potion effect will have either their eyes closed or half closed 
 depending on what is available
@@ -103,8 +101,8 @@ next to the blinking texture, see below:
 
 - Allows Trident textures to be set by a Resource-pack so they can be customized by name
 - Tridents support custom and emissive textures, as of [V2.3.0], a trident item named "Bobby's Trident" will 
-use the texture "trident_bobbys_trident.png", ignoring non-letters and chaning spaces to "_"
-- Option to disable it as CIT resewn mod may implement in the future, and this is only a quick implementation
+use the texture "trident_bobbys_trident.png", ignoring non-letters and changing spaces to "_"
+- This is a simple implementation with an Option to disable it as CIT resewn mod may implement in the future. and has more powerful customizations when item's are involved
 
 ---
 ## ⚗️ Alternate potion effects
@@ -116,6 +114,8 @@ appear enchanted, or have creeper charge fields around them
 ## Settings & Configuration
 - Settings can be changed in-game with Mod Menu, or the config file can be found at 
 config/entity_texture_features.json
+- A few of these options can also be changed via the Puzzle mod
+
 <img src="readMeAssets/options.png" alt="img" width="650"/>
 
 

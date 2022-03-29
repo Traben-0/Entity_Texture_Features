@@ -49,7 +49,7 @@ public abstract class MIX_TridentEntityRenderer implements SynchronousResourceRe
                 String path = TridentEntityModel.TEXTURE.toString();
                 String name = ETF_UUID_TridentName.get(id).toLowerCase().replaceAll("[^a-z0-9/_.-]", "");
                 Identifier possibleId = new Identifier(path.replace(".png", "_" + name + ".png"));
-                if (ETF_isExistingFile(possibleId)) {
+                if (ETF_isExistingNativeImageFile(possibleId)) {
                     return possibleId;
                 }
             }

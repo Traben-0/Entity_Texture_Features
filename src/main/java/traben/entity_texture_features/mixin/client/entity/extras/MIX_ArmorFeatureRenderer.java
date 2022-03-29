@@ -45,14 +45,13 @@ public abstract class MIX_ArmorFeatureRenderer<T extends LivingEntity, M extends
         if (ETFConfigData.enableEmissiveTextures) {
 
             String fileString = ETF_getArmorTexture(item, legs, overlay).toString();
-
             if (!ETF_PATH_EmissiveTextureIdentifier.containsKey(fileString)) {
                 //creates and sets emissive for texture if it exists
                 Identifier fileName_e;
                 for (String suffix1 :
                         ETF_emissiveSuffixes) {
                     fileName_e = new Identifier(fileString.replace(".png", suffix1 + ".png"));
-                    if (ETF_isExistingFile(fileName_e)) {
+                    if (ETF_isExistingNativeImageFile(fileName_e)) {
                         ETF_PATH_EmissiveTextureIdentifier.put(fileString, fileName_e);
                         break;
                     }

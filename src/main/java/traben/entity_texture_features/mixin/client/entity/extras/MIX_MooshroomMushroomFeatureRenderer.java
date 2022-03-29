@@ -24,7 +24,7 @@ public abstract class MIX_MooshroomMushroomFeatureRenderer implements ETF_METHOD
                         return new Identifier("minecraft:textures/entity/cow/red_mushroom.png");
                     default: {
                         Identifier test = new Identifier("minecraft:textures/entity/cow/red_mushroom.png");
-                        if (ETF_isExistingFile(test)) {
+                        if (ETF_isExistingNativeImageFile(test)) {
                             ETF_mooshroomRedCustomShroom = 2;
                             return test;
                         } else {
@@ -41,7 +41,7 @@ public abstract class MIX_MooshroomMushroomFeatureRenderer implements ETF_METHOD
                         return new Identifier("minecraft:textures/entity/cow/brown_mushroom.png");
                     default: {
                         Identifier test = new Identifier("minecraft:textures/entity/cow/brown_mushroom.png");
-                        if (ETF_isExistingFile(test)) {
+                        if (ETF_isExistingNativeImageFile(test)) {
                             ETF_mooshroomBrownCustomShroom = 2;
                             return test;
                         } else {

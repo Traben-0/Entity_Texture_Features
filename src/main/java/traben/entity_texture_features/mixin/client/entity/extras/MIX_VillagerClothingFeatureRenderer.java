@@ -76,7 +76,7 @@ public abstract class MIX_VillagerClothingFeatureRenderer<T extends LivingEntity
                         if (UUID_RandomSuffixMap.get(id) != 0) {
                             Identifier randomTexture = ETF_returnOptifineOrVanillaIdentifier(vanillaTexture.toString(), UUID_RandomSuffixMap.get(id));
                             if (!ETF_PATH_VillagerIsExistingFeature.containsKey(randomTexture.toString())) {
-                                ETF_PATH_VillagerIsExistingFeature.put(randomTexture.toString(), ETF_isExistingFile(randomTexture));
+                                ETF_PATH_VillagerIsExistingFeature.put(randomTexture.toString(), ETF_isExistingNativeImageFile(randomTexture));
                             }
                             if (ETF_PATH_VillagerIsExistingFeature.get(randomTexture.toString())) {
                                 //can use random texture
