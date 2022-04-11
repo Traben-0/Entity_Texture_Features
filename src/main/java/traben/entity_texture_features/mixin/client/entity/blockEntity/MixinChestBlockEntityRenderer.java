@@ -86,9 +86,9 @@ public abstract class MixinChestBlockEntityRenderer<T extends BlockEntity & Ches
     }
 
     private void etf$renderThisEmissive(MatrixStack matrices, VertexConsumerProvider vertexP, Identifier texture, ModelPart lid, ModelPart latch, ModelPart base) {
-        ETFUtils.etf$GeneralEmissiveRenderPart(matrices, vertexP, texture, lid);
-        ETFUtils.etf$GeneralEmissiveRenderPart(matrices, vertexP, texture, latch);
-        ETFUtils.etf$GeneralEmissiveRenderPart(matrices, vertexP, texture, base);
+        ETFUtils.generalEmissiveRenderPart(matrices, vertexP, texture, lid);
+        ETFUtils.generalEmissiveRenderPart(matrices, vertexP, texture, latch);
+        ETFUtils.generalEmissiveRenderPart(matrices, vertexP, texture, base);
     }
 
 }

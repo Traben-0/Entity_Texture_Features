@@ -48,7 +48,7 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
                 try {
                     if (!etf$UUID_playerHasFeatures.containsKey(id) && !etf$UUID_playerSkinDownloadedYet.containsKey(id)) {
                         //check for mark
-                        ETFUtils.etf$checkPlayerForSkinFeatures(id, player);
+                        ETFUtils.checkPlayerForSkinFeatures(id, player);
                     }
                     if (etf$UUID_playerSkinDownloadedYet.get(id)) {
                         if (etf$UUID_playerHasFeatures.get(id)) {
@@ -70,7 +70,7 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
                         }
                     }
                 } catch (Exception e) {
-                    ETFUtils.etf$modMessage(e.toString(), false);
+                    ETFUtils.modMessage(e.toString(), false);
                 }
             }
         }

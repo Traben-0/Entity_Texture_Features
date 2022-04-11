@@ -57,7 +57,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
         if (!(livingEntity instanceof PlayerEntity)) {
 
             Identifier texture = etf$returnAlteredTexture((LivingEntityRenderer) (Object) this, livingEntity);
-            ETFUtils.etf$GeneralEmissiveRender(matrixStack, vertexConsumerProvider, texture, this.getModel());
+            ETFUtils.generalEmissiveRender(matrixStack, vertexConsumerProvider, texture, this.getModel());
 
         } else if (ETFConfigData.skinFeaturesEnabled) { // is a player
             etf$renderSkinFeatures(id, (PlayerEntity) livingEntity, matrixStack, vertexConsumerProvider, i);
@@ -128,7 +128,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
                 try {
                     if (!etf$PATH_OptifineOrTrueRandom.containsKey(texturePath)) {
 
-                        ETFUtils.etf$processNewRandomTextureCandidate(texturePath);
+                        ETFUtils.processNewRandomTextureCandidate(texturePath);
                     }
                     if (etf$PATH_OptifineOrTrueRandom.containsKey(texturePath)) {
                         //if needs to check if change required
@@ -144,8 +144,8 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
                                         if (etf$PATH_OptifineOrTrueRandom.get(texturePath)) {
                                             //if (UUID_randomTextureSuffix.containsKey(id)) {
                                             int hold = etf$UUID_randomTextureSuffix.get(id);
-                                            ETFUtils.etf$resetSingleData(id);
-                                            ETFUtils.etf$testCases(texturePath, id, entity, true, etf$UUID_randomTextureSuffix, etf$UUID_hasUpdatableRandomCases);
+                                            ETFUtils.resetSingleData(id);
+                                            ETFUtils.testCases(texturePath, id, entity, true, etf$UUID_randomTextureSuffix, etf$UUID_hasUpdatableRandomCases);
                                             //if didnt change keep the same
                                             if (!etf$UUID_randomTextureSuffix.containsKey(id)) {
                                                 etf$UUID_randomTextureSuffix.put(id, hold);
@@ -164,7 +164,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
                         if (etf$PATH_OptifineOrTrueRandom.get(texturePath)) {//optifine random
                             //if it doesn't have a random already assign one
                             if (!etf$UUID_randomTextureSuffix.containsKey(id)) {
-                                ETFUtils.etf$testCases(texturePath, id, entity, false);
+                                ETFUtils.testCases(texturePath, id, entity, false);
                                 //if all failed set to vanilla
                                 if (!etf$UUID_randomTextureSuffix.containsKey(id)) {
                                     etf$UUID_randomTextureSuffix.put(id, 0);
@@ -174,14 +174,14 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
                             // System.out.println("suffix was ="+UUID_randomTextureSuffix.get(id));
                             if (etf$UUID_randomTextureSuffix.get(id) == 0) {
                                 if (!etf$PATH_HasOptifineDefaultReplacement.containsKey(textureIdentifier.toString())) {
-                                    etf$PATH_HasOptifineDefaultReplacement.put(textureIdentifier.toString(), ETFUtils.etf$isExistingNativeImageFile(ETFUtils.etf$returnOptifineOrVanillaIdentifier(texturePath)));
+                                    etf$PATH_HasOptifineDefaultReplacement.put(textureIdentifier.toString(), ETFUtils.isExistingNativeImageFile(ETFUtils.returnOptifineOrVanillaIdentifier(texturePath)));
                                 }
                                 if (etf$PATH_HasOptifineDefaultReplacement.get(textureIdentifier.toString())) {
-                                    return ETFUtils.etf$returnBlinkIdOrGiven(entity, ETFUtils.etf$returnOptifineOrVanillaIdentifier(texturePath).toString(), id);
+                                    return ETFUtils.returnBlinkIdOrGiven(entity, ETFUtils.returnOptifineOrVanillaIdentifier(texturePath).toString(), id);
                                 }//elses to vanilla
 
                             } else {
-                                return ETFUtils.etf$returnBlinkIdOrGiven(entity, ETFUtils.etf$returnOptifineOrVanillaIdentifier(texturePath, etf$UUID_randomTextureSuffix.get(id)).toString(), id);
+                                return ETFUtils.returnBlinkIdOrGiven(entity, ETFUtils.returnOptifineOrVanillaIdentifier(texturePath, etf$UUID_randomTextureSuffix.get(id)).toString(), id);
                             }
 
                         } else {//true random assign
@@ -198,20 +198,20 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
                                     etf$UUID_entityAlreadyCalculated.add(id);
                                 }
                                 if (etf$UUID_randomTextureSuffix.get(id) == 0) {
-                                    return ETFUtils.etf$returnBlinkIdOrGiven(entity, textureIdentifier.toString(), id);
+                                    return ETFUtils.returnBlinkIdOrGiven(entity, textureIdentifier.toString(), id);
                                 } else {
-                                    return ETFUtils.etf$returnBlinkIdOrGiven(entity, ETFUtils.etf$returnOptifineOrVanillaPath(texturePath, etf$UUID_randomTextureSuffix.get(id), ""), id);
+                                    return ETFUtils.returnBlinkIdOrGiven(entity, ETFUtils.returnOptifineOrVanillaPath(texturePath, etf$UUID_randomTextureSuffix.get(id), ""), id);
                                 }
                             }//elses to vanilla
 
                         }
                     } else {
-                        ETFUtils.etf$modMessage("not random", false);
+                        ETFUtils.modMessage("not random", false);
 
                     }
 
                 } catch (Exception e) {
-                    ETFUtils.etf$modMessage(e.toString(), false);
+                    ETFUtils.modMessage(e.toString(), false);
                 }
             }
         } else { // is player
@@ -220,12 +220,12 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
                     etf$timerBeforeTrySkin--;
                 } else {
                     if (!etf$UUID_playerHasFeatures.containsKey(id) && !etf$UUID_playerSkinDownloadedYet.containsKey(id)) {
-                        ETFUtils.etf$checkPlayerForSkinFeatures(id, (PlayerEntity) entity);
+                        ETFUtils.checkPlayerForSkinFeatures(id, (PlayerEntity) entity);
                     }
                     if (etf$UUID_playerSkinDownloadedYet.containsKey(id) && etf$UUID_playerHasFeatures.containsKey(id)) {
                         if (etf$UUID_playerSkinDownloadedYet.get(id)) {
                             if (etf$UUID_playerHasFeatures.get(id)) {
-                                return ETFUtils.etf$returnBlinkIdOrGiven(entity, etf$SKIN_NAMESPACE + id + ".png", id, true);
+                                return ETFUtils.returnBlinkIdOrGiven(entity, etf$SKIN_NAMESPACE + id + ".png", id, true);
                             } else {
                                 return textureIdentifier;
                             }
@@ -236,9 +236,9 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
         }
         //return original if it was changed and should be set back to original
         if (originalIdentifierToBeUsedIfChanged == null) {
-            return ETFUtils.etf$returnBlinkIdOrGiven(entity, textureIdentifier.toString(), id);
+            return ETFUtils.returnBlinkIdOrGiven(entity, textureIdentifier.toString(), id);
         }else{
-            return ETFUtils.etf$returnBlinkIdOrGiven(entity, originalIdentifierToBeUsedIfChanged.toString(), id);
+            return ETFUtils.returnBlinkIdOrGiven(entity, originalIdentifierToBeUsedIfChanged.toString(), id);
         }
     }
 
@@ -283,7 +283,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
         } else {
             if (!etf$UUID_playerHasFeatures.containsKey(id) && !etf$UUID_playerSkinDownloadedYet.containsKey(id)) {
                 //check for mark
-                ETFUtils.etf$checkPlayerForSkinFeatures(id, player);
+                ETFUtils.checkPlayerForSkinFeatures(id, player);
             }
             if (etf$UUID_playerHasFeatures.containsKey(id) && etf$UUID_playerSkinDownloadedYet.containsKey(id)) {
                 if (etf$UUID_playerSkinDownloadedYet.get(id)) {

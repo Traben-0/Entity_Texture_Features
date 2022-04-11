@@ -34,7 +34,7 @@ public abstract class MixinTridentEntityRenderer implements SynchronousResourceR
             String path = TridentEntityModel.TEXTURE.toString();
             String name = etf$UUID_TridentName.get(id) != null ? "_" + etf$UUID_TridentName.get(id).toLowerCase().replaceAll("[^a-z0-9/_.-]", "") : "";
             String fileString = etf$UUID_TridentName.get(id) != null ? path.replace(".png", "_" + name + ".png") : path;
-            ETFUtils.etf$GeneralEmissiveRender(matrixStack, vertexConsumerProvider, fileString, this.model);
+            ETFUtils.generalEmissiveRender(matrixStack, vertexConsumerProvider, fileString, this.model);
 
 
         }
@@ -49,7 +49,7 @@ public abstract class MixinTridentEntityRenderer implements SynchronousResourceR
                 String path = TridentEntityModel.TEXTURE.toString();
                 String name = etf$UUID_TridentName.get(id).toLowerCase().replaceAll("[^a-z0-9/_.-]", "");
                 Identifier possibleId = new Identifier(path.replace(".png", "_" + name + ".png"));
-                if (ETFUtils.etf$isExistingNativeImageFile(possibleId)) {
+                if (ETFUtils.isExistingNativeImageFile(possibleId)) {
                     return possibleId;
                 }
             }

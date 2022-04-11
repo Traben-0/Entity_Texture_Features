@@ -31,7 +31,7 @@ public abstract class MixinHorsemarkingFeatureRenderer extends FeatureRenderer<H
 
     private void etf$applyEmissive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, HorseEntity horseEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci, Identifier identifier, VertexConsumer vertexConsumer) {
         //UUID id = livingEntity.getUuid();
-        ETFUtils.etf$GeneralEmissiveRender(matrixStack, vertexConsumerProvider, etf$returnAlteredTexture(identifier), (this.getContextModel()));
+        ETFUtils.generalEmissiveRender(matrixStack, vertexConsumerProvider, etf$returnAlteredTexture(identifier), (this.getContextModel()));
     }
 
     @Inject(
@@ -47,7 +47,7 @@ public abstract class MixinHorsemarkingFeatureRenderer extends FeatureRenderer<H
             method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/passive/HorseEntity;FFFFFF)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/RenderLayer;getEntityTranslucent(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;"))
     private Identifier etf$returnAlteredTexture(Identifier texture) {
-        return ETFUtils.etf$GeneralReturnAlteredTexture(texture, etf$entity);
+        return ETFUtils.GeneralReturnAlteredTexture(texture, etf$entity);
     }
 }
 

@@ -30,7 +30,7 @@ public abstract class MixinBedBlockEntityRenderer implements BlockEntityRenderer
         String texturePath = "textures/" + sprite.getTextureId().getPath() + ".png";
         //System.out.println("bed "+nameSpace +":"+texturePath);
         //Identifier textureID = new Identifier();
-        ETFUtils.etf$GeneralEmissiveRenderPart(matrices, vertexConsumers, nameSpace + ":" + texturePath, part);
+        ETFUtils.generalEmissiveRenderPart(matrices, vertexConsumers, nameSpace + ":" + texturePath, part);
         //VertexConsumer cons = vertexConsumers.getBuffer(RenderLayer.getBeaconBeam(new Identifier(nameSpace,texturePath), true));
         //part.render(matrices,cons,15728640,overlay);
     }

@@ -61,11 +61,11 @@ public abstract class MixinVillagerClothingFeatureRenderer<T extends LivingEntit
         UUID id = etf$villager.getUuid();
         if (ETFConfigData.enableCustomTextures) {
             if (!etf$PATH_OptifineOrTrueRandom.containsKey(vanillaTexture.toString())) {
-                ETFUtils.etf$processNewRandomTextureCandidate(vanillaTexture.toString());
+                ETFUtils.processNewRandomTextureCandidate(vanillaTexture.toString());
             } else if (etf$PATH_OptifineOldVanillaetf$0123.containsKey(vanillaTexture.toString())) {
                 if (etf$PATH_OptifineOrTrueRandom.get(vanillaTexture.toString())) {
                     if (!UUID_RandomSuffixMap.containsKey(id)) {
-                        ETFUtils.etf$testCases(vanillaTexture.toString(), id, etf$villager, false, UUID_RandomSuffixMap, UUID_HasUpdateables);
+                        ETFUtils.testCases(vanillaTexture.toString(), id, etf$villager, false, UUID_RandomSuffixMap, UUID_HasUpdateables);
                         //if all failed set to vanilla
                         if (!UUID_RandomSuffixMap.containsKey(id)) {
                             UUID_RandomSuffixMap.put(id, 0);
@@ -74,9 +74,9 @@ public abstract class MixinVillagerClothingFeatureRenderer<T extends LivingEntit
                     }
                     if (UUID_RandomSuffixMap.containsKey(id)) {
                         if (UUID_RandomSuffixMap.get(id) != 0) {
-                            Identifier randomTexture = ETFUtils.etf$returnOptifineOrVanillaIdentifier(vanillaTexture.toString(), UUID_RandomSuffixMap.get(id));
+                            Identifier randomTexture = ETFUtils.returnOptifineOrVanillaIdentifier(vanillaTexture.toString(), UUID_RandomSuffixMap.get(id));
                             if (!etf$PATH_VillagerIsExistingFeature.containsKey(randomTexture.toString())) {
-                                etf$PATH_VillagerIsExistingFeature.put(randomTexture.toString(), ETFUtils.etf$isExistingNativeImageFile(randomTexture));
+                                etf$PATH_VillagerIsExistingFeature.put(randomTexture.toString(), ETFUtils.isExistingNativeImageFile(randomTexture));
                             }
                             if (etf$PATH_VillagerIsExistingFeature.get(randomTexture.toString())) {
                                 //can use random texture
@@ -98,12 +98,12 @@ public abstract class MixinVillagerClothingFeatureRenderer<T extends LivingEntit
                             //UUID_entityAlreadyCalculated.add(id);
                         }
                         if (UUID_RandomSuffixMap.get(id) == 0) {
-                            return ETFUtils.etf$returnBlinkIdOrGiven(etf$villager, vanillaTexture.toString(), id);
+                            return ETFUtils.returnBlinkIdOrGiven(etf$villager, vanillaTexture.toString(), id);
                         } else {
-                            return ETFUtils.etf$returnBlinkIdOrGiven(etf$villager, ETFUtils.etf$returnOptifineOrVanillaPath(vanillaTexture.toString(), UUID_RandomSuffixMap.get(id), ""), id);
+                            return ETFUtils.returnBlinkIdOrGiven(etf$villager, ETFUtils.returnOptifineOrVanillaPath(vanillaTexture.toString(), UUID_RandomSuffixMap.get(id), ""), id);
                         }
                     } else {
-                        return ETFUtils.etf$returnBlinkIdOrGiven(etf$villager, vanillaTexture.toString(), id);
+                        return ETFUtils.returnBlinkIdOrGiven(etf$villager, vanillaTexture.toString(), id);
                     }
                 }
             }

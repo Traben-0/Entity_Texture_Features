@@ -48,7 +48,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
                 for (String suffix1 :
                         etf$emissiveSuffixes) {
                     fileName_e = new Identifier(fileString.replace(".png", suffix1 + ".png"));
-                    if (ETFUtils.etf$isExistingNativeImageFile(fileName_e)) {
+                    if (ETFUtils.isExistingNativeImageFile(fileName_e)) {
                         etf$PATH_EmissiveTextureIdentifier.put(fileString, fileName_e);
                         break;
                     }

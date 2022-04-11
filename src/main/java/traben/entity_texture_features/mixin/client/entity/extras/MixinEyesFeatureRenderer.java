@@ -38,7 +38,7 @@ public abstract class MixinEyesFeatureRenderer<T extends Entity, M extends Entit
     private void etf$mixin(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, T entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch, CallbackInfo ci) {
 
         Identifier check = this.etf$getAlteredEyesTexture((LivingEntity) entity);
-        if (ETFUtils.etf$isExistingNativeImageFile(check)) {
+        if (ETFUtils.isExistingNativeImageFile(check)) {
             VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEyes(check));
             this.getContextModel().render(matrices, vertexConsumer, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
             ci.cancel();
@@ -60,7 +60,7 @@ public abstract class MixinEyesFeatureRenderer<T extends Entity, M extends Entit
 
         try {
             if (!etf$PATH_OptifineOrTrueRandom.containsKey(path)) {
-                ETFUtils.etf$processNewRandomTextureCandidate(path);
+                ETFUtils.processNewRandomTextureCandidate(path);
             }
             if (etf$PATH_OptifineOrTrueRandom.containsKey(path)) {
                 //if needs to check if change required
@@ -76,8 +76,8 @@ public abstract class MixinEyesFeatureRenderer<T extends Entity, M extends Entit
                                 if (etf$PATH_OptifineOrTrueRandom.get(path)) {
                                     //if (UUID_randomTextureSuffix.containsKey(id)) {
                                     int hold = etf$UUID_randomTextureSuffix2.get(id);
-                                    ETFUtils.etf$resetSingleData(id);
-                                    ETFUtils.etf$testCases(path, id, entity, true, etf$UUID_randomTextureSuffix2, etf$UUID_hasUpdatableRandomCases2);
+                                    ETFUtils.resetSingleData(id);
+                                    ETFUtils.testCases(path, id, entity, true, etf$UUID_randomTextureSuffix2, etf$UUID_hasUpdatableRandomCases2);
                                     //if didnt change keep the same
                                     if (!etf$UUID_randomTextureSuffix2.containsKey(id)) {
                                         etf$UUID_randomTextureSuffix2.put(id, hold);
@@ -96,7 +96,7 @@ public abstract class MixinEyesFeatureRenderer<T extends Entity, M extends Entit
                 if (etf$PATH_OptifineOrTrueRandom.get(path)) {//optifine random
                     //if it doesn't have a random already assign one
                     if (!etf$UUID_randomTextureSuffix2.containsKey(id)) {
-                        ETFUtils.etf$testCases(path, id, entity, false, etf$UUID_randomTextureSuffix2, etf$UUID_hasUpdatableRandomCases2);
+                        ETFUtils.testCases(path, id, entity, false, etf$UUID_randomTextureSuffix2, etf$UUID_hasUpdatableRandomCases2);
                         //if all failed set to vanilla
                         if (!etf$UUID_randomTextureSuffix2.containsKey(id)) {
                             etf$UUID_randomTextureSuffix2.put(id, 0);
@@ -106,16 +106,16 @@ public abstract class MixinEyesFeatureRenderer<T extends Entity, M extends Entit
                     // System.out.println("suffix was ="+UUID_randomTextureSuffix.get(id));
                     if (etf$UUID_randomTextureSuffix2.get(id) == 0) {
                         if (!etf$PATH_HasOptifineDefaultReplacement.containsKey(vanilla.toString())) {
-                            etf$PATH_HasOptifineDefaultReplacement.put(vanilla.toString(), ETFUtils.etf$isExistingNativeImageFile(ETFUtils.etf$returnOptifineOrVanillaIdentifier(path)));
+                            etf$PATH_HasOptifineDefaultReplacement.put(vanilla.toString(), ETFUtils.isExistingNativeImageFile(ETFUtils.returnOptifineOrVanillaIdentifier(path)));
                         }
                         if (etf$PATH_HasOptifineDefaultReplacement.get(vanilla.toString())) {
-                            return ETFUtils.etf$returnBlinkIdOrGiven(entity, ETFUtils.etf$returnOptifineOrVanillaIdentifier(path).toString(), id);
+                            return ETFUtils.returnBlinkIdOrGiven(entity, ETFUtils.returnOptifineOrVanillaIdentifier(path).toString(), id);
                         } else {
-                            return ETFUtils.etf$returnBlinkIdOrGiven(entity, vanilla.toString(), id);
+                            return ETFUtils.returnBlinkIdOrGiven(entity, vanilla.toString(), id);
                         }
 
                     } else {
-                        return ETFUtils.etf$returnBlinkIdOrGiven(entity, ETFUtils.etf$returnOptifineOrVanillaIdentifier(path, etf$UUID_randomTextureSuffix2.get(id)).toString(), id);
+                        return ETFUtils.returnBlinkIdOrGiven(entity, ETFUtils.returnOptifineOrVanillaIdentifier(path, etf$UUID_randomTextureSuffix2.get(id)).toString(), id);
                     }
 
                 } else {//true random assign
@@ -132,22 +132,22 @@ public abstract class MixinEyesFeatureRenderer<T extends Entity, M extends Entit
                             etf$UUID_entityAlreadyCalculated.add(id);
                         }
                         if (etf$UUID_randomTextureSuffix2.get(id) == 0) {
-                            return ETFUtils.etf$returnBlinkIdOrGiven(entity, vanilla.toString(), id);
+                            return ETFUtils.returnBlinkIdOrGiven(entity, vanilla.toString(), id);
                         } else {
-                            return ETFUtils.etf$returnBlinkIdOrGiven(entity, ETFUtils.etf$returnOptifineOrVanillaPath(path, etf$UUID_randomTextureSuffix2.get(id), ""), id);
+                            return ETFUtils.returnBlinkIdOrGiven(entity, ETFUtils.returnOptifineOrVanillaPath(path, etf$UUID_randomTextureSuffix2.get(id), ""), id);
                         }
                     } else {
-                        return ETFUtils.etf$returnBlinkIdOrGiven(entity, vanilla.toString(), id);
+                        return ETFUtils.returnBlinkIdOrGiven(entity, vanilla.toString(), id);
                     }
                 }
             } else {
-                ETFUtils.etf$modMessage("not random", false);
-                return ETFUtils.etf$returnBlinkIdOrGiven(entity, vanilla.toString(), id);
+                ETFUtils.modMessage("not random", false);
+                return ETFUtils.returnBlinkIdOrGiven(entity, vanilla.toString(), id);
             }
 
         } catch (Exception e) {
-            ETFUtils.etf$modMessage(e.toString(), false);
-            return ETFUtils.etf$returnBlinkIdOrGiven(entity, vanilla.toString(), id);
+            ETFUtils.modMessage(e.toString(), false);
+            return ETFUtils.returnBlinkIdOrGiven(entity, vanilla.toString(), id);
         }
     }
 

@@ -23,11 +23,11 @@ public abstract class MixinSimpleResourceReload {
         if (cir.getReturnValue() == 1.0) {
             if (falseAfterFirstRun) {
                 falseAfterFirstRun = false;
-                ETFUtils.etf$resetVisuals();
+                ETFUtils.resetVisuals();
                 for (ModContainer mod :
                         FabricLoader.getInstance().getAllMods()) {
                     if (mod.toString().contains("iris")) {
-                        ETFUtils.etf$modMessage("Entity Texture Features - Iris mod detected : message will be shown in settings", false);
+                        ETFUtils.modMessage("Entity Texture Features - Iris mod detected : message will be shown in settings", false);
                         etf$irisDetected = true;
                         break;
                     }

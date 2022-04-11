@@ -53,7 +53,7 @@ public abstract class MixinBuiltinModelItemRenderer implements SynchronousResour
                     String path = TridentEntityModel.TEXTURE.toString();
                     String name = stack.getName().getString().replaceAll("\s", "_").toLowerCase().replaceAll("[^a-z0-9/_.-]", "");
                     Identifier possibleId = new Identifier(path.replace(".png", "_" + name + ".png"));
-                    if (ETFUtils.etf$isExistingNativeImageFile(possibleId)) {
+                    if (ETFUtils.isExistingNativeImageFile(possibleId)) {
                         matrices.push();
                         matrices.scale(1.0F, -1.0F, -1.0F);
                         VertexConsumer block = ItemRenderer.getDirectItemGlintConsumer(vertexConsumers, this.modelTrident.getLayer(possibleId), false, stack.hasGlint());
@@ -80,7 +80,7 @@ public abstract class MixinBuiltinModelItemRenderer implements SynchronousResour
                 String fileString = path.replace(".png", name + ".png");
                 matrices.push();
                 matrices.scale(1.0F, -1.0F, -1.0F);
-                ETFUtils.etf$GeneralEmissiveRender(matrices, vertexConsumers, fileString, this.modelTrident);
+                ETFUtils.generalEmissiveRender(matrices, vertexConsumers, fileString, this.modelTrident);
                 matrices.pop();
 
             }
@@ -89,18 +89,17 @@ public abstract class MixinBuiltinModelItemRenderer implements SynchronousResour
         } else if (stack.isOf(Items.SHIELD)) {
             if (ETFConfigData.specialEmissiveShield) {
                 if (ETFConfigData.enableEmissiveTextures) {
-                    //todo for some reason wont overlay shield in hand, yet trident does???
                     boolean bl = BlockItem.getBlockEntityNbt(stack) != null;
                     String fileString = bl ? "minecraft:textures/entity/shield_base.png" : "minecraft:textures/entity/shield_base_nopattern.png";
                     matrices.push();
                     matrices.scale(1.0F, -1.0F, -1.0F);
-                    VertexConsumer consumer = ETFUtils.etf$GeneralEmissiveGetVertexConsumer(fileString, vertexConsumers);
+                    VertexConsumer consumer = ETFUtils.generalEmissiveGetVertexConsumer(fileString, vertexConsumers);
 
-                    ETFUtils.etf$GeneralEmissiveRenderPart(matrices, vertexConsumers, fileString, modelShield.getHandle());
+                    ETFUtils.generalEmissiveRenderPart(matrices, vertexConsumers, fileString, modelShield.getHandle());
                     //modelShield.getHandle().render(matrices,consumer,15728640,overlay,1,1,1,1);
                     //modelShield.render(matrices,consumer,15728640,overlay,1,1,1,1);
                     if (!bl)
-                        ETFUtils.etf$GeneralEmissiveRenderPart(matrices, vertexConsumers, fileString, modelShield.getPlate());
+                        ETFUtils.generalEmissiveRenderPart(matrices, vertexConsumers, fileString, modelShield.getPlate());
                     //if (!bl) modelShield.getPlate().render(matrices,consumer,15728640,overlay,1,1,1,1);
                     //todo banner patterns implementation
                     matrices.pop();

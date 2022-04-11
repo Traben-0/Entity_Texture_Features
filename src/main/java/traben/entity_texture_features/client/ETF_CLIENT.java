@@ -103,13 +103,13 @@ public class ETF_CLIENT implements ClientModInitializer {
                 FileReader fileReader = new FileReader(config);
                 ETFConfigData = gson.fromJson(fileReader, ETFConfig.class);
                 fileReader.close();
-                ETFUtils.etf$saveConfig();
+                ETFUtils.saveConfig();
             } catch (IOException e) {
-                ETFUtils.etf$modMessage("Config could not be loaded, using defaults", false);
+                ETFUtils.modMessage("Config could not be loaded, using defaults", false);
             }
         } else {
             ETFConfigData = new ETFConfig();
-            ETFUtils.etf$saveConfig();
+            ETFUtils.saveConfig();
         }
     }
 

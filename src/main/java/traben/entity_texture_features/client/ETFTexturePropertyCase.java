@@ -77,7 +77,7 @@ public class ETFTexturePropertyCase {
                 weightedSuffixes = buildWeighted.toArray(new Integer[0]);
 
             } else {
-                ETFUtils.etf$modMessage("random texture weights don't match", false);
+                ETFUtils.modMessage("random texture weights don't match", false);
                 weightedSuffixes = suffixesX;
             }
         } else {
@@ -252,7 +252,7 @@ public class ETFTexturePropertyCase {
                         for (String lvls :
                                 levels) {
                             if (lvls.contains("-")) {
-                                levelData.addAll(Arrays.asList(ETFUtils.etf$getIntRange(lvls)));
+                                levelData.addAll(Arrays.asList(ETFUtils.getIntRange(lvls)));
                             } else {
                                 levelData.add(Integer.parseInt(lvls.replaceAll("[^0-9]", "")));
                             }
