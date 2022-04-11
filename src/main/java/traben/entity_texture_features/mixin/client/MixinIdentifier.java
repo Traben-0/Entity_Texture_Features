@@ -10,9 +10,9 @@ import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
 
 
 @Mixin(Identifier.class)
-public class MIX_Identifier {
+public class MixinIdentifier {
     @Inject(method = "isPathValid", cancellable = true, at = @At("RETURN"))
-    private static void ETF_illegalPathOverride(CallbackInfoReturnable<Boolean> cir) {
+    private static void etf$illegalPathOverride(CallbackInfoReturnable<Boolean> cir) {
         if (ETFConfigData != null) {
             if (ETFConfigData.allowIllegalTexturePaths) {
                 if (!cir.getReturnValue()) {

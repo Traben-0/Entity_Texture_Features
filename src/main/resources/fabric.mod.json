@@ -31,6 +31,7 @@
   "mixins": [
     "entity_texture_features.mixins.json"
   ],
+  "accessWidener": "entity_texture_features.accesswidener",
   "depends": {
     "fabricloader": ">=0.13.0",
     "minecraft": ">=1.18 "

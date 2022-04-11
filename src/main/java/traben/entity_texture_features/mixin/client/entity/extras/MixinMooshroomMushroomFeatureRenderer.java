@@ -5,47 +5,47 @@ import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
-import traben.entity_texture_features.client.ETF_METHODS;
+import traben.entity_texture_features.client.ETFUtils;
 
 import static traben.entity_texture_features.client.ETF_CLIENT.*;
 
 @Mixin(MooshroomMushroomFeatureRenderer.class)
-public abstract class MIX_MooshroomMushroomFeatureRenderer implements ETF_METHODS {
+public abstract class MixinMooshroomMushroomFeatureRenderer {
 
     @ModifyArg(method = "renderMushroom", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/RenderLayer;getOutline(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;"), index = 0)
-    private Identifier ETF_injected(Identifier texture) {
+    private Identifier etf$injected(Identifier texture) {
         //enable custom mooshroom mushrooms
         if (ETFConfigData.enableCustomTextures) {
             if (texture.toString().equals("minecraft:textures/block/red_mushroom.png")) {
-                switch (ETF_mooshroomRedCustomShroom) {
+                switch (etf$mooshroomRedCustomShroom) {
                     case 1:
                         return texture;
                     case 2:
                         return new Identifier("minecraft:textures/entity/cow/red_mushroom.png");
                     default: {
                         Identifier test = new Identifier("minecraft:textures/entity/cow/red_mushroom.png");
-                        if (ETF_isExistingNativeImageFile(test)) {
-                            ETF_mooshroomRedCustomShroom = 2;
+                        if (ETFUtils.etf$isExistingNativeImageFile(test)) {
+                            etf$mooshroomRedCustomShroom = 2;
                             return test;
                         } else {
-                            ETF_mooshroomRedCustomShroom = 1;
+                            etf$mooshroomRedCustomShroom = 1;
                         }
                     }
                 }
             }
             if (texture.toString().equals("minecraft:textures/block/brown_mushroom.png")) {
-                switch (ETF_mooshroomBrownCustomShroom) {
+                switch (etf$mooshroomBrownCustomShroom) {
                     case 1:
                         return texture;
                     case 2:
                         return new Identifier("minecraft:textures/entity/cow/brown_mushroom.png");
                     default: {
                         Identifier test = new Identifier("minecraft:textures/entity/cow/brown_mushroom.png");
-                        if (ETF_isExistingNativeImageFile(test)) {
-                            ETF_mooshroomBrownCustomShroom = 2;
+                        if (ETFUtils.etf$isExistingNativeImageFile(test)) {
+                            etf$mooshroomBrownCustomShroom = 2;
                             return test;
                         } else {
-                            ETF_mooshroomBrownCustomShroom = 1;
+                            etf$mooshroomBrownCustomShroom = 1;
                         }
                     }
                 }

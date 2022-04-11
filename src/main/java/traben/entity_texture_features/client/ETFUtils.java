@@ -10,6 +10,7 @@ import com.mojang.authlib.properties.PropertyMap;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.Model;
+import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
@@ -49,11 +50,11 @@ import java.util.regex.Pattern;
 
 import static traben.entity_texture_features.client.ETF_CLIENT.*;
 
-public interface ETF_METHODS {
+public class ETFUtils {
 
     //checks if files exists and is in the same or higher resourcepack as id 2
-    default boolean ETF_isExistingFileAndSameOrHigherResourcepackAs(Identifier id, Identifier vanillaIdToMatch,boolean id1IsNativeImage) {
-        if (ETF_isExistingFileDirect(id,id1IsNativeImage)) {
+    public static boolean etf$isExistingFileAndSameOrHigherResourcepackAs(Identifier id, Identifier vanillaIdToMatch, boolean id1IsNativeImage) {
+        if (etf$isExistingFileDirect(id, id1IsNativeImage)) {
             try {
                 ResourceManager resource = MinecraftClient.getInstance().getResourceManager();
                 String packname = resource.getResource(id).getResourcePackName();
@@ -63,7 +64,7 @@ public interface ETF_METHODS {
                 } else {
                     for (ResourcePack pack :
                             resource.streamResourcePacks().toList()) {
-                        //loops through all resourcepacks from bottom "default" to top
+                        //loops through all resourcepacks from bottom "public static " to top
                         if (packname.equals(pack.getName())) {
                             //if first id is reached first it is lower and must be false
                             return false;
@@ -81,19 +82,20 @@ public interface ETF_METHODS {
         return false;
     }
 
-    default boolean ETF_isExistingNativeImageFile(Identifier id) {
-        return ETF_isExistingFileDirect( id,  true) ;
-    }
-    default boolean ETF_isExistingPropertyFile(Identifier id) {
-        return ETF_isExistingFileDirect( id,  false) ;
+    public static boolean etf$isExistingNativeImageFile(Identifier id) {
+        return etf$isExistingFileDirect(id, true);
     }
 
-    default boolean ETF_isExistingFileDirect(Identifier id, boolean isNativeImage) {
+    public static boolean etf$isExistingPropertyFile(Identifier id) {
+        return etf$isExistingFileDirect(id, false);
+    }
+
+    public static boolean etf$isExistingFileDirect(Identifier id, boolean isNativeImage) {
         try {
             Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(id);
             try {
                 InputStream stream = resource.getInputStream();
-                if(isNativeImage) {
+                if (isNativeImage) {
                     //throw exception if it's not a native image
                     NativeImage.read(stream);
                 }
@@ -108,85 +110,85 @@ public interface ETF_METHODS {
         }
     }
 
-    private boolean ETF_checkPropertyPathExistsAndSameOrHigherResourcepackAs(String propertiesPath, String path2) {
-        return ETF_isExistingFileAndSameOrHigherResourcepackAs(new Identifier(propertiesPath), new Identifier(path2), false);
+    private static boolean etf$checkPropertyPathExistsAndSameOrHigherResourcepackAs(String propertiesPath, String path2) {
+        return etf$isExistingFileAndSameOrHigherResourcepackAs(new Identifier(propertiesPath), new Identifier(path2), false);
     }
 
-    default void ETF_resetVisuals() {
-        ETF_modMessage("Reloading...", false);
-        ETF_PATH_TotalTrueRandom.clear();
+    public static void etf$resetVisuals() {
+        etf$modMessage("Reloading...", false);
+        etf$PATH_TotalTrueRandom.clear();
 
-        ETF_UUID_randomTextureSuffix.clear();
-        ETF_UUID_randomTextureSuffix2.clear();
-        ETF_UUID_randomTextureSuffix3.clear();
-        ETF_UUID_randomTextureSuffix4.clear();
-        ETF_UUID_hasUpdatableRandomCases.clear();
-        ETF_UUID_hasUpdatableRandomCases2.clear();
-        ETF_UUID_hasUpdatableRandomCases3.clear();
-        ETF_UUID_hasUpdatableRandomCases4.clear();
+        etf$UUID_randomTextureSuffix.clear();
+        etf$UUID_randomTextureSuffix2.clear();
+        etf$UUID_randomTextureSuffix3.clear();
+        etf$UUID_randomTextureSuffix4.clear();
+        etf$UUID_hasUpdatableRandomCases.clear();
+        etf$UUID_hasUpdatableRandomCases2.clear();
+        etf$UUID_hasUpdatableRandomCases3.clear();
+        etf$UUID_hasUpdatableRandomCases4.clear();
 
-        ETF_PATH_OptifineRandomSettingsPerTexture.clear();
-        ETF_PATH_OptifineOrTrueRandom.clear();
-        ETF_PATH_OptifineOldVanillaETF_0123.clear();// 0,1,2
-        ETF_PATH_ignoreOnePNG.clear();
-        ETF_UUID_entityAlreadyCalculated.clear();//only time it clears
-        ETF_UUID_entityAwaitingDataClearing.clear();
-        ETF_UUID_entityAwaitingDataClearing2.clear();
+        etf$PATH_OptifineRandomSettingsPerTexture.clear();
+        etf$PATH_OptifineOrTrueRandom.clear();
+        etf$PATH_OptifineOldVanillaetf$0123.clear();// 0,1,2
+        etf$PATH_ignoreOnePNG.clear();
+        etf$UUID_entityAlreadyCalculated.clear();//only time it clears
+        etf$UUID_entityAwaitingDataClearing.clear();
+        etf$UUID_entityAwaitingDataClearing2.clear();
 
-        ETF_UUID_OriginalNonUpdatePropertyStrings.clear();
+        etf$UUID_OriginalNonUpdatePropertyStrings.clear();
 
-        ETF_UUID_playerHasFeatures.clear();
-        ETF_UUID_playerHasEnchant.clear();
-        ETF_UUID_playerHasEmissive.clear();
-        ETF_UUID_playerTransparentSkinId.clear();
-        ETF_UUID_playerSkinDownloadedYet.clear();
+        etf$UUID_playerHasFeatures.clear();
+        etf$UUID_playerHasEnchant.clear();
+        etf$UUID_playerHasEmissive.clear();
+        etf$UUID_playerTransparentSkinId.clear();
+        etf$UUID_playerSkinDownloadedYet.clear();
         for (HttpURLConnection h :
-                ETF_URL_HTTPtoDisconnect1.values()) {
+                etf$URL_HTTPtoDisconnect1.values()) {
             if (h != null) {
                 h.disconnect();
             }
         }
         for (HttpURLConnection h :
-                ETF_URL_HTTPtoDisconnect2.values()) {
+                etf$URL_HTTPtoDisconnect2.values()) {
             if (h != null) {
                 h.disconnect();
             }
         }
-        ETF_UUID_playerHasCoat.clear();
-        ETF_URL_HTTPtoDisconnect1.clear();
+        etf$UUID_playerHasCoat.clear();
+        etf$URL_HTTPtoDisconnect1.clear();
 
-        ETF_PATH_FailedPropertiesToIgnore.clear();
+        etf$PATH_FailedPropertiesToIgnore.clear();
 
-        ETF_PATH_HasBlink.clear();
-        ETF_PATH_HasBlink2.clear();
+        etf$PATH_HasBlink.clear();
+        etf$PATH_HasBlink2.clear();
 
-        ETF_UUID_TridentName.clear();
+        etf$UUID_TridentName.clear();
 
-        ETF_PATH_EmissiveTextureIdentifier.clear();
-        ETF_setEmissiveSuffix();
+        etf$PATH_EmissiveTextureIdentifier.clear();
+        etf$setEmissiveSuffix();
 
-        ETF_PATH_VillagerIsExistingFeature.clear();
+        etf$PATH_VillagerIsExistingFeature.clear();
 
-        ETF_mooshroomRedCustomShroom = 0;
-        ETF_mooshroomBrownCustomShroom = 0;
+        etf$mooshroomRedCustomShroom = 0;
+        etf$mooshroomBrownCustomShroom = 0;
 
-        ETF_registerNativeImageToIdentifier(ETF_emptyNativeImage(1, 1), "etf:blank.png");
+        etf$registerNativeImageToIdentifier(etf$emptyNativeImage(1, 1), "etf:blank.png");
     }
 
-    default void ETF_resetSingleData(UUID id) {
-        ETF_UUID_randomTextureSuffix.remove(id);
-        ETF_UUID_randomTextureSuffix2.remove(id);
-        ETF_UUID_randomTextureSuffix3.remove(id);
-        ETF_UUID_randomTextureSuffix4.remove(id);
+    public static void etf$resetSingleData(UUID id) {
+        etf$UUID_randomTextureSuffix.remove(id);
+        etf$UUID_randomTextureSuffix2.remove(id);
+        etf$UUID_randomTextureSuffix3.remove(id);
+        etf$UUID_randomTextureSuffix4.remove(id);
 
 
     }
 
-    default Properties ETF_readProperties(String path) {
-        return ETF_readProperties(path, null);
+    public static Properties etf$readProperties(String path) {
+        return etf$readProperties(path, null);
     }
 
-    default Properties ETF_readProperties(String path, String pathOfTextureToUseForResourcepackCheck) {
+    public static Properties etf$readProperties(String path, String pathOfTextureToUseForResourcepackCheck) {
         Properties props = new Properties();
         try {
             Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(new Identifier(path));
@@ -199,7 +201,7 @@ public interface ETF_METHODS {
                     //not same pack check it is a higher pack and only continue if packname1 is higher
                     for (ResourcePack pack :
                             resourceManager.streamResourcePacks().toList()) {
-                        //loops through all resourcepacks from bottom "default" to top
+                        //loops through all resourcepacks from bottom "public static " to top
                         if (packname1.equals(pack.getName())) {
                             //if first id is reached first it is lower and must not be used return null
                             return null;
@@ -227,7 +229,7 @@ public interface ETF_METHODS {
         return props;
     }
 
-    default NativeImage ETF_getNativeImageFromID(Identifier identifier) {
+    public static NativeImage etf$getNativeImageFromID(Identifier identifier) {
         NativeImage img;
         try {
             Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(identifier);
@@ -246,51 +248,51 @@ public interface ETF_METHODS {
     }
 
 
-    default void ETF_processNewRandomTextureCandidate(String vanillaTexturePath) {
+    public static void etf$processNewRandomTextureCandidate(String vanillaTexturePath) {
         boolean hasProperties = false;
         String properties = "";
-        //set default incase of no change
-        ETF_PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath,2);
-        if (ETF_checkPropertyPathExistsAndSameOrHigherResourcepackAs(vanillaTexturePath.replace(".png", ".properties").replace("textures", "etf/random"), vanillaTexturePath.replace(".png", "2.png").replace("textures", "etf/random"))) {
+        //set public static  incase of no change
+        etf$PATH_OptifineOldVanillaetf$0123.put(vanillaTexturePath, 2);
+        if (etf$checkPropertyPathExistsAndSameOrHigherResourcepackAs(vanillaTexturePath.replace(".png", ".properties").replace("textures", "etf/random"), vanillaTexturePath.replace(".png", "2.png").replace("textures", "etf/random"))) {
             properties = vanillaTexturePath.replace(".png", ".properties").replace("textures", "etf/random");
             hasProperties = true;
-            ETF_PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 3);
-        } else if (ETF_isExistingNativeImageFile(new Identifier(vanillaTexturePath.replace(".png", "2.png").replace("textures", "etf/random")))) {
-            ETF_PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 3);
-        } else if (ETF_checkPropertyPathExistsAndSameOrHigherResourcepackAs(vanillaTexturePath.replace(".png", ".properties").replace("textures", "optifine/random"), vanillaTexturePath.replace(".png", "2.png").replace("textures", "optifine/random"))) {
+            etf$PATH_OptifineOldVanillaetf$0123.put(vanillaTexturePath, 3);
+        } else if (etf$isExistingNativeImageFile(new Identifier(vanillaTexturePath.replace(".png", "2.png").replace("textures", "etf/random")))) {
+            etf$PATH_OptifineOldVanillaetf$0123.put(vanillaTexturePath, 3);
+        } else if (etf$checkPropertyPathExistsAndSameOrHigherResourcepackAs(vanillaTexturePath.replace(".png", ".properties").replace("textures", "optifine/random"), vanillaTexturePath.replace(".png", "2.png").replace("textures", "optifine/random"))) {
             properties = vanillaTexturePath.replace(".png", ".properties").replace("textures", "optifine/random");
             hasProperties = true;
-            ETF_PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 0);
-        } else if (ETF_isExistingNativeImageFile(new Identifier(vanillaTexturePath.replace(".png", "2.png").replace("textures", "optifine/random")))) {
-            ETF_PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 0);
-        } else if (ETF_checkPropertyPathExistsAndSameOrHigherResourcepackAs(vanillaTexturePath.replace(".png", ".properties").replace("textures/entity", "optifine/mob"), vanillaTexturePath.replace(".png", "2.png").replace("textures/entity", "optifine/mob"))) {
+            etf$PATH_OptifineOldVanillaetf$0123.put(vanillaTexturePath, 0);
+        } else if (etf$isExistingNativeImageFile(new Identifier(vanillaTexturePath.replace(".png", "2.png").replace("textures", "optifine/random")))) {
+            etf$PATH_OptifineOldVanillaetf$0123.put(vanillaTexturePath, 0);
+        } else if (etf$checkPropertyPathExistsAndSameOrHigherResourcepackAs(vanillaTexturePath.replace(".png", ".properties").replace("textures/entity", "optifine/mob"), vanillaTexturePath.replace(".png", "2.png").replace("textures/entity", "optifine/mob"))) {
             properties = vanillaTexturePath.replace(".png", ".properties").replace("textures/entity", "optifine/mob");
             hasProperties = true;
-            ETF_PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 1);
-        } else if (ETF_isExistingNativeImageFile(new Identifier(vanillaTexturePath.replace(".png", "2.png").replace("textures/entity", "optifine/mob")))) {
-            ETF_PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 1);
-        } else if (ETF_checkPropertyPathExistsAndSameOrHigherResourcepackAs(vanillaTexturePath.replace(".png", ".properties"), vanillaTexturePath.replace(".png", "2.png"))) {
+            etf$PATH_OptifineOldVanillaetf$0123.put(vanillaTexturePath, 1);
+        } else if (etf$isExistingNativeImageFile(new Identifier(vanillaTexturePath.replace(".png", "2.png").replace("textures/entity", "optifine/mob")))) {
+            etf$PATH_OptifineOldVanillaetf$0123.put(vanillaTexturePath, 1);
+        } else if (etf$checkPropertyPathExistsAndSameOrHigherResourcepackAs(vanillaTexturePath.replace(".png", ".properties"), vanillaTexturePath.replace(".png", "2.png"))) {
             properties = vanillaTexturePath.replace(".png", ".properties");
             hasProperties = true;
-            ETF_PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 2);
-        } else if (ETF_isExistingNativeImageFile(new Identifier(vanillaTexturePath.replace(".png", "2.png")))) {
-            ETF_PATH_OptifineOldVanillaETF_0123.put(vanillaTexturePath, 2);
+            etf$PATH_OptifineOldVanillaetf$0123.put(vanillaTexturePath, 2);
+        } else if (etf$isExistingNativeImageFile(new Identifier(vanillaTexturePath.replace(".png", "2.png")))) {
+            etf$PATH_OptifineOldVanillaetf$0123.put(vanillaTexturePath, 2);
         }
 
         //no settings just true random
-        if (hasProperties && !ETF_PATH_FailedPropertiesToIgnore.contains(properties)) {//optifine settings found
-            ETF_processOptifineTextureCandidate(vanillaTexturePath, properties);
+        if (hasProperties && !etf$PATH_FailedPropertiesToIgnore.contains(properties)) {//optifine settings found
+            etf$processOptifineTextureCandidate(vanillaTexturePath, properties);
         } else {
-            ETF_processTrueRandomCandidate(vanillaTexturePath);
+            etf$processTrueRandomCandidate(vanillaTexturePath);
         }
     }
 
-    private void ETF_processOptifineTextureCandidate(String vanillaTexturePath, String propertiesPath) {
+    private static void etf$processOptifineTextureCandidate(String vanillaTexturePath, String propertiesPath) {
         try {
-            ETF_PATH_ignoreOnePNG.put(vanillaTexturePath, !(ETF_isExistingPropertyFile(new Identifier(propertiesPath.replace(".properties", "1.png")))));
+            etf$PATH_ignoreOnePNG.put(vanillaTexturePath, !(etf$isExistingPropertyFile(new Identifier(propertiesPath.replace(".properties", "1.png")))));
 
-            String twoPngPath = ETF_returnOptifineOrVanillaPath(vanillaTexturePath, 2, "");
-            Properties props = ETF_readProperties(propertiesPath, twoPngPath);
+            String twoPngPath = etf$returnOptifineOrVanillaPath(vanillaTexturePath, 2, "");
+            Properties props = etf$readProperties(propertiesPath, twoPngPath);
 
             if (props != null) {
                 Set<String> propIds = props.stringPropertyNames();
@@ -304,7 +306,7 @@ public interface ETF_METHODS {
                 //sort from lowest to largest
                 List<Integer> numbersList = new ArrayList<>(numbers);
                 Collections.sort(numbersList);
-                ArrayList<randomCase> allCasesForTexture = new ArrayList<>();
+                ArrayList<ETFTexturePropertyCase> allCasesForTexture = new ArrayList<>();
                 for (Integer num :
                         numbersList) {
                     //loops through each known number in properties
@@ -334,7 +336,7 @@ public interface ETF_METHODS {
                             data = data.trim();
                             if (!data.replaceAll("[^0-9]", "").isEmpty()) {
                                 if (data.contains("-")) {
-                                    suffixNumbers.addAll(Arrays.asList(ETF_getIntRange(data)));
+                                    suffixNumbers.addAll(Arrays.asList(etf$getIntRange(data)));
                                 } else {
                                     suffixNumbers.add(Integer.parseInt(data.replaceAll("[^0-9]", "")));
                                 }
@@ -381,7 +383,7 @@ public interface ETF_METHODS {
                             data = data.trim();
                             if (!data.replaceAll("[^0-9]", "").isEmpty()) {
                                 if (data.contains("-")) {
-                                    heightNumbers.addAll(Arrays.asList(ETF_getIntRange(data)));
+                                    heightNumbers.addAll(Arrays.asList(etf$getIntRange(data)));
                                 } else {
                                     heightNumbers.add(Integer.parseInt(data.replaceAll("[^0-9]", "")));
                                 }
@@ -439,7 +441,7 @@ public interface ETF_METHODS {
                             data = data.trim();
                             if (!data.replaceAll("[^0-9]", "").isEmpty()) {
                                 if (data.contains("-")) {
-                                    moonNumbers.addAll(Arrays.asList(ETF_getIntRange(data)));
+                                    moonNumbers.addAll(Arrays.asList(etf$getIntRange(data)));
                                 } else {
                                     moonNumbers.add(Integer.parseInt(data.replaceAll("[^0-9]", "")));
                                 }
@@ -474,27 +476,27 @@ public interface ETF_METHODS {
                     }
 
                     if (suffixes.length != 0) {
-                        allCasesForTexture.add(new randomCase(suffixes, weights, biomes, heights, names, professions, collarColours, baby, weather, health, moon, daytime, blocks, teams));
+                        allCasesForTexture.add(new ETFTexturePropertyCase(suffixes, weights, biomes, heights, names, professions, collarColours, baby, weather, health, moon, daytime, blocks, teams));
                     }
                 }
                 if (!allCasesForTexture.isEmpty()) {
-                    ETF_PATH_OptifineRandomSettingsPerTexture.put(vanillaTexturePath, allCasesForTexture);
-                    ETF_PATH_OptifineOrTrueRandom.put(vanillaTexturePath, true);
+                    etf$PATH_OptifineRandomSettingsPerTexture.put(vanillaTexturePath, allCasesForTexture);
+                    etf$PATH_OptifineOrTrueRandom.put(vanillaTexturePath, true);
                 } else {
-                    ETF_modMessage("Ignoring properties file that failed to load any cases @ " + propertiesPath, false);
-                    ETF_PATH_FailedPropertiesToIgnore.add(propertiesPath);
+                    etf$modMessage("Ignoring properties file that failed to load any cases @ " + propertiesPath, false);
+                    etf$PATH_FailedPropertiesToIgnore.add(propertiesPath);
                 }
             } else {//properties file is null
-                ETF_modMessage("Ignoring properties file that was null @ " + propertiesPath, false);
-                ETF_PATH_FailedPropertiesToIgnore.add(propertiesPath);
+                etf$modMessage("Ignoring properties file that was null @ " + propertiesPath, false);
+                etf$PATH_FailedPropertiesToIgnore.add(propertiesPath);
             }
         } catch (Exception e) {
-            ETF_modMessage("Ignoring properties file that caused Exception @ " + propertiesPath + e, false);
-            ETF_PATH_FailedPropertiesToIgnore.add(propertiesPath);
+            etf$modMessage("Ignoring properties file that caused Exception @ " + propertiesPath + e, false);
+            etf$PATH_FailedPropertiesToIgnore.add(propertiesPath);
         }
     }
 
-    default Integer[] ETF_getIntRange(String rawRange) {
+    public static Integer[] etf$getIntRange(String rawRange) {
         //assume rawRange =  "20-56"  but can be "-64-56"  or "-14"
         rawRange = rawRange.trim();
         //sort negatives before split
@@ -521,7 +523,7 @@ public interface ETF_METHODS {
                     builder.add(i);
                 }
             } else {
-                ETF_modMessage("Optifine properties failed to load: Texture heights range has a problem in properties file. this has occurred for value \"" + rawRange.replace("N", "-") + "\"", false);
+                etf$modMessage("Optifine properties failed to load: Texture heights range has a problem in properties file. this has occurred for value \"" + rawRange.replace("N", "-") + "\"", false);
             }
             return builder.toArray(new Integer[0]);
         } else {//only 1 number but method ran because of "-" present
@@ -534,20 +536,20 @@ public interface ETF_METHODS {
         }
     }
 
-    default void ETF_testCases(String vanillaPath, UUID id, Entity entity, boolean isUpdate) {
-        ETF_testCases(vanillaPath, id, entity, isUpdate, ETF_UUID_randomTextureSuffix, ETF_UUID_hasUpdatableRandomCases);
+    public static void etf$testCases(String vanillaPath, UUID id, Entity entity, boolean isUpdate) {
+        etf$testCases(vanillaPath, id, entity, isUpdate, etf$UUID_randomTextureSuffix, etf$UUID_hasUpdatableRandomCases);
     }
 
-    default void ETF_testCases(String vanillaPath, UUID id, Entity entity, boolean isUpdate, HashMap<UUID, Integer> UUID_RandomSuffixMap, HashMap<UUID, Boolean> UUID_CaseHasUpdateablesCustom) {
-        for (randomCase test :
-                ETF_PATH_OptifineRandomSettingsPerTexture.get(vanillaPath)) {
+    public static void etf$testCases(String vanillaPath, UUID id, Entity entity, boolean isUpdate, HashMap<UUID, Integer> UUID_RandomSuffixMap, HashMap<UUID, Boolean> UUID_CaseHasUpdateablesCustom) {
+        for (ETFTexturePropertyCase test :
+                etf$PATH_OptifineRandomSettingsPerTexture.get(vanillaPath)) {
 
             //skip if its only an update and case is not updatable
-            if (test.testEntity((LivingEntity) entity, ETF_UUID_entityAlreadyCalculated.contains(id), UUID_CaseHasUpdateablesCustom)) {
-                UUID_RandomSuffixMap.put(id, test.getWeightedSuffix(id, ETF_PATH_ignoreOnePNG.get(vanillaPath)));
-                Identifier tested = ETF_returnOptifineOrVanillaIdentifier(vanillaPath, UUID_RandomSuffixMap.get(id));
+            if (test.testEntity((LivingEntity) entity, etf$UUID_entityAlreadyCalculated.contains(id), UUID_CaseHasUpdateablesCustom)) {
+                UUID_RandomSuffixMap.put(id, test.getWeightedSuffix(id, etf$PATH_ignoreOnePNG.get(vanillaPath)));
+                Identifier tested = etf$returnOptifineOrVanillaIdentifier(vanillaPath, UUID_RandomSuffixMap.get(id));
 
-                if (!ETF_isExistingNativeImageFile(tested) && !isUpdate) {
+                if (!etf$isExistingNativeImageFile(tested) && !isUpdate) {
                     UUID_RandomSuffixMap.put(id, 0);
                 }
                 break;
@@ -557,7 +559,7 @@ public interface ETF_METHODS {
             UUID_CaseHasUpdateablesCustom.put(id, false);
     }
 
-    default void ETF_modMessage(String message, boolean inChat) {
+    public static void etf$modMessage(String message, boolean inChat) {
         if (inChat) {
             ClientPlayerEntity plyr = MinecraftClient.getInstance().player;
             if (plyr != null) {
@@ -570,32 +572,32 @@ public interface ETF_METHODS {
         }
     }
 
-    default String ETF_returnOptifineOrVanillaPath(String vanillaPath, int randomId, String emissiveSuffx) {
+    public static String etf$returnOptifineOrVanillaPath(String vanillaPath, int randomId, String emissiveSuffx) {
 
 
         String append = (randomId == 0 ? "" : randomId) + emissiveSuffx + ".png";
-        if (ETF_PATH_OptifineOldVanillaETF_0123.containsKey(vanillaPath)) {
-            return switch (ETF_PATH_OptifineOldVanillaETF_0123.get(vanillaPath)) {
+        if (etf$PATH_OptifineOldVanillaetf$0123.containsKey(vanillaPath)) {
+            return switch (etf$PATH_OptifineOldVanillaetf$0123.get(vanillaPath)) {
                 case 0 -> vanillaPath.replace(".png", append).replace("textures", "optifine/random");
                 case 1 -> vanillaPath.replace(".png", append).replace("textures/entity", "optifine/mob");
                 case 3 -> vanillaPath.replace(".png", append).replace("textures", "etf/random");
                 default -> vanillaPath.replace(".png", append);
             };
-        }else{
+        } else {
             return vanillaPath;
         }
     }
 
-    default Identifier ETF_returnOptifineOrVanillaIdentifier(String vanillaPath, int randomId) {
-        return new Identifier(ETF_returnOptifineOrVanillaPath(vanillaPath, randomId, ""));
+    public static Identifier etf$returnOptifineOrVanillaIdentifier(String vanillaPath, int randomId) {
+        return new Identifier(etf$returnOptifineOrVanillaPath(vanillaPath, randomId, ""));
     }
 
-    default Identifier ETF_returnOptifineOrVanillaIdentifier(String vanillaPath) {
-        return new Identifier(ETF_returnOptifineOrVanillaPath(vanillaPath, 0, ""));
+    public static Identifier etf$returnOptifineOrVanillaIdentifier(String vanillaPath) {
+        return new Identifier(etf$returnOptifineOrVanillaPath(vanillaPath, 0, ""));
     }
 
-    private void ETF_processTrueRandomCandidate(String vanillaPath) {
-        ETF_PATH_ignoreOnePNG.put(vanillaPath, true);
+    private static void etf$processTrueRandomCandidate(String vanillaPath) {
+        etf$PATH_ignoreOnePNG.put(vanillaPath, true);
         boolean keepGoing = false;
         //first iteration longer
         int successCount = 0;
@@ -606,21 +608,21 @@ public interface ETF_METHODS {
         String checkPathOldRandomFormat = vanillaPath.replace(".png", "1.png").replace("textures/entity", "optifine/mob");
         String checkPathOptifineFormat = vanillaPath.replace(".png", "1.png").replace("textures", "optifine/random");
         String checkPathETFFormat = vanillaPath.replace(".png", "1.png").replace("textures", "etf/random");
-        if (ETF_isExistingNativeImageFile(new Identifier(checkPathETFFormat))) {
-            ETF_PATH_OptifineOldVanillaETF_0123.put(vanillaPath, 3);
-            ETF_PATH_ignoreOnePNG.put(vanillaPath, false);
+        if (etf$isExistingNativeImageFile(new Identifier(checkPathETFFormat))) {
+            etf$PATH_OptifineOldVanillaetf$0123.put(vanillaPath, 3);
+            etf$PATH_ignoreOnePNG.put(vanillaPath, false);
             //successCount++;
-        } else if (ETF_isExistingNativeImageFile(new Identifier(checkPathOptifineFormat))) {
-            ETF_PATH_OptifineOldVanillaETF_0123.put(vanillaPath, 0);
-            ETF_PATH_ignoreOnePNG.put(vanillaPath, false);
+        } else if (etf$isExistingNativeImageFile(new Identifier(checkPathOptifineFormat))) {
+            etf$PATH_OptifineOldVanillaetf$0123.put(vanillaPath, 0);
+            etf$PATH_ignoreOnePNG.put(vanillaPath, false);
             //successCount++;
-        } else if (ETF_isExistingNativeImageFile(new Identifier(checkPathOldRandomFormat))) {
-            ETF_PATH_OptifineOldVanillaETF_0123.put(vanillaPath, 1);
-            ETF_PATH_ignoreOnePNG.put(vanillaPath, false);
+        } else if (etf$isExistingNativeImageFile(new Identifier(checkPathOldRandomFormat))) {
+            etf$PATH_OptifineOldVanillaetf$0123.put(vanillaPath, 1);
+            etf$PATH_ignoreOnePNG.put(vanillaPath, false);
             //successCount++;
-        } else if (ETF_isExistingNativeImageFile(new Identifier(checkPath))) {
-            ETF_PATH_OptifineOldVanillaETF_0123.put(vanillaPath, 2);
-            ETF_PATH_ignoreOnePNG.put(vanillaPath, false);
+        } else if (etf$isExistingNativeImageFile(new Identifier(checkPath))) {
+            etf$PATH_OptifineOldVanillaetf$0123.put(vanillaPath, 2);
+            etf$PATH_ignoreOnePNG.put(vanillaPath, false);
             //successCount++;
         }
 
@@ -629,20 +631,20 @@ public interface ETF_METHODS {
         checkPathOldRandomFormat = vanillaPath.replace(".png", "2.png").replace("textures/entity", "optifine/mob");
         checkPathOptifineFormat = vanillaPath.replace(".png", "2.png").replace("textures", "optifine/random");
         checkPathETFFormat = vanillaPath.replace(".png", "2.png").replace("textures", "etf/random");
-        if (ETF_isExistingNativeImageFile(new Identifier(checkPathETFFormat))) {
-            ETF_PATH_OptifineOldVanillaETF_0123.put(vanillaPath, 3);
+        if (etf$isExistingNativeImageFile(new Identifier(checkPathETFFormat))) {
+            etf$PATH_OptifineOldVanillaetf$0123.put(vanillaPath, 3);
             keepGoing = true;
             successCount = 2;
-        } else if (ETF_isExistingNativeImageFile(new Identifier(checkPathOptifineFormat))) {
-            ETF_PATH_OptifineOldVanillaETF_0123.put(vanillaPath, 0);
+        } else if (etf$isExistingNativeImageFile(new Identifier(checkPathOptifineFormat))) {
+            etf$PATH_OptifineOldVanillaetf$0123.put(vanillaPath, 0);
             keepGoing = true;
             successCount = 2;
-        } else if (ETF_isExistingNativeImageFile(new Identifier(checkPathOldRandomFormat))) {
-            ETF_PATH_OptifineOldVanillaETF_0123.put(vanillaPath, 1);
+        } else if (etf$isExistingNativeImageFile(new Identifier(checkPathOldRandomFormat))) {
+            etf$PATH_OptifineOldVanillaetf$0123.put(vanillaPath, 1);
             keepGoing = true;
             successCount = 2;
-        } else if (ETF_isExistingNativeImageFile(new Identifier(checkPath))) {
-            ETF_PATH_OptifineOldVanillaETF_0123.put(vanillaPath, 2);
+        } else if (etf$isExistingNativeImageFile(new Identifier(checkPath))) {
+            etf$PATH_OptifineOldVanillaetf$0123.put(vanillaPath, 2);
             keepGoing = true;
             successCount = 2;
         }
@@ -651,29 +653,29 @@ public interface ETF_METHODS {
         while (keepGoing) {
             count++;
 
-            checkPath = switch(ETF_PATH_OptifineOldVanillaETF_0123.get(vanillaPath)){
+            checkPath = switch (etf$PATH_OptifineOldVanillaetf$0123.get(vanillaPath)) {
                 case 3 -> vanillaPath.replace(".png", (count + ".png")).replace("textures", "etf/random");
                 case 0 -> vanillaPath.replace(".png", (count + ".png")).replace("textures", "optifine/random");
                 case 1 -> vanillaPath.replace(".png", (count + ".png")).replace("textures/entity", "optifine/mob");
-                default-> vanillaPath.replace(".png", (count + ".png"));
+                default -> vanillaPath.replace(".png", (count + ".png"));
             };
 
-            keepGoing = ETF_isExistingNativeImageFile(new Identifier(checkPath));
+            keepGoing = etf$isExistingNativeImageFile(new Identifier(checkPath));
             if (keepGoing) successCount++;
         }
         //true if any random textures at all
 
-        ETF_PATH_TotalTrueRandom.put(vanillaPath, successCount);
-        ETF_PATH_OptifineOrTrueRandom.put(vanillaPath, false);
+        etf$PATH_TotalTrueRandom.put(vanillaPath, successCount);
+        etf$PATH_OptifineOrTrueRandom.put(vanillaPath, false);
 
     }
 
 
-    default void ETF_setEmissiveSuffix() {
+    public static void etf$setEmissiveSuffix() {
         try {
-            Properties suffix = ETF_readProperties("optifine/emissive.properties");
+            Properties suffix = etf$readProperties("optifine/emissive.properties");
             if (suffix.isEmpty()) {
-                suffix = ETF_readProperties("textures/emissive.properties");
+                suffix = etf$readProperties("textures/emissive.properties");
             }
             Set<String> builder = new HashSet<>();
             if (suffix.contains("entities.suffix.emissive")) {
@@ -685,18 +687,18 @@ public interface ETF_METHODS {
             if (ETFConfigData.alwaysCheckVanillaEmissiveSuffix) {
                 builder.add("_e");
             }
-            ETF_emissiveSuffixes = builder.toArray(new String[0]);
-            if (ETF_emissiveSuffixes.length == 0) {
-                ETF_modMessage("Error! Default emissive suffix '_e' used", false);
-                ETF_emissiveSuffixes = new String[]{"_e"};
+            etf$emissiveSuffixes = builder.toArray(new String[0]);
+            if (etf$emissiveSuffixes.length == 0) {
+                etf$modMessage("default emissive suffix '_e' used", false);
+                etf$emissiveSuffixes = new String[]{"_e"};
             }
         } catch (Exception e) {
-            ETF_modMessage("Error! default emissive suffix '_e' used", false);
-            ETF_emissiveSuffixes = new String[]{"_e"};
+            etf$modMessage("default emissive suffix '_e' used", false);
+            etf$emissiveSuffixes = new String[]{"_e"};
         }
     }
 
-    default void ETF_saveConfig() {
+    public static void etf$saveConfig() {
         File config = new File(FabricLoader.getInstance().getConfigDir().toFile(), "entity_texture_features.json");
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         if (!config.getParentFile().exists()) {
@@ -708,11 +710,11 @@ public interface ETF_METHODS {
             fileWriter.write(gson.toJson(ETFConfigData));
             fileWriter.close();
         } catch (IOException e) {
-            ETF_modMessage("Config could not be saved", false);
+            etf$modMessage("Config could not be saved", false);
         }
     }
 
-    default void ETF_checkPlayerForSkinFeatures(UUID id, PlayerEntity player) {
+    public static void etf$checkPlayerForSkinFeatures(UUID id, PlayerEntity player) {
         //if on an enemy team option to disable skin features loading
         if (ETFConfigData.skinFeaturesEnabled
                 && (ETFConfigData.enableEnemyTeamPlayersSkinFeatures
@@ -720,19 +722,19 @@ public interface ETF_METHODS {
                 || player.getScoreboardTeam() == null))
         ) {
             // skip if tried to recently
-            if (ETF_UUID_playerLastSkinCheck.containsKey(id)) {
-                if (ETF_UUID_playerLastSkinCheck.get(id) + 6000 > System.currentTimeMillis()) {
+            if (etf$UUID_playerLastSkinCheck.containsKey(id)) {
+                if (etf$UUID_playerLastSkinCheck.get(id) + 6000 > System.currentTimeMillis()) {
                     return;
                 }
             }
-            ETF_UUID_playerSkinDownloadedYet.put(id, false);
-            ETF_UUID_playerHasCape.put(id, ((AbstractClientPlayerEntity) player).canRenderCapeTexture());
-            ETF_getSkin(player);
+            etf$UUID_playerSkinDownloadedYet.put(id, false);
+            etf$UUID_playerHasCape.put(id, ((AbstractClientPlayerEntity) player).canRenderCapeTexture());
+            etf$getSkin(player);
         }
     }
 
 
-    private void ETF_getSkin(PlayerEntity player) {
+    private static void etf$getSkin(PlayerEntity player) {
         UUID id = player.getUuid();
 
 
@@ -779,22 +781,22 @@ public interface ETF_METHODS {
 }
                 */
 
-            ETF_downloadImageFromUrl(player, url, "VANILLA_SKIN", capeurl);
+            etf$downloadImageFromUrl(player, url, "VANILLA_SKIN", capeurl);
         } catch (Exception e) {
-            ETF_skinFailed(id);
+            etf$skinFailed(id);
         }
 
     }
 
-    private void ETF_downloadImageFromUrl(PlayerEntity player, String url, @SuppressWarnings("SameParameterValue") String sendFileToMethodKey) {
-        ETF_downloadImageFromUrl(player, url, sendFileToMethodKey, null, false);
+    private static void etf$downloadImageFromUrl(PlayerEntity player, String url, @SuppressWarnings("SameParameterValue") String sendFileToMethodKey) {
+        etf$downloadImageFromUrl(player, url, sendFileToMethodKey, null, false);
     }
 
-    private void ETF_downloadImageFromUrl(PlayerEntity player, String url, @SuppressWarnings("SameParameterValue") String sendFileToMethodKey, String url2) {
-        ETF_downloadImageFromUrl(player, url, sendFileToMethodKey, url2, false);
+    private static void etf$downloadImageFromUrl(PlayerEntity player, String url, @SuppressWarnings("SameParameterValue") String sendFileToMethodKey, String url2) {
+        etf$downloadImageFromUrl(player, url, sendFileToMethodKey, url2, false);
     }
 
-    private void ETF_downloadImageFromUrl(PlayerEntity player, String url, String sendFileToMethodKey, @Nullable String url2, @SuppressWarnings("SameParameterValue") boolean isFile) {
+    private static void etf$downloadImageFromUrl(PlayerEntity player, String url, String sendFileToMethodKey, @Nullable String url2, @SuppressWarnings("SameParameterValue") boolean isFile) {
         try {
             //required for vanilla cape
             boolean do2urls = url2 != null;
@@ -828,41 +830,41 @@ public interface ETF_METHODS {
                                 } catch (Exception e) {
                                     read = null;
                                 }
-                                ETF_directFileFromUrlToMethod(read, sendFileToMethodKey);
+                                etf$directFileFromUrlToMethod(read, sendFileToMethodKey);
                             } else {
-                                NativeImage one = this.ETF_loadTexture(inputStream);
+                                NativeImage one = etf$loadTexture(inputStream);
                                 NativeImage two = null;
                                 if (newHas2) {
-                                    two = this.ETF_loadTexture(finalInputStreamCape);
+                                    two = etf$loadTexture(finalInputStreamCape);
                                 }
                                 if (one != null) {
-                                    ETF_directImageFromUrlToMethod(player, one, sendFileToMethodKey, two);
+                                    etf$directImageFromUrlToMethod(player, one, sendFileToMethodKey, two);
                                 } else {
                                     //modMessage("downloading image failed", false);
-                                    ETF_skinFailed(player.getUuid());
+                                    etf$skinFailed(player.getUuid());
                                 }
                             }
-                            if (ETF_URL_HTTPtoDisconnect1.containsKey(url)) {
-                                if (ETF_URL_HTTPtoDisconnect1.get(url) != null) {
-                                    ETF_URL_HTTPtoDisconnect1.get(url).disconnect();
+                            if (etf$URL_HTTPtoDisconnect1.containsKey(url)) {
+                                if (etf$URL_HTTPtoDisconnect1.get(url) != null) {
+                                    etf$URL_HTTPtoDisconnect1.get(url).disconnect();
                                 }
-                                ETF_URL_HTTPtoDisconnect1.remove(url);
+                                etf$URL_HTTPtoDisconnect1.remove(url);
                             }
-                            if (ETF_URL_HTTPtoDisconnect2.containsKey(url2)) {
-                                if (ETF_URL_HTTPtoDisconnect2.get(url2) != null) {
-                                    ETF_URL_HTTPtoDisconnect2.get(url2).disconnect();
+                            if (etf$URL_HTTPtoDisconnect2.containsKey(url2)) {
+                                if (etf$URL_HTTPtoDisconnect2.get(url2) != null) {
+                                    etf$URL_HTTPtoDisconnect2.get(url2).disconnect();
                                 }
-                                ETF_URL_HTTPtoDisconnect2.remove(url2);
+                                etf$URL_HTTPtoDisconnect2.remove(url2);
                             }
                         });
 
                     }
                 } catch (Exception var6) {
-                    ETF_URL_HTTPtoDisconnect1.put(url, httpURLConnection);
-                    ETF_URL_HTTPtoDisconnect2.put(url2, httpURLConnection2);
+                    etf$URL_HTTPtoDisconnect1.put(url, httpURLConnection);
+                    etf$URL_HTTPtoDisconnect2.put(url2, httpURLConnection2);
                 } finally {
-                    ETF_URL_HTTPtoDisconnect1.put(url, httpURLConnection);
-                    ETF_URL_HTTPtoDisconnect2.put(url2, httpURLConnection2);
+                    etf$URL_HTTPtoDisconnect1.put(url, httpURLConnection);
+                    etf$URL_HTTPtoDisconnect2.put(url2, httpURLConnection2);
                 }
 
             }, Util.getMainWorkerExecutor());
@@ -872,67 +874,67 @@ public interface ETF_METHODS {
         }
     }
 
-    private void ETF_directFileFromUrlToMethod(String fileString, String sendFileToMethodKey) {
+    private static void etf$directFileFromUrlToMethod(String fileString, String sendFileToMethodKey) {
         //switch
         if (fileString != null) {
-            if (sendFileToMethodKey.equals("ETF_CAPE")) {
+            if (sendFileToMethodKey.equals("etf$CAPE")) {
                 System.out.println(fileString);
             }
         }
 
     }
 
-    private void ETF_skinFailed(UUID id) {
-        ETF_UUID_playerLastSkinCheck.put(id, System.currentTimeMillis());
-        if (!ETF_UUID_playerLastSkinCheckCount.containsKey(id)) {
-            ETF_UUID_playerLastSkinCheckCount.put(id, 0);
+    private static void etf$skinFailed(UUID id) {
+        etf$UUID_playerLastSkinCheck.put(id, System.currentTimeMillis());
+        if (!etf$UUID_playerLastSkinCheckCount.containsKey(id)) {
+            etf$UUID_playerLastSkinCheckCount.put(id, 0);
         } else {
-            ETF_UUID_playerLastSkinCheckCount.put(id, ETF_UUID_playerLastSkinCheckCount.get(id) + 1);
+            etf$UUID_playerLastSkinCheckCount.put(id, etf$UUID_playerLastSkinCheckCount.get(id) + 1);
         }
 
         //modMessage("Player skin {" + name + "} unavailable for feature check. try number "+UUID_playerLastSkinCheckCount.get(id)+". Reason failed = "+(reason+1), false);
         ///give up after a few checks
-        if (ETF_UUID_playerLastSkinCheckCount.get(id) > 5) {
-            ETF_UUID_playerHasFeatures.put(id, false);
+        if (etf$UUID_playerLastSkinCheckCount.get(id) > 5) {
+            etf$UUID_playerHasFeatures.put(id, false);
         }
-        ETF_UUID_playerSkinDownloadedYet.remove(id);
+        etf$UUID_playerSkinDownloadedYet.remove(id);
     }
 
-    private void ETF_directImageFromUrlToMethod(PlayerEntity player, NativeImage image, String sendFileToMethodKey, @Nullable NativeImage image2) {
+    private static void etf$directImageFromUrlToMethod(PlayerEntity player, NativeImage image, String sendFileToMethodKey, @Nullable NativeImage image2) {
         //switch
         UUID id = player.getUuid();
         if (sendFileToMethodKey.equals("VANILLA_SKIN")) {
             if (image != null) {
-                ETF_skinLoaded(player, image, image2);
+                etf$skinLoaded(player, image, image2);
             } else {
                 //modMessage("Player skin {" + player.getName().getString() + "} unavailable for feature check", false);
-                ETF_skinFailed(id);
+                etf$skinFailed(id);
             }
         } else if (sendFileToMethodKey.equals("THIRD_PARTY_CAPE")) {
             if (image != null) {
                 //optifine resizes them for space cause expensive servers I guess
                 if (image.getWidth() % image.getHeight() != 0) {
-                    ETF_registerNativeImageToIdentifier(ETF_resizeOptifineImage(image), ETF_SKIN_NAMESPACE + id + "_cape.png");
+                    etf$registerNativeImageToIdentifier(etf$resizeOptifineImage(image), etf$SKIN_NAMESPACE + id + "_cape.png");
                 } else {
-                    ETF_registerNativeImageToIdentifier(image, ETF_SKIN_NAMESPACE + id + "_cape.png");
+                    etf$registerNativeImageToIdentifier(image, etf$SKIN_NAMESPACE + id + "_cape.png");
                 }
-                ETF_UUID_playerHasCustomCape.put(id, true);
+                etf$UUID_playerHasCustomCape.put(id, true);
             } else {
-                ETF_modMessage("Player skin {" + player.getName().getString() + "} no THIRD_PARTY_CAPE Found", false);
+                etf$modMessage("Player skin {" + player.getName().getString() + "} no THIRD_PARTY_CAPE Found", false);
                 //registerNativeImageToIdentifier(getNativeImageFromID(new Identifier("etf:capes/error.png")), SKIN_NAMESPACE + id + "_cape.png");
-                ETF_UUID_playerHasCustomCape.put(id, false);
+                etf$UUID_playerHasCustomCape.put(id, false);
             }
 
         }
     }
 
-    private NativeImage ETF_resizeOptifineImage(NativeImage image) {
+    private static NativeImage etf$resizeOptifineImage(NativeImage image) {
         int newWidth = 64;
         while (newWidth < image.getWidth()) {
             newWidth = newWidth + newWidth;
         }
         int newHeight = newWidth / 2;
-        NativeImage resizedImage = ETF_emptyNativeImage(newWidth, newHeight);
+        NativeImage resizedImage = etf$emptyNativeImage(newWidth, newHeight);
         for (int x = 0; x < image.getWidth(); x++) {
             for (int y = 0; y < image.getHeight(); y++) {
                 resizedImage.setColor(x, y, image.getColor(x, y));
@@ -941,7 +943,7 @@ public interface ETF_METHODS {
         return resizedImage;
     }
 
-    private NativeImage ETF_loadTexture(InputStream stream) {
+    private static NativeImage etf$loadTexture(InputStream stream) {
         NativeImage nativeImage = null;
 
         try {
@@ -955,7 +957,7 @@ public interface ETF_METHODS {
     }
 
 
-    private int ETF_getSkinPixelColourToNumber(int color) {
+    private static int etf$getSkinPixelColourToNumber(int color) {
         //            pink   cyan     red       green      brown    blue     orange     yellow
         //colours = -65281, -256, -16776961, -16711936, -16760705, -65536, -16744449, -14483457
         return switch (color) {
@@ -972,7 +974,7 @@ public interface ETF_METHODS {
         };
     }
 
-    private void ETF_skinLoaded(PlayerEntity player, NativeImage skin, @Nullable NativeImage cape) {
+    private static void etf$skinLoaded(PlayerEntity player, NativeImage skin, @Nullable NativeImage cape) {
         UUID id = player.getUuid();
         if (skin != null) {
             if (skin.getColor(1, 16) == -16776961 &&
@@ -989,32 +991,32 @@ public interface ETF_METHODS {
                     skin.getColor(3, 18) == -1
             ) {
                 //this has texture features
-                ETF_modMessage("Found Player {" + id + "} with texture features in skin.", false);
-                ETF_UUID_playerHasFeatures.put(id, true);
+                etf$modMessage("Found Player {" + id + "} with texture features in skin.", false);
+                etf$UUID_playerHasFeatures.put(id, true);
                 //find what features
                 //pink = -65281, blue = -256
                 //            pink   cyan     red       green      brown    blue     orange     yellow
                 //colours = -65281, -256, -16776961, -16711936, -16760705, -65536, -16744449, -14483457
 
                 //check Choice Box
-                int[] choiceBoxChoices = {ETF_getSkinPixelColourToNumber(skin.getColor(52, 16)),
-                        ETF_getSkinPixelColourToNumber(skin.getColor(52, 17)),
-                        ETF_getSkinPixelColourToNumber(skin.getColor(52, 18)),
-                        ETF_getSkinPixelColourToNumber(skin.getColor(52, 19)),
-                        ETF_getSkinPixelColourToNumber(skin.getColor(53, 16)),
-                        ETF_getSkinPixelColourToNumber(skin.getColor(53, 17))};
+                int[] choiceBoxChoices = {etf$getSkinPixelColourToNumber(skin.getColor(52, 16)),
+                        etf$getSkinPixelColourToNumber(skin.getColor(52, 17)),
+                        etf$getSkinPixelColourToNumber(skin.getColor(52, 18)),
+                        etf$getSkinPixelColourToNumber(skin.getColor(52, 19)),
+                        etf$getSkinPixelColourToNumber(skin.getColor(53, 16)),
+                        etf$getSkinPixelColourToNumber(skin.getColor(53, 17))};
 
                 //villager nose check
-                boolean noseUpper = (ETF_getSkinPixelColourToNumber(skin.getColor(43, 13)) == 666 && ETF_getSkinPixelColourToNumber(skin.getColor(44, 13)) == 666 &&
-                        ETF_getSkinPixelColourToNumber(skin.getColor(43, 14)) == 666 && ETF_getSkinPixelColourToNumber(skin.getColor(44, 14)) == 666 &&
-                        ETF_getSkinPixelColourToNumber(skin.getColor(43, 15)) == 666 && ETF_getSkinPixelColourToNumber(skin.getColor(44, 15)) == 666);
-                boolean noseLower = (ETF_getSkinPixelColourToNumber(skin.getColor(11, 13)) == 666 && ETF_getSkinPixelColourToNumber(skin.getColor(12, 13)) == 666 &&
-                        ETF_getSkinPixelColourToNumber(skin.getColor(11, 14)) == 666 && ETF_getSkinPixelColourToNumber(skin.getColor(12, 14)) == 666 &&
-                        ETF_getSkinPixelColourToNumber(skin.getColor(11, 15)) == 666 && ETF_getSkinPixelColourToNumber(skin.getColor(12, 15)) == 666);
+                boolean noseUpper = (etf$getSkinPixelColourToNumber(skin.getColor(43, 13)) == 666 && etf$getSkinPixelColourToNumber(skin.getColor(44, 13)) == 666 &&
+                        etf$getSkinPixelColourToNumber(skin.getColor(43, 14)) == 666 && etf$getSkinPixelColourToNumber(skin.getColor(44, 14)) == 666 &&
+                        etf$getSkinPixelColourToNumber(skin.getColor(43, 15)) == 666 && etf$getSkinPixelColourToNumber(skin.getColor(44, 15)) == 666);
+                boolean noseLower = (etf$getSkinPixelColourToNumber(skin.getColor(11, 13)) == 666 && etf$getSkinPixelColourToNumber(skin.getColor(12, 13)) == 666 &&
+                        etf$getSkinPixelColourToNumber(skin.getColor(11, 14)) == 666 && etf$getSkinPixelColourToNumber(skin.getColor(12, 14)) == 666 &&
+                        etf$getSkinPixelColourToNumber(skin.getColor(11, 15)) == 666 && etf$getSkinPixelColourToNumber(skin.getColor(12, 15)) == 666);
                 if (noseUpper) {
-                    ETF_deletePixels(skin, 43, 13, 44, 15);
+                    etf$deletePixels(skin, 43, 13, 44, 15);
                 }
-                ETF_UUID_playerHasVillagerNose.put(id, noseLower || noseUpper);
+                etf$UUID_playerHasVillagerNose.put(id, noseLower || noseUpper);
 
                 //check for coat bottom
                 //pink to copy coat    light blue to remove from legs
@@ -1022,34 +1024,34 @@ public interface ETF_METHODS {
                 int controllerCoat = choiceBoxChoices[1];
                 if (controllerCoat >= 1 && controllerCoat <= 8) {
                     int lengthOfCoat = choiceBoxChoices[2] - 1;
-                    Identifier coatID = new Identifier(ETF_SKIN_NAMESPACE + id + "_coat.png");
-                    coatSkin = ETF_getOrRemoveCoatTexture(skin, lengthOfCoat, controllerCoat >= 5);
-                    ETF_registerNativeImageToIdentifier(coatSkin, coatID.toString());
-                    ETF_UUID_playerHasCoat.put(id, true);
+                    Identifier coatID = new Identifier(etf$SKIN_NAMESPACE + id + "_coat.png");
+                    coatSkin = etf$getOrRemoveCoatTexture(skin, lengthOfCoat, controllerCoat >= 5);
+                    etf$registerNativeImageToIdentifier(coatSkin, coatID.toString());
+                    etf$UUID_playerHasCoat.put(id, true);
                     if (controllerCoat == 2 || controllerCoat == 4 || controllerCoat == 6 || controllerCoat == 8) {
                         //delete original pixel from skin
-                        ETF_deletePixels(skin, 4, 32, 7, 35);
-                        ETF_deletePixels(skin, 4, 48, 7, 51);
-                        ETF_deletePixels(skin, 0, 36, 15, 36 + lengthOfCoat);
-                        ETF_deletePixels(skin, 0, 52, 15, 52 + lengthOfCoat);
+                        etf$deletePixels(skin, 4, 32, 7, 35);
+                        etf$deletePixels(skin, 4, 48, 7, 51);
+                        etf$deletePixels(skin, 0, 36, 15, 36 + lengthOfCoat);
+                        etf$deletePixels(skin, 0, 52, 15, 52 + lengthOfCoat);
                     }
                     //red or green make fat coat
-                    ETF_UUID_playerHasFatCoat.put(id, controllerCoat == 3 || controllerCoat == 4 || controllerCoat == 7 || controllerCoat == 8);
+                    etf$UUID_playerHasFatCoat.put(id, controllerCoat == 3 || controllerCoat == 4 || controllerCoat == 7 || controllerCoat == 8);
 
 
                 } else {
-                    ETF_UUID_playerHasCoat.put(id, false);
+                    etf$UUID_playerHasCoat.put(id, false);
                 }
                 //check for transparency options
                 //System.out.println("about to check");
                 if (ETFConfigData.skinFeaturesEnableTransparency) {
-                    if (ETF_canTransparentSkin(skin)) {
-                        Identifier transId = new Identifier(ETF_SKIN_NAMESPACE + id + "_transparent.png");
-                        ETF_UUID_playerTransparentSkinId.put(id, transId);
-                        ETF_registerNativeImageToIdentifier(skin, transId.toString());
+                    if (etf$canTransparentSkin(skin)) {
+                        Identifier transId = new Identifier(etf$SKIN_NAMESPACE + id + "_transparent.png");
+                        etf$UUID_playerTransparentSkinId.put(id, transId);
+                        etf$registerNativeImageToIdentifier(skin, transId.toString());
 
                     } else {
-                        ETF_modMessage("Skin was too transparent or had other problems", false);
+                        etf$modMessage("Skin was too transparent or had other problems", false);
                     }
                 }
 
@@ -1059,20 +1061,20 @@ public interface ETF_METHODS {
                 int blinkChoice = choiceBoxChoices[0];
                 if (blinkChoice >= 1 && blinkChoice <= 5) {
                     //check if lazy blink
-                    ETF_PATH_HasBlink.put(ETF_SKIN_NAMESPACE + id + ".png", true);
+                    etf$PATH_HasBlink.put(etf$SKIN_NAMESPACE + id + ".png", true);
                     if (blinkChoice <= 2) {
                         //blink 1 frame if either pink or blue optional
-                        blinkSkinFile = ETF_returnOptimizedBlinkFace(skin, ETF_getSkinPixelBounds("face1"), 1, ETF_getSkinPixelBounds("face3"));
+                        blinkSkinFile = etf$returnOptimizedBlinkFace(skin, etf$getSkinPixelBounds("face1"), 1, etf$getSkinPixelBounds("face3"));
 
-                        ETF_registerNativeImageToIdentifier(blinkSkinFile, ETF_SKIN_NAMESPACE + id + "_blink.png");
+                        etf$registerNativeImageToIdentifier(blinkSkinFile, etf$SKIN_NAMESPACE + id + "_blink.png");
 
                         //blink is 2 frames with blue optional
                         if (blinkChoice == 2) {
-                            blinkSkinFile2 = ETF_returnOptimizedBlinkFace(skin, ETF_getSkinPixelBounds("face2"), 1, ETF_getSkinPixelBounds("face4"));
-                            ETF_PATH_HasBlink2.put(ETF_SKIN_NAMESPACE + id + ".png", true);
-                            ETF_registerNativeImageToIdentifier(blinkSkinFile2, ETF_SKIN_NAMESPACE + id + "_blink2.png");
+                            blinkSkinFile2 = etf$returnOptimizedBlinkFace(skin, etf$getSkinPixelBounds("face2"), 1, etf$getSkinPixelBounds("face4"));
+                            etf$PATH_HasBlink2.put(etf$SKIN_NAMESPACE + id + ".png", true);
+                            etf$registerNativeImageToIdentifier(blinkSkinFile2, etf$SKIN_NAMESPACE + id + "_blink2.png");
                         } else {
-                            ETF_PATH_HasBlink2.put(ETF_SKIN_NAMESPACE + id + ".png", false);
+                            etf$PATH_HasBlink2.put(etf$SKIN_NAMESPACE + id + ".png", false);
                         }
                     } else {//optimized blink
                         int eyeHeightTopDown = choiceBoxChoices[3];
@@ -1081,56 +1083,56 @@ public interface ETF_METHODS {
                         }
                         //optimized 1p high eyes
                         if (blinkChoice == 3) {
-                            blinkSkinFile = ETF_returnOptimizedBlinkFace(skin, ETF_getSkinPixelBounds("optimizedEyeSmall"), eyeHeightTopDown);
+                            blinkSkinFile = etf$returnOptimizedBlinkFace(skin, etf$getSkinPixelBounds("optimizedEyeSmall"), eyeHeightTopDown);
 
-                            ETF_registerNativeImageToIdentifier(blinkSkinFile, ETF_SKIN_NAMESPACE + id + "_blink.png");
+                            etf$registerNativeImageToIdentifier(blinkSkinFile, etf$SKIN_NAMESPACE + id + "_blink.png");
 
                         } else if (blinkChoice == 4) {
-                            blinkSkinFile = ETF_returnOptimizedBlinkFace(skin, ETF_getSkinPixelBounds("optimizedEye2High"), eyeHeightTopDown);
-                            blinkSkinFile2 = ETF_returnOptimizedBlinkFace(skin, ETF_getSkinPixelBounds("optimizedEye2High_second"), eyeHeightTopDown);
-                            ETF_PATH_HasBlink2.put(ETF_SKIN_NAMESPACE + id + ".png", true);
+                            blinkSkinFile = etf$returnOptimizedBlinkFace(skin, etf$getSkinPixelBounds("optimizedEye2High"), eyeHeightTopDown);
+                            blinkSkinFile2 = etf$returnOptimizedBlinkFace(skin, etf$getSkinPixelBounds("optimizedEye2High_second"), eyeHeightTopDown);
+                            etf$PATH_HasBlink2.put(etf$SKIN_NAMESPACE + id + ".png", true);
 
-                            ETF_registerNativeImageToIdentifier(blinkSkinFile, ETF_SKIN_NAMESPACE + id + "_blink.png");
-                            ETF_registerNativeImageToIdentifier(blinkSkinFile2, ETF_SKIN_NAMESPACE + id + "_blink2.png");
+                            etf$registerNativeImageToIdentifier(blinkSkinFile, etf$SKIN_NAMESPACE + id + "_blink.png");
+                            etf$registerNativeImageToIdentifier(blinkSkinFile2, etf$SKIN_NAMESPACE + id + "_blink2.png");
                         } else /*if( blinkChoice == 5)*/ {
-                            blinkSkinFile = ETF_returnOptimizedBlinkFace(skin, ETF_getSkinPixelBounds("optimizedEye4High"), eyeHeightTopDown);
-                            blinkSkinFile2 = ETF_returnOptimizedBlinkFace(skin, ETF_getSkinPixelBounds("optimizedEye4High_second"), eyeHeightTopDown);
-                            ETF_PATH_HasBlink2.put(ETF_SKIN_NAMESPACE + id + ".png", true);
-                            ETF_registerNativeImageToIdentifier(blinkSkinFile, ETF_SKIN_NAMESPACE + id + "_blink.png");
-                            ETF_registerNativeImageToIdentifier(blinkSkinFile2, ETF_SKIN_NAMESPACE + id + "_blink2.png");
+                            blinkSkinFile = etf$returnOptimizedBlinkFace(skin, etf$getSkinPixelBounds("optimizedEye4High"), eyeHeightTopDown);
+                            blinkSkinFile2 = etf$returnOptimizedBlinkFace(skin, etf$getSkinPixelBounds("optimizedEye4High_second"), eyeHeightTopDown);
+                            etf$PATH_HasBlink2.put(etf$SKIN_NAMESPACE + id + ".png", true);
+                            etf$registerNativeImageToIdentifier(blinkSkinFile, etf$SKIN_NAMESPACE + id + "_blink.png");
+                            etf$registerNativeImageToIdentifier(blinkSkinFile2, etf$SKIN_NAMESPACE + id + "_blink2.png");
                         }
                     }
 
 
                 }
-                if (!ETF_PATH_HasBlink.containsKey(ETF_SKIN_NAMESPACE + id + ".png")) {
-                    ETF_PATH_HasBlink.put(ETF_SKIN_NAMESPACE + id + ".png", false);
+                if (!etf$PATH_HasBlink.containsKey(etf$SKIN_NAMESPACE + id + ".png")) {
+                    etf$PATH_HasBlink.put(etf$SKIN_NAMESPACE + id + ".png", false);
                 }
-                if (!ETF_PATH_HasBlink2.containsKey(ETF_SKIN_NAMESPACE + id + ".png")) {
-                    ETF_PATH_HasBlink2.put(ETF_SKIN_NAMESPACE + id + ".png", false);
+                if (!etf$PATH_HasBlink2.containsKey(etf$SKIN_NAMESPACE + id + ".png")) {
+                    etf$PATH_HasBlink2.put(etf$SKIN_NAMESPACE + id + ".png", false);
                 }
 
                 //check for cape recolor
                 int capeChoice1 = choiceBoxChoices[4];
                 // custom cape data experiment
                 // https://drive.google.com/uc?export=download&id=1rn1swLadqdMiLirz9Nrae0_VHFrTaJQe
-                //downloadImageFromUrl(player, "https://drive.google.com/uc?export=download&id=1rn1swLadqdMiLirz9Nrae0_VHFrTaJQe", "ETF_CAPE",null,true);
+                //downloadImageFromUrl(player, "https://drive.google.com/uc?export=download&id=1rn1swLadqdMiLirz9Nrae0_VHFrTaJQe", "etf$CAPE",null,true);
                 if ((capeChoice1 >= 1 && capeChoice1 <= 3) || capeChoice1 == 666) {
                     switch (capeChoice1) {
                         case 1 -> //custom in skin
-                                cape = ETF_returnCustomTexturedCape(skin);
+                                cape = etf$returnCustomTexturedCape(skin);
                         case 2 -> {
                             cape = null;
                             // minecraft capes mod
                             //https://minecraftcapes.net/profile/fd22e573178c415a94fee476b328abfd/cape/
-                            ETF_downloadImageFromUrl(player, "https://minecraftcapes.net/profile/" + player.getUuidAsString().replace("-", "") + "/cape/", "THIRD_PARTY_CAPE");
+                            etf$downloadImageFromUrl(player, "https://minecraftcapes.net/profile/" + player.getUuidAsString().replace("-", "") + "/cape/", "THIRD_PARTY_CAPE");
                         }
                         case 3 -> {
                             cape = null;
                             //  https://optifine.net/capes/Benjamin.png
-                            ETF_downloadImageFromUrl(player, "https://optifine.net/capes/" + player.getName().getString() + ".png", "THIRD_PARTY_CAPE");
+                            etf$downloadImageFromUrl(player, "https://optifine.net/capes/" + player.getName().getString() + ".png", "THIRD_PARTY_CAPE");
                         }
-                        case 666 -> cape = ETF_getNativeImageFromID(new Identifier("etf:capes/error.png"));
+                        case 666 -> cape = etf$getNativeImageFromID(new Identifier("etf:capes/error.png"));
                         default -> {
                             //cape = getNativeImageFromID(new Identifier("etf:capes/blank.png"));
                         }
@@ -1138,101 +1140,101 @@ public interface ETF_METHODS {
                 }
                 if (cape != null) {
                     if ((capeChoice1 >= 1 && capeChoice1 <= 3) || capeChoice1 == 666) {//custom chosen
-                        ETF_registerNativeImageToIdentifier(cape, ETF_SKIN_NAMESPACE + id + "_cape.png");
-                        ETF_UUID_playerHasCustomCape.put(id, true);
+                        etf$registerNativeImageToIdentifier(cape, etf$SKIN_NAMESPACE + id + "_cape.png");
+                        etf$UUID_playerHasCustomCape.put(id, true);
                     }
                 }
-                if (!ETF_UUID_playerHasCustomCape.containsKey(id)) {
-                    ETF_UUID_playerHasCustomCape.put(id, false);
+                if (!etf$UUID_playerHasCustomCape.containsKey(id)) {
+                    etf$UUID_playerHasCustomCape.put(id, false);
                 }
 
 
                 //check for marker choices
                 //  1 = Emissives,  2 = Enchanted
-                List<Integer> markerChoices = List.of(ETF_getSkinPixelColourToNumber(skin.getColor(1, 17)),
-                        ETF_getSkinPixelColourToNumber(skin.getColor(1, 18)),
-                        ETF_getSkinPixelColourToNumber(skin.getColor(2, 17)),
-                        ETF_getSkinPixelColourToNumber(skin.getColor(2, 18)));
+                List<Integer> markerChoices = List.of(etf$getSkinPixelColourToNumber(skin.getColor(1, 17)),
+                        etf$getSkinPixelColourToNumber(skin.getColor(1, 18)),
+                        etf$getSkinPixelColourToNumber(skin.getColor(2, 17)),
+                        etf$getSkinPixelColourToNumber(skin.getColor(2, 18)));
 
                 //enchanted
-                ETF_UUID_playerHasEnchant.put(id, markerChoices.contains(2));
+                etf$UUID_playerHasEnchant.put(id, markerChoices.contains(2));
                 if (markerChoices.contains(2)) {
-                    int[] boxChosenBounds = ETF_getSkinPixelBounds("marker" + (markerChoices.indexOf(2) + 1));
-                    NativeImage check = ETF_returnMatchPixels(skin, boxChosenBounds);
+                    int[] boxChosenBounds = etf$getSkinPixelBounds("marker" + (markerChoices.indexOf(2) + 1));
+                    NativeImage check = etf$returnMatchPixels(skin, boxChosenBounds);
                     if (check != null) {
-                        ETF_registerNativeImageToIdentifier(check, ETF_SKIN_NAMESPACE + id + "_enchant.png");
+                        etf$registerNativeImageToIdentifier(check, etf$SKIN_NAMESPACE + id + "_enchant.png");
                         if (blinkSkinFile != null) {
-                            NativeImage checkBlink = ETF_returnMatchPixels(blinkSkinFile, boxChosenBounds);
-                            ETF_registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkBlink, this::ETF_emptyNativeImage), ETF_SKIN_NAMESPACE + id + "_blink_enchant.png");
+                            NativeImage checkBlink = etf$returnMatchPixels(blinkSkinFile, boxChosenBounds);
+                            etf$registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkBlink, ETFUtils::etf$emptyNativeImage), etf$SKIN_NAMESPACE + id + "_blink_enchant.png");
                         }
                         if (blinkSkinFile2 != null) {
-                            NativeImage checkBlink = ETF_returnMatchPixels(blinkSkinFile2, boxChosenBounds);
-                            ETF_registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkBlink, this::ETF_emptyNativeImage), ETF_SKIN_NAMESPACE + id + "_blink2_enchant.png");
+                            NativeImage checkBlink = etf$returnMatchPixels(blinkSkinFile2, boxChosenBounds);
+                            etf$registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkBlink, ETFUtils::etf$emptyNativeImage), etf$SKIN_NAMESPACE + id + "_blink2_enchant.png");
                         }
                         if (coatSkin != null) {
-                            NativeImage checkCoat = ETF_returnMatchPixels(coatSkin, boxChosenBounds);
-                            ETF_registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkCoat, this::ETF_emptyNativeImage), ETF_SKIN_NAMESPACE + id + "_coat_enchant.png");
+                            NativeImage checkCoat = etf$returnMatchPixels(coatSkin, boxChosenBounds);
+                            etf$registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkCoat, ETFUtils::etf$emptyNativeImage), etf$SKIN_NAMESPACE + id + "_coat_enchant.png");
                         }
 
                         // NativeImage checkCape = returnMatchPixels(skin, boxChosenBounds,cape);
                         // registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkCape, this::emptyNativeImage), SKIN_NAMESPACE + id + "_cape_enchant.png");
 
                     } else {
-                        ETF_UUID_playerHasEnchant.put(id, false);
+                        etf$UUID_playerHasEnchant.put(id, false);
                     }
 
                 }
                 //emissives
-                ETF_UUID_playerHasEmissive.put(id, markerChoices.contains(1));
+                etf$UUID_playerHasEmissive.put(id, markerChoices.contains(1));
                 if (markerChoices.contains(1)) {
-                    int[] boxChosenBounds = ETF_getSkinPixelBounds("marker" + (markerChoices.indexOf(1) + 1));
-                    NativeImage check = ETF_returnMatchPixels(skin, boxChosenBounds);
+                    int[] boxChosenBounds = etf$getSkinPixelBounds("marker" + (markerChoices.indexOf(1) + 1));
+                    NativeImage check = etf$returnMatchPixels(skin, boxChosenBounds);
                     if (check != null) {
-                        ETF_registerNativeImageToIdentifier(check, ETF_SKIN_NAMESPACE + id + "_e.png");
+                        etf$registerNativeImageToIdentifier(check, etf$SKIN_NAMESPACE + id + "_e.png");
                         if (blinkSkinFile != null) {
-                            NativeImage checkBlink = ETF_returnMatchPixels(blinkSkinFile, boxChosenBounds);
-                            ETF_registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkBlink, this::ETF_emptyNativeImage), ETF_SKIN_NAMESPACE + id + "_blink_e.png");
+                            NativeImage checkBlink = etf$returnMatchPixels(blinkSkinFile, boxChosenBounds);
+                            etf$registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkBlink, ETFUtils::etf$emptyNativeImage), etf$SKIN_NAMESPACE + id + "_blink_e.png");
                         }
                         if (blinkSkinFile2 != null) {
-                            NativeImage checkBlink = ETF_returnMatchPixels(blinkSkinFile2, boxChosenBounds);
-                            ETF_registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkBlink, this::ETF_emptyNativeImage), ETF_SKIN_NAMESPACE + id + "_blink2_e.png");
+                            NativeImage checkBlink = etf$returnMatchPixels(blinkSkinFile2, boxChosenBounds);
+                            etf$registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkBlink, ETFUtils::etf$emptyNativeImage), etf$SKIN_NAMESPACE + id + "_blink2_e.png");
                         }
                         if (coatSkin != null) {
-                            NativeImage checkCoat = ETF_returnMatchPixels(coatSkin, boxChosenBounds);
-                            ETF_registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkCoat, this::ETF_emptyNativeImage), ETF_SKIN_NAMESPACE + id + "_coat_e.png");
+                            NativeImage checkCoat = etf$returnMatchPixels(coatSkin, boxChosenBounds);
+                            etf$registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkCoat, ETFUtils::etf$emptyNativeImage), etf$SKIN_NAMESPACE + id + "_coat_e.png");
                         }
 
                         //  NativeImage checkCape = returnMatchPixels(skin, boxChosenBounds,cape);
                         // registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkCape, this::emptyNativeImage), SKIN_NAMESPACE + id + "_cape_e.png");
 
                     } else {
-                        ETF_UUID_playerHasEmissive.put(id, false);
+                        etf$UUID_playerHasEmissive.put(id, false);
                     }
 
                 }
 
             } else {
-                ETF_UUID_playerHasFeatures.put(id, false);
+                etf$UUID_playerHasFeatures.put(id, false);
                 // System.out.println("worked but no features");
             }
         } else { //http failed
             //UUID_playerHasFeatures.put(id, false);
-            ETF_skinFailed(id);
+            etf$skinFailed(id);
         }
-        ETF_UUID_playerSkinDownloadedYet.put(id, true);
+        etf$UUID_playerSkinDownloadedYet.put(id, true);
     }
 
-    private NativeImage ETF_emptyNativeImage() {
-        return ETF_emptyNativeImage(64, 64);
+    private static NativeImage etf$emptyNativeImage() {
+        return etf$emptyNativeImage(64, 64);
     }
 
-    private NativeImage ETF_emptyNativeImage(int Width, int Height) {
+    private static NativeImage etf$emptyNativeImage(int Width, int Height) {
         NativeImage empty = new NativeImage(Width, Height, false);
         empty.fillRect(0, 0, Width, Height, 0);
         return empty;
     }
 
-    private int[] ETF_getSkinPixelBounds(String choiceKey) {
+    private static int[] etf$getSkinPixelBounds(String choiceKey) {
         return switch (choiceKey) {
             case "marker1" -> new int[]{56, 16, 63, 23};
             case "marker2" -> new int[]{56, 24, 63, 31};
@@ -1264,66 +1266,66 @@ public interface ETF_METHODS {
     }
 
 
-    private NativeImage ETF_returnCustomTexturedCape(NativeImage skin) {
-        NativeImage cape = ETF_emptyNativeImage(64, 32);
-        NativeImage elytra = ETF_getNativeImageFromID(new Identifier("etf:capes/default_elytra.png"));
+    private static NativeImage etf$returnCustomTexturedCape(NativeImage skin) {
+        NativeImage cape = etf$emptyNativeImage(64, 32);
+        NativeImage elytra = etf$getNativeImageFromID(new Identifier("etf:capes/public static _elytra.png"));
         if (elytra == null) {
-            elytra = ETF_getNativeImageFromID(new Identifier("textures/entity/elytra.png"));
+            elytra = etf$getNativeImageFromID(new Identifier("textures/entity/elytra.png"));
         }//not else
         if (elytra != null) {
             cape.copyFrom(elytra);
         }
-        ETF_copyToPixels(skin, cape, ETF_getSkinPixelBounds("cape1"), 1, 1);
-        ETF_copyToPixels(skin, cape, ETF_getSkinPixelBounds("cape1"), 12, 1);
-        ETF_copyToPixels(skin, cape, ETF_getSkinPixelBounds("cape2"), 1, 5);
-        ETF_copyToPixels(skin, cape, ETF_getSkinPixelBounds("cape2"), 12, 5);
-        ETF_copyToPixels(skin, cape, ETF_getSkinPixelBounds("cape3"), 1, 9);
-        ETF_copyToPixels(skin, cape, ETF_getSkinPixelBounds("cape3"), 12, 9);
-        ETF_copyToPixels(skin, cape, ETF_getSkinPixelBounds("cape4"), 1, 13);
-        ETF_copyToPixels(skin, cape, ETF_getSkinPixelBounds("cape4"), 12, 13);
-        ETF_copyToPixels(skin, cape, ETF_getSkinPixelBounds("cape5.1"), 9, 1);
-        ETF_copyToPixels(skin, cape, ETF_getSkinPixelBounds("cape5.1"), 20, 1);
-        ETF_copyToPixels(skin, cape, ETF_getSkinPixelBounds("cape5.2"), 9, 5);
-        ETF_copyToPixels(skin, cape, ETF_getSkinPixelBounds("cape5.2"), 20, 5);
-        ETF_copyToPixels(skin, cape, ETF_getSkinPixelBounds("cape5.3"), 9, 9);
-        ETF_copyToPixels(skin, cape, ETF_getSkinPixelBounds("cape5.3"), 20, 9);
-        ETF_copyToPixels(skin, cape, ETF_getSkinPixelBounds("cape5.4"), 9, 13);
-        ETF_copyToPixels(skin, cape, ETF_getSkinPixelBounds("cape5.4"), 20, 13);
+        etf$copyToPixels(skin, cape, etf$getSkinPixelBounds("cape1"), 1, 1);
+        etf$copyToPixels(skin, cape, etf$getSkinPixelBounds("cape1"), 12, 1);
+        etf$copyToPixels(skin, cape, etf$getSkinPixelBounds("cape2"), 1, 5);
+        etf$copyToPixels(skin, cape, etf$getSkinPixelBounds("cape2"), 12, 5);
+        etf$copyToPixels(skin, cape, etf$getSkinPixelBounds("cape3"), 1, 9);
+        etf$copyToPixels(skin, cape, etf$getSkinPixelBounds("cape3"), 12, 9);
+        etf$copyToPixels(skin, cape, etf$getSkinPixelBounds("cape4"), 1, 13);
+        etf$copyToPixels(skin, cape, etf$getSkinPixelBounds("cape4"), 12, 13);
+        etf$copyToPixels(skin, cape, etf$getSkinPixelBounds("cape5.1"), 9, 1);
+        etf$copyToPixels(skin, cape, etf$getSkinPixelBounds("cape5.1"), 20, 1);
+        etf$copyToPixels(skin, cape, etf$getSkinPixelBounds("cape5.2"), 9, 5);
+        etf$copyToPixels(skin, cape, etf$getSkinPixelBounds("cape5.2"), 20, 5);
+        etf$copyToPixels(skin, cape, etf$getSkinPixelBounds("cape5.3"), 9, 9);
+        etf$copyToPixels(skin, cape, etf$getSkinPixelBounds("cape5.3"), 20, 9);
+        etf$copyToPixels(skin, cape, etf$getSkinPixelBounds("cape5.4"), 9, 13);
+        etf$copyToPixels(skin, cape, etf$getSkinPixelBounds("cape5.4"), 20, 13);
 
-        ETF_copyToPixels(cape, cape, ETF_getSkinPixelBounds("capeVertL"), 0, 1);
-        ETF_copyToPixels(cape, cape, ETF_getSkinPixelBounds("capeVertR"), 11, 1);
-        ETF_copyToPixels(cape, cape, ETF_getSkinPixelBounds("capeHorizL"), 1, 0);
-        ETF_copyToPixels(cape, cape, ETF_getSkinPixelBounds("capeHorizR"), 11, 0);
+        etf$copyToPixels(cape, cape, etf$getSkinPixelBounds("capeVertL"), 0, 1);
+        etf$copyToPixels(cape, cape, etf$getSkinPixelBounds("capeVertR"), 11, 1);
+        etf$copyToPixels(cape, cape, etf$getSkinPixelBounds("capeHorizL"), 1, 0);
+        etf$copyToPixels(cape, cape, etf$getSkinPixelBounds("capeHorizR"), 11, 0);
 
         return cape;
     }
 
-    private NativeImage ETF_getOrRemoveCoatTexture(NativeImage skin, int lengthOfCoat, boolean ignoreTopTexture) {
+    private static NativeImage etf$getOrRemoveCoatTexture(NativeImage skin, int lengthOfCoat, boolean ignoreTopTexture) {
 
         NativeImage coat = new NativeImage(64, 64, false);
         coat.fillRect(0, 0, 64, 64, 0);
 
         //top
         if (!ignoreTopTexture) {
-            ETF_copyToPixels(skin, coat, 4, 32, 7, 35 + lengthOfCoat, 20, 32);
-            ETF_copyToPixels(skin, coat, 4, 48, 7, 51 + lengthOfCoat, 24, 32);
+            etf$copyToPixels(skin, coat, 4, 32, 7, 35 + lengthOfCoat, 20, 32);
+            etf$copyToPixels(skin, coat, 4, 48, 7, 51 + lengthOfCoat, 24, 32);
         }
         //sides
-        ETF_copyToPixels(skin, coat, 0, 36, 7, 36 + lengthOfCoat, 16, 36);
-        ETF_copyToPixels(skin, coat, 12, 36, 15, 36 + lengthOfCoat, 36, 36);
-        ETF_copyToPixels(skin, coat, 4, 52, 15, 52 + lengthOfCoat, 24, 36);
+        etf$copyToPixels(skin, coat, 0, 36, 7, 36 + lengthOfCoat, 16, 36);
+        etf$copyToPixels(skin, coat, 12, 36, 15, 36 + lengthOfCoat, 36, 36);
+        etf$copyToPixels(skin, coat, 4, 52, 15, 52 + lengthOfCoat, 24, 36);
         //ENCHANT AND EMISSIVES
-        ETF_copyToPixels(skin, coat, 56, 16, 63, 47, 0, 0);
+        etf$copyToPixels(skin, coat, 56, 16, 63, 47, 0, 0);
         return coat;
 
     }
 
     // modifiers are distance from x1,y1 to copy
-    private void ETF_copyToPixels(NativeImage source, NativeImage dest, int[] bounds, int copyToX, int CopyToY) {
-        ETF_copyToPixels(source, dest, bounds[0], bounds[1], bounds[2], bounds[3], copyToX, CopyToY);
+    private static void etf$copyToPixels(NativeImage source, NativeImage dest, int[] bounds, int copyToX, int CopyToY) {
+        etf$copyToPixels(source, dest, bounds[0], bounds[1], bounds[2], bounds[3], copyToX, CopyToY);
     }
 
-    private void ETF_copyToPixels(NativeImage source, NativeImage dest, int x1, int y1, int x2, int y2, int copyToX, int copyToY) {
+    private static void etf$copyToPixels(NativeImage source, NativeImage dest, int x1, int y1, int x2, int y2, int copyToX, int copyToY) {
         int copyToXRelative = copyToX - x1;
         int copyToYRelative = copyToY - y1;
         for (int x = x1; x <= x2; x++) {
@@ -1333,7 +1335,7 @@ public interface ETF_METHODS {
         }
     }
 
-    private void ETF_deletePixels(NativeImage source, int x1, int y1, int x2, int y2) {
+    private static void etf$deletePixels(NativeImage source, int x1, int y1, int x2, int y2) {
         for (int x = x1; x <= x2; x++) {
             for (int y = y1; y <= y2; y++) {
                 source.setColor(x, y, 0);
@@ -1341,14 +1343,14 @@ public interface ETF_METHODS {
         }
     }
 
-    private void ETF_registerNativeImageToIdentifier(NativeImage img, String identifierPath) {
+    private static void etf$registerNativeImageToIdentifier(NativeImage img, String identifierPath) {
         TextureManager textureManager = MinecraftClient.getInstance().getTextureManager();
         NativeImageBackedTexture bob = new NativeImageBackedTexture(img);
         textureManager.registerTexture(new Identifier(identifierPath), bob);
 
     }
 
-    private int ETF_countTransparentInBox(NativeImage img, int x1, int y1, int x2, int y2) {
+    private static int etf$countTransparentInBox(NativeImage img, int x1, int y1, int x2, int y2) {
         int counter = 0;
         for (int x = x1; x <= x2; x++) {
             for (int y = y1; y <= y2; y++) {
@@ -1365,22 +1367,22 @@ public interface ETF_METHODS {
         return counter;
     }
 
-    private boolean ETF_canTransparentSkin(NativeImage skin) {
+    private static boolean etf$canTransparentSkin(NativeImage skin) {
         if (ETFConfigData.skinFeaturesEnableFullTransparency) {
             return true;
         } else {
             int countTransparent = 0;
             //map of bottom skin layer in cubes
-            countTransparent += ETF_countTransparentInBox(skin, 8, 0, 23, 15);
-            countTransparent += ETF_countTransparentInBox(skin, 0, 20, 55, 31);
-            countTransparent += ETF_countTransparentInBox(skin, 0, 8, 7, 15);
-            countTransparent += ETF_countTransparentInBox(skin, 24, 8, 31, 15);
-            countTransparent += ETF_countTransparentInBox(skin, 0, 16, 11, 19);
-            countTransparent += ETF_countTransparentInBox(skin, 20, 16, 35, 19);
-            countTransparent += ETF_countTransparentInBox(skin, 44, 16, 51, 19);
-            countTransparent += ETF_countTransparentInBox(skin, 20, 48, 27, 51);
-            countTransparent += ETF_countTransparentInBox(skin, 36, 48, 43, 51);
-            countTransparent += ETF_countTransparentInBox(skin, 16, 52, 47, 63);
+            countTransparent += etf$countTransparentInBox(skin, 8, 0, 23, 15);
+            countTransparent += etf$countTransparentInBox(skin, 0, 20, 55, 31);
+            countTransparent += etf$countTransparentInBox(skin, 0, 8, 7, 15);
+            countTransparent += etf$countTransparentInBox(skin, 24, 8, 31, 15);
+            countTransparent += etf$countTransparentInBox(skin, 0, 16, 11, 19);
+            countTransparent += etf$countTransparentInBox(skin, 20, 16, 35, 19);
+            countTransparent += etf$countTransparentInBox(skin, 44, 16, 51, 19);
+            countTransparent += etf$countTransparentInBox(skin, 20, 48, 27, 51);
+            countTransparent += etf$countTransparentInBox(skin, 36, 48, 43, 51);
+            countTransparent += etf$countTransparentInBox(skin, 16, 52, 47, 63);
             //do not allow skins under 40% ish total opacity
             //1648 is total pixels that are not allowed transparent by vanilla
             int average = (countTransparent / 1648); // should be 0 to 256
@@ -1389,29 +1391,29 @@ public interface ETF_METHODS {
         }
     }
 
-    private NativeImage ETF_returnOptimizedBlinkFace(NativeImage baseSkin, int[] eyeBounds, int eyeHeightFromTopDown) {
-        return ETF_returnOptimizedBlinkFace(baseSkin, eyeBounds, eyeHeightFromTopDown, null);
+    private static NativeImage etf$returnOptimizedBlinkFace(NativeImage baseSkin, int[] eyeBounds, int eyeHeightFromTopDown) {
+        return etf$returnOptimizedBlinkFace(baseSkin, eyeBounds, eyeHeightFromTopDown, null);
     }
 
-    private NativeImage ETF_returnOptimizedBlinkFace(NativeImage baseSkin, int[] eyeBounds, int eyeHeightFromTopDown, int[] secondLayerBounds) {
+    private static NativeImage etf$returnOptimizedBlinkFace(NativeImage baseSkin, int[] eyeBounds, int eyeHeightFromTopDown, int[] secondLayerBounds) {
         NativeImage texture = new NativeImage(64, 64, false);
         texture.copyFrom(baseSkin);
         //copy face
-        ETF_copyToPixels(baseSkin, texture, eyeBounds, 8, 8 + (eyeHeightFromTopDown - 1));
+        etf$copyToPixels(baseSkin, texture, eyeBounds, 8, 8 + (eyeHeightFromTopDown - 1));
         //copy face overlay
         if (secondLayerBounds != null) {
-            ETF_copyToPixels(baseSkin, texture, secondLayerBounds, 40, 8 + (eyeHeightFromTopDown - 1));
+            etf$copyToPixels(baseSkin, texture, secondLayerBounds, 40, 8 + (eyeHeightFromTopDown - 1));
         }
         return texture;
     }
 
     @Nullable
-    private NativeImage ETF_returnMatchPixels(NativeImage baseSkin, int[] boundsToCheck) {
-        return ETF_returnMatchPixels(baseSkin, boundsToCheck, null);
+    private static NativeImage etf$returnMatchPixels(NativeImage baseSkin, int[] boundsToCheck) {
+        return etf$returnMatchPixels(baseSkin, boundsToCheck, null);
     }
 
     @Nullable
-    private NativeImage ETF_returnMatchPixels(NativeImage baseSkin, int[] boundsToCheck, @SuppressWarnings("SameParameterValue") @Nullable NativeImage second) {
+    private static NativeImage etf$returnMatchPixels(NativeImage baseSkin, int[] boundsToCheck, @SuppressWarnings("SameParameterValue") @Nullable NativeImage second) {
         if (baseSkin == null) return null;
 
         boolean secondImage = second != null;
@@ -1444,38 +1446,38 @@ public interface ETF_METHODS {
 
     }
 
-    default Identifier ETF_returnBlinkIdOrGiven(LivingEntity entity, String givenTexturePath, UUID id) {
-        return ETF_returnBlinkIdOrGiven(entity, givenTexturePath, id, false);
+    public static Identifier etf$returnBlinkIdOrGiven(LivingEntity entity, String givenTexturePath, UUID id) {
+        return etf$returnBlinkIdOrGiven(entity, givenTexturePath, id, false);
     }
 
 
-    default Identifier ETF_returnBlinkIdOrGiven(LivingEntity entity, String givenTexturePath, UUID id, boolean isPlayer) {
+    public static Identifier etf$returnBlinkIdOrGiven(LivingEntity entity, String givenTexturePath, UUID id, boolean isPlayer) {
         if (ETFConfigData.enableBlinking) {
-            if (!ETF_PATH_HasBlink.containsKey(givenTexturePath)) {
+            if (!etf$PATH_HasBlink.containsKey(givenTexturePath)) {
                 //check for blink textures
-                ETF_PATH_HasBlink.put(givenTexturePath, ETF_isExistingFileAndSameOrHigherResourcepackAs(new Identifier(givenTexturePath.replace(".png", "_blink.png")), new Identifier(givenTexturePath),true));
-                ETF_PATH_HasBlink2.put(givenTexturePath, ETF_isExistingFileAndSameOrHigherResourcepackAs(new Identifier(givenTexturePath.replace(".png", "_blink2.png")), new Identifier(givenTexturePath),true));
-                ETF_PATH_BlinkProps.put(givenTexturePath, ETF_readProperties(givenTexturePath.replace(".png", "_blink.properties"), givenTexturePath));
+                etf$PATH_HasBlink.put(givenTexturePath, etf$isExistingFileAndSameOrHigherResourcepackAs(new Identifier(givenTexturePath.replace(".png", "_blink.png")), new Identifier(givenTexturePath), true));
+                etf$PATH_HasBlink2.put(givenTexturePath, etf$isExistingFileAndSameOrHigherResourcepackAs(new Identifier(givenTexturePath.replace(".png", "_blink2.png")), new Identifier(givenTexturePath), true));
+                etf$PATH_BlinkProps.put(givenTexturePath, etf$readProperties(givenTexturePath.replace(".png", "_blink.properties"), givenTexturePath));
 
             }
-            ETF_PATH_BlinkProps.putIfAbsent(givenTexturePath, null);
-            ETF_PATH_HasBlink.putIfAbsent(givenTexturePath, false);
-            ETF_PATH_HasBlink2.putIfAbsent(givenTexturePath, false);
-            if (ETF_PATH_HasBlink.containsKey(givenTexturePath)) {
-                if (ETF_PATH_HasBlink.get(givenTexturePath)) {
+            etf$PATH_BlinkProps.putIfAbsent(givenTexturePath, null);
+            etf$PATH_HasBlink.putIfAbsent(givenTexturePath, false);
+            etf$PATH_HasBlink2.putIfAbsent(givenTexturePath, false);
+            if (etf$PATH_HasBlink.containsKey(givenTexturePath)) {
+                if (etf$PATH_HasBlink.get(givenTexturePath)) {
                     if (entity.getPose() == EntityPose.SLEEPING) {
                         return new Identifier(givenTexturePath.replace(".png", "_blink.png"));
                     }
                     //force eyes closed if blinded
                     else if (entity.hasStatusEffect(StatusEffects.BLINDNESS)) {
-                        if (ETF_PATH_HasBlink2.containsKey(givenTexturePath)) {
-                            return new Identifier(givenTexturePath.replace(".png", (ETF_PATH_HasBlink2.get(givenTexturePath) ? "_blink2.png" : "_blink.png")));
+                        if (etf$PATH_HasBlink2.containsKey(givenTexturePath)) {
+                            return new Identifier(givenTexturePath.replace(".png", (etf$PATH_HasBlink2.get(givenTexturePath) ? "_blink2.png" : "_blink.png")));
                         } else {
                             return new Identifier(givenTexturePath.replace(".png", "_blink.png"));
                         }
                     } else {
                         //do regular blinking
-                        Properties props = ETF_PATH_BlinkProps.get(givenTexturePath);
+                        Properties props = etf$PATH_BlinkProps.get(givenTexturePath);
                         int blinkLength;
                         int blinkFrequency;
                         if (props != null) {
@@ -1498,15 +1500,15 @@ public interface ETF_METHODS {
                         //if (blinkTimeVariedByUUID > blinkFrequency - blinkLength)
                         //  blinkTimeVariedByUUID = blinkFrequency - blinkLength;
 
-                        if (!ETF_UUID_NextBlinkTime.containsKey(id)) {
-                            ETF_UUID_NextBlinkTime.put(id, entity.world.getTime() + blinkLength + 1);
+                        if (!etf$UUID_NextBlinkTime.containsKey(id)) {
+                            etf$UUID_NextBlinkTime.put(id, entity.world.getTime() + blinkLength + 1);
                         }
-                        long nextBlink = ETF_UUID_NextBlinkTime.get(id);
+                        long nextBlink = etf$UUID_NextBlinkTime.get(id);
                         long currentTime = entity.world.getTime();
 
                         if (currentTime >= nextBlink - blinkLength && currentTime <= nextBlink + blinkLength) {
-                            if (ETF_PATH_HasBlink2.containsKey(givenTexturePath)) {
-                                if (ETF_PATH_HasBlink2.get(givenTexturePath)) {
+                            if (etf$PATH_HasBlink2.containsKey(givenTexturePath)) {
+                                if (etf$PATH_HasBlink2.get(givenTexturePath)) {
                                     if (currentTime >= nextBlink - (blinkLength / 3) && currentTime <= nextBlink + (blinkLength / 3)) {
                                         return new Identifier(givenTexturePath.replace(".png", "_blink.png"));
                                     }
@@ -1518,7 +1520,7 @@ public interface ETF_METHODS {
                             }
                         } else if (currentTime > nextBlink + blinkLength) {
                             //calculate new next blink
-                            ETF_UUID_NextBlinkTime.put(id, currentTime + entity.getRandom().nextInt(blinkFrequency) + 20);
+                            etf$UUID_NextBlinkTime.put(id, currentTime + entity.getRandom().nextInt(blinkFrequency) + 20);
                         }
                     }
                 }
@@ -1526,9 +1528,9 @@ public interface ETF_METHODS {
         }
 
         if (isPlayer && ETFConfigData.skinFeaturesEnabled
-                && ETF_UUID_playerTransparentSkinId.containsKey(id) && (ETFConfigData.enableEnemyTeamPlayersSkinFeatures
+                && etf$UUID_playerTransparentSkinId.containsKey(id) && (ETFConfigData.enableEnemyTeamPlayersSkinFeatures
                 || (entity.isTeammate(MinecraftClient.getInstance().player) || entity.getScoreboardTeam() == null))) {
-            Identifier ident = ETF_UUID_playerTransparentSkinId.get(id);
+            Identifier ident = etf$UUID_playerTransparentSkinId.get(id);
             if (ident != null) {
                 return ident;
             }
@@ -1538,54 +1540,54 @@ public interface ETF_METHODS {
 
     //assume random texture is fully calculated and applied already for UUID
     //no update logic as that will be kept to living entity renderer to reset only once per UUID
-    default Identifier ETF_GeneralReturnAlteredTexture(Identifier texture, Entity entity) {
+    public static Identifier etf$GeneralReturnAlteredTexture(Identifier texture, Entity entity) {
         if (entity == null) return texture;
         UUID id = entity.getUuid();
         if (ETFConfigData.enableCustomTextures) {
-            if (ETF_UUID_randomTextureSuffix.containsKey(id)) {
-                if (ETF_UUID_randomTextureSuffix.get(id) != 0) {
-                    return ETF_returnBlinkIdOrGiven((LivingEntity) entity, ETF_returnOptifineOrVanillaIdentifier(texture.toString(), ETF_UUID_randomTextureSuffix.get(id)).toString(), id);
+            if (etf$UUID_randomTextureSuffix.containsKey(id)) {
+                if (etf$UUID_randomTextureSuffix.get(id) != 0) {
+                    return etf$returnBlinkIdOrGiven((LivingEntity) entity, etf$returnOptifineOrVanillaIdentifier(texture.toString(), etf$UUID_randomTextureSuffix.get(id)).toString(), id);
                 } else {
-                    if (!ETF_PATH_HasOptifineDefaultReplacement.containsKey(texture.toString())) {
-                        ETF_PATH_HasOptifineDefaultReplacement.put(texture.toString(), ETF_isExistingNativeImageFile(ETF_returnOptifineOrVanillaIdentifier(texture.toString())));
+                    if (!etf$PATH_HasOptifineDefaultReplacement.containsKey(texture.toString())) {
+                        etf$PATH_HasOptifineDefaultReplacement.put(texture.toString(), etf$isExistingNativeImageFile(etf$returnOptifineOrVanillaIdentifier(texture.toString())));
                     }
-                    if (ETF_PATH_HasOptifineDefaultReplacement.get(texture.toString())) {
-                        return ETF_returnBlinkIdOrGiven((LivingEntity) entity, ETF_returnOptifineOrVanillaIdentifier(texture.toString()).toString(), id);
+                    if (etf$PATH_HasOptifineDefaultReplacement.get(texture.toString())) {
+                        return etf$returnBlinkIdOrGiven((LivingEntity) entity, etf$returnOptifineOrVanillaIdentifier(texture.toString()).toString(), id);
                     } else {
-                        return ETF_returnBlinkIdOrGiven((LivingEntity) entity, texture.toString(), id);
+                        return etf$returnBlinkIdOrGiven((LivingEntity) entity, texture.toString(), id);
                     }
                 }
             }
         }
-        return ETF_returnBlinkIdOrGiven((LivingEntity) entity, texture.toString(), id);
+        return etf$returnBlinkIdOrGiven((LivingEntity) entity, texture.toString(), id);
     }
 
-    default void ETF_GeneralEmissiveRender(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, String texturePath, Model model) {
-        ETF_GeneralEmissiveRender(matrixStack, vertexConsumerProvider, new Identifier(texturePath), model);
+    public static void etf$GeneralEmissiveRender(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, String texturePath, Model model) {
+        etf$GeneralEmissiveRender(matrixStack, vertexConsumerProvider, new Identifier(texturePath), model);
     }
 
     //will set and render emissive texture for any texture and model
-    default void ETF_GeneralEmissiveRender(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, Identifier texture, Model model) {
+    public static void etf$GeneralEmissiveRender(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, Identifier texture, Model model) {
         if (ETFConfigData.enableEmissiveTextures) {
             String fileString = texture.toString();
-            if (!ETF_PATH_EmissiveTextureIdentifier.containsKey(fileString)) {
+            if (!etf$PATH_EmissiveTextureIdentifier.containsKey(fileString)) {
                 //creates and sets emissive for texture if it exists
                 Identifier fileName_e;
                 for (String suffix1 :
-                        ETF_emissiveSuffixes) {
+                        etf$emissiveSuffixes) {
                     fileName_e = new Identifier(fileString.replace(".png", suffix1 + ".png"));
-                    if (ETF_isExistingNativeImageFile(fileName_e)) {
-                        ETF_PATH_EmissiveTextureIdentifier.put(fileString, fileName_e);
+                    if (etf$isExistingNativeImageFile(fileName_e)) {
+                        etf$PATH_EmissiveTextureIdentifier.put(fileString, fileName_e);
                         break;
                     }
                 }
-                if (!ETF_PATH_EmissiveTextureIdentifier.containsKey(fileString)) {
-                    ETF_PATH_EmissiveTextureIdentifier.put(fileString, null);
+                if (!etf$PATH_EmissiveTextureIdentifier.containsKey(fileString)) {
+                    etf$PATH_EmissiveTextureIdentifier.put(fileString, null);
                 }
             }
-            if (ETF_PATH_EmissiveTextureIdentifier.containsKey(fileString)) {
-                if (ETF_PATH_EmissiveTextureIdentifier.get(fileString) != null) {
-                    VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(ETF_PATH_EmissiveTextureIdentifier.get(fileString), true));
+            if (etf$PATH_EmissiveTextureIdentifier.containsKey(fileString)) {
+                if (etf$PATH_EmissiveTextureIdentifier.get(fileString) != null) {
+                    VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(etf$PATH_EmissiveTextureIdentifier.get(fileString), true));
                     //one check most efficient instead of before and after applying
                     if (ETFConfigData.doShadersEmissiveFix) {
                         matrixStack.scale(1.01f, 1.01f, 1.01f);
@@ -1599,6 +1601,85 @@ public interface ETF_METHODS {
         }
     }
 
+    public static void etf$GeneralEmissiveRenderPart(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, String texturePath, ModelPart model) {
+        etf$GeneralEmissiveRenderPart(matrixStack, vertexConsumerProvider, new Identifier(texturePath), model);
+    }
+
+    //will set and render emissive texture for any texture and model
+    public static void etf$GeneralEmissiveRenderPart(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, Identifier texture, ModelPart modelPart) {
+        if (ETFConfigData.enableEmissiveTextures) {
+            String fileString = texture.toString();
+            if (!etf$PATH_EmissiveTextureIdentifier.containsKey(fileString)) {
+                //creates and sets emissive for texture if it exists
+                Identifier fileName_e;
+                for (String suffix1 :
+                        etf$emissiveSuffixes) {
+                    fileName_e = new Identifier(fileString.replace(".png", suffix1 + ".png"));
+                    if (etf$isExistingNativeImageFile(fileName_e)) {
+                        etf$PATH_EmissiveTextureIdentifier.put(fileString, fileName_e);
+                        break;
+                    }
+                }
+                if (!etf$PATH_EmissiveTextureIdentifier.containsKey(fileString)) {
+                    etf$PATH_EmissiveTextureIdentifier.put(fileString, null);
+                }
+            }
+            if (etf$PATH_EmissiveTextureIdentifier.containsKey(fileString)) {
+                if (etf$PATH_EmissiveTextureIdentifier.get(fileString) != null) {
+                    VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getItemEntityTranslucentCull(etf$PATH_EmissiveTextureIdentifier.get(fileString)));
+                    //one check most efficient instead of before and after applying
+                    if (ETFConfigData.doShadersEmissiveFix) {
+                        matrixStack.scale(1.01f, 1.01f, 1.01f);
+                        if (etf$irisDetected) {
+                            textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(etf$PATH_EmissiveTextureIdentifier.get(fileString), true));
+                            modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV);
+                        } else {
+                            modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV);
+                        }
+                        //modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.public static _UV,1,1,1,1);
+                        matrixStack.scale(1f, 1f, 1f);
+                    } else {
+                        if (etf$irisDetected) {
+                            textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(etf$PATH_EmissiveTextureIdentifier.get(fileString), true));
+                            modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV);
+                        } else {
+                            modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV);
+                        }
+                        //modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.public static _UV,1,1,1,1);
+                    }
+                }
+            }
+        }
+    }
+
+    public static VertexConsumer etf$GeneralEmissiveGetVertexConsumer(String fileString, VertexConsumerProvider vertexConsumerProvider) {
+        if (ETFConfigData.enableEmissiveTextures) {
+            //String fileString = texture.toString();
+            if (!etf$PATH_EmissiveTextureIdentifier.containsKey(fileString)) {
+                //creates and sets emissive for texture if it exists
+                Identifier fileName_e;
+                for (String suffix1 :
+                        etf$emissiveSuffixes) {
+                    fileName_e = new Identifier(fileString.replace(".png", suffix1 + ".png"));
+                    if (etf$isExistingNativeImageFile(fileName_e)) {
+                        etf$PATH_EmissiveTextureIdentifier.put(fileString, fileName_e);
+                        break;
+                    }
+                }
+                if (!etf$PATH_EmissiveTextureIdentifier.containsKey(fileString)) {
+                    etf$PATH_EmissiveTextureIdentifier.put(fileString, null);
+                }
+            }
+            if (etf$PATH_EmissiveTextureIdentifier.containsKey(fileString)) {
+                if (etf$PATH_EmissiveTextureIdentifier.get(fileString) != null) {
+                    return vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(etf$PATH_EmissiveTextureIdentifier.get(fileString), true));
+                    //one check most efficient instead of before and after applying
+
+                }
+            }
+        }
+        return null;
+    }
 
 
 }

@@ -11,10 +11,10 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
 
 @Mixin(ElytraEntityModel.class)
-public abstract class MIX_ElytraEntityModel<T extends LivingEntity> extends AnimalModel<T> {
+public abstract class MixinElytraEntityModel<T extends LivingEntity> extends AnimalModel<T> {
 
     @ModifyArg(method = "getTexturedModelData", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/ModelPartBuilder;cuboid(FFFFFFLnet/minecraft/client/model/Dilation;)Lnet/minecraft/client/model/ModelPartBuilder;"), index = 6)
-    private static Dilation ETF_injected(Dilation dilation) {
+    private static Dilation etf$injected(Dilation dilation) {
         if (ETFConfigData.elytraThicknessFix) {
             return new Dilation(1, 1, 0.2f);
         }

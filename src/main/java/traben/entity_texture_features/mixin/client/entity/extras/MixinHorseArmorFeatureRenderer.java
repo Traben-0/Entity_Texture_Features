@@ -17,13 +17,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-import traben.entity_texture_features.client.ETF_METHODS;
+import traben.entity_texture_features.client.ETFUtils;
 
 @Mixin(HorseArmorFeatureRenderer.class)
-public abstract class MIX_HorseArmorFeatureRenderer extends FeatureRenderer<HorseEntity, HorseEntityModel<HorseEntity>> implements ETF_METHODS {
+public abstract class MixinHorseArmorFeatureRenderer extends FeatureRenderer<HorseEntity, HorseEntityModel<HorseEntity>> {
 
 
-    public MIX_HorseArmorFeatureRenderer(FeatureRendererContext<HorseEntity, HorseEntityModel<HorseEntity>> context) {
+    public MixinHorseArmorFeatureRenderer(FeatureRendererContext<HorseEntity, HorseEntityModel<HorseEntity>> context) {
         super(context);
     }
 
@@ -32,10 +32,10 @@ public abstract class MIX_HorseArmorFeatureRenderer extends FeatureRenderer<Hors
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/HorseEntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V",
                     shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILSOFT)
 
-    private void ETF_applyEmissive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, HorseEntity horseEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci, ItemStack itemStack, HorseArmorItem horseArmorItem, float n, float o, float p, VertexConsumer vertexConsumer) {
+    private void etf$applyEmissive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, HorseEntity horseEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci, ItemStack itemStack, HorseArmorItem horseArmorItem, float n, float o, float p, VertexConsumer vertexConsumer) {
         //UUID id = livingEntity.getUuid();
 
-            ETF_GeneralEmissiveRender(matrixStack,vertexConsumerProvider,horseArmorItem.getEntityTexture(),model);
+        ETFUtils.etf$GeneralEmissiveRender(matrixStack, vertexConsumerProvider, horseArmorItem.getEntityTexture(), model);
 
     }
 

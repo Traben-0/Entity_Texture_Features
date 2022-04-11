@@ -10,7 +10,7 @@ import java.util.*;
 
 import static traben.entity_texture_features.client.ETF_CLIENT.*;
 
-public class randomCase implements ETF_METHODS {
+public class ETFTexturePropertyCase {
     private final Integer[] weightedSuffixes;
     private final String[] biomes;
     private final Integer[] heights;
@@ -28,20 +28,20 @@ public class randomCase implements ETF_METHODS {
     //whether case should be ignored by updates
 
 
-    randomCase(Integer[] suffixesX,
-               Integer[] weightsX,
-               String[] biomesX,
-               Integer[] heightsX,
-               String[] namesX,
-               String[] professionsX,
-               String[] collarColoursX,
-               int baby012,
-               int weather0123,
-               String[] healthX,
-               Integer[] moonX,
-               String[] daytimeX,
-               String[] blocksX,
-               String[] teamsX
+    ETFTexturePropertyCase(Integer[] suffixesX,
+                           Integer[] weightsX,
+                           String[] biomesX,
+                           Integer[] heightsX,
+                           String[] namesX,
+                           String[] professionsX,
+                           String[] collarColoursX,
+                           int baby012,
+                           int weather0123,
+                           String[] healthX,
+                           Integer[] moonX,
+                           String[] daytimeX,
+                           String[] blocksX,
+                           String[] teamsX
     ) {
 
         biomes = biomesX != null ? biomesX : new String[0];
@@ -77,7 +77,7 @@ public class randomCase implements ETF_METHODS {
                 weightedSuffixes = buildWeighted.toArray(new Integer[0]);
 
             } else {
-                ETF_modMessage("random texture weights don't match", false);
+                ETFUtils.etf$modMessage("random texture weights don't match", false);
                 weightedSuffixes = suffixesX;
             }
         } else {
@@ -97,7 +97,7 @@ public class randomCase implements ETF_METHODS {
     }
 
     public boolean testEntity(LivingEntity entity, boolean onlyUpdatables) {
-        return testEntity(entity, onlyUpdatables, ETF_UUID_hasUpdatableRandomCases);
+        return testEntity(entity, onlyUpdatables, etf$UUID_hasUpdatableRandomCases);
     }
 
 
@@ -122,8 +122,8 @@ public class randomCase implements ETF_METHODS {
             isUpdate = false;
         }
 
-        if (!ETF_UUID_OriginalNonUpdatePropertyStrings.containsKey(entity.getUuid())) {
-            ETF_UUID_OriginalNonUpdatePropertyStrings.put(entity.getUuid(), getNonUpdateables(entity));
+        if (!etf$UUID_OriginalNonUpdatePropertyStrings.containsKey(entity.getUuid())) {
+            etf$UUID_OriginalNonUpdatePropertyStrings.put(entity.getUuid(), getNonUpdateables(entity));
         }
 
         boolean wasTestedByUpdateable = false;
@@ -137,7 +137,7 @@ public class randomCase implements ETF_METHODS {
             //example  "Optional[minecraft:worldgen/biome / minecraft:river]"
             String entityBiome;
             if (isUpdate && ETFConfigData.restrictBiome) {
-                entityBiome = ETF_UUID_OriginalNonUpdatePropertyStrings.get(entity.getUuid())[0].trim();
+                entityBiome = etf$UUID_OriginalNonUpdatePropertyStrings.get(entity.getUuid())[0].trim();
             } else if (MinecraftVersion.CURRENT.getName().equals("1.18") || MinecraftVersion.CURRENT.getName().equals("1.18.1")) {
                 entityBiome = traben.entity_texture_features.client.ETF_1_18_1_versionPatch.getBiome(entity.world, entity.getBlockPos());
             } else {
@@ -222,7 +222,7 @@ public class randomCase implements ETF_METHODS {
         if (allBoolean && heights.length > 0) {
             int entityHeight = entity.getBlockY();
             if (isUpdate && ETFConfigData.restrictHeight) {
-                entityHeight = Integer.parseInt(ETF_UUID_OriginalNonUpdatePropertyStrings.get(entity.getUuid())[1].trim());
+                entityHeight = Integer.parseInt(etf$UUID_OriginalNonUpdatePropertyStrings.get(entity.getUuid())[1].trim());
             }
             boolean check = false;
             for (int i :
@@ -252,7 +252,7 @@ public class randomCase implements ETF_METHODS {
                         for (String lvls :
                                 levels) {
                             if (lvls.contains("-")) {
-                                levelData.addAll(Arrays.asList(ETF_getIntRange(lvls)));
+                                levelData.addAll(Arrays.asList(ETFUtils.etf$getIntRange(lvls)));
                             } else {
                                 levelData.add(Integer.parseInt(lvls.replaceAll("[^0-9]", "")));
                             }
@@ -298,7 +298,7 @@ public class randomCase implements ETF_METHODS {
             boolean raining = entity.world.isRaining();
             boolean thundering = entity.world.isThundering();
             if (isUpdate && ETFConfigData.restrictWeather) {
-                String[] data = ETF_UUID_OriginalNonUpdatePropertyStrings.get(entity.getUuid())[3].split("-");
+                String[] data = etf$UUID_OriginalNonUpdatePropertyStrings.get(entity.getUuid())[3].split("-");
                 raining = data[0].trim().equals("1");
                 thundering = data[1].trim().equals("1");
             }
@@ -340,7 +340,7 @@ public class randomCase implements ETF_METHODS {
         if (allBoolean && moon.length > 0) {
             int moonPhase = entity.world.getMoonPhase();
             if (isUpdate && ETFConfigData.restrictMoonPhase) {
-                moonPhase = Integer.parseInt(ETF_UUID_OriginalNonUpdatePropertyStrings.get(entity.getUuid())[5].trim());
+                moonPhase = Integer.parseInt(etf$UUID_OriginalNonUpdatePropertyStrings.get(entity.getUuid())[5].trim());
             }
             boolean check = false;
             for (int i :
@@ -356,7 +356,7 @@ public class randomCase implements ETF_METHODS {
             long time = entity.world.getTimeOfDay();
             boolean check = false;
             if (isUpdate && ETFConfigData.restrictDayTime) {
-                time = Long.parseLong(ETF_UUID_OriginalNonUpdatePropertyStrings.get(entity.getUuid())[4].trim());
+                time = Long.parseLong(etf$UUID_OriginalNonUpdatePropertyStrings.get(entity.getUuid())[4].trim());
             }
             for (String rangeOfTime :
                     daytime) {
@@ -383,7 +383,7 @@ public class randomCase implements ETF_METHODS {
                     .replaceFirst("Block\\{", "")
                     .replaceFirst("}", "");
             if (isUpdate && ETFConfigData.restrictBlock) {
-                entityOnBlock = ETF_UUID_OriginalNonUpdatePropertyStrings.get(entity.getUuid())[2].trim();
+                entityOnBlock = etf$UUID_OriginalNonUpdatePropertyStrings.get(entity.getUuid())[2].trim();
             }
 
             boolean check = false;

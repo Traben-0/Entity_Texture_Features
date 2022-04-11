@@ -15,13 +15,13 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-import traben.entity_texture_features.client.ETF_METHODS;
+import traben.entity_texture_features.client.ETFUtils;
 
 @Mixin(HorseMarkingFeatureRenderer.class)
-public abstract class MIX_HorsemarkingFeatureRenderer extends FeatureRenderer<HorseEntity, HorseEntityModel<HorseEntity>> implements ETF_METHODS {
+public abstract class MixinHorsemarkingFeatureRenderer extends FeatureRenderer<HorseEntity, HorseEntityModel<HorseEntity>> {
 
 
-    public MIX_HorsemarkingFeatureRenderer(FeatureRendererContext<HorseEntity, HorseEntityModel<HorseEntity>> context) {
+    public MixinHorsemarkingFeatureRenderer(FeatureRendererContext<HorseEntity, HorseEntityModel<HorseEntity>> context) {
         super(context);
     }
 
@@ -29,25 +29,25 @@ public abstract class MIX_HorsemarkingFeatureRenderer extends FeatureRenderer<Ho
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/HorseEntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V",
                     shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILSOFT)
 
-    private void ETF_applyEmissive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, HorseEntity horseEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci, Identifier identifier, VertexConsumer vertexConsumer) {
+    private void etf$applyEmissive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, HorseEntity horseEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci, Identifier identifier, VertexConsumer vertexConsumer) {
         //UUID id = livingEntity.getUuid();
-        ETF_GeneralEmissiveRender(matrixStack, vertexConsumerProvider, ETF_returnAlteredTexture(identifier), (this.getContextModel()));
+        ETFUtils.etf$GeneralEmissiveRender(matrixStack, vertexConsumerProvider, etf$returnAlteredTexture(identifier), (this.getContextModel()));
     }
 
     @Inject(
             method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/passive/HorseEntity;FFFFFF)V",
             at = @At(value = "HEAD"))
-    private void ETF_getEntity(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, HorseEntity horseEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
-        ETF_entity = horseEntity;
+    private void etf$getEntity(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, HorseEntity horseEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
+        etf$entity = horseEntity;
     }
 
-    HorseEntity ETF_entity = null;
+    HorseEntity etf$entity = null;
 
     @ModifyArg(
             method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/passive/HorseEntity;FFFFFF)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/RenderLayer;getEntityTranslucent(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;"))
-    private Identifier ETF_returnAlteredTexture(Identifier texture) {
-        return ETF_GeneralReturnAlteredTexture(texture, ETF_entity);
+    private Identifier etf$returnAlteredTexture(Identifier texture) {
+        return ETFUtils.etf$GeneralReturnAlteredTexture(texture, etf$entity);
     }
 }
 

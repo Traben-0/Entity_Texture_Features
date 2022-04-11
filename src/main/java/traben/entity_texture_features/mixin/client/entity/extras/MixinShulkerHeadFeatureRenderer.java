@@ -14,36 +14,36 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import traben.entity_texture_features.client.ETF_METHODS;
+import traben.entity_texture_features.client.ETFUtils;
 
 @Mixin(ShulkerHeadFeatureRenderer.class)
-public abstract class MIX_ShulkerHeadFeatureRenderer extends FeatureRenderer<ShulkerEntity, ShulkerEntityModel<ShulkerEntity>> implements ETF_METHODS {
+public abstract class MixinShulkerHeadFeatureRenderer extends FeatureRenderer<ShulkerEntity, ShulkerEntityModel<ShulkerEntity>> {
 
 
-    public MIX_ShulkerHeadFeatureRenderer(FeatureRendererContext<ShulkerEntity, ShulkerEntityModel<ShulkerEntity>> context) {
+    public MixinShulkerHeadFeatureRenderer(FeatureRendererContext<ShulkerEntity, ShulkerEntityModel<ShulkerEntity>> context) {
         super(context);
     }
 
     @Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/mob/ShulkerEntity;FFFFFF)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/ModelPart;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;II)V",
                     shift = At.Shift.AFTER))
-    private void ETF_applyRenderFeatures(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, ShulkerEntity shulkerEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
-        ETF_GeneralEmissiveRender(matrixStack, vertexConsumerProvider, ETF_returnAlteredTexture(ShulkerEntityRenderer.getTexture(shulkerEntity.getColor())), (this.getContextModel()));
+    private void etf$applyRenderFeatures(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, ShulkerEntity shulkerEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
+        ETFUtils.etf$GeneralEmissiveRender(matrixStack, vertexConsumerProvider, etf$returnAlteredTexture(ShulkerEntityRenderer.getTexture(shulkerEntity.getColor())), (this.getContextModel()));
     }
 
     @Inject(
             method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/mob/ShulkerEntity;FFFFFF)V",
             at = @At(value = "HEAD"))
     private void getEntity(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, ShulkerEntity shulkerEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
-        ETF_shulker = shulkerEntity;
+        etf$shulker = shulkerEntity;
     }
 
-    ShulkerEntity ETF_shulker = null;
+    ShulkerEntity etf$shulker = null;
 
     @ModifyArg(
             method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/mob/ShulkerEntity;FFFFFF)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/RenderLayer;getEntitySolid(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;"))
-    private Identifier ETF_returnAlteredTexture(Identifier texture) {
-        return ETF_GeneralReturnAlteredTexture(texture, ETF_shulker);
+    private Identifier etf$returnAlteredTexture(Identifier texture) {
+        return ETFUtils.etf$GeneralReturnAlteredTexture(texture, etf$shulker);
     }
 }

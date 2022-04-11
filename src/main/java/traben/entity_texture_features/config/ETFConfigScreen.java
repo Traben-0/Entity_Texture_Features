@@ -8,14 +8,14 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
-import traben.entity_texture_features.client.ETF_METHODS;
+import traben.entity_texture_features.client.ETFUtils;
 
 import java.awt.*;
 
 import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
-import static traben.entity_texture_features.client.ETF_CLIENT.ETF_irisDetected;
+import static traben.entity_texture_features.client.ETF_CLIENT.etf$irisDetected;
 
-public class ETFConfigScreen implements ETF_METHODS {
+public class ETFConfigScreen {
     public Screen getConfigScreen(Screen parent, boolean isTransparent) {
         // Return the screen here with the one you created from Cloth Config Builder
         ConfigBuilder builder = ConfigBuilder.create()
@@ -25,7 +25,7 @@ public class ETFConfigScreen implements ETF_METHODS {
         ConfigEntryBuilder entryBuilder = builder.entryBuilder();
         ConfigCategory optifineOptions = builder.getOrCreateCategory(Text.of("Optifine Options"));
         optifineOptions.setBackground(new Identifier("textures/block/light_gray_wool.png"));
-        if (ETF_irisDetected) {
+        if (etf$irisDetected) {
             optifineOptions.addEntry(entryBuilder.startTextDescription(Text.of("Iris Shaders Mod was detected:\n If your emissive textures are flickering with shaders try the\nZ-Fighting fix in Emissive Texture Settings!"))
                     .setColor(new Color(240, 195, 15).getRGB())
                     .build()); // Builds the option entry for cloth config
@@ -120,15 +120,27 @@ public class ETFConfigScreen implements ETF_METHODS {
                         It is recommended to disable this if shaders are disabled""")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.doShadersEmissiveFix = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
-        emissives.add(3, entryBuilder.startBooleanToggle(Text.of("Enable Emissive Elytras"), ETFConfigData.enableElytra)
-                .setDefaultValue(true) // Recommended: Used when user click "Reset"
+        SubCategoryBuilder specialEmissives = entryBuilder.startSubCategory(Text.of("Special Case Emissives")).setTooltip(Text.of("""
+                This option is provided as these cases
+                may not fit into the typical users expectation
+                of entity, these are mostly tile entities
+                hence why they are not supported by the
+                Continuity mod's emissive texture feature.
+                CIT support is always wanted but can only
+                be confirmed for the elytra so far"""));
+        specialEmissives.add(0, entryBuilder.startBooleanToggle(Text.of("Enable Emissive Elytras"), ETFConfigData.enableElytra).setDefaultValue(true)
                 .setTooltip(new TranslatableText("""
                         Allows Elytra to use emissive textures
                         Elytras only have emissive support as the CIT mod
                         already handles customizing these and is fully
-                        compatible with ETF's emissive textures.""")) // Optional: Shown when the user hover over this option
-                .setSaveConsumer(newValue -> ETFConfigData.enableElytra = newValue) // Recommended: Called when user save the config
-                .build()); // Builds the option entry for cloth config
+                        compatible with ETF's emissive textures.""")).setSaveConsumer(newValue -> ETFConfigData.enableElytra = newValue).build());
+        specialEmissives.add(1, entryBuilder.startBooleanToggle(Text.of("Emissive Shields"), ETFConfigData.specialEmissiveShield).setDefaultValue(true)
+                .setTooltip(new TranslatableText("enables emissive shield textures")).setSaveConsumer(newValue -> ETFConfigData.specialEmissiveShield = newValue).build());
+        //specialEmissives.add(2, entryBuilder.startBooleanToggle(Text.of("null"), ETFConfigData.restrictBlock).setDefaultValue(true)
+        // .setTooltip(new TranslatableText("null")).setSaveConsumer(newValue -> ETFConfigData.restrictBlock = newValue).build());
+        emissives.add(3, specialEmissives.build());
+
+
         optifineOptions.addEntry(emissives.build());
         SubCategoryBuilder blinking = entryBuilder.startSubCategory(Text.of("Blinking Mob settings"));
         blinking.add(0, entryBuilder.startBooleanToggle(Text.of("Enable blinking mobs"), ETFConfigData.enableBlinking)
@@ -246,8 +258,8 @@ public class ETFConfigScreen implements ETF_METHODS {
                 .build()); // Builds the option entry for cloth config
         builder.setSavingRunnable(() -> {
             // Serialise the config into the config file. This will be called last after all variables are updated.
-            ETF_saveConfig();
-            ETF_resetVisuals();
+            ETFUtils.etf$saveConfig();
+            ETFUtils.etf$resetVisuals();
 
         });
         //MinecraftClient.getInstance().openScreen(screen);

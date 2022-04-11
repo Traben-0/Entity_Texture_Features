@@ -12,6 +12,7 @@ public class ETFConfig {
     public boolean restrictDayTime = true;
     public boolean restrictMoonPhase = true;
     public boolean enableEmissiveTextures = true;
+    public boolean specialEmissiveShield = true;
     public boolean alwaysCheckVanillaEmissiveSuffix = true;
     public boolean doShadersEmissiveFix = false;
     public enchantedPotionEffectsEnum enchantedPotionEffects = enchantedPotionEffectsEnum.NONE;

@@ -10,17 +10,17 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static traben.entity_texture_features.client.ETF_CLIENT.ETF_UUID_entityAwaitingDataClearing;
+import static traben.entity_texture_features.client.ETF_CLIENT.etf$UUID_entityAwaitingDataClearing;
 
 @Mixin(PlayerEntity.class)
-public abstract class MIX_PlayerEntity {
+public abstract class MixinPlayerEntity {
 
     //will force update entity texture at any player interaction useful for debugging
     @Inject(method = "interact", at = @At("RETURN"))
-    private void ETF_injected(Entity entity, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
+    private void etf$injected(Entity entity, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
         if (((LivingEntity) (Object) this).world.isClient()) {
-            if (!ETF_UUID_entityAwaitingDataClearing.containsKey(entity.getUuid())) {
-                ETF_UUID_entityAwaitingDataClearing.put(entity.getUuid(), System.currentTimeMillis());
+            if (!etf$UUID_entityAwaitingDataClearing.containsKey(entity.getUuid())) {
+                etf$UUID_entityAwaitingDataClearing.put(entity.getUuid(), System.currentTimeMillis());
             }
         }
     }
