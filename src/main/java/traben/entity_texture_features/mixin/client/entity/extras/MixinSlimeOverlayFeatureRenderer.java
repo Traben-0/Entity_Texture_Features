@@ -35,7 +35,7 @@ public abstract class MixinSlimeOverlayFeatureRenderer<T extends LivingEntity> e
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/EntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V",
                     shift = At.Shift.AFTER))
     private void etf$applyRenderFeatures(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
-        ETFUtils.generalEmissiveRender(matrixStack, vertexConsumerProvider, etf$returnAlteredTexture(getTexture(livingEntity)), this.model);
+        ETFUtils.generalEmissiveRenderModel(matrixStack, vertexConsumerProvider, etf$returnAlteredTexture(getTexture(livingEntity)), this.model);
     }
 
     @Inject(

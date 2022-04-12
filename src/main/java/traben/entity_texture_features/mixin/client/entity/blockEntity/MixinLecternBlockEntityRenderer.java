@@ -8,6 +8,7 @@ import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.EnchantingTableBlockEntityRenderer;
 import net.minecraft.client.render.block.entity.LecternBlockEntityRenderer;
 import net.minecraft.client.render.entity.model.BookModel;
+import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Final;
@@ -15,9 +16,11 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.client.ETFUtils;
+
+import java.util.function.Function;
 
 import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
 import static traben.entity_texture_features.client.ETF_CLIENT.lecternHasCustomTexture;
@@ -25,7 +28,7 @@ import static traben.entity_texture_features.client.ETF_CLIENT.lecternHasCustomT
 @Mixin(LecternBlockEntityRenderer.class)
 public abstract class MixinLecternBlockEntityRenderer implements BlockEntityRenderer<LecternBlockEntity> {
 
-    static final String LECTERN_BOOK_PATH = "minecraft:textures/entity/lectern_book.png";
+    private static final String LECTERN_BOOK_PATH = "minecraft:textures/entity/lectern_book.png";
 
     @Shadow
     @Final
@@ -43,7 +46,7 @@ public abstract class MixinLecternBlockEntityRenderer implements BlockEntityRend
 
         String texture = (ETFConfigData.enableCustomTextures && lecternHasCustomTexture) ? LECTERN_BOOK_PATH : EnchantingTableBlockEntityRenderer.BOOK_TEXTURE.getTextureId().toString();
 
-        VertexConsumer etf$vertex = ETFUtils.generalEmissiveGetVertexConsumer(texture, vertexConsumerProvider);
+        VertexConsumer etf$vertex = ETFUtils.generalEmissiveGetVertexConsumer(texture, vertexConsumerProvider, true);
         if (etf$vertex != null) {
             etf$redirectingEmissiveRender(matrixStack, etf$vertex, j);
         }
@@ -62,22 +65,21 @@ public abstract class MixinLecternBlockEntityRenderer implements BlockEntityRend
 
     private VertexConsumerProvider recentVert = null;
 
-    @ModifyArg(
-            method = "render(Lnet/minecraft/block/entity/LecternBlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II)V",
-            at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/client/render/entity/model/BookModel;renderBook(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V"),
-            index = 1
-    )
-    private VertexConsumer etf$replaceVanillaBookIfCustom(VertexConsumer vertices) {
+    @Redirect(method = "render(Lnet/minecraft/block/entity/LecternBlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II)V",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/SpriteIdentifier;getVertexConsumer(Lnet/minecraft/client/render/VertexConsumerProvider;Ljava/util/function/Function;)Lnet/minecraft/client/render/VertexConsumer;"))
+    private VertexConsumer mixin(SpriteIdentifier instance, VertexConsumerProvider vertexConsumers, Function<Identifier, RenderLayer> layerFactory) {
         if (recentVert != null) {
-            if (lecternHasCustomTexture == null)
+            if (lecternHasCustomTexture == null) {
                 lecternHasCustomTexture = ETFUtils.isExistingFileDirect(new Identifier(LECTERN_BOOK_PATH), true);
+            }
             if (lecternHasCustomTexture) {
                 VertexConsumer vertCustom = recentVert.getBuffer(RenderLayer.getEntitySolid(new Identifier(LECTERN_BOOK_PATH)));
-                if (vertCustom != null)
+                if (vertCustom != null) {
                     return vertCustom;
+                }
             }
         }
-        return vertices;
+        return instance.getVertexConsumer(vertexConsumers, RenderLayer::getEntitySolid);
     }
 
 }

@@ -80,7 +80,7 @@ public abstract class MixinBuiltinModelItemRenderer implements SynchronousResour
                 String fileString = path.replace(".png", name + ".png");
                 matrices.push();
                 matrices.scale(1.0F, -1.0F, -1.0F);
-                ETFUtils.generalEmissiveRender(matrices, vertexConsumers, fileString, this.modelTrident);
+                ETFUtils.generalEmissiveRenderModel(matrices, vertexConsumers, fileString, this.modelTrident);
                 matrices.pop();
 
             }
@@ -93,13 +93,13 @@ public abstract class MixinBuiltinModelItemRenderer implements SynchronousResour
                     String fileString = bl ? "minecraft:textures/entity/shield_base.png" : "minecraft:textures/entity/shield_base_nopattern.png";
                     matrices.push();
                     matrices.scale(1.0F, -1.0F, -1.0F);
-                    VertexConsumer consumer = ETFUtils.generalEmissiveGetVertexConsumer(fileString, vertexConsumers);
+                    VertexConsumer consumer = ETFUtils.generalEmissiveGetVertexConsumer(fileString, vertexConsumers, false);
 
-                    ETFUtils.generalEmissiveRenderPart(matrices, vertexConsumers, fileString, modelShield.getHandle());
+                    ETFUtils.generalEmissiveRenderPart(matrices, vertexConsumers, fileString, modelShield.getHandle(), false);
                     //modelShield.getHandle().render(matrices,consumer,15728640,overlay,1,1,1,1);
                     //modelShield.render(matrices,consumer,15728640,overlay,1,1,1,1);
                     if (!bl)
-                        ETFUtils.generalEmissiveRenderPart(matrices, vertexConsumers, fileString, modelShield.getPlate());
+                        ETFUtils.generalEmissiveRenderPart(matrices, vertexConsumers, fileString, modelShield.getPlate(), false);
                     //if (!bl) modelShield.getPlate().render(matrices,consumer,15728640,overlay,1,1,1,1);
                     //todo banner patterns implementation
                     matrices.pop();

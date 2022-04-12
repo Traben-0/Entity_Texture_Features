@@ -31,7 +31,7 @@ public abstract class MixinBellBlockEntityRenderer implements BlockEntityRendere
     private void etf$applyEmissiveBell(BellBlockEntity bellBlockEntity, float f, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j, CallbackInfo ci) {
 
         String texture = BELL_BODY_TEXTURE.getTextureId().toString();
-        ETFUtils.generalEmissiveRenderPart(matrixStack, vertexConsumerProvider, texture, this.bellBody);
+        ETFUtils.generalEmissiveRenderPart(matrixStack, vertexConsumerProvider, texture, this.bellBody, true);
     }
 }
 

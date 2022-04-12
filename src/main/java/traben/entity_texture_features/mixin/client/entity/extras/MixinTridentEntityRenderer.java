@@ -34,7 +34,7 @@ public abstract class MixinTridentEntityRenderer implements SynchronousResourceR
             String path = TridentEntityModel.TEXTURE.toString();
             String name = UUID_TRIDENT_NAME.get(id) != null ? "_" + UUID_TRIDENT_NAME.get(id).toLowerCase().replaceAll("[^a-z0-9/_.-]", "") : "";
             String fileString = UUID_TRIDENT_NAME.get(id) != null ? path.replace(".png", "_" + name + ".png") : path;
-            ETFUtils.generalEmissiveRender(matrixStack, vertexConsumerProvider, fileString, this.model);
+            ETFUtils.generalEmissiveRenderModel(matrixStack, vertexConsumerProvider, fileString, this.model);
 
 
         }

@@ -57,7 +57,7 @@ public abstract class MixinElytraFeatureRenderer<T extends LivingEntity, M exten
                 identifier = SKIN;
             }
 
-            ETFUtils.generalEmissiveRender(matrixStack, vertexConsumerProvider, identifier, elytra);
+            ETFUtils.generalEmissiveRenderModel(matrixStack, vertexConsumerProvider, identifier, elytra);
         }
     }
 }

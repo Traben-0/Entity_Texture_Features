@@ -1564,97 +1564,49 @@ public class ETFUtils {
         return returnBlinkIdOrGiven((LivingEntity) entity, texture.toString(), id);
     }
 
-    public static void generalEmissiveRender(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, String texturePath, Model model) {
-        generalEmissiveRender(matrixStack, vertexConsumerProvider, new Identifier(texturePath), model);
+    public static void generalEmissiveRenderModel(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, Identifier texture, Model model) {
+        generalEmissiveRenderModel(matrixStack, vertexConsumerProvider, texture.toString(), model);
     }
 
     //will set and render emissive texture for any texture and model
-    public static void generalEmissiveRender(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, Identifier texture, Model model) {
-        if (ETFConfigData.enableEmissiveTextures) {
-            String fileString = texture.toString();
-            if (!PATH_EMISSIVE_TEXTURE_IDENTIFIER.containsKey(fileString)) {
-                //creates and sets emissive for texture if it exists
-                Identifier fileName_e;
-                for (String suffix1 :
-                        emissiveSuffixes) {
-                    fileName_e = new Identifier(fileString.replace(".png", suffix1 + ".png"));
-                    if (isExistingNativeImageFile(fileName_e)) {
-                        PATH_EMISSIVE_TEXTURE_IDENTIFIER.put(fileString, fileName_e);
-                        break;
-                    }
-                }
-                if (!PATH_EMISSIVE_TEXTURE_IDENTIFIER.containsKey(fileString)) {
-                    PATH_EMISSIVE_TEXTURE_IDENTIFIER.put(fileString, null);
-                }
-            }
-            if (PATH_EMISSIVE_TEXTURE_IDENTIFIER.containsKey(fileString)) {
-                if (PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString) != null) {
-                    VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString), true));
-                    //one check most efficient instead of before and after applying
-                    if (ETFConfigData.doShadersEmissiveFix) {
-                        matrixStack.scale(1.01f, 1.01f, 1.01f);
-                        model.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
-                        matrixStack.scale(1f, 1f, 1f);
-                    } else {
-                        model.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
-                    }
-                }
+    public static void generalEmissiveRenderModel(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, String fileString, Model model) {
+        VertexConsumer textureVert = generalEmissiveGetVertexConsumer(fileString, vertexConsumerProvider, false);
+        if (textureVert != null) {
+            if (ETFConfigData.doShadersEmissiveFix) {
+                matrixStack.push();
+                matrixStack.scale(1.01f, 1.01f, 1.01f);
+                model.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
+                matrixStack.pop();
+            } else {
+                model.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
             }
         }
     }
 
-    public static void generalEmissiveRenderPart(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, String texturePath, ModelPart model) {
-        generalEmissiveRenderPart(matrixStack, vertexConsumerProvider, new Identifier(texturePath), model);
+    public static void generalEmissiveRenderPart(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, Identifier texture, ModelPart model, boolean isBlockEntity) {
+        generalEmissiveRenderPart(matrixStack, vertexConsumerProvider, texture.toString(), model, isBlockEntity);
     }
 
     //will set and render emissive texture for any texture and model
-    public static void generalEmissiveRenderPart(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, Identifier texture, ModelPart modelPart) {
-        if (ETFConfigData.enableEmissiveTextures) {
-            String fileString = texture.toString();
-            if (!PATH_EMISSIVE_TEXTURE_IDENTIFIER.containsKey(fileString)) {
-                //creates and sets emissive for texture if it exists
-                Identifier fileName_e;
-                for (String suffix1 :
-                        emissiveSuffixes) {
-                    fileName_e = new Identifier(fileString.replace(".png", suffix1 + ".png"));
-                    if (isExistingNativeImageFile(fileName_e)) {
-                        PATH_EMISSIVE_TEXTURE_IDENTIFIER.put(fileString, fileName_e);
-                        break;
-                    }
-                }
-                if (!PATH_EMISSIVE_TEXTURE_IDENTIFIER.containsKey(fileString)) {
-                    PATH_EMISSIVE_TEXTURE_IDENTIFIER.put(fileString, null);
-                }
-            }
-            if (PATH_EMISSIVE_TEXTURE_IDENTIFIER.containsKey(fileString)) {
-                if (PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString) != null) {
-                    VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getItemEntityTranslucentCull(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString)));
-                    //one check most efficient instead of before and after applying
-                    if (ETFConfigData.doShadersEmissiveFix) {
-                        matrixStack.scale(1.01f, 1.01f, 1.01f);
-                        if (irisDetected) {
-                            textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString), true));
-                            modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV);
-                        } else {
-                            modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV);
-                        }
-                        //modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.public static _UV,1,1,1,1);
-                        matrixStack.scale(1f, 1f, 1f);
-                    } else {
-                        if (irisDetected) {
-                            textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString), true));
-                            modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV);
-                        } else {
-                            modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV);
-                        }
-                        //modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.public static _UV,1,1,1,1);
-                    }
-                }
+    public static void generalEmissiveRenderPart(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, String fileString, ModelPart modelPart, boolean isBlockEntity) {
+        VertexConsumer textureVert = generalEmissiveGetVertexConsumer(fileString, vertexConsumerProvider, isBlockEntity);
+        if (textureVert != null) {
+            //one check most efficient instead of before and after applying
+            if (ETFConfigData.doShadersEmissiveFix) {
+                matrixStack.push();
+                matrixStack.scale(1.01f, 1.01f, 1.01f);
+                modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV);
+                //modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.public static _UV,1,1,1,1);
+                matrixStack.pop();
+            } else {
+                modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV);
+                //modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.public static _UV,1,1,1,1);
             }
         }
     }
 
-    public static VertexConsumer generalEmissiveGetVertexConsumer(String fileString, VertexConsumerProvider vertexConsumerProvider) {
+    public static VertexConsumer generalEmissiveGetVertexConsumer(String fileString, VertexConsumerProvider vertexConsumerProvider, boolean isBlockEntity) {
+
         if (ETFConfigData.enableEmissiveTextures) {
             //String fileString = texture.toString();
             if (!PATH_EMISSIVE_TEXTURE_IDENTIFIER.containsKey(fileString)) {
@@ -1674,9 +1626,22 @@ public class ETFUtils {
             }
             if (PATH_EMISSIVE_TEXTURE_IDENTIFIER.containsKey(fileString)) {
                 if (PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString) != null) {
-                    return vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString), true));
-                    //one check most efficient instead of before and after applying
+                    //VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getItemEntityTranslucentCull(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString)));
+                    //textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString), true));
 
+                    if (isBlockEntity) {
+                        if (irisDetected && ETFConfigData.fullBrightEmissives) {
+                            return vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString), true));
+                        } else {
+                            return vertexConsumerProvider.getBuffer(RenderLayer.getItemEntityTranslucentCull(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString)));
+                        }
+                    } else {
+                        if (ETFConfigData.fullBrightEmissives) {
+                            return vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString), true));
+                        } else {
+                            return vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString)));
+                        }
+                    }
                 }
             }
         }

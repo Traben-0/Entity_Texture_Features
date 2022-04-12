@@ -28,8 +28,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import traben.entity_texture_features.client.CustomPlayerFeatureModel;
 import traben.entity_texture_features.client.ETFUtils;
-import traben.entity_texture_features.client.customPlayerFeatureModel;
 import traben.entity_texture_features.config.ETFConfig;
 
 import java.util.UUID;
@@ -42,7 +42,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
     @Shadow
     public abstract M getModel();
 
-    private final customPlayerFeatureModel customPlayerModel = new customPlayerFeatureModel<>();
+    private final CustomPlayerFeatureModel customPlayerModel = new CustomPlayerFeatureModel<>();
 
     protected MixinLivingEntityRenderer(EntityRendererFactory.Context ctx) {
         super(ctx);
@@ -57,7 +57,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
         if (!(livingEntity instanceof PlayerEntity)) {
 
             Identifier texture = etf$returnAlteredTexture((LivingEntityRenderer) (Object) this, livingEntity);
-            ETFUtils.generalEmissiveRender(matrixStack, vertexConsumerProvider, texture, this.getModel());
+            ETFUtils.generalEmissiveRenderModel(matrixStack, vertexConsumerProvider, texture, this.getModel());
 
         } else if (ETFConfigData.skinFeaturesEnabled) { // is a player
             etf$renderSkinFeatures(id, (PlayerEntity) livingEntity, matrixStack, vertexConsumerProvider, i);

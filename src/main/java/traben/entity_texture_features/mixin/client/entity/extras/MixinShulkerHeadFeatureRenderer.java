@@ -28,7 +28,7 @@ public abstract class MixinShulkerHeadFeatureRenderer extends FeatureRenderer<Sh
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/ModelPart;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;II)V",
                     shift = At.Shift.AFTER))
     private void etf$applyRenderFeatures(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, ShulkerEntity shulkerEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
-        ETFUtils.generalEmissiveRender(matrixStack, vertexConsumerProvider, etf$returnAlteredTexture(ShulkerEntityRenderer.getTexture(shulkerEntity.getColor())), (this.getContextModel()));
+        ETFUtils.generalEmissiveRenderModel(matrixStack, vertexConsumerProvider, etf$returnAlteredTexture(ShulkerEntityRenderer.getTexture(shulkerEntity.getColor())), (this.getContextModel()));
     }
 
     @Inject(

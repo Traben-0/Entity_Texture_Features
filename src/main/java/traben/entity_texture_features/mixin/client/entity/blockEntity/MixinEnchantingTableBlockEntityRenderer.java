@@ -32,7 +32,7 @@ public abstract class MixinEnchantingTableBlockEntityRenderer implements BlockEn
     private void etf$applyEmissiveBook(EnchantingTableBlockEntity enchantingTableBlockEntity, float f, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j, CallbackInfo ci) {
 
         String texture = BOOK_TEXTURE.getTextureId().toString();
-        VertexConsumer etf$vertex = ETFUtils.generalEmissiveGetVertexConsumer(texture, vertexConsumerProvider);
+        VertexConsumer etf$vertex = ETFUtils.generalEmissiveGetVertexConsumer(texture, vertexConsumerProvider, true);
         if (etf$vertex != null) {
             this.book.renderBook(matrixStack, etf$vertex, 15728640, j, 1, 1, 1, 1);
         }

@@ -12,6 +12,10 @@ public class ETFConfig {
     public boolean restrictDayTime = true;
     public boolean restrictMoonPhase = true;
     public boolean enableEmissiveTextures = true;
+
+    //todo menu
+    public boolean fullBrightEmissives = true;
+
     public boolean specialEmissiveShield = true;
     public boolean alwaysCheckVanillaEmissiveSuffix = true;
     public boolean doShadersEmissiveFix = false;

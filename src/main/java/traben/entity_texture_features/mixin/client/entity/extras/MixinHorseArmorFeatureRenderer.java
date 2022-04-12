@@ -36,7 +36,7 @@ public abstract class MixinHorseArmorFeatureRenderer extends FeatureRenderer<Hor
         //UUID id = livingEntity.getUuid();
 
         //todo add random horse armour texturing
-        ETFUtils.generalEmissiveRender(matrixStack, vertexConsumerProvider, horseArmorItem.getEntityTexture(), model);
+        ETFUtils.generalEmissiveRenderModel(matrixStack, vertexConsumerProvider, horseArmorItem.getEntityTexture(), model);
 
     }
 

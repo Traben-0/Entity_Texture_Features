@@ -13,18 +13,18 @@ import net.minecraft.util.Identifier;
 import java.util.function.Function;
 
 @Environment(EnvType.CLIENT)
-public class customPlayerFeatureModel<T extends LivingEntity> extends EntityModel<T> {
+public class CustomPlayerFeatureModel<T extends LivingEntity> extends EntityModel<T> {
     public final ModelPart nose;
     public final ModelPart jacket;
     public final ModelPart fatJacket;
     public boolean sneaking;
     public float leaningPitch;
 
-    public customPlayerFeatureModel() {
+    public CustomPlayerFeatureModel() {
         this(RenderLayer::getEntityTranslucent);
     }
 
-    public customPlayerFeatureModel(Function<Identifier, RenderLayer> renderLayerFactory) {
+    public CustomPlayerFeatureModel(Function<Identifier, RenderLayer> renderLayerFactory) {
         super(renderLayerFactory);
 
         ModelPartData data = getModelData(new Dilation(0)).getRoot();

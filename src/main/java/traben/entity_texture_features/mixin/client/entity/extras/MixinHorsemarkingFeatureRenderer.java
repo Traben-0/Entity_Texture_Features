@@ -31,7 +31,7 @@ public abstract class MixinHorsemarkingFeatureRenderer extends FeatureRenderer<H
 
     private void etf$applyEmissive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, HorseEntity horseEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci, Identifier identifier, VertexConsumer vertexConsumer) {
         //UUID id = livingEntity.getUuid();
-        ETFUtils.generalEmissiveRender(matrixStack, vertexConsumerProvider, etf$returnAlteredTexture(identifier), (this.getContextModel()));
+        ETFUtils.generalEmissiveRenderModel(matrixStack, vertexConsumerProvider, etf$returnAlteredTexture(identifier), (this.getContextModel()));
     }
 
     @Inject(
