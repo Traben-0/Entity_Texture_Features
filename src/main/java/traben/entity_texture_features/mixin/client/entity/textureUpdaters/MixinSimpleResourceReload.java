@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import traben.entity_texture_features.client.ETFUtils;
 
-import static traben.entity_texture_features.client.ETF_CLIENT.etf$irisDetected;
+import static traben.entity_texture_features.client.ETF_CLIENT.irisDetected;
 
 
 @Mixin(SimpleResourceReload.class)
@@ -28,7 +28,7 @@ public abstract class MixinSimpleResourceReload {
                         FabricLoader.getInstance().getAllMods()) {
                     if (mod.toString().contains("iris")) {
                         ETFUtils.modMessage("Entity Texture Features - Iris mod detected : message will be shown in settings", false);
-                        etf$irisDetected = true;
+                        irisDetected = true;
                         break;
                     }
                 }

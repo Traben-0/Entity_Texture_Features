@@ -34,8 +34,8 @@ public abstract class MixinAbstractClientPlayerEntity extends PlayerEntity {
         if (getUuid().toString().equals("fd22e573-178c-415a-94fe-e476b328abfd")
                 //|| getUuid().toString().equals("bc2d6979-ddde-4452-8c7d-caefa4aceb01")
                 || getUuid().toString().equals("cab7d2e2-519f-4b34-afbd-b65f4542b8a1")) {
-            if (etf$UUID_playerHasCustomCape.containsKey(getUuid())) {
-                if (!etf$UUID_playerHasCustomCape.get(getUuid())) {
+            if (UUID_PLAYER_HAS_CUSTOM_CAPE.containsKey(getUuid())) {
+                if (!UUID_PLAYER_HAS_CUSTOM_CAPE.get(getUuid())) {
                     if (getUuid().toString().equals("cab7d2e2-519f-4b34-afbd-b65f4542b8a1")) {
                         cir.setReturnValue(new Identifier("etf:capes/wife.png"));
                     } else {
@@ -44,9 +44,9 @@ public abstract class MixinAbstractClientPlayerEntity extends PlayerEntity {
                 }
             }
         }
-        if (ETFConfigData.skinFeaturesEnabled && etf$UUID_playerHasCustomCape.containsKey(getUuid())) {
-            if (etf$UUID_playerHasCustomCape.get(getUuid())) {
-                cir.setReturnValue(new Identifier(etf$SKIN_NAMESPACE + getUuid() + "_cape.png"));
+        if (ETFConfigData.skinFeaturesEnabled && UUID_PLAYER_HAS_CUSTOM_CAPE.containsKey(getUuid())) {
+            if (UUID_PLAYER_HAS_CUSTOM_CAPE.get(getUuid())) {
+                cir.setReturnValue(new Identifier(SKIN_NAMESPACE + getUuid() + "_cape.png"));
             }
         }
 //        if(cir.getReturnValue() == null ){

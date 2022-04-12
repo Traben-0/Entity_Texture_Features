@@ -17,7 +17,7 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
         //enable custom mooshroom mushrooms
         if (ETFConfigData.enableCustomTextures) {
             if (texture.toString().equals("minecraft:textures/block/red_mushroom.png")) {
-                switch (etf$mooshroomRedCustomShroom) {
+                switch (mooshroomRedCustomShroom) {
                     case 1:
                         return texture;
                     case 2:
@@ -25,16 +25,16 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
                     default: {
                         Identifier test = new Identifier("minecraft:textures/entity/cow/red_mushroom.png");
                         if (ETFUtils.isExistingNativeImageFile(test)) {
-                            etf$mooshroomRedCustomShroom = 2;
+                            mooshroomRedCustomShroom = 2;
                             return test;
                         } else {
-                            etf$mooshroomRedCustomShroom = 1;
+                            mooshroomRedCustomShroom = 1;
                         }
                     }
                 }
             }
             if (texture.toString().equals("minecraft:textures/block/brown_mushroom.png")) {
-                switch (etf$mooshroomBrownCustomShroom) {
+                switch (mooshroomBrownCustomShroom) {
                     case 1:
                         return texture;
                     case 2:
@@ -42,10 +42,10 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
                     default: {
                         Identifier test = new Identifier("minecraft:textures/entity/cow/brown_mushroom.png");
                         if (ETFUtils.isExistingNativeImageFile(test)) {
-                            etf$mooshroomBrownCustomShroom = 2;
+                            mooshroomBrownCustomShroom = 2;
                             return test;
                         } else {
-                            etf$mooshroomBrownCustomShroom = 1;
+                            mooshroomBrownCustomShroom = 1;
                         }
                     }
                 }

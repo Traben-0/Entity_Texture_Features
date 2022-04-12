@@ -42,25 +42,25 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
             String fileString = getArmorTexture(item, legs, overlay).toString();
             if (!fileString.contains(".png"))
                 fileString = fileString + ".png";
-            if (!etf$PATH_EmissiveTextureIdentifier.containsKey(fileString)) {
+            if (!PATH_EMISSIVE_TEXTURE_IDENTIFIER.containsKey(fileString)) {
                 //creates and sets emissive for texture if it exists
                 Identifier fileName_e;
                 for (String suffix1 :
-                        etf$emissiveSuffixes) {
+                        emissiveSuffixes) {
                     fileName_e = new Identifier(fileString.replace(".png", suffix1 + ".png"));
                     if (ETFUtils.isExistingNativeImageFile(fileName_e)) {
-                        etf$PATH_EmissiveTextureIdentifier.put(fileString, fileName_e);
+                        PATH_EMISSIVE_TEXTURE_IDENTIFIER.put(fileString, fileName_e);
                         break;
                     }
                 }
-                if (!etf$PATH_EmissiveTextureIdentifier.containsKey(fileString)) {
-                    etf$PATH_EmissiveTextureIdentifier.put(fileString, null);
+                if (!PATH_EMISSIVE_TEXTURE_IDENTIFIER.containsKey(fileString)) {
+                    PATH_EMISSIVE_TEXTURE_IDENTIFIER.put(fileString, null);
                 }
             }
-            if (etf$PATH_EmissiveTextureIdentifier.containsKey(fileString)) {
-                if (etf$PATH_EmissiveTextureIdentifier.get(fileString) != null) {
+            if (PATH_EMISSIVE_TEXTURE_IDENTIFIER.containsKey(fileString)) {
+                if (PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString) != null) {
                     //VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(Texture_Emissive.get(fileString), true));
-                    VertexConsumer textureVert = ItemRenderer.getArmorGlintConsumer(vertexConsumers, RenderLayer.getBeaconBeam(etf$PATH_EmissiveTextureIdentifier.get(fileString), true), false, usesSecondLayer);
+                    VertexConsumer textureVert = ItemRenderer.getArmorGlintConsumer(vertexConsumers, RenderLayer.getBeaconBeam(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString), true), false, usesSecondLayer);
                     //one check most efficient instead of before and after applying
                     if (ETFConfigData.doShadersEmissiveFix) {
                         matrices.scale(1.01f, 1.01f, 1.01f);

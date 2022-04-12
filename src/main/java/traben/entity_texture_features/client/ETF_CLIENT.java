@@ -17,72 +17,121 @@ import java.util.*;
 //class name must preserve original name format for puzzle mod support
 @net.fabricmc.api.Environment(net.fabricmc.api.EnvType.CLIENT)
 public class ETF_CLIENT implements ClientModInitializer {
-    //0 = vanilla only    1+ is zombie1+.png
-    public static final HashMap<String, Integer> etf$PATH_TotalTrueRandom = new HashMap<>();
-    public static final HashMap<UUID, Integer> etf$UUID_randomTextureSuffix = new HashMap<>();
-    public static final HashMap<UUID, Integer> etf$UUID_randomTextureSuffix2 = new HashMap<>();
-    public static final HashMap<UUID, Integer> etf$UUID_randomTextureSuffix3 = new HashMap<>();
-    public static final HashMap<UUID, Integer> etf$UUID_randomTextureSuffix4 = new HashMap<>();
-    public static final Set<UUID> etf$UUID_entityAlreadyCalculated = new HashSet<>();//
-    public static final HashMap<UUID, Long> etf$UUID_entityAwaitingDataClearing = new HashMap<>();
-    public static final HashMap<UUID, Long> etf$UUID_entityAwaitingDataClearing2 = new HashMap<>();
-    public static final HashMap<String, ArrayList<ETFTexturePropertyCase>> etf$PATH_OptifineRandomSettingsPerTexture = new HashMap<>();
-    public static final HashMap<String, Boolean> etf$PATH_OptifineOrTrueRandom = new HashMap<>();
-    public static final HashMap<String, Integer> etf$PATH_OptifineOldVanillaetf$0123 = new HashMap<>();// 0,1,2
-    public static final HashMap<String, Boolean> etf$PATH_ignoreOnePNG = new HashMap<>();
-    public static final HashMap<UUID, Boolean> etf$UUID_hasUpdatableRandomCases = new HashMap<>();
-    public static final HashMap<UUID, Boolean> etf$UUID_hasUpdatableRandomCases2 = new HashMap<>();
-    public static final HashMap<UUID, Boolean> etf$UUID_hasUpdatableRandomCases3 = new HashMap<>();
-    public static final HashMap<UUID, Boolean> etf$UUID_hasUpdatableRandomCases4 = new HashMap<>();
 
-    //must be 6 length
+
+    //total number of random variations if true random is used / no optifine properties file
+    // 0 = vanilla only    1+ is zombie1+.png etc
+    public static final HashMap<String, Integer> PATH_TOTAL_TRUE_RANDOM = new HashMap<>();
+
+    //TODO begin checking and clearing no longer existing UUIDs from maps, memory usage concerns
+
+    //stores the suffix number for that UUID
+    // only stores the Integer as opposed to full texture path for memory size concerns
+    // a few mobs (mostly villagers :/) have separate textures that can be randomized but would not work nicely keyed to the same Map hence 4 of them
+    public static final HashMap<UUID, Integer> UUID_RANDOM_TEXTURE_SUFFIX = new HashMap<>();
+    public static final HashMap<UUID, Integer> UUID_RANDOM_TEXTURE_SUFFIX_2 = new HashMap<>();
+    public static final HashMap<UUID, Integer> UUID_RANDOM_TEXTURE_SUFFIX_3 = new HashMap<>();
+    public static final HashMap<UUID, Integer> UUID_RANDOM_TEXTURE_SUFFIX_4 = new HashMap<>();
+
+    //special case hashmap for villagers used to decide if a texture feature is to be randomized
+    public static final HashMap<String, Boolean> PATH_VILLAGER_IS_EXISTING_FEATURE = new HashMap<>();
+
+    //marks entity has already been processed before for random texture application
+    public static final Set<UUID> UUID_ENTITY_ALREADY_CALCULATED = new HashSet<>();//
+
+    //periodically applied to entities by UUID based on texture update frequency and adds the system time as a long
+    //todo reason for time in long may be recently deprecated, check this
+    public static final HashMap<UUID, Long> UUID_ENTITY_AWAITING_DATA_CLEARING = new HashMap<>();
+    public static final HashMap<UUID, Long> UUID_ENTITY_AWAITING_DATA_CLEARING_2 = new HashMap<>();
+
+    //holds a Set of optifine property cases object (e.g  names.1, biome.1, all of .1) for a specific texture path
+    public static final HashMap<String, Set<ETFTexturePropertyCase>> PATH_OPTIFINE_RANDOM_SETTINGS_PER_TEXTURE = new HashMap<>();
+
+    //marks whether a texture path uses optifine properties, or is just random
+    //true = optifine properties
+    public static final HashMap<String, Boolean> PATH_OPTIFINE_OR_JUST_RANDOM = new HashMap<>();
+
+    // stores an int referring to what location an altered texture is
+    // textures can be in the optifine random folder, the old optifine mobs folder, the vanilla folder, or the ETF override folder
+    // denoted by the numbers in the same order as appearance in variable name 0123
+    public static final HashMap<String, Integer> PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123 = new HashMap<>();// 0,1,2
+
+    //marks whether <textureName>1.png exists for any path, if true it simply uses the vanilla texture if texture 1 is selected in optifine properties
+    public static final HashMap<String, Boolean> PATH_IGNORE_ONE_PNG = new HashMap<>();
+
+    //marks whether an entity should be ignored for texture updating if nothing in it can update
+    //todo may have been recently deprecated, check this
+    public static final HashMap<UUID, Boolean> UUID_HAS_UPDATABLE_RANDOM_CASES = new HashMap<>();
+    public static final HashMap<UUID, Boolean> UUID_HAS_UPDATABLE_RANDOM_CASES_2 = new HashMap<>();
+    public static final HashMap<UUID, Boolean> UUID_HAS_UPDATABLE_RANDOM_CASES_3 = new HashMap<>();
+    public static final HashMap<UUID, Boolean> UUID_HAS_UPDATABLE_RANDOM_CASES_4 = new HashMap<>();
+
+    //stores the initial data of a mob upon spawning, so they can be used if that property is not to be updated over time
     // 0 biome
     // 1 height
     // 2 block
     // 3 weather
     // 4 daytime
     // 5 moonphase
-    public static final HashMap<UUID, String[]> etf$UUID_OriginalNonUpdatePropertyStrings = new HashMap<>();
+    public static final HashMap<UUID, String[]> UUID_ORIGINAL_NON_UPDATE_PROPERTY_STRINGS = new HashMap<>();
 
+    //stores various info about player skins per UUID
+    //probably would benefit from using an object to store these but as not all are used in every skin this might be more efficient in runtime
+    public static final HashMap<UUID, Boolean> UUID_PLAYER_HAS_FEATURES = new HashMap<>();
+    public static final HashMap<UUID, Boolean> UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET = new HashMap<>();
+    public static final HashMap<UUID, Boolean> UUID_PLAYER_HAS_ENCHANT = new HashMap<>();
+    public static final HashMap<UUID, Boolean> UUID_PLAYER_HAS_EMISSIVE = new HashMap<>();
+    public static final HashMap<UUID, Identifier> UUID_PLAYER_TRANSPARENT_SKIN_ID = new HashMap<>();
+    public static final HashMap<UUID, Boolean> UUID_PLAYER_HAS_COAT = new HashMap<>();
+    public static final HashMap<UUID, Boolean> UUID_PLAYER_HAS_FAT_COAT = new HashMap<>();
+    public static final HashMap<UUID, Boolean> UUID_PLAYER_HAS_VILLAGER_NOSE = new HashMap<>();
+    public static final HashMap<UUID, Boolean> UUID_PLAYER_HAS_CAPE = new HashMap<>();
+    public static final HashMap<UUID, Boolean> UUID_PLAYER_HAS_CUSTOM_CAPE = new HashMap<>();
 
-    public static final HashMap<UUID, Boolean> etf$UUID_playerHasFeatures = new HashMap<>();
-    public static final HashMap<UUID, Boolean> etf$UUID_playerSkinDownloadedYet = new HashMap<>();
-    public static final HashMap<UUID, Boolean> etf$UUID_playerHasEnchant = new HashMap<>();
-    public static final HashMap<UUID, Boolean> etf$UUID_playerHasEmissive = new HashMap<>();
-    public static final HashMap<UUID, Identifier> etf$UUID_playerTransparentSkinId = new HashMap<>();
-    public static final HashMap<String, HttpURLConnection> etf$URL_HTTPtoDisconnect1 = new HashMap<>();
-    public static final HashMap<String, HttpURLConnection> etf$URL_HTTPtoDisconnect2 = new HashMap<>();
-    public static final HashMap<UUID, Boolean> etf$UUID_playerHasCoat = new HashMap<>();
-    public static final HashMap<UUID, Boolean> etf$UUID_playerHasFatCoat = new HashMap<>();
-    public static final HashMap<UUID, Boolean> etf$UUID_playerHasVillagerNose = new HashMap<>();
-    public static final HashMap<UUID, Boolean> etf$UUID_playerHasCape = new HashMap<>();
-    public static final HashMap<UUID, Boolean> etf$UUID_playerHasCustomCape = new HashMap<>();
+    //rare cases can cause these not to be closed, just incase these will be closed shortly after use time has passed if they have not already been caught and closed by the system
+    public static final HashMap<String, HttpURLConnection> URL_HTTP_TO_DISCONNECT_1 = new HashMap<>();
+    public static final HashMap<String, HttpURLConnection> URL_HTTP_TO_DISCONNECT_2 = new HashMap<>();
 
-    public static final HashMap<UUID, Long> etf$UUID_playerLastSkinCheck = new HashMap<>();
-    public static final HashMap<UUID, Integer> etf$UUID_playerLastSkinCheckCount = new HashMap<>();
+    //related to repeating HTTP checks a couple times incase of bad connection
+    public static final HashMap<UUID, Long> UUID_PLAYER_LAST_SKIN_CHECK = new HashMap<>();
+    public static final HashMap<UUID, Integer> UUID_PLAYER_LAST_SKIN_CHECK_COUNT = new HashMap<>();
 
-    public static final HashMap<UUID, Long> etf$UUID_NextBlinkTime = new HashMap<>();
-    public static final HashMap<String, Boolean> etf$PATH_HasBlink = new HashMap<>();
-    public static final HashMap<String, Boolean> etf$PATH_HasBlink2 = new HashMap<>();
-    public static final HashMap<String, Properties> etf$PATH_BlinkProps = new HashMap<>();
-    public static final HashMap<String, Boolean> etf$PATH_HasOptifineDefaultReplacement = new HashMap<>();
+    //blinking data
+    public static final HashMap<UUID, Long> UUID_NEXT_BLINK_TIME = new HashMap<>();
+    public static final HashMap<String, Boolean> PATH_HAS_BLINK_TEXTURE = new HashMap<>();
+    public static final HashMap<String, Boolean> PATH_HAS_BLINK_TEXTURE_2 = new HashMap<>();
+    public static final HashMap<String, Properties> PATH_BLINK_PROPERTIES = new HashMap<>();
 
-    public static final HashMap<String, Boolean> etf$PATH_VillagerIsExistingFeature = new HashMap<>();
+    //marks whether the vanilla texture has an override in the randoms folder (e.g  creeper.png in the optifine folder)
+    public static final HashMap<String, Boolean> PATH_HAS_DEFAULT_REPLACEMENT = new HashMap<>();
 
-    public static String[] etf$emissiveSuffixes = null;
-    public static final HashMap<String, Identifier> etf$PATH_EmissiveTextureIdentifier = new HashMap<>();
-    public static boolean etf$irisDetected = false;
+    //list of suffixes found in the suffix properties as for some reason people add multiple sometimes
+    //also because an option in ETF can add "_e" to this list
+    public static String[] emissiveSuffixes = null;
 
-    //can't change due to puzzle mod compatability
+    //stores the identifier for an emissive version of the given texture path
+    public static final HashMap<String, Identifier> PATH_EMISSIVE_TEXTURE_IDENTIFIER = new HashMap<>();
+
+    //whether the iris mod was detected on load
+    public static boolean irisDetected = false;
+
+    //can't change name due to puzzle mod compatibility
+    //this is the Config / settings object used to customize ETF
     public static ETFConfig ETFConfigData;
 
-    public static final HashMap<UUID, String> etf$UUID_TridentName = new HashMap<>();
-    public static final Set<String> etf$PATH_FailedPropertiesToIgnore = new HashSet<>();
+    //trident entities do not send item name data to clients when thrown, this is to keep that name in memory so custom tridents can at least display until reloading
+    public static final HashMap<UUID, String> UUID_TRIDENT_NAME = new HashMap<>();
 
-    public static int etf$mooshroomRedCustomShroom = 0;
-    public static int etf$mooshroomBrownCustomShroom = 0;
+    //set of properties that had some issue and could not be read, they need to be ignored in the next attempt
+    public static final Set<String> PATH_FAILED_PROPERTIES_TO_IGNORE = new HashSet<>();
 
-    public final static String etf$SKIN_NAMESPACE = "etf_skin:";
+    //marks whether mooshroom mushroom overrides exist
+    public static int mooshroomRedCustomShroom = 0;
+    public static int mooshroomBrownCustomShroom = 0;
+
+    public static Boolean lecternHasCustomTexture = null;
+
+    public final static String SKIN_NAMESPACE = "etf_skin:";
 
 
     @Override

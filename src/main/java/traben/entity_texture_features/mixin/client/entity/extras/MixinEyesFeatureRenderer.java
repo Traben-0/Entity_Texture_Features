@@ -59,82 +59,82 @@ public abstract class MixinEyesFeatureRenderer<T extends Entity, M extends Entit
         UUID id = entity.getUuid();
 
         try {
-            if (!etf$PATH_OptifineOrTrueRandom.containsKey(path)) {
+            if (!PATH_OPTIFINE_OR_JUST_RANDOM.containsKey(path)) {
                 ETFUtils.processNewRandomTextureCandidate(path);
             }
-            if (etf$PATH_OptifineOrTrueRandom.containsKey(path)) {
+            if (PATH_OPTIFINE_OR_JUST_RANDOM.containsKey(path)) {
                 //if needs to check if change required
-                if (etf$UUID_entityAwaitingDataClearing2.containsKey(id)) {
-                    if (etf$UUID_randomTextureSuffix2.containsKey(id)) {
-                        if (!etf$UUID_hasUpdatableRandomCases2.containsKey(id)) {
-                            etf$UUID_hasUpdatableRandomCases2.put(id, true);
+                if (UUID_ENTITY_AWAITING_DATA_CLEARING_2.containsKey(id)) {
+                    if (UUID_RANDOM_TEXTURE_SUFFIX_2.containsKey(id)) {
+                        if (!UUID_HAS_UPDATABLE_RANDOM_CASES_2.containsKey(id)) {
+                            UUID_HAS_UPDATABLE_RANDOM_CASES_2.put(id, true);
                         }
-                        if (etf$UUID_hasUpdatableRandomCases2.get(id)) {
+                        if (UUID_HAS_UPDATABLE_RANDOM_CASES_2.get(id)) {
                             //skip a few ticks
                             //UUID_entityAwaitingDataClearing.put(id, UUID_entityAwaitingDataClearing.get(id)+1);
-                            if (etf$UUID_entityAwaitingDataClearing2.get(id) + 100 < System.currentTimeMillis()) {
-                                if (etf$PATH_OptifineOrTrueRandom.get(path)) {
+                            if (UUID_ENTITY_AWAITING_DATA_CLEARING_2.get(id) + 100 < System.currentTimeMillis()) {
+                                if (PATH_OPTIFINE_OR_JUST_RANDOM.get(path)) {
                                     //if (UUID_randomTextureSuffix.containsKey(id)) {
-                                    int hold = etf$UUID_randomTextureSuffix2.get(id);
+                                    int hold = UUID_RANDOM_TEXTURE_SUFFIX_2.get(id);
                                     ETFUtils.resetSingleData(id);
-                                    ETFUtils.testCases(path, id, entity, true, etf$UUID_randomTextureSuffix2, etf$UUID_hasUpdatableRandomCases2);
+                                    ETFUtils.testCases(path, id, entity, true, UUID_RANDOM_TEXTURE_SUFFIX_2, UUID_HAS_UPDATABLE_RANDOM_CASES_2);
                                     //if didnt change keep the same
-                                    if (!etf$UUID_randomTextureSuffix2.containsKey(id)) {
-                                        etf$UUID_randomTextureSuffix2.put(id, hold);
+                                    if (!UUID_RANDOM_TEXTURE_SUFFIX_2.containsKey(id)) {
+                                        UUID_RANDOM_TEXTURE_SUFFIX_2.put(id, hold);
                                     }
                                     //}
                                 }//else here would do something for true random but no need really - may optimise this
 
-                                etf$UUID_entityAwaitingDataClearing2.remove(id);
+                                UUID_ENTITY_AWAITING_DATA_CLEARING_2.remove(id);
                             }
                         } else {
-                            etf$UUID_entityAwaitingDataClearing2.remove(id);
+                            UUID_ENTITY_AWAITING_DATA_CLEARING_2.remove(id);
                         }
                     }
 
                 }
-                if (etf$PATH_OptifineOrTrueRandom.get(path)) {//optifine random
+                if (PATH_OPTIFINE_OR_JUST_RANDOM.get(path)) {//optifine random
                     //if it doesn't have a random already assign one
-                    if (!etf$UUID_randomTextureSuffix2.containsKey(id)) {
-                        ETFUtils.testCases(path, id, entity, false, etf$UUID_randomTextureSuffix2, etf$UUID_hasUpdatableRandomCases2);
+                    if (!UUID_RANDOM_TEXTURE_SUFFIX_2.containsKey(id)) {
+                        ETFUtils.testCases(path, id, entity, false, UUID_RANDOM_TEXTURE_SUFFIX_2, UUID_HAS_UPDATABLE_RANDOM_CASES_2);
                         //if all failed set to vanilla
-                        if (!etf$UUID_randomTextureSuffix2.containsKey(id)) {
-                            etf$UUID_randomTextureSuffix2.put(id, 0);
+                        if (!UUID_RANDOM_TEXTURE_SUFFIX_2.containsKey(id)) {
+                            UUID_RANDOM_TEXTURE_SUFFIX_2.put(id, 0);
                         }
-                        etf$UUID_entityAlreadyCalculated.add(id);
+                        UUID_ENTITY_ALREADY_CALCULATED.add(id);
                     }
                     // System.out.println("suffix was ="+UUID_randomTextureSuffix.get(id));
-                    if (etf$UUID_randomTextureSuffix2.get(id) == 0) {
-                        if (!etf$PATH_HasOptifineDefaultReplacement.containsKey(vanilla.toString())) {
-                            etf$PATH_HasOptifineDefaultReplacement.put(vanilla.toString(), ETFUtils.isExistingNativeImageFile(ETFUtils.returnOptifineOrVanillaIdentifier(path)));
+                    if (UUID_RANDOM_TEXTURE_SUFFIX_2.get(id) == 0) {
+                        if (!PATH_HAS_DEFAULT_REPLACEMENT.containsKey(vanilla.toString())) {
+                            PATH_HAS_DEFAULT_REPLACEMENT.put(vanilla.toString(), ETFUtils.isExistingNativeImageFile(ETFUtils.returnOptifineOrVanillaIdentifier(path)));
                         }
-                        if (etf$PATH_HasOptifineDefaultReplacement.get(vanilla.toString())) {
+                        if (PATH_HAS_DEFAULT_REPLACEMENT.get(vanilla.toString())) {
                             return ETFUtils.returnBlinkIdOrGiven(entity, ETFUtils.returnOptifineOrVanillaIdentifier(path).toString(), id);
                         } else {
                             return ETFUtils.returnBlinkIdOrGiven(entity, vanilla.toString(), id);
                         }
 
                     } else {
-                        return ETFUtils.returnBlinkIdOrGiven(entity, ETFUtils.returnOptifineOrVanillaIdentifier(path, etf$UUID_randomTextureSuffix2.get(id)).toString(), id);
+                        return ETFUtils.returnBlinkIdOrGiven(entity, ETFUtils.returnOptifineOrVanillaIdentifier(path, UUID_RANDOM_TEXTURE_SUFFIX_2.get(id)).toString(), id);
                     }
 
                 } else {//true random assign
-                    etf$UUID_hasUpdatableRandomCases2.put(id, false);
-                    if (etf$PATH_TotalTrueRandom.get(path) > 0) {
-                        if (!etf$UUID_randomTextureSuffix2.containsKey(id)) {
+                    UUID_HAS_UPDATABLE_RANDOM_CASES_2.put(id, false);
+                    if (PATH_TOTAL_TRUE_RANDOM.get(path) > 0) {
+                        if (!UUID_RANDOM_TEXTURE_SUFFIX_2.containsKey(id)) {
                             int randomReliable = Math.abs(id.hashCode());
-                            randomReliable %= etf$PATH_TotalTrueRandom.get(path);
+                            randomReliable %= PATH_TOTAL_TRUE_RANDOM.get(path);
                             randomReliable++;
-                            if (randomReliable == 1 && etf$PATH_ignoreOnePNG.get(path)) {
+                            if (randomReliable == 1 && PATH_IGNORE_ONE_PNG.get(path)) {
                                 randomReliable = 0;
                             }
-                            etf$UUID_randomTextureSuffix2.put(id, randomReliable);
-                            etf$UUID_entityAlreadyCalculated.add(id);
+                            UUID_RANDOM_TEXTURE_SUFFIX_2.put(id, randomReliable);
+                            UUID_ENTITY_ALREADY_CALCULATED.add(id);
                         }
-                        if (etf$UUID_randomTextureSuffix2.get(id) == 0) {
+                        if (UUID_RANDOM_TEXTURE_SUFFIX_2.get(id) == 0) {
                             return ETFUtils.returnBlinkIdOrGiven(entity, vanilla.toString(), id);
                         } else {
-                            return ETFUtils.returnBlinkIdOrGiven(entity, ETFUtils.returnOptifineOrVanillaPath(path, etf$UUID_randomTextureSuffix2.get(id), ""), id);
+                            return ETFUtils.returnBlinkIdOrGiven(entity, ETFUtils.returnOptifineOrVanillaPath(path, UUID_RANDOM_TEXTURE_SUFFIX_2.get(id), ""), id);
                         }
                     } else {
                         return ETFUtils.returnBlinkIdOrGiven(entity, vanilla.toString(), id);

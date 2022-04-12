@@ -19,7 +19,7 @@ import traben.entity_texture_features.client.ETFUtils;
 import java.util.UUID;
 
 import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
-import static traben.entity_texture_features.client.ETF_CLIENT.etf$UUID_TridentName;
+import static traben.entity_texture_features.client.ETF_CLIENT.UUID_TRIDENT_NAME;
 
 @Mixin(TridentEntityRenderer.class)
 public abstract class MixinTridentEntityRenderer implements SynchronousResourceReloader {
@@ -32,8 +32,8 @@ public abstract class MixinTridentEntityRenderer implements SynchronousResourceR
         if (ETFConfigData.enableTridents && ETFConfigData.enableEmissiveTextures) {
             UUID id = tridentEntity.getUuid();
             String path = TridentEntityModel.TEXTURE.toString();
-            String name = etf$UUID_TridentName.get(id) != null ? "_" + etf$UUID_TridentName.get(id).toLowerCase().replaceAll("[^a-z0-9/_.-]", "") : "";
-            String fileString = etf$UUID_TridentName.get(id) != null ? path.replace(".png", "_" + name + ".png") : path;
+            String name = UUID_TRIDENT_NAME.get(id) != null ? "_" + UUID_TRIDENT_NAME.get(id).toLowerCase().replaceAll("[^a-z0-9/_.-]", "") : "";
+            String fileString = UUID_TRIDENT_NAME.get(id) != null ? path.replace(".png", "_" + name + ".png") : path;
             ETFUtils.generalEmissiveRender(matrixStack, vertexConsumerProvider, fileString, this.model);
 
 
@@ -45,9 +45,9 @@ public abstract class MixinTridentEntityRenderer implements SynchronousResourceR
     private Identifier etf$returnTexture(TridentEntityRenderer instance, TridentEntity tridentEntity) {
         if (ETFConfigData.enableTridents && ETFConfigData.enableCustomTextures) {
             UUID id = tridentEntity.getUuid();
-            if (etf$UUID_TridentName.get(id) != null) {
+            if (UUID_TRIDENT_NAME.get(id) != null) {
                 String path = TridentEntityModel.TEXTURE.toString();
-                String name = etf$UUID_TridentName.get(id).toLowerCase().replaceAll("[^a-z0-9/_.-]", "");
+                String name = UUID_TRIDENT_NAME.get(id).toLowerCase().replaceAll("[^a-z0-9/_.-]", "");
                 Identifier possibleId = new Identifier(path.replace(".png", "_" + name + ".png"));
                 if (ETFUtils.isExistingNativeImageFile(possibleId)) {
                     return possibleId;

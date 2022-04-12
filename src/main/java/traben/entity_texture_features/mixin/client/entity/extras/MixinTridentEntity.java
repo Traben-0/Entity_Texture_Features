@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static traben.entity_texture_features.client.ETF_CLIENT.etf$UUID_TridentName;
+import static traben.entity_texture_features.client.ETF_CLIENT.UUID_TRIDENT_NAME;
 
 @Mixin(TridentEntity.class)
 public abstract class MixinTridentEntity {
@@ -17,9 +17,9 @@ public abstract class MixinTridentEntity {
     @Inject(method = "<init>(Lnet/minecraft/world/World;Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;)V", at = @At("TAIL"))
     public void etf$injected(World world, LivingEntity owner, ItemStack stack, CallbackInfo ci) {
         if (stack.hasCustomName()) {
-            etf$UUID_TridentName.put(((TridentEntity) (Object) this).getUuid(), stack.getName().getString());
+            UUID_TRIDENT_NAME.put(((TridentEntity) (Object) this).getUuid(), stack.getName().getString());
         } else {
-            etf$UUID_TridentName.put(((TridentEntity) (Object) this).getUuid(), null);
+            UUID_TRIDENT_NAME.put(((TridentEntity) (Object) this).getUuid(), null);
         }
     }
 }

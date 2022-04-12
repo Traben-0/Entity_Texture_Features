@@ -13,7 +13,7 @@ import traben.entity_texture_features.client.ETFUtils;
 import java.awt.*;
 
 import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
-import static traben.entity_texture_features.client.ETF_CLIENT.etf$irisDetected;
+import static traben.entity_texture_features.client.ETF_CLIENT.irisDetected;
 
 public class ETFConfigScreen {
     public Screen getConfigScreen(Screen parent, boolean isTransparent) {
@@ -25,7 +25,7 @@ public class ETFConfigScreen {
         ConfigEntryBuilder entryBuilder = builder.entryBuilder();
         ConfigCategory optifineOptions = builder.getOrCreateCategory(Text.of("Optifine Options"));
         optifineOptions.setBackground(new Identifier("textures/block/light_gray_wool.png"));
-        if (etf$irisDetected) {
+        if (irisDetected) {
             optifineOptions.addEntry(entryBuilder.startTextDescription(Text.of("Iris Shaders Mod was detected:\n If your emissive textures are flickering with shaders try the\nZ-Fighting fix in Emissive Texture Settings!"))
                     .setColor(new Color(240, 195, 15).getRGB())
                     .build()); // Builds the option entry for cloth config

@@ -97,7 +97,7 @@ public class ETFTexturePropertyCase {
     }
 
     public boolean testEntity(LivingEntity entity, boolean onlyUpdatables) {
-        return testEntity(entity, onlyUpdatables, etf$UUID_hasUpdatableRandomCases);
+        return testEntity(entity, onlyUpdatables, UUID_HAS_UPDATABLE_RANDOM_CASES);
     }
 
 
@@ -122,8 +122,8 @@ public class ETFTexturePropertyCase {
             isUpdate = false;
         }
 
-        if (!etf$UUID_OriginalNonUpdatePropertyStrings.containsKey(entity.getUuid())) {
-            etf$UUID_OriginalNonUpdatePropertyStrings.put(entity.getUuid(), getNonUpdateables(entity));
+        if (!UUID_ORIGINAL_NON_UPDATE_PROPERTY_STRINGS.containsKey(entity.getUuid())) {
+            UUID_ORIGINAL_NON_UPDATE_PROPERTY_STRINGS.put(entity.getUuid(), getNonUpdateables(entity));
         }
 
         boolean wasTestedByUpdateable = false;
@@ -137,7 +137,7 @@ public class ETFTexturePropertyCase {
             //example  "Optional[minecraft:worldgen/biome / minecraft:river]"
             String entityBiome;
             if (isUpdate && ETFConfigData.restrictBiome) {
-                entityBiome = etf$UUID_OriginalNonUpdatePropertyStrings.get(entity.getUuid())[0].trim();
+                entityBiome = UUID_ORIGINAL_NON_UPDATE_PROPERTY_STRINGS.get(entity.getUuid())[0].trim();
             } else if (MinecraftVersion.CURRENT.getName().equals("1.18") || MinecraftVersion.CURRENT.getName().equals("1.18.1")) {
                 entityBiome = traben.entity_texture_features.client.ETF_1_18_1_versionPatch.getBiome(entity.world, entity.getBlockPos());
             } else {
@@ -222,7 +222,7 @@ public class ETFTexturePropertyCase {
         if (allBoolean && heights.length > 0) {
             int entityHeight = entity.getBlockY();
             if (isUpdate && ETFConfigData.restrictHeight) {
-                entityHeight = Integer.parseInt(etf$UUID_OriginalNonUpdatePropertyStrings.get(entity.getUuid())[1].trim());
+                entityHeight = Integer.parseInt(UUID_ORIGINAL_NON_UPDATE_PROPERTY_STRINGS.get(entity.getUuid())[1].trim());
             }
             boolean check = false;
             for (int i :
@@ -298,7 +298,7 @@ public class ETFTexturePropertyCase {
             boolean raining = entity.world.isRaining();
             boolean thundering = entity.world.isThundering();
             if (isUpdate && ETFConfigData.restrictWeather) {
-                String[] data = etf$UUID_OriginalNonUpdatePropertyStrings.get(entity.getUuid())[3].split("-");
+                String[] data = UUID_ORIGINAL_NON_UPDATE_PROPERTY_STRINGS.get(entity.getUuid())[3].split("-");
                 raining = data[0].trim().equals("1");
                 thundering = data[1].trim().equals("1");
             }
@@ -340,7 +340,7 @@ public class ETFTexturePropertyCase {
         if (allBoolean && moon.length > 0) {
             int moonPhase = entity.world.getMoonPhase();
             if (isUpdate && ETFConfigData.restrictMoonPhase) {
-                moonPhase = Integer.parseInt(etf$UUID_OriginalNonUpdatePropertyStrings.get(entity.getUuid())[5].trim());
+                moonPhase = Integer.parseInt(UUID_ORIGINAL_NON_UPDATE_PROPERTY_STRINGS.get(entity.getUuid())[5].trim());
             }
             boolean check = false;
             for (int i :
@@ -356,7 +356,7 @@ public class ETFTexturePropertyCase {
             long time = entity.world.getTimeOfDay();
             boolean check = false;
             if (isUpdate && ETFConfigData.restrictDayTime) {
-                time = Long.parseLong(etf$UUID_OriginalNonUpdatePropertyStrings.get(entity.getUuid())[4].trim());
+                time = Long.parseLong(UUID_ORIGINAL_NON_UPDATE_PROPERTY_STRINGS.get(entity.getUuid())[4].trim());
             }
             for (String rangeOfTime :
                     daytime) {
@@ -383,7 +383,7 @@ public class ETFTexturePropertyCase {
                     .replaceFirst("Block\\{", "")
                     .replaceFirst("}", "");
             if (isUpdate && ETFConfigData.restrictBlock) {
-                entityOnBlock = etf$UUID_OriginalNonUpdatePropertyStrings.get(entity.getUuid())[2].trim();
+                entityOnBlock = UUID_ORIGINAL_NON_UPDATE_PROPERTY_STRINGS.get(entity.getUuid())[2].trim();
             }
 
             boolean check = false;

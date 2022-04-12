@@ -116,70 +116,72 @@ public class ETFUtils {
 
     public static void resetVisuals() {
         modMessage("Reloading...", false);
-        etf$PATH_TotalTrueRandom.clear();
+        PATH_TOTAL_TRUE_RANDOM.clear();
 
-        etf$UUID_randomTextureSuffix.clear();
-        etf$UUID_randomTextureSuffix2.clear();
-        etf$UUID_randomTextureSuffix3.clear();
-        etf$UUID_randomTextureSuffix4.clear();
-        etf$UUID_hasUpdatableRandomCases.clear();
-        etf$UUID_hasUpdatableRandomCases2.clear();
-        etf$UUID_hasUpdatableRandomCases3.clear();
-        etf$UUID_hasUpdatableRandomCases4.clear();
+        UUID_RANDOM_TEXTURE_SUFFIX.clear();
+        UUID_RANDOM_TEXTURE_SUFFIX_2.clear();
+        UUID_RANDOM_TEXTURE_SUFFIX_3.clear();
+        UUID_RANDOM_TEXTURE_SUFFIX_4.clear();
+        UUID_HAS_UPDATABLE_RANDOM_CASES.clear();
+        UUID_HAS_UPDATABLE_RANDOM_CASES_2.clear();
+        UUID_HAS_UPDATABLE_RANDOM_CASES_3.clear();
+        UUID_HAS_UPDATABLE_RANDOM_CASES_4.clear();
 
-        etf$PATH_OptifineRandomSettingsPerTexture.clear();
-        etf$PATH_OptifineOrTrueRandom.clear();
-        etf$PATH_OptifineOldVanillaetf$0123.clear();// 0,1,2
-        etf$PATH_ignoreOnePNG.clear();
-        etf$UUID_entityAlreadyCalculated.clear();//only time it clears
-        etf$UUID_entityAwaitingDataClearing.clear();
-        etf$UUID_entityAwaitingDataClearing2.clear();
+        PATH_OPTIFINE_RANDOM_SETTINGS_PER_TEXTURE.clear();
+        PATH_OPTIFINE_OR_JUST_RANDOM.clear();
+        PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.clear();// 0,1,2
+        PATH_IGNORE_ONE_PNG.clear();
+        UUID_ENTITY_ALREADY_CALCULATED.clear();//only time it clears
+        UUID_ENTITY_AWAITING_DATA_CLEARING.clear();
+        UUID_ENTITY_AWAITING_DATA_CLEARING_2.clear();
 
-        etf$UUID_OriginalNonUpdatePropertyStrings.clear();
+        UUID_ORIGINAL_NON_UPDATE_PROPERTY_STRINGS.clear();
 
-        etf$UUID_playerHasFeatures.clear();
-        etf$UUID_playerHasEnchant.clear();
-        etf$UUID_playerHasEmissive.clear();
-        etf$UUID_playerTransparentSkinId.clear();
-        etf$UUID_playerSkinDownloadedYet.clear();
+        UUID_PLAYER_HAS_FEATURES.clear();
+        UUID_PLAYER_HAS_ENCHANT.clear();
+        UUID_PLAYER_HAS_EMISSIVE.clear();
+        UUID_PLAYER_TRANSPARENT_SKIN_ID.clear();
+        UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.clear();
         for (HttpURLConnection h :
-                etf$URL_HTTPtoDisconnect1.values()) {
+                URL_HTTP_TO_DISCONNECT_1.values()) {
             if (h != null) {
                 h.disconnect();
             }
         }
         for (HttpURLConnection h :
-                etf$URL_HTTPtoDisconnect2.values()) {
+                URL_HTTP_TO_DISCONNECT_2.values()) {
             if (h != null) {
                 h.disconnect();
             }
         }
-        etf$UUID_playerHasCoat.clear();
-        etf$URL_HTTPtoDisconnect1.clear();
+        UUID_PLAYER_HAS_COAT.clear();
+        URL_HTTP_TO_DISCONNECT_1.clear();
 
-        etf$PATH_FailedPropertiesToIgnore.clear();
+        PATH_FAILED_PROPERTIES_TO_IGNORE.clear();
 
-        etf$PATH_HasBlink.clear();
-        etf$PATH_HasBlink2.clear();
+        PATH_HAS_BLINK_TEXTURE.clear();
+        PATH_HAS_BLINK_TEXTURE_2.clear();
 
-        etf$UUID_TridentName.clear();
+        UUID_TRIDENT_NAME.clear();
 
-        etf$PATH_EmissiveTextureIdentifier.clear();
+        PATH_EMISSIVE_TEXTURE_IDENTIFIER.clear();
         setEmissiveSuffix();
 
-        etf$PATH_VillagerIsExistingFeature.clear();
+        PATH_VILLAGER_IS_EXISTING_FEATURE.clear();
 
-        etf$mooshroomRedCustomShroom = 0;
-        etf$mooshroomBrownCustomShroom = 0;
+        mooshroomRedCustomShroom = 0;
+        mooshroomBrownCustomShroom = 0;
+
+        lecternHasCustomTexture = null;
 
         registerNativeImageToIdentifier(emptyNativeImage(1, 1), "etf:blank.png");
     }
 
     public static void resetSingleData(UUID id) {
-        etf$UUID_randomTextureSuffix.remove(id);
-        etf$UUID_randomTextureSuffix2.remove(id);
-        etf$UUID_randomTextureSuffix3.remove(id);
-        etf$UUID_randomTextureSuffix4.remove(id);
+        UUID_RANDOM_TEXTURE_SUFFIX.remove(id);
+        UUID_RANDOM_TEXTURE_SUFFIX_2.remove(id);
+        UUID_RANDOM_TEXTURE_SUFFIX_3.remove(id);
+        UUID_RANDOM_TEXTURE_SUFFIX_4.remove(id);
 
 
     }
@@ -252,35 +254,35 @@ public class ETFUtils {
         boolean hasProperties = false;
         String properties = "";
         //set public static  incase of no change
-        etf$PATH_OptifineOldVanillaetf$0123.put(vanillaTexturePath, 2);
+        PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 2);
         if (checkPropertyPathExistsAndSameOrHigherResourcepackAs(vanillaTexturePath.replace(".png", ".properties").replace("textures", "etf/random"), vanillaTexturePath.replace(".png", "2.png").replace("textures", "etf/random"))) {
             properties = vanillaTexturePath.replace(".png", ".properties").replace("textures", "etf/random");
             hasProperties = true;
-            etf$PATH_OptifineOldVanillaetf$0123.put(vanillaTexturePath, 3);
+            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 3);
         } else if (isExistingNativeImageFile(new Identifier(vanillaTexturePath.replace(".png", "2.png").replace("textures", "etf/random")))) {
-            etf$PATH_OptifineOldVanillaetf$0123.put(vanillaTexturePath, 3);
+            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 3);
         } else if (checkPropertyPathExistsAndSameOrHigherResourcepackAs(vanillaTexturePath.replace(".png", ".properties").replace("textures", "optifine/random"), vanillaTexturePath.replace(".png", "2.png").replace("textures", "optifine/random"))) {
             properties = vanillaTexturePath.replace(".png", ".properties").replace("textures", "optifine/random");
             hasProperties = true;
-            etf$PATH_OptifineOldVanillaetf$0123.put(vanillaTexturePath, 0);
+            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 0);
         } else if (isExistingNativeImageFile(new Identifier(vanillaTexturePath.replace(".png", "2.png").replace("textures", "optifine/random")))) {
-            etf$PATH_OptifineOldVanillaetf$0123.put(vanillaTexturePath, 0);
+            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 0);
         } else if (checkPropertyPathExistsAndSameOrHigherResourcepackAs(vanillaTexturePath.replace(".png", ".properties").replace("textures/entity", "optifine/mob"), vanillaTexturePath.replace(".png", "2.png").replace("textures/entity", "optifine/mob"))) {
             properties = vanillaTexturePath.replace(".png", ".properties").replace("textures/entity", "optifine/mob");
             hasProperties = true;
-            etf$PATH_OptifineOldVanillaetf$0123.put(vanillaTexturePath, 1);
+            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 1);
         } else if (isExistingNativeImageFile(new Identifier(vanillaTexturePath.replace(".png", "2.png").replace("textures/entity", "optifine/mob")))) {
-            etf$PATH_OptifineOldVanillaetf$0123.put(vanillaTexturePath, 1);
+            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 1);
         } else if (checkPropertyPathExistsAndSameOrHigherResourcepackAs(vanillaTexturePath.replace(".png", ".properties"), vanillaTexturePath.replace(".png", "2.png"))) {
             properties = vanillaTexturePath.replace(".png", ".properties");
             hasProperties = true;
-            etf$PATH_OptifineOldVanillaetf$0123.put(vanillaTexturePath, 2);
+            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 2);
         } else if (isExistingNativeImageFile(new Identifier(vanillaTexturePath.replace(".png", "2.png")))) {
-            etf$PATH_OptifineOldVanillaetf$0123.put(vanillaTexturePath, 2);
+            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 2);
         }
 
         //no settings just true random
-        if (hasProperties && !etf$PATH_FailedPropertiesToIgnore.contains(properties)) {//optifine settings found
+        if (hasProperties && !PATH_FAILED_PROPERTIES_TO_IGNORE.contains(properties)) {//optifine settings found
             processOptifineTextureCandidate(vanillaTexturePath, properties);
         } else {
             processTrueRandomCandidate(vanillaTexturePath);
@@ -289,7 +291,7 @@ public class ETFUtils {
 
     private static void processOptifineTextureCandidate(String vanillaTexturePath, String propertiesPath) {
         try {
-            etf$PATH_ignoreOnePNG.put(vanillaTexturePath, !(isExistingPropertyFile(new Identifier(propertiesPath.replace(".properties", "1.png")))));
+            PATH_IGNORE_ONE_PNG.put(vanillaTexturePath, !(isExistingPropertyFile(new Identifier(propertiesPath.replace(".properties", "1.png")))));
 
             String twoPngPath = returnOptifineOrVanillaPath(vanillaTexturePath, 2, "");
             Properties props = readProperties(propertiesPath, twoPngPath);
@@ -306,7 +308,7 @@ public class ETFUtils {
                 //sort from lowest to largest
                 List<Integer> numbersList = new ArrayList<>(numbers);
                 Collections.sort(numbersList);
-                ArrayList<ETFTexturePropertyCase> allCasesForTexture = new ArrayList<>();
+                Set<ETFTexturePropertyCase> allCasesForTexture = new HashSet<>();
                 for (Integer num :
                         numbersList) {
                     //loops through each known number in properties
@@ -480,19 +482,19 @@ public class ETFUtils {
                     }
                 }
                 if (!allCasesForTexture.isEmpty()) {
-                    etf$PATH_OptifineRandomSettingsPerTexture.put(vanillaTexturePath, allCasesForTexture);
-                    etf$PATH_OptifineOrTrueRandom.put(vanillaTexturePath, true);
+                    PATH_OPTIFINE_RANDOM_SETTINGS_PER_TEXTURE.put(vanillaTexturePath, allCasesForTexture);
+                    PATH_OPTIFINE_OR_JUST_RANDOM.put(vanillaTexturePath, true);
                 } else {
                     modMessage("Ignoring properties file that failed to load any cases @ " + propertiesPath, false);
-                    etf$PATH_FailedPropertiesToIgnore.add(propertiesPath);
+                    PATH_FAILED_PROPERTIES_TO_IGNORE.add(propertiesPath);
                 }
             } else {//properties file is null
                 modMessage("Ignoring properties file that was null @ " + propertiesPath, false);
-                etf$PATH_FailedPropertiesToIgnore.add(propertiesPath);
+                PATH_FAILED_PROPERTIES_TO_IGNORE.add(propertiesPath);
             }
         } catch (Exception e) {
             modMessage("Ignoring properties file that caused Exception @ " + propertiesPath + e, false);
-            etf$PATH_FailedPropertiesToIgnore.add(propertiesPath);
+            PATH_FAILED_PROPERTIES_TO_IGNORE.add(propertiesPath);
         }
     }
 
@@ -537,16 +539,16 @@ public class ETFUtils {
     }
 
     public static void testCases(String vanillaPath, UUID id, Entity entity, boolean isUpdate) {
-        testCases(vanillaPath, id, entity, isUpdate, etf$UUID_randomTextureSuffix, etf$UUID_hasUpdatableRandomCases);
+        testCases(vanillaPath, id, entity, isUpdate, UUID_RANDOM_TEXTURE_SUFFIX, UUID_HAS_UPDATABLE_RANDOM_CASES);
     }
 
     public static void testCases(String vanillaPath, UUID id, Entity entity, boolean isUpdate, HashMap<UUID, Integer> UUID_RandomSuffixMap, HashMap<UUID, Boolean> UUID_CaseHasUpdateablesCustom) {
         for (ETFTexturePropertyCase test :
-                etf$PATH_OptifineRandomSettingsPerTexture.get(vanillaPath)) {
+                PATH_OPTIFINE_RANDOM_SETTINGS_PER_TEXTURE.get(vanillaPath)) {
 
             //skip if its only an update and case is not updatable
-            if (test.testEntity((LivingEntity) entity, etf$UUID_entityAlreadyCalculated.contains(id), UUID_CaseHasUpdateablesCustom)) {
-                UUID_RandomSuffixMap.put(id, test.getWeightedSuffix(id, etf$PATH_ignoreOnePNG.get(vanillaPath)));
+            if (test.testEntity((LivingEntity) entity, UUID_ENTITY_ALREADY_CALCULATED.contains(id), UUID_CaseHasUpdateablesCustom)) {
+                UUID_RandomSuffixMap.put(id, test.getWeightedSuffix(id, PATH_IGNORE_ONE_PNG.get(vanillaPath)));
                 Identifier tested = returnOptifineOrVanillaIdentifier(vanillaPath, UUID_RandomSuffixMap.get(id));
 
                 if (!isExistingNativeImageFile(tested) && !isUpdate) {
@@ -576,8 +578,8 @@ public class ETFUtils {
 
 
         String append = (randomId == 0 ? "" : randomId) + emissiveSuffx + ".png";
-        if (etf$PATH_OptifineOldVanillaetf$0123.containsKey(vanillaPath)) {
-            return switch (etf$PATH_OptifineOldVanillaetf$0123.get(vanillaPath)) {
+        if (PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.containsKey(vanillaPath)) {
+            return switch (PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.get(vanillaPath)) {
                 case 0 -> vanillaPath.replace(".png", append).replace("textures", "optifine/random");
                 case 1 -> vanillaPath.replace(".png", append).replace("textures/entity", "optifine/mob");
                 case 3 -> vanillaPath.replace(".png", append).replace("textures", "etf/random");
@@ -597,7 +599,7 @@ public class ETFUtils {
     }
 
     private static void processTrueRandomCandidate(String vanillaPath) {
-        etf$PATH_ignoreOnePNG.put(vanillaPath, true);
+        PATH_IGNORE_ONE_PNG.put(vanillaPath, true);
         boolean keepGoing = false;
         //first iteration longer
         int successCount = 0;
@@ -609,20 +611,20 @@ public class ETFUtils {
         String checkPathOptifineFormat = vanillaPath.replace(".png", "1.png").replace("textures", "optifine/random");
         String checkPathETFFormat = vanillaPath.replace(".png", "1.png").replace("textures", "etf/random");
         if (isExistingNativeImageFile(new Identifier(checkPathETFFormat))) {
-            etf$PATH_OptifineOldVanillaetf$0123.put(vanillaPath, 3);
-            etf$PATH_ignoreOnePNG.put(vanillaPath, false);
+            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaPath, 3);
+            PATH_IGNORE_ONE_PNG.put(vanillaPath, false);
             //successCount++;
         } else if (isExistingNativeImageFile(new Identifier(checkPathOptifineFormat))) {
-            etf$PATH_OptifineOldVanillaetf$0123.put(vanillaPath, 0);
-            etf$PATH_ignoreOnePNG.put(vanillaPath, false);
+            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaPath, 0);
+            PATH_IGNORE_ONE_PNG.put(vanillaPath, false);
             //successCount++;
         } else if (isExistingNativeImageFile(new Identifier(checkPathOldRandomFormat))) {
-            etf$PATH_OptifineOldVanillaetf$0123.put(vanillaPath, 1);
-            etf$PATH_ignoreOnePNG.put(vanillaPath, false);
+            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaPath, 1);
+            PATH_IGNORE_ONE_PNG.put(vanillaPath, false);
             //successCount++;
         } else if (isExistingNativeImageFile(new Identifier(checkPath))) {
-            etf$PATH_OptifineOldVanillaetf$0123.put(vanillaPath, 2);
-            etf$PATH_ignoreOnePNG.put(vanillaPath, false);
+            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaPath, 2);
+            PATH_IGNORE_ONE_PNG.put(vanillaPath, false);
             //successCount++;
         }
 
@@ -632,19 +634,19 @@ public class ETFUtils {
         checkPathOptifineFormat = vanillaPath.replace(".png", "2.png").replace("textures", "optifine/random");
         checkPathETFFormat = vanillaPath.replace(".png", "2.png").replace("textures", "etf/random");
         if (isExistingNativeImageFile(new Identifier(checkPathETFFormat))) {
-            etf$PATH_OptifineOldVanillaetf$0123.put(vanillaPath, 3);
+            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaPath, 3);
             keepGoing = true;
             successCount = 2;
         } else if (isExistingNativeImageFile(new Identifier(checkPathOptifineFormat))) {
-            etf$PATH_OptifineOldVanillaetf$0123.put(vanillaPath, 0);
+            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaPath, 0);
             keepGoing = true;
             successCount = 2;
         } else if (isExistingNativeImageFile(new Identifier(checkPathOldRandomFormat))) {
-            etf$PATH_OptifineOldVanillaetf$0123.put(vanillaPath, 1);
+            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaPath, 1);
             keepGoing = true;
             successCount = 2;
         } else if (isExistingNativeImageFile(new Identifier(checkPath))) {
-            etf$PATH_OptifineOldVanillaetf$0123.put(vanillaPath, 2);
+            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaPath, 2);
             keepGoing = true;
             successCount = 2;
         }
@@ -653,7 +655,7 @@ public class ETFUtils {
         while (keepGoing) {
             count++;
 
-            checkPath = switch (etf$PATH_OptifineOldVanillaetf$0123.get(vanillaPath)) {
+            checkPath = switch (PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.get(vanillaPath)) {
                 case 3 -> vanillaPath.replace(".png", (count + ".png")).replace("textures", "etf/random");
                 case 0 -> vanillaPath.replace(".png", (count + ".png")).replace("textures", "optifine/random");
                 case 1 -> vanillaPath.replace(".png", (count + ".png")).replace("textures/entity", "optifine/mob");
@@ -665,8 +667,8 @@ public class ETFUtils {
         }
         //true if any random textures at all
 
-        etf$PATH_TotalTrueRandom.put(vanillaPath, successCount);
-        etf$PATH_OptifineOrTrueRandom.put(vanillaPath, false);
+        PATH_TOTAL_TRUE_RANDOM.put(vanillaPath, successCount);
+        PATH_OPTIFINE_OR_JUST_RANDOM.put(vanillaPath, false);
 
     }
 
@@ -687,14 +689,14 @@ public class ETFUtils {
             if (ETFConfigData.alwaysCheckVanillaEmissiveSuffix) {
                 builder.add("_e");
             }
-            etf$emissiveSuffixes = builder.toArray(new String[0]);
-            if (etf$emissiveSuffixes.length == 0) {
+            emissiveSuffixes = builder.toArray(new String[0]);
+            if (emissiveSuffixes.length == 0) {
                 modMessage("default emissive suffix '_e' used", false);
-                etf$emissiveSuffixes = new String[]{"_e"};
+                emissiveSuffixes = new String[]{"_e"};
             }
         } catch (Exception e) {
             modMessage("default emissive suffix '_e' used", false);
-            etf$emissiveSuffixes = new String[]{"_e"};
+            emissiveSuffixes = new String[]{"_e"};
         }
     }
 
@@ -722,13 +724,13 @@ public class ETFUtils {
                 || player.getScoreboardTeam() == null))
         ) {
             // skip if tried to recently
-            if (etf$UUID_playerLastSkinCheck.containsKey(id)) {
-                if (etf$UUID_playerLastSkinCheck.get(id) + 6000 > System.currentTimeMillis()) {
+            if (UUID_PLAYER_LAST_SKIN_CHECK.containsKey(id)) {
+                if (UUID_PLAYER_LAST_SKIN_CHECK.get(id) + 6000 > System.currentTimeMillis()) {
                     return;
                 }
             }
-            etf$UUID_playerSkinDownloadedYet.put(id, false);
-            etf$UUID_playerHasCape.put(id, ((AbstractClientPlayerEntity) player).canRenderCapeTexture());
+            UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.put(id, false);
+            UUID_PLAYER_HAS_CAPE.put(id, ((AbstractClientPlayerEntity) player).canRenderCapeTexture());
             getSkin(player);
         }
     }
@@ -844,27 +846,27 @@ public class ETFUtils {
                                     skinFailed(player.getUuid());
                                 }
                             }
-                            if (etf$URL_HTTPtoDisconnect1.containsKey(url)) {
-                                if (etf$URL_HTTPtoDisconnect1.get(url) != null) {
-                                    etf$URL_HTTPtoDisconnect1.get(url).disconnect();
+                            if (URL_HTTP_TO_DISCONNECT_1.containsKey(url)) {
+                                if (URL_HTTP_TO_DISCONNECT_1.get(url) != null) {
+                                    URL_HTTP_TO_DISCONNECT_1.get(url).disconnect();
                                 }
-                                etf$URL_HTTPtoDisconnect1.remove(url);
+                                URL_HTTP_TO_DISCONNECT_1.remove(url);
                             }
-                            if (etf$URL_HTTPtoDisconnect2.containsKey(url2)) {
-                                if (etf$URL_HTTPtoDisconnect2.get(url2) != null) {
-                                    etf$URL_HTTPtoDisconnect2.get(url2).disconnect();
+                            if (URL_HTTP_TO_DISCONNECT_2.containsKey(url2)) {
+                                if (URL_HTTP_TO_DISCONNECT_2.get(url2) != null) {
+                                    URL_HTTP_TO_DISCONNECT_2.get(url2).disconnect();
                                 }
-                                etf$URL_HTTPtoDisconnect2.remove(url2);
+                                URL_HTTP_TO_DISCONNECT_2.remove(url2);
                             }
                         });
 
                     }
                 } catch (Exception var6) {
-                    etf$URL_HTTPtoDisconnect1.put(url, httpURLConnection);
-                    etf$URL_HTTPtoDisconnect2.put(url2, httpURLConnection2);
+                    URL_HTTP_TO_DISCONNECT_1.put(url, httpURLConnection);
+                    URL_HTTP_TO_DISCONNECT_2.put(url2, httpURLConnection2);
                 } finally {
-                    etf$URL_HTTPtoDisconnect1.put(url, httpURLConnection);
-                    etf$URL_HTTPtoDisconnect2.put(url2, httpURLConnection2);
+                    URL_HTTP_TO_DISCONNECT_1.put(url, httpURLConnection);
+                    URL_HTTP_TO_DISCONNECT_2.put(url2, httpURLConnection2);
                 }
 
             }, Util.getMainWorkerExecutor());
@@ -885,19 +887,19 @@ public class ETFUtils {
     }
 
     private static void skinFailed(UUID id) {
-        etf$UUID_playerLastSkinCheck.put(id, System.currentTimeMillis());
-        if (!etf$UUID_playerLastSkinCheckCount.containsKey(id)) {
-            etf$UUID_playerLastSkinCheckCount.put(id, 0);
+        UUID_PLAYER_LAST_SKIN_CHECK.put(id, System.currentTimeMillis());
+        if (!UUID_PLAYER_LAST_SKIN_CHECK_COUNT.containsKey(id)) {
+            UUID_PLAYER_LAST_SKIN_CHECK_COUNT.put(id, 0);
         } else {
-            etf$UUID_playerLastSkinCheckCount.put(id, etf$UUID_playerLastSkinCheckCount.get(id) + 1);
+            UUID_PLAYER_LAST_SKIN_CHECK_COUNT.put(id, UUID_PLAYER_LAST_SKIN_CHECK_COUNT.get(id) + 1);
         }
 
         //modMessage("Player skin {" + name + "} unavailable for feature check. try number "+UUID_playerLastSkinCheckCount.get(id)+". Reason failed = "+(reason+1), false);
         ///give up after a few checks
-        if (etf$UUID_playerLastSkinCheckCount.get(id) > 5) {
-            etf$UUID_playerHasFeatures.put(id, false);
+        if (UUID_PLAYER_LAST_SKIN_CHECK_COUNT.get(id) > 5) {
+            UUID_PLAYER_HAS_FEATURES.put(id, false);
         }
-        etf$UUID_playerSkinDownloadedYet.remove(id);
+        UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.remove(id);
     }
 
     private static void directImageFromUrlToMethod(PlayerEntity player, NativeImage image, String sendFileToMethodKey, @Nullable NativeImage image2) {
@@ -914,15 +916,15 @@ public class ETFUtils {
             if (image != null) {
                 //optifine resizes them for space cause expensive servers I guess
                 if (image.getWidth() % image.getHeight() != 0) {
-                    registerNativeImageToIdentifier(resizeOptifineImage(image), etf$SKIN_NAMESPACE + id + "_cape.png");
+                    registerNativeImageToIdentifier(resizeOptifineImage(image), SKIN_NAMESPACE + id + "_cape.png");
                 } else {
-                    registerNativeImageToIdentifier(image, etf$SKIN_NAMESPACE + id + "_cape.png");
+                    registerNativeImageToIdentifier(image, SKIN_NAMESPACE + id + "_cape.png");
                 }
-                etf$UUID_playerHasCustomCape.put(id, true);
+                UUID_PLAYER_HAS_CUSTOM_CAPE.put(id, true);
             } else {
                 modMessage("Player skin {" + player.getName().getString() + "} no THIRD_PARTY_CAPE Found", false);
                 //registerNativeImageToIdentifier(getNativeImageFromID(new Identifier("etf:capes/error.png")), SKIN_NAMESPACE + id + "_cape.png");
-                etf$UUID_playerHasCustomCape.put(id, false);
+                UUID_PLAYER_HAS_CUSTOM_CAPE.put(id, false);
             }
 
         }
@@ -992,7 +994,7 @@ public class ETFUtils {
             ) {
                 //this has texture features
                 modMessage("Found Player {" + id + "} with texture features in skin.", false);
-                etf$UUID_playerHasFeatures.put(id, true);
+                UUID_PLAYER_HAS_FEATURES.put(id, true);
                 //find what features
                 //pink = -65281, blue = -256
                 //            pink   cyan     red       green      brown    blue     orange     yellow
@@ -1016,7 +1018,7 @@ public class ETFUtils {
                 if (noseUpper) {
                     deletePixels(skin, 43, 13, 44, 15);
                 }
-                etf$UUID_playerHasVillagerNose.put(id, noseLower || noseUpper);
+                UUID_PLAYER_HAS_VILLAGER_NOSE.put(id, noseLower || noseUpper);
 
                 //check for coat bottom
                 //pink to copy coat    light blue to remove from legs
@@ -1024,10 +1026,10 @@ public class ETFUtils {
                 int controllerCoat = choiceBoxChoices[1];
                 if (controllerCoat >= 1 && controllerCoat <= 8) {
                     int lengthOfCoat = choiceBoxChoices[2] - 1;
-                    Identifier coatID = new Identifier(etf$SKIN_NAMESPACE + id + "_coat.png");
+                    Identifier coatID = new Identifier(SKIN_NAMESPACE + id + "_coat.png");
                     coatSkin = getOrRemoveCoatTexture(skin, lengthOfCoat, controllerCoat >= 5);
                     registerNativeImageToIdentifier(coatSkin, coatID.toString());
-                    etf$UUID_playerHasCoat.put(id, true);
+                    UUID_PLAYER_HAS_COAT.put(id, true);
                     if (controllerCoat == 2 || controllerCoat == 4 || controllerCoat == 6 || controllerCoat == 8) {
                         //delete original pixel from skin
                         deletePixels(skin, 4, 32, 7, 35);
@@ -1036,18 +1038,18 @@ public class ETFUtils {
                         deletePixels(skin, 0, 52, 15, 52 + lengthOfCoat);
                     }
                     //red or green make fat coat
-                    etf$UUID_playerHasFatCoat.put(id, controllerCoat == 3 || controllerCoat == 4 || controllerCoat == 7 || controllerCoat == 8);
+                    UUID_PLAYER_HAS_FAT_COAT.put(id, controllerCoat == 3 || controllerCoat == 4 || controllerCoat == 7 || controllerCoat == 8);
 
 
                 } else {
-                    etf$UUID_playerHasCoat.put(id, false);
+                    UUID_PLAYER_HAS_COAT.put(id, false);
                 }
                 //check for transparency options
                 //System.out.println("about to check");
                 if (ETFConfigData.skinFeaturesEnableTransparency) {
                     if (canTransparentSkin(skin)) {
-                        Identifier transId = new Identifier(etf$SKIN_NAMESPACE + id + "_transparent.png");
-                        etf$UUID_playerTransparentSkinId.put(id, transId);
+                        Identifier transId = new Identifier(SKIN_NAMESPACE + id + "_transparent.png");
+                        UUID_PLAYER_TRANSPARENT_SKIN_ID.put(id, transId);
                         registerNativeImageToIdentifier(skin, transId.toString());
 
                     } else {
@@ -1061,20 +1063,20 @@ public class ETFUtils {
                 int blinkChoice = choiceBoxChoices[0];
                 if (blinkChoice >= 1 && blinkChoice <= 5) {
                     //check if lazy blink
-                    etf$PATH_HasBlink.put(etf$SKIN_NAMESPACE + id + ".png", true);
+                    PATH_HAS_BLINK_TEXTURE.put(SKIN_NAMESPACE + id + ".png", true);
                     if (blinkChoice <= 2) {
                         //blink 1 frame if either pink or blue optional
                         blinkSkinFile = returnOptimizedBlinkFace(skin, getSkinPixelBounds("face1"), 1, getSkinPixelBounds("face3"));
 
-                        registerNativeImageToIdentifier(blinkSkinFile, etf$SKIN_NAMESPACE + id + "_blink.png");
+                        registerNativeImageToIdentifier(blinkSkinFile, SKIN_NAMESPACE + id + "_blink.png");
 
                         //blink is 2 frames with blue optional
                         if (blinkChoice == 2) {
                             blinkSkinFile2 = returnOptimizedBlinkFace(skin, getSkinPixelBounds("face2"), 1, getSkinPixelBounds("face4"));
-                            etf$PATH_HasBlink2.put(etf$SKIN_NAMESPACE + id + ".png", true);
-                            registerNativeImageToIdentifier(blinkSkinFile2, etf$SKIN_NAMESPACE + id + "_blink2.png");
+                            PATH_HAS_BLINK_TEXTURE_2.put(SKIN_NAMESPACE + id + ".png", true);
+                            registerNativeImageToIdentifier(blinkSkinFile2, SKIN_NAMESPACE + id + "_blink2.png");
                         } else {
-                            etf$PATH_HasBlink2.put(etf$SKIN_NAMESPACE + id + ".png", false);
+                            PATH_HAS_BLINK_TEXTURE_2.put(SKIN_NAMESPACE + id + ".png", false);
                         }
                     } else {//optimized blink
                         int eyeHeightTopDown = choiceBoxChoices[3];
@@ -1085,31 +1087,31 @@ public class ETFUtils {
                         if (blinkChoice == 3) {
                             blinkSkinFile = returnOptimizedBlinkFace(skin, getSkinPixelBounds("optimizedEyeSmall"), eyeHeightTopDown);
 
-                            registerNativeImageToIdentifier(blinkSkinFile, etf$SKIN_NAMESPACE + id + "_blink.png");
+                            registerNativeImageToIdentifier(blinkSkinFile, SKIN_NAMESPACE + id + "_blink.png");
 
                         } else if (blinkChoice == 4) {
                             blinkSkinFile = returnOptimizedBlinkFace(skin, getSkinPixelBounds("optimizedEye2High"), eyeHeightTopDown);
                             blinkSkinFile2 = returnOptimizedBlinkFace(skin, getSkinPixelBounds("optimizedEye2High_second"), eyeHeightTopDown);
-                            etf$PATH_HasBlink2.put(etf$SKIN_NAMESPACE + id + ".png", true);
+                            PATH_HAS_BLINK_TEXTURE_2.put(SKIN_NAMESPACE + id + ".png", true);
 
-                            registerNativeImageToIdentifier(blinkSkinFile, etf$SKIN_NAMESPACE + id + "_blink.png");
-                            registerNativeImageToIdentifier(blinkSkinFile2, etf$SKIN_NAMESPACE + id + "_blink2.png");
+                            registerNativeImageToIdentifier(blinkSkinFile, SKIN_NAMESPACE + id + "_blink.png");
+                            registerNativeImageToIdentifier(blinkSkinFile2, SKIN_NAMESPACE + id + "_blink2.png");
                         } else /*if( blinkChoice == 5)*/ {
                             blinkSkinFile = returnOptimizedBlinkFace(skin, getSkinPixelBounds("optimizedEye4High"), eyeHeightTopDown);
                             blinkSkinFile2 = returnOptimizedBlinkFace(skin, getSkinPixelBounds("optimizedEye4High_second"), eyeHeightTopDown);
-                            etf$PATH_HasBlink2.put(etf$SKIN_NAMESPACE + id + ".png", true);
-                            registerNativeImageToIdentifier(blinkSkinFile, etf$SKIN_NAMESPACE + id + "_blink.png");
-                            registerNativeImageToIdentifier(blinkSkinFile2, etf$SKIN_NAMESPACE + id + "_blink2.png");
+                            PATH_HAS_BLINK_TEXTURE_2.put(SKIN_NAMESPACE + id + ".png", true);
+                            registerNativeImageToIdentifier(blinkSkinFile, SKIN_NAMESPACE + id + "_blink.png");
+                            registerNativeImageToIdentifier(blinkSkinFile2, SKIN_NAMESPACE + id + "_blink2.png");
                         }
                     }
 
 
                 }
-                if (!etf$PATH_HasBlink.containsKey(etf$SKIN_NAMESPACE + id + ".png")) {
-                    etf$PATH_HasBlink.put(etf$SKIN_NAMESPACE + id + ".png", false);
+                if (!PATH_HAS_BLINK_TEXTURE.containsKey(SKIN_NAMESPACE + id + ".png")) {
+                    PATH_HAS_BLINK_TEXTURE.put(SKIN_NAMESPACE + id + ".png", false);
                 }
-                if (!etf$PATH_HasBlink2.containsKey(etf$SKIN_NAMESPACE + id + ".png")) {
-                    etf$PATH_HasBlink2.put(etf$SKIN_NAMESPACE + id + ".png", false);
+                if (!PATH_HAS_BLINK_TEXTURE_2.containsKey(SKIN_NAMESPACE + id + ".png")) {
+                    PATH_HAS_BLINK_TEXTURE_2.put(SKIN_NAMESPACE + id + ".png", false);
                 }
 
                 //check for cape recolor
@@ -1140,12 +1142,12 @@ public class ETFUtils {
                 }
                 if (cape != null) {
                     if ((capeChoice1 >= 1 && capeChoice1 <= 3) || capeChoice1 == 666) {//custom chosen
-                        registerNativeImageToIdentifier(cape, etf$SKIN_NAMESPACE + id + "_cape.png");
-                        etf$UUID_playerHasCustomCape.put(id, true);
+                        registerNativeImageToIdentifier(cape, SKIN_NAMESPACE + id + "_cape.png");
+                        UUID_PLAYER_HAS_CUSTOM_CAPE.put(id, true);
                     }
                 }
-                if (!etf$UUID_playerHasCustomCape.containsKey(id)) {
-                    etf$UUID_playerHasCustomCape.put(id, false);
+                if (!UUID_PLAYER_HAS_CUSTOM_CAPE.containsKey(id)) {
+                    UUID_PLAYER_HAS_CUSTOM_CAPE.put(id, false);
                 }
 
 
@@ -1157,71 +1159,71 @@ public class ETFUtils {
                         getSkinPixelColourToNumber(skin.getColor(2, 18)));
 
                 //enchanted
-                etf$UUID_playerHasEnchant.put(id, markerChoices.contains(2));
+                UUID_PLAYER_HAS_ENCHANT.put(id, markerChoices.contains(2));
                 if (markerChoices.contains(2)) {
                     int[] boxChosenBounds = getSkinPixelBounds("marker" + (markerChoices.indexOf(2) + 1));
                     NativeImage check = returnMatchPixels(skin, boxChosenBounds);
                     if (check != null) {
-                        registerNativeImageToIdentifier(check, etf$SKIN_NAMESPACE + id + "_enchant.png");
+                        registerNativeImageToIdentifier(check, SKIN_NAMESPACE + id + "_enchant.png");
                         if (blinkSkinFile != null) {
                             NativeImage checkBlink = returnMatchPixels(blinkSkinFile, boxChosenBounds);
-                            registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkBlink, ETFUtils::emptyNativeImage), etf$SKIN_NAMESPACE + id + "_blink_enchant.png");
+                            registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkBlink, ETFUtils::emptyNativeImage), SKIN_NAMESPACE + id + "_blink_enchant.png");
                         }
                         if (blinkSkinFile2 != null) {
                             NativeImage checkBlink = returnMatchPixels(blinkSkinFile2, boxChosenBounds);
-                            registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkBlink, ETFUtils::emptyNativeImage), etf$SKIN_NAMESPACE + id + "_blink2_enchant.png");
+                            registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkBlink, ETFUtils::emptyNativeImage), SKIN_NAMESPACE + id + "_blink2_enchant.png");
                         }
                         if (coatSkin != null) {
                             NativeImage checkCoat = returnMatchPixels(coatSkin, boxChosenBounds);
-                            registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkCoat, ETFUtils::emptyNativeImage), etf$SKIN_NAMESPACE + id + "_coat_enchant.png");
+                            registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkCoat, ETFUtils::emptyNativeImage), SKIN_NAMESPACE + id + "_coat_enchant.png");
                         }
 
                         // NativeImage checkCape = returnMatchPixels(skin, boxChosenBounds,cape);
                         // registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkCape, this::emptyNativeImage), SKIN_NAMESPACE + id + "_cape_enchant.png");
 
                     } else {
-                        etf$UUID_playerHasEnchant.put(id, false);
+                        UUID_PLAYER_HAS_ENCHANT.put(id, false);
                     }
 
                 }
                 //emissives
-                etf$UUID_playerHasEmissive.put(id, markerChoices.contains(1));
+                UUID_PLAYER_HAS_EMISSIVE.put(id, markerChoices.contains(1));
                 if (markerChoices.contains(1)) {
                     int[] boxChosenBounds = getSkinPixelBounds("marker" + (markerChoices.indexOf(1) + 1));
                     NativeImage check = returnMatchPixels(skin, boxChosenBounds);
                     if (check != null) {
-                        registerNativeImageToIdentifier(check, etf$SKIN_NAMESPACE + id + "_e.png");
+                        registerNativeImageToIdentifier(check, SKIN_NAMESPACE + id + "_e.png");
                         if (blinkSkinFile != null) {
                             NativeImage checkBlink = returnMatchPixels(blinkSkinFile, boxChosenBounds);
-                            registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkBlink, ETFUtils::emptyNativeImage), etf$SKIN_NAMESPACE + id + "_blink_e.png");
+                            registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkBlink, ETFUtils::emptyNativeImage), SKIN_NAMESPACE + id + "_blink_e.png");
                         }
                         if (blinkSkinFile2 != null) {
                             NativeImage checkBlink = returnMatchPixels(blinkSkinFile2, boxChosenBounds);
-                            registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkBlink, ETFUtils::emptyNativeImage), etf$SKIN_NAMESPACE + id + "_blink2_e.png");
+                            registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkBlink, ETFUtils::emptyNativeImage), SKIN_NAMESPACE + id + "_blink2_e.png");
                         }
                         if (coatSkin != null) {
                             NativeImage checkCoat = returnMatchPixels(coatSkin, boxChosenBounds);
-                            registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkCoat, ETFUtils::emptyNativeImage), etf$SKIN_NAMESPACE + id + "_coat_e.png");
+                            registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkCoat, ETFUtils::emptyNativeImage), SKIN_NAMESPACE + id + "_coat_e.png");
                         }
 
                         //  NativeImage checkCape = returnMatchPixels(skin, boxChosenBounds,cape);
                         // registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkCape, this::emptyNativeImage), SKIN_NAMESPACE + id + "_cape_e.png");
 
                     } else {
-                        etf$UUID_playerHasEmissive.put(id, false);
+                        UUID_PLAYER_HAS_EMISSIVE.put(id, false);
                     }
 
                 }
 
             } else {
-                etf$UUID_playerHasFeatures.put(id, false);
+                UUID_PLAYER_HAS_FEATURES.put(id, false);
                 // System.out.println("worked but no features");
             }
         } else { //http failed
             //UUID_playerHasFeatures.put(id, false);
             skinFailed(id);
         }
-        etf$UUID_playerSkinDownloadedYet.put(id, true);
+        UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.put(id, true);
     }
 
     private static NativeImage emptyNativeImage() {
@@ -1453,31 +1455,31 @@ public class ETFUtils {
 
     public static Identifier returnBlinkIdOrGiven(LivingEntity entity, String givenTexturePath, UUID id, boolean isPlayer) {
         if (ETFConfigData.enableBlinking) {
-            if (!etf$PATH_HasBlink.containsKey(givenTexturePath)) {
+            if (!PATH_HAS_BLINK_TEXTURE.containsKey(givenTexturePath)) {
                 //check for blink textures
-                etf$PATH_HasBlink.put(givenTexturePath, isExistingFileAndSameOrHigherResourcepackAs(new Identifier(givenTexturePath.replace(".png", "_blink.png")), new Identifier(givenTexturePath), true));
-                etf$PATH_HasBlink2.put(givenTexturePath, isExistingFileAndSameOrHigherResourcepackAs(new Identifier(givenTexturePath.replace(".png", "_blink2.png")), new Identifier(givenTexturePath), true));
-                etf$PATH_BlinkProps.put(givenTexturePath, readProperties(givenTexturePath.replace(".png", "_blink.properties"), givenTexturePath));
+                PATH_HAS_BLINK_TEXTURE.put(givenTexturePath, isExistingFileAndSameOrHigherResourcepackAs(new Identifier(givenTexturePath.replace(".png", "_blink.png")), new Identifier(givenTexturePath), true));
+                PATH_HAS_BLINK_TEXTURE_2.put(givenTexturePath, isExistingFileAndSameOrHigherResourcepackAs(new Identifier(givenTexturePath.replace(".png", "_blink2.png")), new Identifier(givenTexturePath), true));
+                PATH_BLINK_PROPERTIES.put(givenTexturePath, readProperties(givenTexturePath.replace(".png", "_blink.properties"), givenTexturePath));
 
             }
-            etf$PATH_BlinkProps.putIfAbsent(givenTexturePath, null);
-            etf$PATH_HasBlink.putIfAbsent(givenTexturePath, false);
-            etf$PATH_HasBlink2.putIfAbsent(givenTexturePath, false);
-            if (etf$PATH_HasBlink.containsKey(givenTexturePath)) {
-                if (etf$PATH_HasBlink.get(givenTexturePath)) {
+            PATH_BLINK_PROPERTIES.putIfAbsent(givenTexturePath, null);
+            PATH_HAS_BLINK_TEXTURE.putIfAbsent(givenTexturePath, false);
+            PATH_HAS_BLINK_TEXTURE_2.putIfAbsent(givenTexturePath, false);
+            if (PATH_HAS_BLINK_TEXTURE.containsKey(givenTexturePath)) {
+                if (PATH_HAS_BLINK_TEXTURE.get(givenTexturePath)) {
                     if (entity.getPose() == EntityPose.SLEEPING) {
                         return new Identifier(givenTexturePath.replace(".png", "_blink.png"));
                     }
                     //force eyes closed if blinded
                     else if (entity.hasStatusEffect(StatusEffects.BLINDNESS)) {
-                        if (etf$PATH_HasBlink2.containsKey(givenTexturePath)) {
-                            return new Identifier(givenTexturePath.replace(".png", (etf$PATH_HasBlink2.get(givenTexturePath) ? "_blink2.png" : "_blink.png")));
+                        if (PATH_HAS_BLINK_TEXTURE_2.containsKey(givenTexturePath)) {
+                            return new Identifier(givenTexturePath.replace(".png", (PATH_HAS_BLINK_TEXTURE_2.get(givenTexturePath) ? "_blink2.png" : "_blink.png")));
                         } else {
                             return new Identifier(givenTexturePath.replace(".png", "_blink.png"));
                         }
                     } else {
                         //do regular blinking
-                        Properties props = etf$PATH_BlinkProps.get(givenTexturePath);
+                        Properties props = PATH_BLINK_PROPERTIES.get(givenTexturePath);
                         int blinkLength;
                         int blinkFrequency;
                         if (props != null) {
@@ -1500,15 +1502,15 @@ public class ETFUtils {
                         //if (blinkTimeVariedByUUID > blinkFrequency - blinkLength)
                         //  blinkTimeVariedByUUID = blinkFrequency - blinkLength;
 
-                        if (!etf$UUID_NextBlinkTime.containsKey(id)) {
-                            etf$UUID_NextBlinkTime.put(id, entity.world.getTime() + blinkLength + 1);
+                        if (!UUID_NEXT_BLINK_TIME.containsKey(id)) {
+                            UUID_NEXT_BLINK_TIME.put(id, entity.world.getTime() + blinkLength + 1);
                         }
-                        long nextBlink = etf$UUID_NextBlinkTime.get(id);
+                        long nextBlink = UUID_NEXT_BLINK_TIME.get(id);
                         long currentTime = entity.world.getTime();
 
                         if (currentTime >= nextBlink - blinkLength && currentTime <= nextBlink + blinkLength) {
-                            if (etf$PATH_HasBlink2.containsKey(givenTexturePath)) {
-                                if (etf$PATH_HasBlink2.get(givenTexturePath)) {
+                            if (PATH_HAS_BLINK_TEXTURE_2.containsKey(givenTexturePath)) {
+                                if (PATH_HAS_BLINK_TEXTURE_2.get(givenTexturePath)) {
                                     if (currentTime >= nextBlink - (blinkLength / 3) && currentTime <= nextBlink + (blinkLength / 3)) {
                                         return new Identifier(givenTexturePath.replace(".png", "_blink.png"));
                                     }
@@ -1520,7 +1522,7 @@ public class ETFUtils {
                             }
                         } else if (currentTime > nextBlink + blinkLength) {
                             //calculate new next blink
-                            etf$UUID_NextBlinkTime.put(id, currentTime + entity.getRandom().nextInt(blinkFrequency) + 20);
+                            UUID_NEXT_BLINK_TIME.put(id, currentTime + entity.getRandom().nextInt(blinkFrequency) + 20);
                         }
                     }
                 }
@@ -1528,9 +1530,9 @@ public class ETFUtils {
         }
 
         if (isPlayer && ETFConfigData.skinFeaturesEnabled
-                && etf$UUID_playerTransparentSkinId.containsKey(id) && (ETFConfigData.enableEnemyTeamPlayersSkinFeatures
+                && UUID_PLAYER_TRANSPARENT_SKIN_ID.containsKey(id) && (ETFConfigData.enableEnemyTeamPlayersSkinFeatures
                 || (entity.isTeammate(MinecraftClient.getInstance().player) || entity.getScoreboardTeam() == null))) {
-            Identifier ident = etf$UUID_playerTransparentSkinId.get(id);
+            Identifier ident = UUID_PLAYER_TRANSPARENT_SKIN_ID.get(id);
             if (ident != null) {
                 return ident;
             }
@@ -1544,14 +1546,14 @@ public class ETFUtils {
         if (entity == null) return texture;
         UUID id = entity.getUuid();
         if (ETFConfigData.enableCustomTextures) {
-            if (etf$UUID_randomTextureSuffix.containsKey(id)) {
-                if (etf$UUID_randomTextureSuffix.get(id) != 0) {
-                    return returnBlinkIdOrGiven((LivingEntity) entity, returnOptifineOrVanillaIdentifier(texture.toString(), etf$UUID_randomTextureSuffix.get(id)).toString(), id);
+            if (UUID_RANDOM_TEXTURE_SUFFIX.containsKey(id)) {
+                if (UUID_RANDOM_TEXTURE_SUFFIX.get(id) != 0) {
+                    return returnBlinkIdOrGiven((LivingEntity) entity, returnOptifineOrVanillaIdentifier(texture.toString(), UUID_RANDOM_TEXTURE_SUFFIX.get(id)).toString(), id);
                 } else {
-                    if (!etf$PATH_HasOptifineDefaultReplacement.containsKey(texture.toString())) {
-                        etf$PATH_HasOptifineDefaultReplacement.put(texture.toString(), isExistingNativeImageFile(returnOptifineOrVanillaIdentifier(texture.toString())));
+                    if (!PATH_HAS_DEFAULT_REPLACEMENT.containsKey(texture.toString())) {
+                        PATH_HAS_DEFAULT_REPLACEMENT.put(texture.toString(), isExistingNativeImageFile(returnOptifineOrVanillaIdentifier(texture.toString())));
                     }
-                    if (etf$PATH_HasOptifineDefaultReplacement.get(texture.toString())) {
+                    if (PATH_HAS_DEFAULT_REPLACEMENT.get(texture.toString())) {
                         return returnBlinkIdOrGiven((LivingEntity) entity, returnOptifineOrVanillaIdentifier(texture.toString()).toString(), id);
                     } else {
                         return returnBlinkIdOrGiven((LivingEntity) entity, texture.toString(), id);
@@ -1570,24 +1572,24 @@ public class ETFUtils {
     public static void generalEmissiveRender(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, Identifier texture, Model model) {
         if (ETFConfigData.enableEmissiveTextures) {
             String fileString = texture.toString();
-            if (!etf$PATH_EmissiveTextureIdentifier.containsKey(fileString)) {
+            if (!PATH_EMISSIVE_TEXTURE_IDENTIFIER.containsKey(fileString)) {
                 //creates and sets emissive for texture if it exists
                 Identifier fileName_e;
                 for (String suffix1 :
-                        etf$emissiveSuffixes) {
+                        emissiveSuffixes) {
                     fileName_e = new Identifier(fileString.replace(".png", suffix1 + ".png"));
                     if (isExistingNativeImageFile(fileName_e)) {
-                        etf$PATH_EmissiveTextureIdentifier.put(fileString, fileName_e);
+                        PATH_EMISSIVE_TEXTURE_IDENTIFIER.put(fileString, fileName_e);
                         break;
                     }
                 }
-                if (!etf$PATH_EmissiveTextureIdentifier.containsKey(fileString)) {
-                    etf$PATH_EmissiveTextureIdentifier.put(fileString, null);
+                if (!PATH_EMISSIVE_TEXTURE_IDENTIFIER.containsKey(fileString)) {
+                    PATH_EMISSIVE_TEXTURE_IDENTIFIER.put(fileString, null);
                 }
             }
-            if (etf$PATH_EmissiveTextureIdentifier.containsKey(fileString)) {
-                if (etf$PATH_EmissiveTextureIdentifier.get(fileString) != null) {
-                    VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(etf$PATH_EmissiveTextureIdentifier.get(fileString), true));
+            if (PATH_EMISSIVE_TEXTURE_IDENTIFIER.containsKey(fileString)) {
+                if (PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString) != null) {
+                    VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString), true));
                     //one check most efficient instead of before and after applying
                     if (ETFConfigData.doShadersEmissiveFix) {
                         matrixStack.scale(1.01f, 1.01f, 1.01f);
@@ -1609,29 +1611,29 @@ public class ETFUtils {
     public static void generalEmissiveRenderPart(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, Identifier texture, ModelPart modelPart) {
         if (ETFConfigData.enableEmissiveTextures) {
             String fileString = texture.toString();
-            if (!etf$PATH_EmissiveTextureIdentifier.containsKey(fileString)) {
+            if (!PATH_EMISSIVE_TEXTURE_IDENTIFIER.containsKey(fileString)) {
                 //creates and sets emissive for texture if it exists
                 Identifier fileName_e;
                 for (String suffix1 :
-                        etf$emissiveSuffixes) {
+                        emissiveSuffixes) {
                     fileName_e = new Identifier(fileString.replace(".png", suffix1 + ".png"));
                     if (isExistingNativeImageFile(fileName_e)) {
-                        etf$PATH_EmissiveTextureIdentifier.put(fileString, fileName_e);
+                        PATH_EMISSIVE_TEXTURE_IDENTIFIER.put(fileString, fileName_e);
                         break;
                     }
                 }
-                if (!etf$PATH_EmissiveTextureIdentifier.containsKey(fileString)) {
-                    etf$PATH_EmissiveTextureIdentifier.put(fileString, null);
+                if (!PATH_EMISSIVE_TEXTURE_IDENTIFIER.containsKey(fileString)) {
+                    PATH_EMISSIVE_TEXTURE_IDENTIFIER.put(fileString, null);
                 }
             }
-            if (etf$PATH_EmissiveTextureIdentifier.containsKey(fileString)) {
-                if (etf$PATH_EmissiveTextureIdentifier.get(fileString) != null) {
-                    VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getItemEntityTranslucentCull(etf$PATH_EmissiveTextureIdentifier.get(fileString)));
+            if (PATH_EMISSIVE_TEXTURE_IDENTIFIER.containsKey(fileString)) {
+                if (PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString) != null) {
+                    VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getItemEntityTranslucentCull(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString)));
                     //one check most efficient instead of before and after applying
                     if (ETFConfigData.doShadersEmissiveFix) {
                         matrixStack.scale(1.01f, 1.01f, 1.01f);
-                        if (etf$irisDetected) {
-                            textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(etf$PATH_EmissiveTextureIdentifier.get(fileString), true));
+                        if (irisDetected) {
+                            textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString), true));
                             modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV);
                         } else {
                             modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV);
@@ -1639,8 +1641,8 @@ public class ETFUtils {
                         //modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.public static _UV,1,1,1,1);
                         matrixStack.scale(1f, 1f, 1f);
                     } else {
-                        if (etf$irisDetected) {
-                            textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(etf$PATH_EmissiveTextureIdentifier.get(fileString), true));
+                        if (irisDetected) {
+                            textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString), true));
                             modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV);
                         } else {
                             modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV);
@@ -1655,24 +1657,24 @@ public class ETFUtils {
     public static VertexConsumer generalEmissiveGetVertexConsumer(String fileString, VertexConsumerProvider vertexConsumerProvider) {
         if (ETFConfigData.enableEmissiveTextures) {
             //String fileString = texture.toString();
-            if (!etf$PATH_EmissiveTextureIdentifier.containsKey(fileString)) {
+            if (!PATH_EMISSIVE_TEXTURE_IDENTIFIER.containsKey(fileString)) {
                 //creates and sets emissive for texture if it exists
                 Identifier fileName_e;
                 for (String suffix1 :
-                        etf$emissiveSuffixes) {
+                        emissiveSuffixes) {
                     fileName_e = new Identifier(fileString.replace(".png", suffix1 + ".png"));
                     if (isExistingNativeImageFile(fileName_e)) {
-                        etf$PATH_EmissiveTextureIdentifier.put(fileString, fileName_e);
+                        PATH_EMISSIVE_TEXTURE_IDENTIFIER.put(fileString, fileName_e);
                         break;
                     }
                 }
-                if (!etf$PATH_EmissiveTextureIdentifier.containsKey(fileString)) {
-                    etf$PATH_EmissiveTextureIdentifier.put(fileString, null);
+                if (!PATH_EMISSIVE_TEXTURE_IDENTIFIER.containsKey(fileString)) {
+                    PATH_EMISSIVE_TEXTURE_IDENTIFIER.put(fileString, null);
                 }
             }
-            if (etf$PATH_EmissiveTextureIdentifier.containsKey(fileString)) {
-                if (etf$PATH_EmissiveTextureIdentifier.get(fileString) != null) {
-                    return vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(etf$PATH_EmissiveTextureIdentifier.get(fileString), true));
+            if (PATH_EMISSIVE_TEXTURE_IDENTIFIER.containsKey(fileString)) {
+                if (PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString) != null) {
+                    return vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString), true));
                     //one check most efficient instead of before and after applying
 
                 }

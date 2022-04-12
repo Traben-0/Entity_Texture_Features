@@ -44,9 +44,9 @@ public abstract class MixinVillagerClothingFeatureRenderer<T extends LivingEntit
             cir.setReturnValue(
                     switch (keyType) {
                         //base villager uses  suffix1
-                        case "type" -> etf$returnAltered(cir.getReturnValue(), etf$UUID_randomTextureSuffix2, etf$UUID_hasUpdatableRandomCases2);
-                        case "profession" -> etf$returnAltered(cir.getReturnValue(), etf$UUID_randomTextureSuffix3, etf$UUID_hasUpdatableRandomCases3);
-                        case "profession_level" -> etf$returnAltered(cir.getReturnValue(), etf$UUID_randomTextureSuffix4, etf$UUID_hasUpdatableRandomCases4);
+                        case "type" -> etf$returnAltered(cir.getReturnValue(), UUID_RANDOM_TEXTURE_SUFFIX_2, UUID_HAS_UPDATABLE_RANDOM_CASES_2);
+                        case "profession" -> etf$returnAltered(cir.getReturnValue(), UUID_RANDOM_TEXTURE_SUFFIX_3, UUID_HAS_UPDATABLE_RANDOM_CASES_3);
+                        case "profession_level" -> etf$returnAltered(cir.getReturnValue(), UUID_RANDOM_TEXTURE_SUFFIX_4, UUID_HAS_UPDATABLE_RANDOM_CASES_4);
                         default -> cir.getReturnValue();
                     });
 
@@ -60,10 +60,10 @@ public abstract class MixinVillagerClothingFeatureRenderer<T extends LivingEntit
     private Identifier etf$returnAltered(Identifier vanillaTexture, HashMap<UUID, Integer> UUID_RandomSuffixMap, HashMap<UUID, Boolean> UUID_HasUpdateables) {
         UUID id = etf$villager.getUuid();
         if (ETFConfigData.enableCustomTextures) {
-            if (!etf$PATH_OptifineOrTrueRandom.containsKey(vanillaTexture.toString())) {
+            if (!PATH_OPTIFINE_OR_JUST_RANDOM.containsKey(vanillaTexture.toString())) {
                 ETFUtils.processNewRandomTextureCandidate(vanillaTexture.toString());
-            } else if (etf$PATH_OptifineOldVanillaetf$0123.containsKey(vanillaTexture.toString())) {
-                if (etf$PATH_OptifineOrTrueRandom.get(vanillaTexture.toString())) {
+            } else if (PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.containsKey(vanillaTexture.toString())) {
+                if (PATH_OPTIFINE_OR_JUST_RANDOM.get(vanillaTexture.toString())) {
                     if (!UUID_RandomSuffixMap.containsKey(id)) {
                         ETFUtils.testCases(vanillaTexture.toString(), id, etf$villager, false, UUID_RandomSuffixMap, UUID_HasUpdateables);
                         //if all failed set to vanilla
@@ -75,10 +75,10 @@ public abstract class MixinVillagerClothingFeatureRenderer<T extends LivingEntit
                     if (UUID_RandomSuffixMap.containsKey(id)) {
                         if (UUID_RandomSuffixMap.get(id) != 0) {
                             Identifier randomTexture = ETFUtils.returnOptifineOrVanillaIdentifier(vanillaTexture.toString(), UUID_RandomSuffixMap.get(id));
-                            if (!etf$PATH_VillagerIsExistingFeature.containsKey(randomTexture.toString())) {
-                                etf$PATH_VillagerIsExistingFeature.put(randomTexture.toString(), ETFUtils.isExistingNativeImageFile(randomTexture));
+                            if (!PATH_VILLAGER_IS_EXISTING_FEATURE.containsKey(randomTexture.toString())) {
+                                PATH_VILLAGER_IS_EXISTING_FEATURE.put(randomTexture.toString(), ETFUtils.isExistingNativeImageFile(randomTexture));
                             }
-                            if (etf$PATH_VillagerIsExistingFeature.get(randomTexture.toString())) {
+                            if (PATH_VILLAGER_IS_EXISTING_FEATURE.get(randomTexture.toString())) {
                                 //can use random texture
                                 return randomTexture;
                             }
@@ -86,12 +86,12 @@ public abstract class MixinVillagerClothingFeatureRenderer<T extends LivingEntit
                     }
                 } else {
                     UUID_HasUpdateables.put(id, false);
-                    if (etf$PATH_TotalTrueRandom.get(vanillaTexture.toString()) > 0) {
+                    if (PATH_TOTAL_TRUE_RANDOM.get(vanillaTexture.toString()) > 0) {
                         if (!UUID_RandomSuffixMap.containsKey(id)) {
                             int randomReliable = Math.abs(id.hashCode());
-                            randomReliable %= etf$PATH_TotalTrueRandom.get(vanillaTexture.toString());
+                            randomReliable %= PATH_TOTAL_TRUE_RANDOM.get(vanillaTexture.toString());
                             randomReliable++;
-                            if (randomReliable == 1 && etf$PATH_ignoreOnePNG.get(vanillaTexture.toString())) {
+                            if (randomReliable == 1 && PATH_IGNORE_ONE_PNG.get(vanillaTexture.toString())) {
                                 randomReliable = 0;
                             }
                             UUID_RandomSuffixMap.put(id, randomReliable);
