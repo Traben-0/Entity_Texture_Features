@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import traben.entity_texture_features.client.ETFUtils;
 
-import static traben.entity_texture_features.client.ETF_CLIENT.irisDetected;
+import static traben.entity_texture_features.client.ETFClient.irisDetected;
 
 
 @Mixin(SimpleResourceReload.class)

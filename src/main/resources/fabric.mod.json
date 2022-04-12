@@ -22,7 +22,7 @@
   "environment": "client",
   "entrypoints": {
     "client": [
-      "traben.entity_texture_features.client.ETF_CLIENT"
+      "traben.entity_texture_features.client.ETFClient"
     ],
     "modmenu": [
       "traben.entity_texture_features.config.ETFModMenu"

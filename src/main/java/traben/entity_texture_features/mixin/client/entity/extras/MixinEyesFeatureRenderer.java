@@ -23,7 +23,7 @@ import traben.entity_texture_features.client.ETFUtils;
 
 import java.util.UUID;
 
-import static traben.entity_texture_features.client.ETF_CLIENT.*;
+import static traben.entity_texture_features.client.ETFClient.*;
 
 @Mixin(EyesFeatureRenderer.class)
 public abstract class MixinEyesFeatureRenderer<T extends Entity, M extends EntityModel<T>> extends FeatureRenderer<T, M> {

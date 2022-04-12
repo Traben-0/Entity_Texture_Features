@@ -34,7 +34,8 @@ import traben.entity_texture_features.config.ETFConfig;
 
 import java.util.UUID;
 
-import static traben.entity_texture_features.client.ETF_CLIENT.*;
+import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
+import static traben.entity_texture_features.client.ETFClient.*;
 
 @SuppressWarnings("rawtypes")
 @Mixin(LivingEntityRenderer.class)

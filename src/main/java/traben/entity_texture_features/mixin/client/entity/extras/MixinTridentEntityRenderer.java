@@ -19,7 +19,7 @@ import traben.entity_texture_features.client.ETFUtils;
 import java.util.UUID;
 
 import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
-import static traben.entity_texture_features.client.ETF_CLIENT.UUID_TRIDENT_NAME;
+import static traben.entity_texture_features.client.ETFClient.UUID_TRIDENT_NAME;
 
 @Mixin(TridentEntityRenderer.class)
 public abstract class MixinTridentEntityRenderer implements SynchronousResourceReloader {

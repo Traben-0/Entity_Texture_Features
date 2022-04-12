@@ -13,7 +13,7 @@ import traben.entity_texture_features.client.ETFUtils;
 import java.awt.*;
 
 import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
-import static traben.entity_texture_features.client.ETF_CLIENT.irisDetected;
+import static traben.entity_texture_features.client.ETFClient.irisDetected;
 
 public class ETFConfigScreen {
     public Screen getConfigScreen(Screen parent, boolean isTransparent) {
@@ -276,11 +276,21 @@ public class ETFConfigScreen {
                 .build()); // Builds the option entry for cloth config
         builder.setSavingRunnable(() -> {
             // Serialise the config into the config file. This will be called last after all variables are updated.
-            ETFUtils.saveConfig();
-            ETFUtils.resetVisuals();
+            saveConfig();
+            resetVisuals();
 
         });
         //MinecraftClient.getInstance().openScreen(screen);
         return builder.setTransparentBackground(isTransparent).build();
+    }
+
+    //this needs to be here due to puzzle mod compatibility, remove this when the full release happens
+    public void saveConfig() {
+        ETFUtils.saveConfig();
+    }
+
+    //same as above
+    public void resetVisuals() {
+        ETFUtils.resetVisuals();
     }
 }
