@@ -106,9 +106,20 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
         Identifier textureIdentifier = getTexture(entity);
 
         //this is to support inspectio or other abstract rendering mods
+        //checks a few possibilities to detect if the displayed entity is actually in a special rendering window
         if (inEntity.getBlockStateAtPos() == null) {
             return textureIdentifier;
         } else if (inEntity.getBlockStateAtPos().isOf(Blocks.VOID_AIR)) {
+            //used to trigger inspecios inventory renderer
+            // an unintended but acceptable result is an entity in the void will render as vanilla always
+            return textureIdentifier;
+        } else if (inEntity.getBlockPos() == null) {
+            return textureIdentifier;
+        } else if (inEntity.getBlockPos().getX() == 0 &&
+                inEntity.getBlockPos().getY() == 0 &&
+                inEntity.getBlockPos().getZ() == 0) {
+            //triggers inspecio inventory renderer
+            // an unintended but acceptable result is an entity at 0,0,0 will render as vanilla always
             return textureIdentifier;
         }
 
