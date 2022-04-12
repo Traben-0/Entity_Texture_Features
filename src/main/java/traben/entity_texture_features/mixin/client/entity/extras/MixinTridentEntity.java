@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static traben.entity_texture_features.client.ETF_CLIENT.UUID_TRIDENT_NAME;
+import static traben.entity_texture_features.client.ETFClient.UUID_TRIDENT_NAME;
 
 @Mixin(TridentEntity.class)
 public abstract class MixinTridentEntity {

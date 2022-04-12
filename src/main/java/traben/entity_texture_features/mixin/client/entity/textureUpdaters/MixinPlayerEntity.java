@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static traben.entity_texture_features.client.ETF_CLIENT.UUID_ENTITY_AWAITING_DATA_CLEARING;
+import static traben.entity_texture_features.client.ETFClient.UUID_ENTITY_AWAITING_DATA_CLEARING;
 
 @Mixin(PlayerEntity.class)
 public abstract class MixinPlayerEntity {

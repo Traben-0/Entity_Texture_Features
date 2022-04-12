@@ -8,7 +8,8 @@ import net.minecraft.entity.passive.WolfEntity;
 
 import java.util.*;
 
-import static traben.entity_texture_features.client.ETF_CLIENT.*;
+import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
+import static traben.entity_texture_features.client.ETFClient.*;
 
 public class ETFTexturePropertyCase {
     private final Integer[] weightedSuffixes;
