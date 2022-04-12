@@ -88,8 +88,6 @@ the name of the trident with spaces replaces with "_" and any non letters ignore
 
 </td>
 </tr>
-</table>
-<table>
 <tr>
 <td>
 <img src="https://static.wikia.nocookie.net/minecraft_gamepedia/images/1/1c/Red_Mooshroom_JE4.png/revision/latest/scale-to-width-down/150?cb=20200510033824" alt="img" width="128"/>
@@ -102,9 +100,6 @@ of the respective mooshroom.
 
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <td>
 <img src="https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/98/Elytra_%28item%29_JE2_BE2.png/revision/latest/scale-to-width-down/160?cb=20190406130540" alt="img" width="64"/>
@@ -112,20 +107,30 @@ of the respective mooshroom.
 <td>
 
 - Custom elytras are handled by the CIT resewn mod, and may utilise ETF emissive textures only
-- You can also use the Player skin feature options for custom capes to have a custom elytra, though this does not yet support emissive textures
+- You can also use the Player skin feature options for custom capes to have a custom elytra, though this does not yet
+  support emissive textures
 
 </td>
 </tr>
-</table>
-
-<table>
 <tr>
 <td>
 <img src="https://static.wikia.nocookie.net/minecraft_gamepedia/images/0/06/Shulker.png/revision/latest/scale-to-width-down/300?cb=20200107095352" alt="img" width="64"/>
 </td>
 <td>
 
-- Shulkers will only use the base un-coloured shulker.properties for custom settings (no shulker_black.properties), the other coloured textures will still apply as the default to those entities
+- Shulkers will only use the base un-coloured shulker.properties for custom settings (no shulker_black.properties), the
+  other coloured textures will still apply as the default to those entities
+
+</td>
+</tr>
+<tr>
+<td>
+<img src="lecternBook.png" alt="img" width="150"/>
+</td>
+<td>
+
+- If a custom book texture is placed in *"minecraft/textures/entity/lectern_book.png"*, it will overwrite the book of
+  the lectern block
 
 </td>
 </tr>

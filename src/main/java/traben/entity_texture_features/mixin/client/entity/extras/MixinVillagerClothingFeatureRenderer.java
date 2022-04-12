@@ -20,8 +20,8 @@ import traben.entity_texture_features.client.ETFUtils;
 import java.util.HashMap;
 import java.util.UUID;
 
-import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
 import static traben.entity_texture_features.client.ETFClient.*;
+import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
 
 @Mixin(VillagerClothingFeatureRenderer.class)
 public abstract class MixinVillagerClothingFeatureRenderer<T extends LivingEntity & VillagerDataContainer, M extends EntityModel<T> & ModelWithHat> extends FeatureRenderer<T, M> {
@@ -76,10 +76,10 @@ public abstract class MixinVillagerClothingFeatureRenderer<T extends LivingEntit
                     if (UUID_RandomSuffixMap.containsKey(id)) {
                         if (UUID_RandomSuffixMap.get(id) != 0) {
                             Identifier randomTexture = ETFUtils.returnOptifineOrVanillaIdentifier(vanillaTexture.toString(), UUID_RandomSuffixMap.get(id));
-                            if (!PATH_VILLAGER_IS_EXISTING_FEATURE.containsKey(randomTexture.toString())) {
-                                PATH_VILLAGER_IS_EXISTING_FEATURE.put(randomTexture.toString(), ETFUtils.isExistingNativeImageFile(randomTexture));
+                            if (!PATH_IS_EXISTING_FEATURE.containsKey(randomTexture.toString())) {
+                                PATH_IS_EXISTING_FEATURE.put(randomTexture.toString(), ETFUtils.isExistingNativeImageFile(randomTexture));
                             }
-                            if (PATH_VILLAGER_IS_EXISTING_FEATURE.get(randomTexture.toString())) {
+                            if (PATH_IS_EXISTING_FEATURE.get(randomTexture.toString())) {
                                 //can use random texture
                                 return randomTexture;
                             }

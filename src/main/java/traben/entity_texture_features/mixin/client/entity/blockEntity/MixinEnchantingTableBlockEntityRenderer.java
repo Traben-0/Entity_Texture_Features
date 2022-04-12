@@ -30,9 +30,9 @@ public abstract class MixinEnchantingTableBlockEntityRenderer implements BlockEn
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/BookModel;renderBook(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V",
                     shift = At.Shift.AFTER))
     private void etf$applyEmissiveBook(EnchantingTableBlockEntity enchantingTableBlockEntity, float f, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j, CallbackInfo ci) {
-
-        String texture = BOOK_TEXTURE.getTextureId().toString();
-        VertexConsumer etf$vertex = ETFUtils.generalEmissiveGetVertexConsumer(texture, vertexConsumerProvider, true);
+        //BOOK_TEXTURE.getTextureId().toString()
+        String texture = "minecraft:textures/entity/enchanting_table_book.png";
+        VertexConsumer etf$vertex = ETFUtils.generalEmissiveGetVertexConsumer(texture, vertexConsumerProvider, false);
         if (etf$vertex != null) {
             this.book.renderBook(matrixStack, etf$vertex, 15728640, j, 1, 1, 1, 1);
         }

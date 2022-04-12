@@ -21,8 +21,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.client.ETFUtils;
 
+import static traben.entity_texture_features.client.ETFClient.PATH_EMISSIVE_TEXTURE_IDENTIFIER;
+import static traben.entity_texture_features.client.ETFClient.emissiveSuffixes;
 import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
-import static traben.entity_texture_features.client.ETFClient.*;
 
 @Mixin(ArmorFeatureRenderer.class)
 public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extends BipedEntityModel<T>, A extends BipedEntityModel<T>> extends FeatureRenderer<T, M> {
@@ -60,8 +61,14 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
             }
             if (PATH_EMISSIVE_TEXTURE_IDENTIFIER.containsKey(fileString)) {
                 if (PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString) != null) {
-                    //VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(Texture_Emissive.get(fileString), true));
-                    VertexConsumer textureVert = ItemRenderer.getArmorGlintConsumer(vertexConsumers, RenderLayer.getBeaconBeam(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString), true), false, usesSecondLayer);
+                    VertexConsumer textureVert;// = ItemRenderer.getArmorGlintConsumer(vertexConsumers, RenderLayer.getBeaconBeam(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString), true), false, usesSecondLayer);
+                    if (ETFConfigData.fullBrightEmissives) {
+                        textureVert = ItemRenderer.getArmorGlintConsumer(vertexConsumers, RenderLayer.getBeaconBeam(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString), true), false, usesSecondLayer);
+                    } else {
+                        textureVert = ItemRenderer.getArmorGlintConsumer(vertexConsumers, RenderLayer.getEntityTranslucent(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString)), false, usesSecondLayer);
+                    }
+
+
                     //one check most efficient instead of before and after applying
                     if (ETFConfigData.doShadersEmissiveFix) {
                         matrices.scale(1.01f, 1.01f, 1.01f);

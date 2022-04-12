@@ -34,8 +34,8 @@ import traben.entity_texture_features.config.ETFConfig;
 
 import java.util.UUID;
 
-import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
 import static traben.entity_texture_features.client.ETFClient.*;
+import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
 
 @SuppressWarnings("rawtypes")
 @Mixin(LivingEntityRenderer.class)
@@ -127,90 +127,13 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
             }
             if (ETFConfigData.enableCustomTextures) {
                 try {
-                    if (!PATH_OPTIFINE_OR_JUST_RANDOM.containsKey(texturePath)) {
-
-                        ETFUtils.processNewRandomTextureCandidate(texturePath);
-                    }
-                    if (PATH_OPTIFINE_OR_JUST_RANDOM.containsKey(texturePath)) {
-                        //if needs to check if change required
-                        if (UUID_ENTITY_AWAITING_DATA_CLEARING.containsKey(id)) {
-                            if (UUID_RANDOM_TEXTURE_SUFFIX.containsKey(id)) {
-                                if (!UUID_HAS_UPDATABLE_RANDOM_CASES.containsKey(id)) {
-                                    UUID_HAS_UPDATABLE_RANDOM_CASES.put(id, true);
-                                }
-                                if (UUID_HAS_UPDATABLE_RANDOM_CASES.get(id)) {
-                                    //skip a few ticks
-                                    //UUID_entityAwaitingDataClearing.put(id, UUID_entityAwaitingDataClearing.get(id)+1);
-                                    if (UUID_ENTITY_AWAITING_DATA_CLEARING.get(id) + 100 < System.currentTimeMillis()) {
-                                        if (PATH_OPTIFINE_OR_JUST_RANDOM.get(texturePath)) {
-                                            //if (UUID_randomTextureSuffix.containsKey(id)) {
-                                            int hold = UUID_RANDOM_TEXTURE_SUFFIX.get(id);
-                                            ETFUtils.resetSingleData(id);
-                                            ETFUtils.testCases(texturePath, id, entity, true, UUID_RANDOM_TEXTURE_SUFFIX, UUID_HAS_UPDATABLE_RANDOM_CASES);
-                                            //if didnt change keep the same
-                                            if (!UUID_RANDOM_TEXTURE_SUFFIX.containsKey(id)) {
-                                                UUID_RANDOM_TEXTURE_SUFFIX.put(id, hold);
-                                            }
-                                            //}
-                                        }//else here would do something for true random but no need really - may optimise this
-
-                                        UUID_ENTITY_AWAITING_DATA_CLEARING.remove(id);
-                                    }
-                                } else {
-                                    UUID_ENTITY_AWAITING_DATA_CLEARING.remove(id);
-                                }
-                            }
-
-                        }
-                        if (PATH_OPTIFINE_OR_JUST_RANDOM.get(texturePath)) {//optifine random
-                            //if it doesn't have a random already assign one
-                            if (!UUID_RANDOM_TEXTURE_SUFFIX.containsKey(id)) {
-                                ETFUtils.testCases(texturePath, id, entity, false);
-                                //if all failed set to vanilla
-                                if (!UUID_RANDOM_TEXTURE_SUFFIX.containsKey(id)) {
-                                    UUID_RANDOM_TEXTURE_SUFFIX.put(id, 0);
-                                }
-                                UUID_ENTITY_ALREADY_CALCULATED.add(id);
-                            }
-                            // System.out.println("suffix was ="+UUID_randomTextureSuffix.get(id));
-                            if (UUID_RANDOM_TEXTURE_SUFFIX.get(id) == 0) {
-                                if (!PATH_HAS_DEFAULT_REPLACEMENT.containsKey(textureIdentifier.toString())) {
-                                    PATH_HAS_DEFAULT_REPLACEMENT.put(textureIdentifier.toString(), ETFUtils.isExistingNativeImageFile(ETFUtils.returnOptifineOrVanillaIdentifier(texturePath)));
-                                }
-                                if (PATH_HAS_DEFAULT_REPLACEMENT.get(textureIdentifier.toString())) {
-                                    return ETFUtils.returnBlinkIdOrGiven(entity, ETFUtils.returnOptifineOrVanillaIdentifier(texturePath).toString(), id);
-                                }//elses to vanilla
-
-                            } else {
-                                return ETFUtils.returnBlinkIdOrGiven(entity, ETFUtils.returnOptifineOrVanillaIdentifier(texturePath, UUID_RANDOM_TEXTURE_SUFFIX.get(id)).toString(), id);
-                            }
-
-                        } else {//true random assign
-                            UUID_HAS_UPDATABLE_RANDOM_CASES.put(id, false);
-                            if (PATH_TOTAL_TRUE_RANDOM.get(texturePath) > 0) {
-                                if (!UUID_RANDOM_TEXTURE_SUFFIX.containsKey(id)) {
-                                    int randomReliable = Math.abs(id.hashCode());
-                                    randomReliable %= PATH_TOTAL_TRUE_RANDOM.get(texturePath);
-                                    randomReliable++;
-                                    if (randomReliable == 1 && PATH_IGNORE_ONE_PNG.get(texturePath)) {
-                                        randomReliable = 0;
-                                    }
-                                    UUID_RANDOM_TEXTURE_SUFFIX.put(id, randomReliable);
-                                    UUID_ENTITY_ALREADY_CALCULATED.add(id);
-                                }
-                                if (UUID_RANDOM_TEXTURE_SUFFIX.get(id) == 0) {
-                                    return ETFUtils.returnBlinkIdOrGiven(entity, textureIdentifier.toString(), id);
-                                } else {
-                                    return ETFUtils.returnBlinkIdOrGiven(entity, ETFUtils.returnOptifineOrVanillaPath(texturePath, UUID_RANDOM_TEXTURE_SUFFIX.get(id), ""), id);
-                                }
-                            }//elses to vanilla
-
-                        }
+                    // return via general method but also apply the original texture check if return is unalterred
+                    Identifier check = ETFUtils.generalProcessAndReturnAlteredTexture(textureIdentifier, entity);
+                    if (originalIdentifierToBeUsedIfChanged != null && check.toString().equals(textureIdentifier.toString())) {
+                        return ETFUtils.returnBlinkIdOrGiven(entity, originalIdentifierToBeUsedIfChanged.toString(), id);
                     } else {
-                        ETFUtils.modMessage("not random", false);
-
+                        return check;
                     }
-
                 } catch (Exception e) {
                     ETFUtils.modMessage(e.toString(), false);
                 }
@@ -220,6 +143,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
                 if (etf$timerBeforeTrySkin > 0) {
                     etf$timerBeforeTrySkin--;
                 } else {
+
                     if (!UUID_PLAYER_HAS_FEATURES.containsKey(id) && !UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.containsKey(id)) {
                         ETFUtils.checkPlayerForSkinFeatures(id, (PlayerEntity) entity);
                     }
@@ -252,7 +176,13 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
                 this.getModel().render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 0.16F);
             }
             case GLOWING -> {
-                textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(etf$returnAlteredTexture((LivingEntityRenderer) (Object) this, livingEntity), true));
+                //textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(etf$returnAlteredTexture((LivingEntityRenderer) (Object) this, livingEntity), true));
+                if (ETFConfigData.fullBrightEmissives) {
+                    textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(etf$returnAlteredTexture((LivingEntityRenderer) (Object) this, livingEntity), true));
+                } else {
+                    textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(etf$returnAlteredTexture((LivingEntityRenderer) (Object) this, livingEntity)));
+                }
+
                 this.getModel().render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 0.16F);
             }
             case CREEPER_CHARGE -> {
@@ -339,7 +269,12 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
                             }
                             if (UUID_PLAYER_HAS_EMISSIVE.get(id)) {
                                 Identifier emissive = new Identifier(coat.replace(".png", "_e.png"));
-                                VertexConsumer emissVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(emissive, true));
+                                VertexConsumer emissVert;// = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(emissive, true));
+                                if (ETFConfigData.fullBrightEmissives) {
+                                    emissVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(emissive, true));
+                                } else {
+                                    emissVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(emissive));
+                                }
                                 if (ETFConfigData.doShadersEmissiveFix) {
                                     matrixStack.scale(1.01f, 1.01f, 1.01f);
                                 }
@@ -368,7 +303,12 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
                             Identifier emissive = skinPossiblyBlinking.contains(".png") ?
                                     new Identifier(skinPossiblyBlinking.replace(".png", "_e.png")) :
                                     new Identifier(SKIN_NAMESPACE + id + "_e.png");
-                            VertexConsumer emissVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(emissive, true));
+                            VertexConsumer emissVert;// = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(emissive, true));
+                            if (ETFConfigData.fullBrightEmissives) {
+                                emissVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(emissive, true));
+                            } else {
+                                emissVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(emissive));
+                            }
                             if (ETFConfigData.doShadersEmissiveFix) {
                                 matrixStack.scale(1.01f, 1.01f, 1.01f);
                                 this.getModel().render(matrixStack, emissVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);

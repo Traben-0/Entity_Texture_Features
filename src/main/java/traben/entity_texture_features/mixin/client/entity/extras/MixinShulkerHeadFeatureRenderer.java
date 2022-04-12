@@ -44,6 +44,6 @@ public abstract class MixinShulkerHeadFeatureRenderer extends FeatureRenderer<Sh
             method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/mob/ShulkerEntity;FFFFFF)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/RenderLayer;getEntitySolid(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;"))
     private Identifier etf$returnAlteredTexture(Identifier texture) {
-        return ETFUtils.GeneralReturnAlteredTexture(texture, etf$shulker);
+        return ETFUtils.generalReturnAlreadySetAlteredTexture(texture, etf$shulker);
     }
 }

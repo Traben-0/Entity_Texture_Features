@@ -17,12 +17,12 @@ import java.util.*;
 @net.fabricmc.api.Environment(net.fabricmc.api.EnvType.CLIENT)
 public class ETFClient implements ClientModInitializer {
 
+    ///list all uuids that have ever been seen by ETF so they can be selected for random data clearing to save memory
+    public static final HashMap<UUID, Integer> KNOWN_UUID_LIST = new HashMap<>();
 
     //total number of random variations if true random is used / no optifine properties file
     // 0 = vanilla only    1+ is zombie1+.png etc
     public static final HashMap<String, Integer> PATH_TOTAL_TRUE_RANDOM = new HashMap<>();
-
-    //TODO begin checking and clearing no longer existing UUIDs from maps, memory usage concerns
 
     //stores the suffix number for that UUID
     // only stores the Integer as opposed to full texture path for memory size concerns
@@ -32,8 +32,8 @@ public class ETFClient implements ClientModInitializer {
     public static final HashMap<UUID, Integer> UUID_RANDOM_TEXTURE_SUFFIX_3 = new HashMap<>();
     public static final HashMap<UUID, Integer> UUID_RANDOM_TEXTURE_SUFFIX_4 = new HashMap<>();
 
-    //special case hashmap for villagers used to decide if a texture feature is to be randomized
-    public static final HashMap<String, Boolean> PATH_VILLAGER_IS_EXISTING_FEATURE = new HashMap<>();
+    //special case hashmap for villagers and glowing eyes used to decide if a texture feature is to be randomized
+    public static final HashMap<String, Boolean> PATH_IS_EXISTING_FEATURE = new HashMap<>();
 
     //marks entity has already been processed before for random texture application
     public static final Set<UUID> UUID_ENTITY_ALREADY_CALCULATED = new HashSet<>();//

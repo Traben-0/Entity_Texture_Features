@@ -47,7 +47,7 @@ public abstract class MixinHorsemarkingFeatureRenderer extends FeatureRenderer<H
             method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/passive/HorseEntity;FFFFFF)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/RenderLayer;getEntityTranslucent(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;"))
     private Identifier etf$returnAlteredTexture(Identifier texture) {
-        return ETFUtils.GeneralReturnAlteredTexture(texture, etf$entity);
+        return ETFUtils.generalReturnAlreadySetAlteredTexture(texture, etf$entity);
     }
 }
 

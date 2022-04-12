@@ -48,8 +48,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
 import static traben.entity_texture_features.client.ETFClient.*;
+import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
 
 public class ETFUtils {
 
@@ -119,6 +119,8 @@ public class ETFUtils {
         modMessage("Reloading...", false);
         PATH_TOTAL_TRUE_RANDOM.clear();
 
+        KNOWN_UUID_LIST.clear();
+
         UUID_RANDOM_TEXTURE_SUFFIX.clear();
         UUID_RANDOM_TEXTURE_SUFFIX_2.clear();
         UUID_RANDOM_TEXTURE_SUFFIX_3.clear();
@@ -156,19 +158,32 @@ public class ETFUtils {
             }
         }
         UUID_PLAYER_HAS_COAT.clear();
+        UUID_PLAYER_HAS_FAT_COAT.clear();
+        UUID_PLAYER_HAS_VILLAGER_NOSE.clear();
+        UUID_PLAYER_HAS_CAPE.clear();
+        UUID_PLAYER_HAS_CUSTOM_CAPE.clear();
+
+        UUID_PLAYER_LAST_SKIN_CHECK.clear();
+        UUID_PLAYER_LAST_SKIN_CHECK_COUNT.clear();
+
         URL_HTTP_TO_DISCONNECT_1.clear();
+        URL_HTTP_TO_DISCONNECT_2.clear();
 
         PATH_FAILED_PROPERTIES_TO_IGNORE.clear();
 
+        UUID_NEXT_BLINK_TIME.clear();
         PATH_HAS_BLINK_TEXTURE.clear();
         PATH_HAS_BLINK_TEXTURE_2.clear();
+        PATH_BLINK_PROPERTIES.clear();
+
+        PATH_HAS_DEFAULT_REPLACEMENT.clear();
 
         UUID_TRIDENT_NAME.clear();
 
         PATH_EMISSIVE_TEXTURE_IDENTIFIER.clear();
         setEmissiveSuffix();
 
-        PATH_VILLAGER_IS_EXISTING_FEATURE.clear();
+        PATH_IS_EXISTING_FEATURE.clear();
 
         mooshroomRedCustomShroom = 0;
         mooshroomBrownCustomShroom = 0;
@@ -178,14 +193,48 @@ public class ETFUtils {
         registerNativeImageToIdentifier(emptyNativeImage(1, 1), "etf:blank.png");
     }
 
-    public static void resetSingleData(UUID id) {
+    public static void resetSingleSuffixData(UUID id) {
         UUID_RANDOM_TEXTURE_SUFFIX.remove(id);
         UUID_RANDOM_TEXTURE_SUFFIX_2.remove(id);
         UUID_RANDOM_TEXTURE_SUFFIX_3.remove(id);
         UUID_RANDOM_TEXTURE_SUFFIX_4.remove(id);
-
-
+        KNOWN_UUID_LIST.remove(id);
     }
+
+    public static void forceResetAllDataOfUUID(UUID id) {
+        KNOWN_UUID_LIST.remove(id);
+        UUID_RANDOM_TEXTURE_SUFFIX.remove(id);
+        UUID_RANDOM_TEXTURE_SUFFIX_2.remove(id);
+        UUID_RANDOM_TEXTURE_SUFFIX_3.remove(id);
+        UUID_RANDOM_TEXTURE_SUFFIX_4.remove(id);
+        UUID_HAS_UPDATABLE_RANDOM_CASES.remove(id);
+        UUID_HAS_UPDATABLE_RANDOM_CASES_2.remove(id);
+        UUID_HAS_UPDATABLE_RANDOM_CASES_3.remove(id);
+        UUID_HAS_UPDATABLE_RANDOM_CASES_4.remove(id);
+        UUID_ENTITY_ALREADY_CALCULATED.remove(id);
+        UUID_ENTITY_AWAITING_DATA_CLEARING.remove(id);
+        UUID_ENTITY_AWAITING_DATA_CLEARING_2.remove(id);
+        UUID_ORIGINAL_NON_UPDATE_PROPERTY_STRINGS.remove(id);
+        UUID_TRIDENT_NAME.remove(id);
+        UUID_NEXT_BLINK_TIME.remove(id);
+    }
+
+    public static void forceResetAllDataOfPlayerUUID(UUID id) {
+        UUID_NEXT_BLINK_TIME.remove(id);
+        UUID_PLAYER_HAS_FEATURES.remove(id);
+        UUID_PLAYER_HAS_ENCHANT.remove(id);
+        UUID_PLAYER_HAS_EMISSIVE.remove(id);
+        UUID_PLAYER_TRANSPARENT_SKIN_ID.remove(id);
+        UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.remove(id);
+        UUID_PLAYER_HAS_COAT.remove(id);
+        UUID_PLAYER_HAS_FAT_COAT.remove(id);
+        UUID_PLAYER_HAS_VILLAGER_NOSE.remove(id);
+        UUID_PLAYER_HAS_CAPE.remove(id);
+        UUID_PLAYER_HAS_CUSTOM_CAPE.remove(id);
+        UUID_PLAYER_LAST_SKIN_CHECK.remove(id);
+        UUID_PLAYER_LAST_SKIN_CHECK_COUNT.remove(id);
+    }
+
 
     public static Properties readProperties(String path) {
         return readProperties(path, null);
@@ -1541,28 +1590,106 @@ public class ETFUtils {
         return new Identifier(givenTexturePath);
     }
 
-    //assume random texture is fully calculated and applied already for UUID
+
     //no update logic as that will be kept to living entity renderer to reset only once per UUID
-    public static Identifier GeneralReturnAlteredTexture(Identifier texture, Entity entity) {
+    public static Identifier generalProcessAndReturnAlteredTexture(Identifier texture, Entity entity) {
         if (entity == null) return texture;
         UUID id = entity.getUuid();
         if (ETFConfigData.enableCustomTextures) {
-            if (UUID_RANDOM_TEXTURE_SUFFIX.containsKey(id)) {
-                if (UUID_RANDOM_TEXTURE_SUFFIX.get(id) != 0) {
-                    return returnBlinkIdOrGiven((LivingEntity) entity, returnOptifineOrVanillaIdentifier(texture.toString(), UUID_RANDOM_TEXTURE_SUFFIX.get(id)).toString(), id);
-                } else {
-                    if (!PATH_HAS_DEFAULT_REPLACEMENT.containsKey(texture.toString())) {
-                        PATH_HAS_DEFAULT_REPLACEMENT.put(texture.toString(), isExistingNativeImageFile(returnOptifineOrVanillaIdentifier(texture.toString())));
+            if (!PATH_OPTIFINE_OR_JUST_RANDOM.containsKey(texture.toString())) {
+
+                ETFUtils.processNewRandomTextureCandidate(texture.toString());
+            }
+            if (PATH_OPTIFINE_OR_JUST_RANDOM.containsKey(texture.toString())) {
+                //if needs to check if change required
+                if (UUID_ENTITY_AWAITING_DATA_CLEARING.containsKey(id)) {
+                    if (UUID_RANDOM_TEXTURE_SUFFIX.containsKey(id)) {
+                        if (!UUID_HAS_UPDATABLE_RANDOM_CASES.containsKey(id)) {
+                            UUID_HAS_UPDATABLE_RANDOM_CASES.put(id, true);
+                        }
+                        if (UUID_HAS_UPDATABLE_RANDOM_CASES.get(id)) {
+                            //skip a few ticks
+                            //UUID_entityAwaitingDataClearing.put(id, UUID_entityAwaitingDataClearing.get(id)+1);
+                            if (UUID_ENTITY_AWAITING_DATA_CLEARING.get(id) + 100 < System.currentTimeMillis()) {
+                                if (PATH_OPTIFINE_OR_JUST_RANDOM.get(texture.toString())) {
+                                    //if (UUID_randomTextureSuffix.containsKey(id)) {
+                                    int hold = UUID_RANDOM_TEXTURE_SUFFIX.get(id);
+                                    ETFUtils.resetSingleSuffixData(id);
+                                    ETFUtils.testCases(texture.toString(), id, entity, true, UUID_RANDOM_TEXTURE_SUFFIX, UUID_HAS_UPDATABLE_RANDOM_CASES);
+                                    //if didnt change keep the same
+                                    if (!UUID_RANDOM_TEXTURE_SUFFIX.containsKey(id)) {
+                                        UUID_RANDOM_TEXTURE_SUFFIX.put(id, hold);
+                                    }
+                                    //}
+                                }//else here would do something for true random but no need really - may optimise this
+
+                                UUID_ENTITY_AWAITING_DATA_CLEARING.remove(id);
+                            }
+                        } else {
+                            UUID_ENTITY_AWAITING_DATA_CLEARING.remove(id);
+                        }
                     }
-                    if (PATH_HAS_DEFAULT_REPLACEMENT.get(texture.toString())) {
-                        return returnBlinkIdOrGiven((LivingEntity) entity, returnOptifineOrVanillaIdentifier(texture.toString()).toString(), id);
-                    } else {
-                        return returnBlinkIdOrGiven((LivingEntity) entity, texture.toString(), id);
-                    }
+
                 }
+                if (PATH_OPTIFINE_OR_JUST_RANDOM.get(texture.toString())) {//optifine random
+
+
+                    //if it doesn't have a random already assign one
+                    if (!UUID_RANDOM_TEXTURE_SUFFIX.containsKey(id)) {
+                        ETFUtils.testCases(texture.toString(), id, entity, false);
+                        //if all failed set to vanilla
+                        if (!UUID_RANDOM_TEXTURE_SUFFIX.containsKey(id)) {
+                            UUID_RANDOM_TEXTURE_SUFFIX.put(id, 0);
+                        }
+                        UUID_ENTITY_ALREADY_CALCULATED.add(id);
+                    }
+                    return generalReturnAlreadySetAlteredTexture(texture, entity);
+
+                } else {//true random assign
+                    UUID_HAS_UPDATABLE_RANDOM_CASES.put(id, false);
+                    if (PATH_TOTAL_TRUE_RANDOM.get(texture.toString()) > 0) {
+                        if (!UUID_RANDOM_TEXTURE_SUFFIX.containsKey(id)) {
+                            int randomReliable = Math.abs(id.hashCode());
+                            randomReliable %= PATH_TOTAL_TRUE_RANDOM.get(texture.toString());
+                            randomReliable++;
+                            if (randomReliable == 1 && PATH_IGNORE_ONE_PNG.get(texture.toString())) {
+                                randomReliable = 0;
+                            }
+                            UUID_RANDOM_TEXTURE_SUFFIX.put(id, randomReliable);
+                            UUID_ENTITY_ALREADY_CALCULATED.add(id);
+                        }
+                        return generalReturnAlreadySetAlteredTexture(texture, entity);
+                    }//elses to vanilla
+                }
+            } else {
+                ETFUtils.modMessage("not random", false);
             }
         }
-        return returnBlinkIdOrGiven((LivingEntity) entity, texture.toString(), id);
+        //return original if it was changed and should be set back to original
+
+        return ETFUtils.returnBlinkIdOrGiven((LivingEntity) entity, texture.toString(), id);
+
+    }
+
+    //returns an already processed texture
+    public static Identifier generalReturnAlreadySetAlteredTexture(Identifier texture, Entity entity) {
+        UUID id = entity.getUuid();
+        if (UUID_RANDOM_TEXTURE_SUFFIX.containsKey(id)) {
+            if (UUID_RANDOM_TEXTURE_SUFFIX.get(id) != 0) {
+                return returnBlinkIdOrGiven((LivingEntity) entity, returnOptifineOrVanillaIdentifier(texture.toString(), UUID_RANDOM_TEXTURE_SUFFIX.get(id)).toString(), id);
+            } else {
+                if (!PATH_HAS_DEFAULT_REPLACEMENT.containsKey(texture.toString())) {
+                    PATH_HAS_DEFAULT_REPLACEMENT.put(texture.toString(), isExistingNativeImageFile(returnOptifineOrVanillaIdentifier(texture.toString())));
+                }
+                if (PATH_HAS_DEFAULT_REPLACEMENT.get(texture.toString())) {
+                    return returnBlinkIdOrGiven((LivingEntity) entity, returnOptifineOrVanillaIdentifier(texture.toString()).toString(), id);
+                } else {
+                    return returnBlinkIdOrGiven((LivingEntity) entity, texture.toString(), id);
+                }
+            }
+        } else {
+            return returnBlinkIdOrGiven((LivingEntity) entity, texture.toString(), id);
+        }
     }
 
     public static void generalEmissiveRenderModel(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, Identifier texture, Model model) {

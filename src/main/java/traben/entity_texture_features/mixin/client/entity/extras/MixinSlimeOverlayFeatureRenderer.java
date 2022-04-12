@@ -52,6 +52,6 @@ public abstract class MixinSlimeOverlayFeatureRenderer<T extends LivingEntity> e
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/RenderLayer;getEntityTranslucent(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;",
                     ordinal = 0))
     private Identifier etf$returnAlteredTexture(Identifier texture) {
-        return ETFUtils.GeneralReturnAlteredTexture(texture, etf$slime);
+        return ETFUtils.generalReturnAlreadySetAlteredTexture(texture, etf$slime);
     }
 }

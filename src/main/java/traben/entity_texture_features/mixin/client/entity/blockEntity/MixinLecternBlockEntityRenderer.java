@@ -5,7 +5,6 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
-import net.minecraft.client.render.block.entity.EnchantingTableBlockEntityRenderer;
 import net.minecraft.client.render.block.entity.LecternBlockEntityRenderer;
 import net.minecraft.client.render.entity.model.BookModel;
 import net.minecraft.client.util.SpriteIdentifier;
@@ -22,8 +21,8 @@ import traben.entity_texture_features.client.ETFUtils;
 
 import java.util.function.Function;
 
-import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
 import static traben.entity_texture_features.client.ETFClient.lecternHasCustomTexture;
+import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
 
 @Mixin(LecternBlockEntityRenderer.class)
 public abstract class MixinLecternBlockEntityRenderer implements BlockEntityRenderer<LecternBlockEntity> {
@@ -44,7 +43,7 @@ public abstract class MixinLecternBlockEntityRenderer implements BlockEntityRend
         if (lecternHasCustomTexture == null)
             lecternHasCustomTexture = ETFUtils.isExistingFileDirect(new Identifier(LECTERN_BOOK_PATH), true);
 
-        String texture = (ETFConfigData.enableCustomTextures && lecternHasCustomTexture) ? LECTERN_BOOK_PATH : EnchantingTableBlockEntityRenderer.BOOK_TEXTURE.getTextureId().toString();
+        String texture = (ETFConfigData.enableCustomTextures && lecternHasCustomTexture) ? LECTERN_BOOK_PATH : "minecraft:textures/entity/enchanting_table_book.png";//EnchantingTableBlockEntityRenderer.BOOK_TEXTURE.getTextureId().toString();
 
         VertexConsumer etf$vertex = ETFUtils.generalEmissiveGetVertexConsumer(texture, vertexConsumerProvider, true);
         if (etf$vertex != null) {
