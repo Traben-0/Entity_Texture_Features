@@ -22,6 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.client.ETFUtils;
 
 import static traben.entity_texture_features.client.ETFClient.PATH_IS_EXISTING_FEATURE;
+import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
 
 @Mixin(EyesFeatureRenderer.class)
 public abstract class MixinEyesFeatureRenderer<T extends Entity, M extends EntityModel<T>> extends FeatureRenderer<T, M> {
@@ -35,36 +36,36 @@ public abstract class MixinEyesFeatureRenderer<T extends Entity, M extends Entit
 
     @Inject(method = "render", at = @At(value = "HEAD"), cancellable = true)
     private void etf$mixin(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, T entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch, CallbackInfo ci) {
-
-        String[] check = this.etf$getAlteredEyesTexture((LivingEntity) entity);
-        if (!PATH_IS_EXISTING_FEATURE.containsKey(check[0])) {
-            PATH_IS_EXISTING_FEATURE.put(check[0], ETFUtils.isExistingNativeImageFile(new Identifier(check[0])));
-        }
-        if (PATH_IS_EXISTING_FEATURE.get(check[0])) {
-            VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEyes(new Identifier(check[0])));
-            this.getContextModel().render(matrices, vertexConsumer, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
-            ci.cancel();
+        if (ETFConfigData.enableCustomTextures) {
+            String check = this.etf$getAlteredEyesTexture((LivingEntity) entity);
+            if (!PATH_IS_EXISTING_FEATURE.containsKey(check)) {
+                PATH_IS_EXISTING_FEATURE.put(check, ETFUtils.isExistingNativeImageFile(new Identifier(check)));
+            }
+            if (PATH_IS_EXISTING_FEATURE.get(check)) {
+                VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEyes(new Identifier(check)));
+                this.getContextModel().render(matrices, vertexConsumer, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                ci.cancel();
+            }
         }
     }
 
 
-    private String[] etf$getAlteredEyesTexture(LivingEntity entity) {
-        Identifier vanilla = new Identifier("");
+    private String etf$getAlteredEyesTexture(LivingEntity entity) {
         String newPath = "";
         if (entity instanceof EndermanEntity) {
-            vanilla = new Identifier("textures/entity/enderman/enderman.png");
+            Identifier vanilla = new Identifier("textures/entity/enderman/enderman.png");
             newPath = ETFUtils.generalReturnAlreadySetAlteredTexture(vanilla, entity).toString();
             newPath = newPath.replace("enderman/enderman", "enderman/enderman_eyes");
         } else if (entity instanceof SpiderEntity) {
-            vanilla = new Identifier("textures/entity/spider/spider.png");
+            Identifier vanilla = new Identifier("textures/entity/spider/spider.png");
             newPath = ETFUtils.generalReturnAlreadySetAlteredTexture(vanilla, entity).toString();
             newPath = newPath.replace("spider/spider", "spider/spider_eyes");
         } else if (entity instanceof PhantomEntity) {
-            vanilla = new Identifier("textures/entity/phantom.png");
+            Identifier vanilla = new Identifier("textures/entity/phantom.png");
             newPath = ETFUtils.generalReturnAlreadySetAlteredTexture(vanilla, entity).toString();
             newPath = newPath.replace("entity/phantom", "entity/phantom_eyes");
         }
-        return new String[]{newPath, vanilla.toString()};
+        return newPath;
     }
 
 }

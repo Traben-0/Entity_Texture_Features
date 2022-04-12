@@ -299,8 +299,11 @@ public class ETFUtils {
         return img;
     }
 
-
     public static void processNewRandomTextureCandidate(String vanillaTexturePath) {
+        processNewRandomTextureCandidate(vanillaTexturePath, false);
+    }
+
+    public static void processNewRandomTextureCandidate(String vanillaTexturePath, boolean skipProcessing) {
         boolean hasProperties = false;
         String properties = "";
         //set public static  incase of no change
@@ -331,11 +334,13 @@ public class ETFUtils {
             PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 2);
         }
 
-        //no settings just true random
-        if (hasProperties && !PATH_FAILED_PROPERTIES_TO_IGNORE.contains(properties)) {//optifine settings found
-            processOptifineTextureCandidate(vanillaTexturePath, properties);
-        } else {
-            processTrueRandomCandidate(vanillaTexturePath);
+
+        if (!skipProcessing) {
+            if (hasProperties && !PATH_FAILED_PROPERTIES_TO_IGNORE.contains(properties)) {//optifine settings found
+                processOptifineTextureCandidate(vanillaTexturePath, properties);
+            } else {
+                processTrueRandomCandidate(vanillaTexturePath);
+            }
         }
     }
 
@@ -626,6 +631,9 @@ public class ETFUtils {
 
     public static String returnOptifineOrVanillaPath(String vanillaPath, int randomId, String emissiveSuffx) {
 
+        if (!PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.containsKey(vanillaPath)) {
+            ETFUtils.processNewRandomTextureCandidate(vanillaPath, true);
+        }
 
         String append = (randomId == 0 ? "" : randomId) + emissiveSuffx + ".png";
         if (PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.containsKey(vanillaPath)) {
