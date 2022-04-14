@@ -1,6 +1,5 @@
 package traben.entity_texture_features.mixin.client.entity;
 
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -18,7 +17,6 @@ import java.util.Random;
 import java.util.UUID;
 
 import static traben.entity_texture_features.client.ETFClient.KNOWN_UUID_LIST;
-import static traben.entity_texture_features.client.ETFClient.UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET;
 import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
 
 @Mixin(EntityRenderer.class)
@@ -35,29 +33,10 @@ public abstract class MixinEntityRender<T extends Entity> {
         etf$recentID = entity.getUuid();
         KNOWN_UUID_LIST.put(etf$recentID, entity.getId());
 
-        //check if some random data can be cleared roughly every 15 seconds per loaded entity
 
-        if (Math.abs(etf$recentID.hashCode()) % 15000 == System.currentTimeMillis() % 15000) {
-            @SuppressWarnings("ConstantConditions") UUID[] setArray = (UUID[]) KNOWN_UUID_LIST.keySet().toArray();
-            UUID randomUUIDToClear = setArray[random.nextInt(setArray.length)];
-            if (randomUUIDToClear != etf$recentID) {
-                if (UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.containsKey(randomUUIDToClear)) {
-                    //is player
-                    try {
-                        //noinspection ConstantConditions
-                        MinecraftClient.getInstance().getNetworkHandler().getPlayerListEntry(randomUUIDToClear);
-                    } catch (NullPointerException e) {
-                        //player is gone safe to delete data
-                        ETFUtils.forceResetAllDataOfPlayerUUID(randomUUIDToClear);
-                    }
-                } else {
-                    if (entity.getEntityWorld().getEntityById(KNOWN_UUID_LIST.get(randomUUIDToClear)) == null) {
-                        //entity no longer exists delete data
-                        System.out.println("data cleared from" + KNOWN_UUID_LIST.get(randomUUIDToClear).toString());
-                        ETFUtils.forceResetAllDataOfUUID(randomUUIDToClear);
-                    }
-                }
-            }
+        //check if some mob data can be cleared randomly
+        if (random.nextInt(1000) == 1) {
+            ETFUtils.tryClearUneededMobData();
         }
     }
 

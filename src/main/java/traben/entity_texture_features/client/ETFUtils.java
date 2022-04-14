@@ -115,6 +115,13 @@ public class ETFUtils {
         return isExistingFileAndSameOrHigherResourcepackAs(new Identifier(propertiesPath), new Identifier(path2), false);
     }
 
+
+    public static void tryClearUneededMobData() {
+        //todo implement logic here to check if saved mob data is still needed and remove all data of that UUID if no longer needed
+        //check either random known UUIDs or find other selection logic
+    }
+
+
     public static void resetVisuals() {
         modMessage("Reloading...", false);
         PATH_TOTAL_TRUE_RANDOM.clear();

@@ -8,8 +8,8 @@ import net.minecraft.entity.passive.WolfEntity;
 
 import java.util.*;
 
+import static traben.entity_texture_features.client.ETFClient.UUID_ORIGINAL_NON_UPDATE_PROPERTY_STRINGS;
 import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
-import static traben.entity_texture_features.client.ETFClient.*;
 
 public class ETFTexturePropertyCase {
     private final Integer[] weightedSuffixes;
@@ -63,6 +63,8 @@ public class ETFTexturePropertyCase {
             weightsX = new Integer[0];
         }
 
+
+        //todo optimize selection of suffixes by weight better than this, not efficient when scaled
         if (weightsX.length > 0) {
             if (weightsX.length == suffixesX.length) {
                 ArrayList<Integer> buildWeighted = new ArrayList<>();
@@ -95,10 +97,6 @@ public class ETFTexturePropertyCase {
                 ", heights=" + Arrays.toString(heights) +
                 ", names=" + Arrays.toString(names) +
                 '}';
-    }
-
-    public boolean testEntity(LivingEntity entity, boolean onlyUpdatables) {
-        return testEntity(entity, onlyUpdatables, UUID_HAS_UPDATABLE_RANDOM_CASES);
     }
 
 

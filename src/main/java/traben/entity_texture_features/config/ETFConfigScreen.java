@@ -12,8 +12,8 @@ import traben.entity_texture_features.client.ETFUtils;
 
 import java.awt.*;
 
-import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
 import static traben.entity_texture_features.client.ETFClient.irisDetected;
+import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
 
 public class ETFConfigScreen {
     public Screen getConfigScreen(Screen parent, boolean isTransparent) {
@@ -30,20 +30,22 @@ public class ETFConfigScreen {
                             Iris Shaders Mod was detected:
                             - If your emissive textures are flickering with shaders try the
                               Z-Fighting fix in Emissive Texture Settings!
-                            - If your emissives are not glowing correctly with shaders make sure
+                            - If your emissive textures are not glowing correctly with shaders make sure
                               Full Bright emissive rendering is enabled in Emissive Texture Settings"""))
                     .setColor(new Color(240, 195, 15).getRGB())
                     .build()); // Builds the option entry for cloth config
         }
 
         optifineOptions.addEntry(entryBuilder.startBooleanToggle(Text.of("Allow non [a-z0-9/._-] characters in texture paths"), ETFConfigData.allowIllegalTexturePaths)
-                .setDefaultValue(true) // Recommended: Used when user click "Reset"
+                .setDefaultValue(false) // Recommended: Used when user click "Reset"
                 .setTooltip(new TranslatableText("""
                         This setting allows you to overwrite the
                         Vanilla behaviour of prohibiting all
                         non [a-z0-9/._-] characters in texture paths.
                         this means textures with spaces or capitals
-                        are allowed to be used.""")) // Optional: Shown when the user hover over this option
+                        are allowed to be used.
+                        Disabled by default as these problems should really
+                        be fixed by the resource-pack creator""")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.allowIllegalTexturePaths = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
         SubCategoryBuilder randoms = entryBuilder.startSubCategory(Text.of("Random / Custom Mobs settings"));
