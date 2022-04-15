@@ -197,6 +197,8 @@ public class ETFUtils {
 
         lecternHasCustomTexture = null;
 
+        PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION.clear();
+
         registerNativeImageToIdentifier(emptyNativeImage(1, 1), "etf:blank.png");
     }
 
@@ -1686,9 +1688,23 @@ public class ETFUtils {
 
     }
 
-    //returns an already processed texture
     public static Identifier generalReturnAlreadySetAlteredTexture(Identifier texture, Entity entity) {
+        Identifier returned = hiddenGeneralReturnAlreadySetAlteredTexture(texture, entity);
+        if (ETFConfigData.enableEmissiveTextures && isShaderOn()) {
+            if (PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION.containsKey(returned.toString())) {
+                if (PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION.get(returned.toString())) {
+                    return new Identifier(returned.toString() + "etf_iris_patched_file.png");
+                }
+            }
+        }
+
+        return returned;
+    }
+
+    //returns an already processed texture
+    private static Identifier hiddenGeneralReturnAlreadySetAlteredTexture(Identifier texture, Entity entity) {
         UUID id = entity.getUuid();
+
         if (UUID_RANDOM_TEXTURE_SUFFIX.containsKey(id)) {
             if (UUID_RANDOM_TEXTURE_SUFFIX.get(id) != 0) {
                 return returnBlinkIdOrGiven((LivingEntity) entity, returnOptifineOrVanillaIdentifier(texture.toString(), UUID_RANDOM_TEXTURE_SUFFIX.get(id)).toString(), id);
@@ -1713,18 +1729,74 @@ public class ETFUtils {
 
     //will set and render emissive texture for any texture and model
     public static void generalEmissiveRenderModel(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, String fileString, Model model) {
+        if (fileString.contains("etf_iris_patched_file.png")) {
+            fileString = fileString.replace("etf_iris_patched_file.png", "");
+        }
         VertexConsumer textureVert = generalEmissiveGetVertexConsumer(fileString, vertexConsumerProvider, false);
         if (textureVert != null) {
-            if (ETFConfigData.doShadersEmissiveFix) {
-                matrixStack.push();
-                matrixStack.scale(1.01f, 1.01f, 1.01f);
-                model.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
-                matrixStack.pop();
-            } else {
-                model.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
+            if (isShaderOn()) {
+                if (!PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION.containsKey(fileString)) {
+                    //prevent flickering by removing pixels from the base texture
+                    // the iris fix setting will now require a reload
+                    replaceTextureMinusEmissive(fileString);
+                }
             }
+            model.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
         }
     }
+
+    //EXPERIMENT IRIS FLICKER FIX////////////////////////////////////////////////////////////////////////////////////////////////
+    private static final HashMap<String, Boolean> PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION = new HashMap<>();
+
+    private static void replaceTextureMinusEmissive(String originalTexturePath) {
+        String emissiveTexturePath = null;
+        for (String s :
+                emissiveSuffixes) {
+            String test = originalTexturePath.replace(".png", s + ".png");
+            if (isExistingFileDirect(new Identifier(test), true)) {
+                emissiveTexturePath = test;
+                break;
+            }
+        }
+        if (emissiveTexturePath != null) {
+            NativeImage emissive = getNativeImageFromID(new Identifier(emissiveTexturePath));
+            NativeImage originalCopy = getNativeImageFromID(new Identifier(originalTexturePath));
+
+            try {
+                if (emissive.getWidth() == originalCopy.getWidth() && emissive.getHeight() == originalCopy.getHeight()) {
+                    //float widthMultipleEmissive  = originalCopy.getWidth()  / (float)emissive.getWidth();
+                    //float heightMultipleEmissive = originalCopy.getHeight() / (float)emissive.getHeight();
+
+                    for (int x = 0; x < originalCopy.getWidth(); x++) {
+                        for (int y = 0; y < originalCopy.getHeight(); y++) {
+                            //int newX = Math.min((int)(x*widthMultipleEmissive),originalCopy.getWidth()-1);
+                            //int newY = Math.min((int)(y*heightMultipleEmissive),originalCopy.getHeight()-1);
+                            if (emissive.getOpacity(x, y) != 0) {
+                                originalCopy.setColor(x, y, 0);
+                            }
+                        }
+                    }
+                    //no errors and fully replaced
+                    PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION.put(originalTexturePath, true);
+                    registerNativeImageToIdentifier(originalCopy, originalTexturePath + "etf_iris_patched_file.png");
+                    return;
+                }
+            } catch (NullPointerException e) {
+
+            }
+        }
+        PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION.put(originalTexturePath, false);
+    }
+
+    public static boolean isShaderOn() {
+        if (FabricLoader.getInstance().isModLoaded("iris")) {
+            return ETFIrisApi.isShaderOn();
+        } else {
+            return false;
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public static void generalEmissiveRenderPart(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, Identifier texture, ModelPart model, boolean isBlockEntity) {
         generalEmissiveRenderPart(matrixStack, vertexConsumerProvider, texture.toString(), model, isBlockEntity);
@@ -1734,17 +1806,14 @@ public class ETFUtils {
     public static void generalEmissiveRenderPart(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, String fileString, ModelPart modelPart, boolean isBlockEntity) {
         VertexConsumer textureVert = generalEmissiveGetVertexConsumer(fileString, vertexConsumerProvider, isBlockEntity);
         if (textureVert != null) {
-            //one check most efficient instead of before and after applying
-            if (ETFConfigData.doShadersEmissiveFix) {
-                matrixStack.push();
-                matrixStack.scale(1.01f, 1.01f, 1.01f);
-                modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV);
-                //modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.public static _UV,1,1,1,1);
-                matrixStack.pop();
-            } else {
-                modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV);
-                //modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.public static _UV,1,1,1,1);
+            if (isShaderOn()) {
+                if (!PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION.containsKey(fileString)) {
+                    //prevent flickering by removing pixels from the base texture
+                    // the iris fix setting will now require a reload
+                    replaceTextureMinusEmissive(fileString);
+                }
             }
+            modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV);
         }
     }
 
@@ -1780,7 +1849,7 @@ public class ETFUtils {
                         }
                     } else {
                         if (ETFConfigData.fullBrightEmissives) {
-                            return vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString), true));
+                            return vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString), !isShaderOn()));
                         } else {
                             return vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString)));
                         }

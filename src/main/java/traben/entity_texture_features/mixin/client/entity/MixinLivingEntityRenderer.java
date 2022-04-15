@@ -139,7 +139,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
             if (ETFConfigData.enableCustomTextures) {
                 try {
                     // return via general method but also apply the original texture check if return is unalterred
-                    Identifier check = ETFUtils.generalProcessAndReturnAlteredTexture(textureIdentifier, entity);
+                    Identifier check = ETFUtils.generalReturnAlreadySetAlteredTexture(textureIdentifier, entity);
                     if (originalIdentifierToBeUsedIfChanged != null && check.toString().equals(textureIdentifier.toString())) {
                         return ETFUtils.returnBlinkIdOrGiven(entity, originalIdentifierToBeUsedIfChanged.toString(), id);
                     } else {
