@@ -1,17 +1,20 @@
-package traben.entity_texture_features.client;
+package traben.entity_texture_features.client.random;
 
 
 import net.minecraft.MinecraftVersion;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.passive.WolfEntity;
+import traben.entity_texture_features.client.ETFUtils;
+import traben.entity_texture_features.client.ETF_1_18_1_versionPatch;
+import traben.entity_texture_features.client.ETF_1_18_2_versionPatch;
 
 import java.util.*;
 
 import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
 import static traben.entity_texture_features.client.ETFClient.*;
 
-public class ETFTexturePropertyCase {
+public class RandomTexturePropertyCase {
     private final Integer[] weightedSuffixes;
     private final String[] biomes;
     private final Integer[] heights;
@@ -29,7 +32,7 @@ public class ETFTexturePropertyCase {
     //whether case should be ignored by updates
 
 
-    ETFTexturePropertyCase(Integer[] suffixesX,
+    RandomTexturePropertyCase(Integer[] suffixesX,
                            Integer[] weightsX,
                            String[] biomesX,
                            Integer[] heightsX,
@@ -78,7 +81,7 @@ public class ETFTexturePropertyCase {
                 weightedSuffixes = buildWeighted.toArray(new Integer[0]);
 
             } else {
-                ETFUtils.modMessage("random texture weights don't match", false);
+                ETFUtils.modWarn("Random texture weights don't match", false);
                 weightedSuffixes = suffixesX;
             }
         } else {

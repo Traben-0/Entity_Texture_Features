@@ -29,7 +29,7 @@
     "client.entity.extras.MixinTridentEntityRenderer",
     "client.entity.extras.MixinVillagerClothingFeatureRenderer",
     "client.entity.textureUpdaters.MixinPlayerEntity",
-    "client.entity.textureUpdaters.MixinSimpleResourceReload"
+    "client.entity.textureUpdaters.MixinReloadableResourceManagerImpl"
   ],
   "mixins": [
   ],

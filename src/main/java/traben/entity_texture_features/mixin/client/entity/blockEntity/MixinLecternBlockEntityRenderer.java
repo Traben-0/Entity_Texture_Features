@@ -27,7 +27,7 @@ import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
 @Mixin(LecternBlockEntityRenderer.class)
 public abstract class MixinLecternBlockEntityRenderer implements BlockEntityRenderer<LecternBlockEntity> {
 
-    private static final String LECTERN_BOOK_PATH = "minecraft:textures/entity/lectern_book.png";
+    private static final Identifier LECTERN_BOOK_PATH = new Identifier("minecraft:textures/entity/lectern_book.png");
 
     @Shadow
     @Final
@@ -41,11 +41,11 @@ public abstract class MixinLecternBlockEntityRenderer implements BlockEntityRend
 
 
         if (lecternHasCustomTexture == null)
-            lecternHasCustomTexture = ETFUtils.isExistingFileDirect(new Identifier(LECTERN_BOOK_PATH), true);
+            lecternHasCustomTexture = ETFUtils.isExistingFileDirect(LECTERN_BOOK_PATH, true);
 
-        String texture = (ETFConfigData.enableCustomTextures && lecternHasCustomTexture) ? LECTERN_BOOK_PATH : "minecraft:textures/entity/enchanting_table_book.png";//EnchantingTableBlockEntityRenderer.BOOK_TEXTURE.getTextureId().toString();
+        Identifier normalTextureId = (ETFConfigData.enableCustomTextures && lecternHasCustomTexture) ? LECTERN_BOOK_PATH : new Identifier("minecraft:textures/entity/enchanting_table_book.png");//EnchantingTableBlockEntityRenderer.BOOK_TEXTURE.getTextureId().toString();
 
-        VertexConsumer etf$vertex = ETFUtils.generalEmissiveGetVertexConsumer(texture, vertexConsumerProvider, true);
+        VertexConsumer etf$vertex = ETFUtils.generalEmissiveGetVertexConsumer(normalTextureId, vertexConsumerProvider, true);
         if (etf$vertex != null) {
             etf$redirectingEmissiveRender(matrixStack, etf$vertex, j);
         }
@@ -69,10 +69,10 @@ public abstract class MixinLecternBlockEntityRenderer implements BlockEntityRend
     private VertexConsumer mixin(SpriteIdentifier instance, VertexConsumerProvider vertexConsumers, Function<Identifier, RenderLayer> layerFactory) {
         if (recentVert != null) {
             if (lecternHasCustomTexture == null) {
-                lecternHasCustomTexture = ETFUtils.isExistingFileDirect(new Identifier(LECTERN_BOOK_PATH), true);
+                lecternHasCustomTexture = ETFUtils.isExistingFileDirect(LECTERN_BOOK_PATH, true);
             }
             if (lecternHasCustomTexture) {
-                VertexConsumer vertCustom = recentVert.getBuffer(RenderLayer.getEntitySolid(new Identifier(LECTERN_BOOK_PATH)));
+                VertexConsumer vertCustom = recentVert.getBuffer(RenderLayer.getEntitySolid(LECTERN_BOOK_PATH));
                 if (vertCustom != null) {
                     return vertCustom;
                 }

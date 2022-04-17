@@ -32,6 +32,8 @@ public abstract class MixinEntityRender<T extends Entity> {
 
     @Inject(method = "renderLabelIfPresent", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;draw(Lnet/minecraft/text/Text;FFIZLnet/minecraft/util/math/Matrix4f;Lnet/minecraft/client/render/VertexConsumerProvider;ZII)I"))
     private void etf$injected(T entity, Text text, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci) {
+        if(entity.getUuid() != null) return;
+
         etf$recentID = entity.getUuid();
         KNOWN_UUID_LIST.put(etf$recentID, entity.getId());
 

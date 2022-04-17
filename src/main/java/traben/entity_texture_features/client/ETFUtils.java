@@ -30,10 +30,14 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourcePack;
-import net.minecraft.text.Text;
+import net.minecraft.text.LiteralText;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
-import org.apache.logging.log4j.LogManager;
+import traben.entity_texture_features.client.emissive.EmissiveSuffixLoader;
+import traben.entity_texture_features.client.emissive.EmissiveTextureLoader;
+import traben.entity_texture_features.client.random.RandomTexturePropertyCase;
+
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -43,7 +47,16 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -92,23 +105,22 @@ public class ETFUtils {
     }
 
     public static boolean isExistingFileDirect(Identifier id, boolean isNativeImage) {
-        try {
-            Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(id);
-            try {
-                InputStream stream = resource.getInputStream();
-                if (isNativeImage) {
-                    //throw exception if it's not a native image
-                    NativeImage.read(stream);
+        ResourceManager resourceManager = MinecraftClient.getInstance().getResourceManager();
+
+        if(resourceManager.containsResource(id)) {
+            if(isNativeImage) {
+                try (Resource resource = resourceManager.getResource(id)) {
+                    InputStream resourceInputStream = resource.getInputStream();
+                    NativeImage.read(resourceInputStream);
+                } catch (IOException e) {
+                    return false;
                 }
-                resource.close();
-                return true;
-            } catch (IOException e) {
-                resource.close();
-                return false;
             }
-        } catch (IOException f) {
-            return false;
+
+            return true;
         }
+
+        return false;
     }
 
     private static boolean checkPropertyPathExistsAndSameOrHigherResourcepackAs(String propertiesPath, String path2) {
@@ -180,8 +192,8 @@ public class ETFUtils {
 
         UUID_TRIDENT_NAME.clear();
 
-        PATH_EMISSIVE_TEXTURE_IDENTIFIER.clear();
-        setEmissiveSuffix();
+        EmissiveSuffixLoader.load();
+        EmissiveTextureLoader.clearCache();
 
         PATH_IS_EXISTING_FEATURE.clear();
 
@@ -233,52 +245,6 @@ public class ETFUtils {
         UUID_PLAYER_HAS_CUSTOM_CAPE.remove(id);
         UUID_PLAYER_LAST_SKIN_CHECK.remove(id);
         UUID_PLAYER_LAST_SKIN_CHECK_COUNT.remove(id);
-    }
-
-
-    public static Properties readProperties(String path) {
-        return readProperties(path, null);
-    }
-
-    public static Properties readProperties(String path, String pathOfTextureToUseForResourcepackCheck) {
-        Properties props = new Properties();
-        try {
-            Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(new Identifier(path));
-            //skip if needs to be same resourcepack
-            if (pathOfTextureToUseForResourcepackCheck != null) {
-                ResourceManager resourceManager = MinecraftClient.getInstance().getResourceManager();
-                String packname1 = resource.getResourcePackName();
-                String packname2 = resourceManager.getResource(new Identifier(pathOfTextureToUseForResourcepackCheck)).getResourcePackName();
-                if (!packname1.equals(packname2)) {
-                    //not same pack check it is a higher pack and only continue if packname1 is higher
-                    for (ResourcePack pack :
-                            resourceManager.streamResourcePacks().toList()) {
-                        //loops through all resourcepacks from bottom "public static " to top
-                        if (packname1.equals(pack.getName())) {
-                            //if first id is reached first it is lower and must not be used return null
-                            return null;
-                        }
-                        if (packname2.equals(pack.getName())) {
-                            //if the second file is reached first it must be lower thus id 1 is higher so break to continue
-                            break;
-                        }
-                    }
-                }
-            }
-            try {
-                InputStream in = resource.getInputStream();
-                props.load(in);
-                resource.close();
-            } catch (Exception e) {
-                resource.close();
-                return null;
-            }
-        } catch (Exception e) {
-            return null;
-        }
-        // Example return
-        // {skins.4=3, skins.5=1-3, skins.2=2, skins.3=3, weights.5=1 1 , biomes.2=desert, health.3=1-50%, names.4=iregex:mob name.*}
-        return props;
     }
 
     public static NativeImage getNativeImageFromID(Identifier identifier) {
@@ -349,206 +315,207 @@ public class ETFUtils {
             PATH_IGNORE_ONE_PNG.put(vanillaTexturePath, !(isExistingPropertyFile(new Identifier(propertiesPath.replace(".properties", "1.png")))));
 
             String twoPngPath = returnOptifineOrVanillaPath(vanillaTexturePath, 2, "");
-            Properties props = readProperties(propertiesPath, twoPngPath);
+            // TODO
+            // Properties props = readProperties(propertiesPath, twoPngPath);
 
-            if (props != null) {
-                Set<String> propIds = props.stringPropertyNames();
-                //set so only 1 of each
-                Set<Integer> numbers = new HashSet<>();
-                //get the numbers we are working with
-                for (String str :
-                        propIds) {
-                    numbers.add(Integer.parseInt(str.replaceAll("[^0-9]", "")));
-                }
-                //sort from lowest to largest
-                List<Integer> numbersList = new ArrayList<>(numbers);
-                Collections.sort(numbersList);
-                Set<ETFTexturePropertyCase> allCasesForTexture = new HashSet<>();
-                for (Integer num :
-                        numbersList) {
-                    //loops through each known number in properties
-                    //all of case 1 ect should be processed here
-                    Integer[] suffixes = {};
-                    Integer[] weights = {};
-                    String[] biomes = {};
-                    Integer[] heights = {};
-                    String[] names = {};
-                    String[] professions = {};
-                    String[] collarColours = {};
-                    int baby = 0; // 0 1 2 - dont true false
-                    int weather = 0; //0,1,2,3 - no clear rain thunder
-                    String[] health = {};
-                    Integer[] moon = {};
-                    String[] daytime = {};
-                    String[] blocks = {};
-                    String[] teams = {};
+        //     if (props != null) {
+        //         Set<String> propIds = props.stringPropertyNames();
+        //         //set so only 1 of each
+        //         Set<Integer> numbers = new HashSet<>();
+        //         //get the numbers we are working with
+        //         for (String str :
+        //                 propIds) {
+        //             numbers.add(Integer.parseInt(str.replaceAll("[^0-9]", "")));
+        //         }
+        //         //sort from lowest to largest
+        //         List<Integer> numbersList = new ArrayList<>(numbers);
+        //         Collections.sort(numbersList);
+        //         Set<ETFTexturePropertyCase> allCasesForTexture = new HashSet<>();
+        //         for (Integer num :
+        //                 numbersList) {
+        //             //loops through each known number in properties
+        //             //all of case 1 ect should be processed here
+        //             Integer[] suffixes = {};
+        //             Integer[] weights = {};
+        //             String[] biomes = {};
+        //             Integer[] heights = {};
+        //             String[] names = {};
+        //             String[] professions = {};
+        //             String[] collarColours = {};
+        //             int baby = 0; // 0 1 2 - dont true false
+        //             int weather = 0; //0,1,2,3 - no clear rain thunder
+        //             String[] health = {};
+        //             Integer[] moon = {};
+        //             String[] daytime = {};
+        //             String[] blocks = {};
+        //             String[] teams = {};
 
-                    if (props.containsKey("skins." + num) || props.containsKey("textures." + num)) {
-                        String dataFromProps = props.containsKey("skins." + num) ? props.getProperty("skins." + num).trim() : props.getProperty("textures." + num).trim();
-                        String[] skinData = dataFromProps.split("\s+");
-                        ArrayList<Integer> suffixNumbers = new ArrayList<>();
-                        for (String data :
-                                skinData) {
-                            //check if range
-                            data = data.trim();
-                            if (!data.replaceAll("[^0-9]", "").isEmpty()) {
-                                if (data.contains("-")) {
-                                    suffixNumbers.addAll(Arrays.asList(getIntRange(data)));
-                                } else {
-                                    suffixNumbers.add(Integer.parseInt(data.replaceAll("[^0-9]", "")));
-                                }
-                            }
-                        }
-                        suffixes = suffixNumbers.toArray(new Integer[0]);
-                    }
-                    if (props.containsKey("weights." + num)) {
-                        String dataFromProps = props.getProperty("weights." + num).trim();
-                        String[] weightData = dataFromProps.split("\s+");
-                        ArrayList<Integer> builder = new ArrayList<>();
-                        for (String s :
-                                weightData) {
-                            s = s.trim();
-                            if (!s.replaceAll("[^0-9]", "").isEmpty()) {
-                                builder.add(Integer.parseInt(s.replaceAll("[^0-9]", "")));
-                            }
-                        }
-                        weights = builder.toArray(new Integer[0]);
-                    }
-                    if (props.containsKey("biomes." + num)) {
-                        String dataFromProps = props.getProperty("biomes." + num).trim();
-                        biomes = dataFromProps.toLowerCase().split("\s+");
-                    }
-                    //add legacy height support
-                    if (!props.containsKey("heights." + num) && (props.containsKey("minHeight." + num) || props.containsKey("maxHeight." + num))) {
-                        String min = "-64";
-                        String max = "319";
-                        if (props.containsKey("minHeight." + num)) {
-                            min = props.getProperty("minHeight." + num).trim();
-                        }
-                        if (props.containsKey("maxHeight." + num)) {
-                            max = props.getProperty("maxHeight." + num).trim();
-                        }
-                        props.put("heights." + num, min + "-" + max);
-                    }
-                    if (props.containsKey("heights." + num)) {
-                        String dataFromProps = props.getProperty("heights." + num).trim();
-                        String[] heightData = dataFromProps.split("\s+");
-                        ArrayList<Integer> heightNumbers = new ArrayList<>();
-                        for (String data :
-                                heightData) {
-                            //check if range
-                            data = data.trim();
-                            if (!data.replaceAll("[^0-9]", "").isEmpty()) {
-                                if (data.contains("-")) {
-                                    heightNumbers.addAll(Arrays.asList(getIntRange(data)));
-                                } else {
-                                    heightNumbers.add(Integer.parseInt(data.replaceAll("[^0-9]", "")));
-                                }
-                            }
-                        }
-                        heights = heightNumbers.toArray(new Integer[0]);
-                    }
+        //             if (props.containsKey("skins." + num) || props.containsKey("textures." + num)) {
+        //                 String dataFromProps = props.containsKey("skins." + num) ? props.getProperty("skins." + num).trim() : props.getProperty("textures." + num).trim();
+        //                 String[] skinData = dataFromProps.split("\s+");
+        //                 ArrayList<Integer> suffixNumbers = new ArrayList<>();
+        //                 for (String data :
+        //                         skinData) {
+        //                     //check if range
+        //                     data = data.trim();
+        //                     if (!data.replaceAll("[^0-9]", "").isEmpty()) {
+        //                         if (data.contains("-")) {
+        //                             suffixNumbers.addAll(Arrays.asList(getIntRange(data)));
+        //                         } else {
+        //                             suffixNumbers.add(Integer.parseInt(data.replaceAll("[^0-9]", "")));
+        //                         }
+        //                     }
+        //                 }
+        //                 suffixes = suffixNumbers.toArray(new Integer[0]);
+        //             }
+        //             if (props.containsKey("weights." + num)) {
+        //                 String dataFromProps = props.getProperty("weights." + num).trim();
+        //                 String[] weightData = dataFromProps.split("\s+");
+        //                 ArrayList<Integer> builder = new ArrayList<>();
+        //                 for (String s :
+        //                         weightData) {
+        //                     s = s.trim();
+        //                     if (!s.replaceAll("[^0-9]", "").isEmpty()) {
+        //                         builder.add(Integer.parseInt(s.replaceAll("[^0-9]", "")));
+        //                     }
+        //                 }
+        //                 weights = builder.toArray(new Integer[0]);
+        //             }
+        //             if (props.containsKey("biomes." + num)) {
+        //                 String dataFromProps = props.getProperty("biomes." + num).trim();
+        //                 biomes = dataFromProps.toLowerCase().split("\s+");
+        //             }
+        //             //add legacy height support
+        //             if (!props.containsKey("heights." + num) && (props.containsKey("minHeight." + num) || props.containsKey("maxHeight." + num))) {
+        //                 String min = "-64";
+        //                 String max = "319";
+        //                 if (props.containsKey("minHeight." + num)) {
+        //                     min = props.getProperty("minHeight." + num).trim();
+        //                 }
+        //                 if (props.containsKey("maxHeight." + num)) {
+        //                     max = props.getProperty("maxHeight." + num).trim();
+        //                 }
+        //                 props.put("heights." + num, min + "-" + max);
+        //             }
+        //             if (props.containsKey("heights." + num)) {
+        //                 String dataFromProps = props.getProperty("heights." + num).trim();
+        //                 String[] heightData = dataFromProps.split("\s+");
+        //                 ArrayList<Integer> heightNumbers = new ArrayList<>();
+        //                 for (String data :
+        //                         heightData) {
+        //                     //check if range
+        //                     data = data.trim();
+        //                     if (!data.replaceAll("[^0-9]", "").isEmpty()) {
+        //                         if (data.contains("-")) {
+        //                             heightNumbers.addAll(Arrays.asList(getIntRange(data)));
+        //                         } else {
+        //                             heightNumbers.add(Integer.parseInt(data.replaceAll("[^0-9]", "")));
+        //                         }
+        //                     }
+        //                 }
+        //                 heights = heightNumbers.toArray(new Integer[0]);
+        //             }
 
-                    if (props.containsKey("names." + num) || props.containsKey("name." + num)) {
-                        String dataFromProps = props.containsKey("name." + num) ? props.getProperty("name." + num).trim() : props.getProperty("names." + num).trim();
-                        if (dataFromProps.contains("regex:") || dataFromProps.contains("pattern:")) {
-                            names = new String[]{dataFromProps};
-                        } else {
-                            //names = dataFromProps.split("\s+");
-                            //allow    "multiple names" among "other"
-                            List<String> list = new ArrayList<>();
-                            Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(dataFromProps);
-                            while (m.find()) {
-                                list.add(m.group(1).replace("\"", "").trim());
-                            }
-                            names = list.toArray(new String[0]);
-                        }
-                    }
-                    if (props.containsKey("professions." + num)) {
-                        professions = props.getProperty("professions." + num).trim().split("\s+");
-                    }
-                    if (props.containsKey("collarColors." + num) || props.containsKey("collarColours." + num)) {
-                        collarColours = props.containsKey("collarColors." + num) ? props.getProperty("collarColors." + num).trim().split("\s+") : props.getProperty("collarColours." + num).trim().split("\s+");
-                    }
-                    if (props.containsKey("baby." + num)) {
-                        String dataFromProps = props.getProperty("baby." + num).trim();
-                        switch (dataFromProps) {
-                            case "true" -> baby = 1;
-                            case "false" -> baby = 2;
-                        }
-                    }
-                    if (props.containsKey("weather." + num)) {
-                        String dataFromProps = props.getProperty("weather." + num).trim();
-                        switch (dataFromProps) {
-                            case "clear" -> weather = 1;
-                            case "rain" -> weather = 2;
-                            case "thunder" -> weather = 3;
-                        }
-                    }
-                    if (props.containsKey("health." + num)) {
-                        health = props.getProperty("health." + num).trim().split("\s+");
-                    }
-                    if (props.containsKey("moonPhase." + num)) {
-                        String dataFromProps = props.getProperty("moonPhase." + num).trim();
-                        String[] moonData = dataFromProps.split("\s+");
-                        ArrayList<Integer> moonNumbers = new ArrayList<>();
-                        for (String data :
-                                moonData) {
-                            //check if range
-                            data = data.trim();
-                            if (!data.replaceAll("[^0-9]", "").isEmpty()) {
-                                if (data.contains("-")) {
-                                    moonNumbers.addAll(Arrays.asList(getIntRange(data)));
-                                } else {
-                                    moonNumbers.add(Integer.parseInt(data.replaceAll("[^0-9]", "")));
-                                }
-                            }
-                        }
-                        moon = moonNumbers.toArray(new Integer[0]);
-                    }
-                    if (props.containsKey("dayTime." + num)) {
-                        daytime = props.getProperty("dayTime." + num).trim().split("\s+");
-                    }
-                    if (props.containsKey("blocks." + num)) {
-                        blocks = props.getProperty("blocks." + num).trim().split("\s+");
-                    } else if (props.containsKey("block." + num)) {
-                        blocks = props.getProperty("block." + num).trim().split("\s+");
-                    }
-                    if (props.containsKey("teams." + num)) {
-                        String teamData = props.getProperty("teams." + num).trim();
-                        List<String> list = new ArrayList<>();
-                        Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(teamData);
-                        while (m.find()) {
-                            list.add(m.group(1).replace("\"", ""));
-                        }
-                        teams = list.toArray(new String[0]);
-                    } else if (props.containsKey("team." + num)) {
-                        String teamData = props.getProperty("team." + num).trim();
-                        List<String> list = new ArrayList<>();
-                        Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(teamData);
-                        while (m.find()) {
-                            list.add(m.group(1).replace("\"", ""));
-                        }
-                        teams = list.toArray(new String[0]);
-                    }
+        //             if (props.containsKey("names." + num) || props.containsKey("name." + num)) {
+        //                 String dataFromProps = props.containsKey("name." + num) ? props.getProperty("name." + num).trim() : props.getProperty("names." + num).trim();
+        //                 if (dataFromProps.contains("regex:") || dataFromProps.contains("pattern:")) {
+        //                     names = new String[]{dataFromProps};
+        //                 } else {
+        //                     //names = dataFromProps.split("\s+");
+        //                     //allow    "multiple names" among "other"
+        //                     List<String> list = new ArrayList<>();
+        //                     Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(dataFromProps);
+        //                     while (m.find()) {
+        //                         list.add(m.group(1).replace("\"", "").trim());
+        //                     }
+        //                     names = list.toArray(new String[0]);
+        //                 }
+        //             }
+        //             if (props.containsKey("professions." + num)) {
+        //                 professions = props.getProperty("professions." + num).trim().split("\s+");
+        //             }
+        //             if (props.containsKey("collarColors." + num) || props.containsKey("collarColours." + num)) {
+        //                 collarColours = props.containsKey("collarColors." + num) ? props.getProperty("collarColors." + num).trim().split("\s+") : props.getProperty("collarColours." + num).trim().split("\s+");
+        //             }
+        //             if (props.containsKey("baby." + num)) {
+        //                 String dataFromProps = props.getProperty("baby." + num).trim();
+        //                 switch (dataFromProps) {
+        //                     case "true" -> baby = 1;
+        //                     case "false" -> baby = 2;
+        //                 }
+        //             }
+        //             if (props.containsKey("weather." + num)) {
+        //                 String dataFromProps = props.getProperty("weather." + num).trim();
+        //                 switch (dataFromProps) {
+        //                     case "clear" -> weather = 1;
+        //                     case "rain" -> weather = 2;
+        //                     case "thunder" -> weather = 3;
+        //                 }
+        //             }
+        //             if (props.containsKey("health." + num)) {
+        //                 health = props.getProperty("health." + num).trim().split("\s+");
+        //             }
+        //             if (props.containsKey("moonPhase." + num)) {
+        //                 String dataFromProps = props.getProperty("moonPhase." + num).trim();
+        //                 String[] moonData = dataFromProps.split("\s+");
+        //                 ArrayList<Integer> moonNumbers = new ArrayList<>();
+        //                 for (String data :
+        //                         moonData) {
+        //                     //check if range
+        //                     data = data.trim();
+        //                     if (!data.replaceAll("[^0-9]", "").isEmpty()) {
+        //                         if (data.contains("-")) {
+        //                             moonNumbers.addAll(Arrays.asList(getIntRange(data)));
+        //                         } else {
+        //                             moonNumbers.add(Integer.parseInt(data.replaceAll("[^0-9]", "")));
+        //                         }
+        //                     }
+        //                 }
+        //                 moon = moonNumbers.toArray(new Integer[0]);
+        //             }
+        //             if (props.containsKey("dayTime." + num)) {
+        //                 daytime = props.getProperty("dayTime." + num).trim().split("\s+");
+        //             }
+        //             if (props.containsKey("blocks." + num)) {
+        //                 blocks = props.getProperty("blocks." + num).trim().split("\s+");
+        //             } else if (props.containsKey("block." + num)) {
+        //                 blocks = props.getProperty("block." + num).trim().split("\s+");
+        //             }
+        //             if (props.containsKey("teams." + num)) {
+        //                 String teamData = props.getProperty("teams." + num).trim();
+        //                 List<String> list = new ArrayList<>();
+        //                 Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(teamData);
+        //                 while (m.find()) {
+        //                     list.add(m.group(1).replace("\"", ""));
+        //                 }
+        //                 teams = list.toArray(new String[0]);
+        //             } else if (props.containsKey("team." + num)) {
+        //                 String teamData = props.getProperty("team." + num).trim();
+        //                 List<String> list = new ArrayList<>();
+        //                 Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(teamData);
+        //                 while (m.find()) {
+        //                     list.add(m.group(1).replace("\"", ""));
+        //                 }
+        //                 teams = list.toArray(new String[0]);
+        //             }
 
-                    if (suffixes.length != 0) {
-                        allCasesForTexture.add(new ETFTexturePropertyCase(suffixes, weights, biomes, heights, names, professions, collarColours, baby, weather, health, moon, daytime, blocks, teams));
-                    }
-                }
-                if (!allCasesForTexture.isEmpty()) {
-                    PATH_OPTIFINE_RANDOM_SETTINGS_PER_TEXTURE.put(vanillaTexturePath, allCasesForTexture);
-                    PATH_OPTIFINE_OR_JUST_RANDOM.put(vanillaTexturePath, true);
-                } else {
-                    modMessage("Ignoring properties file that failed to load any cases @ " + propertiesPath, false);
-                    PATH_FAILED_PROPERTIES_TO_IGNORE.add(propertiesPath);
-                }
-            } else {//properties file is null
-                modMessage("Ignoring properties file that was null @ " + propertiesPath, false);
-                PATH_FAILED_PROPERTIES_TO_IGNORE.add(propertiesPath);
-            }
+        //             if (suffixes.length != 0) {
+        //                 allCasesForTexture.add(new ETFTexturePropertyCase(suffixes, weights, biomes, heights, names, professions, collarColours, baby, weather, health, moon, daytime, blocks, teams));
+        //             }
+        //         }
+        //         if (!allCasesForTexture.isEmpty()) {
+        //             PATH_OPTIFINE_RANDOM_SETTINGS_PER_TEXTURE.put(vanillaTexturePath, allCasesForTexture);
+        //             PATH_OPTIFINE_OR_JUST_RANDOM.put(vanillaTexturePath, true);
+        //         } else {
+        //             modWarn("Ignoring properties file that failed to load any cases @ " + propertiesPath, false);
+        //             PATH_FAILED_PROPERTIES_TO_IGNORE.add(propertiesPath);
+        //         }
+        //     } else {//properties file is null
+        //         modWarn("Ignoring properties file that was null @ " + propertiesPath, false);
+        //         PATH_FAILED_PROPERTIES_TO_IGNORE.add(propertiesPath);
+        //     }
         } catch (Exception e) {
-            modMessage("Ignoring properties file that caused Exception @ " + propertiesPath + e, false);
+            modWarn("Ignoring properties file that caused Exception @ " + propertiesPath + e, false);
             PATH_FAILED_PROPERTIES_TO_IGNORE.add(propertiesPath);
         }
     }
@@ -580,7 +547,7 @@ public class ETFUtils {
                     builder.add(i);
                 }
             } else {
-                modMessage("Optifine properties failed to load: Texture heights range has a problem in properties file. this has occurred for value \"" + rawRange.replace("N", "-") + "\"", false);
+                modError("Optifine properties failed to load: Texture heights range has a problem in properties file. this has occurred for value \"" + rawRange.replace("N", "-") + "\"", false);
             }
             return builder.toArray(new Integer[0]);
         } else {//only 1 number but method ran because of "-" present
@@ -598,7 +565,7 @@ public class ETFUtils {
     }
 
     public static void testCases(String vanillaPath, UUID id, Entity entity, boolean isUpdate, HashMap<UUID, Integer> UUID_RandomSuffixMap, HashMap<UUID, Boolean> UUID_CaseHasUpdateablesCustom) {
-        for (ETFTexturePropertyCase test :
+        for (RandomTexturePropertyCase test :
                 PATH_OPTIFINE_RANDOM_SETTINGS_PER_TEXTURE.get(vanillaPath)) {
 
             //skip if its only an update and case is not updatable
@@ -616,16 +583,42 @@ public class ETFUtils {
             UUID_CaseHasUpdateablesCustom.put(id, false);
     }
 
-    public static void modMessage(String message, boolean inChat) {
+    public static void modMessage(Object obj, boolean inChat) {
         if (inChat) {
-            ClientPlayerEntity plyr = MinecraftClient.getInstance().player;
-            if (plyr != null) {
-                plyr.sendMessage(Text.of("\u00A76[Entity Texture Features]\u00A77: " + message), false);
+            ClientPlayerEntity player = MinecraftClient.getInstance().player;
+            if (player != null) {
+                player.sendMessage(new LiteralText("[INFO] [Entity Texture Features]: " + obj).formatted(Formatting.GRAY, Formatting.ITALIC), false);
             } else {
-                LogManager.getLogger().info("[Entity Texture Features]: " + message);
+                ETFClient.LOGGER.info(obj);
             }
         } else {
-            LogManager.getLogger().info("[Entity Texture Features]: " + message);
+            ETFClient.LOGGER.info(obj);
+        }
+    }
+
+    public static void modWarn(Object obj, boolean inChat) {
+        if (inChat) {
+            ClientPlayerEntity player = MinecraftClient.getInstance().player;
+            if (player != null) {
+                player.sendMessage(new LiteralText("[WARN] [Entity Texture Features]: " + obj).formatted(Formatting.YELLOW), false);
+            } else {
+                ETFClient.LOGGER.warn(obj);
+            }
+        } else {
+            ETFClient.LOGGER.warn(obj);
+        }
+    }
+
+    public static void modError(Object obj, boolean inChat) {
+        if (inChat) {
+            ClientPlayerEntity player = MinecraftClient.getInstance().player;
+            if (player != null) {
+                player.sendMessage(new LiteralText("[ERROR] [Entity Texture Features]: " + obj).formatted(Formatting.RED, Formatting.BOLD), false);
+            } else {
+                ETFClient.LOGGER.error(obj);
+            }
+        } else {
+            ETFClient.LOGGER.error(obj);
         }
     }
 
@@ -730,34 +723,6 @@ public class ETFUtils {
 
     }
 
-
-    public static void setEmissiveSuffix() {
-        try {
-            Properties suffix = readProperties("optifine/emissive.properties");
-            if (suffix.isEmpty()) {
-                suffix = readProperties("textures/emissive.properties");
-            }
-            Set<String> builder = new HashSet<>();
-            if (suffix.contains("entities.suffix.emissive")) {
-                builder.add(suffix.getProperty("entities.suffix.emissive"));
-            }
-            if (suffix.contains("suffix.emissive")) {
-                builder.add(suffix.getProperty("suffix.emissive"));
-            }
-            if (ETFConfigData.alwaysCheckVanillaEmissiveSuffix) {
-                builder.add("_e");
-            }
-            emissiveSuffixes = builder.toArray(new String[0]);
-            if (emissiveSuffixes.length == 0) {
-                modMessage("default emissive suffix '_e' used", false);
-                emissiveSuffixes = new String[]{"_e"};
-            }
-        } catch (Exception e) {
-            modMessage("default emissive suffix '_e' used", false);
-            emissiveSuffixes = new String[]{"_e"};
-        }
-    }
-
     public static void saveConfig() {
         File config = new File(FabricLoader.getInstance().getConfigDir().toFile(), "entity_texture_features.json");
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -770,7 +735,7 @@ public class ETFUtils {
             fileWriter.write(gson.toJson(ETFConfigData));
             fileWriter.close();
         } catch (IOException e) {
-            modMessage("Config could not be saved", false);
+            modMessage(String.format("Config could not be saved : %s", e), false);
         }
     }
 
@@ -1105,13 +1070,14 @@ public class ETFUtils {
                 //check for transparency options
                 //System.out.println("about to check");
                 if (ETFConfigData.skinFeaturesEnableTransparency) {
+                    Identifier transId = new Identifier(SKIN_NAMESPACE + id + "_transparent.png");
+
                     if (canTransparentSkin(skin)) {
-                        Identifier transId = new Identifier(SKIN_NAMESPACE + id + "_transparent.png");
                         UUID_PLAYER_TRANSPARENT_SKIN_ID.put(id, transId);
                         registerNativeImageToIdentifier(skin, transId.toString());
 
                     } else {
-                        modMessage("Skin was too transparent or had other problems", false);
+                        modWarn(String.format("Failed to load skin %s because it was either too transparent or had other problems", transId), false);
                     }
                 }
 
@@ -1517,7 +1483,8 @@ public class ETFUtils {
                 //check for blink textures
                 PATH_HAS_BLINK_TEXTURE.put(givenTexturePath, isExistingFileAndSameOrHigherResourcepackAs(new Identifier(givenTexturePath.replace(".png", "_blink.png")), new Identifier(givenTexturePath), true));
                 PATH_HAS_BLINK_TEXTURE_2.put(givenTexturePath, isExistingFileAndSameOrHigherResourcepackAs(new Identifier(givenTexturePath.replace(".png", "_blink2.png")), new Identifier(givenTexturePath), true));
-                PATH_BLINK_PROPERTIES.put(givenTexturePath, readProperties(givenTexturePath.replace(".png", "_blink.properties"), givenTexturePath));
+                // PATH_BLINK_PROPERTIES.put(givenTexturePath, readProperties(givenTexturePath.replace(".png", "_blink.properties"), givenTexturePath));
+                // TODO
 
             }
             PATH_BLINK_PROPERTIES.putIfAbsent(givenTexturePath, null);
@@ -1700,40 +1667,29 @@ public class ETFUtils {
         }
     }
 
-    public static void generalEmissiveRenderModel(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, Identifier texture, Model model) {
-        generalEmissiveRenderModel(matrixStack, vertexConsumerProvider, texture.toString(), model);
-    }
-
     //will set and render emissive texture for any texture and model
-    public static void generalEmissiveRenderModel(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, String fileString, Model model) {
-        VertexConsumer textureVert = generalEmissiveGetVertexConsumer(fileString, vertexConsumerProvider, false);
+    public static void generalEmissiveRenderModel(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, Identifier normalTextureId, Model model) {
+        VertexConsumer textureVert = generalEmissiveGetVertexConsumer(normalTextureId, vertexConsumerProvider, false);
         if (textureVert != null) {
             if (ETFConfigData.doShadersEmissiveFix) {
-                matrixStack.push();
                 matrixStack.scale(1.01f, 1.01f, 1.01f);
                 model.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
-                matrixStack.pop();
+                matrixStack.scale(1f, 1f, 1f);
             } else {
                 model.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
             }
         }
     }
 
-    public static void generalEmissiveRenderPart(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, Identifier texture, ModelPart model, boolean isBlockEntity) {
-        generalEmissiveRenderPart(matrixStack, vertexConsumerProvider, texture.toString(), model, isBlockEntity);
-    }
-
     //will set and render emissive texture for any texture and model
-    public static void generalEmissiveRenderPart(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, String fileString, ModelPart modelPart, boolean isBlockEntity) {
-        VertexConsumer textureVert = generalEmissiveGetVertexConsumer(fileString, vertexConsumerProvider, isBlockEntity);
+    public static void generalEmissiveRenderPart(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, Identifier normalTextureId, ModelPart modelPart, boolean isBlockEntity) {
+        VertexConsumer textureVert = generalEmissiveGetVertexConsumer(normalTextureId, vertexConsumerProvider, isBlockEntity);
         if (textureVert != null) {
             //one check most efficient instead of before and after applying
             if (ETFConfigData.doShadersEmissiveFix) {
-                matrixStack.push();
                 matrixStack.scale(1.01f, 1.01f, 1.01f);
                 modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV);
-                //modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.public static _UV,1,1,1,1);
-                matrixStack.pop();
+                matrixStack.scale(1f, 1f, 1f);
             } else {
                 modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV);
                 //modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.public static _UV,1,1,1,1);
@@ -1741,42 +1697,22 @@ public class ETFUtils {
         }
     }
 
-    public static VertexConsumer generalEmissiveGetVertexConsumer(String fileString, VertexConsumerProvider vertexConsumerProvider, boolean isBlockEntity) {
-
+    public static VertexConsumer generalEmissiveGetVertexConsumer(Identifier normalTextureId, VertexConsumerProvider vertexConsumerProvider, boolean isBlockEntity) {
         if (ETFConfigData.enableEmissiveTextures) {
-            //String fileString = texture.toString();
-            if (!PATH_EMISSIVE_TEXTURE_IDENTIFIER.containsKey(fileString)) {
-                //creates and sets emissive for texture if it exists
-                Identifier fileName_e;
-                for (String suffix1 :
-                        emissiveSuffixes) {
-                    fileName_e = new Identifier(fileString.replace(".png", suffix1 + ".png"));
-                    if (isExistingNativeImageFile(fileName_e)) {
-                        PATH_EMISSIVE_TEXTURE_IDENTIFIER.put(fileString, fileName_e);
-                        break;
-                    }
-                }
-                if (!PATH_EMISSIVE_TEXTURE_IDENTIFIER.containsKey(fileString)) {
-                    PATH_EMISSIVE_TEXTURE_IDENTIFIER.put(fileString, null);
-                }
-            }
-            if (PATH_EMISSIVE_TEXTURE_IDENTIFIER.containsKey(fileString)) {
-                if (PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString) != null) {
-                    //VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getItemEntityTranslucentCull(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString)));
-                    //textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString), true));
+            Identifier emissiveTextureId = EmissiveTextureLoader.getOrLoad(normalTextureId);
 
-                    if (isBlockEntity) {
-                        if (irisDetected && ETFConfigData.fullBrightEmissives) {
-                            return vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString), true));
-                        } else {
-                            return vertexConsumerProvider.getBuffer(RenderLayer.getItemEntityTranslucentCull(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString)));
-                        }
+            if (emissiveTextureId != null) {
+                if (isBlockEntity) {
+                    if (irisDetected && ETFConfigData.fullBrightEmissives) {
+                        return vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(emissiveTextureId, true));
                     } else {
-                        if (ETFConfigData.fullBrightEmissives) {
-                            return vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString), true));
-                        } else {
-                            return vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString)));
-                        }
+                        return vertexConsumerProvider.getBuffer(RenderLayer.getItemEntityTranslucentCull(emissiveTextureId));
+                    }
+                } else {
+                    if (ETFConfigData.fullBrightEmissives) {
+                        return vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(emissiveTextureId, true));
+                    } else {
+                        return vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(emissiveTextureId));
                     }
                 }
             }

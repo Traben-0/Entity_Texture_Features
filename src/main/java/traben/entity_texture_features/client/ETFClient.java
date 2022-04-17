@@ -5,17 +5,24 @@ import com.google.gson.GsonBuilder;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.Identifier;
-import org.apache.logging.log4j.LogManager;
+
+import traben.entity_texture_features.client.logging.ETFLogger;
+import traben.entity_texture_features.client.random.RandomTexturePropertyCase;
 import traben.entity_texture_features.config.ETFConfig;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
+import java.util.UUID;
 
 @net.fabricmc.api.Environment(net.fabricmc.api.EnvType.CLIENT)
 public class ETFClient implements ClientModInitializer {
+    public static final ETFLogger LOGGER = ETFLogger.create();
 
     ///list all uuids that have ever been seen by ETF so they can be selected for random data clearing to save memory
     public static final HashMap<UUID, Integer> KNOWN_UUID_LIST = new HashMap<>();
@@ -44,7 +51,7 @@ public class ETFClient implements ClientModInitializer {
     public static final HashMap<UUID, Long> UUID_ENTITY_AWAITING_DATA_CLEARING_2 = new HashMap<>();
 
     //holds a Set of optifine property cases object (e.g  names.1, biome.1, all of .1) for a specific texture path
-    public static final HashMap<String, Set<ETFTexturePropertyCase>> PATH_OPTIFINE_RANDOM_SETTINGS_PER_TEXTURE = new HashMap<>();
+    public static final HashMap<String, Set<RandomTexturePropertyCase>> PATH_OPTIFINE_RANDOM_SETTINGS_PER_TEXTURE = new HashMap<>();
 
     //marks whether a texture path uses optifine properties, or is just random
     //true = optifine properties
@@ -104,13 +111,6 @@ public class ETFClient implements ClientModInitializer {
     //marks whether the vanilla texture has an override in the randoms folder (e.g  creeper.png in the optifine folder)
     public static final HashMap<String, Boolean> PATH_HAS_DEFAULT_REPLACEMENT = new HashMap<>();
 
-    //list of suffixes found in the suffix properties as for some reason people add multiple sometimes
-    //also because an option in ETF can add "_e" to this list
-    public static String[] emissiveSuffixes = null;
-
-    //stores the identifier for an emissive version of the given texture path
-    public static final HashMap<String, Identifier> PATH_EMISSIVE_TEXTURE_IDENTIFIER = new HashMap<>();
-
     //whether the iris mod was detected on load
     public static boolean irisDetected = false;
 
@@ -132,14 +132,20 @@ public class ETFClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         //testing
-        LogManager.getLogger().info("[Entity Texture Features]: Loading! 1.18.x");
-        etf$loadConfig();
+        LOGGER.info("Loading! 1.18.x");
+
+        if (FabricLoader.getInstance().getModContainer("iris").isPresent()) {
+            LOGGER.info("Iris mod detected : message will be shown in settings");
+            irisDetected = true;
+        }
+
+        loadConfig();
     }
 
     // config code based on bedrockify & actually unbreaking fabric config code
     // https://github.com/juancarloscp52/BedrockIfy/blob/1.17.x/src/main/java/me/juancarloscp52/bedrockify/Bedrockify.java
     // https://github.com/wutdahack/ActuallyUnbreakingFabric/blob/1.18.1/src/main/java/wutdahack/actuallyunbreaking/ActuallyUnbreaking.java
-    public void etf$loadConfig() {
+    public void loadConfig() {
         File config = new File(FabricLoader.getInstance().getConfigDir().toFile(), "entity_texture_features.json");
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         if (config.exists()) {
@@ -149,7 +155,7 @@ public class ETFClient implements ClientModInitializer {
                 fileReader.close();
                 ETFUtils.saveConfig();
             } catch (IOException e) {
-                ETFUtils.modMessage("Config could not be loaded, using defaults", false);
+                ETFUtils.modWarn("Config could not be loaded, using defaults", false);
             }
         } else {
             ETF_CLIENT.ETFConfigData = new ETFConfig();

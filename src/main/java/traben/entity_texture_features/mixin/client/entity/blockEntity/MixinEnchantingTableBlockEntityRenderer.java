@@ -8,6 +8,8 @@ import net.minecraft.client.render.block.entity.EnchantingTableBlockEntityRender
 import net.minecraft.client.render.entity.model.BookModel;
 import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.Identifier;
+
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -31,8 +33,7 @@ public abstract class MixinEnchantingTableBlockEntityRenderer implements BlockEn
                     shift = At.Shift.AFTER))
     private void etf$applyEmissiveBook(EnchantingTableBlockEntity enchantingTableBlockEntity, float f, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j, CallbackInfo ci) {
         //BOOK_TEXTURE.getTextureId().toString()
-        String texture = "minecraft:textures/entity/enchanting_table_book.png";
-        VertexConsumer etf$vertex = ETFUtils.generalEmissiveGetVertexConsumer(texture, vertexConsumerProvider, false);
+        VertexConsumer etf$vertex = ETFUtils.generalEmissiveGetVertexConsumer(new Identifier("minecraft:textures/entity/enchanting_table_book.png"), vertexConsumerProvider, false);
         if (etf$vertex != null) {
             this.book.renderBook(matrixStack, etf$vertex, 15728640, j, 1, 1, 1, 1);
         }

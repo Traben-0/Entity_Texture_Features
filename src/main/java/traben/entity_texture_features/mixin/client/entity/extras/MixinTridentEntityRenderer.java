@@ -33,10 +33,8 @@ public abstract class MixinTridentEntityRenderer implements SynchronousResourceR
             UUID id = tridentEntity.getUuid();
             String path = TridentEntityModel.TEXTURE.toString();
             String name = UUID_TRIDENT_NAME.get(id) != null ? "_" + UUID_TRIDENT_NAME.get(id).toLowerCase().replaceAll("[^a-z0-9/_.-]", "") : "";
-            String fileString = UUID_TRIDENT_NAME.get(id) != null ? path.replace(".png", "_" + name + ".png") : path;
-            ETFUtils.generalEmissiveRenderModel(matrixStack, vertexConsumerProvider, fileString, this.model);
-
-
+            Identifier normalTextureId = new Identifier(UUID_TRIDENT_NAME.get(id) != null ? path.substring(0, path.lastIndexOf(".png")) + "_" + name + ".png" : path);
+            ETFUtils.generalEmissiveRenderModel(matrixStack, vertexConsumerProvider, normalTextureId, this.model);
         }
     }
 
@@ -48,7 +46,7 @@ public abstract class MixinTridentEntityRenderer implements SynchronousResourceR
             if (UUID_TRIDENT_NAME.get(id) != null) {
                 String path = TridentEntityModel.TEXTURE.toString();
                 String name = UUID_TRIDENT_NAME.get(id).toLowerCase().replaceAll("[^a-z0-9/_.-]", "");
-                Identifier possibleId = new Identifier(path.replace(".png", "_" + name + ".png"));
+                Identifier possibleId = new Identifier(path.substring(0, path.lastIndexOf(".png")) + "_" + name + ".png");
                 if (ETFUtils.isExistingNativeImageFile(possibleId)) {
                     return possibleId;
                 }

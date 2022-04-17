@@ -77,10 +77,10 @@ public abstract class MixinBuiltinModelItemRenderer implements SynchronousResour
             if (ETFConfigData.enableTridents && ETFConfigData.enableEmissiveTextures) {
                 String path = TridentEntityModel.TEXTURE.toString();
                 String name = stack.hasCustomName() ? "_" + stack.getName().getString().trim().replaceAll("\s", "_").toLowerCase().replaceAll("[^a-z0-9/_.-]", "") : "";
-                String fileString = path.replace(".png", name + ".png");
+                Identifier normalTextureId = new Identifier(path.substring(0, path.lastIndexOf(".png")) + name + ".png");
                 matrices.push();
                 matrices.scale(1.0F, -1.0F, -1.0F);
-                ETFUtils.generalEmissiveRenderModel(matrices, vertexConsumers, fileString, this.modelTrident);
+                ETFUtils.generalEmissiveRenderModel(matrices, vertexConsumers, normalTextureId, this.modelTrident);
                 matrices.pop();
 
             }
@@ -90,16 +90,15 @@ public abstract class MixinBuiltinModelItemRenderer implements SynchronousResour
             if (ETFConfigData.specialEmissiveShield) {
                 if (ETFConfigData.enableEmissiveTextures) {
                     boolean bl = BlockItem.getBlockEntityNbt(stack) != null;
-                    String fileString = bl ? "minecraft:textures/entity/shield_base.png" : "minecraft:textures/entity/shield_base_nopattern.png";
+                    Identifier normalTextureId = new Identifier(bl ? "minecraft:textures/entity/shield_base.png" : "minecraft:textures/entity/shield_base_nopattern.png");
                     matrices.push();
                     matrices.scale(1.0F, -1.0F, -1.0F);
-                    VertexConsumer consumer = ETFUtils.generalEmissiveGetVertexConsumer(fileString, vertexConsumers, false);
 
-                    ETFUtils.generalEmissiveRenderPart(matrices, vertexConsumers, fileString, modelShield.getHandle(), false);
+                    ETFUtils.generalEmissiveRenderPart(matrices, vertexConsumers, normalTextureId, modelShield.getHandle(), false);
                     //modelShield.getHandle().render(matrices,consumer,15728640,overlay,1,1,1,1);
                     //modelShield.render(matrices,consumer,15728640,overlay,1,1,1,1);
                     if (!bl)
-                        ETFUtils.generalEmissiveRenderPart(matrices, vertexConsumers, fileString, modelShield.getPlate(), false);
+                        ETFUtils.generalEmissiveRenderPart(matrices, vertexConsumers, normalTextureId, modelShield.getPlate(), false);
                     //if (!bl) modelShield.getPlate().render(matrices,consumer,15728640,overlay,1,1,1,1);
                     //todo banner patterns implementation
                     matrices.pop();

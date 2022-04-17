@@ -29,9 +29,7 @@ public abstract class MixinBellBlockEntityRenderer implements BlockEntityRendere
     @Inject(method = "render(Lnet/minecraft/block/entity/BellBlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II)V",
             at = @At(value = "TAIL"))
     private void etf$applyEmissiveBell(BellBlockEntity bellBlockEntity, float f, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j, CallbackInfo ci) {
-
-        String texture = BELL_BODY_TEXTURE.getTextureId().toString();
-        ETFUtils.generalEmissiveRenderPart(matrixStack, vertexConsumerProvider, texture, this.bellBody, true);
+        ETFUtils.generalEmissiveRenderPart(matrixStack, vertexConsumerProvider, BELL_BODY_TEXTURE.getTextureId(), this.bellBody, true);
     }
 }
 
