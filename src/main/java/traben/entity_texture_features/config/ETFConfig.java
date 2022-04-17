@@ -1,7 +1,7 @@
 package traben.entity_texture_features.config;
 
 public class ETFConfig {
-    public boolean allowIllegalTexturePaths = true;
+    public boolean allowIllegalTexturePaths = false;
     public boolean enableCustomTextures = true;
     public updateFrequency textureUpdateFrequency_V2 = updateFrequency.Fast;
     public boolean restrictUpdateProperties = true;

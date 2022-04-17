@@ -18,12 +18,14 @@ public class MixinIdentifier {
         if (ETFConfigData != null) {
             if (ETFConfigData.allowIllegalTexturePaths) {
                 if (!cir.getReturnValue()) {
-                    ETFUtils.modWarn(String.format("Encountered broken path: %s", path), false);
-                    cir.setReturnValue(true);
+                    //only allow the fix for images. the only real use case is for weird emissive suffixes
+                    //property files should not have a use case here
+                    if (path.endsWith(".png")) { //|| path.endsWith(".properties")) {
+                        ETFUtils.modWarn(String.format("Encountered broken path: %s", path), false);
+                        cir.setReturnValue(true);
+                    }
                 }
             }
         }
     }
 }
-
-
