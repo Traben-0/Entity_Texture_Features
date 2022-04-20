@@ -128,8 +128,27 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
 
         UUID id = entity.getUuid();
 
+        //debug printing
+        if (UUID_DEBUG_EXPLAINATION_MARKER.contains(id)) {
+            System.out.println("entity Data:\nTexture=" + texturePath);
+
+            if (PATH_OPTIFINE_OR_JUST_RANDOM.containsKey(texturePath))
+                System.out.println("is properties or random=" + PATH_OPTIFINE_OR_JUST_RANDOM.get(texturePath));
+            if (PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.containsKey(texturePath))
+                System.out.println("path_0123=" + PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.get(texturePath));
+            if (PATH_OPTIFINE_RANDOM_SETTINGS_PER_TEXTURE.containsKey(texturePath))
+                System.out.println("amount of properties=" + PATH_OPTIFINE_RANDOM_SETTINGS_PER_TEXTURE.get(texturePath).size());
+            if (PATH_TOTAL_TRUE_RANDOM.containsKey(texturePath))
+                System.out.println("total true random=" + PATH_TOTAL_TRUE_RANDOM.get(texturePath));
+            if (UUID_RANDOM_TEXTURE_SUFFIX.containsKey(id))
+                System.out.println("Random=" + UUID_RANDOM_TEXTURE_SUFFIX.get(id));
+
+            UUID_DEBUG_EXPLAINATION_MARKER.remove(id);
+        }
+
+
         if (!(entity instanceof PlayerEntity)) {
-            if (entity instanceof ShulkerEntity){
+            if (entity instanceof ShulkerEntity) {
                 //set to use vanilla shulker properties if color has been changed
                 //setting the below will trigger a return to the original coloured shulker if no random is applied
                 originalIdentifierToBeUsedIfChanged = new Identifier(texturePath);
@@ -140,6 +159,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
                 try {
                     // return via general method but also apply the original texture check if return is unalterred
                     Identifier check = ETFUtils.generalProcessAndReturnAlteredTexture(textureIdentifier, entity);
+                    //System.out.println("texture="+check.toString());
                     if (originalIdentifierToBeUsedIfChanged != null && check.toString().equals(textureIdentifier.toString())) {
                         return ETFUtils.returnBlinkIdOrGiven(entity, originalIdentifierToBeUsedIfChanged.toString(), id);
                     } else {

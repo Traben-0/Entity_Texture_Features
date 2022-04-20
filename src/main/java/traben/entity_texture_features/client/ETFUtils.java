@@ -91,6 +91,10 @@ public class ETFUtils {
         return isExistingFileDirect(id, false);
     }
 
+    public static boolean isExistingPropertyFile(String id) {
+        return isExistingFileDirect(new Identifier(id), false);
+    }
+
     public static boolean isExistingFileDirect(Identifier id, boolean isNativeImage) {
         try {
             Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(id);
@@ -196,6 +200,8 @@ public class ETFUtils {
         mooshroomBrownCustomShroom = 0;
 
         lecternHasCustomTexture = null;
+
+        PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION.clear();
 
         registerNativeImageToIdentifier(emptyNativeImage(1, 1), "etf:blank.png");
     }
@@ -311,52 +317,129 @@ public class ETFUtils {
     }
 
     public static void processNewRandomTextureCandidate(String vanillaTexturePath, boolean skipProcessing) {
-        boolean hasProperties = false;
-        String properties = "";
-        //set public static  incase of no change
-        PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 2);
-        if (checkPropertyPathExistsAndSameOrHigherResourcepackAs(vanillaTexturePath.replace(".png", ".properties").replace("textures", "etf/random"), vanillaTexturePath.replace(".png", "2.png").replace("textures", "etf/random"))) {
-            properties = vanillaTexturePath.replace(".png", ".properties").replace("textures", "etf/random");
-            hasProperties = true;
-            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 3);
-        } else if (isExistingNativeImageFile(new Identifier(vanillaTexturePath.replace(".png", "2.png").replace("textures", "etf/random")))) {
-            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 3);
-        } else if (checkPropertyPathExistsAndSameOrHigherResourcepackAs(vanillaTexturePath.replace(".png", ".properties").replace("textures", "optifine/random"), vanillaTexturePath.replace(".png", "2.png").replace("textures", "optifine/random"))) {
-            properties = vanillaTexturePath.replace(".png", ".properties").replace("textures", "optifine/random");
-            hasProperties = true;
-            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 0);
-        } else if (isExistingNativeImageFile(new Identifier(vanillaTexturePath.replace(".png", "2.png").replace("textures", "optifine/random")))) {
-            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 0);
-        } else if (checkPropertyPathExistsAndSameOrHigherResourcepackAs(vanillaTexturePath.replace(".png", ".properties").replace("textures/entity", "optifine/mob"), vanillaTexturePath.replace(".png", "2.png").replace("textures/entity", "optifine/mob"))) {
-            properties = vanillaTexturePath.replace(".png", ".properties").replace("textures/entity", "optifine/mob");
-            hasProperties = true;
-            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 1);
-        } else if (isExistingNativeImageFile(new Identifier(vanillaTexturePath.replace(".png", "2.png").replace("textures/entity", "optifine/mob")))) {
-            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 1);
-        } else if (checkPropertyPathExistsAndSameOrHigherResourcepackAs(vanillaTexturePath.replace(".png", ".properties"), vanillaTexturePath.replace(".png", "2.png"))) {
-            properties = vanillaTexturePath.replace(".png", ".properties");
-            hasProperties = true;
-            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 2);
-        } else if (isExistingNativeImageFile(new Identifier(vanillaTexturePath.replace(".png", "2.png")))) {
-            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 2);
-        }
+        //boolean hasProperties = false;
 
+        //set default incase of no change
+        PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 2);
+        //check and apply hashmap data
+        System.out.println("checking=" + vanillaTexturePath);
+        String properties = checkAndSetPathToUseForRandoms(vanillaTexturePath.replace(".png", ".properties"), true);
+        System.out.println("returned=" + properties);
 
         if (!skipProcessing) {
-            if (hasProperties && !PATH_FAILED_PROPERTIES_TO_IGNORE.contains(properties)) {//optifine settings found
+            if (properties != null && !PATH_FAILED_PROPERTIES_TO_IGNORE.contains(properties)) {//optifine settings found
                 processOptifineTextureCandidate(vanillaTexturePath, properties);
             } else {
+                //process a true random texture begins with 2.png
+                checkAndSetPathToUseForRandoms(vanillaTexturePath.replace(".png", "2.png"), false);
                 processTrueRandomCandidate(vanillaTexturePath);
             }
         }
     }
 
+    private static String checkAndSetPathToUseForRandoms(String texturePath, boolean isProperties) {
+        //preserve checking order 3 > 0 > 1 > 2
+        String checkingPath = texturePath.replace("textures", "etf/random");
+        if (isExistingFileDirect(new Identifier(checkingPath), !isProperties)) {
+            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(texturePath.replace(".properties", ".png"), 3);
+            if (isProperties) {
+                String properties = checkPropertiesFileforTexture(checkingPath, texturePath);
+                if (properties != null) {
+                    return properties;
+                }
+                //else check other properties down the list
+            } else {
+                return checkingPath;
+            }
+        }
+        checkingPath = texturePath.replace("textures", "optifine/random");
+        if (isExistingFileDirect(new Identifier(checkingPath), !isProperties)) {
+            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(texturePath.replace(".properties", ".png"), 0);
+            if (isProperties) {
+                String properties = checkPropertiesFileforTexture(checkingPath, texturePath);
+                if (properties != null) {
+                    return properties;
+                }
+                //else check other properties down the list
+            } else {
+                return checkingPath;
+            }
+        }
+        checkingPath = texturePath.replace("textures/entity", "optifine/mob");
+        if (isExistingFileDirect(new Identifier(checkingPath), !isProperties)) {
+            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(texturePath.replace(".properties", ".png"), 1);
+            if (isProperties) {
+                String properties = checkPropertiesFileforTexture(checkingPath, texturePath);
+                if (properties != null) {
+                    return properties;
+                }
+                //else check other properties down the list
+            } else {
+                return checkingPath;
+            }
+        }
+//        if (isExistingFileDirect(new Identifier(texturePath),!isProperties)) {
+//            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(texturePath, 2);
+//            if (isProperties) {
+//                String properties = checkPropertiesFileforTexture(checkingPath,texturePath);
+//                if(properties != null){
+//                    return properties;
+//                }
+//                //else check other properties down the list
+//            }else {
+//                return checkingPath;
+//            }
+//        }
+        return null;
+    }
+
+    private static String checkPropertiesFileforTexture(String possibleProperty, String vanillaTexturePath) {
+        Properties properties = readProperties(possibleProperty);
+        if (properties != null) {
+            for (String propertyName :
+                    properties.stringPropertyNames()) {
+                if (propertyName.contains("skin") || propertyName.contains("texture")) {
+                    //use this one for check
+                    String[] suffixData = properties.getProperty(propertyName).trim().split("\s+");
+                    //assume data may be formatted stupidly like  "   13-14   67  800-805"
+                    //just want a number present in this properties file to check so just grab the first by splitting and grabbing[0]
+
+                    String checkingPath = null;
+                    for (String possibleSuffix :
+                            suffixData) {
+                        //if range use right most as less likely to be 1
+                        if (possibleSuffix.contains("-")) possibleSuffix = possibleSuffix.split("-")[1];
+                        possibleSuffix = possibleSuffix.replaceAll("[^0-9]", "");
+                        if (!possibleSuffix.isEmpty()) {
+                            String tryHere = possibleProperty.replace(".properties", possibleSuffix + ".png");
+                            System.out.println("tried=" + tryHere);
+                            if (isExistingNativeImageFile(new Identifier(tryHere))) {
+                                checkingPath = tryHere;
+                                break;
+                            }
+                        }
+                    }
+                    if (checkingPath != null) {
+                        if (checkPropertyPathExistsAndSameOrHigherResourcepackAs(possibleProperty, checkingPath)) {
+                            //this return only occurs if the properties file exists and the first texture named in the properties file is of the same or a lower pack
+                            return possibleProperty;
+                        }
+                    }
+                }
+            }
+        }
+        //failed
+        System.out.println("failed in check");
+        return null;
+    }
+
+
     private static void processOptifineTextureCandidate(String vanillaTexturePath, String propertiesPath) {
         try {
             PATH_IGNORE_ONE_PNG.put(vanillaTexturePath, !(isExistingPropertyFile(new Identifier(propertiesPath.replace(".properties", "1.png")))));
 
-            String twoPngPath = returnOptifineOrVanillaPath(vanillaTexturePath, 2, "");
-            Properties props = readProperties(propertiesPath, twoPngPath);
+            //String twoPngPath = returnOptifineOrVanillaPath(vanillaTexturePath, 2, "");
+            Properties props = readProperties(propertiesPath);
 
             if (props != null) {
                 Set<String> propIds = props.stringPropertyNames();
@@ -1686,9 +1769,23 @@ public class ETFUtils {
 
     }
 
-    //returns an already processed texture
     public static Identifier generalReturnAlreadySetAlteredTexture(Identifier texture, Entity entity) {
+        Identifier returned = hiddenGeneralReturnAlreadySetAlteredTexture(texture, entity);
+        if (ETFConfigData.enableEmissiveTextures && isShaderOn()) {
+            if (PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION.containsKey(returned.toString())) {
+                if (PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION.get(returned.toString())) {
+                    return new Identifier(returned.toString() + "etf_iris_patched_file.png");
+                }
+            }
+        }
+
+        return returned;
+    }
+
+    //returns an already processed texture
+    private static Identifier hiddenGeneralReturnAlreadySetAlteredTexture(Identifier texture, Entity entity) {
         UUID id = entity.getUuid();
+
         if (UUID_RANDOM_TEXTURE_SUFFIX.containsKey(id)) {
             if (UUID_RANDOM_TEXTURE_SUFFIX.get(id) != 0) {
                 return returnBlinkIdOrGiven((LivingEntity) entity, returnOptifineOrVanillaIdentifier(texture.toString(), UUID_RANDOM_TEXTURE_SUFFIX.get(id)).toString(), id);
@@ -1713,18 +1810,74 @@ public class ETFUtils {
 
     //will set and render emissive texture for any texture and model
     public static void generalEmissiveRenderModel(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, String fileString, Model model) {
+        if (fileString.contains("etf_iris_patched_file.png")) {
+            fileString = fileString.replace("etf_iris_patched_file.png", "");
+        }
         VertexConsumer textureVert = generalEmissiveGetVertexConsumer(fileString, vertexConsumerProvider, false);
         if (textureVert != null) {
-            if (ETFConfigData.doShadersEmissiveFix) {
-                matrixStack.push();
-                matrixStack.scale(1.01f, 1.01f, 1.01f);
-                model.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
-                matrixStack.pop();
-            } else {
-                model.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
+            if (isShaderOn()) {
+                if (!PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION.containsKey(fileString)) {
+                    //prevent flickering by removing pixels from the base texture
+                    // the iris fix setting will now require a reload
+                    replaceTextureMinusEmissive(fileString);
+                }
             }
+            model.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
         }
     }
+
+    //EXPERIMENT IRIS FLICKER FIX////////////////////////////////////////////////////////////////////////////////////////////////
+    private static final HashMap<String, Boolean> PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION = new HashMap<>();
+
+    private static void replaceTextureMinusEmissive(String originalTexturePath) {
+        String emissiveTexturePath = null;
+        for (String s :
+                emissiveSuffixes) {
+            String test = originalTexturePath.replace(".png", s + ".png");
+            if (isExistingFileDirect(new Identifier(test), true)) {
+                emissiveTexturePath = test;
+                break;
+            }
+        }
+        if (emissiveTexturePath != null) {
+            NativeImage emissive = getNativeImageFromID(new Identifier(emissiveTexturePath));
+            NativeImage originalCopy = getNativeImageFromID(new Identifier(originalTexturePath));
+
+            try {
+                if (emissive.getWidth() == originalCopy.getWidth() && emissive.getHeight() == originalCopy.getHeight()) {
+                    //float widthMultipleEmissive  = originalCopy.getWidth()  / (float)emissive.getWidth();
+                    //float heightMultipleEmissive = originalCopy.getHeight() / (float)emissive.getHeight();
+
+                    for (int x = 0; x < originalCopy.getWidth(); x++) {
+                        for (int y = 0; y < originalCopy.getHeight(); y++) {
+                            //int newX = Math.min((int)(x*widthMultipleEmissive),originalCopy.getWidth()-1);
+                            //int newY = Math.min((int)(y*heightMultipleEmissive),originalCopy.getHeight()-1);
+                            if (emissive.getOpacity(x, y) != 0) {
+                                originalCopy.setColor(x, y, 0);
+                            }
+                        }
+                    }
+                    //no errors and fully replaced
+                    PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION.put(originalTexturePath, true);
+                    registerNativeImageToIdentifier(originalCopy, originalTexturePath + "etf_iris_patched_file.png");
+                    return;
+                }
+            } catch (NullPointerException e) {
+
+            }
+        }
+        PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION.put(originalTexturePath, false);
+    }
+
+    public static boolean isShaderOn() {
+        if (FabricLoader.getInstance().isModLoaded("iris")) {
+            return ETFIrisApi.isShaderOn();
+        } else {
+            return false;
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public static void generalEmissiveRenderPart(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, Identifier texture, ModelPart model, boolean isBlockEntity) {
         generalEmissiveRenderPart(matrixStack, vertexConsumerProvider, texture.toString(), model, isBlockEntity);
@@ -1734,17 +1887,14 @@ public class ETFUtils {
     public static void generalEmissiveRenderPart(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, String fileString, ModelPart modelPart, boolean isBlockEntity) {
         VertexConsumer textureVert = generalEmissiveGetVertexConsumer(fileString, vertexConsumerProvider, isBlockEntity);
         if (textureVert != null) {
-            //one check most efficient instead of before and after applying
-            if (ETFConfigData.doShadersEmissiveFix) {
-                matrixStack.push();
-                matrixStack.scale(1.01f, 1.01f, 1.01f);
-                modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV);
-                //modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.public static _UV,1,1,1,1);
-                matrixStack.pop();
-            } else {
-                modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV);
-                //modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.public static _UV,1,1,1,1);
+            if (isShaderOn()) {
+                if (!PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION.containsKey(fileString)) {
+                    //prevent flickering by removing pixels from the base texture
+                    // the iris fix setting will now require a reload
+                    replaceTextureMinusEmissive(fileString);
+                }
             }
+            modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV);
         }
     }
 
@@ -1780,7 +1930,7 @@ public class ETFUtils {
                         }
                     } else {
                         if (ETFConfigData.fullBrightEmissives) {
-                            return vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString), true));
+                            return vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString), !isShaderOn()));
                         } else {
                             return vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString)));
                         }
