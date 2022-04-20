@@ -128,6 +128,9 @@ public class ETFClient implements ClientModInitializer {
 
     public final static String SKIN_NAMESPACE = "etf_skin:";
 
+    //marks this UUID to have relevant data printed for debugging
+    public static final Set<UUID> UUID_DEBUG_EXPLAINATION_MARKER = new HashSet<>();
+
 
     @Override
     public void onInitializeClient() {
