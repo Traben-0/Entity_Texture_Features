@@ -33,8 +33,8 @@ Everything can be enabled or disabled in the config or Mod Menu settings
 ---
 ## Compatibility
 - ✅ALL! Optifine Random / Custom or Emissive Entity resourcepacks
-- ✅[Custom Entity Models **(CEM)**](https://www.curseforge.com/minecraft/mc-mods/custom-entity-models-cem) 
-**(fully compatible)** *(keep in mind CEM is in ALPHA and doen't support every model)*
+- ✅[Custom Entity Models **(CEM)**](https://www.curseforge.com/minecraft/mc-mods/custom-entity-models-cem)
+  **(fully compatible)** *(keep in mind CEM is in ALPHA and don't support every model)*
 - ✅[Sodium](https://www.curseforge.com/minecraft/mc-mods/sodium) **(fully compatible)**
 - ✅[Mod Menu](https://www.curseforge.com/minecraft/mc-mods/modmenu) & Clothconfig *- optional*
 - ✅[Iris Shaders](https://www.curseforge.com/minecraft/mc-mods/irisshaders) **(fully compatible)** 
@@ -48,8 +48,9 @@ Everything can be enabled or disabled in the config or Mod Menu settings
 ## 🎲 Random / Custom entity textures - [Optifine]
 <img src="readMeAssets/randoms.png" alt="img" width="650"/>
 
-- For custom & random entity textures to work you can use a resource-pack that supports the 
-**Optifine format** for custom / random textures, including all Biome, Height, Name, etc properties settings. and even more added by ETF  
+- For custom & random entity textures to work you can use a resource-pack that supports the
+  **Optifine format** for custom / random textures, including all Biome, Height, Name, etc. properties settings. and
+  even more added by ETF
   - [***-> Random / Custom entity textures guide <-***](readMeAssets/RANDOM_GUIDE.md)
 
 ---
@@ -84,8 +85,8 @@ abuse of features in PVP
 
 - Allows a textures to be set by a Resource-pack so that mobs can Blink randomly over a set period
 - Mobs will blink periodically if they have a texture named "TEXTURE_blink.png"
-- Optionally you can also use a texture named TEXTURE_blink2.png" with the eyes half closed to 
-have a smoother animation for large eyes like creepers
+- Optionally you can also use a texture named "TEXTURE_blink2.png" with the eyes half closed to have a smoother
+  animation for large eyes like creepers
 - Random blinking frequency can be altered in settings
 - Sleeping mobs will have their eyes closed if possible
 - Mobs with the Blindness potion effect will have either their eyes closed or half closed 
@@ -99,10 +100,11 @@ next to the blinking texture, see below:
 ## 🔱 Custom Trident textures
 <img src="readMeAssets/tridents.png" alt="img" width="650"/>
 
-- Allows Trident textures to be set by a Resource-pack so they can be customized by name
-- Tridents support custom and emissive textures, as of [V2.3.0], a trident item named "Bobby's Trident" will 
-use the texture "trident_bobbys_trident.png", ignoring non-letters and changing spaces to "_"
-- This is a simple implementation with an Option to disable it as CIT resewn mod may implement in the future. and has more powerful customizations when item's are involved
+- Allows Trident textures to be set by a Resource-pack, so they can be customized by name
+- Tridents support custom and emissive textures, as of [V2.3.0], a trident item named "Bobby's Trident" will use the
+  texture "trident_bobbys_trident.png", ignoring non-letters and changing spaces to "_"
+- This is a simple implementation with an Option to disable it as CIT resewn mod may implement in the future. and has
+  more powerful customizations when items are involved
 
 ---
 ## ⚗️ Alternate potion effects
@@ -128,11 +130,16 @@ config/entity_texture_features.json
 
 
 ## Known Bugs
-- if you are experiencing LAG please check your most recent log file to see if any errors are being logged, sometimes an incorrectly written properties file or missing textures may lag the system.
-- Please check any issue is not actually a problem in the properties file, a few packs seem to be pointing to textures that don't exist.
 
-- So far all Mob Entities support Random & Emissive textures though there may still be some quirks, if you find bugs you can reach me on the mod's [Discord](https://discord.gg/rURmwrzUcz)
-- Complimentary shaders has it's own inbuilt emissive textures that usually work fine but will conflict with some resource-packs *(you can disable either complimentarys emissives or my mods emissives to fix this).*
+- if you are experiencing LAG please check your most recent log file to see if any errors are being logged, sometimes an
+  incorrectly written properties file or missing textures may lag the system.
+- Please check any issue is not actually a problem in the properties file, a few packs seem to be pointing to a texture
+  that doesn't exist.
+
+- So far all Mob Entities support Random & Emissive textures though there may still be some quirks, if you find bugs you
+  can reach me on the mod's [Discord](https://discord.gg/rURmwrzUcz)
+- Complimentary shaders has its own inbuilt emissive textures that usually work fine but will conflict with some
+  resource-packs *(you can disable either complimentary's emissives or my mods emissives to fix this).*
 
 
 

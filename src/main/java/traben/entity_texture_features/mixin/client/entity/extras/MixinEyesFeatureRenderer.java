@@ -28,7 +28,6 @@ import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
 public abstract class MixinEyesFeatureRenderer<T extends Entity, M extends EntityModel<T>> extends FeatureRenderer<T, M> {
 
 
-
     public MixinEyesFeatureRenderer(FeatureRendererContext<T, M> context) {
         super(context);
     }

@@ -130,7 +130,7 @@ public class ETFTexturePropertyCase {
         if (biomes.length > 0) {
             //String entityBiome = entity.world.getBiome(entity.getBlockPos()).getCategory().getName();//has no caps// desert
             //1.18.1 old mapping String entityBiome = Objects.requireNonNull(entity.world.getRegistryManager().get(Registry.BIOME_KEY).getId(entity.world.getBiome(entity.getBlockPos()))).toString();
-            //not an exact grabbing of the name but it works for the contains check so no need for more processing
+            //not an exact grabbing of the name, but it works for the contains check so no need for more processing
             //example "Reference{ResourceKey[minecraft:worldgen/biome / minecraft:river]=net.minecraft.class_1959@373fe79a}"
             //String entityBiome = entity.world.getBiome(entity.getBlockPos()).toString();
             //example  "Optional[minecraft:worldgen/biome / minecraft:river]"
@@ -188,7 +188,8 @@ public class ETFTexturePropertyCase {
                             }
                         }
 
-                        //am i dumb? is this all pattern was????
+                        //I do not understand pattern and no-one has ever had a problem with this implementation
+                        //is this really it, doesn't feel right???
                     } else if (str.contains("pattern:")) {
                         str = str.replace("?", ".?").replace("*", ".*");
                         if (str.contains("ipattern:")) {

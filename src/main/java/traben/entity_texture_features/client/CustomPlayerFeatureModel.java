@@ -17,8 +17,8 @@ public class CustomPlayerFeatureModel<T extends LivingEntity> extends EntityMode
     public final ModelPart nose;
     public final ModelPart jacket;
     public final ModelPart fatJacket;
-    public boolean sneaking;
-    public float leaningPitch;
+    //public boolean sneaking;
+
 
     public CustomPlayerFeatureModel() {
         this(RenderLayer::getEntityTranslucent);
@@ -49,7 +49,7 @@ public class CustomPlayerFeatureModel<T extends LivingEntity> extends EntityMode
     }
 
     public void animateModel(T livingEntity, float f, float g, float h) {
-        this.leaningPitch = livingEntity.getLeaningPitch(h);
+        //this.leaningPitch = livingEntity.getLeaningPitch(h);
         super.animateModel(livingEntity, f, g, h);
     }
 
@@ -59,7 +59,7 @@ public class CustomPlayerFeatureModel<T extends LivingEntity> extends EntityMode
         this.nose.roll = 0.0F;
 
         this.jacket.yaw = 0.0F;
-        if (this.sneaking) {
+        if (livingEntity.isSneaking()) {
             this.jacket.pitch = 0.5F;
             this.jacket.pivotY = 3.2F;
         } else {

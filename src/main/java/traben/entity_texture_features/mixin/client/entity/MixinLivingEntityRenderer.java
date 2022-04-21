@@ -130,7 +130,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
         UUID id = entity.getUuid();
 
         //debug printing
-        if (UUID_DEBUG_EXPLAINATION_MARKER.contains(id)) {
+        if (UUID_DEBUG_EXPLANATION_MARKER.contains(id)) {
             System.out.println("entity Data:\nTexture=" + texturePath);
 
             if (PATH_OPTIFINE_OR_JUST_RANDOM.containsKey(texturePath))
@@ -144,7 +144,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
             if (UUID_RANDOM_TEXTURE_SUFFIX.containsKey(id))
                 System.out.println("Random=" + UUID_RANDOM_TEXTURE_SUFFIX.get(id));
 
-            UUID_DEBUG_EXPLAINATION_MARKER.remove(id);
+            UUID_DEBUG_EXPLANATION_MARKER.remove(id);
         }
 
 
@@ -194,7 +194,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
         //return original if it was changed and should be set back to original
         if (originalIdentifierToBeUsedIfChanged == null) {
             return ETFUtils.returnBlinkIdOrGiven(entity, textureIdentifier.toString(), id);
-        }else{
+        } else {
             return ETFUtils.returnBlinkIdOrGiven(entity, originalIdentifierToBeUsedIfChanged.toString(), id);
         }
     }

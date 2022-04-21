@@ -71,7 +71,7 @@ public class ETFUtils {
                             return false;
                         }
                         if (packname2.equals(pack.getName())) {
-                            //if the second file is reached first it must be lower thus id 1 is higher return true
+                            //if the second file is reached first it must be the lower resource, thus id 1 is higher return true
                             return true;
                         }
                     }
@@ -257,22 +257,22 @@ public class ETFUtils {
         Properties props = new Properties();
         try {
             Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(new Identifier(path));
-            //skip if needs to be same resourcepack
+            //skip if it needs to be same resource-pack
             if (pathOfTextureToUseForResourcepackCheck != null) {
                 ResourceManager resourceManager = MinecraftClient.getInstance().getResourceManager();
-                String packname1 = resource.getResourcePackName();
-                String packname2 = resourceManager.getResource(new Identifier(pathOfTextureToUseForResourcepackCheck)).getResourcePackName();
-                if (!packname1.equals(packname2)) {
-                    //not same pack check it is a higher pack and only continue if packname1 is higher
+                String packName1 = resource.getResourcePackName();
+                String packName2 = resourceManager.getResource(new Identifier(pathOfTextureToUseForResourcepackCheck)).getResourcePackName();
+                if (!packName1.equals(packName2)) {
+                    //not same pack check it is a higher pack and only continue if packName1 is higher
                     for (ResourcePack pack :
                             resourceManager.streamResourcePacks().toList()) {
                         //loops through all resourcepacks from bottom "public static " to top
-                        if (packname1.equals(pack.getName())) {
+                        if (packName1.equals(pack.getName())) {
                             //if first id is reached first it is lower and must not be used return null
                             return null;
                         }
-                        if (packname2.equals(pack.getName())) {
-                            //if the second file is reached first it must be lower thus id 1 is higher so break to continue
+                        if (packName2.equals(pack.getName())) {
+                            //if the second file is reached first it must be the lower resource, thus id 1 is higher so break to continue
                             break;
                         }
                     }
@@ -319,7 +319,7 @@ public class ETFUtils {
     public static void processNewRandomTextureCandidate(String vanillaTexturePath, boolean skipProcessing) {
         //boolean hasProperties = false;
 
-        //set default incase of no change
+        //set default in case of no change
         //PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 2);
         //check and apply hashmap data
         System.out.println("checking=" + vanillaTexturePath);
@@ -357,7 +357,7 @@ public class ETFUtils {
             default -> new String[]{"textures", "optifine/random"};
         };
         String checkingPath = vanillaTexturePath.replace(replaceStrings[0], replaceStrings[1]);
-        if (isExistingFileDirect(new Identifier(checkingPath), false)) {
+        if (isExistingPropertyFile(checkingPath)) {
             PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath.replace(".properties", ".png"), pathToCheck_0123);
             Properties properties = readProperties(checkingPath);
             if (properties != null) {
@@ -422,7 +422,7 @@ public class ETFUtils {
                 for (Integer num :
                         numbersList) {
                     //loops through each known number in properties
-                    //all of case 1 ect should be processed here
+                    //all case.1 ect should be processed here
                     Integer[] suffixes = {};
                     Integer[] weights = {};
                     String[] biomes = {};
@@ -656,7 +656,7 @@ public class ETFUtils {
         for (ETFTexturePropertyCase test :
                 PATH_OPTIFINE_RANDOM_SETTINGS_PER_TEXTURE.get(vanillaPath)) {
 
-            //skip if its only an update and case is not updatable
+            //skip if it is only an update and case is not updatable
             if (test.testEntity((LivingEntity) entity, UUID_ENTITY_ALREADY_CALCULATED.contains(id), UUID_CaseHasUpdateablesCustom)) {
                 UUID_RandomSuffixMap.put(id, test.getWeightedSuffix(id, PATH_IGNORE_ONE_PNG.get(vanillaPath)));
                 Identifier tested = returnOptifineOrVanillaIdentifier(vanillaPath, UUID_RandomSuffixMap.get(id));
@@ -1664,7 +1664,7 @@ public class ETFUtils {
                 ETFUtils.processNewRandomTextureCandidate(texture.toString());
             }
             if (PATH_OPTIFINE_OR_JUST_RANDOM.containsKey(texture.toString())) {
-                //if needs to check if change required
+                //check if this needs a texture update
                 if (UUID_ENTITY_AWAITING_DATA_CLEARING.containsKey(id)) {
                     if (UUID_RANDOM_TEXTURE_SUFFIX.containsKey(id)) {
                         if (!UUID_HAS_UPDATABLE_RANDOM_CASES.containsKey(id)) {
@@ -1679,7 +1679,7 @@ public class ETFUtils {
                                     int hold = UUID_RANDOM_TEXTURE_SUFFIX.get(id);
                                     ETFUtils.resetSingleSuffixData(id);
                                     ETFUtils.testCases(texture.toString(), id, entity, true, UUID_RANDOM_TEXTURE_SUFFIX, UUID_HAS_UPDATABLE_RANDOM_CASES);
-                                    //if didnt change keep the same
+                                    //if didn't change keep it the same
                                     if (!UUID_RANDOM_TEXTURE_SUFFIX.containsKey(id)) {
                                         UUID_RANDOM_TEXTURE_SUFFIX.put(id, hold);
                                     }
@@ -1739,7 +1739,7 @@ public class ETFUtils {
         if (ETFConfigData.enableEmissiveTextures && isShaderOn()) {
             if (PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION.containsKey(returned.toString())) {
                 if (PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION.get(returned.toString())) {
-                    return new Identifier(returned.toString() + "etf_iris_patched_file.png");
+                    return new Identifier(returned + "etf_iris_patched_file.png");
                 }
             }
         }
@@ -1783,7 +1783,7 @@ public class ETFUtils {
             if (isShaderOn()) {
                 if (!PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION.containsKey(fileString)) {
                     //prevent flickering by removing pixels from the base texture
-                    // the iris fix setting will now require a reload
+                    // the iris fix setting will now require a re-load
                     replaceTextureMinusEmissive(fileString);
                 }
             }
@@ -1791,7 +1791,7 @@ public class ETFUtils {
         }
     }
 
-    //EXPERIMENT IRIS FLICKER FIX////////////////////////////////////////////////////////////////////////////////////////////////
+
     private static final HashMap<String, Boolean> PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION = new HashMap<>();
 
     private static void replaceTextureMinusEmissive(String originalTexturePath) {
@@ -1809,6 +1809,7 @@ public class ETFUtils {
             NativeImage originalCopy = getNativeImageFromID(new Identifier(originalTexturePath));
 
             try {
+                //noinspection ConstantConditions - it's in a catch for a reason
                 if (emissive.getWidth() == originalCopy.getWidth() && emissive.getHeight() == originalCopy.getHeight()) {
                     //float widthMultipleEmissive  = originalCopy.getWidth()  / (float)emissive.getWidth();
                     //float heightMultipleEmissive = originalCopy.getHeight() / (float)emissive.getHeight();
@@ -1827,7 +1828,7 @@ public class ETFUtils {
                     registerNativeImageToIdentifier(originalCopy, originalTexturePath + "etf_iris_patched_file.png");
                     return;
                 }
-            } catch (NullPointerException e) {
+            } catch (NullPointerException ignored) {
 
             }
         }
@@ -1842,7 +1843,6 @@ public class ETFUtils {
         }
     }
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public static void generalEmissiveRenderPart(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, Identifier texture, ModelPart model, boolean isBlockEntity) {
         generalEmissiveRenderPart(matrixStack, vertexConsumerProvider, texture.toString(), model, isBlockEntity);
@@ -1855,7 +1855,7 @@ public class ETFUtils {
             if (isShaderOn()) {
                 if (!PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION.containsKey(fileString)) {
                     //prevent flickering by removing pixels from the base texture
-                    // the iris fix setting will now require a reload
+                    // the iris fix setting will now require a re-load
                     replaceTextureMinusEmissive(fileString);
                 }
             }

@@ -1,7 +1,7 @@
 <img src="title.png" alt="Entity Texture Features Title" width="650"/>
 
 ___
-### [[Discord]](https://discord.gg/rURmwrzUcz) - [[CurseForge]](https://www.curseforge.com/minecraft/mc-mods/entity-texture-features-fabric) - [[Modrinth]](https://modrinth.com/mod/entitytexturefeatures) - [[~~Compatability List~~]]() - [[Report Issues]](https://github.com/Traben-0/EmissiveMod/issues) - [[Donate]](https://www.paypal.com/donate/?business=PLB862YH8UXML&no_recurring=0&currency_code=AUD)
+### [[Discord]](https://discord.gg/rURmwrzUcz) - [[CurseForge]](https://www.curseforge.com/minecraft/mc-mods/entity-texture-features-fabric) - [[Modrinth]](https://modrinth.com/mod/entitytexturefeatures) - [[Report Issues]](https://github.com/Traben-0/EmissiveMod/issues) - [[Donate]](https://www.paypal.com/donate/?business=PLB862YH8UXML&no_recurring=0&currency_code=AUD)
 ___
 # 🎨  Player skin features Guide
 <img src="skins1.png" alt="img" width="450"/><br>
@@ -24,12 +24,13 @@ most of these examples are downloadable [[HERE]](https://github.com/Traben-0/Emi
 [*Downloadable example skin*](mod_data_example.png)  
 ![downloadable](mod_data_example.png)
 ## Getting started
-- First of all to enable the skin features in this mod you **must** put the marker in your skin file,
-  this is the red,green,blue,white,black pixels just below the head texture in the example image above.
+
+- First to enable the skin features in this mod you **must** put the marker in your skin file, this is the
+  red,green,blue,white,black pixels just below the head texture in the example image above.
 - This mod will ignore any skin without this so no one else can affect **YOUR** skin
 - You will select your marker choices later these will be selected by putting specific
-colour pixels in the black boxes numbered 1 - 4 in the top left of the example image.   
-*(Note: these 4 boxes point to four other numbered boxes on the right hand side of the example skin.)*
+  colour pixels in the black boxes numbered 1 - 4 in the top left of the example image.   
+  *(Note: these 4 boxes point to four other numbered boxes on the right-hand side of the example skin.)*
 - The choices Box is the white and grey checkered box in the example image, it has been expanded
 into the top right to show you the numbers of those pixels
 you will fill this in later with specific pixel colours to select options for your skin
@@ -44,10 +45,10 @@ blank and transparent no future update will impact your skin unexpectedly.
 ___
 ## Transparency - [V2.3.0+]
 
-- If the marker is present in your skin, you will then be able to use transparency in
-the head, body,RLeg, LLeg,RArm, and LArm, body parts *(this is disabled in vanilla)*.
-- The total skin can not be less than 40% average transparency to prevent possible PVP abuse
-an option has been added to override this for fun and only affects your point of view.
+- If the marker is present in your skin, you will then be able to use transparency in the head, body,RLeg, LLeg,RArm,
+  and LArm, body parts *(this is disabled in vanilla)*.
+- The total skin can not be less than 40% average transparency to prevent possible PVP abuse, an option has been added
+  to override this for fun and only affects your point of view.
 - Transparency can be separately Disabled for enemy team players to not be abused in PVP settings.  
   ![transparent](modskins/ghost.png)![transparent](modskins/slime.png)![transparent](modskins/chicken.png)
   ![transparent](modskins/skelly.png)![transparent](modskins/amogus.png)
@@ -76,8 +77,9 @@ any pixels present in that box will make identical pixels in the rest of the ski
 - See examples above in the Alex, robed figure, and Thano's arm skins
 ---
 ## Blinking - [V2.3.0+]
-- If the marker is present in your skin, you will then be able to have your skin blink periodically
-but you must also choose what style of blinking,
+
+- If the marker is present in your skin, you will then be able to have your skin blink periodically, but you must also
+  choose what style of blinking,
 ```
 - 1 pixel height Eyes      [V2.4.4+]
 - 2 pixel height Eyes      [V2.4.4+]
@@ -116,9 +118,10 @@ If your skin's eyes are only 2 pixels tall - use this.
 - This skin uses the 2 pixel blinking
 
 #### 3-4 pixel blinking - [V2.4.4+]
+
 If your skin's eyes are only 3-4 pixels tall - use this.  
-This actually only supports 4 pixels but you can simply copy an additional *non-eye* line of the face if your 
-eyes are 3 pixels high and it will work fine :)
+This actually only supports 4 pixels, but you can simply copy an additional *non-eye* line of the face if your eyes are
+3 pixels high, and it will work fine :)
 - First place a Brown #5 pixel in Choice Box pixel #1 to enable 4 pixel blinking
 - Then make 2 copies of the 4 horizontal lines of the skin's face where the eyes are, and change 1 copy's
   eyes to be closed, and the other's eyes to be half closed.
@@ -144,10 +147,9 @@ you can have either
 - to Select 1 frame you must use exactly the Pink pixel #1 from the Color Guide, for 2 frames 
 use the Light Blue #2 instead
 - Once this is done you can now add blinking textures to your skin, make a copy of the front of
-your face and put it in the purple box with a #1
-make this face have it's eyes completely closed
-- Repeat with the extra head layer for your face and put that in the purple box with #3, 
-just incase you have popout eyes
+  your face and put it in the purple box with a #1 make this face have its eyes completely closed
+- Repeat with the extra head layer for your face and put that in the purple box with #3, just in case you have pop-out
+  eyes
 - if you have selected a 2 frame blink repeat this process with purple boxes #2 & #4 except this time make the eyes half closed  
   ![transparent](modskins/chicken.png)![transparent](modskins/slime.png)
 - You can see this in the Chicken & Slime Tuxedo skins
@@ -214,14 +216,15 @@ This mod supports placing a custom cape texture in your skin file you upload to 
 
 
 ### Third party capes
-- cause I'm nice I am supporting other cape options you may choose that have their own benefits   
-*(This support is provided bby the servers of these third party services, they may not always support this usage)*
+
+- because I'm nice I am supporting other cape options you may choose that have their own benefits   
+  *(This support is provided bby the servers of these third party services, they may not always support this usage)*
 - Firstly you can always install the Third Party Cape Mod Itself if you want to, otherwise see below.
 
 #### Minecraftcapes.net Cape
-- to select your minecraftcapes.net cape to load in this mod you simply need to put a cyan #2 pixel 
-in the #5 slot of the choice box in your skin and your minecraftcapes.net cape will show to anyone with this mod and player features enabled.   
-*(you need to setup a free cape with [minecraftcapes.net](https://minecraftcapes.net) first)*
+- to select your minecraftcapes.net cape to load in this mod you simply need to put a cyan #2 pixel
+  in the #5 slot of the choice box in your skin and your minecraftcapes.net cape will show to anyone with this mod and player features enabled.   
+  *(you need to set up a free cape with [minecraftcapes.net](https://minecraftcapes.net) first)*
 
 #### Optifine Cape
 while I don't recommend this while other options Exist, 
@@ -231,7 +234,8 @@ I am supporting the people who have donated to the Optifine Dev
 
 ---
 # To confusing or not working?
-join the [[Discord]](https://discord.gg/rURmwrzUcz) and i'll be happy to help
+
+join the [[Discord]](https://discord.gg/rURmwrzUcz) and I'll be happy to help
 
 
 
