@@ -18,13 +18,11 @@ public abstract class MixinPlayerEntity {
 
 
     //will force update entity texture at any player interaction useful for debugging
-    @Inject(method = "interact", at = @At("RETURN"))
+    @Inject(method = "interact", at = @At("HEAD"))
     private void etf$injected(Entity entity, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
         if (((LivingEntity) (Object) this).world.isClient()) {
+            UUID_DEBUG_EXPLAINATION_MARKER.add(entity.getUuid());
             if (!UUID_ENTITY_AWAITING_DATA_CLEARING.containsKey(entity.getUuid())) {
-
-                UUID_DEBUG_EXPLAINATION_MARKER.add(entity.getUuid());
-
                 UUID_ENTITY_AWAITING_DATA_CLEARING.put(entity.getUuid(), System.currentTimeMillis());
             }
         }

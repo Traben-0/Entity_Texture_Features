@@ -123,6 +123,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
             return textureIdentifier;
         }
 
+
         Identifier originalIdentifierToBeUsedIfChanged = null;
         String texturePath = textureIdentifier.toString();
 

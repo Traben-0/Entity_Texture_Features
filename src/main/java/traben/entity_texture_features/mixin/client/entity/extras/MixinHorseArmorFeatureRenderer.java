@@ -31,27 +31,6 @@ public abstract class MixinHorseArmorFeatureRenderer extends FeatureRenderer<Hor
         super(context);
     }
 
-
-//    @Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/passive/HorseEntity;FFFFFF)V",
-//            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/VertexConsumerProvider;getBuffer(Lnet/minecraft/client/render/RenderLayer;)Lnet/minecraft/client/render/VertexConsumer;",
-//                    shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILSOFT,cancellable = true)
-//    private void etf$mixin(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, HorseEntity horseEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci, ItemStack itemStack, HorseArmorItem horseArmorItem, float n, float o, float p) {
-//        if (ETFConfigData.enableCustomTextures) {
-//            String check = ETFUtils.generalReturnAlreadySetAlteredTexture(horseArmorItem.getEntityTexture(), horseEntity).toString();
-//            if (!PATH_IS_EXISTING_FEATURE.containsKey(check)) {
-//                PATH_IS_EXISTING_FEATURE.put(check, ETFUtils.isExistingNativeImageFile(new Identifier(check)));
-//            }
-//            if (PATH_IS_EXISTING_FEATURE.get(check)) {
-//                VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntityCutoutNoCull(new Identifier(check)));
-//                this.model.render(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV, n, o, p, 1.0F);
-//
-//                ETFUtils.generalEmissiveRenderModel(matrixStack, vertexConsumerProvider, check, model);
-//
-//                ci.cancel();
-//            }
-//        }
-//    }
-
     @Inject(
             method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/passive/HorseEntity;FFFFFF)V",
             at = @At(value = "HEAD"))

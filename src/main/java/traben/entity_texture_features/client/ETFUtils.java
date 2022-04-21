@@ -320,10 +320,10 @@ public class ETFUtils {
         //boolean hasProperties = false;
 
         //set default incase of no change
-        PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 2);
+        //PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 2);
         //check and apply hashmap data
         System.out.println("checking=" + vanillaTexturePath);
-        String properties = checkAndSetPathToUseForRandoms(vanillaTexturePath.replace(".png", ".properties"), true);
+        String properties = checkAndSetPathsToUseForPropertyRandoms(vanillaTexturePath.replace(".png", ".properties"));
         System.out.println("returned=" + properties);
 
         if (!skipProcessing) {
@@ -331,105 +331,70 @@ public class ETFUtils {
                 processOptifineTextureCandidate(vanillaTexturePath, properties);
             } else {
                 //process a true random texture begins with 2.png
-                checkAndSetPathToUseForRandoms(vanillaTexturePath.replace(".png", "2.png"), false);
+                //checkAndSetPathToUseForRandoms(vanillaTexturePath.replace(".png", "2.png"), false);
                 processTrueRandomCandidate(vanillaTexturePath);
             }
         }
     }
 
-    private static String checkAndSetPathToUseForRandoms(String texturePath, boolean isProperties) {
+    private static String checkAndSetPathsToUseForPropertyRandoms(String texturePath) {
         //preserve checking order 3 > 0 > 1 > 2
-        String checkingPath = texturePath.replace("textures", "etf/random");
-        if (isExistingFileDirect(new Identifier(checkingPath), !isProperties)) {
-            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(texturePath.replace(".properties", ".png"), 3);
-            if (isProperties) {
-                String properties = checkPropertiesFileforTexture(checkingPath, texturePath);
-                if (properties != null) {
-                    return properties;
-                }
-                //else check other properties down the list
-            } else {
-                return checkingPath;
-            }
-        }
-        checkingPath = texturePath.replace("textures", "optifine/random");
-        if (isExistingFileDirect(new Identifier(checkingPath), !isProperties)) {
-            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(texturePath.replace(".properties", ".png"), 0);
-            if (isProperties) {
-                String properties = checkPropertiesFileforTexture(checkingPath, texturePath);
-                if (properties != null) {
-                    return properties;
-                }
-                //else check other properties down the list
-            } else {
-                return checkingPath;
-            }
-        }
-        checkingPath = texturePath.replace("textures/entity", "optifine/mob");
-        if (isExistingFileDirect(new Identifier(checkingPath), !isProperties)) {
-            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(texturePath.replace(".properties", ".png"), 1);
-            if (isProperties) {
-                String properties = checkPropertiesFileforTexture(checkingPath, texturePath);
-                if (properties != null) {
-                    return properties;
-                }
-                //else check other properties down the list
-            } else {
-                return checkingPath;
-            }
-        }
-//        if (isExistingFileDirect(new Identifier(texturePath),!isProperties)) {
-//            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(texturePath, 2);
-//            if (isProperties) {
-//                String properties = checkPropertiesFileforTexture(checkingPath,texturePath);
-//                if(properties != null){
-//                    return properties;
-//                }
-//                //else check other properties down the list
-//            }else {
-//                return checkingPath;
-//            }
-//        }
-        return null;
+        String check = checkPropertyPath(texturePath, 3);
+        if (check != null) return check;
+        check = checkPropertyPath(texturePath, 0);
+        if (check != null) return check;
+        check = checkPropertyPath(texturePath, 1);
+        if (check != null) return check;
+        check = checkPropertyPath(texturePath, 2);
+        return check;
     }
 
-    private static String checkPropertiesFileforTexture(String possibleProperty, String vanillaTexturePath) {
-        Properties properties = readProperties(possibleProperty);
-        if (properties != null) {
-            for (String propertyName :
-                    properties.stringPropertyNames()) {
-                if (propertyName.contains("skin") || propertyName.contains("texture")) {
-                    //use this one for check
-                    String[] suffixData = properties.getProperty(propertyName).trim().split("\s+");
-                    //assume data may be formatted stupidly like  "   13-14   67  800-805"
-                    //just want a number present in this properties file to check so just grab the first by splitting and grabbing[0]
+    private static String checkPropertyPath(String vanillaTexturePath, int pathToCheck_0123) {
+        String[] replaceStrings = switch (pathToCheck_0123) {
+            case 1 -> new String[]{"textures/entity", "optifine/mob"};
+            case 2 -> new String[]{"$", "$"};
+            case 3 -> new String[]{"textures", "etf/random"};
+            default -> new String[]{"textures", "optifine/random"};
+        };
+        String checkingPath = vanillaTexturePath.replace(replaceStrings[0], replaceStrings[1]);
+        if (isExistingFileDirect(new Identifier(checkingPath), false)) {
+            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath.replace(".properties", ".png"), pathToCheck_0123);
+            Properties properties = readProperties(checkingPath);
+            if (properties != null) {
+                for (String propertyName :
+                        properties.stringPropertyNames()) {
+                    if (propertyName.contains("skin") || propertyName.contains("texture")) {
+                        //use this one for check
+                        String[] suffixData = properties.getProperty(propertyName).trim().split("\s+");
+                        //assume data may be formatted stupidly like  "   13-14   67  800-805"
+                        //just want a number present in this properties file to check so just grab the first by splitting and grabbing[0]
 
-                    String checkingPath = null;
-                    for (String possibleSuffix :
-                            suffixData) {
-                        //if range use right most as less likely to be 1
-                        if (possibleSuffix.contains("-")) possibleSuffix = possibleSuffix.split("-")[1];
-                        possibleSuffix = possibleSuffix.replaceAll("[^0-9]", "");
-                        if (!possibleSuffix.isEmpty()) {
-                            String tryHere = possibleProperty.replace(".properties", possibleSuffix + ".png");
-                            System.out.println("tried=" + tryHere);
-                            if (isExistingNativeImageFile(new Identifier(tryHere))) {
-                                checkingPath = tryHere;
-                                break;
+                        String checkingPath1 = null;
+                        for (String possibleSuffix :
+                                suffixData) {
+                            //if range use right most as less likely to be 1
+                            if (possibleSuffix.contains("-")) possibleSuffix = possibleSuffix.split("-")[1];
+                            possibleSuffix = possibleSuffix.replaceAll("[^0-9]", "");
+                            if (!possibleSuffix.isEmpty()) {
+                                String tryHere = checkingPath.replace(".properties", possibleSuffix + ".png");
+                                //System.out.println("tried=" + tryHere);
+                                if (isExistingNativeImageFile(new Identifier(tryHere))) {
+                                    checkingPath1 = tryHere;
+                                    break;
+                                }
+                            }
+                        }
+                        if (checkingPath1 != null) {
+                            if (checkPropertyPathExistsAndSameOrHigherResourcepackAs(checkingPath, checkingPath1)) {
+                                //this return only occurs if the properties file exists and the first texture named in the properties file is of the same or a lower pack
+                                return checkingPath;
                             }
                         }
                     }
-                    if (checkingPath != null) {
-                        if (checkPropertyPathExistsAndSameOrHigherResourcepackAs(possibleProperty, checkingPath)) {
-                            //this return only occurs if the properties file exists and the first texture named in the properties file is of the same or a lower pack
-                            return possibleProperty;
-                        }
-                    }
                 }
             }
         }
-        //failed
-        System.out.println("failed in check");
+        //failed all checks
         return null;
     }
 

@@ -131,6 +131,9 @@ public class ETFClient implements ClientModInitializer {
     //marks this UUID to have relevant data printed for debugging
     public static final Set<UUID> UUID_DEBUG_EXPLAINATION_MARKER = new HashSet<>();
 
+    //stores the most recent parrots to transfer to sit on shoulders
+    public List<UUID> mostRecentParrot = new ArrayList<>();
+
 
     @Override
     public void onInitializeClient() {
