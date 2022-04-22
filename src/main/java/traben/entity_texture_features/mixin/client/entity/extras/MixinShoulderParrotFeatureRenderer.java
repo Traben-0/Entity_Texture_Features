@@ -72,7 +72,7 @@ public abstract class MixinShoulderParrotFeatureRenderer<T extends PlayerEntity>
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/ParrotEntityModel;poseOnShoulder(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFFI)V",
                     shift = At.Shift.AFTER))
     private <M extends Entity> void etf$applyEmissive(MatrixStack matrixStack, boolean bl, PlayerEntity playerEntity, VertexConsumerProvider vertexConsumerProvider, NbtCompound nbtCompound, int i, float f, float g, float h, float j, EntityType<M> type, CallbackInfo ci) {
-        ETFUtils.generalEmissiveRenderModel(matrixStack, vertexConsumerProvider, etf$returnAlteredIdentifier(), model);
+        ETFUtils.renderEmissiveModel(matrixStack, vertexConsumerProvider, etf$returnAlteredIdentifier(), model, false);
     }
 
 }
