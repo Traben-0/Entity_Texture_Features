@@ -14,10 +14,7 @@ import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.*;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.client.texture.TextureManager;
@@ -398,6 +395,35 @@ public class ETFUtils {
         return null;
     }
 
+    private static void checkAndSetPathsToUseForUncheckedTextures(String vanillaTexturePath, String testPath) {
+        //preserve checking order 3 > 0 > 1 > 2
+        if (hiddenCheckSpecificPath(testPath, 3)) {
+            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 3);
+            return;
+        }
+        if (hiddenCheckSpecificPath(testPath, 0)) {
+            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 0);
+            return;
+        }
+        if (hiddenCheckSpecificPath(testPath, 1)) {
+            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 1);
+            return;
+        }
+        if (hiddenCheckSpecificPath(testPath, 2)) {
+            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 2);
+        }
+    }
+
+    private static boolean hiddenCheckSpecificPath(String vanillaTexturePath, int pathToCheck_0123) {
+        String[] replaceStrings = switch (pathToCheck_0123) {
+            case 1 -> new String[]{"textures/entity", "optifine/mob"};
+            case 2 -> new String[]{"$", "$"};
+            case 3 -> new String[]{"textures", "etf/random"};
+            default -> new String[]{"textures", "optifine/random"};
+        };
+        String checkingPath = vanillaTexturePath.replace(replaceStrings[0], replaceStrings[1]);
+        return isExistingNativeImageFile(new Identifier(checkingPath));
+    }
 
     private static void processOptifineTextureCandidate(String vanillaTexturePath, String propertiesPath) {
         try {
@@ -687,7 +713,14 @@ public class ETFUtils {
     public static String returnOptifineOrVanillaPath(String vanillaPath, int randomId, String emissiveSuffx) {
 
         if (!PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.containsKey(vanillaPath)) {
-            ETFUtils.processNewRandomTextureCandidate(vanillaPath, true);
+
+            if (randomId != 0) {
+                //for special cases of weird textures like horse armour and markings
+                checkAndSetPathsToUseForUncheckedTextures(vanillaPath, vanillaPath.replace(".png", randomId + ".png"));
+            } else {
+                //for brand new unknown textures that slip in
+                ETFUtils.processNewRandomTextureCandidate(vanillaPath, true);
+            }
         }
 
         String append = (randomId == 0 ? "" : randomId) + emissiveSuffx + ".png";
@@ -1751,8 +1784,13 @@ public class ETFUtils {
     private static Identifier hiddenGeneralReturnAlreadySetAlteredTexture(Identifier texture, Entity entity) {
         UUID id = entity.getUuid();
 
+
         if (UUID_RANDOM_TEXTURE_SUFFIX.containsKey(id)) {
             if (UUID_RANDOM_TEXTURE_SUFFIX.get(id) != 0) {
+//                if(!PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.containsKey(texture.toString())){
+//                    //for special cases where we do not want to process again fully, e.g. horse armour
+//                    checkAndSetPathsToUseForUncheckedTextures(texture.toString(),texture.toString().replace(".png",UUID_RANDOM_TEXTURE_SUFFIX.get(id)+".png"));
+//                }
                 return returnBlinkIdOrGiven((LivingEntity) entity, returnOptifineOrVanillaIdentifier(texture.toString(), UUID_RANDOM_TEXTURE_SUFFIX.get(id)).toString(), id);
             } else {
                 if (!PATH_HAS_DEFAULT_REPLACEMENT.containsKey(texture.toString())) {
@@ -1787,7 +1825,7 @@ public class ETFUtils {
                     replaceTextureMinusEmissive(fileString);
                 }
             }
-            model.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
+            model.render(matrixStack, textureVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
         }
     }
 
@@ -1859,7 +1897,7 @@ public class ETFUtils {
                     replaceTextureMinusEmissive(fileString);
                 }
             }
-            modelPart.render(matrixStack, textureVert, 15728640, OverlayTexture.DEFAULT_UV);
+            modelPart.render(matrixStack, textureVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV);
         }
     }
 
