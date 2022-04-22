@@ -31,7 +31,7 @@ public class ETFConfig {
     public boolean enableElytra = true;
     public boolean elytraThicknessFix = true;
 
-    //string name stuff more indepth than other enum for backwards compatiblity
+    //string name stuff more indepth than other enum for backwards compatibility
     public enum enchantedPotionEffectsEnum {
         NONE("None"),
         ENCHANTED("Enchanted"),
@@ -39,12 +39,13 @@ public class ETFConfig {
         CREEPER_CHARGE("Creeper Charge");
 
         private final String name;
-        enchantedPotionEffectsEnum(String namex) {
-            this.name = namex;
+
+        enchantedPotionEffectsEnum(String nameX) {
+            this.name = nameX;
         }
 
         @Override
-        public String toString(){
+        public String toString() {
             return name;
         }
     }

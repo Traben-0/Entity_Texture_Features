@@ -60,12 +60,8 @@ public abstract class MixinBuiltinModelItemRenderer implements SynchronousResour
                         this.modelTrident.render(matrices, block, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
                         matrices.pop();
                         tridentOveridden = true;
-                    } else {//vanilla
-                        //tridentOveridden = false;
-                    }//vanilla render
-                } else {//vanilla
-                    // tridentOveridden = false;
-                }
+                    }  //vanilla
+                }  //vanilla
             }
             if (!tridentOveridden) {//render vanilla
                 matrices.push();

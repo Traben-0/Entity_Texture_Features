@@ -26,7 +26,7 @@ public class ETFClient implements ClientModInitializer {
 
     public static final String MOD_ID = "etf";
 
-    ///list all uuids that have ever been seen by ETF so they can be selected for random data clearing to save memory
+    ///list all uuids that have ever been seen by ETF, so they can be selected for random data clearing to save memory
     public static final HashMap<UUID, Integer> KNOWN_UUID_LIST = new HashMap<>();
 
     //total number of random variations if true random is used / no optifine properties file
@@ -96,11 +96,11 @@ public class ETFClient implements ClientModInitializer {
     public static final HashMap<UUID, Boolean> UUID_PLAYER_HAS_CAPE = new HashMap<>();
     public static final HashMap<UUID, Boolean> UUID_PLAYER_HAS_CUSTOM_CAPE = new HashMap<>();
 
-    //rare cases can cause these not to be closed, just incase these will be closed shortly after use time has passed if they have not already been caught and closed by the system
+    //rare cases can cause these not to be closed, just in case these will be closed shortly after use time has passed if they have not already been caught and closed by the system
     public static final HashMap<String, HttpURLConnection> URL_HTTP_TO_DISCONNECT_1 = new HashMap<>();
     public static final HashMap<String, HttpURLConnection> URL_HTTP_TO_DISCONNECT_2 = new HashMap<>();
 
-    //related to repeating HTTP checks a couple times incase of bad connection
+    //related to repeating HTTP checks a couple of times in case of bad connection
     public static final HashMap<UUID, Long> UUID_PLAYER_LAST_SKIN_CHECK = new HashMap<>();
     public static final HashMap<UUID, Integer> UUID_PLAYER_LAST_SKIN_CHECK_COUNT = new HashMap<>();
 
@@ -110,7 +110,7 @@ public class ETFClient implements ClientModInitializer {
     public static final HashMap<String, Boolean> PATH_HAS_BLINK_TEXTURE_2 = new HashMap<>();
     public static final HashMap<String, Properties> PATH_BLINK_PROPERTIES = new HashMap<>();
 
-    //marks whether the vanilla texture has an override in the randoms folder (e.g  creeper.png in the optifine folder)
+    //marks whether the vanilla texture has an override in the randoms folder (e.g.  creeper.png in the optifine folder)
     public static final HashMap<String, Boolean> PATH_HAS_DEFAULT_REPLACEMENT = new HashMap<>();
 
     //whether the iris mod was detected on load
@@ -131,8 +131,7 @@ public class ETFClient implements ClientModInitializer {
     public final static String SKIN_NAMESPACE = "etf_skin:";
 
     //marks this UUID to have relevant data printed for debugging
-    public static final Set<UUID> UUID_DEBUG_EXPLAINATION_MARKER = new HashSet<>();
-
+    public static final Set<UUID> UUID_DEBUG_EXPLANATION_MARKER = new HashSet<>();
 
     @Override
     public void onInitializeClient() {

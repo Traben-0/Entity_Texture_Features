@@ -68,6 +68,7 @@ public abstract class MixinHorseArmorFeatureRenderer extends FeatureRenderer<Hor
 
         if (ETFConfigData.enableCustomTextures) {
             String check = ETFUtils.generalReturnAlreadySetAlteredTexture(texture, etf$entity).toString();
+            System.out.println("check=" + check);
             if (!PATH_IS_EXISTING_FEATURE.containsKey(check)) {
                 PATH_IS_EXISTING_FEATURE.put(check, ETFUtils.isExistingNativeImageFile(new Identifier(check)));
             }

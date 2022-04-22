@@ -8,7 +8,6 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import net.fabricmc.loader.api.FabricLoader;
-import net.irisshaders.iris.api.v0.IrisApi;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.ModelPart;
@@ -87,7 +86,7 @@ public class ETFUtils {
                             return false;
                         }
                         if (packname2.equals(pack.getName())) {
-                            //if the second file is reached first it must be lower thus id 1 is higher return true
+                            //if the second file is reached first it must be the lower resource, thus id 1 is higher return true
                             return true;
                         }
                     }
@@ -261,6 +260,70 @@ public class ETFUtils {
         UUID_PLAYER_LAST_SKIN_CHECK_COUNT.remove(id);
     }
 
+
+    public static Properties readProperties(String path) {
+        return readProperties(path, null);
+    }
+
+    public static Properties readProperties(String path, String pathOfTextureToUseForResourcepackCheck) {
+        Properties props = new Properties();
+        try {
+            Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(new Identifier(path));
+            //skip if it needs to be same resource-pack
+            if (pathOfTextureToUseForResourcepackCheck != null) {
+                ResourceManager resourceManager = MinecraftClient.getInstance().getResourceManager();
+                String packName1 = resource.getResourcePackName();
+                String packName2 = resourceManager.getResource(new Identifier(pathOfTextureToUseForResourcepackCheck)).getResourcePackName();
+                if (!packName1.equals(packName2)) {
+                    //not same pack check it is a higher pack and only continue if packName1 is higher
+                    for (ResourcePack pack :
+                            resourceManager.streamResourcePacks().toList()) {
+                        //loops through all resourcepacks from bottom "public static " to top
+                        if (packName1.equals(pack.getName())) {
+                            //if first id is reached first it is lower and must not be used return null
+                            return null;
+                        }
+                        if (packName2.equals(pack.getName())) {
+                            //if the second file is reached first it must be the lower resource, thus id 1 is higher so break to continue
+                            break;
+                        }
+                    }
+                }
+            }
+            try {
+                InputStream in = resource.getInputStream();
+                props.load(in);
+                resource.close();
+            } catch (Exception e) {
+                resource.close();
+                return null;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        // Example return
+        // {skins.4=3, skins.5=1-3, skins.2=2, skins.3=3, weights.5=1 1 , biomes.2=desert, health.3=1-50%, names.4=iregex:mob name.*}
+        return props;
+    }
+
+    public static NativeImage getNativeImageFromID(Identifier identifier) {
+        NativeImage img;
+        try {
+            Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(identifier);
+            try {
+                InputStream in = resource.getInputStream();
+                img = NativeImage.read(in);
+                resource.close();
+            } catch (Exception e) {
+                resource.close();
+                return null;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        return img;
+    }
+
     public static void processNewRandomTextureCandidate(String vanillaTexturePath) {
         processNewRandomTextureCandidate(vanillaTexturePath, false);
     }
@@ -268,11 +331,11 @@ public class ETFUtils {
     public static void processNewRandomTextureCandidate(String vanillaTexturePath, boolean skipProcessing) {
         //boolean hasProperties = false;
 
-        //set default incase of no change
-        PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 2);
+        //set default in case of no change
+        //PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 2);
         //check and apply hashmap data
         System.out.println("checking=" + vanillaTexturePath);
-        String properties = checkAndSetPathToUseForRandoms(vanillaTexturePath.replace(".png", ".properties"), true);
+        String properties = checkAndSetPathsToUseForPropertyRandoms(vanillaTexturePath.replace(".png", ".properties"));
         System.out.println("returned=" + properties);
 
         if (!skipProcessing) {
@@ -280,108 +343,102 @@ public class ETFUtils {
                 processOptifineTextureCandidate(vanillaTexturePath, properties);
             } else {
                 //process a true random texture begins with 2.png
-                checkAndSetPathToUseForRandoms(vanillaTexturePath.replace(".png", "2.png"), false);
+                //checkAndSetPathToUseForRandoms(vanillaTexturePath.replace(".png", "2.png"), false);
                 processTrueRandomCandidate(vanillaTexturePath);
             }
         }
     }
 
-    private static String checkAndSetPathToUseForRandoms(String texturePath, boolean isProperties) {
+    private static String checkAndSetPathsToUseForPropertyRandoms(String texturePath) {
         //preserve checking order 3 > 0 > 1 > 2
-        String checkingPath = texturePath.replace("textures", "etf/random");
-        if (isExistingFileDirect(new Identifier(checkingPath), !isProperties)) {
-            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(texturePath.replace(".properties", ".png"), 3);
-            if (isProperties) {
-                String properties = checkPropertiesFileforTexture(checkingPath, texturePath);
-                if (properties != null) {
-                    return properties;
+        String check = checkPropertyPath(texturePath, 3);
+        if (check != null) return check;
+        check = checkPropertyPath(texturePath, 0);
+        if (check != null) return check;
+        check = checkPropertyPath(texturePath, 1);
+        if (check != null) return check;
+        check = checkPropertyPath(texturePath, 2);
+        return check;
+    }
+
+    private static String checkPropertyPath(String vanillaTexturePath, int pathToCheck_0123) {
+        String[] replaceStrings = switch (pathToCheck_0123) {
+            case 1 -> new String[]{"textures/entity", "optifine/mob"};
+            case 2 -> new String[]{"$", "$"};
+            case 3 -> new String[]{"textures", "etf/random"};
+            default -> new String[]{"textures", "optifine/random"};
+        };
+        String checkingPath = vanillaTexturePath.replace(replaceStrings[0], replaceStrings[1]);
+        if (isExistingPropertyFile(checkingPath)) {
+            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath.replace(".properties", ".png"), pathToCheck_0123);
+            Properties properties = readProperties(checkingPath);
+            if (properties != null) {
+                for (String propertyName :
+                        properties.stringPropertyNames()) {
+                    if (propertyName.contains("skin") || propertyName.contains("texture")) {
+                        //use this one for check
+                        String[] suffixData = properties.getProperty(propertyName).trim().split("\s+");
+                        //assume data may be formatted stupidly like  "   13-14   67  800-805"
+                        //just want a number present in this properties file to check so just grab the first by splitting and grabbing[0]
+
+                        String checkingPath1 = null;
+                        for (String possibleSuffix :
+                                suffixData) {
+                            //if range use right most as less likely to be 1
+                            if (possibleSuffix.contains("-")) possibleSuffix = possibleSuffix.split("-")[1];
+                            possibleSuffix = possibleSuffix.replaceAll("[^0-9]", "");
+                            if (!possibleSuffix.isEmpty()) {
+                                String tryHere = checkingPath.replace(".properties", possibleSuffix + ".png");
+                                //System.out.println("tried=" + tryHere);
+                                if (isExistingNativeImageFile(new Identifier(tryHere))) {
+                                    checkingPath1 = tryHere;
+                                    break;
+                                }
+                            }
+                        }
+                        if (checkingPath1 != null) {
+                            if (checkPropertyPathExistsAndSameOrHigherResourcepackAs(checkingPath, checkingPath1)) {
+                                //this return only occurs if the properties file exists and the first texture named in the properties file is of the same or a lower pack
+                                return checkingPath;
+                            }
+                        }
+                    }
                 }
-                //else check other properties down the list
-            } else {
-                return checkingPath;
             }
         }
-        checkingPath = texturePath.replace("textures", "optifine/random");
-        if (isExistingFileDirect(new Identifier(checkingPath), !isProperties)) {
-            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(texturePath.replace(".properties", ".png"), 0);
-            if (isProperties) {
-                String properties = checkPropertiesFileforTexture(checkingPath, texturePath);
-                if (properties != null) {
-                    return properties;
-                }
-                //else check other properties down the list
-            } else {
-                return checkingPath;
-            }
-        }
-        checkingPath = texturePath.replace("textures/entity", "optifine/mob");
-        if (isExistingFileDirect(new Identifier(checkingPath), !isProperties)) {
-            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(texturePath.replace(".properties", ".png"), 1);
-            if (isProperties) {
-                String properties = checkPropertiesFileforTexture(checkingPath, texturePath);
-                if (properties != null) {
-                    return properties;
-                }
-                //else check other properties down the list
-            } else {
-                return checkingPath;
-            }
-        }
-//        if (isExistingFileDirect(new Identifier(texturePath),!isProperties)) {
-//            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(texturePath, 2);
-//            if (isProperties) {
-//                String properties = checkPropertiesFileforTexture(checkingPath,texturePath);
-//                if(properties != null){
-//                    return properties;
-//                }
-//                //else check other properties down the list
-//            }else {
-//                return checkingPath;
-//            }
-//        }
+        //failed all checks
         return null;
     }
 
-    private static String checkPropertiesFileforTexture(String possibleProperty, String vanillaTexturePath) {
-        // Properties properties = readProperties(possibleProperty);
-        // if (properties != null) {
-        //     for (String propertyName :
-        //             properties.stringPropertyNames()) {
-        //         if (propertyName.contains("skin") || propertyName.contains("texture")) {
-        //             //use this one for check
-        //             String[] suffixData = properties.getProperty(propertyName).trim().split("\s+");
-        //             //assume data may be formatted stupidly like  "   13-14   67  800-805"
-        //             //just want a number present in this properties file to check so just grab the first by splitting and grabbing[0]
-
-        //             String checkingPath = null;
-        //             for (String possibleSuffix :
-        //                     suffixData) {
-        //                 //if range use right most as less likely to be 1
-        //                 if (possibleSuffix.contains("-")) possibleSuffix = possibleSuffix.split("-")[1];
-        //                 possibleSuffix = possibleSuffix.replaceAll("[^0-9]", "");
-        //                 if (!possibleSuffix.isEmpty()) {
-        //                     String tryHere = possibleProperty.replace(".properties", possibleSuffix + ".png");
-        //                     System.out.println("tried=" + tryHere);
-        //                     if (isExistingNativeImageFile(new Identifier(tryHere))) {
-        //                         checkingPath = tryHere;
-        //                         break;
-        //                     }
-        //                 }
-        //             }
-        //             if (checkingPath != null) {
-        //                 if (checkPropertyPathExistsAndSameOrHigherResourcepackAs(possibleProperty, checkingPath)) {
-        //                     //this return only occurs if the properties file exists and the first texture named in the properties file is of the same or a lower pack
-        //                     return possibleProperty;
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
-        //failed
-        System.out.println("failed in check");
-        return null;
+    private static void checkAndSetPathsToUseForUncheckedTextures(String vanillaTexturePath, String testPath) {
+        //preserve checking order 3 > 0 > 1 > 2
+        if (hiddenCheckSpecificPath(testPath, 3)) {
+            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 3);
+            return;
+        }
+        if (hiddenCheckSpecificPath(testPath, 0)) {
+            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 0);
+            return;
+        }
+        if (hiddenCheckSpecificPath(testPath, 1)) {
+            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 1);
+            return;
+        }
+        if (hiddenCheckSpecificPath(testPath, 2)) {
+            PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 2);
+        }
     }
 
+    private static boolean hiddenCheckSpecificPath(String vanillaTexturePath, int pathToCheck_0123) {
+        String[] replaceStrings = switch (pathToCheck_0123) {
+            case 1 -> new String[]{"textures/entity", "optifine/mob"};
+            case 2 -> new String[]{"$", "$"};
+            case 3 -> new String[]{"textures", "etf/random"};
+            default -> new String[]{"textures", "optifine/random"};
+        };
+        String checkingPath = vanillaTexturePath.replace(replaceStrings[0], replaceStrings[1]);
+        return isExistingNativeImageFile(new Identifier(checkingPath));
+    }
 
     private static void processOptifineTextureCandidate(String vanillaTexturePath, String propertiesPath) {
         try {
@@ -640,7 +697,7 @@ public class ETFUtils {
         for (RandomTexturePropertyCase test :
                 PATH_OPTIFINE_RANDOM_SETTINGS_PER_TEXTURE.get(vanillaPath)) {
 
-            //skip if its only an update and case is not updatable
+            //skip if it is only an update and case is not updatable
             if (test.testEntity((LivingEntity) entity, UUID_ENTITY_ALREADY_CALCULATED.contains(id), UUID_CaseHasUpdateablesCustom)) {
                 UUID_RandomSuffixMap.put(id, test.getWeightedSuffix(id, PATH_IGNORE_ONE_PNG.get(vanillaPath)));
                 Identifier tested = returnOptifineOrVanillaIdentifier(vanillaPath, UUID_RandomSuffixMap.get(id));
@@ -697,7 +754,14 @@ public class ETFUtils {
     public static String returnOptifineOrVanillaPath(String vanillaPath, int randomId, String emissiveSuffx) {
 
         if (!PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.containsKey(vanillaPath)) {
-            ETFUtils.processNewRandomTextureCandidate(vanillaPath, true);
+
+            if (randomId != 0) {
+                //for special cases of weird textures like horse armour and markings
+                checkAndSetPathsToUseForUncheckedTextures(vanillaPath, vanillaPath.replace(".png", randomId + ".png"));
+            } else {
+                //for brand new unknown textures that slip in
+                ETFUtils.processNewRandomTextureCandidate(vanillaPath, true);
+            }
         }
 
         String append = (randomId == 0 ? "" : randomId) + emissiveSuffx + ".png";
@@ -1661,7 +1725,7 @@ public class ETFUtils {
                 ETFUtils.processNewRandomTextureCandidate(texture.toString());
             }
             if (PATH_OPTIFINE_OR_JUST_RANDOM.containsKey(texture.toString())) {
-                //if needs to check if change required
+                //check if this needs a texture update
                 if (UUID_ENTITY_AWAITING_DATA_CLEARING.containsKey(id)) {
                     if (UUID_RANDOM_TEXTURE_SUFFIX.containsKey(id)) {
                         if (!UUID_HAS_UPDATABLE_RANDOM_CASES.containsKey(id)) {
@@ -1676,7 +1740,7 @@ public class ETFUtils {
                                     int hold = UUID_RANDOM_TEXTURE_SUFFIX.get(id);
                                     ETFUtils.resetSingleSuffixData(id);
                                     ETFUtils.testCases(texture.toString(), id, entity, true, UUID_RANDOM_TEXTURE_SUFFIX, UUID_HAS_UPDATABLE_RANDOM_CASES);
-                                    //if didnt change keep the same
+                                    //if didn't change keep it the same
                                     if (!UUID_RANDOM_TEXTURE_SUFFIX.containsKey(id)) {
                                         UUID_RANDOM_TEXTURE_SUFFIX.put(id, hold);
                                     }
@@ -1749,8 +1813,13 @@ public class ETFUtils {
     private static Identifier hiddenGeneralReturnAlreadySetAlteredTexture(Identifier texture, Entity entity) {
         UUID id = entity.getUuid();
 
+
         if (UUID_RANDOM_TEXTURE_SUFFIX.containsKey(id)) {
             if (UUID_RANDOM_TEXTURE_SUFFIX.get(id) != 0) {
+//                if(!PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.containsKey(texture.toString())){
+//                    //for special cases where we do not want to process again fully, e.g. horse armour
+//                    checkAndSetPathsToUseForUncheckedTextures(texture.toString(),texture.toString().replace(".png",UUID_RANDOM_TEXTURE_SUFFIX.get(id)+".png"));
+//                }
                 return returnBlinkIdOrGiven((LivingEntity) entity, returnOptifineOrVanillaIdentifier(texture.toString(), UUID_RANDOM_TEXTURE_SUFFIX.get(id)).toString(), id);
             } else {
                 if (!PATH_HAS_DEFAULT_REPLACEMENT.containsKey(texture.toString())) {

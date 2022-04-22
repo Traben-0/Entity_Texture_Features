@@ -23,6 +23,7 @@
     "client.entity.extras.MixinHorseArmorFeatureRenderer",
     "client.entity.extras.MixinHorsemarkingFeatureRenderer",
     "client.entity.extras.MixinMooshroomMushroomFeatureRenderer",
+    "client.entity.extras.MixinShoulderParrotFeatureRenderer",
     "client.entity.extras.MixinShulkerHeadFeatureRenderer",
     "client.entity.extras.MixinSlimeOverlayFeatureRenderer",
     "client.entity.extras.MixinTridentEntity",

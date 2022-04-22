@@ -5,9 +5,10 @@
 ### This mod is completely Optifine format compatible!!!!
 
 - It supports all optifine properties present in the link below including Biomes, Names, Heights, etc... 
-*(It also adds some of it's own)*
-- you can directly use the [Optifine Random Entities Format Guide](https://github.com/sp614x/optifine/blob/master/OptiFineDoc/doc/random_entities.properties)
-or any optifine random mob resource-packs and it will work.
+*(ETF also adds some of its own)*
+- you can directly use
+  the [Optifine Random Entities Format Guide](https://github.com/sp614x/optifine/blob/master/OptiFineDoc/doc/random_entities.properties)
+  or any optifine random mob resource-packs, and it will work.
 - This mod also adds a few extra features that Optifine does not have, 
 Most notably you can put everything in the default *"minecraft/textures/entity"* or the *etf/random* directory as well as Optifine's directories
 
@@ -27,20 +28,21 @@ changed, this will even be the same between players if they have the same packs.
 being any number that **must** start from 2,  
 *(if 1.png does not exist then calling 1 in the properties will use the vanilla
 texture, the vanilla texture can also be manually called by using the number 0 in the properties)*
-- A *"TextureName.properties"* file can be placed alongside these random textures to determine special cases 
-for different random textures to be selected, this properties file must 
-support the [optifine format](https://github.com/sp614x/optifine/blob/master/OptiFineDoc/doc/random_entities.properties) 
-and if one isn't present the game will instead pick randomly from the available random textures present.   
-*(Note. when randomly picked like this, the random textures must contains numbers in sequence from 2 -> however many there are, if 
-there are any gaps then textures after the gap will be ignored)*
-- The properties file functions just as it does with [optifine]((https://github.com/sp614x/optifine/blob/master/OptiFineDoc/doc/random_entities.properties)))
-and if a specific entity does not match any of 
-the conditions in the properties file it will default to the vanilla texture.
+- A *"TextureName.properties"* file can be placed alongside these random textures to determine special cases for
+  different random textures to be selected, this properties file must support
+  the [optifine format](https://github.com/sp614x/optifine/blob/master/OptiFineDoc/doc/random_entities.properties)
+  and if one isn't present the game will instead pick randomly from the available random textures present.   
+  *(Note. when randomly picked like this, the random textures must contain numbers in sequence from 2 -> however many
+  there are, if there are any gaps then textures after the gap will be ignored)*
+- The properties file functions just as it does
+  with [optifine]((https://github.com/sp614x/optifine/blob/master/OptiFineDoc/doc/random_entities.properties))
+  and if a specific entity does not match any of the conditions in the properties file it will default to the vanilla
+  texture.
 - This mod also adds two texture Properties "blocks" & "teams"
 - The "blocks" property works exactly the same as the "biomes" property
-except it will allow you to set the texture of the entity based on the block it spawned on 
+  except it will allow you to set the texture of the entity based on the block it spawned on 
 *(or first rendered on)* instead of the Biome, an example of the "blocks" property follows:  
-*blocks.1= Stone stone !bedrock minecraft:stone modname:marble*
+  *blocks.1= stone !bedrock minecraft:stone mod_name:marble*
 - The "teams" Property works exactly the same as the "names" property
 except it will allow you to set the texture of the entity based on the scoreboard team it is in
 *(this will be useful for data-pack creators or map-makers who do not want the mob to display a custom name)*    
@@ -53,15 +55,15 @@ an example of the "teams" property follows:
 <img src="format_example.png" alt="img" width="650"/>
 
 - The example image above shows that any zombie in a desert will have a 10/17 chance of using "zombie1.png"
-- it also shows that any zombie not in a (desert,plains,jungle,nether) biome and is named "John" will always 
-use texture "zombie3.png"
-- it also shows that any zombie in a taiga biome, without the above names from the previoues category, and 
-standing at y-level 45 will be texture "zombie1.png"
-- "zombie3.png" also has an emissive texture "zombie3_e.png", that will make it's eyes glow red
+- it also shows that any zombie not in a (desert,plains,jungle,nether) biome and is named "John" will always use
+  texture "zombie3.png"
+- it also shows that any zombie in a taiga biome, without the above names from the previous category, and standing at
+  y-level 45 will be texture "zombie1.png"
+- "zombie3.png" also has an emissive texture "zombie3_e.png", that will make its eyes glow red
 
-- Certain conditions in the properties file will update the mobs texture, based on the texture update speed, 
-when changes are detected, these are:
-*("name", "profession", "collarColors", "baby", "health", "teams")*.
+- Certain conditions in the properties file will update the mobs texture, based on the texture update speed, when
+  changes are detected, these are:
+  *("name", "profession", "collarColors", "baby", "health", "teams")*.
 - All the other conditions such as "biomes" & "blocks" will by default only be applied to the Mob when it first spawns / loads.  
 *(for example a Zombie spawned in a desert will take the "desert skin" and it will not change to the "forest skin" 
 when they walk into a forest biome.)*  

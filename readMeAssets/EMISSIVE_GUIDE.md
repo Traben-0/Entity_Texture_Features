@@ -13,8 +13,8 @@
 
 - Emissive textures must be in the same folder as the texture it is glowing over and must be named like (
   TextureName#.png)
-  *(with "#" being the suffix set by the topmost optifine format resourcepack, it will otherwise default to "_e" meaning
-  the file name should be (TextureName_e.png)*
+  *(with "#" being the suffix set by the topmost optifine format resource-pack, it will otherwise default to "_e"
+  meaning the file name should be (TextureName_e.png)*
 
 - Elytra & Armour emissives have CIT Resewn mod support and will apply based on the CIT texture
 - Tridents support emissive textures customized via the special case rules in the Random / Custom mob Guide
@@ -32,7 +32,7 @@
 
 This image shows an example of the *"Dull"* rendering mode
 
-- will **not** implicitly support shaders *(E.G shaders likely wont glow or bloom these emissives)*
+- will **not** implicitly support shaders *(E.G shaders likely won't glow or bloom these emissives)*
 - has directional light shading *(some sides are shaded differently)*
 - has an upper brightness limit more inline with typical entity rendering
 - Block entities will always use this mode unless iris is installed *(due to rendering issues in vanilla)*
