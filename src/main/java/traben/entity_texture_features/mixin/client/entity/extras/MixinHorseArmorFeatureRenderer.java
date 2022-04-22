@@ -45,7 +45,7 @@ public abstract class MixinHorseArmorFeatureRenderer extends FeatureRenderer<Hor
 //                VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntityCutoutNoCull(new Identifier(check)));
 //                this.model.render(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV, n, o, p, 1.0F);
 //
-//                ETFUtils.generalEmissiveRenderModel(matrixStack, vertexConsumerProvider, check, model);
+//                ETFUtils.renderEmissiveModel(matrixStack, vertexConsumerProvider, check, model);
 //
 //                ci.cancel();
 //            }
@@ -87,7 +87,7 @@ public abstract class MixinHorseArmorFeatureRenderer extends FeatureRenderer<Hor
     private void etf$applyEmissive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, HorseEntity horseEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci, ItemStack itemStack, HorseArmorItem horseArmorItem) {
         //UUID id = livingEntity.getUuid();
 
-        ETFUtils.generalEmissiveRenderModel(matrixStack, vertexConsumerProvider, etf$returnAlteredTexture(horseArmorItem.getEntityTexture()), model);
+        ETFUtils.renderEmissiveModel(matrixStack, vertexConsumerProvider, etf$returnAlteredTexture(horseArmorItem.getEntityTexture()), model, false);
 
     }
 

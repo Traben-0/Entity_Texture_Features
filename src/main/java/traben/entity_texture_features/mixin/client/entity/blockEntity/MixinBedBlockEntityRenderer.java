@@ -28,7 +28,7 @@ public abstract class MixinBedBlockEntityRenderer implements BlockEntityRenderer
         String nameSpace = sprite.getTextureId().getNamespace();
         String path = "textures/" + sprite.getTextureId().getPath() + ".png";
         //hopefully works in modded scenarios, assumes the mod dev uses the actual vanilla code process and texture pathing rules
-        ETFUtils.generalEmissiveRenderPart(matrices, vertexConsumers, new Identifier(nameSpace, path), part, true);
+        ETFUtils.renderEmissivePart(matrices, vertexConsumers, new Identifier(nameSpace, path), part, true);
         //VertexConsumer cons = vertexConsumers.getBuffer(RenderLayer.getBeaconBeam(new Identifier(nameSpace,texturePath), true));
         //part.render(matrices,cons,15728640,overlay);
     }

@@ -80,7 +80,7 @@ public abstract class MixinBuiltinModelItemRenderer implements SynchronousResour
                 Identifier normalTextureId = new Identifier(path.substring(0, path.lastIndexOf(".png")) + name + ".png");
                 matrices.push();
                 matrices.scale(1.0F, -1.0F, -1.0F);
-                ETFUtils.generalEmissiveRenderModel(matrices, vertexConsumers, normalTextureId, this.modelTrident);
+                ETFUtils.renderEmissiveModel(matrices, vertexConsumers, normalTextureId, this.modelTrident, false);
                 matrices.pop();
 
             }
@@ -94,11 +94,11 @@ public abstract class MixinBuiltinModelItemRenderer implements SynchronousResour
                     matrices.push();
                     matrices.scale(1.0F, -1.0F, -1.0F);
 
-                    ETFUtils.generalEmissiveRenderPart(matrices, vertexConsumers, normalTextureId, modelShield.getHandle(), false);
+                    ETFUtils.renderEmissivePart(matrices, vertexConsumers, normalTextureId, modelShield.getHandle(), false);
                     //modelShield.getHandle().render(matrices,consumer,15728640,overlay,1,1,1,1);
                     //modelShield.render(matrices,consumer,15728640,overlay,1,1,1,1);
                     if (!bl)
-                        ETFUtils.generalEmissiveRenderPart(matrices, vertexConsumers, normalTextureId, modelShield.getPlate(), false);
+                        ETFUtils.renderEmissivePart(matrices, vertexConsumers, normalTextureId, modelShield.getPlate(), false);
                     //if (!bl) modelShield.getPlate().render(matrices,consumer,15728640,overlay,1,1,1,1);
                     //todo banner patterns implementation
                     matrices.pop();

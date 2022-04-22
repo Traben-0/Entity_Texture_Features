@@ -20,7 +20,7 @@ import static traben.entity_texture_features.client.ETFClient.KNOWN_UUID_LIST;
 import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
 
 @Mixin(EntityRenderer.class)
-public abstract class MixinEntityRender<T extends Entity> {
+public abstract class MixinEntityRenderer<T extends Entity> {
 
     private float etf$animateHeightOfName = 0;
 

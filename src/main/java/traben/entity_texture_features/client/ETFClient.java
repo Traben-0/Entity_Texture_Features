@@ -24,6 +24,8 @@ import java.util.UUID;
 public class ETFClient implements ClientModInitializer {
     public static final ETFLogger LOGGER = ETFLogger.create();
 
+    public static final String MOD_ID = "etf";
+
     ///list all uuids that have ever been seen by ETF so they can be selected for random data clearing to save memory
     public static final HashMap<UUID, Integer> KNOWN_UUID_LIST = new HashMap<>();
 
@@ -127,6 +129,9 @@ public class ETFClient implements ClientModInitializer {
     public static Boolean lecternHasCustomTexture = null;
 
     public final static String SKIN_NAMESPACE = "etf_skin:";
+
+    //marks this UUID to have relevant data printed for debugging
+    public static final Set<UUID> UUID_DEBUG_EXPLAINATION_MARKER = new HashSet<>();
 
 
     @Override

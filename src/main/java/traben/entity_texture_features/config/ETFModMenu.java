@@ -5,7 +5,7 @@ import com.terraformersmc.modmenu.api.ModMenuApi;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
-import org.apache.logging.log4j.LogManager;
+import traben.entity_texture_features.client.ETFUtils;
 
 @Environment(EnvType.CLIENT)
 public class ETFModMenu implements ModMenuApi {
@@ -15,10 +15,10 @@ public class ETFModMenu implements ModMenuApi {
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
         try {
             ETFConfigScreen configGUI = new ETFConfigScreen();
-            return parent -> configGUI.getConfigScreen(parent, MinecraftClient.getInstance().world != null);
+            return parent -> configGUI.createConfigScreen(parent, MinecraftClient.getInstance().world != null);
         } catch (NoClassDefFoundError e) {
             //I definitely didn't catch an error, you saw nothing...
-            LogManager.getLogger().warn("[Entity Texture Features]: Mod settings cannot be edited in Mod Menu without cloth config");
+            ETFUtils.modWarn("Mod settings cannot be edited in Mod Menu without cloth config", false);
             return null;
         }
 

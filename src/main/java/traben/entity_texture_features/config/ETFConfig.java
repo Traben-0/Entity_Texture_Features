@@ -14,11 +14,11 @@ public class ETFConfig {
     public boolean enableEmissiveTextures = true;
 
     //todo menu
-    public boolean fullBrightEmissives = true;
+    // TODO: re add this
+    // public boolean fullBrightEmissives = true;
 
     public boolean specialEmissiveShield = true;
     public boolean alwaysCheckVanillaEmissiveSuffix = true;
-    public boolean doShadersEmissiveFix = false;
     public enchantedPotionEffectsEnum enchantedPotionEffects = enchantedPotionEffectsEnum.NONE;
     public boolean skinFeaturesEnabled = true;
     public boolean skinFeaturesEnableTransparency = true;

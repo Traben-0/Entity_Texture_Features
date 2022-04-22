@@ -33,7 +33,7 @@ public abstract class MixinEnchantingTableBlockEntityRenderer implements BlockEn
                     shift = At.Shift.AFTER))
     private void etf$applyEmissiveBook(EnchantingTableBlockEntity enchantingTableBlockEntity, float f, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j, CallbackInfo ci) {
         //BOOK_TEXTURE.getTextureId().toString()
-        VertexConsumer etf$vertex = ETFUtils.generalEmissiveGetVertexConsumer(new Identifier("minecraft:textures/entity/enchanting_table_book.png"), vertexConsumerProvider, false);
+        VertexConsumer etf$vertex = ETFUtils.getEmissiveVertexConsumer(new Identifier("minecraft:textures/entity/enchanting_table_book.png"), vertexConsumerProvider, false, false);
         if (etf$vertex != null) {
             this.book.renderBook(matrixStack, etf$vertex, 15728640, j, 1, 1, 1, 1);
         }

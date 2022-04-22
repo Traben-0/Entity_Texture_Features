@@ -10,11 +10,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
 
-
 @Mixin(Identifier.class)
-public class MixinIdentifier {
+public abstract class MixinIdentifier {
     @Inject(method = "isPathValid", cancellable = true, at = @At("RETURN"))
-    private static void etf$allowIllegalPaths(String path, CallbackInfoReturnable<Boolean> cir) {
+    private static void etf$illegalPathOverride(String path, CallbackInfoReturnable<Boolean> cir) {
         if (ETFConfigData != null) {
             if (ETFConfigData.allowIllegalTexturePaths) {
                 if (!cir.getReturnValue()) {

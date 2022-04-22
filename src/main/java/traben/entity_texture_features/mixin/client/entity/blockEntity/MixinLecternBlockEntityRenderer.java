@@ -45,7 +45,7 @@ public abstract class MixinLecternBlockEntityRenderer implements BlockEntityRend
 
         Identifier normalTextureId = (ETFConfigData.enableCustomTextures && lecternHasCustomTexture) ? LECTERN_BOOK_PATH : new Identifier("minecraft:textures/entity/enchanting_table_book.png");//EnchantingTableBlockEntityRenderer.BOOK_TEXTURE.getTextureId().toString();
 
-        VertexConsumer etf$vertex = ETFUtils.generalEmissiveGetVertexConsumer(normalTextureId, vertexConsumerProvider, true);
+        VertexConsumer etf$vertex = ETFUtils.getEmissiveVertexConsumer(normalTextureId, vertexConsumerProvider, true, false);
         if (etf$vertex != null) {
             etf$redirectingEmissiveRender(matrixStack, etf$vertex, j);
         }

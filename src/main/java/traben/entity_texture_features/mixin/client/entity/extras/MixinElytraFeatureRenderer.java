@@ -59,7 +59,7 @@ public abstract class MixinElytraFeatureRenderer<T extends LivingEntity, M exten
 //                identifier = SKIN;
 //            }
         if (ETFConfigData.enableElytra && ETFConfigData.enableEmissiveTextures) {
-            ETFUtils.generalEmissiveRenderModel(matrixStack, vertexConsumerProvider, identifier, elytra);
+            ETFUtils.renderEmissiveModel(matrixStack, vertexConsumerProvider, identifier, elytra, false);
         }
     }
 }
