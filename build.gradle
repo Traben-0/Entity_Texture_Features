@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.11-SNAPSHOT'
+    id 'dev.architectury.loom' version '0.11.0-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -25,25 +25,24 @@ dependencies {
     // To change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    forge "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
 
-    // Fabric API. This is technically optional, but you probably want it anyway.
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    modApi ("me.shedaniel.cloth:cloth-config-forge:${project.cloth_config_version}")
+}
 
-    modImplementation("com.terraformersmc:modmenu:3.1.0") {
-        exclude(group: "net.fabricmc.fabric-api")
+loom {
+    forge {
+        mixinConfigs = [
+                "entity_texture_features.mixins.json"
+        ]
     }
-    modImplementation( "me.shedaniel.cloth:cloth-config-fabric:6.2.57"){
-        exclude(group: "net.fabricmc.fabric-api")
-    }
-    include( "me.shedaniel.cloth:cloth-config-fabric:6.2.57")
 }
 
 processResources {
     inputs.property "version", project.version
     filteringCharset "UTF-8"
 
-    filesMatching("fabric.mod.json") {
+    filesMatching("META-INF/mods.toml") {
         expand "version": project.version
     }
 }

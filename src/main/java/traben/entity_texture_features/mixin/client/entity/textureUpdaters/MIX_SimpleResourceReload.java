@@ -1,8 +1,7 @@
 package traben.entity_texture_features.mixin.client.entity.textureUpdaters;
 
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.resource.SimpleResourceReload;
+import net.minecraftforge.fml.ModList;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -24,14 +23,12 @@ public abstract class MIX_SimpleResourceReload implements ETF_METHODS {
             if (falseAfterFirstRun) {
                 falseAfterFirstRun = false;
                 ETF_resetVisuals();
-                for (ModContainer mod :
-                        FabricLoader.getInstance().getAllMods()) {
-                    if (mod.toString().contains("iris")) {
+                ModList.get().forEachModContainer((name, mod) -> {
+                    if (name.contains("iris") || name.contains("rubidium")) {
                         ETF_modMessage("Entity Texture Features - Iris mod detected : message will be shown in settings", false);
                         ETF_irisDetected = true;
-                        break;
                     }
-                }
+                });
             }
         } else {
             falseAfterFirstRun = true;
