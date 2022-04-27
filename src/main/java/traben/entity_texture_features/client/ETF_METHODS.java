@@ -7,7 +7,6 @@ import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -697,7 +696,7 @@ public interface ETF_METHODS {
     }
 
     default void ETF_saveConfig() {
-        File config = new File(FabricLoader.getInstance().getConfigDir().toFile(), "entity_texture_features.json");
+        File config = new File(CONFIG_DIR.toFile(), "entity_texture_features.json");
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         if (!config.getParentFile().exists()) {
             //noinspection ResultOfMethodCallIgnored
