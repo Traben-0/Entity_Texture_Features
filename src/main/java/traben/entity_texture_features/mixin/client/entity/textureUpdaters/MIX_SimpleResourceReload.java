@@ -24,7 +24,7 @@ public abstract class MIX_SimpleResourceReload implements ETF_METHODS {
                 falseAfterFirstRun = false;
                 ETF_resetVisuals();
                 ModList.get().forEachModContainer((name, mod) -> {
-                    if (name.contains("iris") || name.contains("rubidium")) {
+                    if (name.contains("iris") || name.contains("oculus")) {
                         ETF_modMessage("Entity Texture Features - Iris mod detected : message will be shown in settings", false);
                         ETF_irisDetected = true;
                     }
