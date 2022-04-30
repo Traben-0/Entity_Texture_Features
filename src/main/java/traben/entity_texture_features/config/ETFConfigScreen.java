@@ -10,31 +10,28 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import traben.entity_texture_features.client.ETFUtils;
 
-import java.awt.*;
-
-import static traben.entity_texture_features.client.ETFClient.irisDetected;
-import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
+import static traben.entity_texture_features.client.ETFClient.ETFConfigData;
 
 public class ETFConfigScreen {
     public Screen getConfigScreen(Screen parent, boolean isTransparent) {
         // Return the screen here with the one you created from Cloth Config Builder
         ConfigBuilder builder = ConfigBuilder.create()
                 .setParentScreen(parent)
-                .setTitle(new TranslatableText("Entity Texture Features by Traben"));
+                .setTitle(new TranslatableText("Entity Texture Features"));
         //Screen ModConfigScreen = builder.build();
         ConfigEntryBuilder entryBuilder = builder.entryBuilder();
         ConfigCategory optifineOptions = builder.getOrCreateCategory(Text.of("Optifine Options"));
         optifineOptions.setBackground(new Identifier("textures/block/light_gray_wool.png"));
-        if (irisDetected) {
-            optifineOptions.addEntry(entryBuilder.startTextDescription(Text.of("""
-                            Iris Shaders Mod was detected:
-                            - If your emissive textures are flickering with shaders try the
-                              Z-Fighting fix in Emissive Texture Settings!
-                            - If your emissive textures are not glowing correctly with shaders make sure
-                              Full Bright emissive rendering is enabled in Emissive Texture Settings"""))
-                    .setColor(new Color(240, 195, 15).getRGB())
-                    .build()); // Builds the option entry for cloth config
-        }
+//        if (irisDetected) {
+//            optifineOptions.addEntry(entryBuilder.startTextDescription(Text.of("""
+//                            Iris Shaders Mod was detected:
+//                            - If your emissive textures are flickering with shaders try the
+//                              Z-Fighting fix in Emissive Texture Settings!
+//                            - If your emissive textures are not glowing correctly with shaders make sure
+//                              Full Bright emissive rendering is enabled in Emissive Texture Settings"""))
+//                    .setColor(new Color(240, 195, 15).getRGB())
+//                    .build()); // Builds the option entry for cloth config
+//        }
 
         optifineOptions.addEntry(entryBuilder.startBooleanToggle(Text.of("Allow non [a-z0-9/._-] characters in texture paths"), ETFConfigData.allowIllegalTexturePaths)
                 .setDefaultValue(false) // Recommended: Used when user click "Reset"
@@ -106,17 +103,18 @@ public class ETFConfigScreen {
                         using the optifine format""")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.enableEmissiveTextures = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
-        emissives.add(1, entryBuilder.startBooleanToggle(Text.of("Use Full Bright emissive rendering"), ETFConfigData.fullBrightEmissives)
-                .setDefaultValue(true) // Recommended: Used when user click "Reset"
+        emissives.add(1, entryBuilder.startBooleanToggle(Text.of("Use Brighter emissive rendering"), ETFConfigData.fullBrightEmissives)
+                .setDefaultValue(false) // Recommended: Used when user click "Reset"
                 .setTooltip(new TranslatableText("""
-                        This sets whether emissives use 'Bright' or 'Dull' rendering.
-                        This is hard to describe just try it ingame.
+                        This sets whether emissives use 'Bright' or 'Default' rendering.
+                        This is hard to describe just try it out ingame.
                         Bright rendering makes the emissive appear at max brightness if need be
-                        and is compatible with shaders and usually supports bloom, etc.
-                        Dull rendering respects the default renderers affects given to entities
+                        and is compatible with shaders and usually supports brighter bloom, etc.
+                        Default rendering respects the default renderers effects on entities
                         the direction of each surface will have slight brightness variation
-                        and the emissives will be a bit less bright overall, as well as unlikely to be shader compatible.
-                        Block entities will always be Dull unless Iris is installed""")) // Optional: Shown when the user hover over this option
+                        and the emissives will be a bit less bright overall
+                        as well as usually smaller bloom with shaders.
+                        Block entities will always be Default mode unless Iris is installed""")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.fullBrightEmissives = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
         emissives.add(2, entryBuilder.startBooleanToggle(Text.of("Always check the 'default' emissive?"), ETFConfigData.alwaysCheckVanillaEmissiveSuffix)
@@ -129,17 +127,17 @@ public class ETFConfigScreen {
                         '_e' suffixes even when set differently by a resource pack""")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.alwaysCheckVanillaEmissiveSuffix = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
-        emissives.add(3, entryBuilder.startBooleanToggle(Text.of("Emissive texture Z-Fighting / Shader patch"), ETFConfigData.doShadersEmissiveFix)
-                .setDefaultValue(false) // Recommended: Used when user click "Reset"
-                .setTooltip(new TranslatableText("""
-                        If true this will make emissive textures float
-                        slightly above the model.
-                        This can fix Z-Fighting present in some shaders.
-                        This will not always look right and can desync
-                        with the models animation.
-                        It is recommended to disable this if shaders are disabled""")) // Optional: Shown when the user hover over this option
-                .setSaveConsumer(newValue -> ETFConfigData.doShadersEmissiveFix = newValue) // Recommended: Called when user save the config
-                .build()); // Builds the option entry for cloth config
+//        emissives.add(3, entryBuilder.startBooleanToggle(Text.of("Emissive texture Z-Fighting / Shader patch"), ETFConfigData.doShadersEmissiveFix)
+//                .setDefaultValue(false) // Recommended: Used when user click "Reset"
+//                .setTooltip(new TranslatableText("""
+//                        If true this will make emissive textures float
+//                        slightly above the model.
+//                        This can fix Z-Fighting present in some shaders.
+//                        This will not always look right and can desync
+//                        with the models animation.
+//                        It is recommended to disable this if shaders are disabled""")) // Optional: Shown when the user hover over this option
+//                .setSaveConsumer(newValue -> ETFConfigData.doShadersEmissiveFix = newValue) // Recommended: Called when user save the config
+//                .build()); // Builds the option entry for cloth config
         SubCategoryBuilder specialEmissives = entryBuilder.startSubCategory(Text.of("Special Case Emissives")).setTooltip(Text.of("""
                 This option is provided as these cases
                 may not fit into the typical users expectation
@@ -158,7 +156,7 @@ public class ETFConfigScreen {
                 .setTooltip(new TranslatableText("enables emissive shield textures")).setSaveConsumer(newValue -> ETFConfigData.specialEmissiveShield = newValue).build());
         //specialEmissives.add(2, entryBuilder.startBooleanToggle(Text.of("null"), ETFConfigData.restrictBlock).setDefaultValue(true)
         // .setTooltip(new TranslatableText("null")).setSaveConsumer(newValue -> ETFConfigData.restrictBlock = newValue).build());
-        emissives.add(4, specialEmissives.build());
+        emissives.add(3, specialEmissives.build());
 
 
         optifineOptions.addEntry(emissives.build());
@@ -275,6 +273,14 @@ public class ETFConfigScreen {
                         be more consistent.
                         REQUIRES a restart or reload (F3 + T)""")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.elytraThicknessFix = newValue) // Recommended: Called when user save the config
+                .build()); // Builds the option entry for cloth config
+        optifineOptions.addEntry(entryBuilder.startBooleanToggle(Text.of("Enable debug logging"), ETFConfigData.enableDebugLogging)
+                .setDefaultValue(false) // Recommended: Used when user click "Reset"
+                .setTooltip(new TranslatableText("""
+                        If enabled this will write relevant ETF data to the log,
+                        about any entity that has been right clicked
+                        """)) // Optional: Shown when the user hover over this option
+                .setSaveConsumer(newValue -> ETFConfigData.enableDebugLogging = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
         builder.setSavingRunnable(() -> {
             // Serialise the config into the config file. This will be called last after all variables are updated.

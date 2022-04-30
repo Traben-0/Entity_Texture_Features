@@ -16,8 +16,8 @@ import traben.entity_texture_features.client.ETFUtils;
 import java.util.Random;
 import java.util.UUID;
 
+import static traben.entity_texture_features.client.ETFClient.ETFConfigData;
 import static traben.entity_texture_features.client.ETFClient.KNOWN_UUID_LIST;
-import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
 
 @Mixin(EntityRenderer.class)
 public abstract class MixinEntityRender<T extends Entity> {

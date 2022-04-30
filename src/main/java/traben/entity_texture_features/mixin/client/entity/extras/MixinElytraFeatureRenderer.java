@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import traben.entity_texture_features.client.ETFUtils;
 
-import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
+import static traben.entity_texture_features.client.ETFClient.ETFConfigData;
 
 @Mixin(ElytraFeatureRenderer.class)
 public abstract class MixinElytraFeatureRenderer<T extends LivingEntity, M extends EntityModel<T>> extends FeatureRenderer<T, M> {

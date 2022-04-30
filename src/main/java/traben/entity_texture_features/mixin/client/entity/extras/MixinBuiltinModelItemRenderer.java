@@ -22,7 +22,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.client.ETFUtils;
 
-import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
+import static traben.entity_texture_features.client.ETFClient.ETFConfigData;
 
 @Mixin(BuiltinModelItemRenderer.class)
 public abstract class MixinBuiltinModelItemRenderer implements SynchronousResourceReloader {

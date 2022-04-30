@@ -131,6 +131,9 @@ public class ETFClient implements ClientModInitializer {
     //marks this UUID to have relevant data printed for debugging
     public static final Set<UUID> UUID_DEBUG_EXPLANATION_MARKER = new HashSet<>();
 
+    //config object
+    public static ETFConfig ETFConfigData;
+
     @Override
     public void onInitializeClient() {
         //testing
@@ -147,14 +150,14 @@ public class ETFClient implements ClientModInitializer {
         if (config.exists()) {
             try {
                 FileReader fileReader = new FileReader(config);
-                ETF_CLIENT.ETFConfigData = gson.fromJson(fileReader, ETFConfig.class);
+                ETFConfigData = gson.fromJson(fileReader, ETFConfig.class);
                 fileReader.close();
                 ETFUtils.saveConfig();
             } catch (IOException e) {
                 ETFUtils.modMessage("Config could not be loaded, using defaults", false);
             }
         } else {
-            ETF_CLIENT.ETFConfigData = new ETFConfig();
+            ETFConfigData = new ETFConfig();
             ETFUtils.saveConfig();
         }
     }

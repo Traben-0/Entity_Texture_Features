@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
-import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
+import static traben.entity_texture_features.client.ETFClient.ETFConfigData;
 
 @Mixin(ElytraEntityModel.class)
 public abstract class MixinElytraEntityModel<T extends LivingEntity> extends AnimalModel<T> {

@@ -32,10 +32,10 @@ import traben.entity_texture_features.client.CustomPlayerFeatureModel;
 import traben.entity_texture_features.client.ETFUtils;
 import traben.entity_texture_features.config.ETFConfig;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 import static traben.entity_texture_features.client.ETFClient.*;
-import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
 
 @SuppressWarnings("rawtypes")
 @Mixin(LivingEntityRenderer.class)
@@ -130,20 +130,23 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
         UUID id = entity.getUuid();
 
         //debug printing
-        if (UUID_DEBUG_EXPLANATION_MARKER.contains(id)) {
-            System.out.println("entity Data:\nTexture=" + texturePath);
+        if (ETFConfigData.enableDebugLogging && UUID_DEBUG_EXPLANATION_MARKER.contains(id)) {
+            //TODO use logging system pending pr
+            System.out.println("ETF entity debug Data for entity with UUID=[" + id.toString() + "]:\n{\n    Texture=" + texturePath);
 
             if (PATH_OPTIFINE_OR_JUST_RANDOM.containsKey(texturePath))
-                System.out.println("is properties or random=" + PATH_OPTIFINE_OR_JUST_RANDOM.get(texturePath));
+                System.out.println("    is properties or random=" + PATH_OPTIFINE_OR_JUST_RANDOM.get(texturePath));
             if (PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.containsKey(texturePath))
-                System.out.println("path_0123=" + PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.get(texturePath));
+                System.out.println("    path_0123=" + PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.get(texturePath));
             if (PATH_OPTIFINE_RANDOM_SETTINGS_PER_TEXTURE.containsKey(texturePath))
-                System.out.println("amount of properties=" + PATH_OPTIFINE_RANDOM_SETTINGS_PER_TEXTURE.get(texturePath).size());
+                System.out.println("    amount of properties=" + PATH_OPTIFINE_RANDOM_SETTINGS_PER_TEXTURE.get(texturePath).size());
             if (PATH_TOTAL_TRUE_RANDOM.containsKey(texturePath))
-                System.out.println("total true random=" + PATH_TOTAL_TRUE_RANDOM.get(texturePath));
+                System.out.println("    total true random=" + PATH_TOTAL_TRUE_RANDOM.get(texturePath));
             if (UUID_RANDOM_TEXTURE_SUFFIX.containsKey(id))
-                System.out.println("Random=" + UUID_RANDOM_TEXTURE_SUFFIX.get(id));
-
+                System.out.println("    Random=" + UUID_RANDOM_TEXTURE_SUFFIX.get(id));
+            if (UUID_ORIGINAL_NON_UPDATE_PROPERTY_STRINGS.containsKey(id))
+                System.out.println("    Original spawn data=" + Arrays.toString(UUID_ORIGINAL_NON_UPDATE_PROPERTY_STRINGS.get(id)));
+            System.out.println("}");
             UUID_DEBUG_EXPLANATION_MARKER.remove(id);
         }
 
@@ -233,10 +236,6 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
     private void etf$renderSkinFeatures(UUID id, PlayerEntity player, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light) {
         //skin http://textures.minecraft.net/texture/a81cd0629057a42f3d8b7b714b1e233a3f89e33faeb67d3796a52df44619e888
 
-        //test area
-
-
-        /////////////////////////////////////////////
         String skinPossiblyBlinking = etf$returnAlteredTexture((LivingEntityRenderer) (Object) this, player).toString();
         if (skinPossiblyBlinking.contains("_transparent")) {
             skinPossiblyBlinking = skinPossiblyBlinking.replace("_transparent", "");
@@ -307,17 +306,13 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
                                 } else {
                                     emissVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(emissive));
                                 }
-                                if (ETFConfigData.doShadersEmissiveFix) {
-                                    matrixStack.scale(1.01f, 1.01f, 1.01f);
-                                }
+
                                 if (UUID_PLAYER_HAS_FAT_COAT.get(id)) {
                                     customPlayerModel.fatJacket.render(matrixStack, emissVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
                                 } else {
                                     customPlayerModel.jacket.render(matrixStack, emissVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
                                 }
-                                if (ETFConfigData.doShadersEmissiveFix) {
-                                    matrixStack.scale(1f, 1f, 1f);
-                                }
+
 
                             }
                             matrixStack.pop();
@@ -341,14 +336,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
                             } else {
                                 emissVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(emissive));
                             }
-                            if (ETFConfigData.doShadersEmissiveFix) {
-                                matrixStack.scale(1.01f, 1.01f, 1.01f);
                                 this.getModel().render(matrixStack, emissVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
-                                matrixStack.scale(1f, 1f, 1f);
-                            } else {
-                                this.getModel().render(matrixStack, emissVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
-                            }
-
                         }
                     }
                 }

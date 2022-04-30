@@ -7,9 +7,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import traben.entity_texture_features.client.ETFUtils;
 
-import static traben.entity_texture_features.client.ETFClient.mooshroomBrownCustomShroom;
-import static traben.entity_texture_features.client.ETFClient.mooshroomRedCustomShroom;
-import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
+import static traben.entity_texture_features.client.ETFClient.*;
 
 @Mixin(MooshroomMushroomFeatureRenderer.class)
 public abstract class MixinMooshroomMushroomFeatureRenderer {

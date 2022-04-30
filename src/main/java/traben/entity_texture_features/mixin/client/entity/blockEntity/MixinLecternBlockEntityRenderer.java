@@ -21,8 +21,8 @@ import traben.entity_texture_features.client.ETFUtils;
 
 import java.util.function.Function;
 
+import static traben.entity_texture_features.client.ETFClient.ETFConfigData;
 import static traben.entity_texture_features.client.ETFClient.lecternHasCustomTexture;
-import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
 
 @Mixin(LecternBlockEntityRenderer.class)
 public abstract class MixinLecternBlockEntityRenderer implements BlockEntityRenderer<LecternBlockEntity> {

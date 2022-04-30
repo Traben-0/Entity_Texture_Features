@@ -46,7 +46,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static traben.entity_texture_features.client.ETFClient.*;
-import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
 
 public class ETFUtils {
 
@@ -319,9 +318,9 @@ public class ETFUtils {
         //set default in case of no change
         //PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 2);
         //check and apply hashmap data
-        System.out.println("checking=" + vanillaTexturePath);
+        //System.out.println("checking=" + vanillaTexturePath);
         String properties = checkAndSetPathsToUseForPropertyRandoms(vanillaTexturePath.replace(".png", ".properties"));
-        System.out.println("returned=" + properties);
+        //System.out.println("returned=" + properties);
 
         if (!skipProcessing) {
             if (properties != null && !PATH_FAILED_PROPERTIES_TO_IGNORE.contains(properties)) {//optifine settings found

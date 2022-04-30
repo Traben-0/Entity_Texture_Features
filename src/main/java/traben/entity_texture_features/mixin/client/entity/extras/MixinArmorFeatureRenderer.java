@@ -21,9 +21,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.client.ETFUtils;
 
-import static traben.entity_texture_features.client.ETFClient.PATH_EMISSIVE_TEXTURE_IDENTIFIER;
-import static traben.entity_texture_features.client.ETFClient.emissiveSuffixes;
-import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
+import static traben.entity_texture_features.client.ETFClient.*;
 
 @Mixin(ArmorFeatureRenderer.class)
 public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extends BipedEntityModel<T>, A extends BipedEntityModel<T>> extends FeatureRenderer<T, M> {
@@ -70,13 +68,13 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
 
 
                     //one check most efficient instead of before and after applying
-                    if (ETFConfigData.doShadersEmissiveFix) {
-                        matrices.scale(1.01f, 1.01f, 1.01f);
-                        model.render(matrices, textureVert, 15728640, OverlayTexture.DEFAULT_UV, red, green, blue, 1.0F);
-                        matrices.scale(1f, 1f, 1f);
-                    } else {
-                        model.render(matrices, textureVert, 15728640, OverlayTexture.DEFAULT_UV, red, green, blue, 1.0F);
-                    }
+//                    if (ETFConfigData.doShadersEmissiveFix) {
+//                        matrices.scale(1.01f, 1.01f, 1.01f);
+//                        model.render(matrices, textureVert, 15728640, OverlayTexture.DEFAULT_UV, red, green, blue, 1.0F);
+//                        matrices.scale(1f, 1f, 1f);
+//                    } else {
+                    model.render(matrices, textureVert, 15728640, OverlayTexture.DEFAULT_UV, red, green, blue, 1.0F);
+//                    }
                 }
             }
         }

@@ -27,7 +27,7 @@ public abstract class MixinSimpleResourceReload {
                 for (ModContainer mod :
                         FabricLoader.getInstance().getAllMods()) {
                     if (mod.toString().contains("iris")) {
-                        ETFUtils.modMessage("Entity Texture Features - Iris mod detected : message will be shown in settings", false);
+                        ETFUtils.modMessage("Iris mod detected : message will be shown in settings", false);
                         irisDetected = true;
                         break;
                     }

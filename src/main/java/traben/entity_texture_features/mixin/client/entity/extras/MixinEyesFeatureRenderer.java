@@ -21,8 +21,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.client.ETFUtils;
 
+import static traben.entity_texture_features.client.ETFClient.ETFConfigData;
 import static traben.entity_texture_features.client.ETFClient.PATH_IS_EXISTING_FEATURE;
-import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
 
 @Mixin(EyesFeatureRenderer.class)
 public abstract class MixinEyesFeatureRenderer<T extends Entity, M extends EntityModel<T>> extends FeatureRenderer<T, M> {

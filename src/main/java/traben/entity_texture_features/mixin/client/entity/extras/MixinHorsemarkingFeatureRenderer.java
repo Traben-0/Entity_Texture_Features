@@ -17,8 +17,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import traben.entity_texture_features.client.ETFUtils;
 
+import static traben.entity_texture_features.client.ETFClient.ETFConfigData;
 import static traben.entity_texture_features.client.ETFClient.PATH_IS_EXISTING_FEATURE;
-import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
 
 @Mixin(HorseMarkingFeatureRenderer.class)
 public abstract class MixinHorsemarkingFeatureRenderer extends FeatureRenderer<HorseEntity, HorseEntityModel<HorseEntity>> {

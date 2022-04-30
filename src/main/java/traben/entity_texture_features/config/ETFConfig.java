@@ -13,12 +13,15 @@ public class ETFConfig {
     public boolean restrictMoonPhase = true;
     public boolean enableEmissiveTextures = true;
 
-    //todo menu
-    public boolean fullBrightEmissives = true;
+    public boolean fullBrightEmissives = false;
 
     public boolean specialEmissiveShield = true;
     public boolean alwaysCheckVanillaEmissiveSuffix = true;
+
+    //present for temporary puzzle compatibility
+    @Deprecated
     public boolean doShadersEmissiveFix = false;
+
     public enchantedPotionEffectsEnum enchantedPotionEffects = enchantedPotionEffectsEnum.NONE;
     public boolean skinFeaturesEnabled = true;
     public boolean skinFeaturesEnableTransparency = true;
@@ -30,6 +33,8 @@ public class ETFConfig {
     public boolean enableTridents = true;
     public boolean enableElytra = true;
     public boolean elytraThicknessFix = true;
+
+    public boolean enableDebugLogging = false;
 
     //string name stuff more indepth than other enum for backwards compatibility
     public enum enchantedPotionEffectsEnum {

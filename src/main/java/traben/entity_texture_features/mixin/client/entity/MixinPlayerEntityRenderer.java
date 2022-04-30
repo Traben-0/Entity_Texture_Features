@@ -21,7 +21,6 @@ import traben.entity_texture_features.client.ETFUtils;
 import java.util.UUID;
 
 import static traben.entity_texture_features.client.ETFClient.*;
-import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
 
 @Mixin(PlayerEntityRenderer.class)
 public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {

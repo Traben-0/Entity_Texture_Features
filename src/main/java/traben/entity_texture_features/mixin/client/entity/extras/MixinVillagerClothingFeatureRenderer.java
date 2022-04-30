@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import static traben.entity_texture_features.client.ETFClient.*;
-import static traben.entity_texture_features.client.ETF_CLIENT.ETFConfigData;
 
 @Mixin(VillagerClothingFeatureRenderer.class)
 public abstract class MixinVillagerClothingFeatureRenderer<T extends LivingEntity & VillagerDataContainer, M extends EntityModel<T> & ModelWithHat> extends FeatureRenderer<T, M> {

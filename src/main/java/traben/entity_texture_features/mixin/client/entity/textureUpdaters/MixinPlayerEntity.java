@@ -10,8 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static traben.entity_texture_features.client.ETFClient.UUID_DEBUG_EXPLANATION_MARKER;
-import static traben.entity_texture_features.client.ETFClient.UUID_ENTITY_AWAITING_DATA_CLEARING;
+import static traben.entity_texture_features.client.ETFClient.*;
 
 @Mixin(PlayerEntity.class)
 public abstract class MixinPlayerEntity {
@@ -21,7 +20,8 @@ public abstract class MixinPlayerEntity {
     @Inject(method = "interact", at = @At("HEAD"))
     private void etf$injected(Entity entity, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
         if (((LivingEntity) (Object) this).world.isClient()) {
-            UUID_DEBUG_EXPLANATION_MARKER.add(entity.getUuid());
+            if (ETFConfigData.enableDebugLogging)
+                UUID_DEBUG_EXPLANATION_MARKER.add(entity.getUuid());
             if (!UUID_ENTITY_AWAITING_DATA_CLEARING.containsKey(entity.getUuid())) {
                 UUID_ENTITY_AWAITING_DATA_CLEARING.put(entity.getUuid(), System.currentTimeMillis());
             }
