@@ -34,7 +34,7 @@ Everything can be enabled or disabled in the config or Mod Menu settings
 ## Compatibility
 - ✅ALL! Optifine Random / Custom or Emissive Entity resourcepacks
 - ✅[Custom Entity Models **(CEM)**](https://www.curseforge.com/minecraft/mc-mods/custom-entity-models-cem)
-  **(fully compatible)** *(keep in mind CEM is in ALPHA and don't support every model)*
+  **(fully compatible)** *(keep in mind CEM is in ALPHA and doesn't support every model)*
 - ✅[Sodium](https://www.curseforge.com/minecraft/mc-mods/sodium) **(fully compatible)**
 - ✅[Mod Menu](https://www.curseforge.com/minecraft/mc-mods/modmenu) & Clothconfig *- optional*
 - ✅[Iris Shaders](https://www.curseforge.com/minecraft/mc-mods/irisshaders) **(fully compatible)** 

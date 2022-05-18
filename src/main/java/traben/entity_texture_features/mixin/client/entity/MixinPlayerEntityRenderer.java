@@ -70,7 +70,7 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
                         }
                     }
                 } catch (Exception e) {
-                    ETFUtils.modMessage(e.toString(), false);
+                    ETFUtils.logError(e.toString(), false);
                 }
             }
         }

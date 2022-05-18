@@ -130,23 +130,25 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
         UUID id = entity.getUuid();
 
         //debug printing
-        if (ETFConfigData.enableDebugLogging && UUID_DEBUG_EXPLANATION_MARKER.contains(id)) {
-            //TODO use logging system pending pr
-            System.out.println("ETF entity debug Data for entity with UUID=[" + id.toString() + "]:\n{\n    Texture=" + texturePath);
+        if (ETFConfigData.debugLoggingMode != ETFConfig.debugLogMode.None && UUID_DEBUG_EXPLANATION_MARKER.contains(id)) {
+
+            boolean inChat = ETFConfigData.debugLoggingMode == ETFConfig.debugLogMode.Chat;
+
+            ETFUtils.logMessage("ETF entity debug data for entity with UUID=[" + id.toString() + "]:\n{\n    Texture=" + texturePath, inChat);
 
             if (PATH_OPTIFINE_OR_JUST_RANDOM.containsKey(texturePath))
-                System.out.println("    is properties or random=" + PATH_OPTIFINE_OR_JUST_RANDOM.get(texturePath));
+                ETFUtils.logMessage("    is properties or random=" + PATH_OPTIFINE_OR_JUST_RANDOM.get(texturePath), inChat);
             if (PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.containsKey(texturePath))
-                System.out.println("    path_0123=" + PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.get(texturePath));
+                ETFUtils.logMessage("    path_0123=" + PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.get(texturePath), inChat);
             if (PATH_OPTIFINE_RANDOM_SETTINGS_PER_TEXTURE.containsKey(texturePath))
-                System.out.println("    amount of properties=" + PATH_OPTIFINE_RANDOM_SETTINGS_PER_TEXTURE.get(texturePath).size());
+                ETFUtils.logMessage("    amount of properties=" + PATH_OPTIFINE_RANDOM_SETTINGS_PER_TEXTURE.get(texturePath).size(), inChat);
             if (PATH_TOTAL_TRUE_RANDOM.containsKey(texturePath))
-                System.out.println("    total true random=" + PATH_TOTAL_TRUE_RANDOM.get(texturePath));
+                ETFUtils.logMessage("    total true random=" + PATH_TOTAL_TRUE_RANDOM.get(texturePath), inChat);
             if (UUID_RANDOM_TEXTURE_SUFFIX.containsKey(id))
-                System.out.println("    Random=" + UUID_RANDOM_TEXTURE_SUFFIX.get(id));
+                ETFUtils.logMessage("    Random=" + UUID_RANDOM_TEXTURE_SUFFIX.get(id), inChat);
             if (UUID_ORIGINAL_NON_UPDATE_PROPERTY_STRINGS.containsKey(id))
-                System.out.println("    Original spawn data=" + Arrays.toString(UUID_ORIGINAL_NON_UPDATE_PROPERTY_STRINGS.get(id)));
-            System.out.println("}");
+                ETFUtils.logMessage("    Original spawn data=" + Arrays.toString(UUID_ORIGINAL_NON_UPDATE_PROPERTY_STRINGS.get(id)), inChat);
+            ETFUtils.logMessage("}", inChat);
             UUID_DEBUG_EXPLANATION_MARKER.remove(id);
         }
 
@@ -170,7 +172,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
                         return check;
                     }
                 } catch (Exception e) {
-                    ETFUtils.modMessage(e.toString(), false);
+                    ETFUtils.logError(e.toString(), false);
                 }
             }
         } else { // is player

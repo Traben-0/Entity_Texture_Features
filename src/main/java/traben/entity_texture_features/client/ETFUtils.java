@@ -27,10 +27,10 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourcePack;
-import net.minecraft.text.Text;
+import net.minecraft.text.LiteralText;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
-import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -91,25 +91,44 @@ public class ETFUtils {
         return isExistingFileDirect(new Identifier(id), false);
     }
 
+    //improvements by @maximum#8760
     public static boolean isExistingFileDirect(Identifier id, boolean isNativeImage) {
-        try {
-            Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(id);
-            try {
-                InputStream stream = resource.getInputStream();
-                if (isNativeImage) {
-                    //throw exception if it's not a native image
-                    NativeImage.read(stream);
+        ResourceManager resourceManager = MinecraftClient.getInstance().getResourceManager();
+
+        if (resourceManager.containsResource(id)) {
+            if (isNativeImage) {
+                try (Resource resource = resourceManager.getResource(id)) {
+                    InputStream resourceInputStream = resource.getInputStream();
+                    NativeImage.read(resourceInputStream);
+                } catch (IOException e) {
+                    return false;
                 }
-                resource.close();
-                return true;
-            } catch (IOException e) {
-                resource.close();
-                return false;
             }
-        } catch (IOException f) {
-            return false;
+
+            return true;
         }
+
+        return false;
     }
+//    public static boolean isExistingFileDirect(Identifier id, boolean isNativeImage) {
+//        try {
+//            Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(id);
+//            try {
+//                InputStream stream = resource.getInputStream();
+//                if (isNativeImage) {
+//                    //throw exception if it's not a native image
+//                    NativeImage.read(stream);
+//                }
+//                resource.close();
+//                return true;
+//            } catch (IOException e) {
+//                resource.close();
+//                return false;
+//            }
+//        } catch (IOException f) {
+//            return false;
+//        }
+//    }
 
     private static boolean checkPropertyPathExistsAndSameOrHigherResourcepackAs(String propertiesPath, String path2) {
         return isExistingFileAndSameOrHigherResourcepackAs(new Identifier(propertiesPath), new Identifier(path2), false);
@@ -123,7 +142,7 @@ public class ETFUtils {
 
 
     public static void resetVisuals() {
-        modMessage("Reloading...", false);
+        logMessage("Reloading...", false);
         PATH_TOTAL_TRUE_RANDOM.clear();
 
         KNOWN_UUID_LIST.clear();
@@ -620,15 +639,15 @@ public class ETFUtils {
                     PATH_OPTIFINE_RANDOM_SETTINGS_PER_TEXTURE.put(vanillaTexturePath, allCasesForTexture);
                     PATH_OPTIFINE_OR_JUST_RANDOM.put(vanillaTexturePath, true);
                 } else {
-                    modMessage("Ignoring properties file that failed to load any cases @ " + propertiesPath, false);
+                    logMessage("Ignoring properties file that failed to load any cases @ " + propertiesPath, false);
                     PATH_FAILED_PROPERTIES_TO_IGNORE.add(propertiesPath);
                 }
             } else {//properties file is null
-                modMessage("Ignoring properties file that was null @ " + propertiesPath, false);
+                logMessage("Ignoring properties file that was null @ " + propertiesPath, false);
                 PATH_FAILED_PROPERTIES_TO_IGNORE.add(propertiesPath);
             }
         } catch (Exception e) {
-            modMessage("Ignoring properties file that caused Exception @ " + propertiesPath + e, false);
+            logWarn("Ignoring properties file that caused Exception @ " + propertiesPath + e, false);
             PATH_FAILED_PROPERTIES_TO_IGNORE.add(propertiesPath);
         }
     }
@@ -660,7 +679,7 @@ public class ETFUtils {
                     builder.add(i);
                 }
             } else {
-                modMessage("Optifine properties failed to load: Texture heights range has a problem in properties file. this has occurred for value \"" + rawRange.replace("N", "-") + "\"", false);
+                logMessage("Optifine properties failed to load: Texture heights range has a problem in properties file. this has occurred for value \"" + rawRange.replace("N", "-") + "\"", false);
             }
             return builder.toArray(new Integer[0]);
         } else {//only 1 number but method ran because of "-" present
@@ -696,18 +715,61 @@ public class ETFUtils {
             UUID_CaseHasUpdateablesCustom.put(id, false);
     }
 
-    public static void modMessage(String message, boolean inChat) {
+//    public static void modMessage(String message, boolean inChat) {
+//        if (inChat) {
+//            ClientPlayerEntity plyr = MinecraftClient.getInstance().player;
+//            if (plyr != null) {
+//                plyr.sendMessage(Text.of("\u00A76[Entity Texture Features]\u00A77: " + message), false);
+//            } else {
+//                LogManager.getLogger().info("[Entity Texture Features]: " + message);
+//            }
+//        } else {
+//            LogManager.getLogger().info("[Entity Texture Features]: " + message);
+//        }
+//    }
+
+    //improvements to logging by @Maximum#8760
+    public static void logMessage(Object obj, boolean inChat) {
         if (inChat) {
-            ClientPlayerEntity plyr = MinecraftClient.getInstance().player;
-            if (plyr != null) {
-                plyr.sendMessage(Text.of("\u00A76[Entity Texture Features]\u00A77: " + message), false);
+            ClientPlayerEntity player = MinecraftClient.getInstance().player;
+            if (player != null) {
+                player.sendMessage(new LiteralText("[INFO] [Entity Texture Features]: " + obj).formatted(Formatting.GRAY, Formatting.ITALIC), false);
             } else {
-                LogManager.getLogger().info("[Entity Texture Features]: " + message);
+                ETFClient.LOGGER.info(obj);
             }
         } else {
-            LogManager.getLogger().info("[Entity Texture Features]: " + message);
+            ETFClient.LOGGER.info(obj);
         }
     }
+
+    //improvements to logging by @Maximum#8760
+    public static void logWarn(Object obj, boolean inChat) {
+        if (inChat) {
+            ClientPlayerEntity player = MinecraftClient.getInstance().player;
+            if (player != null) {
+                player.sendMessage(new LiteralText("[WARN] [Entity Texture Features]: " + obj).formatted(Formatting.YELLOW), false);
+            } else {
+                ETFClient.LOGGER.warn(obj);
+            }
+        } else {
+            ETFClient.LOGGER.warn(obj);
+        }
+    }
+
+    //improvements to logging by @Maximum#8760
+    public static void logError(Object obj, boolean inChat) {
+        if (inChat) {
+            ClientPlayerEntity player = MinecraftClient.getInstance().player;
+            if (player != null) {
+                player.sendMessage(new LiteralText("[ERROR] [Entity Texture Features]: " + obj).formatted(Formatting.RED, Formatting.BOLD), false);
+            } else {
+                ETFClient.LOGGER.error(obj);
+            }
+        } else {
+            ETFClient.LOGGER.error(obj);
+        }
+    }
+
 
     public static String returnOptifineOrVanillaPath(String vanillaPath, int randomId, String emissiveSuffx) {
 
@@ -836,11 +898,11 @@ public class ETFUtils {
             }
             emissiveSuffixes = builder.toArray(new String[0]);
             if (emissiveSuffixes.length == 0) {
-                modMessage("default emissive suffix '_e' used", false);
+                logMessage("default emissive suffix '_e' used", false);
                 emissiveSuffixes = new String[]{"_e"};
             }
         } catch (Exception e) {
-            modMessage("default emissive suffix '_e' used", false);
+            logMessage("default emissive suffix '_e' used", false);
             emissiveSuffixes = new String[]{"_e"};
         }
     }
@@ -857,7 +919,7 @@ public class ETFUtils {
             fileWriter.write(gson.toJson(ETFConfigData));
             fileWriter.close();
         } catch (IOException e) {
-            modMessage("Config could not be saved", false);
+            logError("Config file could not be saved", false);
         }
     }
 
@@ -1067,7 +1129,7 @@ public class ETFUtils {
                 }
                 UUID_PLAYER_HAS_CUSTOM_CAPE.put(id, true);
             } else {
-                modMessage("Player skin {" + player.getName().getString() + "} no THIRD_PARTY_CAPE Found", false);
+                logMessage("Player skin {" + player.getName().getString() + "} no THIRD_PARTY_CAPE Found", false);
                 //registerNativeImageToIdentifier(getNativeImageFromID(new Identifier("etf:capes/error.png")), SKIN_NAMESPACE + id + "_cape.png");
                 UUID_PLAYER_HAS_CUSTOM_CAPE.put(id, false);
             }
@@ -1138,7 +1200,7 @@ public class ETFUtils {
                     skin.getColor(3, 18) == -1
             ) {
                 //this has texture features
-                modMessage("Found Player {" + id + "} with texture features in skin.", false);
+                logMessage("Found Player {" + id + "} with texture features in skin.", false);
                 UUID_PLAYER_HAS_FEATURES.put(id, true);
                 //find what features
                 //pink = -65281, blue = -256
@@ -1198,7 +1260,7 @@ public class ETFUtils {
                         registerNativeImageToIdentifier(skin, transId.toString());
 
                     } else {
-                        modMessage("Skin was too transparent or had other problems", false);
+                        logMessage("Skin was too transparent or had other problems", false);
                     }
                 }
 
@@ -1757,7 +1819,7 @@ public class ETFUtils {
                     }//elses to vanilla
                 }
             } else {
-                ETFUtils.modMessage("not random", false);
+                logMessage("not random", false);
             }
         }
         //return original if it was changed and should be set back to original
@@ -1768,7 +1830,7 @@ public class ETFUtils {
 
     public static Identifier generalReturnAlreadySetAlteredTexture(Identifier texture, Entity entity) {
         Identifier returned = hiddenGeneralReturnAlreadySetAlteredTexture(texture, entity);
-        if (ETFConfigData.enableEmissiveTextures && isShaderOn()) {
+        if (ETFConfigData.enableEmissiveTextures && IrisCompat.isShaderPackInUse()) {
             if (PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION.containsKey(returned.toString())) {
                 if (PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION.get(returned.toString())) {
                     return new Identifier(returned + "etf_iris_patched_file.png");
@@ -1817,7 +1879,7 @@ public class ETFUtils {
         }
         VertexConsumer textureVert = generalEmissiveGetVertexConsumer(fileString, vertexConsumerProvider, false);
         if (textureVert != null) {
-            if (isShaderOn()) {
+            if (IrisCompat.isShaderPackInUse()) {
                 if (!PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION.containsKey(fileString)) {
                     //prevent flickering by removing pixels from the base texture
                     // the iris fix setting will now require a re-load
@@ -1872,13 +1934,13 @@ public class ETFUtils {
         PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION.put(originalTexturePath, false);
     }
 
-    public static boolean isShaderOn() {
-        if (FabricLoader.getInstance().isModLoaded("iris")) {
-            return ETFIrisApi.isShaderOn();
-        } else {
-            return false;
-        }
-    }
+//    public static boolean isShaderOn() {
+//        if (FabricLoader.getInstance().isModLoaded("iris")) {
+//            return IrisCompat.isShaderPackInUse();
+//        } else {
+//            return false;
+//        }
+//    }
 
 
     public static void generalEmissiveRenderPart(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, Identifier texture, ModelPart model, boolean isBlockEntity) {
@@ -1889,7 +1951,7 @@ public class ETFUtils {
     public static void generalEmissiveRenderPart(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, String fileString, ModelPart modelPart, boolean isBlockEntity) {
         VertexConsumer textureVert = generalEmissiveGetVertexConsumer(fileString, vertexConsumerProvider, isBlockEntity);
         if (textureVert != null) {
-            if (isShaderOn()) {
+            if (IrisCompat.isShaderPackInUse()) {
                 if (!PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION.containsKey(fileString)) {
                     //prevent flickering by removing pixels from the base texture
                     // the iris fix setting will now require a re-load
@@ -1932,7 +1994,7 @@ public class ETFUtils {
                         }
                     } else {
                         if (ETFConfigData.fullBrightEmissives) {
-                            return vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString), !isShaderOn()));
+                            return vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString), !IrisCompat.isShaderPackInUse()));
                         } else {
                             return vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString)));
                         }

@@ -17,6 +17,7 @@
     "client.entity.extras.MixinArmorFeatureRenderer",
     "client.entity.extras.MixinBuiltinModelItemRenderer",
     "client.entity.extras.MixinCapeFeatureRenderer",
+    "client.entity.extras.MixinDrownedOverlayFeatureRenderer",
     "client.entity.extras.MixinElytraEntityModel",
     "client.entity.extras.MixinElytraFeatureRenderer",
     "client.entity.extras.MixinEyesFeatureRenderer",
@@ -30,7 +31,7 @@
     "client.entity.extras.MixinTridentEntityRenderer",
     "client.entity.extras.MixinVillagerClothingFeatureRenderer",
     "client.entity.textureUpdaters.MixinPlayerEntity",
-    "client.entity.textureUpdaters.MixinSimpleResourceReload"
+    "client.entity.textureUpdaters.MixinReloadableResourceManagerImpl"
   ],
   "mixins": [
   ],

@@ -34,7 +34,7 @@ public class ETFConfig {
     public boolean enableElytra = true;
     public boolean elytraThicknessFix = true;
 
-    public boolean enableDebugLogging = false;
+    public debugLogMode debugLoggingMode = debugLogMode.None;
 
     //string name stuff more indepth than other enum for backwards compatibility
     public enum enchantedPotionEffectsEnum {
@@ -60,6 +60,12 @@ public class ETFConfig {
         Slow,
         Fast,
         Instant
+    }
+
+    public enum debugLogMode {
+        None,
+        Log,
+        Chat
     }
 
 }

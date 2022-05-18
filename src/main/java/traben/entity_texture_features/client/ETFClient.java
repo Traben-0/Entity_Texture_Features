@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.Identifier;
-import org.apache.logging.log4j.LogManager;
+import traben.entity_texture_features.client.logging.ETFLogger;
 import traben.entity_texture_features.config.ETFConfig;
 
 import java.io.File;
@@ -126,7 +126,9 @@ public class ETFClient implements ClientModInitializer {
 
     public static Boolean lecternHasCustomTexture = null;
 
+    //string finals
     public final static String SKIN_NAMESPACE = "etf_skin:";
+    public static final String MOD_ID = "etf";
 
     //marks this UUID to have relevant data printed for debugging
     public static final Set<UUID> UUID_DEBUG_EXPLANATION_MARKER = new HashSet<>();
@@ -134,10 +136,19 @@ public class ETFClient implements ClientModInitializer {
     //config object
     public static ETFConfig ETFConfigData;
 
+    //logging object
+    public static final ETFLogger LOGGER = ETFLogger.create();
+
     @Override
     public void onInitializeClient() {
         //testing
-        LogManager.getLogger().info("[Entity Texture Features]: Loading! 1.18.x");
+        LOGGER.info("Loading! 1.18.x");
+
+        if (FabricLoader.getInstance().getModContainer("iris").isPresent()) {
+            //LOGGER.info("Iris mod detected : message will be shown in settings");
+            irisDetected = true;
+        }
+
         etf$loadConfig();
     }
 
@@ -154,7 +165,7 @@ public class ETFClient implements ClientModInitializer {
                 fileReader.close();
                 ETFUtils.saveConfig();
             } catch (IOException e) {
-                ETFUtils.modMessage("Config could not be loaded, using defaults", false);
+                ETFUtils.logMessage("Config could not be loaded, using defaults", false);
             }
         } else {
             ETFConfigData = new ETFConfig();
