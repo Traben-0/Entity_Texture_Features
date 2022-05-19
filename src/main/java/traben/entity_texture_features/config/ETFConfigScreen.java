@@ -128,9 +128,9 @@ public class ETFConfigScreen {
                 .setSaveConsumer(newValue -> ETFConfigData.enableEmissiveTextures = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
 
-        emissiveSettings.add(entryBuilder.startBooleanToggle(new TranslatableText("config." + ETFClient.MOD_ID + ".full_bright_emissives.title"), ETFConfigData.fullBrightEmissives)
+        emissiveSettings.add(entryBuilder.startBooleanToggle(Text.translatable("config." + ETFClient.MOD_ID + ".fullBrightEmissives.title"), ETFConfigData.fullBrightEmissives)
                 .setDefaultValue(false) // Recommended: Used when user click "Reset"
-                .setTooltip(new TranslatableText("config." + ETFClient.MOD_ID + ".full_bright_emissives.tooltip")) // Optional: Shown when the user hover over this option
+                .setTooltip(Text.translatable("config." + ETFClient.MOD_ID + ".fullBrightEmissives.tooltip")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.fullBrightEmissives = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
         emissiveSettings.add(entryBuilder.startBooleanToggle(Text.translatable("config." + ETFClient.MOD_ID + ".always_check_vanilla_emissive_suffix.title"), ETFConfigData.alwaysCheckVanillaEmissiveSuffix)
@@ -150,8 +150,8 @@ public class ETFConfigScreen {
         category.addEntry(emissiveSettings.build());
 
         // blinking mob settings
-        SubCategoryBuilder blinkingMobSettings = entryBuilder.startSubCategory(new TranslatableText("config." + ETFClient.MOD_ID + ".blinking_mob_settings_sub.title"));
-        blinkingMobSettings.add(0, entryBuilder.startBooleanToggle(Text.of("config." + ETFClient.MOD_ID + ".blinking_mob_settings.title"), ETFConfigData.enableBlinking)
+        SubCategoryBuilder blinkingMobSettings = entryBuilder.startSubCategory(Text.translatable("config." + ETFClient.MOD_ID + ".blinking_mob_settings.title"));
+        blinkingMobSettings.add(0, entryBuilder.startBooleanToggle(Text.of("Enable blinking mobs"), ETFConfigData.enableBlinking)
                 .setDefaultValue(false) // Recommended: Used when user click "Reset"
                 .setTooltip(Text.translatable("config." + ETFClient.MOD_ID + ".blinking_mob_settings.tooltip")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.enableBlinking = newValue) // Recommended: Called when user save the config

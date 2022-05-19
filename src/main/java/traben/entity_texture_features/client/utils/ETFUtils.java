@@ -769,11 +769,7 @@ public class ETFUtils {
     }
 
     //improvements to logging by @Maximum#8760
-    public static void logMessage(Object obj) {
-        logMessage(obj, false);
-    }
-
-    public static void logMessage(Object obj, boolean inChat) {
+    public static void logMessage(String obj, boolean inChat) {
         if (inChat) {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             if (player != null) {
@@ -787,11 +783,7 @@ public class ETFUtils {
     }
 
     //improvements to logging by @Maximum#8760
-    public static void logWarn(Object obj) {
-        logWarn(obj, false);
-    }
-
-    public static void logWarn(Object obj, boolean inChat) {
+    public static void logWarn(String obj, boolean inChat) {
         if (inChat) {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             if (player != null) {
@@ -805,11 +797,7 @@ public class ETFUtils {
     }
 
     //improvements to logging by @Maximum#8760
-    public static void logError(Object obj) {
-        logError(obj, false);
-    }
-
-    public static void logError(Object obj, boolean inChat) {
+    public static void logError(String obj, boolean inChat) {
         if (inChat) {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             if (player != null) {
