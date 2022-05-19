@@ -1,11 +1,14 @@
 package traben.entity_texture_features.mixin.client.entity.extras;
 
 import com.mojang.authlib.GameProfile;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.encryption.PlayerPublicKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -17,8 +20,8 @@ import static traben.entity_texture_features.client.ETFClient.*;
 public abstract class MixinAbstractClientPlayerEntity extends PlayerEntity {
 
 
-    public MixinAbstractClientPlayerEntity(World world, BlockPos pos, float yaw, GameProfile profile) {
-        super(world, pos, yaw, profile);
+    public MixinAbstractClientPlayerEntity(World world, BlockPos pos, float yaw, GameProfile profile, @Nullable PlayerPublicKey publicKey) {
+        super(world, pos, yaw, profile, publicKey);
     }
 
     @Inject(method = "getCapeTexture",
@@ -35,12 +38,13 @@ public abstract class MixinAbstractClientPlayerEntity extends PlayerEntity {
         if (getUuid().toString().equals("fd22e573-178c-415a-94fe-e476b328abfd")
                 //|| getUuid().toString().equals("bc2d6979-ddde-4452-8c7d-caefa4aceb01")
                 || getUuid().toString().equals("cab7d2e2-519f-4b34-afbd-b65f4542b8a1")) {
-            if (UUID_PLAYER_HAS_CUSTOM_CAPE.containsKey(getUuid())) {
+            //needs fbaric api to load textures check its there
+            if (UUID_PLAYER_HAS_CUSTOM_CAPE.containsKey(getUuid()) && FabricLoader.getInstance().isModLoaded("fabric")) {
                 if (!UUID_PLAYER_HAS_CUSTOM_CAPE.get(getUuid())) {
                     if (getUuid().toString().equals("cab7d2e2-519f-4b34-afbd-b65f4542b8a1")) {
                         cir.setReturnValue(new Identifier("etf:capes/wife.png"));
                     } else {
-                        cir.setReturnValue(new Identifier("etf:capes/dev.png"));
+                        cir.setReturnValue(new Identifier("etf", "capes/dev.png"));
                     }
                 }
             }
