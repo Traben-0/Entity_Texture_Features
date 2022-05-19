@@ -1,7 +1,6 @@
 package traben.entity_texture_features.client;
 
 
-import net.minecraft.MinecraftVersion;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.passive.WolfEntity;
@@ -138,11 +137,14 @@ public class ETFTexturePropertyCase {
             String entityBiome;
             if (isUpdate && ETFConfigData.restrictBiome) {
                 entityBiome = UUID_ORIGINAL_NON_UPDATE_PROPERTY_STRINGS.get(entity.getUuid())[0].trim();
-            } else if (MinecraftVersion.CURRENT.getName().equals("1.18") || MinecraftVersion.CURRENT.getName().equals("1.18.1")) {
-                entityBiome = traben.entity_texture_features.client.ETF_1_18_1_versionPatch.getBiome(entity.world, entity.getBlockPos());
             } else {
-                entityBiome = ETF_1_18_2_versionPatch.getBiome(entity.world, entity.getBlockPos());
+                entityBiome = entity.world.getBiome(entity.getBlockPos()).getKey().toString().split("\s/\s")[1].replaceAll("[^0-9a-zA-Z_:-]", "");
             }
+//            } else if (MinecraftVersion.CURRENT.getName().equals("1.18") || MinecraftVersion.CURRENT.getName().equals("1.18.1")) {
+//                entityBiome = ETF_1_18_1_versionPatch.getBiome(entity.world, entity.getBlockPos());
+//            } else {
+//                entityBiome = ETF_1_18_2_versionPatch.getBiome(entity.world, entity.getBlockPos());
+//            }
 
             //System.out.println("biome="+entityBiome);
             boolean check = false;
@@ -463,12 +465,7 @@ public class ETFTexturePropertyCase {
         // 3 weather
         // 4 daytime
         // 5 moonphase
-        String biome;
-        if (MinecraftVersion.CURRENT.getName().equals("1.18") || MinecraftVersion.CURRENT.getName().equals("1.18.1")) {
-            biome = traben.entity_texture_features.client.ETF_1_18_1_versionPatch.getBiome(entity.world, entity.getBlockPos());
-        } else {
-            biome = ETF_1_18_2_versionPatch.getBiome(entity.world, entity.getBlockPos());
-        }
+        String biome = entity.world.getBiome(entity.getBlockPos()).getKey().toString().split("\s/\s")[1].replaceAll("[^0-9a-zA-Z_:-]", "");
         String height = "" + entity.getBlockY();
         String block = entity.world.getBlockState(entity.getBlockPos().down()).toString()
                 .replaceFirst("minecraft:", "")

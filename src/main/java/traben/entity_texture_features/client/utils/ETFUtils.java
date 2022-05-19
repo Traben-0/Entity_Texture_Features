@@ -19,7 +19,8 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourcePack;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.LiteralTextContent;
+import net.minecraft.text.MutableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import traben.entity_texture_features.client.ETFClient;
@@ -44,8 +45,8 @@ public class ETFUtils {
         if (isExistingFileDirect(id, id1IsNativeImage)) {
             try {
                 ResourceManager resource = MinecraftClient.getInstance().getResourceManager();
-                String packname = resource.getResource(id).getResourcePackName();
-                String packname2 = resource.getResource(vanillaIdToMatch).getResourcePackName();
+                String packname = resource.getResource(id).get().getResourcePackName();
+                String packname2 = resource.getResource(vanillaIdToMatch).get().getResourcePackName();
                 if (packname.equals(packname2)) {
                     return true;
                 } else {
@@ -85,12 +86,13 @@ public class ETFUtils {
     public static boolean isExistingFileDirect(Identifier id, boolean isNativeImage) {
         ResourceManager resourceManager = MinecraftClient.getInstance().getResourceManager();
 
-        if (resourceManager.containsResource(id)) {
+        if (resourceManager.getResource(id).isPresent()) {
             if (isNativeImage) {
-                try (Resource resource = resourceManager.getResource(id)) {
+                try {
+                    Resource resource = resourceManager.getResource(id).get();
                     InputStream resourceInputStream = resource.getInputStream();
                     NativeImage.read(resourceInputStream);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     return false;
                 }
             }
@@ -245,12 +247,12 @@ public class ETFUtils {
     public static Properties readProperties(String path, String pathOfTextureToUseForResourcepackCheck) {
         Properties props = new Properties();
         try {
-            Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(new Identifier(path));
+            Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(new Identifier(path)).get();
             //skip if it needs to be same resource-pack
             if (pathOfTextureToUseForResourcepackCheck != null) {
                 ResourceManager resourceManager = MinecraftClient.getInstance().getResourceManager();
                 String packName1 = resource.getResourcePackName();
-                String packName2 = resourceManager.getResource(new Identifier(pathOfTextureToUseForResourcepackCheck)).getResourcePackName();
+                String packName2 = resourceManager.getResource(new Identifier(pathOfTextureToUseForResourcepackCheck)).get().getResourcePackName();
                 if (!packName1.equals(packName2)) {
                     //not same pack check it is a higher pack and only continue if packName1 is higher
                     for (ResourcePack pack :
@@ -270,9 +272,9 @@ public class ETFUtils {
             try {
                 InputStream in = resource.getInputStream();
                 props.load(in);
-                resource.close();
+                in.close();
             } catch (Exception e) {
-                resource.close();
+                //resource.close();
                 return null;
             }
         } catch (Exception e) {
@@ -286,13 +288,13 @@ public class ETFUtils {
     public static NativeImage getNativeImageFromID(Identifier identifier) {
         NativeImage img;
         try {
-            Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(identifier);
+            Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(identifier).get();
             try {
                 InputStream in = resource.getInputStream();
                 img = NativeImage.read(in);
-                resource.close();
+                in.close();
             } catch (Exception e) {
-                resource.close();
+                //resource.close();
                 return null;
             }
         } catch (Exception e) {
@@ -703,11 +705,11 @@ public class ETFUtils {
 //    }
 
     //improvements to logging by @Maximum#8760
-    public static void logMessage(Object obj, boolean inChat) {
+    public static void logMessage(String obj, boolean inChat) {
         if (inChat) {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             if (player != null) {
-                player.sendMessage(new LiteralText("[INFO] [Entity Texture Features]: " + obj).formatted(Formatting.GRAY, Formatting.ITALIC), false);
+                player.sendMessage(MutableText.of(new LiteralTextContent("[INFO] [Entity Texture Features]: " + obj)).formatted(Formatting.GRAY, Formatting.ITALIC), false);
             } else {
                 ETFClient.LOGGER.info(obj);
             }
@@ -717,11 +719,11 @@ public class ETFUtils {
     }
 
     //improvements to logging by @Maximum#8760
-    public static void logWarn(Object obj, boolean inChat) {
+    public static void logWarn(String obj, boolean inChat) {
         if (inChat) {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             if (player != null) {
-                player.sendMessage(new LiteralText("[WARN] [Entity Texture Features]: " + obj).formatted(Formatting.YELLOW), false);
+                player.sendMessage(MutableText.of(new LiteralTextContent("[WARN] [Entity Texture Features]: " + obj)).formatted(Formatting.YELLOW), false);
             } else {
                 ETFClient.LOGGER.warn(obj);
             }
@@ -731,11 +733,11 @@ public class ETFUtils {
     }
 
     //improvements to logging by @Maximum#8760
-    public static void logError(Object obj, boolean inChat) {
+    public static void logError(String obj, boolean inChat) {
         if (inChat) {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             if (player != null) {
-                player.sendMessage(new LiteralText("[ERROR] [Entity Texture Features]: " + obj).formatted(Formatting.RED, Formatting.BOLD), false);
+                player.sendMessage(MutableText.of(new LiteralTextContent("[ERROR] [Entity Texture Features]: " + obj)).formatted(Formatting.RED, Formatting.BOLD), false);
             } else {
                 ETFClient.LOGGER.error(obj);
             }
