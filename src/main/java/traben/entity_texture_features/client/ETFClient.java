@@ -5,8 +5,7 @@ import com.google.gson.GsonBuilder;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.Identifier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import traben.entity_texture_features.client.logging.ETFLogger;
 import traben.entity_texture_features.client.utils.ETFUtils;
 import traben.entity_texture_features.config.ETFConfig;
 
@@ -139,13 +138,14 @@ public class ETFClient implements ClientModInitializer {
     public static ETFConfig ETFConfigData;
 
     //logging object
-    public static Logger LOGGER = LoggerFactory.getLogger("Entity Texture Features");
+    public static ETFLogger LOGGER;// = ETFLogger.create();
 
     @Override
     public void onInitializeClient() {
+        //needs to be created after initialization stage
+        LOGGER = ETFLogger.create();
 
-
-        LOGGER.info("Loading! 1.19.pre1");
+        LOGGER.info("Loading! 1.18.x");
 
         if (FabricLoader.getInstance().getModContainer("iris").isPresent()) {
             //LOGGER.info("Iris mod detected : message will be shown in settings");
