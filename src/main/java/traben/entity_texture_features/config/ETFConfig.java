@@ -3,7 +3,7 @@ package traben.entity_texture_features.config;
 public class ETFConfig {
     public boolean allowIllegalTexturePaths = false;
     public boolean enableCustomTextures = true;
-    public updateFrequency textureUpdateFrequency_V2 = updateFrequency.Fast;
+    public UpdateFrequency textureUpdateFrequency_V2 = UpdateFrequency.Fast;
     public boolean restrictUpdateProperties = true;
     public boolean restrictBiome = true;
     public boolean restrictHeight = true;
@@ -22,7 +22,7 @@ public class ETFConfig {
     @Deprecated
     public boolean doShadersEmissiveFix = false;
 
-    public enchantedPotionEffectsEnum enchantedPotionEffects = enchantedPotionEffectsEnum.NONE;
+    public EnchantedPotionEffectsEnum enchantedPotionEffects = EnchantedPotionEffectsEnum.NONE;
     public boolean skinFeaturesEnabled = true;
     public boolean skinFeaturesEnableTransparency = true;
     public boolean skinFeaturesEnableFullTransparency = false;
@@ -34,10 +34,10 @@ public class ETFConfig {
     public boolean enableElytra = true;
     public boolean elytraThicknessFix = true;
 
-    public debugLogMode debugLoggingMode = debugLogMode.None;
+    public DebugLogMode debugLoggingMode = DebugLogMode.None;
 
     //string name stuff more indepth than other enum for backwards compatibility
-    public enum enchantedPotionEffectsEnum {
+    public enum EnchantedPotionEffectsEnum {
         NONE("None"),
         ENCHANTED("Enchanted"),
         GLOWING("Glowing"),
@@ -45,7 +45,7 @@ public class ETFConfig {
 
         private final String name;
 
-        enchantedPotionEffectsEnum(String nameX) {
+        EnchantedPotionEffectsEnum(String nameX) {
             this.name = nameX;
         }
 
@@ -55,14 +55,14 @@ public class ETFConfig {
         }
     }
 
-    public enum updateFrequency {
+    public enum UpdateFrequency {
         Never,
         Slow,
         Fast,
         Instant
     }
 
-    public enum debugLogMode {
+    public enum DebugLogMode {
         None,
         Log,
         Chat

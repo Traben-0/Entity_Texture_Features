@@ -15,7 +15,7 @@ public abstract class MixinIdentifier {
     private static void etf$illegalPathOverride(String path, CallbackInfoReturnable<Boolean> cir) {
         if (ETFConfigData != null) {
             if (ETFConfigData.allowIllegalTexturePaths) {
-                if (!cir.getReturnValue()) {
+                if (!cir.getReturnValue() && path != null) {
                     //only allow the fix for images. the only real use case is for weird emissive suffixes
                     //property files should not have a use case here
                     if (path.endsWith(".png")) { //|| path.endsWith(".properties")) {

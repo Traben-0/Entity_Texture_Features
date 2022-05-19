@@ -1,4 +1,4 @@
-package traben.entity_texture_features.mixin.client.entity.textureUpdaters;
+package traben.entity_texture_features.mixin.client.textureUpdaters;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -21,7 +21,7 @@ public abstract class MixinPlayerEntity {
     @Inject(method = "interact", at = @At("HEAD"))
     private void etf$injected(Entity entity, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
         if (((LivingEntity) (Object) this).world.isClient()) {
-            if (ETFConfigData.debugLoggingMode != ETFConfig.debugLogMode.None)
+            if (ETFConfigData.debugLoggingMode != ETFConfig.DebugLogMode.None)
                 UUID_DEBUG_EXPLANATION_MARKER.add(entity.getUuid());
             if (!UUID_ENTITY_AWAITING_DATA_CLEARING.containsKey(entity.getUuid())) {
                 UUID_ENTITY_AWAITING_DATA_CLEARING.put(entity.getUuid(), System.currentTimeMillis());

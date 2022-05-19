@@ -5,6 +5,7 @@ import net.minecraft.MinecraftVersion;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.passive.WolfEntity;
+import traben.entity_texture_features.client.utils.ETFUtils;
 
 import java.util.*;
 
@@ -29,20 +30,20 @@ public class ETFTexturePropertyCase {
     //whether case should be ignored by updates
 
 
-    ETFTexturePropertyCase(Integer[] suffixesX,
-                           Integer[] weightsX,
-                           String[] biomesX,
-                           Integer[] heightsX,
-                           String[] namesX,
-                           String[] professionsX,
-                           String[] collarColoursX,
-                           int baby012,
-                           int weather0123,
-                           String[] healthX,
-                           Integer[] moonX,
-                           String[] daytimeX,
-                           String[] blocksX,
-                           String[] teamsX
+    public ETFTexturePropertyCase(Integer[] suffixesX,
+                                  Integer[] weightsX,
+                                  String[] biomesX,
+                                  Integer[] heightsX,
+                                  String[] namesX,
+                                  String[] professionsX,
+                                  String[] collarColoursX,
+                                  int baby012,
+                                  int weather0123,
+                                  String[] healthX,
+                                  Integer[] moonX,
+                                  String[] daytimeX,
+                                  String[] blocksX,
+                                  String[] teamsX
     ) {
 
         biomes = biomesX != null ? biomesX : new String[0];

@@ -16,7 +16,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import traben.entity_texture_features.client.ETFUtils;
+import traben.entity_texture_features.client.utils.ETFPlayerSkinUtils;
+import traben.entity_texture_features.client.utils.ETFUtils;
 
 import java.util.UUID;
 
@@ -48,7 +49,7 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
                 try {
                     if (!UUID_PLAYER_HAS_FEATURES.containsKey(id) && !UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.containsKey(id)) {
                         //check for mark
-                        ETFUtils.checkPlayerForSkinFeatures(id, player);
+                        ETFPlayerSkinUtils.checkPlayerForSkinFeatures(id, player);
                     }
                     if (UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.get(id)) {
                         if (UUID_PLAYER_HAS_FEATURES.get(id)) {

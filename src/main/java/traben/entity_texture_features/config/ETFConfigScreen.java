@@ -9,7 +9,7 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import traben.entity_texture_features.client.ETFClient;
-import traben.entity_texture_features.client.ETFUtils;
+import traben.entity_texture_features.client.utils.ETFUtils;
 
 import static traben.entity_texture_features.client.ETFClient.ETFConfigData;
 
@@ -52,8 +52,8 @@ public class ETFConfigScreen {
                 .setTooltip(new TranslatableText("config." + ETFClient.MOD_ID + ".enable_custom_textures.tooltip")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.enableCustomTextures = newValue) // Recommended: Called when user save the config
                 .build());
-        randomSettings.add(1, entryBuilder.startEnumSelector(new TranslatableText("config." + ETFClient.MOD_ID + ".texture_update_frequency.title"), ETFConfig.updateFrequency.class, ETFConfigData.textureUpdateFrequency_V2)
-                .setDefaultValue(ETFConfig.updateFrequency.Fast)
+        randomSettings.add(1, entryBuilder.startEnumSelector(new TranslatableText("config." + ETFClient.MOD_ID + ".texture_update_frequency.title"), ETFConfig.UpdateFrequency.class, ETFConfigData.textureUpdateFrequency_V2)
+                .setDefaultValue(ETFConfig.UpdateFrequency.Fast)
                 .setTooltip(new TranslatableText("config." + ETFClient.MOD_ID + ".texture_update_frequency.tooltip")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.textureUpdateFrequency_V2 = newValue)
                 .build());
@@ -156,8 +156,8 @@ public class ETFConfigScreen {
                 .build()); // Builds the option entry for cloth config
         category.addEntry(playerSkinSettings.build());
 
-        category.addEntry(entryBuilder.startEnumSelector(new TranslatableText("config." + ETFClient.MOD_ID + ".enchanted_potion_effects.title"), ETFConfig.enchantedPotionEffectsEnum.class, ETFConfigData.enchantedPotionEffects)
-                .setDefaultValue(ETFConfig.enchantedPotionEffectsEnum.NONE)
+        category.addEntry(entryBuilder.startEnumSelector(new TranslatableText("config." + ETFClient.MOD_ID + ".enchanted_potion_effects.title"), ETFConfig.EnchantedPotionEffectsEnum.class, ETFConfigData.enchantedPotionEffects)
+                .setDefaultValue(ETFConfig.EnchantedPotionEffectsEnum.NONE)
                 .setTooltip(new TranslatableText("config." + ETFClient.MOD_ID + ".enchanted_potion_effects.tooltip")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.enchantedPotionEffects = newValue)
                 .build());
@@ -171,8 +171,8 @@ public class ETFConfigScreen {
                 .setTooltip(new TranslatableText("config." + ETFClient.MOD_ID + ".elytra_thickness_fix.tooltip")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.elytraThicknessFix = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
-        category.addEntry(entryBuilder.startEnumSelector(new TranslatableText("config." + ETFClient.MOD_ID + ".debug_logging_mode.title"), ETFConfig.debugLogMode.class, ETFConfigData.debugLoggingMode)
-                .setDefaultValue(ETFConfig.debugLogMode.None) // Recommended: Used when user click "Reset"
+        category.addEntry(entryBuilder.startEnumSelector(new TranslatableText("config." + ETFClient.MOD_ID + ".debug_logging_mode.title"), ETFConfig.DebugLogMode.class, ETFConfigData.debugLoggingMode)
+                .setDefaultValue(ETFConfig.DebugLogMode.None) // Recommended: Used when user click "Reset"
                 .setTooltip(new TranslatableText("config." + ETFClient.MOD_ID + ".debug_logging_mode.tooltip")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.debugLoggingMode = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config

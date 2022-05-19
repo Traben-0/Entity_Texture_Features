@@ -29,7 +29,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.client.CustomPlayerFeatureModel;
-import traben.entity_texture_features.client.ETFUtils;
+import traben.entity_texture_features.client.utils.ETFPlayerSkinUtils;
+import traben.entity_texture_features.client.utils.ETFUtils;
 import traben.entity_texture_features.config.ETFConfig;
 
 import java.util.Arrays;
@@ -64,7 +65,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
             etf$renderSkinFeatures(id, (PlayerEntity) livingEntity, matrixStack, vertexConsumerProvider, i);
         }
         //potion effects
-        if (ETFConfigData.enchantedPotionEffects != ETFConfig.enchantedPotionEffectsEnum.NONE
+        if (ETFConfigData.enchantedPotionEffects != ETFConfig.EnchantedPotionEffectsEnum.NONE
                 && !livingEntity.getActiveStatusEffects().isEmpty()
                 && !livingEntity.hasStatusEffect(StatusEffects.INVISIBILITY)
         ) {
@@ -72,7 +73,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
         }
 
         //randomly mark texture for rechecking randomized by UUID
-        if (ETFConfigData.enableCustomTextures && ETFConfigData.textureUpdateFrequency_V2 != ETFConfig.updateFrequency.Never) {
+        if (ETFConfigData.enableCustomTextures && ETFConfigData.textureUpdateFrequency_V2 != ETFConfig.UpdateFrequency.Never) {
 
             int delay = switch (ETFConfigData.textureUpdateFrequency_V2) {
                 case Fast -> 5;
@@ -130,9 +131,9 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
         UUID id = entity.getUuid();
 
         //debug printing
-        if (ETFConfigData.debugLoggingMode != ETFConfig.debugLogMode.None && UUID_DEBUG_EXPLANATION_MARKER.contains(id)) {
+        if (ETFConfigData.debugLoggingMode != ETFConfig.DebugLogMode.None && UUID_DEBUG_EXPLANATION_MARKER.contains(id)) {
 
-            boolean inChat = ETFConfigData.debugLoggingMode == ETFConfig.debugLogMode.Chat;
+            boolean inChat = ETFConfigData.debugLoggingMode == ETFConfig.DebugLogMode.Chat;
 
             ETFUtils.logMessage("ETF entity debug data for entity with UUID=[" + id.toString() + "]:\n{\n    Texture=" + texturePath, inChat);
 
@@ -182,7 +183,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
                 } else {
 
                     if (!UUID_PLAYER_HAS_FEATURES.containsKey(id) && !UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.containsKey(id)) {
-                        ETFUtils.checkPlayerForSkinFeatures(id, (PlayerEntity) entity);
+                        ETFPlayerSkinUtils.checkPlayerForSkinFeatures(id, (PlayerEntity) entity);
                     }
                     if (UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.containsKey(id) && UUID_PLAYER_HAS_FEATURES.containsKey(id)) {
                         if (UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.get(id)) {
@@ -247,7 +248,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
         } else {
             if (!UUID_PLAYER_HAS_FEATURES.containsKey(id) && !UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.containsKey(id)) {
                 //check for mark
-                ETFUtils.checkPlayerForSkinFeatures(id, player);
+                ETFPlayerSkinUtils.checkPlayerForSkinFeatures(id, player);
             }
             if (UUID_PLAYER_HAS_FEATURES.containsKey(id) && UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.containsKey(id)) {
                 if (UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.get(id)) {
@@ -338,7 +339,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
                             } else {
                                 emissVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(emissive));
                             }
-                                this.getModel().render(matrixStack, emissVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                            this.getModel().render(matrixStack, emissVert, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
                         }
                     }
                 }

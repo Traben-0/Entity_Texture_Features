@@ -6,6 +6,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.Identifier;
 import traben.entity_texture_features.client.logging.ETFLogger;
+import traben.entity_texture_features.client.utils.ETFUtils;
 import traben.entity_texture_features.config.ETFConfig;
 
 import java.io.File;
@@ -137,11 +138,13 @@ public class ETFClient implements ClientModInitializer {
     public static ETFConfig ETFConfigData;
 
     //logging object
-    public static final ETFLogger LOGGER = ETFLogger.create();
+    public static ETFLogger LOGGER;// = ETFLogger.create();
 
     @Override
     public void onInitializeClient() {
-        //testing
+        //needs to be created after initialization stage
+        LOGGER = ETFLogger.create();
+
         LOGGER.info("Loading! 1.18.x");
 
         if (FabricLoader.getInstance().getModContainer("iris").isPresent()) {
