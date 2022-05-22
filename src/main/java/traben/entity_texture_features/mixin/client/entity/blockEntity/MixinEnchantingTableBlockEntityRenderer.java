@@ -1,6 +1,7 @@
 package traben.entity_texture_features.mixin.client.entity.blockEntity;
 
 import net.minecraft.block.entity.EnchantingTableBlockEntity;
+import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
@@ -34,7 +35,7 @@ public abstract class MixinEnchantingTableBlockEntityRenderer implements BlockEn
         String texture = "minecraft:textures/entity/enchanting_table_book.png";
         VertexConsumer etf$vertex = ETFUtils.generalEmissiveGetVertexConsumer(texture, vertexConsumerProvider, false);
         if (etf$vertex != null) {
-            this.book.renderBook(matrixStack, etf$vertex, 15728640, j, 1, 1, 1, 1);
+            this.book.renderBook(matrixStack, etf$vertex, LightmapTextureManager.MAX_LIGHT_COORDINATE, j, 1, 1, 1, 1);
         }
     }
 }

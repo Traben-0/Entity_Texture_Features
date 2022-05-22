@@ -1,4 +1,4 @@
-package traben.entity_texture_features.mixin.client.entity.extras;
+package traben.entity_texture_features.mixin.client.entity.misc;
 
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
@@ -20,7 +20,6 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import traben.entity_texture_features.client.utils.ETFUtils;
 
 import static traben.entity_texture_features.client.ETFClient.ETFConfigData;
-import static traben.entity_texture_features.client.ETFClient.PATH_IS_EXISTING_FEATURE;
 
 @Mixin(EnderDragonEntityRenderer.class)
 public abstract class MixinEnderDragonEntityRenderer extends EntityRenderer<EnderDragonEntity> {
@@ -71,17 +70,7 @@ public abstract class MixinEnderDragonEntityRenderer extends EntityRenderer<Ende
                     alteredTexture = ETFUtils.generalProcessAndReturnAlteredTexture(TEXTURE, etf$entity);
                     layerToReturn = RenderLayer.getEntityCutoutNoCull(alteredTexture);
                 } else if (texturedRenderLayer.equals(DRAGON_EYES)) {
-                    alteredTexture = ETFUtils.generalReturnAlreadySetAlteredTexture(EYE_TEXTURE, etf$entity);
-                    String path = alteredTexture.toString();
-                    //todo it occurs to me this code block can be generalized to ETFUtils and optimized for all simple features, look into this
-                    ////////////////////////////////////////////////////////////////
-                    if (!PATH_IS_EXISTING_FEATURE.containsKey(path)) {
-                        PATH_IS_EXISTING_FEATURE.put(path, ETFUtils.isExistingNativeImageFile(alteredTexture));
-                    }
-                    if (PATH_IS_EXISTING_FEATURE.get(path)) {
-                        layerToReturn = RenderLayer.getEyes(alteredTexture);
-                    }//else leaves null to use vanilla eyes
-                    ////////////////////////////////////////////////////////////////
+                    layerToReturn = RenderLayer.getEyes(ETFUtils.generalReturnAlteredFeatureTextureOrOriginal(EYE_TEXTURE, etf$entity));
                 }
                 if (layerToReturn != null) return layerToReturn;
 

@@ -53,6 +53,10 @@
     "config.etf.elytra_thickness_fix.tooltip": "The thickness of Elytra is a bit larger than\nthe 2 pixels it is meant to be.\nThis option will 'fix' the scaling of the Elytra to\nbe more consistent.\nREQUIRES a restart or reload (F3 + T)",
     "config.etf.debug_logging_mode.title": "Debug logging mode",
     "config.etf.debug_logging_mode.tooltip": "If enabled this will write relevant ETF data\nabout any entity that has been right clicked\nto either the log file or to in-game chat",
-    "config.etf.fullBrightEmissives.title": "Use Brighter emissive rendering",
-    "config.etf.fullBrightEmissives.tooltip": "This sets whether emissives use 'Bright' or 'Default' rendering.\nThis is hard to describe just try it out ingame.\nBright rendering makes the emissive appear at max brightness if need be\nand is compatible with shaders and usually supports brighter bloom, etc.\nDefault rendering respects the default renderers effects on entities\nthe direction of each surface will have slight brightness variation\nand the emissives will be a bit less bright overall\nas well as usually smaller bloom with shaders.\nBlock entities will always be Default mode unless Iris is installed"
+    "config.etf.full_bright_emissives.title": "Use Brighter emissive rendering",
+    "config.etf.full_bright_emissives.tooltip": "This sets whether emissives use 'Bright' or 'Default' rendering.\nThis is hard to describe just try it out ingame.\nBright rendering makes the emissive appear at max brightness if need be\nand is compatible with shaders and usually supports brighter bloom, etc.\nDefault rendering respects the default renderers effects on entities\nthe direction of each surface will have slight brightness variation\nand the emissives will be a bit less bright overall\nas well as usually smaller bloom with shaders.\nBlock entities will always be Default mode unless Iris is installed",
+    "config.etf.skin_feature_print.title": "Save a copy of your skin with the skin feature template applied",
+    "config.etf.skin_feature_print.tooltip": "To help you setup your skin for skin features\nThis setting will save a copy of your skin with\nthe skin feature template applied onto it\nto the minecraft directory.\nAfter enabling this setting open a game, enter third person & press F3+T\nyou will get a message in chat telling you when it is finished",
+    "config.etf.player_skin_transparent_sub.title": "Transparent skin settings",
+    "config.etf.player_skin_transparent_sub.tooltip": ""
 }

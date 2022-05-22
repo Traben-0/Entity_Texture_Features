@@ -18,24 +18,42 @@ most of these examples are downloadable [[HERE]](https://github.com/Traben-0/Emi
 
 # How can you do this?
 ## The Example Skin File
+
 ###### *Not as scary as it looks all will be explained below*
+
   <img src="mod_data_example_details.png" alt="img" width="650"/>
 
 [*Downloadable example skin*](mod_data_example.png)  
 ![downloadable](mod_data_example.png)
+
 ## Getting started
 
 - First to enable the skin features in this mod you **must** put the marker in your skin file, this is the
   red,green,blue,white,black pixels just below the head texture in the example image above.
+
+<table> 
+<tr>
+<td>
+
+ETF can do this step for you **automatically** as of V2.7.0, simply open the mod menu settings and enable *"Apply skin
+feature template to a copy of your skin"* then open a world enter third person & press F3+T. You will see a message in
+chat when it is done, and you will find a copy of your skin in the minecraft directory folder called *"
+ETF_player_skin_printout.png"* that has the example template applied to it ready for the next steps after getting
+started.
+
+</td>
+</tr>
+</table>
+
 - This mod will ignore any skin without this so no one else can affect **YOUR** skin
-- You will select your marker choices later these will be selected by putting specific
-  colour pixels in the black boxes numbered 1 - 4 in the top left of the example image.   
+- You will select your marker choices later these will be selected by putting specific colour pixels in the black boxes
+  numbered 1 - 4 in the top left of the example image.   
   *(Note: these 4 boxes point to four other numbered boxes on the right-hand side of the example skin.)*
-- The choices Box is the white and grey checkered box in the example image, it has been expanded
-into the top right to show you the numbers of those pixels
-you will fill this in later with specific pixel colours to select options for your skin
+- The choices Box is the white and grey checkered box in the example image, it has been expanded into the top right to
+  show you the numbers of those pixels you will fill this in later with specific pixel colours to select options for
+  your skin
 - The Color Guide at the bottom right is not required - it is provided in the example skins for you to grab the specific
-colors required for later choices. *(Note: each color corresponds to a number, this will be used later)* 
+  colors required for later choices. *(Note: each color corresponds to a number, this will be used later)*
 
 - It is **highly** recommended you leave every unused pixel in your skin texture blank and transparent,
 if you have stray pixels filled they may accidentally trigger future added features 

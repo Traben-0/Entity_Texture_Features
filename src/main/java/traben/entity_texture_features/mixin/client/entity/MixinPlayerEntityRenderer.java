@@ -59,11 +59,11 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
                                 arm.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(UUID_PLAYER_TRANSPARENT_SKIN_ID.get(id))), light, OverlayTexture.DEFAULT_UV);
                                 sleeve.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(player.getSkinTexture())), light, OverlayTexture.DEFAULT_UV);
                             }
-                            if (UUID_PLAYER_HAS_EMISSIVE.get(id)) {
+                            if (UUID_PLAYER_HAS_EMISSIVE_SKIN.get(id)) {
                                 arm.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(new Identifier(SKIN_NAMESPACE + id + "_e.png"))), 15728640, OverlayTexture.DEFAULT_UV);
                                 sleeve.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(new Identifier(SKIN_NAMESPACE + id + "_e.png"))), 15728640, OverlayTexture.DEFAULT_UV);
                             }
-                            if (UUID_PLAYER_HAS_ENCHANT.get(id)) {
+                            if (UUID_PLAYER_HAS_ENCHANT_SKIN.get(id)) {
                                 arm.render(matrices, ItemRenderer.getArmorGlintConsumer(vertexConsumers, RenderLayer.getArmorCutoutNoCull(new Identifier(SKIN_NAMESPACE + id + "_enchant.png")), false, true), 15728640, OverlayTexture.DEFAULT_UV);
                                 sleeve.render(matrices, ItemRenderer.getArmorGlintConsumer(vertexConsumers, RenderLayer.getArmorCutoutNoCull(new Identifier(SKIN_NAMESPACE + id + "_enchant.png")), false, true), 15728640, OverlayTexture.DEFAULT_UV);
                             }

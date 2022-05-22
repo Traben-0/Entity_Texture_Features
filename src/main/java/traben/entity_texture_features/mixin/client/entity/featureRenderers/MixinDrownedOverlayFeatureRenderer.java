@@ -1,4 +1,4 @@
-package traben.entity_texture_features.mixin.client.entity.extras;
+package traben.entity_texture_features.mixin.client.entity.featureRenderers;
 
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.DrownedOverlayFeatureRenderer;
@@ -19,7 +19,6 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import traben.entity_texture_features.client.utils.ETFUtils;
 
 import static traben.entity_texture_features.client.ETFClient.ETFConfigData;
-import static traben.entity_texture_features.client.ETFClient.PATH_IS_EXISTING_FEATURE;
 
 @Mixin(DrownedOverlayFeatureRenderer.class)
 public abstract class MixinDrownedOverlayFeatureRenderer<T extends DrownedEntity> extends FeatureRenderer<T, DrownedEntityModel<T>> {
@@ -43,16 +42,8 @@ public abstract class MixinDrownedOverlayFeatureRenderer<T extends DrownedEntity
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/feature/DrownedOverlayFeatureRenderer;render(Lnet/minecraft/client/render/entity/model/EntityModel;Lnet/minecraft/client/render/entity/model/EntityModel;Lnet/minecraft/util/Identifier;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFFFFF)V"))
     private Identifier etf$returnAlteredTexture(Identifier texture) {
         if (ETFConfigData.enableCustomTextures) {
-            String check = ETFUtils.generalReturnAlreadySetAlteredTexture(texture, etf$entity).toString();
-            //System.out.println("check=" + check);
-            if (!PATH_IS_EXISTING_FEATURE.containsKey(check)) {
-                PATH_IS_EXISTING_FEATURE.put(check, ETFUtils.isExistingNativeImageFile(new Identifier(check)));
-            }
-            if (PATH_IS_EXISTING_FEATURE.get(check)) {
-                return new Identifier(check);
-            }
+            return ETFUtils.generalReturnAlteredFeatureTextureOrOriginal(texture, etf$entity);
         }
-
         return texture;
     }
 

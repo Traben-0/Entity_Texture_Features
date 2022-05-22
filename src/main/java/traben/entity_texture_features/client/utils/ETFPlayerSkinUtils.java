@@ -5,6 +5,7 @@ import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
@@ -18,6 +19,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
@@ -30,8 +32,8 @@ public class ETFPlayerSkinUtils {
     public static void forceResetAllDataOfPlayerUUID(UUID id) {
         UUID_NEXT_BLINK_TIME.remove(id);
         UUID_PLAYER_HAS_FEATURES.remove(id);
-        UUID_PLAYER_HAS_ENCHANT.remove(id);
-        UUID_PLAYER_HAS_EMISSIVE.remove(id);
+        UUID_PLAYER_HAS_ENCHANT_SKIN.remove(id);
+        UUID_PLAYER_HAS_EMISSIVE_SKIN.remove(id);
         UUID_PLAYER_TRANSPARENT_SKIN_ID.remove(id);
         UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.remove(id);
         UUID_PLAYER_HAS_COAT.remove(id);
@@ -306,6 +308,14 @@ public class ETFPlayerSkinUtils {
 
     private static void skinLoaded(PlayerEntity player, NativeImage skin, @Nullable NativeImage cape) {
         UUID id = player.getUuid();
+        //original skin saved
+        //ETFUtils.registerNativeImageToIdentifier(skin, SKIN_NAMESPACE + id + ".png");
+        if (ETFConfigData.skinFeaturesPrintETFReadySkin) {
+            ETFUtils.logMessage("Skin feature layout is being applied to a copy of your skin please wait...", true);
+            ETFPlayerSkinUtils.printPlayerSkinCopyWithFeatureOverlay(skin);
+            ETFConfigData.skinFeaturesPrintETFReadySkin = false;
+            ETFUtils.saveConfig();
+        }
         if (skin != null) {
             if (skin.getColor(1, 16) == -16776961 &&
                     skin.getColor(0, 16) == -16777089 &&
@@ -462,7 +472,7 @@ public class ETFPlayerSkinUtils {
                             //  https://optifine.net/capes/Benjamin.png
                             downloadImageFromUrl(player, "https://optifine.net/capes/" + player.getName().getString() + ".png", "THIRD_PARTY_CAPE");
                         }
-                        case 666 -> cape = ETFUtils.getNativeImageFromID(new Identifier("etf:capes/error.png"));
+                        case 666 -> cape = ETFUtils.getNativeImageFromID(new Identifier("etf:textures/capes/error.png"));
                         default -> {
                             //cape = getNativeImageFromID(new Identifier("etf:capes/blank.png"));
                         }
@@ -487,7 +497,7 @@ public class ETFPlayerSkinUtils {
                         getSkinPixelColourToNumber(skin.getColor(2, 18)));
 
                 //enchanted
-                UUID_PLAYER_HAS_ENCHANT.put(id, markerChoices.contains(2));
+                UUID_PLAYER_HAS_ENCHANT_SKIN.put(id, markerChoices.contains(2));
                 if (markerChoices.contains(2)) {
                     int[] boxChosenBounds = getSkinPixelBounds("marker" + (markerChoices.indexOf(2) + 1));
                     NativeImage check = returnMatchPixels(skin, boxChosenBounds);
@@ -503,19 +513,25 @@ public class ETFPlayerSkinUtils {
                         }
                         if (coatSkin != null) {
                             NativeImage checkCoat = returnMatchPixels(coatSkin, boxChosenBounds);
-                            ETFUtils.registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkCoat, ETFUtils::emptyNativeImage), SKIN_NAMESPACE + id + "_coat_enchant.png");
+                            UUID_PLAYER_HAS_ENCHANT_COAT.put(id, checkCoat != null);
+                            if (checkCoat != null) {
+                                ETFUtils.registerNativeImageToIdentifier(checkCoat, SKIN_NAMESPACE + id + "_coat_enchant.png");
+                            }
                         }
-
-                        // NativeImage checkCape = returnMatchPixels(skin, boxChosenBounds,cape);
-                        // registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkCape, this::emptyNativeImage), SKIN_NAMESPACE + id + "_cape_enchant.png");
-
+                        if (cape != null) {
+                            NativeImage checkCape = returnMatchPixels(skin, boxChosenBounds, cape);
+                            UUID_PLAYER_HAS_ENCHANT_CAPE.put(id, checkCape != null);
+                            if (checkCape != null) {
+                                ETFUtils.registerNativeImageToIdentifier(checkCape, SKIN_NAMESPACE + id + "_cape_enchant.png");
+                            }
+                        }
                     } else {
-                        UUID_PLAYER_HAS_ENCHANT.put(id, false);
+                        UUID_PLAYER_HAS_ENCHANT_SKIN.put(id, false);
                     }
 
                 }
                 //emissives
-                UUID_PLAYER_HAS_EMISSIVE.put(id, markerChoices.contains(1));
+                UUID_PLAYER_HAS_EMISSIVE_SKIN.put(id, markerChoices.contains(1));
                 if (markerChoices.contains(1)) {
                     int[] boxChosenBounds = getSkinPixelBounds("marker" + (markerChoices.indexOf(1) + 1));
                     NativeImage check = returnMatchPixels(skin, boxChosenBounds);
@@ -531,14 +547,20 @@ public class ETFPlayerSkinUtils {
                         }
                         if (coatSkin != null) {
                             NativeImage checkCoat = returnMatchPixels(coatSkin, boxChosenBounds);
-                            ETFUtils.registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkCoat, ETFUtils::emptyNativeImage), SKIN_NAMESPACE + id + "_coat_e.png");
+                            UUID_PLAYER_HAS_EMISSIVE_COAT.put(id, checkCoat != null);
+                            if (checkCoat != null) {
+                                ETFUtils.registerNativeImageToIdentifier(checkCoat, SKIN_NAMESPACE + id + "_coat_e.png");
+                            }
                         }
-
-                        //  NativeImage checkCape = returnMatchPixels(skin, boxChosenBounds,cape);
-                        // registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkCape, this::emptyNativeImage), SKIN_NAMESPACE + id + "_cape_e.png");
-
+                        if (cape != null) {
+                            NativeImage checkCape = returnMatchPixels(skin, boxChosenBounds, cape);
+                            UUID_PLAYER_HAS_EMISSIVE_CAPE.put(id, checkCape != null);
+                            if (checkCape != null) {
+                                ETFUtils.registerNativeImageToIdentifier(checkCape, SKIN_NAMESPACE + id + "_cape_e.png");
+                            }
+                        }
                     } else {
-                        UUID_PLAYER_HAS_EMISSIVE.put(id, false);
+                        UUID_PLAYER_HAS_EMISSIVE_SKIN.put(id, false);
                     }
 
                 }
@@ -727,6 +749,9 @@ public class ETFPlayerSkinUtils {
         return returnMatchPixels(baseSkin, boundsToCheck, null);
     }
 
+    // returns a native image with only pixels that match those contained in the boundsToCheck region of baseSkin
+    // if second is not null it will return an altered version of that instead of baseSkin
+    // will also return null if there is nothing to check or no matching pixels
     @Nullable
     private static NativeImage returnMatchPixels(NativeImage baseSkin, int[] boundsToCheck, @SuppressWarnings("SameParameterValue") @Nullable NativeImage second) {
         if (baseSkin == null) return null;
@@ -756,10 +781,50 @@ public class ETFPlayerSkinUtils {
                     }
                 }
             }
-            return texture;
+            return returnNullIfEmptyImage(texture);
         }
 
     }
 
+    @Nullable
+    private static NativeImage returnNullIfEmptyImage(NativeImage imageToCheck) {
+        boolean foundAPixel = false;
+        upper:
+        for (int x = 0; x < imageToCheck.getWidth(); x++) {
+            for (int y = 0; y < imageToCheck.getHeight(); y++) {
+                if (imageToCheck.getColor(x, y) != 0) {
+                    foundAPixel = true;
+                    break upper;
+                }
+            }
+        }
+        return foundAPixel ? imageToCheck : null;
+    }
 
+    public static void printPlayerSkinCopyWithFeatureOverlay(NativeImage skinImage) {
+        if (FabricLoader.getInstance().isModLoaded("fabric")) {
+            Path outputDirectory = Path.of(FabricLoader.getInstance().getGameDir().toString(), "ETF_player_skin_printout.png");
+            //NativeImage skinImage = ETFUtils.getNativeImageFromID(new Identifier(SKIN_NAMESPACE + playerID + ".png"));
+            NativeImage skinFeatureImage = ETFUtils.getNativeImageFromID(new Identifier(MOD_ID, "textures/skin_feature_printout.png"));
+            try {
+                for (int x = 0; x < skinImage.getWidth(); x++) {
+                    for (int y = 0; y < skinImage.getHeight(); y++) {
+                        //noinspection ConstantConditions
+                        if (skinFeatureImage.getColor(x, y) != 0) {
+                            skinImage.setColor(x, y, skinFeatureImage.getColor(x, y));
+                        }
+                    }
+                }
+                skinImage.writeTo(outputDirectory);
+                ETFUtils.logMessage("Skin feature layout successfully applied to a copy of your skin and has been saved to the minecraft directory.", true);
+            } catch (Exception e) {
+                ETFUtils.logMessage("Skin feature layout could not be applied to a copy of your skin and has not been saved. Error written to log.", true);
+                ETFUtils.logError(e, false);
+            }
+
+        } else {
+            //requires fab api to read from mod resources
+            ETFUtils.logError("Fabric API required for example skin printout, cancelling.", true);
+        }
+    }
 }

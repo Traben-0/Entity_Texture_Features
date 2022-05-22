@@ -4,7 +4,7 @@
 ---
 ### This mod is completely Optifine format compatible!!!!
 
-- It supports all optifine Emissive Texture Resource-packs
+- ETF supports all optifine Emissive Texture Resource-packs
 
 ---
 ## The Guide:
@@ -30,9 +30,10 @@
 </td>
 <td>
 
-This image shows an example of the *"Dull"* rendering mode
+This image shows an example of the Default *"Dull"* rendering mode
 
-- will **not** implicitly support shaders *(E.G shaders likely won't glow or bloom these emissives)*
+- is like Optifine emissives
+- are not overly bright in sunlight
 - has directional light shading *(some sides are shaded differently)*
 - has an upper brightness limit more inline with typical entity rendering
 - Block entities will always use this mode unless iris is installed *(due to rendering issues in vanilla)*
@@ -47,11 +48,13 @@ This image shows an example of the *"Dull"* rendering mode
 </td>
 <td>
 
-This image shows an example of the Default *"Bright"* rendering mode
+This image shows an example of the optional *"Bright"* rendering mode
 
-- supports shaders *(E.G shaders likely will glow or bloom these emissives by default)*
+- is brighter than Optifine emissives
+- are noticeably bright in sunlight and can look out of style with vanilla
+- typically, has more bloom with shaders
 - has global illumination and does not shade differently over the model
-- brighter than Dull mode
+- brighter than Default *"Dull"* mode
 
 </td>
 </tr>

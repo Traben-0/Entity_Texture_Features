@@ -88,9 +88,9 @@ public class ETFConfigScreen {
                 .setSaveConsumer(newValue -> ETFConfigData.enableEmissiveTextures = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
 
-        emissiveSettings.add(entryBuilder.startBooleanToggle(new TranslatableText("config." + ETFClient.MOD_ID + ".fullBrightEmissives.title"), ETFConfigData.fullBrightEmissives)
+        emissiveSettings.add(entryBuilder.startBooleanToggle(new TranslatableText("config." + ETFClient.MOD_ID + ".full_bright_emissives.title"), ETFConfigData.fullBrightEmissives)
                 .setDefaultValue(false) // Recommended: Used when user click "Reset"
-                .setTooltip(new TranslatableText("config." + ETFClient.MOD_ID + ".fullBrightEmissives.tooltip")) // Optional: Shown when the user hover over this option
+                .setTooltip(new TranslatableText("config." + ETFClient.MOD_ID + ".full_bright_emissives.tooltip")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.fullBrightEmissives = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
         emissiveSettings.add(entryBuilder.startBooleanToggle(new TranslatableText("config." + ETFClient.MOD_ID + ".always_check_vanilla_emissive_suffix.title"), ETFConfigData.alwaysCheckVanillaEmissiveSuffix)
@@ -144,16 +144,25 @@ public class ETFConfigScreen {
                 .setTooltip(new TranslatableText("config." + ETFClient.MOD_ID + ".enable_enemy_team_players_skin_features.tooltip")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.enableEnemyTeamPlayersSkinFeatures = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
-        playerSkinSettings.add(2, entryBuilder.startBooleanToggle(new TranslatableText("config." + ETFClient.MOD_ID + ".skin_features_enable_transparency.title"), ETFConfigData.skinFeaturesEnableTransparency)
+        SubCategoryBuilder playerSkinTransparentSettings = entryBuilder.startSubCategory(new TranslatableText("config." + ETFClient.MOD_ID + ".player_skin_transparent_sub.title")).setTooltip(new TranslatableText("config." + ETFClient.MOD_ID + ".player_skin_transparent_sub.tooltip"));
+        playerSkinTransparentSettings.add(entryBuilder.startBooleanToggle(new TranslatableText("config." + ETFClient.MOD_ID + ".skin_features_enable_transparency.title"), ETFConfigData.skinFeaturesEnableTransparency)
                 .setDefaultValue(true) // Recommended: Used when user click "Reset"
                 .setTooltip(new TranslatableText("config." + ETFClient.MOD_ID + ".skin_features_enable_transparency.tooltip")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.skinFeaturesEnableTransparency = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
-        playerSkinSettings.add(3, entryBuilder.startBooleanToggle(new TranslatableText("config." + ETFClient.MOD_ID + ".skin_features_enable_full_transparency.title"), ETFConfigData.skinFeaturesEnableFullTransparency)
+        playerSkinTransparentSettings.add(entryBuilder.startBooleanToggle(new TranslatableText("config." + ETFClient.MOD_ID + ".skin_features_enable_full_transparency.title"), ETFConfigData.skinFeaturesEnableFullTransparency)
                 .setDefaultValue(false) // Recommended: Used when user click "Reset"
                 .setTooltip(new TranslatableText("config." + ETFClient.MOD_ID + ".skin_features_enable_full_transparency.tooltip")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.skinFeaturesEnableFullTransparency = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
+        playerSkinSettings.add(playerSkinTransparentSettings.build());
+
+        playerSkinSettings.add(entryBuilder.startBooleanToggle(new TranslatableText("config." + ETFClient.MOD_ID + ".skin_feature_print.title"), ETFConfigData.skinFeaturesPrintETFReadySkin)
+                .setDefaultValue(false) // Recommended: Used when user click "Reset"
+                .setTooltip(new TranslatableText("config." + ETFClient.MOD_ID + ".skin_feature_print.tooltip")) // Optional: Shown when the user hover over this option
+                .setSaveConsumer(newValue -> ETFConfigData.skinFeaturesPrintETFReadySkin = newValue) // Recommended: Called when user save the config
+                .build()); // Builds the option entry for cloth config
+
         category.addEntry(playerSkinSettings.build());
 
         category.addEntry(entryBuilder.startEnumSelector(new TranslatableText("config." + ETFClient.MOD_ID + ".enchanted_potion_effects.title"), ETFConfig.EnchantedPotionEffectsEnum.class, ETFConfigData.enchantedPotionEffects)

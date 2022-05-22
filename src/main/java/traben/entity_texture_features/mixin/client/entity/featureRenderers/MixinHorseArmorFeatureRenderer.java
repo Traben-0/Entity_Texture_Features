@@ -1,4 +1,4 @@
-package traben.entity_texture_features.mixin.client.entity.extras;
+package traben.entity_texture_features.mixin.client.entity.featureRenderers;
 
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
@@ -21,7 +21,6 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import traben.entity_texture_features.client.utils.ETFUtils;
 
 import static traben.entity_texture_features.client.ETFClient.ETFConfigData;
-import static traben.entity_texture_features.client.ETFClient.PATH_IS_EXISTING_FEATURE;
 
 @Mixin(HorseArmorFeatureRenderer.class)
 public abstract class MixinHorseArmorFeatureRenderer extends FeatureRenderer<HorseEntity, HorseEntityModel<HorseEntity>> {
@@ -46,14 +45,7 @@ public abstract class MixinHorseArmorFeatureRenderer extends FeatureRenderer<Hor
     private Identifier etf$returnAlteredTexture(Identifier texture) {
 
         if (ETFConfigData.enableCustomTextures) {
-            String check = ETFUtils.generalReturnAlreadySetAlteredTexture(texture, etf$entity).toString();
-            //System.out.println("check=" + check);
-            if (!PATH_IS_EXISTING_FEATURE.containsKey(check)) {
-                PATH_IS_EXISTING_FEATURE.put(check, ETFUtils.isExistingNativeImageFile(new Identifier(check)));
-            }
-            if (PATH_IS_EXISTING_FEATURE.get(check)) {
-                return new Identifier(check);
-            }
+            return ETFUtils.generalReturnAlteredFeatureTextureOrOriginal(texture, etf$entity);
         }
 
         return texture;

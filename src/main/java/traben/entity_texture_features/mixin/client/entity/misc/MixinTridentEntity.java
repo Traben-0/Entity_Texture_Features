@@ -1,4 +1,4 @@
-package traben.entity_texture_features.mixin.client.entity.extras;
+package traben.entity_texture_features.mixin.client.entity.misc;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.TridentEntity;

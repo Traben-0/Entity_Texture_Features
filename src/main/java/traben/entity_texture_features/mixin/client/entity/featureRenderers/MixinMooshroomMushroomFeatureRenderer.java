@@ -1,4 +1,4 @@
-package traben.entity_texture_features.mixin.client.entity.extras;
+package traben.entity_texture_features.mixin.client.entity.featureRenderers;
 
 import net.minecraft.client.render.entity.feature.MooshroomMushroomFeatureRenderer;
 import net.minecraft.util.Identifier;

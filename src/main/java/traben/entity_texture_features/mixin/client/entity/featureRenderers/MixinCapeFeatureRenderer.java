@@ -1,20 +1,23 @@
-package traben.entity_texture_features.mixin.client.entity.extras;
+package traben.entity_texture_features.mixin.client.entity.featureRenderers;
 
 import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.*;
 import net.minecraft.client.render.entity.feature.CapeFeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
+import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.UUID;
+
+import static traben.entity_texture_features.client.ETFClient.UUID_PLAYER_HAS_EMISSIVE_CAPE;
+import static traben.entity_texture_features.client.ETFClient.UUID_PLAYER_HAS_ENCHANT_CAPE;
 
 @Mixin(CapeFeatureRenderer.class)
 public abstract class MixinCapeFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
@@ -30,10 +33,25 @@ public abstract class MixinCapeFeatureRenderer extends FeatureRenderer<AbstractC
         //if (abstractClientPlayerEntity.canRenderCapeTexture() && !abstractClientPlayerEntity.isInvisible() && abstractClientPlayerEntity.isPartVisible(PlayerModelPart.CAPE) && abstractClientPlayerEntity.getCapeTexture() != null) {
         //    ItemStack itemStack = abstractClientPlayerEntity.getEquippedStack(EquipmentSlot.CHEST);
         //   if (!itemStack.isOf(Items.ELYTRA)) {
+
+        UUID id = abstractClientPlayerEntity.getUuid();
         Identifier cape = abstractClientPlayerEntity.getCapeTexture();
         if (cape != null) {
             VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(cape));
             (this.getContextModel()).renderCape(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV);
+            if (UUID_PLAYER_HAS_EMISSIVE_CAPE.containsKey(id)) {
+                if (UUID_PLAYER_HAS_EMISSIVE_CAPE.get(id)) {
+                    VertexConsumer emissiveVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(new Identifier(cape.toString().replace(".png", "_e.png"))));
+                    (this.getContextModel()).renderCape(matrixStack, emissiveVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV);
+                }
+            }
+            if (UUID_PLAYER_HAS_ENCHANT_CAPE.containsKey(id)) {
+                if (UUID_PLAYER_HAS_ENCHANT_CAPE.get(id)) {
+                    VertexConsumer enchantVert = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(new Identifier(cape.toString().replace(".png", "_enchant.png"))), false, true);
+                    //VertexConsumer enchantVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(new Identifier( cape.toString().replace(".png","_e.png"))));
+                    (this.getContextModel()).renderCape(matrixStack, enchantVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV);
+                }
+            }
         }
         matrixStack.pop();
         ci.cancel();

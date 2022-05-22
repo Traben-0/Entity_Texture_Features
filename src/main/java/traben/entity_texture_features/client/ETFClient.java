@@ -79,8 +79,12 @@ public class ETFClient implements ClientModInitializer {
     //probably would benefit from using an object to store these but as not all are used in every skin this might be more efficient in runtime
     public static final HashMap<UUID, Boolean> UUID_PLAYER_HAS_FEATURES = new HashMap<>();
     public static final HashMap<UUID, Boolean> UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET = new HashMap<>();
-    public static final HashMap<UUID, Boolean> UUID_PLAYER_HAS_ENCHANT = new HashMap<>();
-    public static final HashMap<UUID, Boolean> UUID_PLAYER_HAS_EMISSIVE = new HashMap<>();
+    public static final HashMap<UUID, Boolean> UUID_PLAYER_HAS_ENCHANT_SKIN = new HashMap<>();
+    public static final HashMap<UUID, Boolean> UUID_PLAYER_HAS_ENCHANT_CAPE = new HashMap<>();
+    public static final HashMap<UUID, Boolean> UUID_PLAYER_HAS_ENCHANT_COAT = new HashMap<>();
+    public static final HashMap<UUID, Boolean> UUID_PLAYER_HAS_EMISSIVE_SKIN = new HashMap<>();
+    public static final HashMap<UUID, Boolean> UUID_PLAYER_HAS_EMISSIVE_CAPE = new HashMap<>();
+    public static final HashMap<UUID, Boolean> UUID_PLAYER_HAS_EMISSIVE_COAT = new HashMap<>();
     public static final HashMap<UUID, Identifier> UUID_PLAYER_TRANSPARENT_SKIN_ID = new HashMap<>();
     public static final HashMap<UUID, Boolean> UUID_PLAYER_HAS_COAT = new HashMap<>();
     public static final HashMap<UUID, Boolean> UUID_PLAYER_HAS_FAT_COAT = new HashMap<>();

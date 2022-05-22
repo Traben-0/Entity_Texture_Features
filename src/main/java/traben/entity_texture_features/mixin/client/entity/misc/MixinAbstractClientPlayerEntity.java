@@ -1,4 +1,4 @@
-package traben.entity_texture_features.mixin.client.entity.extras;
+package traben.entity_texture_features.mixin.client.entity.misc;
 
 import com.mojang.authlib.GameProfile;
 import net.fabricmc.loader.api.FabricLoader;
@@ -38,10 +38,14 @@ public abstract class MixinAbstractClientPlayerEntity extends PlayerEntity {
                 || getUuid().toString().equals("cab7d2e2-519f-4b34-afbd-b65f4542b8a1"))) {
             if (UUID_PLAYER_HAS_CUSTOM_CAPE.containsKey(getUuid())) {
                 if (!UUID_PLAYER_HAS_CUSTOM_CAPE.get(getUuid())) {
+                    UUID_PLAYER_HAS_ENCHANT_CAPE.put(getUuid(), false);
                     if (getUuid().toString().equals("cab7d2e2-519f-4b34-afbd-b65f4542b8a1")) {
-                        cir.setReturnValue(new Identifier("etf:capes/wife.png"));
+                        UUID_PLAYER_HAS_EMISSIVE_CAPE.put(getUuid(), false);
+                        cir.setReturnValue(new Identifier("etf:textures/capes/wife.png"));
                     } else {
-                        cir.setReturnValue(new Identifier("etf:capes/dev.png"));
+                        UUID_PLAYER_HAS_EMISSIVE_CAPE.put(getUuid(), true);
+
+                        cir.setReturnValue(new Identifier("etf:textures/capes/dev.png"));
                     }
                 }
             }

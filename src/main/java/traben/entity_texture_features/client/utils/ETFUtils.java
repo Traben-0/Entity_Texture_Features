@@ -25,6 +25,7 @@ import net.minecraft.util.Identifier;
 import traben.entity_texture_features.client.ETFClient;
 import traben.entity_texture_features.client.ETFTexturePropertyCase;
 import traben.entity_texture_features.client.IrisCompat;
+import traben.entity_texture_features.config.ETFConfig;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -157,8 +158,13 @@ public class ETFUtils {
         UUID_ORIGINAL_NON_UPDATE_PROPERTY_STRINGS.clear();
 
         UUID_PLAYER_HAS_FEATURES.clear();
-        UUID_PLAYER_HAS_ENCHANT.clear();
-        UUID_PLAYER_HAS_EMISSIVE.clear();
+        UUID_PLAYER_HAS_ENCHANT_SKIN.clear();
+        UUID_PLAYER_HAS_ENCHANT_CAPE.clear();
+        UUID_PLAYER_HAS_ENCHANT_COAT.clear();
+        UUID_PLAYER_HAS_EMISSIVE_SKIN.clear();
+        UUID_PLAYER_HAS_EMISSIVE_CAPE.clear();
+        UUID_PLAYER_HAS_EMISSIVE_COAT.clear();
+
         UUID_PLAYER_TRANSPARENT_SKIN_ID.clear();
         UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.clear();
         for (HttpURLConnection h :
@@ -702,6 +708,42 @@ public class ETFUtils {
 //        }
 //    }
 
+
+    //debug printing
+    public static void checkAndPrintEntityDebugIfNeeded(UUID id, String texturePath) {
+        if (ETFConfigData.debugLoggingMode != ETFConfig.DebugLogMode.None && UUID_DEBUG_EXPLANATION_MARKER.contains(id)) {
+            //stringbuilder as chat messages have a prefix that can be bothersome
+            StringBuilder message = new StringBuilder();
+            boolean inChat = ETFConfigData.debugLoggingMode == ETFConfig.DebugLogMode.Chat;
+            message.append("ETF entity debug data for entity with UUID=[").append(id.toString()).append("]:\n{\n    vanillaTexture=").append(texturePath);
+
+            if (PATH_OPTIFINE_OR_JUST_RANDOM.containsKey(texturePath))
+                message.append("\nhas an optifine properties file=").append(PATH_OPTIFINE_OR_JUST_RANDOM.get(texturePath));
+            if (PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.containsKey(texturePath))
+                message.append("\npath of custom textures=").append(switch (PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.get(texturePath)) {
+                    case 0 -> "optifine/random";
+                    case 1 -> "optifine/mob";
+                    case 3 -> "etf/random";
+                    default -> "vanilla";
+                });
+            if (PATH_OPTIFINE_RANDOM_SETTINGS_PER_TEXTURE.containsKey(texturePath))
+                message.append("\namount of properties=").append(PATH_OPTIFINE_RANDOM_SETTINGS_PER_TEXTURE.get(texturePath).size());
+            if (PATH_TOTAL_TRUE_RANDOM.containsKey(texturePath))
+                message.append("\ntotal random textures detected=").append(PATH_TOTAL_TRUE_RANDOM.get(texturePath));
+            if (UUID_RANDOM_TEXTURE_SUFFIX.containsKey(id))
+                message.append("\nRandom texture number of this mob=")
+                        .append(UUID_RANDOM_TEXTURE_SUFFIX.get(id))
+                        .append(", probably uses {")
+                        .append(texturePath.replace(".png", UUID_RANDOM_TEXTURE_SUFFIX.get(id) + ".png}"));
+            if (UUID_ORIGINAL_NON_UPDATE_PROPERTY_STRINGS.containsKey(id))
+                message.append("\nOriginal spawn data *unsorted*=").append(Arrays.toString(UUID_ORIGINAL_NON_UPDATE_PROPERTY_STRINGS.get(id)));
+            message.append("\n}");
+
+            ETFUtils.logMessage(message, inChat);
+            UUID_DEBUG_EXPLANATION_MARKER.remove(id);
+        }
+    }
+
     //improvements to logging by @Maximum#8760
     public static void logMessage(Object obj, boolean inChat) {
         if (inChat) {
@@ -1008,12 +1050,31 @@ public class ETFUtils {
         return new Identifier(givenTexturePath);
     }
 
+    //this is for entity rendering features that do not need separate processing
+    //e.g horse armor and markings, and glowing eye textures
+    public static Identifier generalReturnAlteredFeatureTextureOrOriginal(Identifier originalFeatureTexture, Entity entity) {
+
+        Identifier alteredFeatureTexture = ETFUtils.generalReturnAlreadySetAlteredTexture(originalFeatureTexture, entity);
+
+        if (!PATH_IS_EXISTING_FEATURE.containsKey(alteredFeatureTexture.toString())) {
+            PATH_IS_EXISTING_FEATURE.put(alteredFeatureTexture.toString(), isExistingNativeImageFile(alteredFeatureTexture));
+        }
+        if (PATH_IS_EXISTING_FEATURE.get(alteredFeatureTexture.toString())) {
+            return alteredFeatureTexture;
+        }
+
+        return originalFeatureTexture;
+    }
+
 
     //no update logic as that will be kept to living entity renderer to reset only once per UUID
     public static Identifier generalProcessAndReturnAlteredTexture(Identifier texture, Entity entity) {
         if (entity == null) return texture;
         UUID id = entity.getUuid();
         if (ETFConfigData.enableCustomTextures) {
+
+            checkAndPrintEntityDebugIfNeeded(id, texture.toString());
+
             if (!PATH_OPTIFINE_OR_JUST_RANDOM.containsKey(texture.toString())) {
 
                 ETFUtils.processNewRandomTextureCandidate(texture.toString());

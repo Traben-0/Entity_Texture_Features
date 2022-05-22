@@ -1,9 +1,6 @@
-package traben.entity_texture_features.mixin.client.entity.extras;
+package traben.entity_texture_features.mixin.client.entity.featureRenderers;
 
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.*;
 import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
@@ -73,7 +70,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
 //                        model.render(matrices, textureVert, 15728640, OverlayTexture.DEFAULT_UV, red, green, blue, 1.0F);
 //                        matrices.scale(1f, 1f, 1f);
 //                    } else {
-                    model.render(matrices, textureVert, 15728640, OverlayTexture.DEFAULT_UV, red, green, blue, 1.0F);
+                    model.render(matrices, textureVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, red, green, blue, 1.0F);
 //                    }
                 }
             }

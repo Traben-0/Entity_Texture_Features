@@ -1,6 +1,7 @@
 package traben.entity_texture_features.mixin.client.entity.blockEntity;
 
 import net.minecraft.block.entity.LecternBlockEntity;
+import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -53,7 +54,7 @@ public abstract class MixinLecternBlockEntityRenderer implements BlockEntityRend
 
     //so is not caught by other injects
     private void etf$redirectingEmissiveRender(MatrixStack matrixStack, VertexConsumer vertexConsumer, int overlay) {
-        this.book.renderBook(matrixStack, vertexConsumer, 15728640, overlay, 1, 1, 1, 1);
+        this.book.renderBook(matrixStack, vertexConsumer, LightmapTextureManager.MAX_LIGHT_COORDINATE, overlay, 1, 1, 1, 1);
     }
 
     @Inject(method = "render(Lnet/minecraft/block/entity/LecternBlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II)V",
