@@ -5,7 +5,7 @@ ___
 ### mostly using the Optifine Format but compatible with Sodium :)
 #### ~ Now with 1.16.5  -> 1.18.2
 ___
-### [[Discord]](https://discord.gg/rURmwrzUcz) - [[CurseForge]](https://www.curseforge.com/minecraft/mc-mods/entity-texture-features-fabric) - [[Modrinth]](https://modrinth.com/mod/entitytexturefeatures) - [[~~Compatibility List~~]]() - [[Report Issues]](https://github.com/Traben-0/EmissiveMod/issues) - [[Donate (Ko-Fi)]](https://ko-fi.com/traben)
+### [[Discord]](https://discord.gg/rURmwrzUcz) - [[CurseForge]](https://www.curseforge.com/minecraft/mc-mods/entity-texture-features-fabric) - [[Modrinth]](https://modrinth.com/mod/entitytexturefeatures) - [[Report Issues]](https://github.com/Traben-0/EmissiveMod/issues) - [[Donate (Ko-Fi)]](https://ko-fi.com/traben)
 ___
 <img src="readMeAssets/main.png" alt="img" width="650"/>
 
@@ -23,7 +23,6 @@ For more Fabric Optifine alternatives Click
 (Customised just like Optifine, by Biome, Name, Height, etc. with even more properties)
 - 💡 Emissive/Glowing entity textures just like Optifine & compatible with Optifine Resourcepacks.
 - 😑️ Blinking mobs
-- 🔱 Custom Trident textures
 - ⚗️ Alternate potion visuals for mobs
 - 🎨 Player Skin Features & Additions, including support for most of the above features 
 
@@ -96,15 +95,6 @@ depending on what is available
 next to the blinking texture, see below:  
   <img src="readMeAssets/blinkProperties.png" alt="img" width="300"/>
 
----
-## 🔱 Custom Trident textures
-<img src="readMeAssets/tridents.png" alt="img" width="650"/>
-
-- Allows Trident textures to be set by a Resource-pack, so they can be customized by name
-- Tridents support custom and emissive textures, as of [V2.3.0], a trident item named "Bobby's Trident" will use the
-  texture "trident_bobbys_trident.png", ignoring non-letters and changing spaces to "_"
-- This is a simple implementation with an Option to disable it as CIT resewn mod may implement in the future. and has
-  more powerful customizations when items are involved
 
 ---
 ## ⚗️ Alternate potion effects

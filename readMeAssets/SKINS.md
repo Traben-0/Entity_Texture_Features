@@ -1,7 +1,7 @@
 <img src="title.png" alt="Entity Texture Features Title" width="650"/>
 
 ___
-### [[Discord]](https://discord.gg/rURmwrzUcz) - [[CurseForge]](https://www.curseforge.com/minecraft/mc-mods/entity-texture-features-fabric) - [[Modrinth]](https://modrinth.com/mod/entitytexturefeatures) - [[Report Issues]](https://github.com/Traben-0/EmissiveMod/issues) - [[Donate]](https://www.paypal.com/donate/?business=PLB862YH8UXML&no_recurring=0&currency_code=AUD)
+### [[Discord]](https://discord.gg/rURmwrzUcz) - [[CurseForge]](https://www.curseforge.com/minecraft/mc-mods/entity-texture-features-fabric) - [[Modrinth]](https://modrinth.com/mod/entitytexturefeatures) - [[Report Issues]](https://github.com/Traben-0/EmissiveMod/issues) - [[Donate]](https://ko-fi.com/traben)
 ___
 # 🎨  Player skin features Guide
 <img src="skins1.png" alt="img" width="450"/><br>
@@ -225,8 +225,10 @@ Capes are supported for players by this mod in 3 different ways
 <img src="customCape.png" alt="img" width="250"/><img src="modskins/cape.png" alt="img" width="64"/>
 
 This mod supports placing a custom cape texture in your skin file you upload to Mojang.
-- to select your custom cape to load you simply need to put a pink #1 pixel
-  in the #5 slot of the choice box in your skin and your custom cape will show to anyone with this mod and player features enabled.
+
+- to select your custom cape to load you simply need to put a pink #1 pixel in the #5 slot of the choice box in your
+  skin and your custom cape will show to anyone with this mod and player features enabled.
+- This capes will also be checked for emissive and enchanted pixels as per the skin settings.
 - you can see an example skin file above to download and use.
 - For now your Elytra will be unaffected and will look like the default
 - Below is a visual guide of how the cape texture is 'cut up' and placed in the 5 orange rectangles in the skin file  
@@ -236,7 +238,8 @@ This mod supports placing a custom cape texture in your skin file you upload to 
 ### Third party capes
 
 - because I'm nice I am supporting other cape options you may choose that have their own benefits   
-  *(This support is provided bby the servers of these third party services, they may not always support this usage)*
+  *(This support is provided by the servers of these third party services, they may not always support this usage)*
+- These capes will also be checked for emissive and enchanted pixels as per the skin settings.
 - Firstly you can always install the Third Party Cape Mod Itself if you want to, otherwise see below.
 
 #### Minecraftcapes.net Cape
@@ -253,7 +256,7 @@ I am supporting the people who have donated to the Optifine Dev
 ---
 # To confusing or not working?
 
-join the [[Discord]](https://discord.gg/rURmwrzUcz) and I'll be happy to help
+join the [[Discord]](https://discord.gg/rURmwrzUcz) and We'll be happy to help
 
 
 

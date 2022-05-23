@@ -68,25 +68,43 @@ an example of the "teams" property follows:
 *(for example a Zombie spawned in a desert will take the "desert skin" and it will not change to the "forest skin" 
 when they walk into a forest biome.)*  
 - This can be disabled by the config option "Property update restrictions" for each of these properties individually.  
-*(if update restrictions are disabled for biomes, the above example Zombie with the "desert skin" would indeed change to the "forest skin"
-upon entering a forest biome)*
+  *(if update restrictions are disabled for biomes, the above example Zombie with the "desert skin" would indeed change
+  to the "forest skin"
+  upon entering a forest biome)*
 
-- Entities with multiple textures like Wolves, Bees or Ghasts should be given the same amount of random variant textures for 
-each texture variant
+- Entities with multiple textures like Wolves, Bees or Ghasts should be given the same amount of random variant textures
+  for each texture variant
 
 ---
+
 ## Special Cases
+
 <table>
+<tr>
+<td>
+<img src="blockEntityCustom.png" alt="img" width="128"/>
+</td>
+<td>
+
+- Chests and beds are Block Entities and can be customized with the same properties format as optifine does for other
+  entities
+- *Note:* Most Block Entity optimization fabric mods like ***Enhanced Block Entities*** or ***BetterBeds***, will
+  disable this feature in favour of faster rendering
+
+</td>
+</tr>
 <tr>
 <td>
 <img src="https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/9a/Trident.png/revision/latest/scale-to-width-down/300?cb=20200106005732" alt="img" width="128"/>
 </td>
 <td>
 
-- Tridents support custom textures, as of *[V2.3.0]*, a trident item named *"Bobby's Trident"* will use the 
-texture *"trident_bobbys_trident.png"*
-- A named trident will match any texture of the format *trident_"customName".png*, with customName being 
-the name of the trident with spaces replaces with "_" and any non letters ignored.
+<img src="tridents.png" alt="img" width="450"/>
+
+- Tridents support custom textures, as of *[V2.3.0]*, a trident item named *"Bobby's Trident"* will use the texture *"
+  trident_bobbys_trident.png"*
+- A named trident will match any texture of the format *trident_"customName".png*, with customName being the name of the
+  trident with spaces replaces with "_" and any non letters ignored.
 
 </td>
 </tr>
@@ -109,8 +127,8 @@ of the respective mooshroom.
 <td>
 
 - Custom elytras are handled by the CIT resewn mod, and may utilise ETF emissive textures only
-- You can also use the Player skin feature options for custom capes to have a custom elytra, though this does not yet
-  support emissive textures
+- You can also use the Player skin feature options for custom capes to have a custom elytra, this supports emissive
+  elytras
 
 </td>
 </tr>

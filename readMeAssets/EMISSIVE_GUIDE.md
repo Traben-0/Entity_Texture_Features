@@ -19,6 +19,9 @@
 - Elytra & Armour emissives have CIT Resewn mod support and will apply based on the CIT texture
 - Tridents support emissive textures customized via the special case rules in the Random / Custom mob Guide
 
+- Block entities like: Chests, Beds, Bells, Enchanting table & Lectern books, all support emissive textures with ETF,
+  other blocks will need the in-development Continuity mod's emissive blocks feature
+
 - Player Skin Features support emissive textures, see [Player Skin Features Guide](SKINS.md)
 
 ### Emissive textures can render in two different ways set by the config or mod-menu options the two images below show the two rendering modes:
