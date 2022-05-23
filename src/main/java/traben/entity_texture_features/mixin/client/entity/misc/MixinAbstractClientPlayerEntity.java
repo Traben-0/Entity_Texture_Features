@@ -12,7 +12,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static traben.entity_texture_features.client.ETFClient.*;
+import static traben.entity_texture_features.client.ETFClient.ETFConfigData;
+import static traben.entity_texture_features.client.utils.ETFPlayerSkinUtils.*;
 
 @Mixin(AbstractClientPlayerEntity.class)
 public abstract class MixinAbstractClientPlayerEntity extends PlayerEntity {
@@ -37,7 +38,7 @@ public abstract class MixinAbstractClientPlayerEntity extends PlayerEntity {
                 //|| getUuid().toString().equals("bc2d6979-ddde-4452-8c7d-caefa4aceb01")
                 || getUuid().toString().equals("cab7d2e2-519f-4b34-afbd-b65f4542b8a1"))) {
             if (UUID_PLAYER_HAS_CUSTOM_CAPE.containsKey(getUuid())) {
-                if (!UUID_PLAYER_HAS_CUSTOM_CAPE.get(getUuid())) {
+                if (!UUID_PLAYER_HAS_CUSTOM_CAPE.getBoolean(getUuid())) {
                     UUID_PLAYER_HAS_ENCHANT_CAPE.put(getUuid(), false);
                     if (getUuid().toString().equals("cab7d2e2-519f-4b34-afbd-b65f4542b8a1")) {
                         UUID_PLAYER_HAS_EMISSIVE_CAPE.put(getUuid(), false);
@@ -51,7 +52,7 @@ public abstract class MixinAbstractClientPlayerEntity extends PlayerEntity {
             }
         }
         if (ETFConfigData.skinFeaturesEnabled && UUID_PLAYER_HAS_CUSTOM_CAPE.containsKey(getUuid())) {
-            if (UUID_PLAYER_HAS_CUSTOM_CAPE.get(getUuid())) {
+            if (UUID_PLAYER_HAS_CUSTOM_CAPE.getBoolean(getUuid())) {
                 cir.setReturnValue(new Identifier(SKIN_NAMESPACE + getUuid() + "_cape.png"));
             }
         }

@@ -159,10 +159,10 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
                     boolean inChat = ETFConfigData.debugLoggingMode == ETFConfig.DebugLogMode.Chat;
                     message.append("ETF entity debug data for player [").append(entity.getDisplayName()).append("]");
 
-                    if (UUID_PLAYER_HAS_FEATURES.containsKey(id))
-                        message.append("\nplayer has features=").append(UUID_PLAYER_HAS_FEATURES.get(id));
-                    if (UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.containsKey(id))
-                        message.append("\nplayer skin has downloaded yet for check=").append(UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.get(id));
+                    if (ETFPlayerSkinUtils.UUID_PLAYER_HAS_FEATURES.containsKey(id))
+                        message.append("\nplayer has features=").append(ETFPlayerSkinUtils.UUID_PLAYER_HAS_FEATURES.getBoolean(id));
+                    if (ETFPlayerSkinUtils.UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.containsKey(id))
+                        message.append("\nplayer skin has downloaded yet for check=").append(ETFPlayerSkinUtils.UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.getBoolean(id));
 
                     ETFUtils.logMessage(message, inChat);
                     UUID_DEBUG_EXPLANATION_MARKER.remove(id);
@@ -171,13 +171,13 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
                     etf$timerBeforeTrySkin--;
                 } else {
 
-                    if (!UUID_PLAYER_HAS_FEATURES.containsKey(id) && !UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.containsKey(id)) {
+                    if (!ETFPlayerSkinUtils.UUID_PLAYER_HAS_FEATURES.containsKey(id) && !ETFPlayerSkinUtils.UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.containsKey(id)) {
                         ETFPlayerSkinUtils.checkPlayerForSkinFeatures(id, (PlayerEntity) entity);
                     }
-                    if (UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.containsKey(id) && UUID_PLAYER_HAS_FEATURES.containsKey(id)) {
-                        if (UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.get(id)) {
-                            if (UUID_PLAYER_HAS_FEATURES.get(id)) {
-                                return ETFUtils.returnBlinkIdOrGiven(entity, SKIN_NAMESPACE + id + ".png", id, true);
+                    if (ETFPlayerSkinUtils.UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.containsKey(id) && ETFPlayerSkinUtils.UUID_PLAYER_HAS_FEATURES.containsKey(id)) {
+                        if (ETFPlayerSkinUtils.UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.getBoolean(id)) {
+                            if (ETFPlayerSkinUtils.UUID_PLAYER_HAS_FEATURES.getBoolean(id)) {
+                                return ETFUtils.returnBlinkIdOrGiven(entity, ETFPlayerSkinUtils.SKIN_NAMESPACE + id + ".png", id, true);
                             } else {
                                 return textureIdentifier;
                             }
@@ -235,16 +235,16 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
         if (etf$timerBeforeTrySkin > 0) {
             etf$timerBeforeTrySkin--;
         } else {
-            if (!UUID_PLAYER_HAS_FEATURES.containsKey(id) && !UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.containsKey(id)) {
+            if (!ETFPlayerSkinUtils.UUID_PLAYER_HAS_FEATURES.containsKey(id) && !ETFPlayerSkinUtils.UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.containsKey(id)) {
                 //check for mark
                 ETFPlayerSkinUtils.checkPlayerForSkinFeatures(id, player);
             }
-            if (UUID_PLAYER_HAS_FEATURES.containsKey(id) && UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.containsKey(id)) {
-                if (UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.get(id)) {
-                    if (UUID_PLAYER_HAS_FEATURES.get(id)) {
+            if (ETFPlayerSkinUtils.UUID_PLAYER_HAS_FEATURES.containsKey(id) && ETFPlayerSkinUtils.UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.containsKey(id)) {
+                if (ETFPlayerSkinUtils.UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.getBoolean(id)) {
+                    if (ETFPlayerSkinUtils.UUID_PLAYER_HAS_FEATURES.getBoolean(id)) {
 
                         //villager nose
-                        if (UUID_PLAYER_HAS_VILLAGER_NOSE.get(id)) {
+                        if (ETFPlayerSkinUtils.UUID_PLAYER_HAS_VILLAGER_NOSE.getBoolean(id)) {
 
                             customPlayerModel.nose.copyTransform(((PlayerEntityModel) this.getModel()).head);
                             Identifier villager = new Identifier("textures/entity/villager/villager.png");
@@ -254,7 +254,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
 
                         //coat features
                         ItemStack armour = player.getInventory().getArmorStack(1);
-                        if (UUID_PLAYER_HAS_COAT.get(id) &&
+                        if (ETFPlayerSkinUtils.UUID_PLAYER_HAS_COAT.getBoolean(id) &&
                                 player.isPartVisible(PlayerModelPart.JACKET) &&
                                 !(armour.isOf(Items.CHAINMAIL_LEGGINGS) ||
                                         armour.isOf(Items.LEATHER_LEGGINGS) ||
@@ -263,9 +263,9 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
                                         armour.isOf(Items.IRON_LEGGINGS) ||
                                         armour.isOf(Items.NETHERITE_LEGGINGS))
                         ) {
-                            String coat = SKIN_NAMESPACE + id + "_coat.png";
+                            String coat = ETFPlayerSkinUtils.SKIN_NAMESPACE + id + "_coat.png";
 
-                            if (UUID_PLAYER_HAS_FAT_COAT.get(id)) {
+                            if (ETFPlayerSkinUtils.UUID_PLAYER_HAS_FAT_COAT.getBoolean(id)) {
                                 customPlayerModel.fatJacket.copyTransform(((PlayerEntityModel) this.getModel()).jacket);
                             } else {
                                 customPlayerModel.jacket.copyTransform(((PlayerEntityModel) this.getModel()).jacket);
@@ -275,25 +275,25 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
                             matrixStack.push();
 
 
-                            if (UUID_PLAYER_HAS_FAT_COAT.get(id)) {
+                            if (ETFPlayerSkinUtils.UUID_PLAYER_HAS_FAT_COAT.getBoolean(id)) {
                                 customPlayerModel.fatJacket.render(matrixStack, coatVert, light, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
                             } else {
                                 customPlayerModel.jacket.render(matrixStack, coatVert, light, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
                             }
-                            if (UUID_PLAYER_HAS_ENCHANT_COAT.containsKey(id)) {
-                                if (UUID_PLAYER_HAS_ENCHANT_COAT.get(id)) {
+                            if (ETFPlayerSkinUtils.UUID_PLAYER_HAS_ENCHANT_COAT.containsKey(id)) {
+                                if (ETFPlayerSkinUtils.UUID_PLAYER_HAS_ENCHANT_COAT.getBoolean(id)) {
                                     Identifier enchant = new Identifier(coat.replace(".png", "_enchant.png"));
                                     VertexConsumer enchantVert = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(enchant), false, true);
 
-                                    if (UUID_PLAYER_HAS_FAT_COAT.get(id)) {
+                                    if (ETFPlayerSkinUtils.UUID_PLAYER_HAS_FAT_COAT.getBoolean(id)) {
                                         customPlayerModel.fatJacket.render(matrixStack, enchantVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 0.16F);
                                     } else {
                                         customPlayerModel.jacket.render(matrixStack, enchantVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 0.16F);
                                     }
                                 }
                             }
-                            if (UUID_PLAYER_HAS_EMISSIVE_COAT.containsKey(id)) {
-                                if (UUID_PLAYER_HAS_EMISSIVE_COAT.get(id)) {
+                            if (ETFPlayerSkinUtils.UUID_PLAYER_HAS_EMISSIVE_COAT.containsKey(id)) {
+                                if (ETFPlayerSkinUtils.UUID_PLAYER_HAS_EMISSIVE_COAT.getBoolean(id)) {
                                     Identifier emissive = new Identifier(coat.replace(".png", "_e.png"));
                                     VertexConsumer emissVert;// = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(emissive, true));
                                     if (ETFConfigData.fullBrightEmissives) {
@@ -302,7 +302,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
                                         emissVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(emissive));
                                     }
 
-                                    if (UUID_PLAYER_HAS_FAT_COAT.get(id)) {
+                                    if (ETFPlayerSkinUtils.UUID_PLAYER_HAS_FAT_COAT.getBoolean(id)) {
                                         customPlayerModel.fatJacket.render(matrixStack, emissVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
                                     } else {
                                         customPlayerModel.jacket.render(matrixStack, emissVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
@@ -313,17 +313,17 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
                         }
 
                         //perform texture features
-                        if (UUID_PLAYER_HAS_ENCHANT_SKIN.get(id)) {
+                        if (ETFPlayerSkinUtils.UUID_PLAYER_HAS_ENCHANT_SKIN.getBoolean(id)) {
                             Identifier enchant = skinPossiblyBlinking.contains(".png") ?
                                     new Identifier(skinPossiblyBlinking.replace(".png", "_enchant.png")) :
-                                    new Identifier(SKIN_NAMESPACE + id + "_enchant.png");
+                                    new Identifier(ETFPlayerSkinUtils.SKIN_NAMESPACE + id + "_enchant.png");
                             VertexConsumer enchantVert = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(enchant), false, true);
                             this.getModel().render(matrixStack, enchantVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 0.16F);
                         }
-                        if (UUID_PLAYER_HAS_EMISSIVE_SKIN.get(id)) {
+                        if (ETFPlayerSkinUtils.UUID_PLAYER_HAS_EMISSIVE_SKIN.getBoolean(id)) {
                             Identifier emissive = skinPossiblyBlinking.contains(".png") ?
                                     new Identifier(skinPossiblyBlinking.replace(".png", "_e.png")) :
-                                    new Identifier(SKIN_NAMESPACE + id + "_e.png");
+                                    new Identifier(ETFPlayerSkinUtils.SKIN_NAMESPACE + id + "_e.png");
                             VertexConsumer emissVert;// = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(emissive, true));
                             if (ETFConfigData.fullBrightEmissives) {
                                 emissVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(emissive, true));

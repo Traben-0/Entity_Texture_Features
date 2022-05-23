@@ -12,7 +12,9 @@ import traben.entity_texture_features.client.utils.ETFUtils;
 public abstract class MixinReloadableResourceManagerImpl {
     @Inject(method = "method_29491", at = @At("HEAD"))
     private static void etf$updateVisuals(CallbackInfoReturnable<String> cir) {
-        ETFUtils.resetVisuals();
+        ETFUtils.resetAllETFEntityData();
     }
+
+
 }
 

@@ -16,12 +16,12 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import traben.entity_texture_features.client.utils.ETFPlayerSkinUtils;
 import traben.entity_texture_features.client.utils.ETFUtils;
 
 import java.util.UUID;
 
-import static traben.entity_texture_features.client.ETFClient.*;
+import static traben.entity_texture_features.client.ETFClient.ETFConfigData;
+import static traben.entity_texture_features.client.utils.ETFPlayerSkinUtils.*;
 
 @Mixin(PlayerEntityRenderer.class)
 public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
@@ -49,21 +49,21 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
                 try {
                     if (!UUID_PLAYER_HAS_FEATURES.containsKey(id) && !UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.containsKey(id)) {
                         //check for mark
-                        ETFPlayerSkinUtils.checkPlayerForSkinFeatures(id, player);
+                        checkPlayerForSkinFeatures(id, player);
                     }
-                    if (UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.get(id)) {
-                        if (UUID_PLAYER_HAS_FEATURES.get(id)) {
+                    if (UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.getBoolean(id)) {
+                        if (UUID_PLAYER_HAS_FEATURES.getBoolean(id)) {
                             if (ETFConfigData.skinFeaturesEnableTransparency
                                     && UUID_PLAYER_TRANSPARENT_SKIN_ID.containsKey(id)) {
                                 ci.cancel();
                                 arm.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(UUID_PLAYER_TRANSPARENT_SKIN_ID.get(id))), light, OverlayTexture.DEFAULT_UV);
                                 sleeve.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(player.getSkinTexture())), light, OverlayTexture.DEFAULT_UV);
                             }
-                            if (UUID_PLAYER_HAS_EMISSIVE_SKIN.get(id)) {
+                            if (UUID_PLAYER_HAS_EMISSIVE_SKIN.getBoolean(id)) {
                                 arm.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(new Identifier(SKIN_NAMESPACE + id + "_e.png"))), 15728640, OverlayTexture.DEFAULT_UV);
                                 sleeve.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(new Identifier(SKIN_NAMESPACE + id + "_e.png"))), 15728640, OverlayTexture.DEFAULT_UV);
                             }
-                            if (UUID_PLAYER_HAS_ENCHANT_SKIN.get(id)) {
+                            if (UUID_PLAYER_HAS_ENCHANT_SKIN.getBoolean(id)) {
                                 arm.render(matrices, ItemRenderer.getArmorGlintConsumer(vertexConsumers, RenderLayer.getArmorCutoutNoCull(new Identifier(SKIN_NAMESPACE + id + "_enchant.png")), false, true), 15728640, OverlayTexture.DEFAULT_UV);
                                 sleeve.render(matrices, ItemRenderer.getArmorGlintConsumer(vertexConsumers, RenderLayer.getArmorCutoutNoCull(new Identifier(SKIN_NAMESPACE + id + "_enchant.png")), false, true), 15728640, OverlayTexture.DEFAULT_UV);
                             }

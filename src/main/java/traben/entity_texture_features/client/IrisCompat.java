@@ -19,7 +19,6 @@ public class IrisCompat {
             return false;
         }
 
-        ;
     }
 
     private static class InternalHandlerImpl implements InternalHandler {
@@ -28,6 +27,5 @@ public class IrisCompat {
             return IrisApi.getInstance().isShaderPackInUse();
         }
 
-        ;
     }
 }

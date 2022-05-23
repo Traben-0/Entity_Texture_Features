@@ -2,6 +2,8 @@ package traben.entity_texture_features.client.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.Model;
@@ -31,7 +33,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -132,7 +133,7 @@ public class ETFUtils {
     }
 
 
-    public static void resetVisuals() {
+    public static void resetAllETFEntityData() {
         logMessage("Reloading...", false);
         PATH_TOTAL_TRUE_RANDOM.clear();
 
@@ -157,39 +158,7 @@ public class ETFUtils {
 
         UUID_ORIGINAL_NON_UPDATE_PROPERTY_STRINGS.clear();
 
-        UUID_PLAYER_HAS_FEATURES.clear();
-        UUID_PLAYER_HAS_ENCHANT_SKIN.clear();
-        UUID_PLAYER_HAS_ENCHANT_CAPE.clear();
-        UUID_PLAYER_HAS_ENCHANT_COAT.clear();
-        UUID_PLAYER_HAS_EMISSIVE_SKIN.clear();
-        UUID_PLAYER_HAS_EMISSIVE_CAPE.clear();
-        UUID_PLAYER_HAS_EMISSIVE_COAT.clear();
-
-        UUID_PLAYER_TRANSPARENT_SKIN_ID.clear();
-        UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.clear();
-        for (HttpURLConnection h :
-                URL_HTTP_TO_DISCONNECT_1.values()) {
-            if (h != null) {
-                h.disconnect();
-            }
-        }
-        for (HttpURLConnection h :
-                URL_HTTP_TO_DISCONNECT_2.values()) {
-            if (h != null) {
-                h.disconnect();
-            }
-        }
-        UUID_PLAYER_HAS_COAT.clear();
-        UUID_PLAYER_HAS_FAT_COAT.clear();
-        UUID_PLAYER_HAS_VILLAGER_NOSE.clear();
-        UUID_PLAYER_HAS_CAPE.clear();
-        UUID_PLAYER_HAS_CUSTOM_CAPE.clear();
-
-        UUID_PLAYER_LAST_SKIN_CHECK.clear();
-        UUID_PLAYER_LAST_SKIN_CHECK_COUNT.clear();
-
-        URL_HTTP_TO_DISCONNECT_1.clear();
-        URL_HTTP_TO_DISCONNECT_2.clear();
+        ETFPlayerSkinUtils.clearAllPlayerETFData();
 
         PATH_FAILED_PROPERTIES_TO_IGNORE.clear();
 
@@ -218,29 +187,30 @@ public class ETFUtils {
     }
 
     public static void resetSingleSuffixData(UUID id) {
-        UUID_RANDOM_TEXTURE_SUFFIX.remove(id);
-        UUID_RANDOM_TEXTURE_SUFFIX_2.remove(id);
-        UUID_RANDOM_TEXTURE_SUFFIX_3.remove(id);
-        UUID_RANDOM_TEXTURE_SUFFIX_4.remove(id);
-        KNOWN_UUID_LIST.remove(id);
+        UUID_RANDOM_TEXTURE_SUFFIX.removeInt(id);
+        UUID_RANDOM_TEXTURE_SUFFIX.removeInt(id);
+        UUID_RANDOM_TEXTURE_SUFFIX_2.removeInt(id);
+        UUID_RANDOM_TEXTURE_SUFFIX_3.removeInt(id);
+        UUID_RANDOM_TEXTURE_SUFFIX_4.removeInt(id);
+        KNOWN_UUID_LIST.removeInt(id);
     }
 
     public static void forceResetAllDataOfUUID(UUID id) {
-        KNOWN_UUID_LIST.remove(id);
-        UUID_RANDOM_TEXTURE_SUFFIX.remove(id);
-        UUID_RANDOM_TEXTURE_SUFFIX_2.remove(id);
-        UUID_RANDOM_TEXTURE_SUFFIX_3.remove(id);
-        UUID_RANDOM_TEXTURE_SUFFIX_4.remove(id);
-        UUID_HAS_UPDATABLE_RANDOM_CASES.remove(id);
-        UUID_HAS_UPDATABLE_RANDOM_CASES_2.remove(id);
-        UUID_HAS_UPDATABLE_RANDOM_CASES_3.remove(id);
-        UUID_HAS_UPDATABLE_RANDOM_CASES_4.remove(id);
+        KNOWN_UUID_LIST.removeInt(id);
+        UUID_RANDOM_TEXTURE_SUFFIX.removeInt(id);
+        UUID_RANDOM_TEXTURE_SUFFIX_2.removeInt(id);
+        UUID_RANDOM_TEXTURE_SUFFIX_3.removeInt(id);
+        UUID_RANDOM_TEXTURE_SUFFIX_4.removeInt(id);
+        UUID_HAS_UPDATABLE_RANDOM_CASES.removeBoolean(id);
+        UUID_HAS_UPDATABLE_RANDOM_CASES_2.removeBoolean(id);
+        UUID_HAS_UPDATABLE_RANDOM_CASES_3.removeBoolean(id);
+        UUID_HAS_UPDATABLE_RANDOM_CASES_4.removeBoolean(id);
         UUID_ENTITY_ALREADY_CALCULATED.remove(id);
-        UUID_ENTITY_AWAITING_DATA_CLEARING.remove(id);
-        UUID_ENTITY_AWAITING_DATA_CLEARING_2.remove(id);
+        UUID_ENTITY_AWAITING_DATA_CLEARING.removeLong(id);
+        UUID_ENTITY_AWAITING_DATA_CLEARING_2.removeLong(id);
         UUID_ORIGINAL_NON_UPDATE_PROPERTY_STRINGS.remove(id);
         UUID_TRIDENT_NAME.remove(id);
-        UUID_NEXT_BLINK_TIME.remove(id);
+        UUID_NEXT_BLINK_TIME.removeLong(id);
     }
 
 
@@ -434,6 +404,7 @@ public class ETFUtils {
                 Set<String> propIds = props.stringPropertyNames();
                 //set so only 1 of each
                 Set<Integer> numbers = new HashSet<>();
+
                 //get the numbers we are working with
                 for (String str :
                         propIds) {
@@ -442,9 +413,10 @@ public class ETFUtils {
                 //sort from lowest to largest
                 List<Integer> numbersList = new ArrayList<>(numbers);
                 Collections.sort(numbersList);
-                Set<ETFTexturePropertyCase> allCasesForTexture = new HashSet<>();
+                List<ETFTexturePropertyCase> allCasesForTexture = new ArrayList<>();
                 for (Integer num :
                         numbersList) {
+                    //System.out.println("constructed as "+num);
                     //loops through each known number in properties
                     //all case.1 ect should be processed here
                     Integer[] suffixes = {};
@@ -536,6 +508,11 @@ public class ETFUtils {
                             //names = dataFromProps.split("\s+");
                             //allow    "multiple names" among "other"
                             List<String> list = new ArrayList<>();
+                            //add the full line as the first name option to allow for simple multiple names
+                            //incase someone just writes   names.1=john smith
+                            //instead of                   names.1="john smith"
+                            list.add(dataFromProps);
+
                             Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(dataFromProps);
                             while (m.find()) {
                                 list.add(m.group(1).replace("\"", "").trim());
@@ -612,9 +589,13 @@ public class ETFUtils {
                     }
 
                     if (suffixes.length != 0) {
-                        allCasesForTexture.add(new ETFTexturePropertyCase(suffixes, weights, biomes, heights, names, professions, collarColours, baby, weather, health, moon, daytime, blocks, teams));
+                        allCasesForTexture.add(new ETFTexturePropertyCase(suffixes, weights, biomes, heights, names, professions, collarColours, baby, weather, health, moon, daytime, blocks, teams, num));
                     }
                 }
+                //for (ETFTexturePropertyCase t:
+                //     allCasesForTexture) {
+                //    System.out.println("foreach as "+t.propertyNumber);
+                //}
                 if (!allCasesForTexture.isEmpty()) {
                     PATH_OPTIFINE_RANDOM_SETTINGS_PER_TEXTURE.put(vanillaTexturePath, allCasesForTexture);
                     PATH_OPTIFINE_OR_JUST_RANDOM.put(vanillaTexturePath, true);
@@ -676,14 +657,14 @@ public class ETFUtils {
         testCases(vanillaPath, id, entity, isUpdate, UUID_RANDOM_TEXTURE_SUFFIX, UUID_HAS_UPDATABLE_RANDOM_CASES);
     }
 
-    public static void testCases(String vanillaPath, UUID id, Entity entity, boolean isUpdate, HashMap<UUID, Integer> UUID_RandomSuffixMap, HashMap<UUID, Boolean> UUID_CaseHasUpdateablesCustom) {
+    public static void testCases(String vanillaPath, UUID id, Entity entity, boolean isUpdate, Object2IntOpenHashMap<UUID> UUID_RandomSuffixMap, Object2BooleanOpenHashMap<UUID> UUID_CaseHasUpdateablesCustom) {
         for (ETFTexturePropertyCase test :
                 PATH_OPTIFINE_RANDOM_SETTINGS_PER_TEXTURE.get(vanillaPath)) {
 
             //skip if it is only an update and case is not updatable
             if (test.testEntity((LivingEntity) entity, UUID_ENTITY_ALREADY_CALCULATED.contains(id), UUID_CaseHasUpdateablesCustom)) {
-                UUID_RandomSuffixMap.put(id, test.getWeightedSuffix(id, PATH_IGNORE_ONE_PNG.get(vanillaPath)));
-                Identifier tested = returnOptifineOrVanillaIdentifier(vanillaPath, UUID_RandomSuffixMap.get(id));
+                UUID_RandomSuffixMap.put(id, test.getWeightedSuffix(id, PATH_IGNORE_ONE_PNG.getBoolean(vanillaPath)));
+                Identifier tested = returnOptifineOrVanillaIdentifier(vanillaPath, UUID_RandomSuffixMap.getInt(id));
 
                 if (!isExistingNativeImageFile(tested) && !isUpdate) {
                     UUID_RandomSuffixMap.put(id, 0);
@@ -718,9 +699,9 @@ public class ETFUtils {
             message.append("ETF entity debug data for entity with UUID=[").append(id.toString()).append("]:\n{\n    vanillaTexture=").append(texturePath);
 
             if (PATH_OPTIFINE_OR_JUST_RANDOM.containsKey(texturePath))
-                message.append("\nhas an optifine properties file=").append(PATH_OPTIFINE_OR_JUST_RANDOM.get(texturePath));
+                message.append("\nhas an optifine properties file=").append(PATH_OPTIFINE_OR_JUST_RANDOM.getBoolean(texturePath));
             if (PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.containsKey(texturePath))
-                message.append("\npath of custom textures=").append(switch (PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.get(texturePath)) {
+                message.append("\npath of custom textures=").append(switch (PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.getInt(texturePath)) {
                     case 0 -> "optifine/random";
                     case 1 -> "optifine/mob";
                     case 3 -> "etf/random";
@@ -729,12 +710,12 @@ public class ETFUtils {
             if (PATH_OPTIFINE_RANDOM_SETTINGS_PER_TEXTURE.containsKey(texturePath))
                 message.append("\namount of properties=").append(PATH_OPTIFINE_RANDOM_SETTINGS_PER_TEXTURE.get(texturePath).size());
             if (PATH_TOTAL_TRUE_RANDOM.containsKey(texturePath))
-                message.append("\ntotal random textures detected=").append(PATH_TOTAL_TRUE_RANDOM.get(texturePath));
+                message.append("\ntotal random textures detected=").append(PATH_TOTAL_TRUE_RANDOM.getInt(texturePath));
             if (UUID_RANDOM_TEXTURE_SUFFIX.containsKey(id))
                 message.append("\nRandom texture number of this mob=")
-                        .append(UUID_RANDOM_TEXTURE_SUFFIX.get(id))
+                        .append(UUID_RANDOM_TEXTURE_SUFFIX.getInt(id))
                         .append(", probably uses {")
-                        .append(texturePath.replace(".png", UUID_RANDOM_TEXTURE_SUFFIX.get(id) + ".png}"));
+                        .append(texturePath.replace(".png", UUID_RANDOM_TEXTURE_SUFFIX.getInt(id) + ".png}"));
             if (UUID_ORIGINAL_NON_UPDATE_PROPERTY_STRINGS.containsKey(id))
                 message.append("\nOriginal spawn data *unsorted*=").append(Arrays.toString(UUID_ORIGINAL_NON_UPDATE_PROPERTY_STRINGS.get(id)));
             message.append("\n}");
@@ -802,7 +783,7 @@ public class ETFUtils {
 
         String append = (randomId == 0 ? "" : randomId) + emissiveSuffx + ".png";
         if (PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.containsKey(vanillaPath)) {
-            return switch (PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.get(vanillaPath)) {
+            return switch (PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.getInt(vanillaPath)) {
                 case 0 -> vanillaPath.replace(".png", append).replace("textures", "optifine/random");
                 case 1 -> vanillaPath.replace(".png", append).replace("textures/entity", "optifine/mob");
                 case 3 -> vanillaPath.replace(".png", append).replace("textures", "etf/random");
@@ -878,7 +859,7 @@ public class ETFUtils {
         while (keepGoing) {
             count++;
 
-            checkPath = switch (PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.get(vanillaPath)) {
+            checkPath = switch (PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.getInt(vanillaPath)) {
                 case 3 -> vanillaPath.replace(".png", (count + ".png")).replace("textures", "etf/random");
                 case 0 -> vanillaPath.replace(".png", (count + ".png")).replace("textures", "optifine/random");
                 case 1 -> vanillaPath.replace(".png", (count + ".png")).replace("textures/entity", "optifine/mob");
@@ -976,14 +957,14 @@ public class ETFUtils {
             PATH_HAS_BLINK_TEXTURE.putIfAbsent(givenTexturePath, false);
             PATH_HAS_BLINK_TEXTURE_2.putIfAbsent(givenTexturePath, false);
             if (PATH_HAS_BLINK_TEXTURE.containsKey(givenTexturePath)) {
-                if (PATH_HAS_BLINK_TEXTURE.get(givenTexturePath)) {
+                if (PATH_HAS_BLINK_TEXTURE.getBoolean(givenTexturePath)) {
                     if (entity.getPose() == EntityPose.SLEEPING) {
                         return new Identifier(givenTexturePath.replace(".png", "_blink.png"));
                     }
                     //force eyes closed if blinded
                     else if (entity.hasStatusEffect(StatusEffects.BLINDNESS)) {
                         if (PATH_HAS_BLINK_TEXTURE_2.containsKey(givenTexturePath)) {
-                            return new Identifier(givenTexturePath.replace(".png", (PATH_HAS_BLINK_TEXTURE_2.get(givenTexturePath) ? "_blink2.png" : "_blink.png")));
+                            return new Identifier(givenTexturePath.replace(".png", (PATH_HAS_BLINK_TEXTURE_2.getBoolean(givenTexturePath) ? "_blink2.png" : "_blink.png")));
                         } else {
                             return new Identifier(givenTexturePath.replace(".png", "_blink.png"));
                         }
@@ -1015,12 +996,12 @@ public class ETFUtils {
                         if (!UUID_NEXT_BLINK_TIME.containsKey(id)) {
                             UUID_NEXT_BLINK_TIME.put(id, entity.world.getTime() + blinkLength + 1);
                         }
-                        long nextBlink = UUID_NEXT_BLINK_TIME.get(id);
+                        long nextBlink = UUID_NEXT_BLINK_TIME.getLong(id);
                         long currentTime = entity.world.getTime();
 
                         if (currentTime >= nextBlink - blinkLength && currentTime <= nextBlink + blinkLength) {
                             if (PATH_HAS_BLINK_TEXTURE_2.containsKey(givenTexturePath)) {
-                                if (PATH_HAS_BLINK_TEXTURE_2.get(givenTexturePath)) {
+                                if (PATH_HAS_BLINK_TEXTURE_2.getBoolean(givenTexturePath)) {
                                     if (currentTime >= nextBlink - (blinkLength / 3) && currentTime <= nextBlink + (blinkLength / 3)) {
                                         return new Identifier(givenTexturePath.replace(".png", "_blink.png"));
                                     }
@@ -1040,9 +1021,9 @@ public class ETFUtils {
         }
 
         if (isPlayer && ETFConfigData.skinFeaturesEnabled
-                && UUID_PLAYER_TRANSPARENT_SKIN_ID.containsKey(id) && (ETFConfigData.enableEnemyTeamPlayersSkinFeatures
+                && ETFPlayerSkinUtils.UUID_PLAYER_TRANSPARENT_SKIN_ID.containsKey(id) && (ETFConfigData.enableEnemyTeamPlayersSkinFeatures
                 || (entity.isTeammate(MinecraftClient.getInstance().player) || entity.getScoreboardTeam() == null))) {
-            Identifier ident = UUID_PLAYER_TRANSPARENT_SKIN_ID.get(id);
+            Identifier ident = ETFPlayerSkinUtils.UUID_PLAYER_TRANSPARENT_SKIN_ID.get(id);
             if (ident != null) {
                 return ident;
             }
@@ -1052,6 +1033,7 @@ public class ETFUtils {
 
     //this is for entity rendering features that do not need separate processing
     //e.g horse armor and markings, and glowing eye textures
+    //todo reminder warden implementation needs several textures
     public static Identifier generalReturnAlteredFeatureTextureOrOriginal(Identifier originalFeatureTexture, Entity entity) {
 
         Identifier alteredFeatureTexture = ETFUtils.generalReturnAlreadySetAlteredTexture(originalFeatureTexture, entity);
@@ -1059,7 +1041,7 @@ public class ETFUtils {
         if (!PATH_IS_EXISTING_FEATURE.containsKey(alteredFeatureTexture.toString())) {
             PATH_IS_EXISTING_FEATURE.put(alteredFeatureTexture.toString(), isExistingNativeImageFile(alteredFeatureTexture));
         }
-        if (PATH_IS_EXISTING_FEATURE.get(alteredFeatureTexture.toString())) {
+        if (PATH_IS_EXISTING_FEATURE.getBoolean(alteredFeatureTexture.toString())) {
             return alteredFeatureTexture;
         }
 
@@ -1086,13 +1068,13 @@ public class ETFUtils {
                         if (!UUID_HAS_UPDATABLE_RANDOM_CASES.containsKey(id)) {
                             UUID_HAS_UPDATABLE_RANDOM_CASES.put(id, true);
                         }
-                        if (UUID_HAS_UPDATABLE_RANDOM_CASES.get(id)) {
+                        if (UUID_HAS_UPDATABLE_RANDOM_CASES.getBoolean(id)) {
                             //skip a few ticks
                             //UUID_entityAwaitingDataClearing.put(id, UUID_entityAwaitingDataClearing.get(id)+1);
-                            if (UUID_ENTITY_AWAITING_DATA_CLEARING.get(id) + 100 < System.currentTimeMillis()) {
-                                if (PATH_OPTIFINE_OR_JUST_RANDOM.get(texture.toString())) {
+                            if (UUID_ENTITY_AWAITING_DATA_CLEARING.getLong(id) + 100 < System.currentTimeMillis()) {
+                                if (PATH_OPTIFINE_OR_JUST_RANDOM.getBoolean(texture.toString())) {
                                     //if (UUID_randomTextureSuffix.containsKey(id)) {
-                                    int hold = UUID_RANDOM_TEXTURE_SUFFIX.get(id);
+                                    int hold = UUID_RANDOM_TEXTURE_SUFFIX.getInt(id);
                                     ETFUtils.resetSingleSuffixData(id);
                                     ETFUtils.testCases(texture.toString(), id, entity, true, UUID_RANDOM_TEXTURE_SUFFIX, UUID_HAS_UPDATABLE_RANDOM_CASES);
                                     //if didn't change keep it the same
@@ -1102,15 +1084,15 @@ public class ETFUtils {
                                     //}
                                 }//else here would do something for true random but no need really - may optimise this
 
-                                UUID_ENTITY_AWAITING_DATA_CLEARING.remove(id);
+                                UUID_ENTITY_AWAITING_DATA_CLEARING.removeLong(id);
                             }
                         } else {
-                            UUID_ENTITY_AWAITING_DATA_CLEARING.remove(id);
+                            UUID_ENTITY_AWAITING_DATA_CLEARING.removeLong(id);
                         }
                     }
 
                 }
-                if (PATH_OPTIFINE_OR_JUST_RANDOM.get(texture.toString())) {//optifine random
+                if (PATH_OPTIFINE_OR_JUST_RANDOM.getBoolean(texture.toString())) {//optifine random
 
 
                     //if it doesn't have a random already assign one
@@ -1126,12 +1108,12 @@ public class ETFUtils {
 
                 } else {//true random assign
                     UUID_HAS_UPDATABLE_RANDOM_CASES.put(id, false);
-                    if (PATH_TOTAL_TRUE_RANDOM.get(texture.toString()) > 0) {
+                    if (PATH_TOTAL_TRUE_RANDOM.getInt(texture.toString()) > 0) {
                         if (!UUID_RANDOM_TEXTURE_SUFFIX.containsKey(id)) {
                             int randomReliable = Math.abs(id.hashCode());
-                            randomReliable %= PATH_TOTAL_TRUE_RANDOM.get(texture.toString());
+                            randomReliable %= PATH_TOTAL_TRUE_RANDOM.getInt(texture.toString());
                             randomReliable++;
-                            if (randomReliable == 1 && PATH_IGNORE_ONE_PNG.get(texture.toString())) {
+                            if (randomReliable == 1 && PATH_IGNORE_ONE_PNG.getBoolean(texture.toString())) {
                                 randomReliable = 0;
                             }
                             UUID_RANDOM_TEXTURE_SUFFIX.put(id, randomReliable);
@@ -1154,7 +1136,7 @@ public class ETFUtils {
         Identifier returned = hiddenGeneralReturnAlreadySetAlteredTexture(texture, entity);
         if (ETFConfigData.enableEmissiveTextures && IrisCompat.isShaderPackInUse()) {
             if (PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION.containsKey(returned.toString())) {
-                if (PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION.get(returned.toString())) {
+                if (PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION.getBoolean(returned.toString())) {
                     return new Identifier(returned + "etf_iris_patched_file.png");
                 }
             }
@@ -1169,17 +1151,17 @@ public class ETFUtils {
 
 
         if (UUID_RANDOM_TEXTURE_SUFFIX.containsKey(id)) {
-            if (UUID_RANDOM_TEXTURE_SUFFIX.get(id) != 0) {
+            if (UUID_RANDOM_TEXTURE_SUFFIX.getInt(id) != 0) {
 //                if(!PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.containsKey(texture.toString())){
 //                    //for special cases where we do not want to process again fully, e.g. horse armour
 //                    checkAndSetPathsToUseForUncheckedTextures(texture.toString(),texture.toString().replace(".png",UUID_RANDOM_TEXTURE_SUFFIX.get(id)+".png"));
 //                }
-                return returnBlinkIdOrGiven((LivingEntity) entity, returnOptifineOrVanillaIdentifier(texture.toString(), UUID_RANDOM_TEXTURE_SUFFIX.get(id)).toString(), id);
+                return returnBlinkIdOrGiven((LivingEntity) entity, returnOptifineOrVanillaIdentifier(texture.toString(), UUID_RANDOM_TEXTURE_SUFFIX.getInt(id)).toString(), id);
             } else {
                 if (!PATH_HAS_DEFAULT_REPLACEMENT.containsKey(texture.toString())) {
                     PATH_HAS_DEFAULT_REPLACEMENT.put(texture.toString(), isExistingNativeImageFile(returnOptifineOrVanillaIdentifier(texture.toString())));
                 }
-                if (PATH_HAS_DEFAULT_REPLACEMENT.get(texture.toString())) {
+                if (PATH_HAS_DEFAULT_REPLACEMENT.getBoolean(texture.toString())) {
                     return returnBlinkIdOrGiven((LivingEntity) entity, returnOptifineOrVanillaIdentifier(texture.toString()).toString(), id);
                 } else {
                     return returnBlinkIdOrGiven((LivingEntity) entity, texture.toString(), id);
@@ -1212,8 +1194,6 @@ public class ETFUtils {
         }
     }
 
-
-    private static final HashMap<String, Boolean> PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION = new HashMap<>();
 
     private static void replaceTextureMinusEmissive(String originalTexturePath) {
         String emissiveTexturePath = null;

@@ -1,18 +1,23 @@
 package traben.entity_texture_features.client;
 
 
+import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import net.minecraft.MinecraftVersion;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.passive.WolfEntity;
 import traben.entity_texture_features.client.utils.ETFUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.UUID;
 
 import static traben.entity_texture_features.client.ETFClient.ETFConfigData;
 import static traben.entity_texture_features.client.ETFClient.UUID_ORIGINAL_NON_UPDATE_PROPERTY_STRINGS;
 
 public class ETFTexturePropertyCase {
+    public final int propertyNumber;
     private final Integer[] weightedSuffixes;
     private final String[] biomes;
     private final Integer[] heights;
@@ -43,7 +48,8 @@ public class ETFTexturePropertyCase {
                                   Integer[] moonX,
                                   String[] daytimeX,
                                   String[] blocksX,
-                                  String[] teamsX
+                                  String[] teamsX,
+                                  int propNumber
     ) {
 
         biomes = biomesX != null ? biomesX : new String[0];
@@ -58,7 +64,7 @@ public class ETFTexturePropertyCase {
         daytime = daytimeX != null ? daytimeX : new String[0];
         blocks = blocksX != null ? blocksX : new String[0];
         teams = teamsX != null ? teamsX : new String[0];
-
+        propertyNumber = propNumber;
 
         if (weightsX == null) {
             weightsX = new Integer[0];
@@ -101,7 +107,12 @@ public class ETFTexturePropertyCase {
     }
 
 
-    public boolean testEntity(LivingEntity entity, boolean isUpdate, HashMap<UUID, Boolean> UUID_CaseHasUpdateablesCustom) {
+    public boolean testEntity(LivingEntity entity, boolean isUpdate, Object2BooleanOpenHashMap<UUID> UUID_CaseHasUpdateablesCustom) {
+
+
+        //System.out.println("checking property number "+propertyNumber);
+
+
         if (biomes.length == 0
                 && names.length == 0
                 && heights.length == 0

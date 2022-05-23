@@ -16,8 +16,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.UUID;
 
-import static traben.entity_texture_features.client.ETFClient.UUID_PLAYER_HAS_EMISSIVE_CAPE;
-import static traben.entity_texture_features.client.ETFClient.UUID_PLAYER_HAS_ENCHANT_CAPE;
+import static traben.entity_texture_features.client.utils.ETFPlayerSkinUtils.UUID_PLAYER_HAS_EMISSIVE_CAPE;
+import static traben.entity_texture_features.client.utils.ETFPlayerSkinUtils.UUID_PLAYER_HAS_ENCHANT_CAPE;
 
 @Mixin(CapeFeatureRenderer.class)
 public abstract class MixinCapeFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
@@ -40,13 +40,13 @@ public abstract class MixinCapeFeatureRenderer extends FeatureRenderer<AbstractC
             VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(cape));
             (this.getContextModel()).renderCape(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV);
             if (UUID_PLAYER_HAS_EMISSIVE_CAPE.containsKey(id)) {
-                if (UUID_PLAYER_HAS_EMISSIVE_CAPE.get(id)) {
+                if (UUID_PLAYER_HAS_EMISSIVE_CAPE.getBoolean(id)) {
                     VertexConsumer emissiveVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(new Identifier(cape.toString().replace(".png", "_e.png"))));
                     (this.getContextModel()).renderCape(matrixStack, emissiveVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV);
                 }
             }
             if (UUID_PLAYER_HAS_ENCHANT_CAPE.containsKey(id)) {
-                if (UUID_PLAYER_HAS_ENCHANT_CAPE.get(id)) {
+                if (UUID_PLAYER_HAS_ENCHANT_CAPE.getBoolean(id)) {
                     VertexConsumer enchantVert = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(new Identifier(cape.toString().replace(".png", "_enchant.png"))), false, true);
                     //VertexConsumer enchantVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(new Identifier( cape.toString().replace(".png","_e.png"))));
                     (this.getContextModel()).renderCape(matrixStack, enchantVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV);

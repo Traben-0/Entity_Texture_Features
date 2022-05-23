@@ -4,12 +4,15 @@ import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import me.shedaniel.clothconfig2.impl.builders.SubCategoryBuilder;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import traben.entity_texture_features.client.ETFClient;
 import traben.entity_texture_features.client.utils.ETFUtils;
+
+import java.awt.*;
 
 import static traben.entity_texture_features.client.ETFClient.ETFConfigData;
 
@@ -27,17 +30,47 @@ public class ETFConfigScreen {
 
         ConfigCategory category = builder.getOrCreateCategory(Text.of(""));
         ConfigEntryBuilder entryBuilder = builder.entryBuilder();
-        category.setBackground(new Identifier("textures/block/light_gray_wool.png"));
+        category.setBackground(new Identifier("textures/block/deepslate_tiles.png"));
 
-        // TODO: may want to re use this
-        // if (irisDetected) {
-        //     optifineOptions.addEntry(entryBuilder.startTextDescription(Text.of("""
-        //                     Iris Shaders Mod was detected:
-        //                     - If your emissive textures are not glowing correctly with shaders make sure
-        //                       Full Bright emissive rendering is enabled in Emissive Texture Settings"""))
-        //             .setColor(new Color(240, 195, 15).getRGB())
-        //             .build()); // Builds the option entry for cloth config
-        // }
+        boolean shownWarning = false;
+        int warningCount = 0;
+        //this warning disables skin features with figura present
+        if (FabricLoader.getInstance().isModLoaded("figura")) {
+            shownWarning = true;
+            warningCount++;
+            if (!ETFConfigData.ignoreConfigWarnings) {
+                ETFUtils.logWarn(new TranslatableText("config." + ETFClient.MOD_ID + ".figura_warn.text").toString(), false);
+                category.addEntry(entryBuilder.startTextDescription(new TranslatableText("config." + ETFClient.MOD_ID + ".figura_warn.text"))
+                        .setColor(new Color(240, 195, 15).getRGB())
+                        .build()); // Builds the option entry for cloth config
+                ETFConfigData.skinFeaturesEnabled = false;
+                ETFUtils.saveConfig();
+            }
+        }
+        if (FabricLoader.getInstance().isModLoaded("skinlayers") && ETFConfigData.enableEmissiveTextures && ETFConfigData.skinFeaturesEnabled) {
+            shownWarning = true;
+            warningCount++;
+            if (!ETFConfigData.ignoreConfigWarnings) {
+                ETFUtils.logWarn(new TranslatableText("config." + ETFClient.MOD_ID + ".skinlayers_warn.text").toString(), false);
+                category.addEntry(entryBuilder.startTextDescription(new TranslatableText("config." + ETFClient.MOD_ID + ".skinlayers_warn.text"))
+                        .setColor(new Color(220, 175, 15).getRGB())
+                        .build()); // Builds the option entry for cloth config
+            }
+        }
+        if (shownWarning && ETFConfigData.ignoreConfigWarnings) {
+            ETFUtils.logMessage(warningCount + " warnings have been ignored", false);
+        }
+
+        //allow users to bypass warning if they want to
+        //(this only appears if enabled or if a warning that disables something is present)
+        if (shownWarning || ETFConfigData.ignoreConfigWarnings) {
+            category.addEntry(entryBuilder.startBooleanToggle(Text.of(new TranslatableText("config." + ETFClient.MOD_ID + ".ignore_warnings.title") + " -> [" + warningCount + "]"), ETFConfigData.ignoreConfigWarnings)
+                    .setDefaultValue(false) // Recommended: Used when user click "Reset"
+                    .setTooltip(Text.of(new TranslatableText("config." + ETFClient.MOD_ID + ".ignore_warnings.tooltip").toString() + warningCount + ".")) // Optional: Shown when the user hover over this option
+                    .setSaveConsumer(newValue -> ETFConfigData.ignoreConfigWarnings = newValue) // Recommended: Called when user save the config
+                    .build()); // Builds the option entry for cloth config
+        }
+
 
         category.addEntry(entryBuilder.startBooleanToggle(new TranslatableText("config." + ETFClient.MOD_ID + ".allow_illegal_texture_paths.title"), ETFConfigData.allowIllegalTexturePaths)
                 .setDefaultValue(false) // Recommended: Used when user click "Reset"
@@ -197,6 +230,6 @@ public class ETFConfigScreen {
 
     //same as above
     public void resetVisuals() {
-        ETFUtils.resetVisuals();
+        ETFUtils.resetAllETFEntityData();
     }
 }

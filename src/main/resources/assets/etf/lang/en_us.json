@@ -58,5 +58,9 @@
     "config.etf.skin_feature_print.title": "Save a copy of your skin with the skin feature template applied",
     "config.etf.skin_feature_print.tooltip": "To help you setup your skin for skin features\nThis setting will save a copy of your skin with\nthe skin feature template applied onto it\nto the minecraft directory.\nAfter enabling this setting open a game, enter third person & press F3+T\nyou will get a message in chat telling you when it is finished",
     "config.etf.player_skin_transparent_sub.title": "Transparent skin settings",
-    "config.etf.player_skin_transparent_sub.tooltip": ""
+    "config.etf.player_skin_transparent_sub.tooltip": "",
+    "config.etf.figura_warn.text": "The Figura mod was detected!\n - ETF skin features have been disabled due to incompatibility",
+    "config.etf.skinlayers_warn.text": "The 3D skin layers mod was detected!\n - ETF skin features do not display on 3d layers :/",
+    "config.etf.ignore_warnings.title": "Ignore / hide config warnings",
+    "config.etf.ignore_warnings.tooltip": "This option only appears if a warning is displayed or it is enabled.\nIf enabled ETF will ignore and hide warnings and will no longer disable\nfeatures automatically for compatibility reasons\nThe amount of warnings currently being ignored is "
 }

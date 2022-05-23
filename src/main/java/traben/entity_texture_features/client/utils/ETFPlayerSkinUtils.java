@@ -5,6 +5,10 @@ import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
+import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -28,21 +32,87 @@ import static traben.entity_texture_features.client.ETFClient.*;
 //contains all methods and utilities for player skin features to prevent bloat in the regular ETFUtils file
 public class ETFPlayerSkinUtils {
 
+    //stores various info about player skins per UUID
+    //probably would benefit from using an object to store these but as not all are used in every skin this might be more efficient in runtime
+    public static final Object2BooleanOpenHashMap<UUID> UUID_PLAYER_HAS_FEATURES = new Object2BooleanOpenHashMap<>();
+    public static final Object2BooleanOpenHashMap<UUID> UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET = new Object2BooleanOpenHashMap<>();
+    public static final Object2BooleanOpenHashMap<UUID> UUID_PLAYER_HAS_ENCHANT_SKIN = new Object2BooleanOpenHashMap<>();
+    public static final Object2BooleanOpenHashMap<UUID> UUID_PLAYER_HAS_ENCHANT_CAPE = new Object2BooleanOpenHashMap<>();
+    public static final Object2BooleanOpenHashMap<UUID> UUID_PLAYER_HAS_ENCHANT_COAT = new Object2BooleanOpenHashMap<>();
+    public static final Object2BooleanOpenHashMap<UUID> UUID_PLAYER_HAS_EMISSIVE_SKIN = new Object2BooleanOpenHashMap<>();
+    public static final Object2BooleanOpenHashMap<UUID> UUID_PLAYER_HAS_EMISSIVE_CAPE = new Object2BooleanOpenHashMap<>();
+    public static final Object2BooleanOpenHashMap<UUID> UUID_PLAYER_HAS_EMISSIVE_COAT = new Object2BooleanOpenHashMap<>();
+    public static final Object2ReferenceOpenHashMap<UUID, Identifier> UUID_PLAYER_TRANSPARENT_SKIN_ID = new Object2ReferenceOpenHashMap<>();
+    public static final Object2BooleanOpenHashMap<UUID> UUID_PLAYER_HAS_COAT = new Object2BooleanOpenHashMap<>();
+    public static final Object2BooleanOpenHashMap<UUID> UUID_PLAYER_HAS_FAT_COAT = new Object2BooleanOpenHashMap<>();
+    public static final Object2BooleanOpenHashMap<UUID> UUID_PLAYER_HAS_VILLAGER_NOSE = new Object2BooleanOpenHashMap<>();
+    public static final Object2BooleanOpenHashMap<UUID> UUID_PLAYER_HAS_CAPE = new Object2BooleanOpenHashMap<>();
+    public static final Object2BooleanOpenHashMap<UUID> UUID_PLAYER_HAS_CUSTOM_CAPE = new Object2BooleanOpenHashMap<>();
+    //holds texture co-ordinates for emissive or enchanted pixels of skins for third party capes to be affected
+    //is only ever used when third party capes are used
+    public static final Object2ReferenceOpenHashMap<UUID, NativeImage> UUID_PLAYER_TPC_SKIN_IMAGE_HOLDER = new Object2ReferenceOpenHashMap<>();
+    public static final Object2ReferenceOpenHashMap<UUID, int[]> UUID_PLAYER_EMISSIVE_TPC_HOLDER = new Object2ReferenceOpenHashMap<>();
+    public static final Object2ReferenceOpenHashMap<UUID, int[]> UUID_PLAYER_ENCHANT_TPC_HOLDER = new Object2ReferenceOpenHashMap<>();
+    //rare cases can cause these not to be closed, just in case these will be closed shortly after use time has passed if they have not already been caught and closed by the system
+    public static final Object2ReferenceOpenHashMap<String, HttpURLConnection> URL_HTTP_TO_DISCONNECT_1 = new Object2ReferenceOpenHashMap<>();
+    public static final Object2ReferenceOpenHashMap<String, HttpURLConnection> URL_HTTP_TO_DISCONNECT_2 = new Object2ReferenceOpenHashMap<>();
+    //related to repeating HTTP checks a couple of times in case of bad connection
+    public static final Object2LongOpenHashMap<UUID> UUID_PLAYER_LAST_SKIN_CHECK = new Object2LongOpenHashMap<>();
+    public static final Object2IntOpenHashMap<UUID> UUID_PLAYER_LAST_SKIN_CHECK_COUNT = new Object2IntOpenHashMap<>();
+    //string finals
+    public final static String SKIN_NAMESPACE = "etf_skin:";
+
+
+    public static void clearAllPlayerETFData() {
+        UUID_PLAYER_HAS_FEATURES.clear();
+        UUID_PLAYER_HAS_ENCHANT_SKIN.clear();
+        UUID_PLAYER_HAS_ENCHANT_CAPE.clear();
+        UUID_PLAYER_HAS_ENCHANT_COAT.clear();
+        UUID_PLAYER_HAS_EMISSIVE_SKIN.clear();
+        UUID_PLAYER_HAS_EMISSIVE_CAPE.clear();
+        UUID_PLAYER_HAS_EMISSIVE_COAT.clear();
+
+        UUID_PLAYER_TRANSPARENT_SKIN_ID.clear();
+        UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.clear();
+        for (HttpURLConnection h :
+                URL_HTTP_TO_DISCONNECT_1.values()) {
+            if (h != null) {
+                h.disconnect();
+            }
+        }
+        for (HttpURLConnection h :
+                URL_HTTP_TO_DISCONNECT_2.values()) {
+            if (h != null) {
+                h.disconnect();
+            }
+        }
+        UUID_PLAYER_HAS_COAT.clear();
+        UUID_PLAYER_HAS_FAT_COAT.clear();
+        UUID_PLAYER_HAS_VILLAGER_NOSE.clear();
+        UUID_PLAYER_HAS_CAPE.clear();
+        UUID_PLAYER_HAS_CUSTOM_CAPE.clear();
+
+        UUID_PLAYER_LAST_SKIN_CHECK.clear();
+        UUID_PLAYER_LAST_SKIN_CHECK_COUNT.clear();
+
+        URL_HTTP_TO_DISCONNECT_1.clear();
+        URL_HTTP_TO_DISCONNECT_2.clear();
+    }
 
     public static void forceResetAllDataOfPlayerUUID(UUID id) {
-        UUID_NEXT_BLINK_TIME.remove(id);
-        UUID_PLAYER_HAS_FEATURES.remove(id);
-        UUID_PLAYER_HAS_ENCHANT_SKIN.remove(id);
-        UUID_PLAYER_HAS_EMISSIVE_SKIN.remove(id);
+        UUID_NEXT_BLINK_TIME.removeLong(id);
+        UUID_PLAYER_HAS_FEATURES.removeBoolean(id);
+        UUID_PLAYER_HAS_ENCHANT_SKIN.removeBoolean(id);
+        UUID_PLAYER_HAS_EMISSIVE_SKIN.removeBoolean(id);
         UUID_PLAYER_TRANSPARENT_SKIN_ID.remove(id);
-        UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.remove(id);
-        UUID_PLAYER_HAS_COAT.remove(id);
-        UUID_PLAYER_HAS_FAT_COAT.remove(id);
-        UUID_PLAYER_HAS_VILLAGER_NOSE.remove(id);
-        UUID_PLAYER_HAS_CAPE.remove(id);
-        UUID_PLAYER_HAS_CUSTOM_CAPE.remove(id);
-        UUID_PLAYER_LAST_SKIN_CHECK.remove(id);
-        UUID_PLAYER_LAST_SKIN_CHECK_COUNT.remove(id);
+        UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.removeBoolean(id);
+        UUID_PLAYER_HAS_COAT.removeBoolean(id);
+        UUID_PLAYER_HAS_FAT_COAT.removeBoolean(id);
+        UUID_PLAYER_HAS_VILLAGER_NOSE.removeBoolean(id);
+        UUID_PLAYER_HAS_CAPE.removeBoolean(id);
+        UUID_PLAYER_HAS_CUSTOM_CAPE.removeBoolean(id);
+        UUID_PLAYER_LAST_SKIN_CHECK.removeLong(id);
+        UUID_PLAYER_LAST_SKIN_CHECK_COUNT.removeInt(id);
     }
 
 
@@ -55,7 +125,7 @@ public class ETFPlayerSkinUtils {
         ) {
             // skip if tried to recently
             if (UUID_PLAYER_LAST_SKIN_CHECK.containsKey(id)) {
-                if (UUID_PLAYER_LAST_SKIN_CHECK.get(id) + 6000 > System.currentTimeMillis()) {
+                if (UUID_PLAYER_LAST_SKIN_CHECK.getLong(id) + 6000 > System.currentTimeMillis()) {
                     return;
                 }
             }
@@ -221,15 +291,15 @@ public class ETFPlayerSkinUtils {
         if (!UUID_PLAYER_LAST_SKIN_CHECK_COUNT.containsKey(id)) {
             UUID_PLAYER_LAST_SKIN_CHECK_COUNT.put(id, 0);
         } else {
-            UUID_PLAYER_LAST_SKIN_CHECK_COUNT.put(id, UUID_PLAYER_LAST_SKIN_CHECK_COUNT.get(id) + 1);
+            UUID_PLAYER_LAST_SKIN_CHECK_COUNT.put(id, UUID_PLAYER_LAST_SKIN_CHECK_COUNT.getInt(id) + 1);
         }
 
         //modMessage("Player skin {" + name + "} unavailable for feature check. try number "+UUID_playerLastSkinCheckCount.get(id)+". Reason failed = "+(reason+1), false);
         ///give up after a few checks
-        if (UUID_PLAYER_LAST_SKIN_CHECK_COUNT.get(id) > 5) {
+        if (UUID_PLAYER_LAST_SKIN_CHECK_COUNT.getInt(id) > 5) {
             UUID_PLAYER_HAS_FEATURES.put(id, false);
         }
-        UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.remove(id);
+        UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.removeBoolean(id);
     }
 
     private static void directImageFromUrlToMethod(PlayerEntity player, NativeImage image, String sendFileToMethodKey, @Nullable NativeImage image2) {
@@ -251,6 +321,32 @@ public class ETFPlayerSkinUtils {
                     ETFUtils.registerNativeImageToIdentifier(image, SKIN_NAMESPACE + id + "_cape.png");
                 }
                 UUID_PLAYER_HAS_CUSTOM_CAPE.put(id, true);
+
+                if (UUID_PLAYER_HAS_ENCHANT_SKIN.containsKey(id)) {
+                    if (UUID_PLAYER_HAS_ENCHANT_SKIN.getBoolean(id)) {
+
+                        NativeImage checkCape = returnMatchPixels(UUID_PLAYER_TPC_SKIN_IMAGE_HOLDER.get(id), UUID_PLAYER_ENCHANT_TPC_HOLDER.get(id), image);
+                        UUID_PLAYER_HAS_ENCHANT_CAPE.put(id, checkCape != null);
+                        if (checkCape != null) {
+                            ETFUtils.registerNativeImageToIdentifier(checkCape, SKIN_NAMESPACE + id + "_cape_enchant.png");
+                        }
+                    }
+                }
+                if (UUID_PLAYER_HAS_EMISSIVE_SKIN.containsKey(id)) {
+                    if (UUID_PLAYER_HAS_EMISSIVE_SKIN.getBoolean(id)) {
+                        NativeImage checkCapeEmissive = returnMatchPixels(UUID_PLAYER_TPC_SKIN_IMAGE_HOLDER.get(id), UUID_PLAYER_EMISSIVE_TPC_HOLDER.get(id), image);
+                        UUID_PLAYER_HAS_EMISSIVE_CAPE.put(id, checkCapeEmissive != null);
+                        if (checkCapeEmissive != null) {
+                            ETFUtils.registerNativeImageToIdentifier(checkCapeEmissive, SKIN_NAMESPACE + id + "_cape_e.png");
+                        }
+                    }
+                }
+
+                UUID_PLAYER_TPC_SKIN_IMAGE_HOLDER.remove(id);
+                UUID_PLAYER_EMISSIVE_TPC_HOLDER.remove(id);
+                UUID_PLAYER_ENCHANT_TPC_HOLDER.remove(id);
+
+
             } else {
                 ETFUtils.logMessage("Player skin {" + player.getName().getString() + "} no THIRD_PARTY_CAPE Found", false);
                 //registerNativeImageToIdentifier(getNativeImageFromID(new Identifier("etf:capes/error.png")), SKIN_NAMESPACE + id + "_cape.png");
@@ -333,6 +429,7 @@ public class ETFPlayerSkinUtils {
                 //this has texture features
                 ETFUtils.logMessage("Found Player {" + id + "} with texture features in skin.", false);
                 UUID_PLAYER_HAS_FEATURES.put(id, true);
+
                 //find what features
                 //pink = -65281, blue = -256
                 //            pink   cyan     red       green      brown    blue     orange     yellow
@@ -452,6 +549,8 @@ public class ETFPlayerSkinUtils {
                     PATH_HAS_BLINK_TEXTURE_2.put(SKIN_NAMESPACE + id + ".png", false);
                 }
 
+
+                boolean thirdPartyCapeWaiting = false;
                 //check for cape recolor
                 int capeChoice1 = choiceBoxChoices[4];
                 // custom cape data experiment
@@ -466,11 +565,15 @@ public class ETFPlayerSkinUtils {
                             // minecraft capes mod
                             //https://minecraftcapes.net/profile/fd22e573178c415a94fee476b328abfd/cape/
                             downloadImageFromUrl(player, "https://minecraftcapes.net/profile/" + player.getUuidAsString().replace("-", "") + "/cape/", "THIRD_PARTY_CAPE");
+                            thirdPartyCapeWaiting = true;
+                            UUID_PLAYER_TPC_SKIN_IMAGE_HOLDER.put(id, skin);
                         }
                         case 3 -> {
                             cape = null;
                             //  https://optifine.net/capes/Benjamin.png
                             downloadImageFromUrl(player, "https://optifine.net/capes/" + player.getName().getString() + ".png", "THIRD_PARTY_CAPE");
+                            thirdPartyCapeWaiting = true;
+                            UUID_PLAYER_TPC_SKIN_IMAGE_HOLDER.put(id, skin);
                         }
                         case 666 -> cape = ETFUtils.getNativeImageFromID(new Identifier("etf:textures/capes/error.png"));
                         default -> {
@@ -524,6 +627,8 @@ public class ETFPlayerSkinUtils {
                             if (checkCape != null) {
                                 ETFUtils.registerNativeImageToIdentifier(checkCape, SKIN_NAMESPACE + id + "_cape_enchant.png");
                             }
+                        } else if (thirdPartyCapeWaiting) {
+                            UUID_PLAYER_ENCHANT_TPC_HOLDER.put(id, boxChosenBounds);
                         }
                     } else {
                         UUID_PLAYER_HAS_ENCHANT_SKIN.put(id, false);
@@ -558,6 +663,8 @@ public class ETFPlayerSkinUtils {
                             if (checkCape != null) {
                                 ETFUtils.registerNativeImageToIdentifier(checkCape, SKIN_NAMESPACE + id + "_cape_e.png");
                             }
+                        } else if (thirdPartyCapeWaiting) {
+                            UUID_PLAYER_EMISSIVE_TPC_HOLDER.put(id, boxChosenBounds);
                         }
                     } else {
                         UUID_PLAYER_HAS_EMISSIVE_SKIN.put(id, false);
