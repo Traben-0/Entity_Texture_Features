@@ -1,8 +1,6 @@
 package traben.entity_texture_features.mixin.client.entity.blockEntity;
 
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
-import net.minecraft.client.block.ChestAnimationProgress;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -30,7 +28,7 @@ import java.util.UUID;
 import static traben.entity_texture_features.client.ETFClient.ETFConfigData;
 
 @Mixin(ShulkerBoxBlockEntityRenderer.class)
-public abstract class MixinShulkerBoxBlockEntityRenderer<T extends BlockEntity & ChestAnimationProgress> implements BlockEntityRenderer<T> {
+public abstract class MixinShulkerBoxBlockEntityRenderer implements BlockEntityRenderer<ShulkerBoxBlockEntity> {
 
     @Final
     @Shadow

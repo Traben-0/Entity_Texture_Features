@@ -5,9 +5,9 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.DoubleBlockProperties;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.LidOpenable;
 import net.minecraft.block.enums.ChestType;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.block.ChestAnimationProgress;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
@@ -35,7 +35,7 @@ import java.util.UUID;
 import static traben.entity_texture_features.client.ETFClient.ETFConfigData;
 
 @Mixin(ChestBlockEntityRenderer.class)
-public abstract class MixinChestBlockEntityRenderer<T extends BlockEntity & ChestAnimationProgress> implements BlockEntityRenderer<T> {
+public abstract class MixinChestBlockEntityRenderer<T extends BlockEntity & LidOpenable> implements BlockEntityRenderer<T> {
 
     @Final
     @Shadow
