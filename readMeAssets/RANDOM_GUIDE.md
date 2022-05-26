@@ -4,50 +4,51 @@
 ---
 ### This mod is completely Optifine format compatible!!!!
 
-- It supports all optifine properties present in the link below including Biomes, Names, Heights, etc... 
-*(ETF also adds some of its own)*
-- you can directly use
-  the [Optifine Random Entities Format Guide](https://github.com/sp614x/optifine/blob/master/OptiFineDoc/doc/random_entities.properties)
-  or any optifine random mob resource-packs, and it will work.
-- This mod also adds a few extra features that Optifine does not have, 
-Most notably you can put everything in the default *"minecraft/textures/entity"* or the *etf/random* directory as well as Optifine's directories
+- ETF supports all optifine random entity texture properties including Biomes, Names, Heights, etc...
+  *(ETF also adds some of its own)*
+- For documentation see the [ETF random entities format doc](random_entities.properties)
+- For examples try any optifine or ETF random mob resource-packs, and it will work.
+- This mod also adds a few extra features that Optifine does not have, Most notably you can put everything in the
+  default *"minecraft/textures/entity"* or the *etf/random* directory as well as Optifine's directories
 
 ---
 ## Guide & how it works:
-- Random textures are applied to each mob on the client-side  
-*(based on it's UUID, meaning that mob will always have the same random texture unless texture packs are 
-changed, this will even be the same between players if they have the same packs.)*
 
-- Random textures **must** be in one of the following folders in the resource-pack, and will be checked from the top directory first, only using the last directory if none of the others are used
+- Random textures are applied to each mob on the client-side  
+  *(based on it's UUID, meaning that mob will always have the same random texture unless texture packs are changed, this
+  will even be the same between players if they have the same packs.)*
+
+- Random textures **must** be in one of the following folders in the resource-pack, and will be checked from the top
+  directory first, only using the last directory if none of the others are used
   - the ETF override directory *"etf/random/entity"*
-  - the Optifine Random directory *"optifine/random/entity"*
+  - the Optifine Random directory *"optifine/random/entity"* ****Highly Recommended***
   - the Optifine legacy directory *"optifine/mob"*
   - the Vanilla directory *"minecraft/textures/entity"*
-  
-- the random textures **must** be named like *"TextureName#.png"* with # 
-being any number that **must** start from 2,  
-*(if 1.png does not exist then calling 1 in the properties will use the vanilla
-texture, the vanilla texture can also be manually called by using the number 0 in the properties)*
+
+- the random textures **must** be named like *"TextureName#.png"* with # being any number that **must** start from 2,  
+  *(if 1.png does not exist then calling 1 in the properties will use the vanilla texture, the vanilla texture can also
+  be manually called by using the number 0 in the properties)*
 - A *"TextureName.properties"* file can be placed alongside these random textures to determine special cases for
   different random textures to be selected, this properties file must support
-  the [optifine format](https://github.com/sp614x/optifine/blob/master/OptiFineDoc/doc/random_entities.properties)
+  the [ETF / Optifine format](random_entities.properties)
   and if one isn't present the game will instead pick randomly from the available random textures present.   
   *(Note. when randomly picked like this, the random textures must contain numbers in sequence from 2 -> however many
   there are, if there are any gaps then textures after the gap will be ignored)*
-- The properties file functions just as it does
-  with [optifine]((https://github.com/sp614x/optifine/blob/master/OptiFineDoc/doc/random_entities.properties))
-  and if a specific entity does not match any of the conditions in the properties file it will default to the vanilla
-  texture.
-- This mod also adds two texture Properties "blocks" & "teams"
-- The "blocks" property works exactly the same as the "biomes" property
-  except it will allow you to set the texture of the entity based on the block it spawned on 
-*(or first rendered on)* instead of the Biome, an example of the "blocks" property follows:  
+- The properties file functions just as it does with Optifine and if a specific entity does not match any of the
+  conditions in the properties file it will default to the vanilla texture.
+- This mod also adds a few texture Properties "names", "blocks" & "teams", as well as extending "colors" and other minor
+  tweaks
+- The "names" property works exactly the same as the "name" property except it will allow you to set multiple names for
+  a condition a little easier
+- The "blocks" property works exactly the same as the "biomes" property except it will allow you to set the texture of
+  the entity based on the block it spawned on
+  *(or first rendered on)* instead of the Biome, an example of the "blocks" property follows:  
   *blocks.1= stone !bedrock minecraft:stone mod_name:marble*
-- The "teams" Property works exactly the same as the "names" property
-except it will allow you to set the texture of the entity based on the scoreboard team it is in
-*(this will be useful for data-pack creators or map-makers who do not want the mob to display a custom name)*    
-an example of the "teams" property follows:  
-*teams.1= !red_team "Blue Team" blue_team*
+- The "teams" Property works exactly the same as the "names" property except it will allow you to set the texture of the
+  entity based on the scoreboard team it is in
+  *(this will be useful for data-pack creators or map-makers who do not want the mob to display a custom name)*    
+  an example of the "teams" property follows:  
+  *teams.1= !red_team "Blue Team" blue_team*
 - Additionally, the Names & Teams property support grouping names that have spaces within double quotes e.g "John Smith"
 
 ---
@@ -138,8 +139,22 @@ of the respective mooshroom.
 </td>
 <td>
 
-- Shulkers will only use the base un-coloured shulker.properties for custom settings (no shulker_black.properties), the
-  other coloured textures will still apply as the default to those entities
+- Shulkers **will only** use the base un-coloured shulker.properties for custom settings (**not**
+  shulker_black.properties), the other coloured textures will still apply as the default to those entities when spawned
+  via commands
+- Shulker Boxes **WILL** use *shulker.properties* **OR** *shulker_black.properties* depending on the shulker box colour
+- if you would like to prevent wild shulkers from using custom textures intended for shulker boxes try using the
+  following at the start of shulker.properties
+
+<table><tr><td>
+skins.1=1<br>
+biomes.1=the_end<br>
+</td></tr></table>
+
+- this should make all shulkers and shulker boxes in "the end" appear as default, you can find an example in the example
+  ETF_vanilla resourcepack.
+- Note: Most Block Entity optimization fabric mods like Enhanced Block Entities, will disable this feature in favour of
+  faster rendering
 
 </td>
 </tr>

@@ -4,8 +4,11 @@ package traben.entity_texture_features.client;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import net.minecraft.MinecraftVersion;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.passive.VillagerEntity;
-import net.minecraft.entity.passive.WolfEntity;
+import net.minecraft.entity.mob.PhantomEntity;
+import net.minecraft.entity.mob.ShulkerEntity;
+import net.minecraft.entity.mob.SlimeEntity;
+import net.minecraft.entity.passive.*;
+import net.minecraft.util.DyeColor;
 import traben.entity_texture_features.client.utils.ETFUtils;
 
 import java.util.ArrayList;
@@ -23,7 +26,7 @@ public class ETFTexturePropertyCase {
     private final Integer[] heights;
     private final String[] names;//add
     private final String[] professions;
-    private final String[] collarColours;//add
+    private final String[] colors;//add
     private final int baby; // 0 1 2 - dont true false
     private final int weather; //0,1,2,3 - no clear rain thunder
     private final String[] health;
@@ -31,6 +34,7 @@ public class ETFTexturePropertyCase {
     private final String[] daytime;
     private final String[] blocks;
     private final String[] teams;
+    private final Integer[] sizes;
 
     //whether case should be ignored by updates
 
@@ -49,14 +53,15 @@ public class ETFTexturePropertyCase {
                                   String[] daytimeX,
                                   String[] blocksX,
                                   String[] teamsX,
-                                  int propNumber
+                                  int propNumber,
+                                  Integer[] sizeX
     ) {
 
         biomes = biomesX != null ? biomesX : new String[0];
         heights = heightsX != null ? heightsX : new Integer[0];
         names = namesX != null ? namesX : new String[0];
         professions = professionsX != null ? professionsX : new String[0];
-        collarColours = collarColoursX != null ? collarColoursX : new String[0];
+        colors = collarColoursX != null ? collarColoursX : new String[0];
         baby = baby012;
         weather = weather0123;
         health = healthX != null ? healthX : new String[0];
@@ -65,6 +70,7 @@ public class ETFTexturePropertyCase {
         blocks = blocksX != null ? blocksX : new String[0];
         teams = teamsX != null ? teamsX : new String[0];
         propertyNumber = propNumber;
+        sizes = sizeX;
 
         if (weightsX == null) {
             weightsX = new Integer[0];
@@ -117,7 +123,7 @@ public class ETFTexturePropertyCase {
                 && names.length == 0
                 && heights.length == 0
                 && professions.length == 0
-                && collarColours.length == 0
+                && colors.length == 0
                 && baby == 0
                 && weather == 0
                 && health.length == 0
@@ -125,6 +131,7 @@ public class ETFTexturePropertyCase {
                 && daytime.length == 0
                 && blocks.length == 0
                 && teams.length == 0
+                && sizes.length == 0
         ) {
             return true;
         }
@@ -248,34 +255,42 @@ public class ETFTexturePropertyCase {
         }
         if (allBoolean && professions.length > 0 && entity instanceof VillagerEntity) {
             wasTestedByUpdateable = true;
-            String entityProfession = ((VillagerEntity) entity).getVillagerData().getProfession().toString().toLowerCase();
+            String entityProfession = ((VillagerEntity) entity).getVillagerData().getProfession().toString().toLowerCase().replace("minecraft:", "");
             int entityProfessionLevel = ((VillagerEntity) entity).getVillagerData().getLevel();
             boolean check = false;
             for (String str :
                     professions) {
                 //str could be   librarian:1,3-4
-                str = str.toLowerCase();
+                str = str.toLowerCase().replaceAll("\s*", "").replace("minecraft:", "");
+                //could be   "minecraft:cleric:1-4
                 if (str.contains(":")) {
-                    String[] data = str.split(":");
+                    //splits at seperator for profession level check only
+                    String[] data = str.split(":[0-9]");
                     if (entityProfession.contains(data[0]) || data[0].contains(entityProfession)) {
                         //has profession now check level
-                        String[] levels = data[1].split(",");
-                        ArrayList<Integer> levelData = new ArrayList<>();
-                        for (String lvls :
-                                levels) {
-                            if (lvls.contains("-")) {
-                                levelData.addAll(Arrays.asList(ETFUtils.getIntRange(lvls)));
-                            } else {
-                                levelData.add(Integer.parseInt(lvls.replaceAll("[^0-9]", "")));
+                        if (data.length == 2) {
+                            String[] levels = data[1].split(",");
+                            ArrayList<Integer> levelData = new ArrayList<>();
+                            for (String lvls :
+                                    levels) {
+                                if (lvls.contains("-")) {
+                                    levelData.addAll(Arrays.asList(ETFUtils.getIntRange(lvls)));
+                                } else {
+                                    levelData.add(Integer.parseInt(lvls.replaceAll("[^0-9]", "")));
+                                }
                             }
-                        }
-                        //now check levels
-                        for (Integer i :
-                                levelData) {
-                            if (i == entityProfessionLevel) {
-                                check = true;
-                                break;
+                            //now check levels
+                            for (Integer i :
+                                    levelData) {
+                                if (i == entityProfessionLevel) {
+                                    check = true;
+                                    break;
+                                }
                             }
+                        } else {
+                            //no levels just send profession match confirmation
+                            check = true;
+                            break;
                         }
                     }
                 } else {
@@ -287,14 +302,47 @@ public class ETFTexturePropertyCase {
             }
             allBoolean = check;
         }
-        if (allBoolean && collarColours.length > 0 && entity instanceof WolfEntity) {
+
+        if (allBoolean && colors.length > 0) {
+
             wasTestedByUpdateable = true;
-            String entityCollar = ((WolfEntity) entity).getCollarColor().asString().toLowerCase();
+            String entityColor;
+            if (entity instanceof WolfEntity wolf) {
+                entityColor = wolf.getCollarColor().asString().toLowerCase();
+            } else if (entity instanceof SheepEntity sheep) {
+                entityColor = sheep.getColor().asString().toLowerCase();
+            } else if (entity instanceof LlamaEntity llama) {
+                DyeColor str = llama.getCarpetColor();
+                if (str != null) {
+                    entityColor = str.asString().toLowerCase();
+                } else {
+                    entityColor = "NOT_A_COLOR";
+                }
+            } else if (entity instanceof CatEntity cat) {
+                entityColor = cat.getCollarColor().asString().toLowerCase();
+            } else if (entity instanceof ShulkerEntity shulker) {
+                DyeColor str = shulker.getColor();
+                if (str != null) {
+                    entityColor = str.asString().toLowerCase();
+                } else {
+                    entityColor = "NOT_A_COLOR";
+                }
+            } else if (entity instanceof TropicalFishEntity fishy) {
+                DyeColor str = TropicalFishEntity.getBaseDyeColor(fishy.getVariant());
+                if (str != null) {
+                    entityColor = str.asString().toLowerCase();
+                } else {
+                    entityColor = "NOT_A_COLOR";
+                }
+            } else {
+                entityColor = "NOT_A_COLOR";
+            }
+
             boolean check = false;
             for (String i :
-                    collarColours) {
+                    colors) {
                 i = i.toLowerCase();
-                if (i.contains(entityCollar) || entityCollar.contains(i)) {
+                if (i.contains(entityColor) || entityColor.contains(i)) {
                     check = true;
                     break;
                 }
@@ -393,7 +441,8 @@ public class ETFTexturePropertyCase {
             String entityOnBlock = entity.world.getBlockState(entity.getBlockPos().down()).toString()
                     .replaceFirst("minecraft:", "")
                     .replaceFirst("Block\\{", "")
-                    .replaceFirst("}", "");
+                    //will print with
+                    .replaceFirst("}.*", "");
             if (isUpdate && ETFConfigData.restrictBlock) {
                 entityOnBlock = UUID_ORIGINAL_NON_UPDATE_PROPERTY_STRINGS.get(entity.getUuid())[2].trim();
             }
@@ -443,6 +492,26 @@ public class ETFTexturePropertyCase {
             } else {
                 allBoolean = false;
             }
+        }
+        if (allBoolean && sizes.length > 0 &&
+                (entity instanceof SlimeEntity || entity instanceof PhantomEntity)) {
+            int size;
+            if (entity instanceof SlimeEntity slime) {
+                //magma cube too
+                size = slime.getSize();
+            } else {
+                size = ((PhantomEntity) entity).getPhantomSize();
+            }
+
+            boolean check = false;
+            for (int i :
+                    sizes) {
+                if (i == size) {
+                    check = true;
+                    break;
+                }
+            }
+            allBoolean = check;
         }
 
 

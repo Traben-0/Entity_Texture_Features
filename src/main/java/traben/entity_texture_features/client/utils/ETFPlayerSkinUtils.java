@@ -99,23 +99,6 @@ public class ETFPlayerSkinUtils {
         URL_HTTP_TO_DISCONNECT_2.clear();
     }
 
-    public static void forceResetAllDataOfPlayerUUID(UUID id) {
-        UUID_NEXT_BLINK_TIME.removeLong(id);
-        UUID_PLAYER_HAS_FEATURES.removeBoolean(id);
-        UUID_PLAYER_HAS_ENCHANT_SKIN.removeBoolean(id);
-        UUID_PLAYER_HAS_EMISSIVE_SKIN.removeBoolean(id);
-        UUID_PLAYER_TRANSPARENT_SKIN_ID.remove(id);
-        UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.removeBoolean(id);
-        UUID_PLAYER_HAS_COAT.removeBoolean(id);
-        UUID_PLAYER_HAS_FAT_COAT.removeBoolean(id);
-        UUID_PLAYER_HAS_VILLAGER_NOSE.removeBoolean(id);
-        UUID_PLAYER_HAS_CAPE.removeBoolean(id);
-        UUID_PLAYER_HAS_CUSTOM_CAPE.removeBoolean(id);
-        UUID_PLAYER_LAST_SKIN_CHECK.removeLong(id);
-        UUID_PLAYER_LAST_SKIN_CHECK_COUNT.removeInt(id);
-    }
-
-
     public static void checkPlayerForSkinFeatures(UUID id, PlayerEntity player) {
         //if on an enemy team option to disable skin features loading
         if (ETFConfigData.skinFeaturesEnabled

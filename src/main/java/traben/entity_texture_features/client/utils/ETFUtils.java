@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.Model;
@@ -22,6 +23,7 @@ import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import traben.entity_texture_features.client.ETFClient;
@@ -134,7 +136,7 @@ public class ETFUtils {
 
 
     public static void resetAllETFEntityData() {
-        logMessage("Reloading...", false);
+        //logMessage("Clearing / Reloading ETF data...", false);
         PATH_TOTAL_TRUE_RANDOM.clear();
 
         KNOWN_UUID_LIST.clear();
@@ -174,6 +176,7 @@ public class ETFUtils {
         PATH_EMISSIVE_TEXTURE_IDENTIFIER.clear();
         setEmissiveSuffix();
 
+
         PATH_IS_EXISTING_FEATURE.clear();
 
         mooshroomRedCustomShroom = 0;
@@ -184,6 +187,16 @@ public class ETFUtils {
         PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION.clear();
 
         registerNativeImageToIdentifier(emptyNativeImage(1, 1), "etf:blank.png");
+
+        //if incompatabilities are detected and are not set to be ignored by config then set conditions
+        if (!ETFConfigData.ignoreConfigWarnings) {
+            if (ETFConfigData.skinFeaturesEnabled && FabricLoader.getInstance().isModLoaded("figura")) {
+                ETFUtils.logWarn(new TranslatableText("config." + ETFClient.MOD_ID + ".figura_warn.text").getString(), false);
+                ETFConfigData.skinFeaturesEnabled = false;
+                ETFUtils.saveConfig();
+            }
+            //more compat changes when required
+        }
     }
 
     public static void resetSingleSuffixData(UUID id) {
@@ -423,7 +436,7 @@ public class ETFUtils {
                     Integer[] weights = {};
                     String[] biomes = {};
                     Integer[] heights = {};
-                    String[] names = {};
+                    ArrayList<String> names = new ArrayList<>();
                     String[] professions = {};
                     String[] collarColours = {};
                     int baby = 0; // 0 1 2 - dont true false
@@ -433,6 +446,7 @@ public class ETFUtils {
                     String[] daytime = {};
                     String[] blocks = {};
                     String[] teams = {};
+                    Integer[] sizes = {};
 
                     if (props.containsKey("skins." + num) || props.containsKey("textures." + num)) {
                         String dataFromProps = props.containsKey("skins." + num) ? props.getProperty("skins." + num).trim() : props.getProperty("textures." + num).trim();
@@ -487,6 +501,7 @@ public class ETFUtils {
                         ArrayList<Integer> heightNumbers = new ArrayList<>();
                         for (String data :
                                 heightData) {
+                            data = data.replaceAll("\\(", "").replaceAll("\\)", "");
                             //check if range
                             data = data.trim();
                             if (!data.replaceAll("[^0-9]", "").isEmpty()) {
@@ -500,31 +515,35 @@ public class ETFUtils {
                         heights = heightNumbers.toArray(new Integer[0]);
                     }
 
-                    if (props.containsKey("names." + num) || props.containsKey("name." + num)) {
-                        String dataFromProps = props.containsKey("name." + num) ? props.getProperty("name." + num).trim() : props.getProperty("names." + num).trim();
+                    if (props.containsKey("names." + num)) {
+                        String dataFromProps = props.getProperty("names." + num).trim();
                         if (dataFromProps.contains("regex:") || dataFromProps.contains("pattern:")) {
-                            names = new String[]{dataFromProps};
+                            names.add(dataFromProps);
                         } else {
                             //names = dataFromProps.split("\s+");
                             //allow    "multiple names" among "other"
-                            List<String> list = new ArrayList<>();
+                            //List<String> list = new ArrayList<>();
                             //add the full line as the first name option to allow for simple multiple names
                             //incase someone just writes   names.1=john smith
                             //instead of                   names.1="john smith"
-                            list.add(dataFromProps);
+                            names.add(dataFromProps);
 
                             Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(dataFromProps);
                             while (m.find()) {
-                                list.add(m.group(1).replace("\"", "").trim());
+                                names.add(m.group(1).replace("\"", "").trim());
                             }
-                            names = list.toArray(new String[0]);
+                            //names.addAll(list);
                         }
+                    }
+                    if (props.containsKey("name." + num)) {
+                        String dataFromProps = props.getProperty("name." + num).trim();
+                        names.add(dataFromProps);
                     }
                     if (props.containsKey("professions." + num)) {
                         professions = props.getProperty("professions." + num).trim().split("\s+");
                     }
-                    if (props.containsKey("collarColors." + num) || props.containsKey("collarColours." + num)) {
-                        collarColours = props.containsKey("collarColors." + num) ? props.getProperty("collarColors." + num).trim().split("\s+") : props.getProperty("collarColours." + num).trim().split("\s+");
+                    if (props.containsKey("collarColors." + num) || props.containsKey("colors." + num)) {
+                        collarColours = props.containsKey("collarColors." + num) ? props.getProperty("collarColors." + num).trim().split("\s+") : props.getProperty("colors." + num).trim().split("\s+");
                     }
                     if (props.containsKey("baby." + num)) {
                         String dataFromProps = props.getProperty("baby." + num).trim();
@@ -588,8 +607,31 @@ public class ETFUtils {
                         teams = list.toArray(new String[0]);
                     }
 
+                    if (props.containsKey("sizes." + num)) {
+                        String dataFromProps = props.getProperty("sizes." + num).trim();
+                        String[] sizeData = dataFromProps.split("\s+");
+                        ArrayList<Integer> sizeNumbers = new ArrayList<>();
+                        for (String data :
+                                sizeData) {
+                            //check if range
+                            data = data.trim();
+                            if (!data.replaceAll("[^0-9]", "").isEmpty()) {
+                                if (data.contains("-")) {
+                                    sizeNumbers.addAll(Arrays.asList(getIntRange(data)));
+                                } else {
+                                    sizeNumbers.add(Integer.parseInt(data.replaceAll("[^0-9]", "")));
+                                }
+                            }
+                        }
+                        sizes = sizeNumbers.toArray(new Integer[0]);
+                    }
+
+                    //array faster to use
+                    //list easier to build
+                    String[] namesArray = names.toArray(new String[0]);
+
                     if (suffixes.length != 0) {
-                        allCasesForTexture.add(new ETFTexturePropertyCase(suffixes, weights, biomes, heights, names, professions, collarColours, baby, weather, health, moon, daytime, blocks, teams, num));
+                        allCasesForTexture.add(new ETFTexturePropertyCase(suffixes, weights, biomes, heights, namesArray, professions, collarColours, baby, weather, health, moon, daytime, blocks, teams, num, sizes));
                     }
                 }
                 //for (ETFTexturePropertyCase t:
@@ -726,6 +768,10 @@ public class ETFUtils {
     }
 
     //improvements to logging by @Maximum#8760
+    public static void logMessage(Object obj) {
+        logMessage(obj, false);
+    }
+
     public static void logMessage(Object obj, boolean inChat) {
         if (inChat) {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
@@ -740,6 +786,10 @@ public class ETFUtils {
     }
 
     //improvements to logging by @Maximum#8760
+    public static void logWarn(Object obj) {
+        logWarn(obj, false);
+    }
+
     public static void logWarn(Object obj, boolean inChat) {
         if (inChat) {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
@@ -754,6 +804,10 @@ public class ETFUtils {
     }
 
     //improvements to logging by @Maximum#8760
+    public static void logError(Object obj) {
+        logError(obj, false);
+    }
+
     public static void logError(Object obj, boolean inChat) {
         if (inChat) {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
@@ -876,32 +930,46 @@ public class ETFUtils {
 
     }
 
-
-    public static void setEmissiveSuffix() {
+    //this requires the game to be more fully load and won't always happen properly on initial boot
+    private static void setEmissiveSuffix() {
         try {
-            Properties suffix = readProperties("optifine/emissive.properties");
-            if (suffix.isEmpty()) {
-                suffix = readProperties("textures/emissive.properties");
+            List<Properties> props = new ArrayList<>();
+            String[] paths = {"optifine/emissive.properties", "textures/emissive.properties", "etf/emissive.properties"};
+            for (String path :
+                    paths) {
+                Properties prop = readProperties(path);
+                if (prop != null)
+                    props.add(prop);
             }
-            Set<String> builder = new HashSet<>();
-            if (suffix.contains("entities.suffix.emissive")) {
-                builder.add(suffix.getProperty("entities.suffix.emissive"));
-            }
-            if (suffix.contains("suffix.emissive")) {
-                builder.add(suffix.getProperty("suffix.emissive"));
+
+            ObjectOpenHashSet<String> builder = new ObjectOpenHashSet<>();
+            for (Properties prop :
+                    props) {
+                //not an optifine property that I know of but this has come up in a few packs, so I am supporting it
+                if (prop.containsKey("entities.suffix.emissive")) {
+                    builder.add(prop.getProperty("entities.suffix.emissive"));
+                }
+                if (prop.containsKey("suffix.emissive")) {
+                    builder.add(prop.getProperty("suffix.emissive"));
+                }
             }
             if (ETFConfigData.alwaysCheckVanillaEmissiveSuffix) {
                 builder.add("_e");
             }
+
+
             emissiveSuffixes = builder.toArray(new String[0]);
             if (emissiveSuffixes.length == 0) {
-                logMessage("default emissive suffix '_e' used", false);
+                logMessage("no emissive suffixes found: default emissive suffix '_e' used");
                 emissiveSuffixes = new String[]{"_e"};
+            } else {
+                logMessage("emissive suffixes loaded: " + Arrays.toString(emissiveSuffixes));
             }
         } catch (Exception e) {
-            logMessage("default emissive suffix '_e' used", false);
+            logError("emissive suffixes could not be read: default emissive suffix '_e' used");
             emissiveSuffixes = new String[]{"_e"};
         }
+
     }
 
     public static void saveConfig() {
@@ -921,20 +989,24 @@ public class ETFUtils {
     }
 
 
-    static NativeImage emptyNativeImage() {
+    public static NativeImage emptyNativeImage() {
         return emptyNativeImage(64, 64);
     }
 
-    static NativeImage emptyNativeImage(int Width, int Height) {
+    public static NativeImage emptyNativeImage(int Width, int Height) {
         NativeImage empty = new NativeImage(Width, Height, false);
         empty.fillRect(0, 0, Width, Height, 0);
         return empty;
     }
 
-    static void registerNativeImageToIdentifier(NativeImage img, String identifierPath) {
+    public static void registerNativeImageToIdentifier(NativeImage img, String identifierPath) {
+        registerNativeImageToIdentifier(img, new Identifier(identifierPath));
+    }
+
+    public static void registerNativeImageToIdentifier(NativeImage img, Identifier identifier) {
         TextureManager textureManager = MinecraftClient.getInstance().getTextureManager();
         NativeImageBackedTexture bob = new NativeImageBackedTexture(img);
-        textureManager.registerTexture(new Identifier(identifierPath), bob);
+        textureManager.registerTexture(identifier, bob);
 
     }
 
@@ -1052,6 +1124,7 @@ public class ETFUtils {
     //no update logic as that will be kept to living entity renderer to reset only once per UUID
     public static Identifier generalProcessAndReturnAlteredTexture(Identifier texture, Entity entity) {
         if (entity == null) return texture;
+        if (entity.getWorld() == null) return texture;
         UUID id = entity.getUuid();
         if (ETFConfigData.enableCustomTextures) {
 
@@ -1173,6 +1246,7 @@ public class ETFUtils {
     }
 
     public static void generalEmissiveRenderModel(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, Identifier texture, Model model) {
+
         generalEmissiveRenderModel(matrixStack, vertexConsumerProvider, texture.toString(), model);
     }
 
@@ -1244,13 +1318,15 @@ public class ETFUtils {
 //        }
 //    }
 
-
-    public static void generalEmissiveRenderPart(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, Identifier texture, ModelPart model, boolean isBlockEntity) {
-        generalEmissiveRenderPart(matrixStack, vertexConsumerProvider, texture.toString(), model, isBlockEntity);
+    public static void generalEmissiveRenderPart(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, Identifier texture, ModelPart modelPart, boolean isBlockEntity) {
+        generalEmissiveRenderPart(matrixStack, vertexConsumerProvider, texture.toString(), modelPart, isBlockEntity);
     }
 
     //will set and render emissive texture for any texture and model
     public static void generalEmissiveRenderPart(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, String fileString, ModelPart modelPart, boolean isBlockEntity) {
+        if (fileString.contains("etf_iris_patched_file.png")) {
+            fileString = fileString.replace("etf_iris_patched_file.png", "");
+        }
         VertexConsumer textureVert = generalEmissiveGetVertexConsumer(fileString, vertexConsumerProvider, isBlockEntity);
         if (textureVert != null) {
             if (IrisCompat.isShaderPackInUse()) {
@@ -1260,6 +1336,7 @@ public class ETFUtils {
                     replaceTextureMinusEmissive(fileString);
                 }
             }
+            //System.out.println("rendering="+fileString);
             modelPart.render(matrixStack, textureVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV);
         }
     }
@@ -1274,6 +1351,7 @@ public class ETFUtils {
                 for (String suffix1 :
                         emissiveSuffixes) {
                     fileName_e = new Identifier(fileString.replace(".png", suffix1 + ".png"));
+                    //System.out.println("tried="+fileName_e);
                     if (isExistingNativeImageFile(fileName_e)) {
                         PATH_EMISSIVE_TEXTURE_IDENTIFIER.put(fileString, fileName_e);
                         break;
@@ -1306,6 +1384,5 @@ public class ETFUtils {
         }
         return null;
     }
-
 
 }

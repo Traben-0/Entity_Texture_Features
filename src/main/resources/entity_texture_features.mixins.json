@@ -13,6 +13,7 @@
     "client.entity.blockEntity.MixinChestBlockEntityRenderer",
     "client.entity.blockEntity.MixinEnchantingTableBlockEntityRenderer",
     "client.entity.blockEntity.MixinLecternBlockEntityRenderer",
+    "client.entity.blockEntity.MixinShulkerBoxBlockEntityRenderer",
     "client.entity.featureRenderers.MixinArmorFeatureRenderer",
     "client.entity.featureRenderers.MixinCapeFeatureRenderer",
     "client.entity.featureRenderers.MixinDrownedOverlayFeatureRenderer",
@@ -32,7 +33,7 @@
     "client.entity.misc.MixinTridentEntity",
     "client.entity.misc.MixinTridentEntityRenderer",
     "client.textureUpdaters.MixinPlayerEntity",
-    "client.textureUpdaters.MixinReloadableResourceManagerImpl"
+    "client.textureUpdaters.MixinSimpleResourceReload"
   ],
   "mixins": [
   ],

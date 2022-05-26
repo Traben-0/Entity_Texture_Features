@@ -18,6 +18,7 @@ import static traben.entity_texture_features.client.ETFClient.ETFConfigData;
 
 // config translation rework done by @Maximum#8760
 public class ETFConfigScreen {
+
     public Screen getConfigScreen(Screen parent, boolean isTransparent) {
         // Return the screen here with the one you created from Cloth Config Builder
         ConfigBuilder builder = ConfigBuilder.create()
@@ -39,44 +40,45 @@ public class ETFConfigScreen {
             shownWarning = true;
             warningCount++;
             if (!ETFConfigData.ignoreConfigWarnings) {
-                ETFUtils.logWarn(new TranslatableText("config." + ETFClient.MOD_ID + ".figura_warn.text").toString(), false);
+
                 category.addEntry(entryBuilder.startTextDescription(new TranslatableText("config." + ETFClient.MOD_ID + ".figura_warn.text"))
-                        .setColor(new Color(240, 195, 15).getRGB())
+                        .setColor(new Color(255, 102, 102).getRGB())
                         .build()); // Builds the option entry for cloth config
-                ETFConfigData.skinFeaturesEnabled = false;
-                ETFUtils.saveConfig();
             }
         }
-        if (FabricLoader.getInstance().isModLoaded("skinlayers") && ETFConfigData.enableEmissiveTextures && ETFConfigData.skinFeaturesEnabled) {
+        if (FabricLoader.getInstance().isModLoaded("skinlayers") && ETFConfigData.skinFeaturesEnabled) {
             shownWarning = true;
             warningCount++;
             if (!ETFConfigData.ignoreConfigWarnings) {
-                ETFUtils.logWarn(new TranslatableText("config." + ETFClient.MOD_ID + ".skinlayers_warn.text").toString(), false);
+                ETFUtils.logWarn(new TranslatableText("config." + ETFClient.MOD_ID + ".skinlayers_warn.text").getString(), false);
                 category.addEntry(entryBuilder.startTextDescription(new TranslatableText("config." + ETFClient.MOD_ID + ".skinlayers_warn.text"))
                         .setColor(new Color(220, 175, 15).getRGB())
                         .build()); // Builds the option entry for cloth config
             }
         }
+        if (FabricLoader.getInstance().isModLoaded("enhancedblockentities")) {
+            shownWarning = true;
+            warningCount++;
+            if (!ETFConfigData.ignoreConfigWarnings) {
+                ETFUtils.logWarn(new TranslatableText("config." + ETFClient.MOD_ID + ".ebe_warn.text").getString(), false);
+                category.addEntry(entryBuilder.startTextDescription(new TranslatableText("config." + ETFClient.MOD_ID + ".ebe_warn.text"))
+                        .setColor(new Color(240, 175, 15).getRGB())
+                        .build()); // Builds the option entry for cloth config
+            }
+        }
         if (shownWarning && ETFConfigData.ignoreConfigWarnings) {
-            ETFUtils.logMessage(warningCount + " warnings have been ignored", false);
+            ETFUtils.logMessage(warningCount + " warnings have been ignored.", false);
         }
 
         //allow users to bypass warning if they want to
         //(this only appears if enabled or if a warning that disables something is present)
         if (shownWarning || ETFConfigData.ignoreConfigWarnings) {
-            category.addEntry(entryBuilder.startBooleanToggle(Text.of(new TranslatableText("config." + ETFClient.MOD_ID + ".ignore_warnings.title") + " -> [" + warningCount + "]"), ETFConfigData.ignoreConfigWarnings)
+            category.addEntry(entryBuilder.startBooleanToggle(Text.of(new TranslatableText("config." + ETFClient.MOD_ID + ".ignore_warnings.title").getString() + " -> [" + warningCount + "]"), ETFConfigData.ignoreConfigWarnings)
                     .setDefaultValue(false) // Recommended: Used when user click "Reset"
-                    .setTooltip(Text.of(new TranslatableText("config." + ETFClient.MOD_ID + ".ignore_warnings.tooltip").toString() + warningCount + ".")) // Optional: Shown when the user hover over this option
+                    .setTooltip(Text.of(new TranslatableText("config." + ETFClient.MOD_ID + ".ignore_warnings.tooltip").getString() + warningCount + ".")) // Optional: Shown when the user hover over this option
                     .setSaveConsumer(newValue -> ETFConfigData.ignoreConfigWarnings = newValue) // Recommended: Called when user save the config
                     .build()); // Builds the option entry for cloth config
         }
-
-
-        category.addEntry(entryBuilder.startBooleanToggle(new TranslatableText("config." + ETFClient.MOD_ID + ".allow_illegal_texture_paths.title"), ETFConfigData.allowIllegalTexturePaths)
-                .setDefaultValue(false) // Recommended: Used when user click "Reset"
-                .setTooltip(new TranslatableText("config." + ETFClient.MOD_ID + ".allow_illegal_texture_paths.tooltip")) // Optional: Shown when the user hover over this option
-                .setSaveConsumer(newValue -> ETFConfigData.allowIllegalTexturePaths = newValue) // Recommended: Called when user save the config
-                .build()); // Builds the option entry for cloth config
 
         // random settings
         SubCategoryBuilder randomSettings = entryBuilder.startSubCategory(new TranslatableText("config." + ETFClient.MOD_ID + ".random_settings.title"));
@@ -95,6 +97,12 @@ public class ETFConfigScreen {
                 .setTooltip(new TranslatableText("config." + ETFClient.MOD_ID + ".restrict_update_properties.tooltip")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.restrictUpdateProperties = newValue) // Recommended: Called when user save the config
                 .build());
+
+        randomSettings.add(entryBuilder.startBooleanToggle(new TranslatableText("config." + ETFClient.MOD_ID + ".enable_tridents.title"), ETFConfigData.enableTridents)
+                .setDefaultValue(true) // Recommended: Used when user click "Reset"
+                .setTooltip(new TranslatableText("config." + ETFClient.MOD_ID + ".enable_tridents.tooltip")) // Optional: Shown when the user hover over this option
+                .setSaveConsumer(newValue -> ETFConfigData.enableTridents = newValue) // Recommended: Called when user save the config
+                .build()); // Builds the option entry for cloth config
 
         // restriction settings
         SubCategoryBuilder restrictionSettings = entryBuilder.startSubCategory(new TranslatableText("config." + ETFClient.MOD_ID + ".restriction_settings.title"));
@@ -143,8 +151,8 @@ public class ETFConfigScreen {
         category.addEntry(emissiveSettings.build());
 
         // blinking mob settings
-        SubCategoryBuilder blinkingMobSettings = entryBuilder.startSubCategory(new TranslatableText("config." + ETFClient.MOD_ID + ".blinking_mob_settings.title"));
-        blinkingMobSettings.add(0, entryBuilder.startBooleanToggle(Text.of("Enable blinking mobs"), ETFConfigData.enableBlinking)
+        SubCategoryBuilder blinkingMobSettings = entryBuilder.startSubCategory(new TranslatableText("config." + ETFClient.MOD_ID + ".blinking_mob_settings_sub.title"));
+        blinkingMobSettings.add(0, entryBuilder.startBooleanToggle(Text.of("config." + ETFClient.MOD_ID + ".blinking_mob_settings.title"), ETFConfigData.enableBlinking)
                 .setDefaultValue(false) // Recommended: Used when user click "Reset"
                 .setTooltip(new TranslatableText("config." + ETFClient.MOD_ID + ".blinking_mob_settings.tooltip")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.enableBlinking = newValue) // Recommended: Called when user save the config
@@ -203,11 +211,7 @@ public class ETFConfigScreen {
                 .setTooltip(new TranslatableText("config." + ETFClient.MOD_ID + ".enchanted_potion_effects.tooltip")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.enchantedPotionEffects = newValue)
                 .build());
-        category.addEntry(entryBuilder.startBooleanToggle(new TranslatableText("config." + ETFClient.MOD_ID + ".enable_tridents.title"), ETFConfigData.enableTridents)
-                .setDefaultValue(true) // Recommended: Used when user click "Reset"
-                .setTooltip(new TranslatableText("config." + ETFClient.MOD_ID + ".enable_tridents.tooltip")) // Optional: Shown when the user hover over this option
-                .setSaveConsumer(newValue -> ETFConfigData.enableTridents = newValue) // Recommended: Called when user save the config
-                .build()); // Builds the option entry for cloth config
+
         category.addEntry(entryBuilder.startBooleanToggle(new TranslatableText("config." + ETFClient.MOD_ID + ".elytra_thickness_fix.title"), ETFConfigData.elytraThicknessFix)
                 .setDefaultValue(true) // Recommended: Used when user click "Reset"
                 .setTooltip(new TranslatableText("config." + ETFClient.MOD_ID + ".elytra_thickness_fix.tooltip")) // Optional: Shown when the user hover over this option
@@ -218,6 +222,12 @@ public class ETFConfigScreen {
                 .setTooltip(new TranslatableText("config." + ETFClient.MOD_ID + ".debug_logging_mode.tooltip")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.debugLoggingMode = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
+        category.addEntry(entryBuilder.startBooleanToggle(new TranslatableText("config." + ETFClient.MOD_ID + ".allow_illegal_texture_paths.title"), ETFConfigData.allowIllegalTexturePaths)
+                .setDefaultValue(false) // Recommended: Used when user click "Reset"
+                .setTooltip(new TranslatableText("config." + ETFClient.MOD_ID + ".allow_illegal_texture_paths.tooltip")) // Optional: Shown when the user hover over this option
+                .setSaveConsumer(newValue -> ETFConfigData.allowIllegalTexturePaths = newValue) // Recommended: Called when user save the config
+                .build()); // Builds the option entry for cloth config
+
 
         //MinecraftClient.getInstance().openScreen(screen);
         return builder.setTransparentBackground(isTransparent).build();
