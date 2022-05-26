@@ -1,28 +1,32 @@
 {
   "schemaVersion": 1,
   "id": "entity_texture_features",
-  "version": "2.6.0",
+  "version": "3.0.0",
   "name": "Entity Texture Features",
   "description": "Optifine format compatible:\n - Random & Custom textures\n - Emissive textures\n\nWith features such as:\n - Blinking textures\n - Player Skin textures",
   "authors": [
     {
       "name": "Traben",
       "contact": {
-        "homepage": "https://www.curseforge.com/members/traben_0/projects"
+        "homepage": "https://www.curseforge.com/members/traben_0/projects",
+        "discord": "https://discord.gg/rURmwrzUcz"
       }
     }
+  ],
+  "contributors": [
   ],
   "license": "LGPL-3.0",
   "icon": "icon.png",
   "contact": {
     "homepage": "https://www.curseforge.com/minecraft/mc-mods/entity-texture-features-fabric",
-    "sources": "https://github.com/Traben-0/EmissiveMod",
-    "issues": "https://github.com/Traben-0/EmissiveMod/issues"
+    "sources": "https://github.com/Traben-0/Entity_Texture_Features",
+    "issues": "https://github.com/Traben-0/Entity_Texture_Features/issues",
+    "discord": "https://discord.gg/rURmwrzUcz"
   },
   "environment": "client",
   "entrypoints": {
     "client": [
-      "traben.entity_texture_features.client.ETF_CLIENT"
+      "traben.entity_texture_features.client.ETFClient"
     ],
     "modmenu": [
       "traben.entity_texture_features.config.ETFModMenu"
@@ -31,9 +35,10 @@
   "mixins": [
     "entity_texture_features.mixins.json"
   ],
+  "accessWidener": "entity_texture_features.accesswidener",
   "depends": {
     "fabricloader": ">=0.13.0",
-    "minecraft": ">=1.18 "
+    "minecraft": "1.18.x "
   },
   "suggests": {
     "modmenu": ">=3.1.0",

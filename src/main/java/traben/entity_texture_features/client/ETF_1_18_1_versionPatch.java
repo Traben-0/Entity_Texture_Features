@@ -1,7 +1,7 @@
 package traben.entity_texture_features.client;
 /*
  * file is always overridden by working 1.18 version of class
- *  -> ETF_1_18_1_versionPatch.class
+ *  -> etf$1_18_1_versionPatch.class
  */
 
 import net.minecraft.util.math.BlockPos;
