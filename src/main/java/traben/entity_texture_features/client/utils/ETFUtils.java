@@ -24,6 +24,7 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.text.LiteralTextContent;
 import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import traben.entity_texture_features.client.ETFClient;
@@ -192,7 +193,7 @@ public class ETFUtils {
         //if incompatabilities are detected and are not set to be ignored by config then set conditions
         if (!ETFConfigData.ignoreConfigWarnings) {
             if (ETFConfigData.skinFeaturesEnabled && FabricLoader.getInstance().isModLoaded("figura")) {
-                ETFUtils.logWarn(new TranslatableText("config." + ETFClient.MOD_ID + ".figura_warn.text").getString(), false);
+                ETFUtils.logWarn(Text.translatable("config." + ETFClient.MOD_ID + ".figura_warn.text").getString(), false);
                 ETFConfigData.skinFeaturesEnabled = false;
                 ETFUtils.saveConfig();
             }
@@ -763,12 +764,16 @@ public class ETFUtils {
                 message.append("\nOriginal spawn data *unsorted*=").append(Arrays.toString(UUID_ORIGINAL_NON_UPDATE_PROPERTY_STRINGS.get(id)));
             message.append("\n}");
 
-            ETFUtils.logMessage(message, inChat);
+            ETFUtils.logMessage(message.toString(), inChat);
             UUID_DEBUG_EXPLANATION_MARKER.remove(id);
         }
     }
 
     //improvements to logging by @Maximum#8760
+    public static void logMessage(String obj) {
+        logMessage(obj, false);
+    }
+
     public static void logMessage(String obj, boolean inChat) {
         if (inChat) {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
@@ -783,6 +788,10 @@ public class ETFUtils {
     }
 
     //improvements to logging by @Maximum#8760
+    public static void logWarn(String obj) {
+        logWarn(obj, false);
+    }
+
     public static void logWarn(String obj, boolean inChat) {
         if (inChat) {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
@@ -797,6 +806,10 @@ public class ETFUtils {
     }
 
     //improvements to logging by @Maximum#8760
+    public static void logError(String obj) {
+        logError(obj, false);
+    }
+
     public static void logError(String obj, boolean inChat) {
         if (inChat) {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
