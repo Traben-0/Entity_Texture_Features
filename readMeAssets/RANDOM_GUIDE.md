@@ -96,7 +96,7 @@ when they walk into a forest biome.)*
 </tr>
 <tr>
 <td>
-<img src="https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/9a/Trident.png/revision/latest/scale-to-width-down/300?cb=20200106005732" alt="img" width="128"/>
+<img src="Trident.webp" alt="img" width="128"/>
 </td>
 <td>
 
@@ -111,7 +111,7 @@ when they walk into a forest biome.)*
 </tr>
 <tr>
 <td>
-<img src="https://static.wikia.nocookie.net/minecraft_gamepedia/images/1/1c/Red_Mooshroom_JE4.png/revision/latest/scale-to-width-down/150?cb=20200510033824" alt="img" width="128"/>
+<img src="Red_Mooshroom_JE4.webp" alt="img" width="128"/>
 </td>
 <td>
 
@@ -123,7 +123,7 @@ of the respective mooshroom.
 </tr>
 <tr>
 <td>
-<img src="https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/98/Elytra_%28item%29_JE2_BE2.png/revision/latest/scale-to-width-down/160?cb=20190406130540" alt="img" width="64"/>
+<img src="Elytra_JE2_BE2.webp" alt="img" width="64"/>
 </td>
 <td>
 
@@ -135,7 +135,7 @@ of the respective mooshroom.
 </tr>
 <tr>
 <td>
-<img src="https://static.wikia.nocookie.net/minecraft_gamepedia/images/0/06/Shulker.png/revision/latest/scale-to-width-down/300?cb=20200107095352" alt="img" width="64"/>
+<img src="Shulker_Closed.webp" alt="img" width="64"/>
 </td>
 <td>
 

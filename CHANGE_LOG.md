@@ -7,10 +7,10 @@ Changed:
 - the shader z-fighting fix no longer expands the model leading to weird rendering, emissives should no longer z-fight
   for most mobs while using shaders.(option has been removed)
 - illegal identifier fix changed to only affect image files, cause of litematica conflicts
-- names property will also match against the whole line ((names.1=john smith) will check the names {"john", "smith" & "
-  john smith"})
 - Optifine parity: Name property now works identical to optifine
 - ETF supports a new Names (plural) property using previous ETF name behaviour
+- names property will also match against the whole line ((names.1=john smith) will check the names {"john", "smith" & "
+  john smith"})
 
 Added:
 
