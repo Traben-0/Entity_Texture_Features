@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.client.utils.ETFUtils;
 
@@ -29,6 +30,26 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
     @Shadow
     protected abstract Identifier getArmorTexture(ArmorItem item, boolean legs, @Nullable String overlay);
 
+
+    @ModifyArg(method = "renderArmorParts",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/RenderLayer;getArmorCutoutNoCull(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;"))
+    private Identifier etf$changetexture(Identifier texture) {
+        if (ETFConfigData.enableEmissiveTextures && PATH_EMISSIVE_TEXTURE_IDENTIFIER.containsKey(texture.toString())) {
+            if (PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(texture.toString()) != null) {
+                if (!PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION.containsKey(texture.toString())) {
+                    //prevent flickering by removing pixels from the base texture
+                    // the iris fix setting will now require a re-load
+                    ETFUtils.replaceTextureMinusEmissive(texture.toString());
+                }
+                if (PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION.containsKey(texture.toString())) {
+                    if (PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION.getBoolean(texture.toString())) {
+                        return new Identifier(texture + "etf_iris_patched_file.png");
+                    }
+                }
+            }
+        }
+        return texture;
+    }
 
     @Inject(method = "renderArmorParts",
             at = @At(value = "TAIL"))

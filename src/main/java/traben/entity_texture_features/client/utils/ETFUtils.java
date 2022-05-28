@@ -1269,7 +1269,7 @@ public class ETFUtils {
     }
 
 
-    private static void replaceTextureMinusEmissive(String originalTexturePath) {
+    public static void replaceTextureMinusEmissive(String originalTexturePath) {
         String emissiveTexturePath = null;
         for (String s :
                 emissiveSuffixes) {
