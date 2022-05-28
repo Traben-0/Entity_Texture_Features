@@ -1,5 +1,9 @@
 ETF Changelog:
 
+[V3.0.1]
+
+- fixed emissive armour & works with CIT Resewn
+
 [V3.0.0]
 
 Changed:
