@@ -1,4 +1,8 @@
-ETF Changelog:
+**ETF Changelog:**
+
+[V3.0.2]
+
+- fixed certain blocks not reading correctly for the Blocks texture property
 
 [V3.0.1]
 
@@ -17,7 +21,6 @@ Changed:
   john smith"})
 
 Added:
-
 - Optifine parity: Size & Color texture properties
 - Ender Dragon random / custom and emissive texture support
 - drowned outer layers support random and emissive textures using the vanilla format
@@ -38,7 +41,6 @@ Added:
 - translation support
 
 Fixed:
-
 - memory leak / usage issue in V2.6.0 - was related to entity glowing eyes code
 - litematica compatibility
 - blocks property not working for certain blocks with extra data

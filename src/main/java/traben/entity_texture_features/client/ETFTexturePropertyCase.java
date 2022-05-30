@@ -553,7 +553,7 @@ public class ETFTexturePropertyCase {
         String block = entity.world.getBlockState(entity.getBlockPos().down()).toString()
                 .replaceFirst("minecraft:", "")
                 .replaceFirst("Block\\{", "")
-                .replaceFirst("}", "");
+                .replaceFirst("}.*", "");
         String weather = (entity.world.isRaining() ? "1" : "0") + "-" + (entity.world.isThundering() ? "1" : "0");
         String time = "" + entity.world.getTimeOfDay();
         String moon = "" + entity.world.getMoonPhase();
