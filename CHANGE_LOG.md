@@ -1,5 +1,10 @@
 **ETF Changelog:**
 
+[V3.0.3]
+
+- fixed names property not working with chests (they will still not function on servers unless a mod is used to send
+  blockEntity name data to clients)
+
 [V3.0.2]
 
 - fixed certain blocks not reading correctly for the Blocks texture property

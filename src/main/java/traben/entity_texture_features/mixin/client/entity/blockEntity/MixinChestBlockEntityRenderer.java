@@ -5,6 +5,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.DoubleBlockProperties;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.ChestBlockEntity;
 import net.minecraft.block.enums.ChestType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.block.ChestAnimationProgress;
@@ -95,6 +96,10 @@ public abstract class MixinChestBlockEntityRenderer<T extends BlockEntity & Ches
         if (ETFConfigData.enableCustomTextures) {
             etf$chestStandInDummy = new ArmorStandEntity(EntityType.ARMOR_STAND, MinecraftClient.getInstance().world);
             etf$chestStandInDummy.setPos(entity.getPos().getX(), entity.getPos().getY(), entity.getPos().getZ());
+            if (entity instanceof ChestBlockEntity) {
+                etf$chestStandInDummy.setCustomName(((ChestBlockEntity) entity).getCustomName());
+                etf$chestStandInDummy.setCustomNameVisible(((ChestBlockEntity) entity).hasCustomName());
+            }
             //chests don't have uuid so set UUID from something repeatable I chose from block pos
             etf$chestStandInDummy.setUuid(UUID.nameUUIDFromBytes(entity.getPos().toString().getBytes()));
         }
