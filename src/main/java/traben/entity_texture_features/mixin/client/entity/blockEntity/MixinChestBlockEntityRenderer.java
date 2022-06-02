@@ -20,6 +20,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Nameable;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -96,12 +97,16 @@ public abstract class MixinChestBlockEntityRenderer<T extends BlockEntity & Ches
         if (ETFConfigData.enableCustomTextures) {
             etf$chestStandInDummy = new ArmorStandEntity(EntityType.ARMOR_STAND, MinecraftClient.getInstance().world);
             etf$chestStandInDummy.setPos(entity.getPos().getX(), entity.getPos().getY(), entity.getPos().getZ());
-            if (entity instanceof ChestBlockEntity) {
-                etf$chestStandInDummy.setCustomName(((ChestBlockEntity) entity).getCustomName());
-                etf$chestStandInDummy.setCustomNameVisible(((ChestBlockEntity) entity).hasCustomName());
+            String identifier = entity.getPos().toString();
+            if (entity instanceof Nameable nameable) {
+                etf$chestStandInDummy.setCustomName(nameable.getCustomName());
+                etf$chestStandInDummy.setCustomNameVisible(nameable.hasCustomName());
+                if(nameable.hasCustomName()) {
+                    identifier += nameable.getCustomName().asString();
+                }
             }
             //chests don't have uuid so set UUID from something repeatable I chose from block pos
-            etf$chestStandInDummy.setUuid(UUID.nameUUIDFromBytes(entity.getPos().toString().getBytes()));
+            etf$chestStandInDummy.setUuid(UUID.nameUUIDFromBytes(identifier.getBytes()));
         }
     }
 
