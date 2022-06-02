@@ -50,10 +50,15 @@ public abstract class MixinShulkerBoxBlockEntityRenderer<T extends BlockEntity &
             try {
                 etf$shulkerBoxStandInDummy = new ArmorStandEntity(EntityType.ARMOR_STAND, shulkerBoxBlockEntity.getWorld());
                 etf$shulkerBoxStandInDummy.setPos(shulkerBoxBlockEntity.getPos().getX(), shulkerBoxBlockEntity.getPos().getY(), shulkerBoxBlockEntity.getPos().getZ());
+                String identifier = "shulker" + shulkerBoxBlockEntity.getPos().toString();
                 etf$shulkerBoxStandInDummy.setCustomName(shulkerBoxBlockEntity.getCustomName());
                 etf$shulkerBoxStandInDummy.setCustomNameVisible(shulkerBoxBlockEntity.hasCustomName());
-                //shulker boxes don't have uuid so set UUID from something repeatable I chose from block pos
-                etf$shulkerBoxStandInDummy.setUuid(UUID.nameUUIDFromBytes(shulkerBoxBlockEntity.getPos().toString().getBytes()));
+                if (shulkerBoxBlockEntity.hasCustomName()) {
+                    //noinspection ConstantConditions
+                    identifier += shulkerBoxBlockEntity.getCustomName().asString();
+                }
+                //shulker boxes don't have uuid so set UUID from something repeatable this uses blockPos & container name
+                etf$shulkerBoxStandInDummy.setUuid(UUID.nameUUIDFromBytes(identifier.getBytes()));
             } catch (Exception e) {
                 ETFUtils.logError("shulker box custom rendering failed during setup, " + e);
             }

@@ -1,5 +1,10 @@
 **ETF Changelog:**
 
+[V3.0.4]
+
+- chest & shulker custom texture caching is more consistent
+- texture cache data now also resets on game disconnect
+
 [V3.0.3]
 
 - fixed names property not working with chests (they will still not function on servers unless a mod is used to send

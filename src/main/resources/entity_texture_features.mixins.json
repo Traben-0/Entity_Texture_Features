@@ -5,6 +5,9 @@
   "compatibilityLevel": "JAVA_17",
   "client": [
     "client.MixinIdentifier",
+    "client.cacheReloaders.MixinMinecraftClient",
+    "client.cacheReloaders.MixinPlayerEntity",
+    "client.cacheReloaders.MixinSimpleResourceReload",
     "client.entity.MixinEntityRender",
     "client.entity.MixinLivingEntityRenderer",
     "client.entity.MixinPlayerEntityRenderer",
@@ -31,9 +34,7 @@
     "client.entity.misc.MixinElytraEntityModel",
     "client.entity.misc.MixinEnderDragonEntityRenderer",
     "client.entity.misc.MixinTridentEntity",
-    "client.entity.misc.MixinTridentEntityRenderer",
-    "client.textureUpdaters.MixinPlayerEntity",
-    "client.textureUpdaters.MixinSimpleResourceReload"
+    "client.entity.misc.MixinTridentEntityRenderer"
   ],
   "mixins": [
   ],

@@ -1,4 +1,4 @@
-package traben.entity_texture_features.mixin.client.textureUpdaters;
+package traben.entity_texture_features.mixin.client.cacheReloaders;
 
 import net.minecraft.resource.SimpleResourceReload;
 import org.spongepowered.asm.mixin.Mixin;

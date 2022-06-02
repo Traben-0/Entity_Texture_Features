@@ -91,6 +91,8 @@ when they walk into a forest biome.)*
   entities
 - *Note:* Most Block Entity optimization fabric mods like ***Enhanced Block Entities*** or ***BetterBeds***, will
   disable this feature in favour of faster rendering
+- *Note:* The name property for chests and other block entities will not work on servers, unless the server has a mod
+  like [Know my name!](https://modrinth.com/mod/know-my-name)
 
 </td>
 </tr>
@@ -106,6 +108,7 @@ when they walk into a forest biome.)*
   trident_bobbys_trident.png"*
 - A named trident will match any texture of the format *trident_"customName".png*, with customName being the name of the
   trident with spaces replaces with "_" and any non letters ignored.
+- Custom trident support will be removed if implemented in a mod like CIT.
 
 </td>
 </tr>
@@ -155,6 +158,8 @@ biomes.1=the_end<br>
   ETF_vanilla resourcepack.
 - Note: Most Block Entity optimization fabric mods like Enhanced Block Entities, will disable this feature in favour of
   faster rendering
+- *Note:* The name property for shulker boxes and other block entities will not work on servers, unless the server has a
+  mod like [Know my name!](https://modrinth.com/mod/know-my-name)
 
 </td>
 </tr>
@@ -166,6 +171,18 @@ biomes.1=the_end<br>
 
 - If a custom book texture is placed in *"minecraft/textures/entity/lectern_book.png"*, it will overwrite the book of
   the lectern block
+
+</td>
+</tr>
+<tr>
+<td>
+<img src="armor.webp" alt="img" width="150"/>
+</td>
+<td>
+
+- Armor can be customized using the CIT mod only as it allows greater customization and makes more sense as the armor is
+  an 'item'
+- ETF will provide emissive support for CIT customised armor textures
 
 </td>
 </tr>
