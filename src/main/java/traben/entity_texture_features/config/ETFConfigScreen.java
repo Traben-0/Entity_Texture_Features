@@ -4,11 +4,12 @@ import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import me.shedaniel.clothconfig2.impl.builders.SubCategoryBuilder;
-import net.fabricmc.loader.api.FabricLoader;
+//import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
+import net.minecraftforge.fml.ModList;
 import traben.entity_texture_features.client.ETFClient;
 import traben.entity_texture_features.client.utils.ETFUtils;
 
@@ -36,7 +37,7 @@ public class ETFConfigScreen {
         boolean shownWarning = false;
         int warningCount = 0;
         //this warning disables skin features with figura present
-        if (FabricLoader.getInstance().isModLoaded("figura")) {
+        if (ModList.get().isLoaded("figura")) {
             shownWarning = true;
             warningCount++;
             if (!ETFConfigData.ignoreConfigWarnings) {
@@ -46,7 +47,7 @@ public class ETFConfigScreen {
                         .build()); // Builds the option entry for cloth config
             }
         }
-        if (FabricLoader.getInstance().isModLoaded("skinlayers") && ETFConfigData.skinFeaturesEnabled) {
+        if (ModList.get().isLoaded("skinlayers") && ETFConfigData.skinFeaturesEnabled) {
             shownWarning = true;
             warningCount++;
             if (!ETFConfigData.ignoreConfigWarnings) {
@@ -56,7 +57,7 @@ public class ETFConfigScreen {
                         .build()); // Builds the option entry for cloth config
             }
         }
-        if (FabricLoader.getInstance().isModLoaded("enhancedblockentities")) {
+        if (ModList.get().isLoaded("enhancedblockentities")) {
             shownWarning = true;
             warningCount++;
             if (!ETFConfigData.ignoreConfigWarnings) {

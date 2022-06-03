@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import net.fabricmc.loader.api.FabricLoader;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.ModelPart;
@@ -26,6 +26,7 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import net.minecraftforge.fml.ModList;
 import traben.entity_texture_features.client.ETFClient;
 import traben.entity_texture_features.client.ETFTexturePropertyCase;
 import traben.entity_texture_features.client.IrisCompat;
@@ -190,7 +191,7 @@ public class ETFUtils {
 
         //if incompatabilities are detected and are not set to be ignored by config then set conditions
         if (!ETFConfigData.ignoreConfigWarnings) {
-            if (ETFConfigData.skinFeaturesEnabled && FabricLoader.getInstance().isModLoaded("figura")) {
+            if (ETFConfigData.skinFeaturesEnabled && ModList.get().isLoaded("figura")) {
                 ETFUtils.logWarn(new TranslatableText("config." + ETFClient.MOD_ID + ".figura_warn.text").getString(), false);
                 ETFConfigData.skinFeaturesEnabled = false;
                 ETFUtils.saveConfig();
@@ -762,17 +763,17 @@ public class ETFUtils {
                 message.append("\nOriginal spawn data *unsorted*=").append(Arrays.toString(UUID_ORIGINAL_NON_UPDATE_PROPERTY_STRINGS.get(id)));
             message.append("\n}");
 
-            ETFUtils.logMessage(message, inChat);
+            ETFUtils.logMessage(message.toString(), inChat);
             UUID_DEBUG_EXPLANATION_MARKER.remove(id);
         }
     }
 
     //improvements to logging by @Maximum#8760
-    public static void logMessage(Object obj) {
+    public static void logMessage(String obj) {
         logMessage(obj, false);
     }
 
-    public static void logMessage(Object obj, boolean inChat) {
+    public static void logMessage(String obj, boolean inChat) {
         if (inChat) {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             if (player != null) {
@@ -786,11 +787,11 @@ public class ETFUtils {
     }
 
     //improvements to logging by @Maximum#8760
-    public static void logWarn(Object obj) {
+    public static void logWarn(String obj) {
         logWarn(obj, false);
     }
 
-    public static void logWarn(Object obj, boolean inChat) {
+    public static void logWarn(String obj, boolean inChat) {
         if (inChat) {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             if (player != null) {
@@ -804,11 +805,11 @@ public class ETFUtils {
     }
 
     //improvements to logging by @Maximum#8760
-    public static void logError(Object obj) {
+    public static void logError(String obj) {
         logError(obj, false);
     }
 
-    public static void logError(Object obj, boolean inChat) {
+    public static void logError(String obj, boolean inChat) {
         if (inChat) {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             if (player != null) {
@@ -973,7 +974,7 @@ public class ETFUtils {
     }
 
     public static void saveConfig() {
-        File config = new File(FabricLoader.getInstance().getConfigDir().toFile(), "entity_texture_features.json");
+        File config = new File(CONFIG_DIR.toFile(), "entity_texture_features.json");
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         if (!config.getParentFile().exists()) {
             //noinspection ResultOfMethodCallIgnored

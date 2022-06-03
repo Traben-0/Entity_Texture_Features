@@ -3,12 +3,25 @@ package traben.entity_texture_features.client;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import it.unimi.dsi.fastutil.objects.*;
-import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.Identifier;
-import traben.entity_texture_features.client.logging.ETFLogger;
+import org.slf4j.LoggerFactory;
 import traben.entity_texture_features.client.utils.ETFUtils;
 import traben.entity_texture_features.config.ETFConfig;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.ConfigGuiHandler;
+import net.minecraftforge.fml.IExtensionPoint;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.loading.FMLConfig;
+import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.network.NetworkConstants;
+import traben.entity_texture_features.config.ETFConfigScreen;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileReader;
@@ -16,9 +29,13 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
+import java.nio.file.Path;
+import java.util.function.BiFunction;
 
-@net.fabricmc.api.Environment(net.fabricmc.api.EnvType.CLIENT)
-public class ETFClient implements ClientModInitializer {
+@Mod("etf")
+public class ETFClient {
+    public static final Path CONFIG_DIR = FMLPaths.GAMEDIR.get().resolve(FMLConfig.defaultConfigPath());
+
 
     ///list all uuids that have ever been seen by ETF, so they can be selected for random data clearing to save memory
     public static final Object2IntOpenHashMap<UUID> KNOWN_UUID_LIST = new Object2IntOpenHashMap<>();
@@ -110,28 +127,30 @@ public class ETFClient implements ClientModInitializer {
     public static ETFConfig ETFConfigData;
 
     //logging object
-    public static ETFLogger LOGGER;// = ETFLogger.create();
+    public static Logger LOGGER = LoggerFactory.getLogger("Entity Texture Features");;// = ETFLogger.create();
 
-    @Override
-    public void onInitializeClient() {
-        //needs to be created after initialization stage
-        LOGGER = ETFLogger.create();
 
-        LOGGER.info("Loading! 1.18.x");
-
-        if (FabricLoader.getInstance().getModContainer("iris").isPresent()) {
-            //LOGGER.info("Iris mod detected : message will be shown in settings");
-            irisDetected = true;
+    public ETFClient() {
+        if(FMLEnvironment.dist == Dist.CLIENT) {
+            LOGGER.info("[Entity Texture Features]: Loading! 1.18.x");
+            etf$loadConfig();
+            // Register the configuration GUI factory
+            ModLoadingContext.get().registerExtensionPoint(
+                    ConfigGuiHandler.ConfigGuiFactory.class,
+                    () -> new ConfigGuiHandler.ConfigGuiFactory((minecraftClient, screen) -> new ETFConfigScreen().getConfigScreen(screen, false)));
+            ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));
+        } else {
+            LOGGER.info("[Entity Texture Features]: Attempting to load a clientside only mod on the server, refusing.");
+            throw new UnsupportedOperationException("Attempting to load a clientside only mod on the server, refusing");
         }
 
-        etf$loadConfig();
     }
 
     // config code based on bedrockify & actually unbreaking fabric config code
     // https://github.com/juancarloscp52/BedrockIfy/blob/1.17.x/src/main/java/me/juancarloscp52/bedrockify/Bedrockify.java
     // https://github.com/wutdahack/ActuallyUnbreakingFabric/blob/1.18.1/src/main/java/wutdahack/actuallyunbreaking/ActuallyUnbreaking.java
     public void etf$loadConfig() {
-        File config = new File(FabricLoader.getInstance().getConfigDir().toFile(), "entity_texture_features.json");
+        File config = new File(CONFIG_DIR.toFile(), "entity_texture_features.json");
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         if (config.exists()) {
             try {

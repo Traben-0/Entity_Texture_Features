@@ -31,7 +31,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
     protected abstract Identifier getArmorTexture(ArmorItem item, boolean legs, @Nullable String overlay);
 
 
-    @ModifyArg(method = "renderArmorParts",
+    @ModifyArg(method = "renderModel",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/RenderLayer;getArmorCutoutNoCull(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;"))
     private Identifier etf$changetexture(Identifier texture) {
         if (ETFConfigData.enableEmissiveTextures && PATH_EMISSIVE_TEXTURE_IDENTIFIER.containsKey(texture.toString())) {

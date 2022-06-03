@@ -1,7 +1,6 @@
 package traben.entity_texture_features.client;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+
 import net.minecraft.client.model.*;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
@@ -12,7 +11,7 @@ import net.minecraft.util.Identifier;
 
 import java.util.function.Function;
 
-@Environment(EnvType.CLIENT)
+
 public class CustomPlayerFeatureModel<T extends LivingEntity> extends EntityModel<T> {
     public final ModelPart nose;
     public final ModelPart jacket;

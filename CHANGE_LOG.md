@@ -1,5 +1,8 @@
 **ETF Changelog:**
 
+[forge port of V3.0.4]
+- shoulder parrot support disabled (could not get working)
+
 [V3.0.4]
 
 - chest & shulker custom texture caching is more consistent

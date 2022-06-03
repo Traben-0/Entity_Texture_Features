@@ -9,7 +9,7 @@ import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
-import net.fabricmc.loader.api.FabricLoader;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
@@ -17,6 +17,8 @@ import net.minecraft.client.texture.NativeImage;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
+import net.minecraftforge.fml.loading.FMLConfig;
+import net.minecraftforge.fml.loading.FMLPaths;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
@@ -892,8 +894,8 @@ public class ETFPlayerSkinUtils {
     }
 
     public static void printPlayerSkinCopyWithFeatureOverlay(NativeImage skinImage) {
-        if (FabricLoader.getInstance().isModLoaded("fabric")) {
-            Path outputDirectory = Path.of(FabricLoader.getInstance().getGameDir().toString(), "ETF_player_skin_printout.png");
+
+            Path outputDirectory = Path.of(FMLPaths.GAMEDIR.get().toString(), "ETF_player_skin_printout.png");
             //NativeImage skinImage = ETFUtils.getNativeImageFromID(new Identifier(SKIN_NAMESPACE + playerID + ".png"));
             NativeImage skinFeatureImage = ETFUtils.getNativeImageFromID(new Identifier(MOD_ID, "textures/skin_feature_printout.png"));
             try {
@@ -909,12 +911,9 @@ public class ETFPlayerSkinUtils {
                 ETFUtils.logMessage("Skin feature layout successfully applied to a copy of your skin and has been saved to the minecraft directory.", true);
             } catch (Exception e) {
                 ETFUtils.logMessage("Skin feature layout could not be applied to a copy of your skin and has not been saved. Error written to log.", true);
-                ETFUtils.logError(e, false);
+                ETFUtils.logError(e.toString(), false);
             }
 
-        } else {
-            //requires fab api to read from mod resources
-            ETFUtils.logError("Fabric API required for example skin printout, cancelling.", true);
-        }
+
     }
 }
