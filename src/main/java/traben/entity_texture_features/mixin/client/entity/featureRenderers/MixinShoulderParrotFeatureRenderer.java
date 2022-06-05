@@ -32,48 +32,46 @@ public abstract class MixinShoulderParrotFeatureRenderer<T extends PlayerEntity>
     public MixinShoulderParrotFeatureRenderer(FeatureRendererContext<T, PlayerEntityModel<T>> context) {
         super(context);
     }
-//////todo forge
-//    @Shadow
-//    @Final
-//    private ParrotEntityModel model;
-//
-//    private NbtCompound parrotNBT = null;
-//    private PlayerEntity player = null;
-//
-//    @Inject(method = "method_17958",
-//            at = @At(value = "HEAD"))
-//    private <M extends Entity> void etf$getNBT(MatrixStack matrixStack, boolean bl, PlayerEntity playerEntity, VertexConsumerProvider vertexConsumerProvider, NbtCompound nbtCompound, int i, float f, float g, float h, float j, EntityType<M> type, CallbackInfo ci) {
-//        parrotNBT = nbtCompound;
-//        player = playerEntity;
-//
-//    }
-//
-//    @ModifyArg(method = "method_17958",
-//            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/VertexConsumerProvider;getBuffer(Lnet/minecraft/client/render/RenderLayer;)Lnet/minecraft/client/render/VertexConsumer;"))
-//    private RenderLayer etf$alterTexture(RenderLayer layer) {
-//        if (parrotNBT != null) {
-//            return RenderLayer.getEntityTranslucent(etf$returnAlteredIdentifier());
-//        }
-//        //vanilla
-//        return layer;
-//    }
-//
-//    private Identifier etf$returnAlteredIdentifier() {
-//        ParrotEntity parrot = new ParrotEntity(EntityType.PARROT, player.world);
-//        parrot.readCustomDataFromNbt(parrotNBT);
-//        // uuid not manually read from above code
-//        UUID id = parrotNBT.getUuid("UUID");
-//        //System.out.println(id);
-//        parrot.setUuid(id);
-//        return ETFUtils.generalReturnAlreadySetAlteredTexture(ParrotEntityRenderer.TEXTURES[parrotNBT.getInt("Variant")], parrot);
-//    }
-//
-//    @Inject(method = "method_17958",
-//            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/ParrotEntityModel;poseOnShoulder(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFFI)V",
-//                    shift = At.Shift.AFTER))
-//    private <M extends Entity> void etf$applyEmissive(MatrixStack matrixStack, boolean bl, PlayerEntity playerEntity, VertexConsumerProvider vertexConsumerProvider, NbtCompound nbtCompound, int i, float f, float g, float h, float j, EntityType<M> type, CallbackInfo ci) {
-//        ETFUtils.generalEmissiveRenderModel(matrixStack, vertexConsumerProvider, etf$returnAlteredIdentifier(), model);
-//    }
+    @Shadow
+    @Final
+    private ParrotEntityModel model;
+
+    private NbtCompound parrotNBT = null;
+    private PlayerEntity player = null;
+
+    @Inject(method = "method_17958(Lnet/minecraft/client/util/math/MatrixStack;ZLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/nbt/NbtCompound;IFFFFLnet/minecraft/entity/EntityType;)V",
+            at = @At(value = "HEAD"))
+    private <M extends Entity> void etf$getNBT(MatrixStack matrixStack, boolean bl, PlayerEntity playerEntity, VertexConsumerProvider vertexConsumerProvider, NbtCompound nbtCompound, int i, float f, float g, float h, float j, EntityType<M> type, CallbackInfo ci) {
+        parrotNBT = nbtCompound;
+        player = playerEntity;
+    }
+
+    @ModifyArg(method = "method_17958(Lnet/minecraft/client/util/math/MatrixStack;ZLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/nbt/NbtCompound;IFFFFLnet/minecraft/entity/EntityType;)V",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/VertexConsumerProvider;getBuffer(Lnet/minecraft/client/render/RenderLayer;)Lnet/minecraft/client/render/VertexConsumer;"))
+    private RenderLayer etf$alterTexture(RenderLayer layer) {
+        if (parrotNBT != null) {
+            return RenderLayer.getEntityTranslucent(etf$returnAlteredIdentifier());
+        }
+        //vanilla
+        return layer;
+    }
+
+    private Identifier etf$returnAlteredIdentifier() {
+        ParrotEntity parrot = new ParrotEntity(EntityType.PARROT, player.world);
+        parrot.readCustomDataFromNbt(parrotNBT);
+        // uuid not manually read from above code
+        UUID id = parrotNBT.getUuid("UUID");
+        //System.out.println(id);
+        parrot.setUuid(id);
+        return ETFUtils.generalReturnAlreadySetAlteredTexture(ParrotEntityRenderer.TEXTURES[parrotNBT.getInt("Variant")], parrot);
+    }
+
+    @Inject(method = "method_17958(Lnet/minecraft/client/util/math/MatrixStack;ZLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/nbt/NbtCompound;IFFFFLnet/minecraft/entity/EntityType;)V",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/ParrotEntityModel;poseOnShoulder(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFFI)V",
+                    shift = At.Shift.AFTER))
+    private <M extends Entity> void etf$applyEmissive(MatrixStack matrixStack, boolean bl, PlayerEntity playerEntity, VertexConsumerProvider vertexConsumerProvider, NbtCompound nbtCompound, int i, float f, float g, float h, float j, EntityType<M> type, CallbackInfo ci) {
+        ETFUtils.generalEmissiveRenderModel(matrixStack, vertexConsumerProvider, etf$returnAlteredIdentifier(), model);
+    }
 
 }
 
