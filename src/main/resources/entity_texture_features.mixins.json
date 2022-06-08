@@ -29,6 +29,7 @@
     "client.entity.featureRenderers.MixinShulkerHeadFeatureRenderer",
     "client.entity.featureRenderers.MixinSlimeOverlayFeatureRenderer",
     "client.entity.featureRenderers.MixinVillagerClothingFeatureRenderer",
+    "client.entity.featureRenderers.MixinWardenFeatureRenderer",
     "client.entity.misc.MixinAbstractClientPlayerEntity",
     "client.entity.misc.MixinBuiltinModelItemRenderer",
     "client.entity.misc.MixinElytraEntityModel",

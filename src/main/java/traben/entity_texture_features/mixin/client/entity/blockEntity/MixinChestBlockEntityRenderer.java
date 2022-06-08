@@ -69,7 +69,7 @@ public abstract class MixinChestBlockEntityRenderer<T extends BlockEntity & LidO
                 etf$chestStandInDummy.setCustomNameVisible(nameable.hasCustomName());
                 if(nameable.hasCustomName()) {
                     //noinspection ConstantConditions
-                    identifier += nameable.getCustomName().asString();
+                    identifier += nameable.getCustomName().getString();
                 }
             }
             //chests don't have uuid so set UUID from something repeatable this uses blockPos chestType & container name

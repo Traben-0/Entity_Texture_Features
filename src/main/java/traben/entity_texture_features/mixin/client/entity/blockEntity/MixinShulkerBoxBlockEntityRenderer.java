@@ -53,7 +53,7 @@ public abstract class MixinShulkerBoxBlockEntityRenderer implements BlockEntityR
                 etf$shulkerBoxStandInDummy.setCustomNameVisible(shulkerBoxBlockEntity.hasCustomName());
                 if (shulkerBoxBlockEntity.hasCustomName()) {
                     //noinspection ConstantConditions
-                    identifier += shulkerBoxBlockEntity.getCustomName().asString();
+                    identifier += shulkerBoxBlockEntity.getCustomName().getString();
                 }
                 //shulker boxes don't have uuid so set UUID from something repeatable this uses blockPos & container name
                 etf$shulkerBoxStandInDummy.setUuid(UUID.nameUUIDFromBytes(identifier.getBytes()));
