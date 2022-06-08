@@ -17,10 +17,7 @@ public class ETFConfig {
 
     public boolean specialEmissiveShield = true;
     public boolean alwaysCheckVanillaEmissiveSuffix = true;
-
-    //present for temporary puzzle compatibility
-    @Deprecated
-    public boolean doShadersEmissiveFix = false;
+    
 
     public EnchantedPotionEffectsEnum enchantedPotionEffects = EnchantedPotionEffectsEnum.NONE;
     public boolean skinFeaturesEnabled = true;

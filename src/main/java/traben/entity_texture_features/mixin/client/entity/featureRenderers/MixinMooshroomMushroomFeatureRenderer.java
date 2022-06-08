@@ -6,7 +6,6 @@ import net.minecraft.client.model.*;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.block.BlockRenderManager;
 import net.minecraft.client.render.entity.feature.MooshroomMushroomFeatureRenderer;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.texture.NativeImage;
@@ -34,7 +33,7 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
 
     //rewritten as original didn't seem to work, I must have accidentally changed the vanilla mushroom texture when testing originally
     @Inject(method = "renderMushroom", at = @At(value = "HEAD"), cancellable = true)
-    private void etf$injected(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, boolean renderAsModel, BlockRenderManager blockRenderManager, BlockState mushroomState, int overlay, BakedModel mushroomModel, CallbackInfo ci) {
+    private void etf$injected(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, boolean renderAsModel, BlockState mushroomState, int overlay, BakedModel mushroomModel, CallbackInfo ci) {
         Boolean shroomType = returnRedTrueBrownFalseVanillaNull(mushroomState);
         if (shroomType != null) {
             VertexConsumer texturedConsumer = vertexConsumers.getBuffer(RenderLayer.getEntityCutout(shroomType ? RED_SHROOM_ALT : BROWN_SHROOM_ALT));

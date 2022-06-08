@@ -164,7 +164,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
                     if (ETFPlayerSkinUtils.UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.containsKey(id))
                         message.append("\nplayer skin has downloaded yet for check=").append(ETFPlayerSkinUtils.UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.getBoolean(id));
 
-                    ETFUtils.logMessage(message, inChat);
+                    ETFUtils.logMessage(String.valueOf(message), inChat);
                     UUID_DEBUG_EXPLANATION_MARKER.remove(id);
                 }
                 if (etf$timerBeforeTrySkin > 0) {

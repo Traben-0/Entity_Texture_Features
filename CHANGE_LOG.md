@@ -1,5 +1,10 @@
 **ETF Changelog:**
 
+[V3.1.0]
+
+- updated to 1.19 *(for now 1.18.2 will remain supported with feature updates, but 1.18.1 & 1.18.0 will no longer be supported moving forwards, due to very annoying workarounds required)*
+- support added for the wardens many texture layers
+
 [V3.0.4]
 
 - chest & shulker custom texture caching is more consistent

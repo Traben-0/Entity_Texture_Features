@@ -909,7 +909,7 @@ public class ETFPlayerSkinUtils {
                 ETFUtils.logMessage("Skin feature layout successfully applied to a copy of your skin and has been saved to the minecraft directory.", true);
             } catch (Exception e) {
                 ETFUtils.logMessage("Skin feature layout could not be applied to a copy of your skin and has not been saved. Error written to log.", true);
-                ETFUtils.logError(e, false);
+                ETFUtils.logError(e.toString(), false);
             }
 
         } else {
