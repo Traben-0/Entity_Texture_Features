@@ -212,7 +212,7 @@ public class ETFConfigScreen {
                 .build());
 
         category.addEntry(entryBuilder.startBooleanToggle(Text.translatable("config." + ETFClient.MOD_ID + ".elytra_thickness_fix.title"), ETFConfigData.elytraThicknessFix)
-                .setDefaultValue(true) // Recommended: Used when user click "Reset"
+                .setDefaultValue(false) // Recommended: Used when user click "Reset"
                 .setTooltip(Text.translatable("config." + ETFClient.MOD_ID + ".elytra_thickness_fix.tooltip")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.elytraThicknessFix = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
