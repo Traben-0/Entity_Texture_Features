@@ -1,5 +1,9 @@
 **ETF Changelog:**
 
+[V3.1.2]
+
+- fixed a crash related to player skins that could occur when leaving a server
+
 [V3.1.1]
 
 - fixed other Mod integrations for 1.19 *(Mod menu, iris, etc)*

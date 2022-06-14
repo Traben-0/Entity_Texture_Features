@@ -54,8 +54,8 @@ public class ETFPlayerSkinUtils {
     public static final Object2ReferenceOpenHashMap<UUID, int[]> UUID_PLAYER_EMISSIVE_TPC_HOLDER = new Object2ReferenceOpenHashMap<>();
     public static final Object2ReferenceOpenHashMap<UUID, int[]> UUID_PLAYER_ENCHANT_TPC_HOLDER = new Object2ReferenceOpenHashMap<>();
     //rare cases can cause these not to be closed, just in case these will be closed shortly after use time has passed if they have not already been caught and closed by the system
-    public static final Object2ReferenceOpenHashMap<String, HttpURLConnection> URL_HTTP_TO_DISCONNECT_1 = new Object2ReferenceOpenHashMap<>();
-    public static final Object2ReferenceOpenHashMap<String, HttpURLConnection> URL_HTTP_TO_DISCONNECT_2 = new Object2ReferenceOpenHashMap<>();
+    public static final HashMap<String, HttpURLConnection> URL_HTTP_TO_DISCONNECT_1 = new HashMap<>();
+    public static final HashMap<String, HttpURLConnection> URL_HTTP_TO_DISCONNECT_2 = new HashMap<>();
     //related to repeating HTTP checks a couple of times in case of bad connection
     public static final Object2LongOpenHashMap<UUID> UUID_PLAYER_LAST_SKIN_CHECK = new Object2LongOpenHashMap<>();
     public static final Object2IntOpenHashMap<UUID> UUID_PLAYER_LAST_SKIN_CHECK_COUNT = new Object2IntOpenHashMap<>();
@@ -74,17 +74,26 @@ public class ETFPlayerSkinUtils {
 
         UUID_PLAYER_TRANSPARENT_SKIN_ID.clear();
         UUID_PLAYER_HAS_SKIN_DOWNLOADED_YET.clear();
-        for (HttpURLConnection h :
-                URL_HTTP_TO_DISCONNECT_1.values()) {
-            if (h != null) {
-                h.disconnect();
+
+        try {
+            for (HttpURLConnection h :
+                    URL_HTTP_TO_DISCONNECT_1.values()) {
+                if (h != null) {
+                    h.disconnect();
+                }
             }
+        }catch(Exception e){
+            //
         }
-        for (HttpURLConnection h :
-                URL_HTTP_TO_DISCONNECT_2.values()) {
-            if (h != null) {
-                h.disconnect();
+        try {
+            for (HttpURLConnection h :
+                    URL_HTTP_TO_DISCONNECT_2.values()) {
+                if (h != null) {
+                    h.disconnect();
+                }
             }
+        }catch(Exception e){
+            //
         }
         UUID_PLAYER_HAS_COAT.clear();
         UUID_PLAYER_HAS_FAT_COAT.clear();
