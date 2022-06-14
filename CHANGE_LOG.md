@@ -1,5 +1,14 @@
 **ETF Changelog:**
 
+[V3.1.2]
+
+- fixed a crash related to player skins that could occur when leaving a server
+
+[V3.1.1]
+
+- fixed other Mod integrations for 1.19 *(Mod menu, iris, etc)*
+- elytra size fix now set disabled by default
+
 [V3.1.0]
 
 - updated to 1.19 *(for now 1.18.2 will remain supported with feature updates, but 1.18.1 & 1.18.0 will no longer be supported moving forwards, due to very annoying workarounds required)*
