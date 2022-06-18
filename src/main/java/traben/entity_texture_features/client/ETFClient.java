@@ -117,7 +117,7 @@ public class ETFClient implements ClientModInitializer {
     public void onInitializeClient() {
 
 
-        LOGGER.info("Loading! 1.19.pre1");
+        LOGGER.info("Loading! 1.19");
 
         if (FabricLoader.getInstance().getModContainer("iris").isPresent()) {
             //LOGGER.info("Iris mod detected : message will be shown in settings");

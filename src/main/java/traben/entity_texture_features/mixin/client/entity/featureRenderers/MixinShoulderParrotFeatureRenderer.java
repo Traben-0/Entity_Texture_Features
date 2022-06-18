@@ -40,7 +40,7 @@ public abstract class MixinShoulderParrotFeatureRenderer<T extends PlayerEntity>
     private NbtCompound parrotNBT = null;
     private PlayerEntity player = null;
 
-    @Inject(method = "method_17958",
+    @Inject(method = "method_17958(Lnet/minecraft/client/util/math/MatrixStack;ZLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/nbt/NbtCompound;IFFFFLnet/minecraft/entity/EntityType;)V",
             at = @At(value = "HEAD"))
     private <M extends Entity> void etf$getNBT(MatrixStack matrixStack, boolean bl, PlayerEntity playerEntity, VertexConsumerProvider vertexConsumerProvider, NbtCompound nbtCompound, int i, float f, float g, float h, float j, EntityType<M> type, CallbackInfo ci) {
         parrotNBT = nbtCompound;
@@ -48,7 +48,7 @@ public abstract class MixinShoulderParrotFeatureRenderer<T extends PlayerEntity>
 
     }
 
-    @ModifyArg(method = "method_17958",
+    @ModifyArg(method = "method_17958(Lnet/minecraft/client/util/math/MatrixStack;ZLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/nbt/NbtCompound;IFFFFLnet/minecraft/entity/EntityType;)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/VertexConsumerProvider;getBuffer(Lnet/minecraft/client/render/RenderLayer;)Lnet/minecraft/client/render/VertexConsumer;"))
     private RenderLayer etf$alterTexture(RenderLayer layer) {
         if (parrotNBT != null) {
@@ -68,7 +68,7 @@ public abstract class MixinShoulderParrotFeatureRenderer<T extends PlayerEntity>
         return ETFUtils.generalReturnAlreadySetAlteredTexture(ParrotEntityRenderer.TEXTURES[parrotNBT.getInt("Variant")], parrot);
     }
 
-    @Inject(method = "method_17958",
+    @Inject(method = "method_17958(Lnet/minecraft/client/util/math/MatrixStack;ZLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/nbt/NbtCompound;IFFFFLnet/minecraft/entity/EntityType;)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/ParrotEntityModel;poseOnShoulder(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFFI)V",
                     shift = At.Shift.AFTER))
     private <M extends Entity> void etf$applyEmissive(MatrixStack matrixStack, boolean bl, PlayerEntity playerEntity, VertexConsumerProvider vertexConsumerProvider, NbtCompound nbtCompound, int i, float f, float g, float h, float j, EntityType<M> type, CallbackInfo ci) {

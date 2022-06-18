@@ -1,5 +1,12 @@
 **ETF Changelog:**
 
+[V3.1.3]
+- sheep wool support added *(wool doesn't apply dye color to the emissive texture, use custom texture colour properties to set an altered coloured texture instead if required. A sheep using sheep2.png will try and use the equivalent wool2.png and will use the default otherwise )*
+- fixed a crash due to an incorrect texture path for custom capes skin feature
+- tweaked property file loading to be more consistent with resource-pack order *(using folders like "etf/random" & the vanilla locations will no longer accidentally override or be overridden by packs out of order)*
+- iron golem cracking texture support added *(an iron_golem using texture2.png will try and use "crack_texture2.png" and will use the default if it doesn't exist)*
+
+
 [V3.1.2]
 
 - fixed a crash related to player skins that could occur when leaving a server

@@ -341,7 +341,7 @@ public class ETFPlayerSkinUtils {
 
             } else {
                 ETFUtils.logMessage("Player skin {" + player.getName().getString() + "} no THIRD_PARTY_CAPE Found", false);
-                //registerNativeImageToIdentifier(getNativeImageFromID(new Identifier("etf:capes/error.png")), SKIN_NAMESPACE + id + "_cape.png");
+                ETFUtils.registerNativeImageToIdentifier(Objects.requireNonNullElseGet(ETFUtils.getNativeImageFromID(new Identifier("etf:textures/capes/error.png")),ETFUtils::emptyNativeImage), SKIN_NAMESPACE + id + "_cape.png");
                 UUID_PLAYER_HAS_CUSTOM_CAPE.put(id, false);
             }
 
@@ -710,7 +710,7 @@ public class ETFPlayerSkinUtils {
 
     private static NativeImage returnCustomTexturedCape(NativeImage skin) {
         NativeImage cape = ETFUtils.emptyNativeImage(64, 32);
-        NativeImage elytra = ETFUtils.getNativeImageFromID(new Identifier("etf:capes/public static _elytra.png"));
+        NativeImage elytra = ETFUtils.getNativeImageFromID(new Identifier("etf:textures/capes/default_elytra.png"));
         if (elytra == null) {
             elytra = ETFUtils.getNativeImageFromID(new Identifier("textures/entity/elytra.png"));
         }//not else
