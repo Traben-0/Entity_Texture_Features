@@ -50,6 +50,10 @@
   an example of the "teams" property follows:  
   *teams.1= !red_team "Blue Team" blue_team*
 - Additionally, the Names & Teams property support grouping names that have spaces within double quotes e.g "John Smith"
+- Mobs with additional textures like "sheep & wool", "horse & markings & armour", iron_golem & cracking textures, etc. 
+will have the additional texture try and match whatever variant the main texture uses. *(e.g. a sheep using "sheep2.png will
+try and use wool2.png and if that doesn't exist it will use the default texture)*
+- Villagers are the exception to the above rule and each texture for villagers will apply their own rules, whether they be randomly assigned or set by a .properties file
 
 ---
 ## Example properties file
