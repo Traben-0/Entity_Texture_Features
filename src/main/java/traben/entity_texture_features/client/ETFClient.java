@@ -52,6 +52,8 @@ public class ETFClient {
 
     //special case hashmap for villagers and glowing eyes used to decide if a texture feature is to be randomized
     public static final Object2BooleanOpenHashMap<String> PATH_IS_EXISTING_FEATURE = new Object2BooleanOpenHashMap<>();
+    //part of features check to optimize method processing
+    public static final ObjectOpenHashSet<UUID> UUID_SKIP_FEATURES_CHECK = new ObjectOpenHashSet<>();
 
     //marks entity has already been processed before for random texture application
     public static final ObjectOpenHashSet<UUID> UUID_ENTITY_ALREADY_CALCULATED = new ObjectOpenHashSet<>();//
@@ -114,7 +116,7 @@ public class ETFClient {
     public static final ObjectOpenHashSet<UUID> UUID_DEBUG_EXPLANATION_MARKER = new ObjectOpenHashSet<>();
     //list of suffixes found in the suffix properties as for some reason people add multiple sometimes
     //also because an option in ETF can add "_e" to this list
-    public static String[] emissiveSuffixes = null;
+    public static ObjectOpenHashSet<String> emissiveSuffixes =  new ObjectOpenHashSet<>();
     //whether the iris mod was detected on load
     public static boolean irisDetected = false;
     //marks whether mooshroom mushroom overrides exist
@@ -173,6 +175,7 @@ public class ETFClient {
             } catch (IOException e) {
                 ETFUtils.logMessage("Config could not be loaded, using defaults", false);
                 etf_config = new ETFConfig();
+                ETFUtils.saveConfig();
             }
         } else {
             etf_config = new ETFConfig();
