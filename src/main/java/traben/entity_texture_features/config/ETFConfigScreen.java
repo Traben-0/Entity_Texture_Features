@@ -102,6 +102,11 @@ public class ETFConfigScreen {
                 .setTooltip(Text.translatable("config." + ETFClient.MOD_ID + ".enable_tridents.tooltip")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.enableTridents = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
+        randomSettings.add(entryBuilder.startBooleanToggle(Text.translatable("config." + ETFClient.MOD_ID + ".custom_block_entity.title"), ETFConfigData.enableCustomBlockEntities)
+                .setDefaultValue(true) // Recommended: Used when user click "Reset"
+                .setTooltip(Text.translatable("config." + ETFClient.MOD_ID + ".custom_block_entity.tooltip")) // Optional: Shown when the user hover over this option
+                .setSaveConsumer(newValue -> ETFConfigData.enableCustomBlockEntities = newValue) // Recommended: Called when user save the config
+                .build()); // Builds the option entry for cloth config
 
         // restriction settings
         SubCategoryBuilder restrictionSettings = entryBuilder.startSubCategory(Text.translatable("config." + ETFClient.MOD_ID + ".restriction_settings.title"));
@@ -143,8 +148,10 @@ public class ETFConfigScreen {
         SubCategoryBuilder specialEmissiveSettings = entryBuilder.startSubCategory(Text.translatable("config." + ETFClient.MOD_ID + ".special_emissive_settings.title")).setTooltip(Text.translatable("config." + ETFClient.MOD_ID + ".special_emissive_settings.tooltip"));
         specialEmissiveSettings.add(0, entryBuilder.startBooleanToggle(Text.translatable("config." + ETFClient.MOD_ID + ".enable_elytra.title"), ETFConfigData.enableElytra).setDefaultValue(true)
                 .setTooltip(Text.translatable("config." + ETFClient.MOD_ID + ".enable_elytra.tooltip")).setSaveConsumer(newValue -> ETFConfigData.enableElytra = newValue).build());
-        specialEmissiveSettings.add(1, entryBuilder.startBooleanToggle(Text.of("Emissive Shields"), ETFConfigData.specialEmissiveShield).setDefaultValue(true)
-                .setTooltip(Text.translatable("enables emissive shield textures")).setSaveConsumer(newValue -> ETFConfigData.specialEmissiveShield = newValue).build());
+        specialEmissiveSettings.add(1, entryBuilder.startBooleanToggle(Text.translatable("config." + ETFClient.MOD_ID + ".emissive_shield.title"), ETFConfigData.specialEmissiveShield).setDefaultValue(true)
+                .setTooltip(Text.translatable("config." + ETFClient.MOD_ID + ".emissive_shield.tooltip")).setSaveConsumer(newValue -> ETFConfigData.specialEmissiveShield = newValue).build());
+        specialEmissiveSettings.add(2, entryBuilder.startBooleanToggle(Text.translatable("config." + ETFClient.MOD_ID + ".emissive_block_entity.title"), ETFConfigData.enableEmissiveBlockEntities).setDefaultValue(true)
+                .setTooltip(Text.translatable("config." + ETFClient.MOD_ID + ".emissive_block_entity.tooltip")).setSaveConsumer(newValue -> ETFConfigData.enableEmissiveBlockEntities = newValue).build());
         emissiveSettings.add(specialEmissiveSettings.build());
 
         category.addEntry(emissiveSettings.build());

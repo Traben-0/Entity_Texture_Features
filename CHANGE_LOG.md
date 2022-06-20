@@ -1,5 +1,11 @@
 **ETF Changelog:**
 
+[V3.1.4]
+- fixed a logic mistake causing high lag when additional mob textures *(like sheep_fur.png)* did not have the same or higher number of variations as the base texture
+- the Blocks property now also check the block the mob spawned inside of *(allowing things like water, cave_air, flowers, torches, etc. to be used, and also fixes issues with soul-sand and mud not reading correctly)*
+- added an option to enable / disable block entity emissive and custom textures as they currently do not support vanilla animated textures and may want to be disabled by such users
+- added some missed translation support *(Still only english atm :/)*
+
 [V3.1.3]
 - sheep wool support added *(wool doesn't apply dye color to the emissive texture, use custom texture colour properties to set an altered coloured texture instead if required. A sheep using sheep2.png will try and use the equivalent wool2.png and will use the default otherwise )*
 - fixed a crash due to an incorrect texture path for custom capes skin feature

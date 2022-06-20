@@ -4,13 +4,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.*;
+import net.minecraft.client.render.model.SpriteAtlasManager;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.client.texture.TextureManager;
@@ -167,6 +167,8 @@ public class ETFUtils {
         UUID_HAS_UPDATABLE_RANDOM_CASES_3.clear();
         UUID_HAS_UPDATABLE_RANDOM_CASES_4.clear();
 
+        UUID_SKIP_FEATURES_CHECK.clear();
+
         PATH_OPTIFINE_RANDOM_SETTINGS_PER_TEXTURE.clear();
         PATH_OPTIFINE_OR_JUST_RANDOM.clear();
         PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.clear();// 0,1,2
@@ -222,7 +224,9 @@ public class ETFUtils {
         UUID_RANDOM_TEXTURE_SUFFIX_2.removeInt(id);
         UUID_RANDOM_TEXTURE_SUFFIX_3.removeInt(id);
         UUID_RANDOM_TEXTURE_SUFFIX_4.removeInt(id);
-        KNOWN_UUID_LIST.removeInt(id);
+
+        //WARNING do not put UUID_SKIP_FEATURES here
+
     }
 
     public static void forceResetAllDataOfUUID(UUID id) {
@@ -241,6 +245,7 @@ public class ETFUtils {
         UUID_ORIGINAL_NON_UPDATE_PROPERTY_STRINGS.remove(id);
         UUID_TRIDENT_NAME.remove(id);
         UUID_NEXT_BLINK_TIME.removeLong(id);
+        UUID_SKIP_FEATURES_CHECK.remove(id);
     }
 
 
@@ -487,19 +492,21 @@ public class ETFUtils {
             PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 1);
             return;
         }
-        if (hiddenCheckSpecificPath(testPath, 2)) {
+        //if (hiddenCheckSpecificPath(testPath, 2)) {
+        //effectively default
             PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(vanillaTexturePath, 2);
-        }
+        //}
     }
 
     private static boolean hiddenCheckSpecificPath(String vanillaTexturePath, int pathToCheck_0123) {
-        String[] replaceStrings = switch (pathToCheck_0123) {
-            case 1 -> new String[]{"textures/entity", "optifine/mob"};
-            case 2 -> new String[]{"$", "$"};
-            case 3 -> new String[]{"textures", "etf/random"};
-            default -> new String[]{"textures", "optifine/random"};
+        String checkingPath;
+        switch (pathToCheck_0123) {
+            case 1 -> checkingPath = vanillaTexturePath.replace("textures/entity", "optifine/mob");
+            case 0 ->  checkingPath = vanillaTexturePath.replace("textures", "optifine/random");
+            case 3 -> checkingPath = vanillaTexturePath.replace("textures", "etf/random");
+            default -> checkingPath = vanillaTexturePath;//shouldn't be run
         };
-        String checkingPath = vanillaTexturePath.replace(replaceStrings[0], replaceStrings[1]);
+
         return isExistingNativeImageFile(new Identifier(checkingPath));
     }
 
@@ -1060,6 +1067,8 @@ public class ETFUtils {
     //this requires the game to be more fully load and won't always happen properly on initial boot
     private static void setEmissiveSuffix() {
         try {
+            emissiveSuffixes.clear();
+
             List<Properties> props = new ArrayList<>();
             String[] paths = {"optifine/emissive.properties", "textures/emissive.properties", "etf/emissive.properties"};
             for (String path :
@@ -1069,32 +1078,35 @@ public class ETFUtils {
                     props.add(prop);
             }
 
-            ObjectOpenHashSet<String> builder = new ObjectOpenHashSet<>();
+
             for (Properties prop :
                     props) {
                 //not an optifine property that I know of but this has come up in a few packs, so I am supporting it
                 if (prop.containsKey("entities.suffix.emissive")) {
-                    builder.add(prop.getProperty("entities.suffix.emissive"));
+                    if(prop.getProperty("entities.suffix.emissive") != null)
+                        emissiveSuffixes.add(prop.getProperty("entities.suffix.emissive"));
                 }
                 if (prop.containsKey("suffix.emissive")) {
-                    builder.add(prop.getProperty("suffix.emissive"));
+                    if(prop.getProperty("suffix.emissive") != null)
+                        emissiveSuffixes.add(prop.getProperty("suffix.emissive"));
                 }
             }
             if (ETFConfigData.alwaysCheckVanillaEmissiveSuffix) {
-                builder.add("_e");
+                emissiveSuffixes.add("_e");
             }
 
 
-            emissiveSuffixes = builder.toArray(new String[0]);
-            if (emissiveSuffixes.length == 0) {
+
+            if (emissiveSuffixes.size() == 0) {
                 logMessage("no emissive suffixes found: default emissive suffix '_e' used");
-                emissiveSuffixes = new String[]{"_e"};
+                emissiveSuffixes.add("_e");
             } else {
-                logMessage("emissive suffixes loaded: " + Arrays.toString(emissiveSuffixes));
+                logMessage("emissive suffixes loaded: " + emissiveSuffixes.toString());
             }
         } catch (Exception e) {
             logError("emissive suffixes could not be read: default emissive suffix '_e' used");
-            emissiveSuffixes = new String[]{"_e"};
+            emissiveSuffixes.clear();
+            emissiveSuffixes.add("_e");
         }
 
     }
@@ -1232,16 +1244,30 @@ public class ETFUtils {
 
     //this is for entity rendering features that do not need separate processing
     //e.g horse armor and markings, and glowing eye textures
-    //todo reminder warden implementation needs several textures
     public static Identifier generalReturnAlteredFeatureTextureOrOriginal(Identifier originalFeatureTexture, Entity entity) {
+        //don't waste processing time
+        //UUID_SKIP_FEATURES_CHECK resets in-game only on the occurrence of a mobs suffix changing or a full reset
+        if (UUID_SKIP_FEATURES_CHECK.contains(entity.getUuid())) {
+            return originalFeatureTexture;
+        }
+        //otherwise we need to get the varied texture, or run the method the first time to see if it exists
 
         Identifier alteredFeatureTexture = ETFUtils.generalReturnAlreadySetAlteredTexture(originalFeatureTexture, entity);
 
-        if (!PATH_IS_EXISTING_FEATURE.containsKey(alteredFeatureTexture.toString())) {
-            PATH_IS_EXISTING_FEATURE.put(alteredFeatureTexture.toString(), isExistingNativeImageFile(alteredFeatureTexture));
-        }
-        if (PATH_IS_EXISTING_FEATURE.getBoolean(alteredFeatureTexture.toString())) {
-            return alteredFeatureTexture;
+
+        if (PATH_IS_EXISTING_FEATURE.containsKey(alteredFeatureTexture.toString())) {
+            if (PATH_IS_EXISTING_FEATURE.getBoolean(alteredFeatureTexture.toString())) {
+                return alteredFeatureTexture;
+            }
+        }else{//check the returned exists atleast once
+            if(isExistingNativeImageFile(alteredFeatureTexture)){
+                PATH_IS_EXISTING_FEATURE.put(alteredFeatureTexture.toString(), true);
+                return alteredFeatureTexture;
+            }else {
+                //doesn't exist then skip all future processing and return vanilla
+                UUID_SKIP_FEATURES_CHECK.add(entity.getUuid());
+                PATH_IS_EXISTING_FEATURE.put(alteredFeatureTexture.toString(), false);
+            }
         }
 
         return originalFeatureTexture;
@@ -1280,6 +1306,9 @@ public class ETFUtils {
                                     //if didn't change keep it the same
                                     if (!UUID_RANDOM_TEXTURE_SUFFIX.containsKey(id)) {
                                         UUID_RANDOM_TEXTURE_SUFFIX.put(id, hold);
+                                    }else{
+                                        //allow feature optimization to process new potential changes
+                                        UUID_SKIP_FEATURES_CHECK.remove(id);
                                     }
                                     //}
                                 }//else here would do something for true random but no need really - may optimise this
@@ -1388,7 +1417,7 @@ public class ETFUtils {
                 if (!PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION.containsKey(fileString)) {
                     //prevent flickering by removing pixels from the base texture
                     // the iris fix setting will now require a re-load
-                    replaceTextureMinusEmissive(fileString);
+                    applyETFEmissivePatchingToTexture(fileString);
                 }
             }
             model.render(matrixStack, textureVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
@@ -1396,7 +1425,7 @@ public class ETFUtils {
     }
 
 
-    public static void replaceTextureMinusEmissive(String originalTexturePath) {
+    public static void applyETFEmissivePatchingToTexture(String originalTexturePath) {
         String emissiveTexturePath = null;
         for (String s :
                 emissiveSuffixes) {
@@ -1451,6 +1480,9 @@ public class ETFUtils {
 
     //will set and render emissive texture for any texture and model
     public static void generalEmissiveRenderPart(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, String fileString, ModelPart modelPart, boolean isBlockEntity) {
+        if(!ETFConfigData.enableEmissiveBlockEntities && isBlockEntity){
+            return;
+        }
         if (fileString.contains("etf_iris_patched_file.png")) {
             fileString = fileString.replace("etf_iris_patched_file.png", "");
         }
@@ -1460,7 +1492,7 @@ public class ETFUtils {
                 if (!PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION.containsKey(fileString)) {
                     //prevent flickering by removing pixels from the base texture
                     // the iris fix setting will now require a re-load
-                    replaceTextureMinusEmissive(fileString);
+                    applyETFEmissivePatchingToTexture(fileString);
                 }
             }
             //System.out.println("rendering="+fileString);
