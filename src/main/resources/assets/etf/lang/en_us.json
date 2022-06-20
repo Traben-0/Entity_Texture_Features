@@ -27,8 +27,8 @@
     "config.etf.enable_emissive_textures.tooltip": "Enables Emissive entity textures\nworks with resource packs\nusing the optifine format",
     "config.etf.always_check_vanilla_emissive_suffix.title": "Always check the 'default' emissive?",
     "config.etf.always_check_vanilla_emissive_suffix.tooltip": "Most resource packs use the emissive suffix _e\nhowever this can be overridden by packs if they\nwant to use a different suffix.\nIf this is true the mod will always check for\n'_e' suffixes even when set differently by a resource pack",
-    "config.etf.special_emissive_settings.title": "Special Case Emissives",
-    "config.etf.special_emissive_settings.tooltip": "This option is provided as these cases\nmay not fit into the typical users expectation\nof entity, these are mostly tile entities\nhence why they are not supported by the\nContinuity mod's emissive texture feature.\nCIT support is always wanted but can only\nbe confirmed for the elytra so far",
+    "config.etf.special_emissive_settings.title": "Special Case Emissive Settings",
+    "config.etf.special_emissive_settings.tooltip": "This option is provided as these cases\nmay not fit into the typical users expectation of entity.",
     "config.etf.enable_elytra.title": "Enable Emissive Elytras",
     "config.etf.enable_elytra.tooltip": "Allows Elytra to use emissive textures\nElytras only have emissive support as the CIT mod\nalready handles customizing these and is fully\ncompatible with ETF's emissive textures.",
     "config.etf.blinking_mob_settings_sub.title": "Blinking mob settings",
@@ -64,5 +64,11 @@
     "config.etf.skinlayers_warn.text": "The 3D skin layers mod was detected!\n - ETF skin features do not display on 3d layers.",
     "config.etf.ebe_warn.text": "Enhanced block entities mod was detected!\n - Custom & Emissive textures will not apply to EBE block entities.",
     "config.etf.ignore_warnings.title": "Ignore / hide config warnings",
-    "config.etf.ignore_warnings.tooltip": "This option only appears if a warning is displayed or it is enabled.\nIf enabled ETF will ignore and hide warnings and will no longer disable\nfeatures automatically for compatibility reasons\nThe amount of warnings currently being ignored is "
+    "config.etf.ignore_warnings.tooltip": "This option only appears if a warning is displayed or it is enabled.\nIf enabled ETF will ignore and hide warnings and will no longer disable\nfeatures automatically for compatibility reasons\nThe amount of warnings currently being ignored is ",
+    "config.etf.emissive_block_entity.title": "Allow Block entity textures",
+    "config.etf.emissive_block_entity.tooltip": "Allows block entities to use emissive texture\nincompatible with the enhanced block entities mod",
+    "config.etf.custom_block_entity.title": "Allow Custom / Random, Block entity textures",
+    "config.etf.custom_block_entity.tooltip": "Allows block entities to use a custom texture\nusing the optifine/ETF random format\nincompatible with the enhanced block entities mod",
+    "config.etf.emissive_shield.title": "Emissive Shields",
+    "config.etf.emissive_shield.tooltip": "enables emissive shield textures"
 }

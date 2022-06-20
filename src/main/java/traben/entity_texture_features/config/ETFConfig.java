@@ -3,6 +3,7 @@ package traben.entity_texture_features.config;
 public class ETFConfig {
     public boolean allowIllegalTexturePaths = false;
     public boolean enableCustomTextures = true;
+    public boolean enableCustomBlockEntities = true;
     public UpdateFrequency textureUpdateFrequency_V2 = UpdateFrequency.Fast;
     public boolean restrictUpdateProperties = true;
     public boolean restrictBiome = true;
@@ -12,6 +13,7 @@ public class ETFConfig {
     public boolean restrictDayTime = true;
     public boolean restrictMoonPhase = true;
     public boolean enableEmissiveTextures = true;
+    public boolean enableEmissiveBlockEntities = true;
 
     public boolean fullBrightEmissives = false;
 

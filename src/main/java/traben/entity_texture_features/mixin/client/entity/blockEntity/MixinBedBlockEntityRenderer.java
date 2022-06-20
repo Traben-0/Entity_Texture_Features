@@ -33,7 +33,7 @@ public abstract class MixinBedBlockEntityRenderer implements BlockEntityRenderer
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/ModelPart;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;II)V"),
             index = 1)
     private VertexConsumer etf$alterTexture(VertexConsumer vertices) {
-        if (!ETFConfigData.enableCustomTextures)
+        if (!ETFConfigData.enableCustomTextures || !ETFConfigData.enableCustomBlockEntities )
             return vertices;
 
         etf$textureOfThis = ETFUtils.generalProcessAndReturnAlteredTexture(etf$textureOfThis, etf$bedStandInDummy);
@@ -53,7 +53,7 @@ public abstract class MixinBedBlockEntityRenderer implements BlockEntityRenderer
         String texturePath = "textures/" + spriteIdentifier.getTextureId().getPath() + ".png";
         etf$textureOfThis = new Identifier(nameSpace, texturePath);
         etf$vertexConsumerProviderOfThis = vertexConsumerProvider;
-        if (ETFConfigData.enableCustomTextures) {
+        if (ETFConfigData.enableCustomTextures && ETFConfigData.enableCustomBlockEntities ) {
             etf$bedStandInDummy = new ArmorStandEntity(EntityType.ARMOR_STAND, MinecraftClient.getInstance().world);
             //System.out.println(MinecraftClient.getInstance().world.getBlockState(bedBlockEntity.getPos().down()).toString());
             etf$bedStandInDummy.setPos(bedBlockEntity.getPos().getX(), bedBlockEntity.getPos().getY(), bedBlockEntity.getPos().getZ());

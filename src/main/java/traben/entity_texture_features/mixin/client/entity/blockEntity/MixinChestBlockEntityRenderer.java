@@ -1,5 +1,6 @@
 package traben.entity_texture_features.mixin.client.entity.blockEntity;
 
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.AbstractChestBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -14,6 +15,7 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.ChestBlockEntityRenderer;
+import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EntityType;
@@ -29,6 +31,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import traben.entity_texture_features.client.utils.ETFUtils;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.util.UUID;
 
 import static traben.entity_texture_features.client.ETFClient.ETFConfigData;
@@ -40,7 +44,7 @@ public abstract class MixinChestBlockEntityRenderer<T extends BlockEntity & LidO
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/block/entity/ChestBlockEntityRenderer;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;Lnet/minecraft/client/model/ModelPart;Lnet/minecraft/client/model/ModelPart;Lnet/minecraft/client/model/ModelPart;FII)V"),
             index = 1)
     private VertexConsumer etf$alterTexture(VertexConsumer vertices) {
-        if (!ETFConfigData.enableCustomTextures)
+        if (!ETFConfigData.enableCustomTextures || !ETFConfigData.enableCustomBlockEntities )
             return vertices;
 
         etf$textureOfThis = ETFUtils.generalProcessAndReturnAlteredTexture(etf$textureOfThis, etf$chestStandInDummy);
@@ -60,7 +64,7 @@ public abstract class MixinChestBlockEntityRenderer<T extends BlockEntity & LidO
         String texturePath = "textures/" + spriteIdentifier.getTextureId().getPath() + ".png";
         etf$textureOfThis = new Identifier(nameSpace, texturePath);
         etf$vertexConsumerProviderOfThis = vertexConsumers;
-        if (ETFConfigData.enableCustomTextures) {
+        if (ETFConfigData.enableCustomTextures && ETFConfigData.enableCustomBlockEntities ) {
             etf$chestStandInDummy = new ArmorStandEntity(EntityType.ARMOR_STAND, MinecraftClient.getInstance().world);
             etf$chestStandInDummy.setPos(entity.getPos().getX(), entity.getPos().getY(), entity.getPos().getZ());
             String identifier = "chest" + entity.getPos().toString() + chestType.asString();

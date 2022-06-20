@@ -39,7 +39,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
                 if (!PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION.containsKey(texture.toString())) {
                     //prevent flickering by removing pixels from the base texture
                     // the iris fix setting will now require a re-load
-                    ETFUtils.replaceTextureMinusEmissive(texture.toString());
+                    ETFUtils.applyETFEmissivePatchingToTexture(texture.toString());
                 }
                 if (PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION.containsKey(texture.toString())) {
                     if (PATH_HAS_EMISSIVE_OVERLAY_REMOVED_VERSION.getBoolean(texture.toString())) {

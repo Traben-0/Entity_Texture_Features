@@ -43,7 +43,7 @@ public abstract class MixinShulkerBoxBlockEntityRenderer implements BlockEntityR
             at = @At(value = "HEAD"))
     private void etf$injected(ShulkerBoxBlockEntity shulkerBoxBlockEntity, float f, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j, CallbackInfo ci) {
 
-        if (ETFConfigData.enableCustomTextures) {
+        if (ETFConfigData.enableCustomTextures && ETFConfigData.enableCustomBlockEntities ) {
             etf$vertexConsumerProviderOfThis = vertexConsumerProvider;
             try {
                 etf$shulkerBoxStandInDummy = new ArmorStandEntity(EntityType.ARMOR_STAND, shulkerBoxBlockEntity.getWorld());
@@ -85,7 +85,7 @@ public abstract class MixinShulkerBoxBlockEntityRenderer implements BlockEntityR
             index = 1)
     private VertexConsumer etf$alterTexture(VertexConsumer vertices) {
         //System.out.println("doCustom ="+(!ETFConfigData.enableCustomTextures) + ","+(etf$textureOfThis == null) +","+ (etf$shulkerBoxStandInDummy == null));
-        if (!ETFConfigData.enableCustomTextures || etf$textureOfThis == null || etf$shulkerBoxStandInDummy == null)
+        if (!ETFConfigData.enableCustomTextures  || !ETFConfigData.enableCustomBlockEntities  || etf$textureOfThis == null || etf$shulkerBoxStandInDummy == null)
             return vertices;
         //System.out.println("pre="+etf$textureOfThis);
         etf$textureOfThis = ETFUtils.generalProcessAndReturnAlteredTexture(etf$textureOfThis, etf$shulkerBoxStandInDummy);
@@ -99,7 +99,9 @@ public abstract class MixinShulkerBoxBlockEntityRenderer implements BlockEntityR
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/ShulkerEntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V",
                     shift = At.Shift.AFTER))
     private void etf$emissiveTime(ShulkerBoxBlockEntity shulkerBoxBlockEntity, float f, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j, CallbackInfo ci) {
-        ETFUtils.generalEmissiveRenderModel(matrixStack, vertexConsumerProvider, etf$textureOfThis, this.model);
+        if(ETFConfigData.enableEmissiveBlockEntities) {
+            ETFUtils.generalEmissiveRenderModel(matrixStack, vertexConsumerProvider, etf$textureOfThis, this.model);
+        }
         //etf$shulkerBoxStandInDummy = null;
         //etf$vertexConsumerProviderOfThis = null;
         //etf$textureOfThis = null;

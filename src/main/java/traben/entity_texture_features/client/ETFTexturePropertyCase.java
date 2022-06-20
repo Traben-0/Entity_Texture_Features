@@ -440,35 +440,69 @@ public class ETFTexturePropertyCase {
             allBoolean = check;
         }
         if (allBoolean && blocks.length > 0) {
-            String entityOnBlock = entity.world.getBlockState(entity.getBlockPos().down()).toString()
-                    .replaceFirst("minecraft:", "")
-                    .replaceFirst("Block\\{", "")
-                    //will print with
-                    .replaceFirst("}.*", "");
+            //check block
+
+            String[] entityOnBlocks;
             if (isUpdate && ETFConfigData.restrictBlock) {
-                entityOnBlock = UUID_ORIGINAL_NON_UPDATE_PROPERTY_STRINGS.get(entity.getUuid())[2].trim();
+                entityOnBlocks = new String[]{UUID_ORIGINAL_NON_UPDATE_PROPERTY_STRINGS.get(entity.getUuid())[2].trim(), UUID_ORIGINAL_NON_UPDATE_PROPERTY_STRINGS.get(entity.getUuid())[6].trim()};
+            }else{
+                String entityOnBlock1 = entity.world.getBlockState(entity.getBlockPos().down()).toString()
+                        .replaceFirst("minecraft:", "")
+                        .replaceFirst("Block\\{", "")
+                        //will print with
+                        .replaceFirst("}.*", "").toLowerCase();
+                String entityOnBlock2 = entity.world.getBlockState(entity.getBlockPos().down()).toString()
+                        .replaceFirst("minecraft:", "")
+                        .replaceFirst("Block\\{", "")
+                        //will print with
+                        .replaceFirst("}.*", "").toLowerCase();
+                entityOnBlocks = new String[]{entityOnBlock1, entityOnBlock2};
             }
 
-            boolean check = false;
+            boolean check2 = false;
+            boolean check1 = false;
             for (String block :
                     blocks) {
                 block = block.trim();
                 if (block.startsWith("!")) {
                     block = block.replaceFirst("!", "");
-                    if (!block.replace("minecraft:", "").equalsIgnoreCase(entityOnBlock)) {
+                    if (!block.replace("minecraft:", "").equalsIgnoreCase(entityOnBlocks[0])) {
                         //can continue to check cases
-                        check = true;
+                        check1 = true;
                     } else {
                         //will prevent future checking
-                        check = false;
-                        break;
+                        allBoolean = false;
+
                     }
-                } else if (block.replace("minecraft:", "").equalsIgnoreCase(entityOnBlock)) {
-                    check = true;
+                } else if (block.replace("minecraft:", "").equalsIgnoreCase(entityOnBlocks[0])) {
+                    check1 = true;
                     break;
                 }
             }
-            allBoolean = check;
+            for (String block :
+                    blocks) {
+                block = block.trim();
+                if (block.startsWith("!")) {
+                    block = block.replaceFirst("!", "");
+                    if (!block.replace("minecraft:", "").equalsIgnoreCase(entityOnBlocks[1])) {
+                        //can continue to check cases
+                        check2 = true;
+                    } else {
+                        //will prevent future checking
+                        allBoolean = false;
+
+                    }
+                } else if (block.replace("minecraft:", "").equalsIgnoreCase(entityOnBlocks[1])) {
+                    check2 = true;
+                    break;
+                }
+            }
+            //will just leave if a negative check matched
+            if (allBoolean) {
+                //true if on or inside required block
+                //allows water to be used as well as fixing soul sand and mud checks
+                 allBoolean = check1 || check2;
+            }
         }
         if (allBoolean && teams.length > 0) {
             wasTestedByUpdateable = true;
@@ -550,10 +584,20 @@ public class ETFTexturePropertyCase {
         String block = entity.world.getBlockState(entity.getBlockPos().down()).toString()
                 .replaceFirst("minecraft:", "")
                 .replaceFirst("Block\\{", "")
-                .replaceFirst("}.*", "");
+                .replaceFirst("}.*", "").toLowerCase();
+        //check the block the mob is inside also
+        // this solves issues with soul sand and mud being undetected
+        String block2 = entity.world.getBlockState(entity.getBlockPos()).toString()
+                .replaceFirst("minecraft:", "")
+                .replaceFirst("Block\\{", "")
+                .replaceFirst("}.*", "").toLowerCase();
+//        String block3 = entity.world.getBlockState(entity.getBlockPos().up()).toString()
+//                .replaceFirst("minecraft:", "")
+//                .replaceFirst("Block\\{", "")
+//                .replaceFirst("}.*", "");
         String weather = (entity.world.isRaining() ? "1" : "0") + "-" + (entity.world.isThundering() ? "1" : "0");
         String time = "" + entity.world.getTimeOfDay();
         String moon = "" + entity.world.getMoonPhase();
-        return new String[]{biome, height, block, weather, time, moon};
+        return new String[]{biome, height, block, weather, time, moon,block2};
     }
 }
