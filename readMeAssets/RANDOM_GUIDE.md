@@ -41,9 +41,9 @@
 - The "names" property works exactly the same as the "name" property except it will allow you to set multiple names for
   a condition a little easier
 - The "blocks" property works exactly the same as the "biomes" property except it will allow you to set the texture of
-  the entity based on the block it spawned on
-  *(or first rendered on)* instead of the Biome, an example of the "blocks" property follows:  
-  *blocks.1= stone !bedrock minecraft:stone mod_name:marble*
+  the entity based on the block it spawned on *(or first rendered on)* *(it also checks the block it spawns in allowing things like water, cave_air, flowers, etc. to be used)*
+, an example of the "blocks" property follows:  
+  *blocks.1= stone !bedrock minecraft:stone mod_name:marble oak_sapling*
 - The "teams" Property works exactly the same as the "names" property except it will allow you to set the texture of the
   entity based on the scoreboard team it is in
   *(this will be useful for data-pack creators or map-makers who do not want the mob to display a custom name)*    
