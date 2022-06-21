@@ -158,7 +158,7 @@ public class ETFConfigScreen {
 
         // blinking mob settings
         SubCategoryBuilder blinkingMobSettings = entryBuilder.startSubCategory(Text.translatable("config." + ETFClient.MOD_ID + ".blinking_mob_settings_sub.title"));
-        blinkingMobSettings.add(0, entryBuilder.startBooleanToggle(Text.of("config." + ETFClient.MOD_ID + ".blinking_mob_settings.title"), ETFConfigData.enableBlinking)
+        blinkingMobSettings.add(0, entryBuilder.startBooleanToggle(Text.translatable("config." + ETFClient.MOD_ID + ".blinking_mob_settings.title"), ETFConfigData.enableBlinking)
                 .setDefaultValue(false) // Recommended: Used when user click "Reset"
                 .setTooltip(Text.translatable("config." + ETFClient.MOD_ID + ".blinking_mob_settings.tooltip")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.enableBlinking = newValue) // Recommended: Called when user save the config
@@ -181,9 +181,9 @@ public class ETFConfigScreen {
 
         // player skin settings
         SubCategoryBuilder playerSkinSettings = entryBuilder.startSubCategory(Text.translatable("config." + ETFClient.MOD_ID + ".player_skin_settings.title"));
-        playerSkinSettings.add(0, entryBuilder.startBooleanToggle(Text.of("Player Skin Features"), ETFConfigData.skinFeaturesEnabled)
+        playerSkinSettings.add(0, entryBuilder.startBooleanToggle(Text.translatable("config." + ETFClient.MOD_ID + ".player_skin_features.title"), ETFConfigData.skinFeaturesEnabled)
                 .setDefaultValue(true) // Recommended: Used when user click "Reset"
-                .setTooltip(Text.translatable("config." + ETFClient.MOD_ID + ".player_skin_settings.tooltip")) // Optional: Shown when the user hover over this option
+                .setTooltip(Text.translatable("config." + ETFClient.MOD_ID + ".player_skin_features.tooltip")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.skinFeaturesEnabled = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
         playerSkinSettings.add(1, entryBuilder.startBooleanToggle(Text.translatable("config." + ETFClient.MOD_ID + ".enable_enemy_team_players_skin_features.title"), ETFConfigData.enableEnemyTeamPlayersSkinFeatures)
