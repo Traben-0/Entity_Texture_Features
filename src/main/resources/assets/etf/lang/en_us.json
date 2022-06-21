@@ -40,7 +40,7 @@
     "config.etf.blink_length.tooltip": "sets how long textures will blink for\n0 = 1 tick, 19 = 20 ticks / 1 second\nThis can be set / overridden per mob\nby the resource-pack\nSee the mod download page for details",
     "config.etf.player_skin_settings.title": "Player Skin settings",
     "config.etf.player_skin_features.title": "Player Skin Features",
-    "config.etf.player_skin_settings.tooltip": "Allows player skins to use the features added by this mod.\nFeatures are set in the players skin file.\n - Instructions can be found on the mod page\n - This can be disabled for enemy team players for PVP\nFeatures include:\n - Emissive pixels\n - Enchanted pixels\n - Blinking & (closed eyes when sleeping)\n - maybe more...",
+    "config.etf.player_skin_features.tooltip": "Allows player skins to use the features added by this mod.\nFeatures are set in the players skin file.\n - Instructions can be found on the mod page\n - This can be disabled for enemy team players for PVP\nFeatures include:\n - Emissive pixels\n - Enchanted pixels\n - Blinking & (closed eyes when sleeping)\n - maybe more...",
     "config.etf.enable_enemy_team_players_skin_features.title": "Enable Player Skin Feature for Enemy Teams",
     "config.etf.enable_enemy_team_players_skin_features.tooltip": "Allows player skins to be enabled/disabled\nfor players on opposing teams in PVP games\notherwise they may be harder to see\nand may affect balance\n///THIS SETTING REQUIRES A RESTART\\\\\\",
     "config.etf.skin_features_enable_transparency.title": "Player Skin Feature: Transparency",
