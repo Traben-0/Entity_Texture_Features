@@ -40,7 +40,7 @@
     "config.etf.blink_length.tooltip": "设置眨眼长度，\n0 = 1刻，19 = 20刻/1秒\n这项可以被资源包设置或覆盖单个实体\n在模组下载页面查看详情",
     "config.etf.player_skin_settings.title": "玩家皮肤设定",
     "config.etf.player_skin_features.title": "玩家皮肤特性",
-    "config.etf.player_skin_settings.tooltip": "允许玩家皮肤使用模组特性\n特性需要在玩家皮肤文件中设置\n——介绍可以在模组页面\n为了PVP可以对敌对队伍玩家禁用\n包含特性：\n - 发光像素\n - 附魔像素\n - 眨眼&（睡觉时闭眼）\n - 可能更多……",
+    "config.etf.player_skin_features.tooltip": "允许玩家皮肤使用模组特性\n特性需要在玩家皮肤文件中设置\n——介绍可以在模组页面\n为了PVP可以对敌对队伍玩家禁用\n包含特性：\n - 发光像素\n - 附魔像素\n - 眨眼&（睡觉时闭眼）\n - 可能更多……",
     "config.etf.enable_enemy_team_players_skin_features.title": "对敌对队伍启用玩家皮肤特性",
     "config.etf.enable_enemy_team_players_skin_features.tooltip": "启用/禁用PVP中敌对玩家皮肤，否则他们会更难被看到及影响平衡\n///这项需要重启\\\\\\",
     "config.etf.skin_features_enable_transparency.title": "玩家皮肤特性：透明",
