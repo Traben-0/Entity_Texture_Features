@@ -3,32 +3,31 @@ package traben.entity_texture_features.client;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import it.unimi.dsi.fastutil.objects.*;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.model.ModelPart;
 import net.minecraft.util.Identifier;
-import net.minecraftforge.fml.ModList;
-import org.slf4j.LoggerFactory;
-import traben.entity_texture_features.client.utils.ETFUtils;
-import traben.entity_texture_features.config.ETFConfig;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ConfigGuiHandler;
 import net.minecraftforge.fml.IExtensionPoint;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLConfig;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.network.NetworkConstants;
-import traben.entity_texture_features.config.ETFConfigScreen;
-
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import traben.entity_texture_features.client.utils.ETFUtils;
+import traben.entity_texture_features.config.ETFConfig;
+import traben.entity_texture_features.config.ETFConfigScreen;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
-import java.nio.file.Path;
 
 @Mod("etf")
 public class ETFClient {
@@ -54,6 +53,12 @@ public class ETFClient {
     public static final Object2BooleanOpenHashMap<String> PATH_IS_EXISTING_FEATURE = new Object2BooleanOpenHashMap<>();
     //part of features check to optimize method processing
     public static final ObjectOpenHashSet<UUID> UUID_SKIP_FEATURES_CHECK = new ObjectOpenHashSet<>();
+
+    //data for different elytra wing texture conversion
+    public static final Object2ObjectOpenHashMap<Identifier,Identifier> IDENTIFIER_OPPOSITE_ELYTRA_IDENTIFIER = new Object2ObjectOpenHashMap<>();
+
+    //need for 1.18
+    public static final ObjectOpenHashSet<ModelPart> ELYTRA_MODELPART_TO_SKIP = new ObjectOpenHashSet<>();//
 
     //marks entity has already been processed before for random texture application
     public static final ObjectOpenHashSet<UUID> UUID_ENTITY_ALREADY_CALCULATED = new ObjectOpenHashSet<>();//

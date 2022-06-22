@@ -122,7 +122,7 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
             }
         }
         //System.out.println("found="+suffix);
-        NativeImage originalImagePreFlip = ETFUtils.getNativeImageFromID(idOfOriginal);
+        NativeImage originalImagePreFlip = ETFUtils.getNativeImageFromIDElseNull(idOfOriginal);
         if (originalImagePreFlip != null) {
             try {
                 //flip vertically

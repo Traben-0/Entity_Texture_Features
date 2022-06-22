@@ -30,7 +30,6 @@ import net.minecraft.util.Identifier;
 import net.minecraftforge.fml.ModList;
 import traben.entity_texture_features.client.ETFClient;
 import traben.entity_texture_features.client.ETFTexturePropertyCase;
-import traben.entity_texture_features.client.IrisCompat;
 import traben.entity_texture_features.config.ETFConfig;
 
 import java.io.File;
@@ -168,6 +167,9 @@ public class ETFUtils {
 
         UUID_SKIP_FEATURES_CHECK.clear();
 
+        IDENTIFIER_OPPOSITE_ELYTRA_IDENTIFIER.clear();
+        ELYTRA_MODELPART_TO_SKIP.clear();
+
         PATH_OPTIFINE_RANDOM_SETTINGS_PER_TEXTURE.clear();
         PATH_OPTIFINE_OR_JUST_RANDOM.clear();
         PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.clear();// 0,1,2
@@ -295,12 +297,13 @@ public class ETFUtils {
         return props;
     }
 
-    public static NativeImage getNativeImageFromID(Identifier identifier) {
+    public static NativeImage getNativeImageFromIDElseNull(Identifier identifier) {
         NativeImage img;
         try {
             Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(identifier);
+            InputStream in = resource.getInputStream();
             try {
-                InputStream in = resource.getInputStream();
+
                 img = NativeImage.read(in);
                 resource.close();
             } catch (Exception e) {
@@ -355,7 +358,7 @@ public class ETFUtils {
         if (finalResult != 404) {
 
             PATH_USES_OPTIFINE_OLD_VANILLA_ETF_0123.put(propertiesPath.replace(".properties", ".png"), finalResult);
-            System.out.println("result="+finalResult+" in "+properties);
+            //System.out.println("result="+finalResult+" in "+properties);
             //have 0123 order here as final result is in that format
             String[] checksAs0123 = {check0, check1, check2, check3};
             return checksAs0123[finalResult];
@@ -1253,6 +1256,12 @@ public class ETFUtils {
 
         Identifier alteredFeatureTexture = ETFUtils.generalReturnAlreadySetAlteredTexture(originalFeatureTexture, entity);
 
+        //if mob doesn't even have a variation completely ignore this check in future
+        if(alteredFeatureTexture.equals(originalFeatureTexture)){
+            UUID_SKIP_FEATURES_CHECK.add(entity.getUuid());
+            PATH_IS_EXISTING_FEATURE.put(alteredFeatureTexture.toString(), false);
+            return originalFeatureTexture;
+        }
 
         if (PATH_IS_EXISTING_FEATURE.containsKey(alteredFeatureTexture.toString())) {
             if (PATH_IS_EXISTING_FEATURE.getBoolean(alteredFeatureTexture.toString())) {
@@ -1423,20 +1432,29 @@ public class ETFUtils {
         }
     }
 
-
-    public static void applyETFEmissivePatchingToTexture(String originalTexturePath) {
+    public static void applyETFEmissivePatchingToTexture(String originalTexturePath){//,boolean skipFindEmissive) {
         String emissiveTexturePath = null;
-        for (String s :
-                emissiveSuffixes) {
-            String test = originalTexturePath.replace(".png", s + ".png");
-            if (isExistingFileDirect(new Identifier(test), true)) {
-                emissiveTexturePath = test;
-                break;
+//        if (!skipFindEmissive) {
+//            for (String s :
+//                    emissiveSuffixes) {
+//                String test = originalTexturePath.replace(".png", s + ".png");
+//                if (isExistingFileDirect(new Identifier(test), true)) {
+//                    emissiveTexturePath = test;
+//                    break;
+//                }
+//            }
+//        }else{
+            if (PATH_EMISSIVE_TEXTURE_IDENTIFIER.containsKey(originalTexturePath)){
+                if(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(originalTexturePath) != null){
+                    emissiveTexturePath = PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(originalTexturePath).toString();
+                }
             }
-        }
+
+
+//        }
         if (emissiveTexturePath != null) {
-            NativeImage emissive = getNativeImageFromID(new Identifier(emissiveTexturePath));
-            NativeImage originalCopy = getNativeImageFromID(new Identifier(originalTexturePath));
+            NativeImage emissive = getNativeImageFromIDElseNull(new Identifier(emissiveTexturePath));
+            NativeImage originalCopy = getNativeImageFromIDElseNull(new Identifier(originalTexturePath));
 
             try {
                 //noinspection ConstantConditions - it's in a catch for a reason
