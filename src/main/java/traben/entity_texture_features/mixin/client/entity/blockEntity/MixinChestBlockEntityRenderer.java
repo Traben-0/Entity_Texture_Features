@@ -30,6 +30,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import traben.entity_texture_features.client.utils.ETFUtils;
+import traben.entity_texture_features.mixin.client.accessor.SpriteAccessor;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -44,7 +45,7 @@ public abstract class MixinChestBlockEntityRenderer<T extends BlockEntity & Ches
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/block/entity/ChestBlockEntityRenderer;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;Lnet/minecraft/client/model/ModelPart;Lnet/minecraft/client/model/ModelPart;Lnet/minecraft/client/model/ModelPart;FII)V"),
             index = 1)
     private VertexConsumer etf$alterTexture(VertexConsumer vertices) {
-        if (!ETFConfigData.enableCustomTextures || !ETFConfigData.enableCustomBlockEntities )
+        if (isAnimatedTexture || !ETFConfigData.enableCustomTextures || !ETFConfigData.enableCustomBlockEntities )
             return vertices;
 
         etf$textureOfThis = ETFUtils.generalProcessAndReturnAlteredTexture(etf$textureOfThis, etf$chestStandInDummy);
@@ -53,31 +54,34 @@ public abstract class MixinChestBlockEntityRenderer<T extends BlockEntity & Ches
         return alteredReturn == null ? vertices : alteredReturn;
     }
 
+    private boolean isAnimatedTexture = false;
 
     @Inject(method = "render(Lnet/minecraft/block/entity/BlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/SpriteIdentifier;getVertexConsumer(Lnet/minecraft/client/render/VertexConsumerProvider;Ljava/util/function/Function;)Lnet/minecraft/client/render/VertexConsumer;",
                     shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILSOFT)
     private void etf$getChestTexture(T entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, CallbackInfo ci, World world, boolean bl, BlockState blockState, ChestType chestType, Block block, AbstractChestBlock<?> abstractChestBlock, boolean bl2, float f, DoubleBlockProperties.PropertySource<?> propertySource, float g, int i, SpriteIdentifier spriteIdentifier) {
-
-        //hopefully works in modded scenarios, assumes the mod dev uses the actual vanilla code process and texture pathing rules
-        String nameSpace = spriteIdentifier.getTextureId().getNamespace();
-        String texturePath = "textures/" + spriteIdentifier.getTextureId().getPath() + ".png";
-        etf$textureOfThis = new Identifier(nameSpace, texturePath);
-        etf$vertexConsumerProviderOfThis = vertexConsumers;
-        if (ETFConfigData.enableCustomTextures && ETFConfigData.enableCustomBlockEntities ) {
-            etf$chestStandInDummy = new ArmorStandEntity(EntityType.ARMOR_STAND, MinecraftClient.getInstance().world);
-            etf$chestStandInDummy.setPos(entity.getPos().getX(), entity.getPos().getY(), entity.getPos().getZ());
-            String identifier = "chest" + entity.getPos().toString() + chestType.asString();
-            if (entity instanceof Nameable nameable) {
-                etf$chestStandInDummy.setCustomName(nameable.getCustomName());
-                etf$chestStandInDummy.setCustomNameVisible(nameable.hasCustomName());
-                if(nameable.hasCustomName()) {
-                    //noinspection ConstantConditions
-                    identifier += nameable.getCustomName().asString();
+        isAnimatedTexture = ((SpriteAccessor)spriteIdentifier.getSprite()).callGetFrameCount() != 1;
+        if (!isAnimatedTexture) {
+            //hopefully works in modded scenarios, assumes the mod dev uses the actual vanilla code process and texture pathing rules
+            String nameSpace = spriteIdentifier.getTextureId().getNamespace();
+            String texturePath = "textures/" + spriteIdentifier.getTextureId().getPath() + ".png";
+            etf$textureOfThis = new Identifier(nameSpace, texturePath);
+            etf$vertexConsumerProviderOfThis = vertexConsumers;
+            if (ETFConfigData.enableCustomTextures && ETFConfigData.enableCustomBlockEntities) {
+                etf$chestStandInDummy = new ArmorStandEntity(EntityType.ARMOR_STAND, MinecraftClient.getInstance().world);
+                etf$chestStandInDummy.setPos(entity.getPos().getX(), entity.getPos().getY(), entity.getPos().getZ());
+                String identifier = "chest" + entity.getPos().toString() + chestType.asString();
+                if (entity instanceof Nameable nameable) {
+                    etf$chestStandInDummy.setCustomName(nameable.getCustomName());
+                    etf$chestStandInDummy.setCustomNameVisible(nameable.hasCustomName());
+                    if (nameable.hasCustomName()) {
+                        //noinspection ConstantConditions
+                        identifier += nameable.getCustomName().asString();
+                    }
                 }
+                //chests don't have uuid so set UUID from something repeatable this uses blockPos chestType & container name
+                etf$chestStandInDummy.setUuid(UUID.nameUUIDFromBytes(identifier.getBytes()));
             }
-            //chests don't have uuid so set UUID from something repeatable this uses blockPos chestType & container name
-            etf$chestStandInDummy.setUuid(UUID.nameUUIDFromBytes(identifier.getBytes()));
         }
     }
 
@@ -88,12 +92,14 @@ public abstract class MixinChestBlockEntityRenderer<T extends BlockEntity & Ches
     @Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;Lnet/minecraft/client/model/ModelPart;Lnet/minecraft/client/model/ModelPart;Lnet/minecraft/client/model/ModelPart;FII)V",
             at = @At(value = "TAIL"))
     private void etf$renderEmissiveChest(MatrixStack matrices, VertexConsumer vertices, ModelPart lid, ModelPart latch, ModelPart base, float openFactor, int light, int overlay, CallbackInfo ci) {
-        ETFUtils.generalEmissiveRenderPart(matrices, etf$vertexConsumerProviderOfThis, etf$textureOfThis, lid, true);
-        ETFUtils.generalEmissiveRenderPart(matrices, etf$vertexConsumerProviderOfThis, etf$textureOfThis, latch, true);
-        ETFUtils.generalEmissiveRenderPart(matrices, etf$vertexConsumerProviderOfThis, etf$textureOfThis, base, true);
+        if(!isAnimatedTexture && ETFConfigData.enableEmissiveBlockEntities) {
+            ETFUtils.generalEmissiveRenderPart(matrices, etf$vertexConsumerProviderOfThis, etf$textureOfThis, lid, true);
+            ETFUtils.generalEmissiveRenderPart(matrices, etf$vertexConsumerProviderOfThis, etf$textureOfThis, latch, true);
+            ETFUtils.generalEmissiveRenderPart(matrices, etf$vertexConsumerProviderOfThis, etf$textureOfThis, base, true);
 
-        etf$textureOfThis = null;
-        etf$vertexConsumerProviderOfThis = null;
+            etf$textureOfThis = null;
+            etf$vertexConsumerProviderOfThis = null;
+        }
     }
 
 

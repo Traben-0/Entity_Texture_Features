@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import it.unimi.dsi.fastutil.objects.*;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.model.ModelPart;
 import net.minecraft.util.Identifier;
 import traben.entity_texture_features.client.logging.ETFLogger;
 import traben.entity_texture_features.client.utils.ETFUtils;
@@ -39,6 +40,12 @@ public class ETFClient implements ClientModInitializer {
     public static final Object2BooleanOpenHashMap<String> PATH_IS_EXISTING_FEATURE = new Object2BooleanOpenHashMap<>();
     //part of features check to optimize method processing
     public static final ObjectOpenHashSet<UUID> UUID_SKIP_FEATURES_CHECK = new ObjectOpenHashSet<>();
+
+    //data for different elytra wing texture conversion
+    public static final Object2ObjectOpenHashMap<Identifier,Identifier> IDENTIFIER_OPPOSITE_ELYTRA_IDENTIFIER = new Object2ObjectOpenHashMap<>();
+
+    //need for 1.18
+    public static final ObjectOpenHashSet<ModelPart> ELYTRA_MODELPART_TO_SKIP = new ObjectOpenHashSet<>();//
 
     //marks entity has already been processed before for random texture application
     public static final ObjectOpenHashSet<UUID> UUID_ENTITY_ALREADY_CALCULATED = new ObjectOpenHashSet<>();//

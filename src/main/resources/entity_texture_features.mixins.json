@@ -35,10 +35,14 @@
     "client.entity.misc.MixinBuiltinModelItemRenderer",
     "client.entity.misc.MixinElytraEntityModel",
     "client.entity.misc.MixinEnderDragonEntityRenderer",
+    "client.entity.misc.MixinModelPart",
     "client.entity.misc.MixinTridentEntity",
-    "client.entity.misc.MixinTridentEntityRenderer"
+    "client.entity.misc.MixinTridentEntityRenderer",
+    "client.accessor.ElytraEntityModelAccessor",
+    "client.accessor.SpriteAccessor"
   ],
   "mixins": [
+
   ],
   "injectors": {
     "defaultRequire": 1

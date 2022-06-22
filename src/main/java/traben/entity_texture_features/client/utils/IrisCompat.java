@@ -1,4 +1,4 @@
-package traben.entity_texture_features.client;
+package traben.entity_texture_features.client.utils;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.irisshaders.iris.api.v0.IrisApi;

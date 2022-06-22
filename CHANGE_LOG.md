@@ -1,5 +1,11 @@
 **ETF Changelog:**
 
+[dev-build.1]
+- block entity features will not render if the texture is animated as it is not supported *(no need to change settings)*
+- further optimizations to additional mob textures *(like sheep_fur.png)*
+- added option to have different textures on left & right elytra wing using *"elytra_other.png"* *(compatible with CITResewn)*
+- fixed elytra emissive texture rendering
+
 [V3.1.4]
 - fixed a logic mistake causing high lag when additional mob textures *(like sheep_fur.png)* did not have the same or higher number of variations as the base texture
 - the Blocks property now also check the block the mob spawned inside of *(allowing things like water, cave_air, flowers, torches, etc. to be used, and also fixes issues with soul-sand and mud not reading correctly)*

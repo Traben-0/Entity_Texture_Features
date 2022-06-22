@@ -24,6 +24,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import traben.entity_texture_features.client.utils.ETFUtils;
+import traben.entity_texture_features.mixin.client.accessor.SpriteAccessor;
 
 import java.util.UUID;
 
@@ -40,46 +41,36 @@ public abstract class MixinShulkerBoxBlockEntityRenderer<T extends BlockEntity &
     private VertexConsumerProvider etf$vertexConsumerProviderOfThis = null;
     private Identifier etf$textureOfThis = null;
 
-
-    @Inject(method = "render(Lnet/minecraft/block/entity/ShulkerBoxBlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II)V",
-            at = @At(value = "HEAD"))
-    private void etf$injected(ShulkerBoxBlockEntity shulkerBoxBlockEntity, float f, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j, CallbackInfo ci) {
-
-        if (ETFConfigData.enableCustomTextures && ETFConfigData.enableCustomBlockEntities ) {
-            etf$vertexConsumerProviderOfThis = vertexConsumerProvider;
-            try {
-                etf$shulkerBoxStandInDummy = new ArmorStandEntity(EntityType.ARMOR_STAND, shulkerBoxBlockEntity.getWorld());
-                etf$shulkerBoxStandInDummy.setPos(shulkerBoxBlockEntity.getPos().getX(), shulkerBoxBlockEntity.getPos().getY(), shulkerBoxBlockEntity.getPos().getZ());
-                String identifier = "shulker" + shulkerBoxBlockEntity.getPos().toString();
-                etf$shulkerBoxStandInDummy.setCustomName(shulkerBoxBlockEntity.getCustomName());
-                etf$shulkerBoxStandInDummy.setCustomNameVisible(shulkerBoxBlockEntity.hasCustomName());
-                if (shulkerBoxBlockEntity.hasCustomName()) {
-                    //noinspection ConstantConditions
-                    identifier += shulkerBoxBlockEntity.getCustomName().asString();
-                }
-                //shulker boxes don't have uuid so set UUID from something repeatable this uses blockPos & container name
-                etf$shulkerBoxStandInDummy.setUuid(UUID.nameUUIDFromBytes(identifier.getBytes()));
-            } catch (Exception e) {
-                ETFUtils.logError("shulker box custom rendering failed during setup, " + e);
-            }
-        }
-    }
+    private boolean isAnimatedTexture = false;
 
     @Inject(method = "render(Lnet/minecraft/block/entity/ShulkerBoxBlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;push()V",
                     shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILSOFT)
     private void etf$injected(ShulkerBoxBlockEntity shulkerBoxBlockEntity, float f, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j, CallbackInfo ci, Direction direction, SpriteIdentifier spriteIdentifier) {
-        //etf$shulkerBox = shulkerBoxBlockEntity;
-        String path = "textures/" + spriteIdentifier.getTextureId().getPath() + ".png";
-        //if(shulkerBoxBlockEntity.getColor() != null){
-        //    path = path+ "_" + shulkerBoxBlockEntity.getColor().getName();
-        //}
-        //path = path + ".png";
-
-        etf$textureOfThis = new Identifier(spriteIdentifier.getTextureId().getNamespace(), path);
-        //System.out.println(etf$textureOfThis);
-
+        isAnimatedTexture = ((SpriteAccessor) spriteIdentifier.getSprite()).callGetFrameCount() != 1;
+        if (!isAnimatedTexture) {
+            if (ETFConfigData.enableCustomTextures && ETFConfigData.enableCustomBlockEntities) {
+                etf$vertexConsumerProviderOfThis = vertexConsumerProvider;
+                try {
+                    etf$shulkerBoxStandInDummy = new ArmorStandEntity(EntityType.ARMOR_STAND, shulkerBoxBlockEntity.getWorld());
+                    etf$shulkerBoxStandInDummy.setPos(shulkerBoxBlockEntity.getPos().getX(), shulkerBoxBlockEntity.getPos().getY(), shulkerBoxBlockEntity.getPos().getZ());
+                    String identifier = "shulker" + shulkerBoxBlockEntity.getPos().toString();
+                    etf$shulkerBoxStandInDummy.setCustomName(shulkerBoxBlockEntity.getCustomName());
+                    etf$shulkerBoxStandInDummy.setCustomNameVisible(shulkerBoxBlockEntity.hasCustomName());
+                    if (shulkerBoxBlockEntity.hasCustomName()) {
+                        //noinspection ConstantConditions
+                        identifier += shulkerBoxBlockEntity.getCustomName().asString();
+                    }
+                    //shulker boxes don't have uuid so set UUID from something repeatable this uses blockPos & container name
+                    etf$shulkerBoxStandInDummy.setUuid(UUID.nameUUIDFromBytes(identifier.getBytes()));
+                } catch (Exception e) {
+                    ETFUtils.logError("shulker box custom rendering failed during setup, " + e);
+                }
+                String path = "textures/" + spriteIdentifier.getTextureId().getPath() + ".png";
+                etf$textureOfThis =new Identifier(spriteIdentifier.getTextureId().getNamespace(),path);
+            }
     }
+}
 
 
     @ModifyArg(method = "render(Lnet/minecraft/block/entity/ShulkerBoxBlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II)V",
@@ -87,7 +78,7 @@ public abstract class MixinShulkerBoxBlockEntityRenderer<T extends BlockEntity &
             index = 1)
     private VertexConsumer etf$alterTexture(VertexConsumer vertices) {
         //System.out.println("doCustom ="+(!ETFConfigData.enableCustomTextures) + ","+(etf$textureOfThis == null) +","+ (etf$shulkerBoxStandInDummy == null));
-        if (!ETFConfigData.enableCustomTextures  || !ETFConfigData.enableCustomBlockEntities  || etf$textureOfThis == null || etf$shulkerBoxStandInDummy == null)
+        if (isAnimatedTexture || !ETFConfigData.enableCustomTextures  || !ETFConfigData.enableCustomBlockEntities  || etf$textureOfThis == null || etf$shulkerBoxStandInDummy == null)
             return vertices;
         //System.out.println("pre="+etf$textureOfThis);
         etf$textureOfThis = ETFUtils.generalProcessAndReturnAlteredTexture(etf$textureOfThis, etf$shulkerBoxStandInDummy);
@@ -101,7 +92,7 @@ public abstract class MixinShulkerBoxBlockEntityRenderer<T extends BlockEntity &
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/ShulkerEntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V",
                     shift = At.Shift.AFTER))
     private void etf$emissiveTime(ShulkerBoxBlockEntity shulkerBoxBlockEntity, float f, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j, CallbackInfo ci) {
-        if(ETFConfigData.enableEmissiveBlockEntities) {
+        if(!isAnimatedTexture && ETFConfigData.enableEmissiveBlockEntities) {
             ETFUtils.generalEmissiveRenderModel(matrixStack, vertexConsumerProvider, etf$textureOfThis, this.model);
         }
         //etf$shulkerBoxStandInDummy = null;

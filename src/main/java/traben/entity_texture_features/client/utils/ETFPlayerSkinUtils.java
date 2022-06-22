@@ -341,7 +341,7 @@ public class ETFPlayerSkinUtils {
 
             } else {
                 ETFUtils.logMessage("Player skin {" + player.getName().getString() + "} no THIRD_PARTY_CAPE Found", false);
-                ETFUtils.registerNativeImageToIdentifier(Objects.requireNonNullElseGet(ETFUtils.getNativeImageFromID(new Identifier("etf:textures/capes/error.png")),ETFUtils::emptyNativeImage), SKIN_NAMESPACE + id + "_cape.png");
+                ETFUtils.registerNativeImageToIdentifier(Objects.requireNonNullElseGet(ETFUtils.getNativeImageFromIDElseNull(new Identifier("etf:textures/capes/error.png")),ETFUtils::emptyNativeImage), SKIN_NAMESPACE + id + "_cape.png");
                 UUID_PLAYER_HAS_CUSTOM_CAPE.put(id, false);
             }
 
@@ -567,7 +567,7 @@ public class ETFPlayerSkinUtils {
                             thirdPartyCapeWaiting = true;
                             UUID_PLAYER_TPC_SKIN_IMAGE_HOLDER.put(id, skin);
                         }
-                        case 666 -> cape = ETFUtils.getNativeImageFromID(new Identifier("etf:textures/capes/error.png"));
+                        case 666 -> cape = ETFUtils.getNativeImageFromIDElseNull(new Identifier("etf:textures/capes/error.png"));
                         default -> {
                             //cape = getNativeImageFromID(new Identifier("etf:capes/blank.png"));
                         }
@@ -710,9 +710,9 @@ public class ETFPlayerSkinUtils {
 
     private static NativeImage returnCustomTexturedCape(NativeImage skin) {
         NativeImage cape = ETFUtils.emptyNativeImage(64, 32);
-        NativeImage elytra = ETFUtils.getNativeImageFromID(new Identifier("etf:textures/capes/default_elytra.png"));
+        NativeImage elytra = ETFUtils.getNativeImageFromIDElseNull(new Identifier("etf:textures/capes/default_elytra.png"));
         if (elytra == null) {
-            elytra = ETFUtils.getNativeImageFromID(new Identifier("textures/entity/elytra.png"));
+            elytra = ETFUtils.getNativeImageFromIDElseNull(new Identifier("textures/entity/elytra.png"));
         }//not else
         if (elytra != null) {
             cape.copyFrom(elytra);
@@ -904,7 +904,7 @@ public class ETFPlayerSkinUtils {
         if (FabricLoader.getInstance().isModLoaded("fabric")) {
             Path outputDirectory = Path.of(FabricLoader.getInstance().getGameDir().toString(), "ETF_player_skin_printout.png");
             //NativeImage skinImage = ETFUtils.getNativeImageFromID(new Identifier(SKIN_NAMESPACE + playerID + ".png"));
-            NativeImage skinFeatureImage = ETFUtils.getNativeImageFromID(new Identifier(MOD_ID, "textures/skin_feature_printout.png"));
+            NativeImage skinFeatureImage = ETFUtils.getNativeImageFromIDElseNull(new Identifier(MOD_ID, "textures/skin_feature_printout.png"));
             try {
                 for (int x = 0; x < skinImage.getWidth(); x++) {
                     for (int y = 0; y < skinImage.getHeight(); y++) {
