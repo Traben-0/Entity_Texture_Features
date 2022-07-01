@@ -1,6 +1,7 @@
 **ETF Changelog:**
 
-[dev-build.1]
+[V3.1.5]
+- fixed a crash on forge
 - block entity features will not render if the texture is animated as it is not supported *(no need to change settings)*
 - further optimizations to additional mob textures *(like sheep_fur.png)*
 - added option to have different textures on left & right elytra wing using *"elytra_other.png"* *(compatible with CITResewn)*

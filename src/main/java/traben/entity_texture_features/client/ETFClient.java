@@ -8,7 +8,6 @@ import net.minecraft.util.Identifier;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ConfigGuiHandler;
 import net.minecraftforge.fml.IExtensionPoint;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLConfig;
@@ -129,7 +128,7 @@ public class ETFClient {
     public static int mooshroomBrownCustomShroom = 0;
     public static Boolean lecternHasCustomTexture = null;
     //config object
-    public static ETFConfig ETFConfigData = etf$loadConfig(true);;
+    public static ETFConfig ETFConfigData = new ETFConfig();
 
     //logging object
     public static Logger LOGGER = LoggerFactory.getLogger("Entity Texture Features");;// = ETFLogger.create();
@@ -141,16 +140,15 @@ public class ETFClient {
             //etf$loadConfig();
             // Register the configuration GUI factory
 
-            if(ModList.get().isLoaded("cloth-config-forge")) {
+            try {
                 ModLoadingContext.get().registerExtensionPoint(
                         ConfigGuiHandler.ConfigGuiFactory.class,
                         () -> new ConfigGuiHandler.ConfigGuiFactory((minecraftClient, screen) -> new ETFConfigScreen().getConfigScreen(screen, false)));
-            } else {
-                //I definitely didn't catch an error, you saw nothing...
+            }catch(NoClassDefFoundError e){
                 System.out.println("[Entity Texture Features]: Mod settings cannot be edited in GUI without cloth config");
-
             }
 
+            etf$loadConfig();
 
             ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));
         } else {
@@ -163,11 +161,8 @@ public class ETFClient {
     // config code based on bedrockify & actually unbreaking fabric config code
     // https://github.com/juancarloscp52/BedrockIfy/blob/1.17.x/src/main/java/me/juancarloscp52/bedrockify/Bedrockify.java
     // https://github.com/wutdahack/ActuallyUnbreakingFabric/blob/1.18.1/src/main/java/wutdahack/actuallyunbreaking/ActuallyUnbreaking.java
-    public static ETFConfig etf$loadConfig() {
-        return etf$loadConfig(false);
-    }
 
-    public static ETFConfig etf$loadConfig(boolean returnConfig) {
+    public static void etf$loadConfig() {
         ETFConfig etf_config = null;
         File config = new File(CONFIG_DIR.toFile(), "entity_texture_features.json");
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -186,12 +181,10 @@ public class ETFClient {
             etf_config = new ETFConfig();
             ETFUtils.saveConfig();
         }
-        if (returnConfig){
-            return etf_config ;
-        }else{
-            ETFConfigData = etf_config;
-            return null;
-        }
+        ETFConfigData = etf_config;
+
+        if (ETFConfigData == null)
+            ETFConfigData = new ETFConfig();
     }
 
 }

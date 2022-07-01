@@ -12,7 +12,7 @@ issueTrackerURL="https://github.com/Traben-0/EmissiveMod/issues"
 showAsResourcePack=false
 
 [[mods]]
-modId="entity_texture_features"
+modId="etf"
 version="${version}"
 displayName="Entity Texture Features"
 displayURL="https://github.com/Traben-0/EmissiveMod"
@@ -20,13 +20,15 @@ logoFile="icon.png"
 credits=""
 authors=["Traben", "CanadianBacon"]
 description='''
-  Optifine format compatible:
+Adds support for resource-pack driven features for entity textures including some OptiFine features
+§c!Cloth config is required to change settings with ModMenu!§7
+Supports OptiFine:
  - Random & Custom textures
  - Emissive textures
-With features such as:
+With more features such as:
  - Blinking textures
- - Player Skin textures
-  '''
+ - Player Skin support",
+ '''
 
 [[dependencies.etf]]
 modId="forge"
