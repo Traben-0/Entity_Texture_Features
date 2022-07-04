@@ -1,0 +1,47 @@
+{
+  "required": true,
+  "package": "traben.entity_texture_features.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "MixinIdentifier",
+    "accessor.ElytraEntityModelAccessor",
+    "accessor.SpriteAccessor",
+    "cacheReloaders.MixinMinecraftClient",
+    "cacheReloaders.MixinPlayerEntity",
+    "cacheReloaders.MixinSimpleResourceReload",
+    "entity.MixinLivingEntityRenderer",
+    "entity.MixinPlayerEntityRenderer",
+    "entity.blockEntity.MixinBedBlockEntityRenderer",
+    "entity.blockEntity.MixinBellBlockEntityRenderer",
+    "entity.blockEntity.MixinChestBlockEntityRenderer",
+    "entity.blockEntity.MixinEnchantingTableBlockEntityRenderer",
+    "entity.blockEntity.MixinLecternBlockEntityRenderer",
+    "entity.blockEntity.MixinShulkerBoxBlockEntityRenderer",
+    "entity.featureRenderers.MixinCapeFeatureRenderer",
+    "entity.featureRenderers.MixinDrownedOverlayFeatureRenderer",
+    "entity.featureRenderers.MixinElytraFeatureRenderer",
+    "entity.featureRenderers.MixinEyesFeatureRenderer",
+    "entity.featureRenderers.MixinHorseArmorFeatureRenderer",
+    "entity.featureRenderers.MixinHorsemarkingFeatureRenderer",
+    "entity.featureRenderers.MixinIronGolemCrackFeatureRenderer",
+    "entity.featureRenderers.MixinMooshroomMushroomFeatureRenderer",
+    "entity.featureRenderers.MixinSheepWoolFeatureRenderer",
+    "entity.featureRenderers.MixinShoulderParrotFeatureRenderer",
+    "entity.featureRenderers.MixinShulkerHeadFeatureRenderer",
+    "entity.featureRenderers.MixinSlimeOverlayFeatureRenderer",
+    "entity.featureRenderers.MixinVillagerClothingFeatureRenderer",
+    "entity.featureRenderers.MixinWardenFeatureRenderer",
+    "entity.misc.MixinAbstractClientPlayerEntity",
+    "entity.misc.MixinBuiltinModelItemRenderer",
+    "entity.misc.MixinElytraEntityModel",
+    "entity.misc.MixinEnderDragonEntityRenderer",
+    "entity.misc.MixinMobSpawnerBlockEntityRenderer",
+    "entity.misc.MixinTridentEntity",
+    "entity.misc.MixinTridentEntityRenderer"
+  ],
+  "mixins": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

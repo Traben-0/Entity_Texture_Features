@@ -1,8 +1,30 @@
 **ETF Changelog:**
 
+[dev build 6]
+- ported the code to single codebase for forge and fabric using architechtury
+- expect issues especially with forge *(please report any you find)*
+- armor emissive bright mode bug fixed
+- shulker box emissive bright mode bug fixed
+- elytra emissive bright mode bug fix
+- fixed mobs with changing textures not updating with ETF *(e.g. ghasts shooting, wolves angry texture, bees angry texture etc)*
+
+[ETF rewrite changes]
+- custom potion effects have been removed as due to limits of client/server data transparency there is no reliable way to have it update during-game *(potion info is **only** sent to clients in the mobs first seen/spawn packet :/ )*
+- additional mob textures like "sheep_fur.png" can now optionally utilize a "sheep_fur.properties" file to have settings different to the 'base' texture, if this properties file is not present ETF will try and use the same variant number as the 'base' texture the mob is using, failing all of these it will default to the regular vanilla texture for this variant
+- added config option "advanced_IncreaseCacheSizeModifier" which will only show in the config file, this should only be increased in the event of an extremely modded instance having over 2000 entities loaded on the client (the amount ETF now keeps track of at any given time), to prevent them being removed from ETF's memory.
+- cloth config is no longer included in the jar and is now an optional dependency *(it is required to use the mod menu settings screen)*
+- resource-packs with property files that do not read correctly and cause problems will now fall back to the vanilla texture instead of randomly picking and causing confusion
+- texture1.png will now be ignored and direct to the vanilla texture or a texture.png in an override folder only *(override folder being any of the etf or optifine folders)*
+
+[dev-build.1]
+- block entity features will not render if the texture is animated as it is not supported *(no need to change settings)*
+- further optimizations to additional mob textures *(like sheep_fur.png)*
+- added option to have a different texture on the left elytra wing using *"elytra_left.png"* *(compatible with CITResewn)*
+- fixed elytra emissive texture rendering
+
 [V3.1.4]
 - fixed a logic mistake causing high lag when additional mob textures *(like sheep_fur.png)* did not have the same or higher number of variations as the base texture
-- the Blocks property now also check the block the mob spawned inside of *(allowing things like water, cave_air, flowers, torches, etc. to be used, and also fixes issues with soul-sand and mud not reading correctly)*
+- the Blocks property now also check the block the mob spawned inside *(allowing things like water, cave_air, flowers, torches, etc. to be used, and also fixes issues with soul-sand and mud not reading correctly)*
 - added an option to enable / disable block entity emissive and custom textures as they currently do not support vanilla animated textures and may want to be disabled by such users
 - added some missed translation support *(Still only english atm :/)*
 
@@ -84,6 +106,5 @@ Fixed:
 - villager profession property not working with namespaces
 - Mooshroom mushrooms not being overridden correctly
 - various minor issues
-
 
 

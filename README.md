@@ -1,3 +1,9 @@
+
+# this branch holds the rewrite ported to architechtury so fabric and forge can utilise a single codebase
+
+
+
+
 <img src="readMeAssets/title.png" alt="Entity Texture Features Title" width="650"/>
 
 ___

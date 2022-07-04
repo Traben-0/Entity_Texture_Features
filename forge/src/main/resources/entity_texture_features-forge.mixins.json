@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "traben.entity_texture_features.forge.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "MixinArmorFeatureRenderer"
+  ],
+  "mixins": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
