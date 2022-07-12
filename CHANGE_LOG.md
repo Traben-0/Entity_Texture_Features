@@ -1,5 +1,10 @@
 **ETF Changelog:**
 
+[dev build 7]
+- texture1.png functionality has returned to the rewrite and functions identically to OptiFine
+- initial support for iris PBR _n & _s varied entity textures added *(may cause issues with some textures please report any you find)*
+- fixed a minor issue with 2 frame blinking not registering the correct texture
+
 [dev build 6]
 - ported the code to single codebase for forge and fabric using architechtury
 - expect issues especially with forge *(please report any you find)*
@@ -13,8 +18,7 @@
 - additional mob textures like "sheep_fur.png" can now optionally utilize a "sheep_fur.properties" file to have settings different to the 'base' texture, if this properties file is not present ETF will try and use the same variant number as the 'base' texture the mob is using, failing all of these it will default to the regular vanilla texture for this variant
 - added config option "advanced_IncreaseCacheSizeModifier" which will only show in the config file, this should only be increased in the event of an extremely modded instance having over 2000 entities loaded on the client (the amount ETF now keeps track of at any given time), to prevent them being removed from ETF's memory.
 - cloth config is no longer included in the jar and is now an optional dependency *(it is required to use the mod menu settings screen)*
-- resource-packs with property files that do not read correctly and cause problems will now fall back to the vanilla texture instead of randomly picking and causing confusion
-- texture1.png will now be ignored and direct to the vanilla texture or a texture.png in an override folder only *(override folder being any of the etf or optifine folders)*
+- textures with property files that do not read correctly and cause problems will now fall back to the vanilla texture instead of randomly picking and causing confusion
 
 [dev-build.1]
 - block entity features will not render if the texture is animated as it is not supported *(no need to change settings)*

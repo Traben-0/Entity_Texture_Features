@@ -75,7 +75,7 @@ public abstract class ETFUtils2 {
 
     }
 
-    public static NativeImage getNativeImageElseNull(Identifier identifier) {
+    public static NativeImage getNativeImageElseNull(@Nullable Identifier identifier) {
         NativeImage img;
         try {
             @SuppressWarnings("OptionalGetWithoutIsPresent") //try catch is intended

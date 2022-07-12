@@ -224,45 +224,165 @@ public class ETFTexture {
     }
 
     private void createPatchedTextures() {
+        //here we will 'patch' the base texture to prevent z-fighting with various shaders
+        //emissive and iris pbr textures will require this for shader z-fighting prevention
+
+        //null depending on existence
+        NativeImage newBaseTexture = ETFUtils2.getNativeImageElseNull(thisIdentifier);
+        NativeImage newBlinkTexture = ETFUtils2.getNativeImageElseNull(blinkIdentifier);
+        NativeImage newBlink2Texture = ETFUtils2.getNativeImageElseNull(blink2Identifier);
+
+        boolean didPatch = false;
+
+        //we need to patch iris pbr textures out, these are texture_n.png   and texture_s.png
+
+        if(newBaseTexture != null && ETFCrossPlatformHandler.isThisModLoaded("iris")){
+            ResourceManager manager = MinecraftClient.getInstance().getResourceManager();
+            Optional<Resource> baseResource = manager.getResource(thisIdentifier);
+            if(baseResource.isPresent()) {
+                ObjectSet<String> packNames = new ObjectOpenHashSet<>();
+                String baseTexturePackName = baseResource.get().getResourcePackName();
+                try {
+
+                    Identifier identifier_n = new Identifier(thisIdentifier.toString().replace(".png", "_n.png"));
+                    Optional<Resource> base_nResource = manager.getResource(identifier_n);
+                    if (base_nResource.isPresent()) {
+                        String base_nPackName = base_nResource.get().getResourcePackName();
+                        //packNames.clear();
+                        packNames.add(baseTexturePackName);
+                        packNames.add(base_nPackName);
+                        if(base_nPackName.equals(ETFUtils2.returnNameOfHighestPackFrom(packNames))){
+                            //here _n texture exists and is in an overriding pack and iris is installed, thus it should be patched out
+                            patchTextureToRemoveZFightingWithOtherTexture(newBaseTexture, ETFUtils2.getNativeImageElseNull(identifier_n));
+                            didPatch = true;
+                        }
+                    }
+                    Identifier identifier_s = new Identifier(thisIdentifier.toString().replace(".png", "_s.png"));
+                    Optional<Resource> base_sResource = manager.getResource(identifier_s);
+                    if (base_sResource.isPresent()) {
+                        String base_sPackName = base_sResource.get().getResourcePackName();
+                        packNames.clear();
+                        packNames.add(baseTexturePackName);
+                        packNames.add(base_sPackName);
+                        if(base_sPackName.equals(ETFUtils2.returnNameOfHighestPackFrom(packNames))){
+                            //here _s texture exists and is in an overriding pack and iris is installed, thus it should be patched out
+                            patchTextureToRemoveZFightingWithOtherTexture(newBaseTexture, ETFUtils2.getNativeImageElseNull(identifier_s));
+                            didPatch = true;
+                        }
+                    }
+
+                    if (doesBlink() && newBlinkTexture != null){
+                        Identifier identifier_blink_n = new Identifier(blinkIdentifier.toString().replace(".png", "_n.png"));
+                        Optional<Resource> blink_nResource = manager.getResource(identifier_blink_n);
+                        if (blink_nResource.isPresent()) {
+                            String blink_nPackName = blink_nResource.get().getResourcePackName();
+                            packNames.clear();
+                            packNames.add(baseTexturePackName);
+                            packNames.add(blink_nPackName);
+                            if(blink_nPackName.equals(ETFUtils2.returnNameOfHighestPackFrom(packNames))){
+                                //here _n texture exists and is in an overriding pack and iris is installed, thus it should be patched out
+                                patchTextureToRemoveZFightingWithOtherTexture(newBlinkTexture, ETFUtils2.getNativeImageElseNull(identifier_blink_n));
+                            }
+                        }
+                        Identifier identifier_blink_s = new Identifier(thisIdentifier.toString().replace(".png", "_s.png"));
+                        Optional<Resource> blink_sResource = manager.getResource(identifier_blink_s);
+                        if (blink_sResource.isPresent()) {
+                            String blink_sPackName = blink_sResource.get().getResourcePackName();
+                            packNames.clear();
+                            packNames.add(baseTexturePackName);
+                            packNames.add(blink_sPackName);
+                            if(blink_sPackName.equals(ETFUtils2.returnNameOfHighestPackFrom(packNames))){
+                                //here _s texture exists and is in an overriding pack and iris is installed, thus it should be patched out
+                                patchTextureToRemoveZFightingWithOtherTexture(newBlinkTexture, ETFUtils2.getNativeImageElseNull(identifier_blink_s));
+                            }
+                        }
+                        if (doesBlink2() && newBlink2Texture != null){
+                            Identifier identifier_blink2_n = new Identifier(blinkIdentifier.toString().replace(".png", "_n.png"));
+                            Optional<Resource> blink2_nResource = manager.getResource(identifier_blink2_n);
+                            if (blink2_nResource.isPresent()) {
+                                String blink2_nPackName = blink2_nResource.get().getResourcePackName();
+                                packNames.clear();
+                                packNames.add(baseTexturePackName);
+                                packNames.add(blink2_nPackName);
+                                if(blink2_nPackName.equals(ETFUtils2.returnNameOfHighestPackFrom(packNames))){
+                                    //here _n texture exists and is in an overriding pack and iris is installed, thus it should be patched out
+                                    patchTextureToRemoveZFightingWithOtherTexture(newBlink2Texture, ETFUtils2.getNativeImageElseNull(identifier_blink2_n));
+                                }
+                            }
+                            Identifier identifier_blink2_s = new Identifier(thisIdentifier.toString().replace(".png", "_s.png"));
+                            Optional<Resource> blink2_sResource = manager.getResource(identifier_blink2_s);
+                            if (blink2_sResource.isPresent()) {
+                                String blink2_sPackName = blink2_sResource.get().getResourcePackName();
+                                packNames.clear();
+                                packNames.add(baseTexturePackName);
+                                packNames.add(blink2_sPackName);
+                                if(blink2_sPackName.equals(ETFUtils2.returnNameOfHighestPackFrom(packNames))){
+                                    //here _s texture exists and is in an overriding pack and iris is installed, thus it should be patched out
+                                    patchTextureToRemoveZFightingWithOtherTexture(newBlink2Texture, ETFUtils2.getNativeImageElseNull(identifier_blink2_s));
+                                }
+                            }
+                        }
+                    }
+
+
+                } catch (IndexOutOfBoundsException e) {
+                    ETFUtils2.logError("IRIS '_n' or '_s' PBR texture was not the same size as original texture");
+                }
+            }
+        }//abort iris pbr patching not present
+
+
+        //patch out emissive textures for shader z fighting fix
         if (this.emissiveIdentifier != null) {
             //create patched texture
             NativeImage emissiveImage = ETFUtils2.getNativeImageElseNull(emissiveIdentifier);
-
             try {
-                NativeImage originalCopyToPatch = returnPatchedVersionOrNull(ETFUtils2.getNativeImageElseNull(thisIdentifier), emissiveImage);
+                patchTextureToRemoveZFightingWithOtherTexture(newBaseTexture, emissiveImage);
+                didPatch = true;
                 //no errors here means it all , and we have a patched texture in originalCopyToPatch
-                thisIdentifier_Patched = new Identifier(PATCH_NAMESPACE_PREFIX + thisIdentifier.getNamespace(), thisIdentifier.getPath());
-                ETFUtils2.registerNativeImageToIdentifier(originalCopyToPatch, thisIdentifier_Patched);
+                //thisIdentifier_Patched = new Identifier(PATCH_NAMESPACE_PREFIX + thisIdentifier.getNamespace(), thisIdentifier.getPath());
+                //ETFUtils2.registerNativeImageToIdentifier(originalCopyToPatch, thisIdentifier_Patched);
 
                 if (doesBlink() && emissiveBlinkIdentifier != null) {
                     NativeImage emissiveBlinkImage = ETFUtils2.getNativeImageElseNull(emissiveBlinkIdentifier);
-                    NativeImage blinkCopyToPatch = returnPatchedVersionOrNull(ETFUtils2.getNativeImageElseNull(blinkIdentifier), emissiveBlinkImage);
+                    patchTextureToRemoveZFightingWithOtherTexture(newBlinkTexture, emissiveBlinkImage);
                     //no errors here means it all worked, and we have a patched texture in
-                    blinkIdentifier_Patched = new Identifier(PATCH_NAMESPACE_PREFIX + blinkIdentifier.getNamespace(), blinkIdentifier.getPath());
-                    ETFUtils2.registerNativeImageToIdentifier(blinkCopyToPatch, blinkIdentifier_Patched);
+                    //blinkIdentifier_Patched = new Identifier(PATCH_NAMESPACE_PREFIX + blinkIdentifier.getNamespace(), blinkIdentifier.getPath());
+                    //ETFUtils2.registerNativeImageToIdentifier(blinkCopyToPatch, blinkIdentifier_Patched);
 
                     if (doesBlink2() && emissiveBlink2Identifier != null) {
                         NativeImage emissiveBlink2Image = ETFUtils2.getNativeImageElseNull(emissiveBlink2Identifier);
-                        NativeImage blink2CopyToPatch = returnPatchedVersionOrNull(ETFUtils2.getNativeImageElseNull(blink2Identifier), emissiveBlink2Image);
+                        patchTextureToRemoveZFightingWithOtherTexture(newBlink2Texture, emissiveBlink2Image);
                         //no errors here means it all worked, and we have a patched texture in
-                        blink2Identifier_Patched = new Identifier(PATCH_NAMESPACE_PREFIX + blink2Identifier.getNamespace(), blink2Identifier.getPath());
-                        ETFUtils2.registerNativeImageToIdentifier(blink2CopyToPatch, blinkIdentifier_Patched);
+                        //blink2Identifier_Patched = new Identifier(PATCH_NAMESPACE_PREFIX + blink2Identifier.getNamespace(), blink2Identifier.getPath());
+                        //ETFUtils2.registerNativeImageToIdentifier(blink2CopyToPatch, blinkIdentifier_Patched);
                     }
                 }
             } catch (Exception ignored) {
-                //assert this just in case of crash in unexpected step after being set
-                thisIdentifier_Patched = null;
-                blinkIdentifier_Patched = null;
-                blink2Identifier_Patched = null;
+                //
             }
 
+            //save successful patches
+            if(didPatch) {
+                thisIdentifier_Patched = new Identifier(PATCH_NAMESPACE_PREFIX + thisIdentifier.getNamespace(), thisIdentifier.getPath());
+                ETFUtils2.registerNativeImageToIdentifier(newBaseTexture, thisIdentifier_Patched);
+                if (doesBlink()) {
+                    blinkIdentifier_Patched = new Identifier(PATCH_NAMESPACE_PREFIX + blinkIdentifier.getNamespace(), blinkIdentifier.getPath());
+                    ETFUtils2.registerNativeImageToIdentifier(newBlinkTexture, blinkIdentifier_Patched);
+                    if (doesBlink2()) {
+                        blink2Identifier_Patched = new Identifier(PATCH_NAMESPACE_PREFIX + blink2Identifier.getNamespace(), blink2Identifier.getPath());
+                        ETFUtils2.registerNativeImageToIdentifier(newBlink2Texture, blink2Identifier_Patched);
+                    }
+                }
+            }
         }
-
     }
 
-    private @NotNull NativeImage returnPatchedVersionOrNull(NativeImage baseImage, NativeImage emissiveImage) throws IndexOutOfBoundsException {
+    private void patchTextureToRemoveZFightingWithOtherTexture(NativeImage baseImage, NativeImage otherImage) throws IndexOutOfBoundsException {
+        //here we alter the first image removing all pixels that are present in the second image to prevent z fighting
+        //this does not support transparency and is a hard counter to f-fighting
         try {
-            if (emissiveImage.getWidth() == baseImage.getWidth() && emissiveImage.getHeight() == baseImage.getHeight()) {
+            if (otherImage.getWidth() == baseImage.getWidth() && otherImage.getHeight() == baseImage.getHeight()) {
                 //float widthMultipleEmissive  = originalCopy.getWidth()  / (float)emissive.getWidth();
                 //float heightMultipleEmissive = originalCopy.getHeight() / (float)emissive.getHeight();
 
@@ -270,15 +390,15 @@ public class ETFTexture {
                     for (int y = 0; y < baseImage.getHeight(); y++) {
                         //int newX = Math.min((int)(x*widthMultipleEmissive),originalCopy.getWidth()-1);
                         //int newY = Math.min((int)(y*heightMultipleEmissive),originalCopy.getHeight()-1);
-                        if (emissiveImage.getOpacity(x, y) != 0) {
+                        if (otherImage.getOpacity(x, y) != 0) {
                             baseImage.setColor(x, y, 0);
                         }
                     }
                 }
             }
-            return baseImage;
+            //return baseImage;
         } catch (Exception e) {
-            throw new IndexOutOfBoundsException("emissive texture is not correct size");
+            throw new IndexOutOfBoundsException("additional texture is not the correct size, ETF has crashed in the patching stage");
         }
     }
 
@@ -498,7 +618,7 @@ public class ETFTexture {
             case BLINK2, BLINK2_PATCHED -> emissiveBlink2Identifier;
             default ->
                 //ETFUtils.logError("identifierOfCurrentState failed, it should not have, returning default");
-                    thisIdentifier;
+                    null;
         };
     }
 

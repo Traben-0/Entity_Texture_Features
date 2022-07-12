@@ -49,7 +49,7 @@ public abstract class ETFManager {
     public static final ETFLruCache<UUID, ETFPlayerTexture> PLAYER_TEXTURE_MAP = new ETFLruCache<>();
     static final Object2LongOpenHashMap<UUID> ENTITY_BLINK_TIME = new Object2LongOpenHashMap<>();
     //if false variant 1 will need to use vanilla texture otherwise vanilla texture has an override in other directory
-    //private static final Object2BooleanOpenHashMap<Identifier> OPTIFINE_1_HAS_REPLACEMENT = new Object2BooleanOpenHashMap<>();
+    private static final Object2BooleanOpenHashMap<Identifier> OPTIFINE_1_HAS_REPLACEMENT = new Object2BooleanOpenHashMap<>();
     static final ETFLruCache<ETFCacheKey, ObjectImmutableList<String>> ENTITY_SPAWN_CONDITIONS_CACHE = new ETFLruCache<>();
     //private static final Object2ReferenceOpenHashMap<@NotNull UUID, @NotNull ETFTexture> ENTITY_TEXTURE_MAP = new Object2ReferenceOpenHashMap<>();
 
@@ -83,7 +83,7 @@ public abstract class ETFManager {
     public static void reset() {
 
         ETFClientCommon.etf$loadConfig();
-
+        OPTIFINE_1_HAS_REPLACEMENT.clear();
         TEXTURE_MAP_TO_OPPOSITE_ELYTRA.clear();
         ETF_TEXTURE_CACHE.clear();
         ENTITY_TEXTURE_MAP.clearCache();
@@ -691,21 +691,16 @@ public abstract class ETFManager {
 
     @Nullable
     private static Identifier returnNewAlreadyNumberedRandomTexture(Identifier vanillaIdentifier, int variantNumber) {
+        //1.png logic not required as expected optifine behaviour is already present
+        Identifier identifierWithDirectory = ETFDirectory.getDirectoryVersionOf(ETFUtils2.replaceIdentifier(vanillaIdentifier, ".png", variantNumber + ".png"));
 
-        Identifier identifierWithDirectory;
-        if (variantNumber == 1) {
-            //return returnTextureOneIdentifier(vanillaIdentifier);
-            //should pick the highest directory anyway
-            identifierWithDirectory = ETFDirectory.getDirectoryVersionOf(vanillaIdentifier);
-        } else {
-            identifierWithDirectory = ETFDirectory.getDirectoryVersionOf(ETFUtils2.replaceIdentifier(vanillaIdentifier, ".png", variantNumber + ".png"));
+        if (identifierWithDirectory == null) {
+            ETFUtils2.logError("texture assign has failed, and should not have (possibly incorrect OptiFine properties file), vanilla texture has been used as fallback");
         }
-        if (identifierWithDirectory != null) {
-            return identifierWithDirectory;
-        }
-        ETFUtils2.logError("texture assign has failed, and should not have (possibly incorrect OptiFine properties file), vanilla texture has been used as fallback");
-        return null;
+        return identifierWithDirectory;
     }
+
+
 
     @NotNull
     private static ETFTexture getOrCreateETFTexture(Identifier vanillaIdentifier, Identifier variantIdentifier) {
