@@ -692,12 +692,8 @@ public abstract class ETFManager {
     @Nullable
     private static Identifier returnNewAlreadyNumberedRandomTexture(Identifier vanillaIdentifier, int variantNumber) {
         //1.png logic not required as expected optifine behaviour is already present
-        Identifier identifierWithDirectory = ETFDirectory.getDirectoryVersionOf(ETFUtils2.replaceIdentifier(vanillaIdentifier, ".png", variantNumber + ".png"));
 
-        if (identifierWithDirectory == null) {
-            ETFUtils2.logError("texture assign has failed, and should not have (possibly incorrect OptiFine properties file), vanilla texture has been used as fallback");
-        }
-        return identifierWithDirectory;
+        return ETFDirectory.getDirectoryVersionOf(ETFUtils2.replaceIdentifier(vanillaIdentifier, ".png", variantNumber + ".png"));
     }
 
 

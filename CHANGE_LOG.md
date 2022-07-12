@@ -1,5 +1,9 @@
 **ETF Changelog:**
 
+[dev build 8]
+- removed incorrect iris pbr code
+- removed log spam from build 7
+
 [dev build 7]
 - texture1.png functionality has returned to the rewrite and functions identically to OptiFine
 - initial support for iris PBR _n & _s varied entity textures added *(may cause issues with some textures please report any you find)*

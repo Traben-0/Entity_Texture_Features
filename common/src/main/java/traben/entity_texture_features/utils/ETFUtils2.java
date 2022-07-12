@@ -28,8 +28,9 @@ import static traben.entity_texture_features.ETFClientCommon.CONFIG_DIR;
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
 public abstract class ETFUtils2 {
-    @NotNull
+    @Nullable
     public static Identifier replaceIdentifier(Identifier id, String regex, String replace) {
+        if(id == null) return null;
         return new Identifier(id.getNamespace(), id.getPath().replaceFirst(regex, replace));
     }
 
@@ -216,9 +217,12 @@ public abstract class ETFUtils2 {
     }
 
     public static void registerNativeImageToIdentifier(NativeImage img, Identifier identifier) {
-        NativeImageBackedTexture bob = new NativeImageBackedTexture(img);
-        MinecraftClient.getInstance().getTextureManager().registerTexture(identifier, bob);
-        //MinecraftClient.getInstance().getResourceManager().
-
+        if(img != null && identifier != null) {
+            NativeImageBackedTexture bob = new NativeImageBackedTexture(img);
+            MinecraftClient.getInstance().getTextureManager().registerTexture(identifier, bob);
+            //MinecraftClient.getInstance().getResourceManager().
+        }else{
+            logError("registering native image failed: "+img+", "+identifier);
+        }
     }
 }

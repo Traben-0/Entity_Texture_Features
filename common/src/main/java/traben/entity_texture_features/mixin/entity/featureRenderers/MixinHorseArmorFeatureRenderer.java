@@ -61,8 +61,10 @@ public abstract class MixinHorseArmorFeatureRenderer extends FeatureRenderer<Hor
     private void etf$applyEmissive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, HorseEntity horseEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci, ItemStack itemStack, HorseArmorItem horseArmorItem) {
         //UUID id = livingEntity.getUuid();
 
-
+//        matrixStack.push();
+//        matrixStack.translate(3,0,3);
         if (thisETFTexture != null) thisETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, model);
+//        matrixStack.pop();
     }
 
 }
