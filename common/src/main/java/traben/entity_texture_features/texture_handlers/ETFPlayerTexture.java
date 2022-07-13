@@ -28,6 +28,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import static traben.entity_texture_features.ETFClientCommon.*;
@@ -403,6 +404,8 @@ public class ETFPlayerTexture {
                 customPlayerModel.villagerNose.render(matrixStack, villagerVert, light, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
             }
 
+
+
             //coat features
             ItemStack armour = player.getInventory().getArmorStack(1);
             if (coatIdentifier != null &&
@@ -432,9 +435,9 @@ public class ETFPlayerTexture {
                 if (coatEnchantedIdentifier != null) {
                     VertexConsumer enchantVert = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(coatEnchantedIdentifier), false, true);
                     if (hasFatCoat) {
-                        customPlayerModel.fatJacket.render(matrixStack, enchantVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 0.16F);
+                        customPlayerModel.fatJacket.render(matrixStack, enchantVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1,1,1,0.16f);
                     } else {
-                        customPlayerModel.jacket.render(matrixStack, enchantVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 0.16F);
+                        customPlayerModel.jacket.render(matrixStack, enchantVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV,  1,1,1,0.16f);
                     }
                 }
 
@@ -465,7 +468,7 @@ public class ETFPlayerTexture {
                             case BLINK2, BLINK2_PATCHED, APPLY_BLINK2 -> baseEnchantBlink2Identifier;
                             default -> baseEnchantIdentifier;
                         }), false, true);
-                model.render(matrixStack, enchantVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 0.16F);
+                model.render(matrixStack, enchantVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV,1,1,1,0.16f);
             }
             if (hasEmissives && etfTextureOfFinalBaseSkin != null) {
                 etfTextureOfFinalBaseSkin.renderEmissive(matrixStack, vertexConsumerProvider, model);
@@ -597,7 +600,8 @@ public class ETFPlayerTexture {
 
     public void receiveThirdPartyCape(@NotNull NativeImage capeImage) {
         //optifine resizes them for space cause expensive servers I guess
-        etfCapeIdentifier = new Identifier(SKIN_NAMESPACE, player.getUuid() + "_cape_third_party.png");
+
+        Identifier newCapeId = new Identifier(SKIN_NAMESPACE, player.getUuid().toString().replaceAll( "/[^a-z]/g", "" )  + "_cape_third_party.png");
         if (capeImage.getWidth() % capeImage.getHeight() != 0) {
             //resize optifine image
             int newWidth = 64;
@@ -605,27 +609,38 @@ public class ETFPlayerTexture {
                 newWidth = newWidth + newWidth;
             }
             int newHeight = newWidth / 2;
-            NativeImage resizedImage = ETFUtils2.emptyNativeImage(newWidth, newHeight);
-            for (int x = 0; x < capeImage.getWidth(); x++) {
-                for (int y = 0; y < capeImage.getHeight(); y++) {
-                    resizedImage.setColor(x, y, capeImage.getColor(x, y));
+            try (NativeImage resizedImage = ETFUtils2.emptyNativeImage(newWidth, newHeight)) {
+                for (int x = 0; x < capeImage.getWidth(); x++) {
+                    for (int y = 0; y < capeImage.getHeight(); y++) {
+                        resizedImage.setColor(x, y, capeImage.getColor(x, y));
+                    }
                 }
+                capeImage = resizedImage;
+            }catch (Exception e){
+                ETFUtils2.logError("optifine cape resize failed");
             }
         }
-        ETFUtils2.registerNativeImageToIdentifier(capeImage, etfCapeIdentifier);
+        ETFUtils2.registerNativeImageToIdentifier(capeImage, newCapeId);
 
         NativeImage checkCapeEmissive = returnMatchPixels(originalSkin, emissiveCapeBounds, capeImage);
         //UUID_PLAYER_HAS_EMISSIVE_CAPE.put(id, checkCape != null);
         if (checkCapeEmissive != null) {
-            etfCapeEmissiveIdentifier = new Identifier(SKIN_NAMESPACE, player.getUuid() + "_cape_third_party_e.png");
-            ETFUtils2.registerNativeImageToIdentifier(checkCapeEmissive, etfCapeEmissiveIdentifier);
+            Identifier newCapeEmissive = new Identifier(SKIN_NAMESPACE, player.getUuid() + "_cape_third_party_e.png");
+            ETFUtils2.registerNativeImageToIdentifier(checkCapeEmissive, newCapeEmissive);
+            etfCapeEmissiveIdentifier = newCapeEmissive;
+        }else{
+            etfCapeEmissiveIdentifier = null;
         }
         NativeImage checkCapeEnchant = returnMatchPixels(originalSkin, enchantCapeBounds, capeImage);
         //UUID_PLAYER_HAS_EMISSIVE_CAPE.put(id, checkCape != null);
         if (checkCapeEnchant != null) {
-            etfCapeEnchantedIdentifier = new Identifier(SKIN_NAMESPACE, player.getUuid() + "_cape_third_party_enchant.png");
-            ETFUtils2.registerNativeImageToIdentifier(checkCapeEnchant, etfCapeEnchantedIdentifier);
+            Identifier newCapeEnchanted = new Identifier(SKIN_NAMESPACE, player.getUuid() + "_cape_third_party_enchant.png");
+            ETFUtils2.registerNativeImageToIdentifier(checkCapeEnchant, newCapeEnchanted);
+            etfCapeEnchantedIdentifier = newCapeEnchanted;
+        }else{
+            etfCapeEnchantedIdentifier = null;
         }
+        etfCapeIdentifier = newCapeId;
     }
 
     private void skinFailed(boolean preventFurtherChecks) {
@@ -696,7 +711,8 @@ public class ETFPlayerTexture {
                         getSkinPixelColourToNumber(originalSkin.getColor(52, 18)),
                         getSkinPixelColourToNumber(originalSkin.getColor(52, 19)),
                         getSkinPixelColourToNumber(originalSkin.getColor(53, 16)),
-                        getSkinPixelColourToNumber(originalSkin.getColor(53, 17))};
+                        -1,//getSkinPixelColourToNumber(originalSkin.getColor(53, 17)),       this one is used for actual color value but still fill the array to preserve index number
+                        getSkinPixelColourToNumber(originalSkin.getColor(53, 18))};
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 boolean noseUpper = (getSkinPixelColourToNumber(originalSkin.getColor(43, 13)) == 666 && getSkinPixelColourToNumber(originalSkin.getColor(44, 13)) == 666 &&
                         getSkinPixelColourToNumber(originalSkin.getColor(43, 14)) == 666 && getSkinPixelColourToNumber(originalSkin.getColor(44, 14)) == 666 &&
@@ -824,7 +840,7 @@ public class ETFPlayerTexture {
                 }
                 if (modifiedCape != null) {
                     if ((capeChoice1 >= 1 && capeChoice1 <= 3) || capeChoice1 == 666) {//custom chosen
-                        etfCapeIdentifier = new Identifier(SKIN_NAMESPACE, id + "_cape.png");
+                        etfCapeIdentifier = new Identifier(SKIN_NAMESPACE, id.toString().replaceAll( "/[^a-z]/g", "" ) + "_cape.png");
                         ETFUtils2.registerNativeImageToIdentifier(modifiedCape, etfCapeIdentifier);
                         //UUID_PLAYER_HAS_CUSTOM_CAPE.put(id, true);
                     }
@@ -880,7 +896,7 @@ public class ETFPlayerTexture {
                             //UUID_PLAYER_HAS_EMISSIVE_CAPE.put(id, checkCape != null);
                             if (checkCape != null) {
                                 etfCapeEmissiveIdentifier = new Identifier(SKIN_NAMESPACE, id + "_cape_e.png");
-                                ETFUtils2.registerNativeImageToIdentifier(checkCape, coatEmissiveIdentifier);
+                                ETFUtils2.registerNativeImageToIdentifier(checkCape, etfCapeEmissiveIdentifier);
                             }
                         }
                     } else {
@@ -929,7 +945,7 @@ public class ETFPlayerTexture {
                             if (checkCape != null) {
 
                                 etfCapeEnchantedIdentifier = new Identifier(SKIN_NAMESPACE, id + "_cape_enchant.png");
-                                ETFUtils2.registerNativeImageToIdentifier(checkCape, coatEmissiveIdentifier);
+                                ETFUtils2.registerNativeImageToIdentifier(checkCape, etfCapeEnchantedIdentifier);
                             }
                         }
                     } else {

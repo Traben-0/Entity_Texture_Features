@@ -1,5 +1,9 @@
 package traben.entity_texture_features.mixin.entity;
 
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.OverlayTexture;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory;
@@ -8,9 +12,12 @@ import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.command.argument.ParticleEffectArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.particle.ParticleEffect;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -18,9 +25,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import traben.entity_texture_features.ETFCrossPlatformHandler;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFPlayerTexture;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
+
+import java.util.UUID;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
@@ -51,16 +61,18 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
             if (ETFConfigData.skinFeaturesEnabled && thisETFPlayerTexture != null) {
                 //noinspection unchecked
                 thisETFPlayerTexture.renderFeatures(matrixStack, vertexConsumerProvider, i, (PlayerEntityModel<PlayerEntity>) this.getModel());
+                //just a little harmless particle effect on the dev
+                if (livingEntity.getUuid().equals(ETFPlayerTexture.Dev) && !MinecraftClient.getInstance().isPaused() && livingEntity.getRandom().nextInt(64) == 0 && (MinecraftClient.getInstance().player == null || !(ETFCrossPlatformHandler.areShadersInUse() == ETFPlayerTexture.Dev.equals(MinecraftClient.getInstance().player.getUuid())))) {
+                    livingEntity.world.addParticle(ParticleTypes.TOTEM_OF_UNDYING,livingEntity.getX(),livingEntity.getRandomBodyY(),livingEntity.getZ(), livingEntity.getRandom().nextFloat()-0.5, livingEntity.getRandom().nextFloat()*0.5, livingEntity.getRandom().nextFloat()-0.5);
+                }
             }
             //else nothing
         } else {
-            if (thisETFTexture != null)
+            if (thisETFTexture != null) {
                 thisETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, this.getModel());
+            }
         }
-
-
     }
-
 
     @Redirect(
             method = "getRenderLayer",

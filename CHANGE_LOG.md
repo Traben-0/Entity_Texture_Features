@@ -1,5 +1,11 @@
 **ETF Changelog:**
 
+[dev build 9]
+- fixed skin feature capes and issues preventing vanilla cape rendering in rewrite
+- fixed bed textures getting stuck to a co-ord position between different color beds
+- fixed shulker box textures getting stuck to a co-ord position between different color shulker boxes
+- added option to disable ETF texture patching to allow iris PBR to function *(this implementation may or may not be final)* *(expect possible z-fighting with etf emissive textures when using certain shaders)*
+
 [dev build 8]
 - removed incorrect iris pbr code
 - removed log spam from build 7

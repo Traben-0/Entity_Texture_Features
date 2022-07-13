@@ -39,6 +39,8 @@ public class ETFConfig {
 
     public DebugLogMode debugLoggingMode = DebugLogMode.None;
 
+    public boolean temporary_fixIrisPBR = false;
+
     //string name stuff more in-depth than other enum for backwards compatibility
 
 

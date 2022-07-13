@@ -9,6 +9,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import traben.entity_texture_features.ETFClientCommon;
+import traben.entity_texture_features.ETFCrossPlatformHandler;
 import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.utils.ETFUtils2;
@@ -235,7 +236,13 @@ public class ETFConfigScreenFabric {
                 .setTooltip(Text.translatable("config." + ETFClientCommon.MOD_ID + ".allow_illegal_texture_paths.tooltip")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.allowIllegalTexturePaths = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
-
+        if(ETFCrossPlatformHandler.isThisModLoaded("iris")) {
+            category.addEntry(entryBuilder.startBooleanToggle(Text.translatable("config." + ETFClientCommon.MOD_ID + ".iris_pbr_fix.title"), ETFConfigData.temporary_fixIrisPBR)
+                    .setDefaultValue(false) // Recommended: Used when user click "Reset"
+                    .setTooltip(Text.translatable("config." + ETFClientCommon.MOD_ID + ".iris_pbr_fix.tooltip")) // Optional: Shown when the user hover over this option
+                    .setSaveConsumer(newValue -> ETFConfigData.temporary_fixIrisPBR = newValue) // Recommended: Called when user save the config
+                    .build()); // Builds the option entry for cloth config
+        }
 
         //MinecraftClient.getInstance().openScreen(screen);
         return builder.setTransparentBackground(isTransparent).build();

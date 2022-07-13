@@ -71,5 +71,7 @@
   "config.entity_texture_features.custom_block_entity.title": "Allow Custom / Random, Block entity textures",
   "config.entity_texture_features.custom_block_entity.tooltip": "Allows block entities to use a custom texture\nusing the optifine/ETF random format\nincompatible with the enhanced block entities mod",
   "config.entity_texture_features.emissive_shield.title": "Emissive Shields",
-  "config.entity_texture_features.emissive_shield.tooltip": "enables emissive shield textures"
+  "config.entity_texture_features.emissive_shield.tooltip": "enables emissive shield textures",
+  "config.entity_texture_features.iris_pbr_fix.title": "enable iris PBR fix",
+  "config.entity_texture_features.iris_pbr_fix.tooltip": "only necessary while using the iris PBR versions currently in beta\nthis disables ETF texture patching to allow iris PBR to function\n (TEMPORARY FIX)\n (expect z-fighting with etf emissive textures when using shaders)"
 }

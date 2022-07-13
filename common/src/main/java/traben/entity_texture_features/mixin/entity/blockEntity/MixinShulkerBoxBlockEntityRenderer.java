@@ -56,7 +56,7 @@ public abstract class MixinShulkerBoxBlockEntityRenderer implements BlockEntityR
                 try {
                     etf$shulkerBoxStandInDummy = new ArmorStandEntity(EntityType.ARMOR_STAND, shulkerBoxBlockEntity.getWorld());
                     etf$shulkerBoxStandInDummy.setPos(shulkerBoxBlockEntity.getPos().getX(), shulkerBoxBlockEntity.getPos().getY(), shulkerBoxBlockEntity.getPos().getZ());
-                    String identifier = "shulker" + shulkerBoxBlockEntity.getPos().toString();
+                    String identifier = "shulker" + shulkerBoxBlockEntity.getPos().toString() + shulkerBoxBlockEntity.getColor();
                     etf$shulkerBoxStandInDummy.setCustomName(shulkerBoxBlockEntity.getCustomName());
                     etf$shulkerBoxStandInDummy.setCustomNameVisible(shulkerBoxBlockEntity.hasCustomName());
                     if (shulkerBoxBlockEntity.hasCustomName()) {

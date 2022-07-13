@@ -68,7 +68,7 @@ public abstract class MixinBedBlockEntityRenderer implements BlockEntityRenderer
                 etf$bedStandInDummy = new ArmorStandEntity(EntityType.ARMOR_STAND, MinecraftClient.getInstance().world);
                 etf$bedStandInDummy.setPos(bedBlockEntity.getPos().getX(), bedBlockEntity.getPos().getY(), bedBlockEntity.getPos().getZ());
                 //chests don't have uuid so set UUID from something repeatable I chose from block pos
-                etf$bedStandInDummy.setUuid(UUID.nameUUIDFromBytes(bedBlockEntity.getPos().toString().getBytes()));
+                etf$bedStandInDummy.setUuid(UUID.nameUUIDFromBytes((bedBlockEntity.getPos().toString()+bedBlockEntity.getColor().toString()).getBytes()));
             }
         }
     }

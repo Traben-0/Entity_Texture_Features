@@ -236,7 +236,6 @@ public class ETFConfigScreenForge {
                 .setSaveConsumer(newValue -> ETFConfigData.allowIllegalTexturePaths = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
 
-
         //MinecraftClient.getInstance().openScreen(screen);
         return builder.setTransparentBackground(isTransparent).build();
     }
