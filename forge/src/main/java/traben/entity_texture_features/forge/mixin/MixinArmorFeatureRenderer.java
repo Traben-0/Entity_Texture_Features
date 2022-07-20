@@ -47,7 +47,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
                 //if (ETFManager.getEmissiveMode() == ETFManager.EmissiveRenderModes.BRIGHT) {
                 //    textureVert = ItemRenderer.getArmorGlintConsumer(vertexConsumers, RenderLayer.getBeaconBeam(emissive, true), false, usesSecondLayer);
                 //} else {
-                    textureVert =ItemRenderer.getArmorGlintConsumer(arg2, RenderLayer.getEntityTranslucent(emissive), false, bl);
+                    textureVert = arg2.getBuffer(RenderLayer.getArmorCutoutNoCull(emissive));
                 //}
                 arg3.render(arg, textureVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, f, g, h, 1.0F);
             }

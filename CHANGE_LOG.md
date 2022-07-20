@@ -1,5 +1,42 @@
 **ETF Changelog:**
 
+[4.0.beta.1]
+
+*changes since last stable release*
+
+ETF's source code has been almost entirely rewritten with a focus on optimization.
+
+Some scenarios exhibit up to 11 times less processing time usage, and in general the mod is much more stable and efficient
+
+The source code has also been ported to a single codebase for forge and fabric using architechtury to streamline same time updating of both. 
+
+Groundwork has been laid to more easily backport the mod to 1.16, 1.17 & 1.18 these will come later
+
+- added option to disable ETF texture patching to allow iris PBR to function *(this implementation may or may not be final)* *(expect possible z-fighting with etf emissive textures when using certain shaders)*
+- added: additional mob textures like "sheep_fur.png" can now optionally utilize a "sheep_fur.properties" file to have settings different to the 'base' texture, if this properties file is not present ETF will try and use the same variant number as the 'base' texture the mob is using, failing all of these it will default to the regular vanilla texture for this variant
+- added: config option "advanced_IncreaseCacheSizeModifier" which will only show in the config file, this should only be increased in the event of an extremely modded instance having over 2000 entities loaded on the client (the amount ETF now keeps track of at any given time), to prevent them being removed from ETF's memory.
+- added: option to have a different texture on the left elytra wing using *"elytra_left.png"* *(compatible with CITResewn)*
+
+
+- fixed: issue with capes, and other skin features, having incorrect enchanted pixels
+- fixed: armor and elytra emissives rendering behind textures, now works with iris pbr fix
+- fixed: skin feature capes and issues preventing vanilla cape rendering in rewrite
+- fixed: bed textures getting stuck to a co-ord position between different color beds
+- fixed: shulker box textures getting stuck to a co-ord position between different color shulker boxes
+- fixed: a minor issue with 2 frame blinking not registering the correct texture
+- fixed: armor emissive bright mode bug
+- fixed: shulker box emissive bright mode bug
+- fixed: elytra emissive bright mode bug
+
+
+- changed: custom potion effects have been removed as due to limits of client/server data transparency there is no reliable way to have it update during-game *(potion info is **only** sent to clients in the mobs first seen/spawn packet :/ )*
+- changed: textures with property files that do not read correctly and cause problems will now fall back to the vanilla texture instead of randomly picking and causing confusion
+- changed: block entity features will not render if the texture is animated as it is not supported *(no need to change settings)*
+
+[dev build 10]
+- fixed issue with capes, and other skin features, having incorrect enchanted pixels
+- fixed armor and elytra emissives rendering behind textures, now works with iris pbr fix
+
 [dev build 9]
 - fixed skin feature capes and issues preventing vanilla cape rendering in rewrite
 - fixed bed textures getting stuck to a co-ord position between different color beds

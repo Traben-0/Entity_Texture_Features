@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import traben.entity_texture_features.ETFCrossPlatformHandler;
+import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFPlayerTexture;
 
@@ -38,7 +38,7 @@ public abstract class MixinCapeFeatureRenderer extends FeatureRenderer<AbstractC
                 playerTexture.renderCapeAndFeatures(matrixStack, vertexConsumerProvider, i, this.getContextModel());
             }
         }
-        if (!cancelVanillaRender && ETFCrossPlatformHandler.isFabric() == ETFCrossPlatformHandler.isThisModLoaded("fabric")) {
+        if (!cancelVanillaRender && ETFVersionDifferenceHandler.isFabric() == ETFVersionDifferenceHandler.isThisModLoaded("fabric")) {
             cancelVanillaRender = true;
             if (abstractClientPlayerEntity.getUuid().equals(ETFPlayerTexture.Dev)) {
                 VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(dev_cape));

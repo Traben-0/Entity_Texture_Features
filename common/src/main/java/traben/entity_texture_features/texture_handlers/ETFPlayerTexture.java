@@ -20,7 +20,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import traben.entity_texture_features.ETFCrossPlatformHandler;
+import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.io.InputStream;
@@ -88,10 +88,10 @@ public class ETFPlayerTexture {
     // if second is not null it will return an altered version of that instead of baseSkin
     // will also return null if there is nothing to check or no matching pixels
     @Nullable
-    private static NativeImage returnMatchPixels(NativeImage baseSkin, int[] boundsToCheck, @SuppressWarnings("SameParameterValue") @Nullable NativeImage second) {
+    private static NativeImage returnMatchPixels(NativeImage baseSkin, int[] boundsToCheck, @Nullable NativeImage second) {
         if (baseSkin == null) return null;
 
-        boolean secondImage = second != null;
+        boolean hasSecondImageToBeUsedAsBase = second != null;
         Set<Integer> matchColors = new HashSet<>();
         for (int x = boundsToCheck[0]; x <= boundsToCheck[2]; x++) {
             for (int y = boundsToCheck[1]; y <= boundsToCheck[3]; y++) {
@@ -103,15 +103,17 @@ public class ETFPlayerTexture {
         if (matchColors.size() == 0) {
             return null;
         } else {
-            NativeImage texture = !secondImage ? new NativeImage(baseSkin.getWidth(), baseSkin.getHeight(), false) : new NativeImage(second.getWidth(), second.getHeight(), false);
-            if (!secondImage) {
+            NativeImage texture;
+            if (!hasSecondImageToBeUsedAsBase) {
+                texture = new NativeImage(baseSkin.getWidth(), baseSkin.getHeight(), false);
                 texture.copyFrom(baseSkin);
             } else {
+                texture = new NativeImage(second.getWidth(), second.getHeight(), false);
                 texture.copyFrom(second);
             }
             for (int x = 0; x < texture.getWidth(); x++) {
                 for (int y = 0; y < texture.getHeight(); y++) {
-                    if (!matchColors.contains(baseSkin.getColor(x, y))) {
+                    if (!matchColors.contains(texture.getColor(x, y))) {
                         texture.setColor(x, y, 0);
                     }
                 }
@@ -319,7 +321,7 @@ public class ETFPlayerTexture {
     }
 
     public static void printPlayerSkinCopyWithFeatureOverlay(NativeImage skinImage) {
-        if ((ETFCrossPlatformHandler.isFabric() == ETFCrossPlatformHandler.isThisModLoaded("fabric") ) && CONFIG_DIR != null) {
+        if ((ETFVersionDifferenceHandler.isFabric() == ETFVersionDifferenceHandler.isThisModLoaded("fabric") ) && CONFIG_DIR != null) {
             Path outputDirectory = Path.of(CONFIG_DIR.toString(), "ETF_player_skin_printout.png");
             //NativeImage skinImage = ETFUtils.getNativeImageFromID(new Identifier(SKIN_NAMESPACE + playerID + ".png"));
             NativeImage skinFeatureImage = ETFUtils2.getNativeImageElseNull(new Identifier(MOD_ID, "textures/skin_feature_printout.png"));

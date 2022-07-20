@@ -10,6 +10,7 @@ import net.minecraft.entity.mob.SlimeEntity;
 import net.minecraft.entity.passive.*;
 import net.minecraft.util.DyeColor;
 import org.jetbrains.annotations.NotNull;
+import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.utils.ETFCacheKey;
 import traben.entity_texture_features.utils.ETFUtils2;
 
@@ -168,7 +169,7 @@ public class ETFTexturePropertyCase {
             if (isUpdate && ETFConfigData.restrictBiome && ETFConfigData.restrictUpdateProperties && spawnConditions !=null && spawnConditions.size() >1) {
                 entityBiome = spawnConditions.get(0).trim();
             } else {
-                entityBiome = entity.world.getBiome(entity.getBlockPos()).getKey().toString().split("\s/\s")[1].replaceAll("[^\\da-zA-Z_:-]", "");
+                entityBiome = ETFVersionDifferenceHandler.getBiomeString(entity.world,entity.getBlockPos());
             }
 //            } else if (MinecraftVersion.CURRENT.getName().equals("1.18") || MinecraftVersion.CURRENT.getName().equals("1.18.1")) {
 //                entityBiome = ETF_1_18_1_versionPatch.getBiome(entity.world, entity.getBlockPos());
@@ -608,7 +609,7 @@ public class ETFTexturePropertyCase {
         // 5 moon-phase
         // 6 block2
         //checks to speed up runtime as values potentially won't be used but can't be null
-        @NotNull String biome = !ETFConfigData.restrictBiome ? "" : entity.world.getBiome(entity.getBlockPos()).getKey().toString().split("\s/\s")[1].replaceAll("[^\\da-zA-Z_:-]", "");
+        @NotNull String biome = !ETFConfigData.restrictBiome ? "" : ETFVersionDifferenceHandler.getBiomeString(entity.world,entity.getBlockPos());
         @NotNull String height = !ETFConfigData.restrictHeight ? "" : "" + entity.getBlockY();
         @NotNull String block = !ETFConfigData.restrictBlock ? "" : entity.world.getBlockState(entity.getBlockPos().down()).toString()
                 .replaceFirst("minecraft:", "")

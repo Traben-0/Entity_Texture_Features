@@ -12,7 +12,7 @@ import net.minecraft.util.math.Vec3i;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFClientCommon;
-import traben.entity_texture_features.ETFCrossPlatformHandler;
+import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.utils.ETFCacheKey;
 import traben.entity_texture_features.utils.ETFLruCache;
@@ -774,7 +774,7 @@ public abstract class ETFManager {
 
         public static EmissiveRenderModes blockEntityMode() {
             //iris has fixes for bright mode which is otherwise broken on block entities, does not require enabled shaders
-            if (ETFCrossPlatformHandler.isThisModLoaded("iris") && ETFConfigData.fullBrightEmissives) {
+            if (ETFVersionDifferenceHandler.isThisModLoaded("iris") && ETFConfigData.fullBrightEmissives) {
                 return BRIGHT;
             } else {
                 //todo investigate if block entities require a third enum for custom render mode

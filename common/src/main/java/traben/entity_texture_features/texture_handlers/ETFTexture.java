@@ -17,7 +17,7 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import traben.entity_texture_features.ETFCrossPlatformHandler;
+import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.Optional;
@@ -224,7 +224,7 @@ public class ETFTexture {
     }
 
     private void createPatchedTextures() {
-        if(ETFCrossPlatformHandler.isFabric() && ETFConfigData.temporary_fixIrisPBR){
+        if(ETFVersionDifferenceHandler.isFabric() && ETFConfigData.temporary_fixIrisPBR){
             return;
         }
         //here we will 'patch' the base texture to prevent z-fighting with various shaders
@@ -407,7 +407,7 @@ public class ETFTexture {
     @NotNull
     public Identifier getTextureIdentifier(@Nullable LivingEntity entity, boolean forcePatchedTexture) {
 
-        if (isPatched() && (forcePatchedTexture || (ETFConfigData.enableEmissiveTextures && ETFCrossPlatformHandler.areShadersInUse()))) {
+        if (isPatched() && (forcePatchedTexture || (ETFConfigData.enableEmissiveTextures && ETFVersionDifferenceHandler.areShadersInUse()))) {
             //patched required
             currentTextureState = TextureReturnState.NORMAL_PATCHED;
             return getBlinkingIdentifier(entity);
@@ -522,7 +522,7 @@ public class ETFTexture {
             Identifier emissiveToUse = getEmissiveIdentifierOfCurrentState();
             if (emissiveToUse != null) {
                 if (modeToUsePossiblyManuallyChosen == ETFManager.EmissiveRenderModes.BRIGHT) {
-                    return vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(emissiveToUse, !ETFCrossPlatformHandler.areShadersInUse()));
+                    return vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(emissiveToUse, !ETFVersionDifferenceHandler.areShadersInUse()));
                 } else {
                     if (model == null) {
                         return vertexConsumerProvider.getBuffer(RenderLayer.getEntityCutoutNoCull /*RenderLayer.getEntityTranslucent*/(emissiveToUse));

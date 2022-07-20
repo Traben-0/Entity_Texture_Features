@@ -15,10 +15,10 @@ import java.io.IOException;
 
 public class ETFClientCommon {
 
-    public static final File CONFIG_DIR = ETFCrossPlatformHandler.getConfigDir();
+    public static final File CONFIG_DIR = ETFVersionDifferenceHandler.getConfigDir();
     public static final String MOD_ID = "entity_texture_features";
     //logging object
-    public final static Logger LOGGER = LoggerFactory.getLogger("Entity Texture Features");
+    public final static Logger LOGGER = ETFVersionDifferenceHandler.getLogger();
     //config object
     public static ETFConfig ETFConfigData = new ETFConfig();
 

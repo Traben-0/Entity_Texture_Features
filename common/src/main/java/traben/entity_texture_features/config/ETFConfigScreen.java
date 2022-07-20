@@ -2,7 +2,7 @@ package traben.entity_texture_features.config;
 
 
 import net.minecraft.client.gui.screen.Screen;
-import traben.entity_texture_features.ETFCrossPlatformHandler;
+import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.utils.ETFUtils2;
 
@@ -10,7 +10,7 @@ import traben.entity_texture_features.utils.ETFUtils2;
 public class ETFConfigScreen {
 
     public static Screen getConfigScreen(Screen parent, boolean isTransparent) {
-        return ETFCrossPlatformHandler.getConfigScreen( parent,  isTransparent);
+        return ETFVersionDifferenceHandler.getConfigScreen( parent,  isTransparent);
     }
 
     //this needs to be here due to puzzle mod compatibility
