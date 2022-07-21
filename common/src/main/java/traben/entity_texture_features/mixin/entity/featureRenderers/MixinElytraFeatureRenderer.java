@@ -118,26 +118,28 @@ public abstract class MixinElytraFeatureRenderer<T extends LivingEntity, M exten
 
         if (ETFConfigData.enableElytra && ETFConfigData.enableEmissiveTextures && thisETFTexture != null) {
             Identifier emissive = thisETFTexture.getEmissiveIdentifierOfCurrentState();
-            VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getArmorCutoutNoCull(emissive));
-            if (etf$vanillaVisibility != null) {
+            if(emissive != null) {
+                VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getArmorCutoutNoCull(emissive));
+                if (etf$vanillaVisibility != null) {
 
-                //left is invis already
-                //thisETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, elytra, ETFManager.EmissiveRenderModes.DULL);
-                elytra.render(matrixStack, textureVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
+                    //left is invis already
+                    //thisETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, elytra, ETFManager.EmissiveRenderModes.DULL);
+                    elytra.render(matrixStack, textureVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
 
-                etf$leftWing.hidden = etf$vanillaVisibility;
-                etf$rightWing.hidden = true;
-                //thisOtherETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, elytra, ETFManager.EmissiveRenderModes.DULL);
-                elytra.render(matrixStack, textureVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
+                    etf$leftWing.hidden = etf$vanillaVisibility;
+                    etf$rightWing.hidden = true;
+                    //thisOtherETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, elytra, ETFManager.EmissiveRenderModes.DULL);
+                    elytra.render(matrixStack, textureVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
 
-                etf$rightWing.hidden = etf$vanillaVisibility;
-                etf$vanillaVisibility = null;
+                    etf$rightWing.hidden = etf$vanillaVisibility;
+                    etf$vanillaVisibility = null;
 
-            } else {
-                //easy vanilla
-                //thisETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, elytra, ETFManager.EmissiveRenderModes.DULL);
+                } else {
+                    //easy vanilla
+                    //thisETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, elytra, ETFManager.EmissiveRenderModes.DULL);
 
-                elytra.render(matrixStack, textureVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
+                    elytra.render(matrixStack, textureVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
+                }
             }
         }
     }
