@@ -66,7 +66,7 @@ public abstract class MixinShulkerBoxBlockEntityRenderer implements BlockEntityR
                     //shulker boxes don't have uuid so set UUID from something repeatable this uses blockPos & container name
                     etf$shulkerBoxStandInDummy.setUuid(UUID.nameUUIDFromBytes(identifier.getBytes()));
                 } catch (Exception e) {
-                    ETFUtils2.logError("shulker box custom rendering failed during setup, " + e);
+                    //ETFUtils2.logError("shulker box custom rendering failed during setup, " + e);
                 }
             }
 
