@@ -478,7 +478,7 @@ public class ETFTexturePropertyCase {
                         .replaceFirst("Block\\{", "")
                         //will print with
                         .replaceFirst("}.*", "").toLowerCase();
-                String entityOnBlock2 = entity.world.getBlockState(entity.getBlockPos().down()).toString()
+                String entityOnBlock2 = entity.world.getBlockState(entity.getBlockPos()).toString()
                         .replaceFirst("minecraft:", "")
                         .replaceFirst("Block\\{", "")
                         //will print with
@@ -490,7 +490,7 @@ public class ETFTexturePropertyCase {
             boolean check1 = false;
             for (String block :
                     BLOCK_VALUES) {
-                block = block.trim();
+                block = block.strip();
                 if (block.startsWith("!")) {
                     block = block.replaceFirst("!", "");
                     if (!block.replace("minecraft:", "").equalsIgnoreCase(entityOnBlocks[0])) {
@@ -508,7 +508,7 @@ public class ETFTexturePropertyCase {
             }
             for (String block :
                     BLOCK_VALUES) {
-                block = block.trim();
+                block = block.strip();
                 if (block.startsWith("!")) {
                     block = block.replaceFirst("!", "");
                     if (!block.replace("minecraft:", "").equalsIgnoreCase(entityOnBlocks[1])) {

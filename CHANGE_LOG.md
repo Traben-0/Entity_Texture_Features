@@ -1,5 +1,13 @@
 **ETF Changelog:**
 
+[4.0.beta.3]
+- fixed NumberFormatException crashes when reading property files
+- fixed blocks property not also checking the block spawned inside correctly
+- implemented legacy optifine biome name support *(it is only done by best fit, it is up to RP creators to keep their things updated)*
+
+[4.0.beta.2]
+- fixed elytra crash in beta.1
+
 [4.0.beta.1]
 
 *changes since last stable release*

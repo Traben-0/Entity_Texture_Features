@@ -373,7 +373,14 @@ public abstract class ETFManager {
                 //get the numbers we are working with
                 for (String str :
                         propIds) {
-                    numbers.add(Integer.parseInt(str.replaceAll("\\D", "")));
+                    str = str.replaceAll("\\D", "");
+                    if(!str.isEmpty()) {
+                        try {
+                            numbers.add(Integer.parseInt(str));
+                        } catch (NumberFormatException e) {
+                            ETFUtils2.logWarn("properties file number error in start count");
+                        }
+                    }
                 }
                 //sort from lowest to largest
                 List<Integer> numbersList = new ArrayList<>(numbers);
@@ -401,18 +408,23 @@ public abstract class ETFManager {
                     Integer[] sizes = {};
 
                     if (props.containsKey("skins." + num) || props.containsKey("textures." + num)) {
-                        String dataFromProps = props.containsKey("skins." + num) ? props.getProperty("skins." + num).trim() : props.getProperty("textures." + num).trim();
+                        String dataFromProps = props.containsKey("skins." + num) ? props.getProperty("skins." + num).strip() : props.getProperty("textures." + num).strip();
                         String[] skinData = dataFromProps.split("\s+");
                         ArrayList<Integer> suffixNumbers = new ArrayList<>();
                         for (String data :
                                 skinData) {
                             //check if range
-                            data = data.trim();
+                            data = data.strip();
                             if (!data.replaceAll("\\D", "").isEmpty()) {
                                 if (data.contains("-")) {
                                     suffixNumbers.addAll(Arrays.asList(ETFUtils2.getIntRange(data)));
                                 } else {
-                                    suffixNumbers.add(Integer.parseInt(data.replaceAll("\\D", "")));
+                                    try {
+                                        int tryNumber = Integer.parseInt(data.replaceAll("\\D", ""));
+                                        suffixNumbers.add(tryNumber);
+                                    }catch (NumberFormatException e){
+                                        ETFUtils2.logWarn("properties files number error in skins / textures category");
+                                    }
                                 }
                             }
                         }
@@ -426,24 +438,60 @@ public abstract class ETFManager {
                                 weightData) {
                             s = s.trim();
                             if (!s.replaceAll("\\D", "").isEmpty()) {
-                                builder.add(Integer.parseInt(s.replaceAll("\\D", "")));
+                                try {
+                                    int tryNumber = Integer.parseInt(s.replaceAll("\\D", ""));
+                                    builder.add(tryNumber);
+                                }catch (NumberFormatException e){
+                                    ETFUtils2.logWarn("properties files number error in weights category");
+                                }
                             }
                         }
                         weights = builder.toArray(new Integer[0]);
                     }
                     if (props.containsKey("biomes." + num)) {
-                        String dataFromProps = props.getProperty("biomes." + num).trim();
-                        biomes = dataFromProps.toLowerCase().split("\s+");
+                        String dataFromProps = props.getProperty("biomes." + num).strip();
+                        String[] biomeList = dataFromProps.toLowerCase().split("\s+");
+
+                        //strip out old format optifine biome names
+                        //I could be way more in-depth and make these line up to all variants but this is legacy code
+                        //only here for compat, pack makers need to fix these
+                        if(biomeList.length > 0) {
+                            for (int i = 0; i < biomeList.length; i++) {
+                                String biome = biomeList[i].strip();
+                                switch (biome) {
+                                    case "Ocean" -> biomeList[i] = "ocean";
+                                    case "Plains" -> biomeList[i] = "plains";
+                                    case "ExtremeHills" -> biomeList[i] = "stony_peaks";
+                                    case "Forest", "ForestHills" -> biomeList[i] = "forest";
+                                    case "Taiga", "TaigaHills" -> biomeList[i] = "taiga";
+                                    case "Swampland" -> biomeList[i] = "swamp";
+                                    case "River" -> biomeList[i] = "river";
+                                    case "Hell" -> biomeList[i] = "nether_wastes";
+                                    case "Sky" -> biomeList[i] = "the_end";
+                                    case "FrozenOcean" -> biomeList[i] = "frozen_ocean";
+                                    case "FrozenRiver" -> biomeList[i] = "frozen_river";
+                                    case "IcePlains" -> biomeList[i] = "snowy_plains";
+                                    case "IceMountains" -> biomeList[i] = "snowy_slopes";
+                                    case "MushroomIsland", "MushroomIslandShore" -> biomeList[i] = "mushroom_fields";
+                                    case "Beach" -> biomeList[i] = "beach";
+                                    case "DesertHills", "Desert" -> biomeList[i] = "desert";
+                                    case "ExtremeHillsEdge" -> biomeList[i] = "meadow";
+                                    case "Jungle", "JungleHills" -> biomeList[i] = "jungle";
+                                }
+                            }
+                            biomes = biomeList;
+                        }
+
                     }
                     //add legacy height support
                     if (!props.containsKey("heights." + num) && (props.containsKey("minHeight." + num) || props.containsKey("maxHeight." + num))) {
                         String min = "-64";
                         String max = "319";
                         if (props.containsKey("minHeight." + num)) {
-                            min = props.getProperty("minHeight." + num).trim();
+                            min = props.getProperty("minHeight." + num).strip();
                         }
                         if (props.containsKey("maxHeight." + num)) {
-                            max = props.getProperty("maxHeight." + num).trim();
+                            max = props.getProperty("maxHeight." + num).strip();
                         }
                         props.put("heights." + num, min + "-" + max);
                     }
@@ -460,7 +508,12 @@ public abstract class ETFManager {
                                 if (data.contains("-")) {
                                     heightNumbers.addAll(Arrays.asList(ETFUtils2.getIntRange(data)));
                                 } else {
-                                    heightNumbers.add(Integer.parseInt(data.replaceAll("\\D", "")));
+                                    try {
+                                        int tryNumber = Integer.parseInt(data.replaceAll("\\D", ""));
+                                        heightNumbers.add(tryNumber);
+                                    }catch (NumberFormatException e){
+                                        ETFUtils2.logWarn("properties files number error in height category");
+                                    }
                                 }
                             }
                         }
@@ -527,7 +580,12 @@ public abstract class ETFManager {
                                 if (data.contains("-")) {
                                     moonNumbers.addAll(Arrays.asList(ETFUtils2.getIntRange(data)));
                                 } else {
-                                    moonNumbers.add(Integer.parseInt(data.replaceAll("\\D", "")));
+                                    try {
+                                        int tryNumber = Integer.parseInt(data.replaceAll("\\D", ""));
+                                        moonNumbers.add(tryNumber);
+                                    }catch (NumberFormatException e){
+                                        ETFUtils2.logWarn("properties files number error in moon phase category");
+                                    }
                                 }
                             }
                         }
@@ -571,7 +629,14 @@ public abstract class ETFManager {
                                 if (data.contains("-")) {
                                     sizeNumbers.addAll(Arrays.asList(ETFUtils2.getIntRange(data)));
                                 } else {
-                                    sizeNumbers.add(Integer.parseInt(data.replaceAll("\\D", "")));
+
+                                    try {
+                                        int tryNumber = Integer.parseInt(data.replaceAll("\\D", ""));
+                                        sizeNumbers.add(tryNumber);
+                                    }catch (NumberFormatException e){
+                                        ETFUtils2.logWarn("properties files number error in sizes category");
+                                    }
+
                                 }
                             }
                         }
