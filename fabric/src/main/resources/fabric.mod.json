@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "id": "entity_texture_features",
+  "version": "${version}",
+  "name": "Entity Texture Features",
+  "description": "Adds support for resource-pack driven features for entity textures including some OptiFine features\n §c!Cloth config is required to change settings with ModMenu!§7 \nSupports OptiFine:\n - Random & Custom textures\n - Emissive textures\nWith more features such as:\n - Blinking textures\n - Player Skin support",
+  "authors": [
+    {
+      "name": "Traben",
+      "contact": {
+        "homepage": "https://www.curseforge.com/members/traben_0/projects",
+        "discord": "https://discord.gg/rURmwrzUcz"
+      }
+    }
+  ],
+  "contributors": [
+  ],
+  "license": "LGPL-3.0",
+  "icon": "icon.png",
+  "contact": {
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/entity-texture-features-fabric",
+    "sources": "https://github.com/Traben-0/Entity_Texture_Features",
+    "issues": "https://github.com/Traben-0/Entity_Texture_Features/issues",
+    "discord": "https://discord.gg/rURmwrzUcz"
+  },
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "traben.entity_texture_features.fabric.ETFClientFabric"
+    ],
+    "modmenu": [
+      "traben.entity_texture_features.fabric.config.ETFModMenu"
+    ]
+  },
+  "mixins": [
+    "entity_texture_features-fabric.mixins.json",
+    "entity_texture_features-common.mixins.json"
+  ],
+  "accessWidener": "entity_texture_features.accesswidener",
+  "depends": {
+    "fabricloader": ">=0.14.0",
+    "minecraft": ">=1.19 "
+  },
+  "suggests": {
+    "fabric": ">=0.55",
+    "modmenu": ">=4",
+    "clothconfig": ">=7.0"
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.website": "https://www.curseforge.com/members/traben_0/projects",
+        "modmenu.discord": "https://discord.gg/rURmwrzUcz"
+      }
+    }
+  }
+}

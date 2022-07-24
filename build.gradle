@@ -1,69 +1,59 @@
 plugins {
-    id 'fabric-loom' version '0.12-SNAPSHOT'
+    id "architectury-plugin" version "3.4-SNAPSHOT"
+    id "dev.architectury.loom" version "0.12.0-SNAPSHOT" apply false
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
-
-archivesBaseName = project.archives_base_name
-version = "${project.mod_version}-mc1.19"
-group = project.maven_group
-
-loom {
-    accessWidenerPath = file("src/main/resources/entity_texture_features.accesswidener")
+architectury {
+    minecraft = rootProject.minecraft_version
 }
 
-repositories {
-    // Add repositories to retrieve artifacts from in here.
-    // You should only use this when depending on other mods because
-    // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-    // See https://docs.gradle.org/current/userguide/declaring_repositories.html
-    // for more information about repositories.
-    maven {
-        url = "https://api.modrinth.com/maven"
-    }
-    maven { url "https://maven.shedaniel.me/" }
-    maven { url "https://maven.terraformersmc.com/releases/" }
-}
+subprojects {
+    apply plugin: "dev.architectury.loom"
 
-dependencies {
-    // To change the versions see the gradle.properties file
-    minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-
-    modImplementation("maven.modrinth:iris:${project.iris_version}") {
-        exclude(group: "net.fabricmc.fabric-api")
+    loom {
+        silentMojangMappingsLicense()
     }
 
-    modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}") {
-        exclude(group: "net.fabricmc.fabric-api")
-    }
-    modImplementation("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
-        exclude(group: "net.fabricmc.fabric-api")
-    }
-    include("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}")
-}
+    dependencies {
+        minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
+        // The following line declares the mojmap mappings, you may use other mappings as well
+        // mappings loom.officialMojangMappings()
+        // The following line declares the yarn mappings you may select this one as well.
+        //mappings "net.fabricmc:yarn:1.19+build.4:v2"
+        mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 
-processResources {
-    inputs.property "version", project.version
-    filteringCharset "UTF-8"
-
-    filesMatching("fabric.mod.json") {
-        expand "version": project.version
     }
 }
 
-tasks.withType(JavaCompile).configureEach {
-    it.options.release = Integer.parseInt(sourceCompatibility)
-}
+allprojects {
+    apply plugin: "java"
+    apply plugin: "architectury-plugin"
+    apply plugin: "maven-publish"
 
-java {
-    withSourcesJar()
-}
+    archivesBaseName = rootProject.archives_base_name
+    version = rootProject.mod_version
+    group = rootProject.maven_group
 
-jar {
-    from("LICENSE") {
-        rename { "${it}_${project.archivesBaseName}"}
+    repositories {
+        // Add repositories to retrieve artifacts from in here.
+        // You should only use this when depending on other mods because
+        // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
+        // See https://docs.gradle.org/current/userguide/declaring_repositories.html
+        // for more information about repositories.
+        maven {
+            url = "https://api.modrinth.com/maven"
+        }
+        maven { url "https://maven.shedaniel.me/" }
+        maven { url "https://maven.terraformersmc.com/releases/" }
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+        options.release = 17
+    }
+    //compileJava.options.fork = true
+    //compileJava.options.forkOptions.executable = 'C:/Program Files/Java/jdk-17.0.3.1/'
+    java {
+        withSourcesJar()
     }
 }
