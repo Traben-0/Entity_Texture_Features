@@ -1,14 +1,6 @@
 **ETF Changelog:**
 
-[4.0.beta.3]
-- fixed NumberFormatException crashes when reading property files
-- fixed blocks property not also checking the block spawned inside correctly
-- implemented legacy optifine biome name support *(it is only done by best fit, it is up to RP creators to keep their things updated)*
-
-[4.0.beta.2]
-- fixed elytra crash in beta.1
-
-[4.0.beta.1]
+[V4.0]
 
 *changes since last stable release*
 
@@ -20,12 +12,13 @@ The source code has also been ported to a single codebase for forge and fabric u
 
 Groundwork has been laid to more easily backport the mod to 1.16, 1.17 & 1.18 these will come later
 
+- added legacy optifine biome name support e.g. "ForestHills" *(it is only mapped to current best fit, it is up to RP creators to keep their things updated)*
 - added option to disable ETF texture patching to allow iris PBR to function *(this implementation may or may not be final)* *(expect possible z-fighting with etf emissive textures when using certain shaders)*
 - added: additional mob textures like "sheep_fur.png" can now optionally utilize a "sheep_fur.properties" file to have settings different to the 'base' texture, if this properties file is not present ETF will try and use the same variant number as the 'base' texture the mob is using, failing all of these it will default to the regular vanilla texture for this variant
 - added: config option "advanced_IncreaseCacheSizeModifier" which will only show in the config file, this should only be increased in the event of an extremely modded instance having over 2000 entities loaded on the client (the amount ETF now keeps track of at any given time), to prevent them being removed from ETF's memory.
 - added: option to have a different texture on the left elytra wing using *"elytra_left.png"* *(compatible with CITResewn)*
 
-
+- fixed blocks property not also checking the block spawned inside correctly
 - fixed: issue with capes, and other skin features, having incorrect enchanted pixels
 - fixed: armor and elytra emissives rendering behind textures, now works with iris pbr fix
 - fixed: skin feature capes and issues preventing vanilla cape rendering in rewrite
@@ -36,50 +29,11 @@ Groundwork has been laid to more easily backport the mod to 1.16, 1.17 & 1.18 th
 - fixed: shulker box emissive bright mode bug
 - fixed: elytra emissive bright mode bug
 
-
 - changed: custom potion effects have been removed as due to limits of client/server data transparency there is no reliable way to have it update during-game *(potion info is **only** sent to clients in the mobs first seen/spawn packet :/ )*
 - changed: textures with property files that do not read correctly and cause problems will now fall back to the vanilla texture instead of randomly picking and causing confusion
 - changed: block entity features will not render if the texture is animated as it is not supported *(no need to change settings)*
 
-[dev build 10]
-- fixed issue with capes, and other skin features, having incorrect enchanted pixels
-- fixed armor and elytra emissives rendering behind textures, now works with iris pbr fix
-
-[dev build 9]
-- fixed skin feature capes and issues preventing vanilla cape rendering in rewrite
-- fixed bed textures getting stuck to a co-ord position between different color beds
-- fixed shulker box textures getting stuck to a co-ord position between different color shulker boxes
-- added option to disable ETF texture patching to allow iris PBR to function *(this implementation may or may not be final)* *(expect possible z-fighting with etf emissive textures when using certain shaders)*
-
-[dev build 8]
-- removed incorrect iris pbr code
-- removed log spam from build 7
-
-[dev build 7]
-- texture1.png functionality has returned to the rewrite and functions identically to OptiFine
-- initial support for iris PBR _n & _s varied entity textures added *(may cause issues with some textures please report any you find)*
-- fixed a minor issue with 2 frame blinking not registering the correct texture
-
-[dev build 6]
-- ported the code to single codebase for forge and fabric using architechtury
-- expect issues especially with forge *(please report any you find)*
-- armor emissive bright mode bug fixed
-- shulker box emissive bright mode bug fixed
-- elytra emissive bright mode bug fix
-- fixed mobs with changing textures not updating with ETF *(e.g. ghasts shooting, wolves angry texture, bees angry texture etc)*
-
-[ETF rewrite changes]
-- custom potion effects have been removed as due to limits of client/server data transparency there is no reliable way to have it update during-game *(potion info is **only** sent to clients in the mobs first seen/spawn packet :/ )*
-- additional mob textures like "sheep_fur.png" can now optionally utilize a "sheep_fur.properties" file to have settings different to the 'base' texture, if this properties file is not present ETF will try and use the same variant number as the 'base' texture the mob is using, failing all of these it will default to the regular vanilla texture for this variant
-- added config option "advanced_IncreaseCacheSizeModifier" which will only show in the config file, this should only be increased in the event of an extremely modded instance having over 2000 entities loaded on the client (the amount ETF now keeps track of at any given time), to prevent them being removed from ETF's memory.
-- cloth config is no longer included in the jar and is now an optional dependency *(it is required to use the mod menu settings screen)*
-- textures with property files that do not read correctly and cause problems will now fall back to the vanilla texture instead of randomly picking and causing confusion
-
-[dev-build.1]
-- block entity features will not render if the texture is animated as it is not supported *(no need to change settings)*
-- further optimizations to additional mob textures *(like sheep_fur.png)*
-- added option to have a different texture on the left elytra wing using *"elytra_left.png"* *(compatible with CITResewn)*
-- fixed elytra emissive texture rendering
+- broke: puzzle support will be broken for a short period after release until I PR a fix to the dev
 
 [V3.1.4]
 - fixed a logic mistake causing high lag when additional mob textures *(like sheep_fur.png)* did not have the same or higher number of variations as the base texture

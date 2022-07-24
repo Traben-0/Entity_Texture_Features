@@ -937,7 +937,7 @@ public class ETFPlayerTexture {
                             //UUID_PLAYER_HAS_EMISSIVE_COAT.put(id, checkCoat != null);
                             if (checkCoat != null) {
                                 coatEnchantedIdentifier = new Identifier(SKIN_NAMESPACE, id + "_coat_enchant.png");
-                                ETFUtils2.registerNativeImageToIdentifier(checkCoat, coatEmissiveIdentifier);
+                                ETFUtils2.registerNativeImageToIdentifier(checkCoat, coatEnchantedIdentifier);
                             }
                         }
                         if (modifiedCape != null) {

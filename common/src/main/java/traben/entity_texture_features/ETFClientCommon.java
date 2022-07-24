@@ -24,13 +24,7 @@ public class ETFClientCommon {
 
 
     public static void start() {
-
-        if(MinecraftClient.getInstance().getGameVersion().equals("1.19.1")){
-            LOGGER.info("Loading 1.19.84");
-        }else{
-            LOGGER.info("Loading 1.19");
-        }
-
+        LOGGER.info("Loading 1.19.84");
         etf$loadConfig();
     }
 
