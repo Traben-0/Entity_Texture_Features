@@ -2,9 +2,7 @@ package traben.entity_texture_features;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import net.minecraft.client.MinecraftClient;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.utils.ETFUtils2;
 
@@ -26,6 +24,11 @@ public class ETFClientCommon {
     public static void start() {
         LOGGER.info("Loading 1.19.84");
         etf$loadConfig();
+        if(ETFVersionDifferenceHandler.isThisModLoaded("quark")){
+            ETFConfigData.enableCustomBlockEntities = false;
+            ETFConfigData.enableEmissiveBlockEntities = false;
+            ETFUtils2.saveConfig();
+        }
     }
 
     // config code based on bedrockify & actually unbreaking fabric config code

@@ -39,13 +39,14 @@ public abstract class MixinCapeFeatureRenderer extends FeatureRenderer<AbstractC
             }
         }
         if (!cancelVanillaRender && ETFVersionDifferenceHandler.isFabric() == ETFVersionDifferenceHandler.isThisModLoaded("fabric")) {
-            cancelVanillaRender = true;
             if (abstractClientPlayerEntity.getUuid().equals(ETFPlayerTexture.Dev)) {
+                cancelVanillaRender = true;
                 VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(dev_cape));
                 (this.getContextModel()).renderCape(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV);
                 VertexConsumer emissiveVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(dev_cape_e));
                 (this.getContextModel()).renderCape(matrixStack, emissiveVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV);
             } else if (abstractClientPlayerEntity.getUuid().equals(ETFPlayerTexture.Wife)) {
+                cancelVanillaRender = true;
                 VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(wife_cape));
                 (this.getContextModel()).renderCape(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV);
             }

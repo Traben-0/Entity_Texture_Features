@@ -1,4 +1,8 @@
-**ETF Changelog:**
+[**ETF Changelog:**
+
+[V4.0.1]
+- fixed cape mod compatibility
+- added quark compatibility warning that disables incompatible features
 
 [V4.0]
 
@@ -34,7 +38,7 @@ Groundwork has been laid to more easily backport the mod to 1.16, 1.17 & 1.18 th
 - changed: block entity features will not render if the texture is animated as it is not supported *(no need to change settings)*
 
 - broke: puzzle support will be broken for a short period after release until I PR a fix to the dev
-
+]()
 [V3.1.4]
 - fixed a logic mistake causing high lag when additional mob textures *(like sheep_fur.png)* did not have the same or higher number of variations as the base texture
 - the Blocks property now also check the block the mob spawned inside *(allowing things like water, cave_air, flowers, torches, etc. to be used, and also fixes issues with soul-sand and mud not reading correctly)*

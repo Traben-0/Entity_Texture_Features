@@ -64,6 +64,7 @@
   "config.entity_texture_features.figura_warn.text": "The Figura mod was detected!\n - ETF skin features have been disabled due to incompatibility.",
   "config.entity_texture_features.skinlayers_warn.text": "The 3D skin layers mod was detected!\n - ETF skin features do not display on 3d layers.",
   "config.entity_texture_features.ebe_warn.text": "Enhanced block entities mod was detected!\n - Custom & Emissive textures will not apply to EBE block entities.",
+  "config.entity_texture_features.quark_warn.text": "Quark mod was detected!\n - Custom & Emissive Block entity textures are disabled for compatibility.",
   "config.entity_texture_features.ignore_warnings.title": "Ignore / hide config warnings",
   "config.entity_texture_features.ignore_warnings.tooltip": "This option only appears if a warning is displayed or it is enabled.\nIf enabled ETF will ignore and hide warnings and will no longer disable\nfeatures automatically for compatibility reasons\nThe amount of warnings currently being ignored is ",
   "config.entity_texture_features.emissive_block_entity.title": "Allow Block entity textures",

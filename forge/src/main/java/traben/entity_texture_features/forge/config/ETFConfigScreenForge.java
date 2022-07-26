@@ -67,6 +67,18 @@ public class ETFConfigScreenForge {
                         .build()); // Builds the option entry for cloth config
             }
         }
+        if(ETFVersionDifferenceHandler.isThisModLoaded("quark")) {
+            shownWarning = true;
+            warningCount++;
+            if (!ETFConfigData.ignoreConfigWarnings) {
+                ETFUtils2.logWarn(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".quark_warn.text").getString(), false);
+                category.addEntry(entryBuilder.startTextDescription(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".quark_warn.text"))
+                        .setColor(new Color(230, 165, 15).getRGB())
+                        .build()); // Builds the option entry for cloth config
+                ETFConfigData.enableCustomBlockEntities = false;
+                ETFConfigData.enableEmissiveBlockEntities = false;
+            }
+        }
         if (shownWarning && ETFConfigData.ignoreConfigWarnings) {
             ETFUtils2.logMessage(warningCount + " warnings have been ignored.", false);
         }
@@ -235,6 +247,7 @@ public class ETFConfigScreenForge {
                 .setTooltip(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".allow_illegal_texture_paths.tooltip")) // Optional: Shown when the user hover over this option
                 .setSaveConsumer(newValue -> ETFConfigData.allowIllegalTexturePaths = newValue) // Recommended: Called when user save the config
                 .build()); // Builds the option entry for cloth config
+
 
         //MinecraftClient.getInstance().openScreen(screen);
         return builder.setTransparentBackground(isTransparent).build();
