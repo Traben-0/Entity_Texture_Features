@@ -2,6 +2,7 @@ package traben.entity_texture_features.forge;
 
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.ModList;
@@ -45,8 +46,8 @@ public class ETFVersionDifferenceHandlerImpl {
     }
 
     public static Text getTextFromTranslation(String translationKey) {
-        //1.19.84 version
-        return Text.translatable(translationKey);
+        //1.18.2 version
+        return new TranslatableText(translationKey);
     }
 
     public static String getBiomeString(World world, BlockPos pos) {

@@ -60,9 +60,9 @@ public abstract class MixinTridentEntityRenderer implements SynchronousResourceR
                     String path = TridentEntityModel.TEXTURE.toString();
                     String name = UUID_TRIDENT_NAME.get(id).toLowerCase().replaceAll("[^a-z\\d/_.-]", "");
                     Identifier possibleId = new Identifier(path.replace(".png", "_" + name + ".png"));
-                    if (MinecraftClient.getInstance().getResourceManager().getResource(possibleId).isPresent()) {
+                    if (ETFUtils2.isExistingResource(possibleId)) {
                         Identifier emissive = ETFUtils2.replaceIdentifier(possibleId, ".png", "_e.png");
-                        if (MinecraftClient.getInstance().getResourceManager().getResource(emissive).isEmpty()) {
+                        if (!ETFUtils2.isExistingResource(emissive)) {
                             emissive = null;
                         }
                         ENTITY_TEXTURE_MAP.put(key, new ETFTexture(possibleId, emissive));

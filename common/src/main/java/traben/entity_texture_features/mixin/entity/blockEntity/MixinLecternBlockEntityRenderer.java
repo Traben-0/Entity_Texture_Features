@@ -20,6 +20,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.texture_handlers.ETFManager;
+import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.function.Function;
 
@@ -43,7 +44,7 @@ public abstract class MixinLecternBlockEntityRenderer implements BlockEntityRend
 
 
         if (lecternHasCustomTexture == null)
-            lecternHasCustomTexture = MinecraftClient.getInstance().getResourceManager().getResource(new Identifier(LECTERN_BOOK_PATH)).isPresent();
+            lecternHasCustomTexture = ETFUtils2.isExistingResource(new Identifier(LECTERN_BOOK_PATH));
 
         String texture = (ETFConfigData.enableCustomTextures && lecternHasCustomTexture) ? LECTERN_BOOK_PATH : "minecraft:texture_handlers/entity/enchanting_table_book.png";//EnchantingTableBlockEntityRenderer.BOOK_TEXTURE.getTextureId().toString();
 
@@ -69,7 +70,7 @@ public abstract class MixinLecternBlockEntityRenderer implements BlockEntityRend
     private VertexConsumer mixin(SpriteIdentifier instance, VertexConsumerProvider vertexConsumers, Function<Identifier, RenderLayer> layerFactory) {
         if (recentVert != null) {
             if (lecternHasCustomTexture == null) {
-                lecternHasCustomTexture = MinecraftClient.getInstance().getResourceManager().getResource(new Identifier(LECTERN_BOOK_PATH)).isPresent();
+                lecternHasCustomTexture = ETFUtils2.isExistingResource(new Identifier(LECTERN_BOOK_PATH));
             }
             if (lecternHasCustomTexture) {
                 VertexConsumer vertCustom = recentVert.getBuffer(RenderLayer.getEntitySolid(new Identifier(LECTERN_BOOK_PATH)));

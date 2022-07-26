@@ -3,7 +3,6 @@ package traben.entity_texture_features.mixin.entity.misc;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.encryption.PlayerPublicKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -22,8 +21,8 @@ import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 public abstract class MixinAbstractClientPlayerEntity extends PlayerEntity {
 
 
-    public MixinAbstractClientPlayerEntity(World world, BlockPos pos, float yaw, GameProfile profile, @Nullable PlayerPublicKey publicKey) {
-        super(world, pos, yaw, profile, publicKey);
+    public MixinAbstractClientPlayerEntity(World world, BlockPos pos, float yaw, GameProfile profile) {
+        super(world, pos, yaw, profile);
     }
 
     @Inject(method = "getCapeTexture",

@@ -7,6 +7,7 @@ import net.minecraft.client.model.*;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.block.BlockRenderManager;
 import net.minecraft.client.render.entity.feature.MooshroomMushroomFeatureRenderer;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.texture.NativeImage;
@@ -55,7 +56,7 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
                     case 2:
                         return true;
                     default: {
-                        if (MinecraftClient.getInstance().getResourceManager().getResource(RED_SHROOM).isPresent()) {
+                        if (ETFUtils2.isExistingResource(RED_SHROOM)) {
                             ETFManager.mooshroomRedCustomShroom = 2;
                             return prepareMushroomTextures(true);
                         } else {
@@ -70,7 +71,7 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
                     case 2:
                         return false;
                     default: {
-                        if (MinecraftClient.getInstance().getResourceManager().getResource(BROWN_SHROOM).isPresent()) {
+                        if (ETFUtils2.isExistingResource(BROWN_SHROOM)) {
 
                             ETFManager.mooshroomBrownCustomShroom = 2;
                             return prepareMushroomTextures(false);
@@ -99,7 +100,7 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
                     EMISSIVE_SUFFIX_LIST) {
                 Identifier test = new Identifier(idOfOriginal.toString().replace(".png", str + ".png"));
                 //System.out.println("trying "+test.toString());
-                if (MinecraftClient.getInstance().getResourceManager().getResource(test).isPresent()) {
+                if (ETFUtils2.isExistingResource(test)) {
                     suffix = str;
                     idOfOriginal = test;
                     found = true;
@@ -168,7 +169,7 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
 
     //rewritten as original didn't seem to work, I must have accidentally changed the vanilla mushroom texture when testing originally
     @Inject(method = "renderMushroom", at = @At(value = "HEAD"), cancellable = true)
-    private void etf$injected(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, boolean renderAsModel, BlockState mushroomState, int overlay, BakedModel mushroomModel, CallbackInfo ci) {
+    private void etf$injected(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, boolean renderAsModel, BlockRenderManager blockRenderManager, BlockState mushroomState, int overlay, BakedModel mushroomModel, CallbackInfo ci) {
 
         Boolean shroomType = returnRedTrueBrownFalseVanillaNull(mushroomState);
         if (shroomType != null) {

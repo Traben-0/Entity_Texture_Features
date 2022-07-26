@@ -30,12 +30,12 @@
     "entity.featureRenderers.MixinShulkerHeadFeatureRenderer",
     "entity.featureRenderers.MixinSlimeOverlayFeatureRenderer",
     "entity.featureRenderers.MixinVillagerClothingFeatureRenderer",
-    "entity.featureRenderers.MixinWardenFeatureRenderer",
     "entity.misc.MixinAbstractClientPlayerEntity",
     "entity.misc.MixinBuiltinModelItemRenderer",
     "entity.misc.MixinElytraEntityModel",
     "entity.misc.MixinEnderDragonEntityRenderer",
     "entity.misc.MixinMobSpawnerBlockEntityRenderer",
+    "entity.misc.MixinModelPart",
     "entity.misc.MixinTridentEntity",
     "entity.misc.MixinTridentEntityRenderer"
   ],

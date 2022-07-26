@@ -39,12 +39,12 @@
   "accessWidener": "entity_texture_features.accesswidener",
   "depends": {
     "fabricloader": ">=0.14.0",
-    "minecraft": ">=1.19 "
+    "minecraft": "=1.18.2 "
   },
   "suggests": {
     "fabric": ">=0.55",
-    "modmenu": ">=4",
-    "clothconfig": ">=7.0"
+    "modmenu": ">=3",
+    "clothconfig": ">=6.0"
   },
   "custom": {
     "modmenu": {

@@ -32,13 +32,13 @@ import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.Optional;
 
+import static traben.entity_texture_features.ETFClientCommon.ELYTRA_MODELPART_TO_SKIP;
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 import static traben.entity_texture_features.texture_handlers.ETFManager.TEXTURE_MAP_TO_OPPOSITE_ELYTRA;
 
 @Mixin(ElytraFeatureRenderer.class)
 public abstract class MixinElytraFeatureRenderer<T extends LivingEntity, M extends EntityModel<T>> extends FeatureRenderer<T, M> {
-    //the sneaky 3 way boolean
-    Boolean etf$vanillaVisibility = null;
+
 
     //todo rewrite
     @Final
@@ -74,16 +74,20 @@ public abstract class MixinElytraFeatureRenderer<T extends LivingEntity, M exten
                 //first time check other texture exists and put null if not
 
                 Identifier otherWingIdentifier = new Identifier(identifier.toString().replace(".png", "_left.png"));
-                Optional<Resource> otherWing = MinecraftClient.getInstance().getResourceManager().getResource(otherWingIdentifier);
-                Optional<Resource> thisWing = MinecraftClient.getInstance().getResourceManager().getResource(identifier);
-                if (otherWing.isPresent() && thisWing.isPresent()) {
-                    String otherName = otherWing.get().getResourcePackName();
-                    String thisName = thisWing.get().getResourcePackName();
-                    ObjectSet<String> set = new ObjectOpenHashSet<>();
-                    set.add(thisName);
-                    set.add(otherName);
-                    if (otherName.equals(ETFUtils2.returnNameOfHighestPackFrom(set))) {
-                        TEXTURE_MAP_TO_OPPOSITE_ELYTRA.put(identifier, new ETFTexture(otherWingIdentifier));
+                //Optional<Resource> otherWing = ;
+                //Optional<Resource> thisWing = ;
+                if (ETFUtils2.isExistingResource(otherWingIdentifier) && ETFUtils2.isExistingResource(identifier)) {
+                    try {
+                        String otherName = MinecraftClient.getInstance().getResourceManager().getResource(otherWingIdentifier).getResourcePackName();
+                        String thisName = MinecraftClient.getInstance().getResourceManager().getResource(identifier).getResourcePackName();
+                        ObjectSet<String> set = new ObjectOpenHashSet<>();
+                        set.add(thisName);
+                        set.add(otherName);
+                        if (otherName.equals(ETFUtils2.returnNameOfHighestPackFrom(set))) {
+                            TEXTURE_MAP_TO_OPPOSITE_ELYTRA.put(identifier, new ETFTexture(otherWingIdentifier));
+                        }
+                    }catch(Exception ignored){
+
                     }
                 }
                 TEXTURE_MAP_TO_OPPOSITE_ELYTRA.putIfAbsent(identifier, null);
@@ -97,19 +101,24 @@ public abstract class MixinElytraFeatureRenderer<T extends LivingEntity, M exten
                     //0=left  1=right
                     etf$leftWing = wingParts.get(0);
                     etf$rightWing = wingParts.get(1);
-                    etf$vanillaVisibility = etf$leftWing.hidden;
 
-                    etf$rightWing.hidden = true;
+                    ELYTRA_MODELPART_TO_SKIP.add(etf$leftWing);
+
+
+
+
+                    ELYTRA_MODELPART_TO_SKIP.add(etf$rightWing);
                     VertexConsumer vertexConsumerOther = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(thisOtherETFTexture.getTextureIdentifier(null, ETFConfigData.enableEmissiveTextures)), false, itemStack.hasGlint());
                     this.elytra.render(matrixStack, vertexConsumerOther, i, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
-                    etf$rightWing.hidden = etf$vanillaVisibility;
-                    etf$leftWing.hidden = true;
+                    ELYTRA_MODELPART_TO_SKIP.remove(etf$rightWing);
+                    ELYTRA_MODELPART_TO_SKIP.add(etf$leftWing);
 
 
                 }//else do nothing
             }
         }
     }
+
 
     @Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/ElytraEntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V",
@@ -120,20 +129,22 @@ public abstract class MixinElytraFeatureRenderer<T extends LivingEntity, M exten
             Identifier emissive = thisETFTexture.getEmissiveIdentifierOfCurrentState();
             if(emissive != null) {
                 VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getArmorCutoutNoCull(emissive));
-                if (etf$vanillaVisibility != null) {
+                if (!ELYTRA_MODELPART_TO_SKIP.isEmpty()) {
 
                     //left is invis already
                     //thisETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, elytra, ETFManager.EmissiveRenderModes.DULL);
                     elytra.render(matrixStack, textureVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
 
-                    etf$leftWing.hidden = etf$vanillaVisibility;
-                    etf$rightWing.hidden = true;
+                    //etf$leftWing.hidden = etf$vanillaVisibility;
+                    //etf$rightWing.hidden = true;
+                    ELYTRA_MODELPART_TO_SKIP.remove(etf$leftWing);
+                    ELYTRA_MODELPART_TO_SKIP.add(etf$rightWing);
                     //thisOtherETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, elytra, ETFManager.EmissiveRenderModes.DULL);
                     elytra.render(matrixStack, textureVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
 
-                    etf$rightWing.hidden = etf$vanillaVisibility;
-                    etf$vanillaVisibility = null;
-
+                   // etf$rightWing.hidden = etf$vanillaVisibility;
+                    //etf$vanillaVisibility = null;
+                    ELYTRA_MODELPART_TO_SKIP.remove(etf$rightWing);
                 } else {
                     //easy vanilla
                     //thisETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, elytra, ETFManager.EmissiveRenderModes.DULL);

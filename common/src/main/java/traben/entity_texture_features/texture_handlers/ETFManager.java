@@ -335,8 +335,10 @@ public abstract class ETFManager {
             } else {//neither null this will be annoying
                 //if 2.png is higher it MUST be treated as true random confirmed
                 ResourceManager resources = MinecraftClient.getInstance().getResourceManager();
-                String p2pngPackName = resources.getResource(possible2PNG).isPresent() ? resources.getResource(possible2PNG).get().getResourcePackName() : null;
-                String propertiesPackName = resources.getResource(possibleProperty).isPresent() ? resources.getResource(possibleProperty).get().getResourcePackName() : null;
+                String p2pngPackName = null;
+                try{p2pngPackName = resources.getResource(possible2PNG).getResourcePackName();}catch (Exception ignored){}
+                String propertiesPackName = null;
+                try{propertiesPackName = resources.getResource(possibleProperty).getResourcePackName();}catch (Exception ignored){}
                 ObjectOpenHashSet<String> packs = new ObjectOpenHashSet<>();
                 //if (p2pngPackName != null)
                 packs.add(p2pngPackName);
@@ -677,7 +679,7 @@ public abstract class ETFManager {
         //I'm going to ignore 1.png that will be hardcoded as vanilla or optifine replaced
         ResourceManager resources = MinecraftClient.getInstance().getResourceManager();
         int totalTextureCount = 2;
-        while (resources.getResource(ETFUtils2.replaceIdentifier(variant2PNG, "[0-9]+(?=\\.png)", String.valueOf((totalTextureCount + 1)))).isPresent()) {
+        while (ETFUtils2.isExistingResource(ETFUtils2.replaceIdentifier(variant2PNG, "[0-9]+(?=\\.png)", String.valueOf((totalTextureCount + 1))))) {
             totalTextureCount++;
         }
         //here totalTextureCount == the confirmed last value of the random order
@@ -688,6 +690,8 @@ public abstract class ETFManager {
         //return returnAlreadyConfirmedTrueRandomTexture(entity,vanillaIdentifier,totalTextureCount);
         //can't return null as 2.png confirmed exists
     }
+
+
 
     @Nullable
     private static <T extends Entity> Identifier returnNewAlreadyConfirmedOptifineTexture(T entity, Identifier vanillaIdentifier, boolean isThisAnUpdate) {
@@ -711,8 +715,8 @@ public abstract class ETFManager {
             //then we know it exists
             return variantIdentifier;
         }
-        Optional<Resource> variantResource = MinecraftClient.getInstance().getResourceManager().getResource(variantIdentifier);
-        if (variantResource.isPresent()) {
+        //Optional<Resource> variantResource = MinecraftClient.getInstance().getResourceManager().getResource();
+        if (ETFUtils2.isExistingResource(variantIdentifier)) {
             return variantIdentifier;
             //it will be added to cache for future checks later
         } else {

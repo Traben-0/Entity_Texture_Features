@@ -9,8 +9,8 @@ import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourcePack;
-import net.minecraft.text.LiteralTextContent;
 import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -59,8 +59,8 @@ public abstract class ETFUtils2 {
     public static Properties readAndReturnPropertiesElseNull(Identifier path) {
         Properties props = new Properties();
         try {
-            @SuppressWarnings("OptionalGetWithoutIsPresent") //try catch is intended
-            Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(path).get();
+
+            Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(path);
             try {
                 InputStream in = resource.getInputStream();
                 props.load(in);
@@ -80,7 +80,7 @@ public abstract class ETFUtils2 {
         NativeImage img;
         try {
             @SuppressWarnings("OptionalGetWithoutIsPresent") //try catch is intended
-            InputStream in = MinecraftClient.getInstance().getResourceManager().getResource(identifier).get().getInputStream();
+            InputStream in = MinecraftClient.getInstance().getResourceManager().getResource(identifier).getInputStream();
             try {
                 img = NativeImage.read(in);
                 in.close();
@@ -105,7 +105,7 @@ public abstract class ETFUtils2 {
         if (inChat) {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             if (player != null) {
-                player.sendMessage(MutableText.of(new LiteralTextContent("[INFO] [Entity Texture Features]: " + obj)).formatted(Formatting.GRAY, Formatting.ITALIC), false);
+                player.sendMessage(Text.of("[INFO] [Entity Texture Features]: " + obj), false);
             } else {
                 ETFClientCommon.LOGGER.info(obj);
             }
@@ -123,7 +123,7 @@ public abstract class ETFUtils2 {
         if (inChat) {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             if (player != null) {
-                player.sendMessage(MutableText.of(new LiteralTextContent("[WARN] [Entity Texture Features]: " + obj)).formatted(Formatting.YELLOW), false);
+                player.sendMessage(Text.of("[WARN] [Entity Texture Features]: " + obj), false);
             } else {
                 ETFClientCommon.LOGGER.warn(obj);
             }
@@ -141,12 +141,21 @@ public abstract class ETFUtils2 {
         if (inChat) {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             if (player != null) {
-                player.sendMessage(MutableText.of(new LiteralTextContent("[ERROR] [Entity Texture Features]: " + obj)).formatted(Formatting.RED, Formatting.BOLD), false);
+                player.sendMessage(Text.of("[ERROR] [Entity Texture Features]: " + obj), false);
             } else {
                 ETFClientCommon.LOGGER.error(obj);
             }
         } else {
             ETFClientCommon.LOGGER.error(obj);
+        }
+    }
+
+    public static boolean isExistingResource(Identifier identifier){
+        try{
+            MinecraftClient.getInstance().getResourceManager().getResource(identifier);
+            return true;
+        }catch (Exception e){
+            return false;
         }
     }
 

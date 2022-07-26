@@ -56,13 +56,13 @@ public enum ETFDirectory {
         ObjectArrayList<ETFDirectory> foundDirectories = new ObjectArrayList<>();
         ResourceManager resources = MinecraftClient.getInstance().getResourceManager();
 
-        if (resources.getResource(getIdentifierAsDirectory(vanillaIdentifier, VANILLA)).isPresent())
+        if (ETFUtils2.isExistingResource(getIdentifierAsDirectory(vanillaIdentifier, VANILLA)))
             foundDirectories.add(VANILLA);
-        if (resources.getResource(getIdentifierAsDirectory(vanillaIdentifier, OLD_OPTIFINE)).isPresent())
+        if (ETFUtils2.isExistingResource(getIdentifierAsDirectory(vanillaIdentifier, OLD_OPTIFINE)))
             foundDirectories.add(OLD_OPTIFINE);
-        if (resources.getResource(getIdentifierAsDirectory(vanillaIdentifier, OPTIFINE)).isPresent())
+        if (ETFUtils2.isExistingResource(getIdentifierAsDirectory(vanillaIdentifier, OPTIFINE)))
             foundDirectories.add(OPTIFINE);
-        if (resources.getResource(getIdentifierAsDirectory(vanillaIdentifier, ETF)).isPresent())
+        if (ETFUtils2.isExistingResource(getIdentifierAsDirectory(vanillaIdentifier, ETF)))
             foundDirectories.add(ETF);
 
         //these are here as these will be 90%+ cases and will be faster
@@ -78,8 +78,11 @@ public enum ETFDirectory {
             for (ETFDirectory directory :
                     foundDirectories) {
                 //map result already has internal 0123 order of pack directories ironed out only need to check pack order
-                Optional<Resource> resource = resources.getResource(getIdentifierAsDirectory(vanillaIdentifier, directory));
-                resource.ifPresent(value -> resourcePackNames.put(value.getResourcePackName(), directory));
+                try {
+                    if (ETFUtils2.isExistingResource(getIdentifierAsDirectory(vanillaIdentifier, directory))) {
+                        resourcePackNames.put(resources.getResource(getIdentifierAsDirectory(vanillaIdentifier, directory)).getResourcePackName(), directory);
+                    }
+                }catch(Exception ignored){}
             }
 
             String returnedPack = ETFUtils2.returnNameOfHighestPackFrom(resourcePackNames.keySet());
