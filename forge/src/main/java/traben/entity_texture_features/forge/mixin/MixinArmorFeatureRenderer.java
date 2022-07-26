@@ -38,7 +38,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
 
     @Inject(method = "renderModel",
             at = @At(value = "TAIL"))
-    private void etf$applyEmissive(MatrixStack arg, VertexConsumerProvider arg2, int i, boolean bl, Model arg3, float f, float g, float h, Identifier armorResource,CallbackInfo ci) {
+    private void etf$applyEmissive(MatrixStack arg, VertexConsumerProvider arg2, int i, boolean bl, A arg3, float f, float g, float h, Identifier armorResource,CallbackInfo ci) {
         //UUID id = livingEntity.getUuid();
         if (thisETFTexture != null && ETFConfigData.enableEmissiveTextures) {
             Identifier emissive = thisETFTexture.getEmissiveIdentifierOfCurrentState();

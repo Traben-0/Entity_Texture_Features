@@ -1,14 +1,15 @@
 package traben.entity_texture_features.forge;
 
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.ConfigGuiHandler;
 import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.network.NetworkConstants;
+import net.minecraftforge.fmlclient.ConfigGuiHandler;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
+
+import static net.minecraftforge.fmllegacy.network.FMLNetworkConstants.IGNORESERVERONLY;
 
 @Mod("entity_texture_features")
 public class ETFClientForge {
@@ -25,7 +26,7 @@ public class ETFClientForge {
             }
 
 
-            ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));
+            ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> IGNORESERVERONLY, (a, b) -> true));
             ETFClientCommon.start();
         } else {
 

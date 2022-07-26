@@ -5,6 +5,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -13,6 +14,7 @@ import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.fabric.config.ETFConfigScreenFabric;
 
 import java.io.File;
+import java.util.Objects;
 
 public class ETFVersionDifferenceHandlerImpl {
     public static Screen getConfigScreen(Screen parent, boolean isTransparent) {
@@ -51,7 +53,7 @@ public class ETFVersionDifferenceHandlerImpl {
 
     @NotNull
     public static String getBiomeString(World world, BlockPos pos) {
-        //1.19 & 1.18.2 variation
-        return world.getBiome(pos).getKey().toString().split("\s/\s")[1].replaceAll("[^\\da-zA-Z_:-]", "");
+        //1.17 and before version
+        return Objects.requireNonNull(world.getRegistryManager().get(Registry.BIOME_KEY).getId(world.getBiome(pos))).toString();
     }
 }

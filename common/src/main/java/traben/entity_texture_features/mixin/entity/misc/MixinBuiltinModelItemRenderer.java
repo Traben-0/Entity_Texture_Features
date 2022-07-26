@@ -95,7 +95,7 @@ public abstract class MixinBuiltinModelItemRenderer implements SynchronousResour
         } else if (stack.isOf(Items.SHIELD)) {
             if (ETFConfigData.specialEmissiveShield && ETFConfigData.enableEmissiveTextures) {
 
-                boolean bl = BlockItem.getBlockEntityNbt(stack) != null;
+                boolean bl = stack.getSubNbt("BlockEntityTag") != null;
                 Identifier file = new Identifier(bl ? "textures/entity/shield_base_e.png" : "textures/entity/shield_base_nopattern_e.png");
                 if (ETFUtils2.isExistingResource(file)) {
                     matrices.push();

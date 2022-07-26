@@ -492,7 +492,9 @@ public class ETFPlayerTexture {
 
             for (Property p :
                     textureData) {
-                JsonObject props = JsonParser.parseString(new String(Base64.getDecoder().decode((p.getValue())))).getAsJsonObject();
+                JsonParser parser = new JsonParser();
+                JsonObject props = parser.parse(new String(Base64.getDecoder().decode((p.getValue())))).getAsJsonObject();
+                //JsonObject props = JsonParser.parseString(new String(Base64.getDecoder().decode((p.getValue())))).getAsJsonObject();
                 skinUrl = ((JsonObject) ((JsonObject) props.get("textures")).get("SKIN")).get("url").getAsString();
                 try {
                     capeUrl = ((JsonObject) ((JsonObject) props.get("textures")).get("CAPE")).get("url").getAsString();

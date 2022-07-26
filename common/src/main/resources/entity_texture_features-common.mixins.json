@@ -1,14 +1,13 @@
 {
   "required": true,
   "package": "traben.entity_texture_features.mixin",
-  "compatibilityLevel": "JAVA_17",
+  "compatibilityLevel": "JAVA_16",
   "client": [
     "MixinIdentifier",
     "accessor.ElytraEntityModelAccessor",
     "accessor.SpriteAccessor",
     "cacheReloaders.MixinMinecraftClient",
     "cacheReloaders.MixinPlayerEntity",
-    "cacheReloaders.MixinSimpleResourceReload",
     "entity.MixinLivingEntityRenderer",
     "entity.MixinPlayerEntityRenderer",
     "entity.blockEntity.MixinBedBlockEntityRenderer",
@@ -37,9 +36,11 @@
     "entity.misc.MixinMobSpawnerBlockEntityRenderer",
     "entity.misc.MixinModelPart",
     "entity.misc.MixinTridentEntity",
-    "entity.misc.MixinTridentEntityRenderer"
+    "entity.misc.MixinTridentEntityRenderer",
+    "cacheReloaders.MixinSimpleResourceReload"
   ],
   "mixins": [
+
   ],
   "injectors": {
     "defaultRequire": 1

@@ -1,8 +1,8 @@
 package traben.entity_texture_features.texture_handlers;
 
 
+import com.google.common.collect.ImmutableList;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectImmutableList;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.PhantomEntity;
 import net.minecraft.entity.mob.ShulkerEntity;
@@ -144,7 +144,7 @@ public class ETFTexturePropertyCase {
         }
         ETFCacheKey CacheId = new ETFCacheKey(entity.getUuid(), null);
 
-        ObjectImmutableList<String> spawnConditions = null;
+        ImmutableList<String> spawnConditions = null;
         if (ETFConfigData.restrictUpdateProperties) {
             if (ENTITY_SPAWN_CONDITIONS_CACHE.containsKey(CacheId)) {
                 spawnConditions = (ENTITY_SPAWN_CONDITIONS_CACHE.get(CacheId));
@@ -597,7 +597,7 @@ public class ETFTexturePropertyCase {
     }
 
     @NotNull
-    private ObjectImmutableList<String> readAllSpawnConditionsForCache(@NotNull LivingEntity entity) {
+    private ImmutableList<String> readAllSpawnConditionsForCache(@NotNull LivingEntity entity) {
         //check to speed up processing time
 
         //must be 6 length
@@ -625,6 +625,6 @@ public class ETFTexturePropertyCase {
         @NotNull String weather = !ETFConfigData.restrictWeather ? "" : (entity.world.isRaining() ? "1" : "0") + "-" + (entity.world.isThundering() ? "1" : "0");
         @NotNull String time = !ETFConfigData.restrictDayTime ? "" : "" + entity.world.getTimeOfDay();
         @NotNull String moon = !ETFConfigData.restrictMoonPhase ? "" : "" + entity.world.getMoonPhase();
-        return ObjectImmutableList.of(biome, height, block, weather, time, moon, block2);
+        return ImmutableList.of(biome, height, block, weather, time, moon, block2);
     }
 }

@@ -49,7 +49,7 @@ allprojects {
 
     tasks.withType(JavaCompile) {
         options.encoding = "UTF-8"
-        options.release = 17
+        options.release = 16
     }
     //compileJava.options.fork = true
     //compileJava.options.forkOptions.executable = 'C:/Program Files/Java/jdk-17.0.3.1/'
