@@ -35,9 +35,9 @@ public abstract class MixinSheepWoolFeatureRenderer extends FeatureRenderer<Shee
     }
 
     @Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/passive/SheepEntity;FFFFFF)V",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/SheepWoolEntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V",
-                    shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILSOFT)
-    private void etf$applyEmissive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, SheepEntity sheepEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci, MinecraftClient minecraftClient, boolean bl, VertexConsumer vertexConsumer) {
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/feature/SheepWoolFeatureRenderer;render(Lnet/minecraft/client/render/entity/model/EntityModel;Lnet/minecraft/client/render/entity/model/EntityModel;Lnet/minecraft/util/Identifier;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFFFFF)V",
+                    shift = At.Shift.AFTER))
+    private void etf$applyEmissive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, SheepEntity sheepEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
         //UUID id = livingEntity.getUuid();
         //todo no colour logic here for now, packs can set textures for this with the color properties anyway
         if (thisETFTexture != null)

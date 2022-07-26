@@ -22,6 +22,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Properties;
 
 import static traben.entity_texture_features.ETFClientCommon.CONFIG_DIR;
@@ -37,17 +38,20 @@ public abstract class ETFUtils2 {
     @Nullable
     public static String returnNameOfHighestPackFrom(ObjectSet<String> packNameList) {
         for (
-                ResourcePack pack :
-                MinecraftClient.getInstance().getResourceManager().streamResourcePacks().toList()) {
+                Object obj :
+                MinecraftClient.getInstance().getResourceManager().streamResourcePacks().toArray()) {
             //loops from lowest to highest pack
-            String packName = pack.getName();
-            if (packNameList.contains(packName)) {
-                //simply loops through packs and removes them from the list to check
-                if (packNameList.size() <= 1) {
-                    //if there is only 1 left we have our winner in the highest resource-pack
-                    return (String) packNameList.toArray()[0];
-                } else {
-                    packNameList.remove(packName);
+            if(obj instanceof ResourcePack) {
+                ResourcePack pack = (ResourcePack) obj;
+                String packName = pack.getName();
+                if (packNameList.contains(packName)) {
+                    //simply loops through packs and removes them from the list to check
+                    if (packNameList.size() <= 1) {
+                        //if there is only 1 left we have our winner in the highest resource-pack
+                        return (String) packNameList.toArray()[0];
+                    } else {
+                        packNameList.remove(packName);
+                    }
                 }
             }
         }
@@ -74,6 +78,11 @@ public abstract class ETFUtils2 {
             return null;
         }
 
+    }
+
+    public static Object requireNonNullElseGet(Object one, Object two){
+        if(one == null) return two;
+        return one;
     }
 
     public static NativeImage getNativeImageElseNull(@Nullable Identifier identifier) {

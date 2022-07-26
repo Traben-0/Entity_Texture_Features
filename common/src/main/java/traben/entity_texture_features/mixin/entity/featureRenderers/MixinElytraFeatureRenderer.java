@@ -25,6 +25,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.mixin.accessor.ElytraEntityModelAccessor;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
@@ -133,14 +134,14 @@ public abstract class MixinElytraFeatureRenderer<T extends LivingEntity, M exten
 
                     //left is invis already
                     //thisETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, elytra, ETFManager.EmissiveRenderModes.DULL);
-                    elytra.render(matrixStack, textureVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
+                    elytra.render(matrixStack, textureVert, ETFClientCommon.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
 
                     //etf$leftWing.hidden = etf$vanillaVisibility;
                     //etf$rightWing.hidden = true;
                     ELYTRA_MODELPART_TO_SKIP.remove(etf$leftWing);
                     ELYTRA_MODELPART_TO_SKIP.add(etf$rightWing);
                     //thisOtherETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, elytra, ETFManager.EmissiveRenderModes.DULL);
-                    elytra.render(matrixStack, textureVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
+                    elytra.render(matrixStack, textureVert, ETFClientCommon.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
 
                    // etf$rightWing.hidden = etf$vanillaVisibility;
                     //etf$vanillaVisibility = null;
@@ -149,7 +150,7 @@ public abstract class MixinElytraFeatureRenderer<T extends LivingEntity, M exten
                     //easy vanilla
                     //thisETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, elytra, ETFManager.EmissiveRenderModes.DULL);
 
-                    elytra.render(matrixStack, textureVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
+                    elytra.render(matrixStack, textureVert, ETFClientCommon.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
                 }
             }
         }

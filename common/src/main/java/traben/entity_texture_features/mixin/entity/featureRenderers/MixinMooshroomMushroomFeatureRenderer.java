@@ -9,6 +9,7 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.BlockRenderManager;
 import net.minecraft.client.render.entity.feature.MooshroomMushroomFeatureRenderer;
+import net.minecraft.client.render.entity.model.CowEntityModel;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.util.math.MatrixStack;
@@ -17,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
@@ -35,13 +37,22 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
     private static Identifier brownEmissive = null;
 
     private static ModelPart[] getModelData() {
-        Dilation dilation = new Dilation(0);
-        ModelData modelData = new ModelData();
-        ModelPartData modelPartData = modelData.getRoot();
-        modelPartData.addChild("shroom1", ModelPartBuilder.create().uv(32, 16).cuboid(0, 0F, 8.0F, 16.0F, 16.0F, 0F, dilation), ModelTransform.NONE);
-        modelPartData.addChild("shroom2", ModelPartBuilder.create().uv(32, 16).cuboid(8F, 0F, 0.0F, 0F, 16F, 16.0F, dilation), ModelTransform.NONE);
-        ModelPart shroom1 = modelData.getRoot().getChild("shroom1").createPart(32, 16);
-        ModelPart shroom2 = modelData.getRoot().getChild("shroom2").createPart(32, 16);
+        //Dilation dilation = new Dilation(0);
+        //ModelData modelData = new ModelData();
+        //ModelPartData modelPartData = modelData.getRoot();
+        //modelPartData.addChild("shroom1", ModelPartBuilder.create().uv(32, 16).cuboid(0, 0F, 8.0F, 16.0F, 16.0F, 0F, dilation), ModelTransform.NONE);
+        //modelPartData.addChild("shroom2", ModelPartBuilder.create().uv(32, 16).cuboid(8F, 0F, 0.0F, 0F, 16F, 16.0F, dilation), ModelTransform.NONE);
+        //ModelPart shroom1 = modelData.getRoot().getChild("shroom1").createPart(32, 16);
+        //ModelPart shroom2 = modelData.getRoot().getChild("shroom2").createPart(32, 16);
+
+
+        ModelPart shroom1 = (new ModelPart(new CowEntityModel<>())).setTextureSize(64, 64);
+        //shroom1.setPivot(0.0F, -2.0F, 0.0F);
+        shroom1.setTextureOffset(32, 16).addCuboid(0, 0F, 8.0F, 16.0F, 16.0F, 0F, 0.0f);
+        ModelPart shroom2 = (new ModelPart(new CowEntityModel<>())).setTextureSize(64, 64);
+        //shroom1.setPivot(0.0F, -2.0F, 0.0F);
+        shroom1.setTextureOffset(32, 16).addCuboid(8F, 0F, 0.0F, 0F, 16F, 16.0F, 0.0f);
+
         return new ModelPart[]{shroom1, shroom2};
     }
 
@@ -120,7 +131,7 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
                 NativeImage flippedOriginalImage = ETFUtils2.emptyNativeImage(originalImagePreFlip.getWidth(), originalImagePreFlip.getHeight());
                 for (int x = 0; x < flippedOriginalImage.getWidth(); x++) {
                     for (int y = 0; y < flippedOriginalImage.getHeight(); y++) {
-                        flippedOriginalImage.setColor(x, y, originalImagePreFlip.getColor(x, originalImagePreFlip.getHeight() - 1 - y));
+                        flippedOriginalImage.setPixelColor(x, y, originalImagePreFlip.getPixelColor(x, originalImagePreFlip.getHeight() - 1 - y));
                     }
                 }
                 //mirror 2x wide texture for entity rendering
@@ -128,9 +139,9 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
                 for (int x = 0; x < newImage.getWidth(); x++) {
                     for (int y = 0; y < newImage.getHeight(); y++) {
                         if (x < flippedOriginalImage.getWidth()) {
-                            newImage.setColor(x, y, flippedOriginalImage.getColor(x, y));
+                            newImage.setPixelColor(x, y, flippedOriginalImage.getPixelColor(x, y));
                         } else {
-                            newImage.setColor(x, y, flippedOriginalImage.getColor(flippedOriginalImage.getWidth() - 1 - (x - flippedOriginalImage.getWidth()), y));
+                            newImage.setPixelColor(x, y, flippedOriginalImage.getPixelColor(flippedOriginalImage.getWidth() - 1 - (x - flippedOriginalImage.getWidth()), y));
                         }
                     }
                 }
@@ -167,24 +178,25 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
     }
 
 
-    //rewritten as original didn't seem to work, I must have accidentally changed the vanilla mushroom texture when testing originally
-    @Inject(method = "renderMushroom", at = @At(value = "HEAD"), cancellable = true)
-    private void etf$injected(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, boolean renderAsModel, BlockRenderManager blockRenderManager, BlockState mushroomState, int overlay, BakedModel mushroomModel, CallbackInfo ci) {
+    //redirect needed for 1.16.5
+    @Redirect(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/passive/MooshroomEntity;FFFFFF)V",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/block/BlockRenderManager;renderBlockAsEntity(Lnet/minecraft/block/BlockState;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II)V"))
+    private void etf$injected(BlockRenderManager instance, BlockState state, MatrixStack matrices, VertexConsumerProvider vertexConsumer, int light, int overlay) {
 
-        Boolean shroomType = returnRedTrueBrownFalseVanillaNull(mushroomState);
+        Boolean shroomType = returnRedTrueBrownFalseVanillaNull(state);
         if (shroomType != null) {
             ETFTexture thisTexture = shroomType ? ETFManager.redMooshroomAlt : ETFManager.brownMooshroomAlt;
             if (thisTexture != null) {
                 for (ModelPart model :
                         shroomAsEntityModel) {
-                    VertexConsumer texturedConsumer = vertexConsumers.getBuffer(RenderLayer.getEntityCutout(thisTexture.thisIdentifier));
+                    VertexConsumer texturedConsumer = vertexConsumer.getBuffer(RenderLayer.getEntityCutout(thisTexture.thisIdentifier));
                     model.render(matrices, texturedConsumer, light, overlay, 1, 1, 1, 1);
 
-                    thisTexture.renderEmissive(matrices, vertexConsumers, model);
+                    thisTexture.renderEmissive(matrices, vertexConsumer, model);
                     //ETFUtils2.generalEmissiveRenderPart(matrices, vertexConsumers, shroomType ? RED_SHROOM_ALT : BROWN_SHROOM_ALT, model, false);
 
                 }
-                ci.cancel();
+                //ci.cancel();
             }
         }
         //else continue to vanilla code

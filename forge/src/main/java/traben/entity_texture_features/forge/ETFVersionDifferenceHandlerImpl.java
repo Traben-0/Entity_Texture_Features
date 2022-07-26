@@ -9,8 +9,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLConfig;
 import net.minecraftforge.fml.loading.FMLPaths;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+
+import org.apache.logging.log4j.Logger;
 import traben.entity_texture_features.forge.config.ETFConfigScreenForge;
 
 import java.io.File;
@@ -44,7 +45,7 @@ public class ETFVersionDifferenceHandlerImpl {
 
     public static Logger getLogger() {
         //1.19 & 1.18.2 variation
-        return LoggerFactory.getLogger("Entity Texture Features");
+        return LogManager.getLogger("Entity Texture Features");
     }
 
     public static Text getTextFromTranslation(String translationKey) {

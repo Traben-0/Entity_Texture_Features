@@ -4,6 +4,7 @@ import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.ShulkerBoxBlockEntityRenderer;
 import net.minecraft.client.render.entity.model.ShulkerEntityModel;
@@ -31,7 +32,7 @@ import java.util.UUID;
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
 @Mixin(ShulkerBoxBlockEntityRenderer.class)
-public abstract class MixinShulkerBoxBlockEntityRenderer implements BlockEntityRenderer<ShulkerBoxBlockEntity> {
+public abstract class MixinShulkerBoxBlockEntityRenderer extends BlockEntityRenderer<ShulkerBoxBlockEntity> {
 
     @Final
     @Shadow
@@ -43,6 +44,10 @@ public abstract class MixinShulkerBoxBlockEntityRenderer implements BlockEntityR
 
     private boolean isAnimatedTexture = false;
     private ETFTexture thisETFTexture = null;
+
+    public MixinShulkerBoxBlockEntityRenderer(BlockEntityRenderDispatcher dispatcher) {
+        super(dispatcher);
+    }
 
     @Inject(method = "render(Lnet/minecraft/block/entity/ShulkerBoxBlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;push()V",
@@ -78,7 +83,7 @@ public abstract class MixinShulkerBoxBlockEntityRenderer implements BlockEntityR
     }
 
     @ModifyArg(method = "render(Lnet/minecraft/block/entity/ShulkerBoxBlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II)V",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/ShulkerEntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V"),
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/ModelPart;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;II)V"),
             index = 1)
     private VertexConsumer etf$alterTexture(VertexConsumer vertices) {
 
@@ -92,7 +97,7 @@ public abstract class MixinShulkerBoxBlockEntityRenderer implements BlockEntityR
     }
 
     @Inject(method = "render(Lnet/minecraft/block/entity/ShulkerBoxBlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II)V",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/ShulkerEntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/ModelPart;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;II)V",
                     shift = At.Shift.AFTER))
     private void etf$emissiveTime(ShulkerBoxBlockEntity shulkerBoxBlockEntity, float f, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j, CallbackInfo ci) {
         if (!isAnimatedTexture && ETFConfigData.enableEmissiveBlockEntities && (thisETFTexture != null)) {

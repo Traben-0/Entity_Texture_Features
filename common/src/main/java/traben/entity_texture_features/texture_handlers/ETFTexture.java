@@ -17,6 +17,7 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.utils.ETFUtils2;
 
@@ -351,8 +352,8 @@ public class ETFTexture {
                     for (int y = 0; y < baseImage.getHeight(); y++) {
                         //int newX = Math.min((int)(x*widthMultipleEmissive),originalCopy.getWidth()-1);
                         //int newY = Math.min((int)(y*heightMultipleEmissive),originalCopy.getHeight()-1);
-                        if (otherImage.getOpacity(x, y) != 0) {
-                            baseImage.setColor(x, y, 0);
+                        if (otherImage.getPixelOpacity(x, y) != 0) {
+                            baseImage.setPixelColor(x, y, 0);
                         }
                     }
                 }
@@ -496,7 +497,7 @@ public class ETFTexture {
     public void renderEmissive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, ModelPart modelPart, ETFManager.EmissiveRenderModes modeToUsePossiblyManuallyChosen) {
         VertexConsumer vertexC = getEmissiveVertexConsumer(vertexConsumerProvider, null, modeToUsePossiblyManuallyChosen);
         if (vertexC != null) {
-            modelPart.render(matrixStack, vertexC, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV);
+            modelPart.render(matrixStack, vertexC, ETFClientCommon.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV);
         }
     }
 
@@ -507,7 +508,7 @@ public class ETFTexture {
     public void renderEmissive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, Model model, ETFManager.EmissiveRenderModes modeToUsePossiblyManuallyChosen) {
         VertexConsumer vertexC = getEmissiveVertexConsumer(vertexConsumerProvider, model, modeToUsePossiblyManuallyChosen);
         if (vertexC != null) {
-            model.render(matrixStack, vertexC, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
+            model.render(matrixStack, vertexC, ETFClientCommon.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
         }
     }
 
@@ -540,11 +541,14 @@ public class ETFTexture {
 
     private void modifyTextureState(TextureReturnState givenState) {
         switch (givenState) {
-            case APPLY_BLINK ->
+            case APPLY_BLINK :
                     currentTextureState = currentTextureState == TextureReturnState.NORMAL_PATCHED ? TextureReturnState.BLINK_PATCHED : TextureReturnState.BLINK;
-            case APPLY_BLINK2 -> currentTextureState = switch (currentTextureState) {
-                case NORMAL_PATCHED, BLINK_PATCHED -> TextureReturnState.BLINK2_PATCHED;
-                default -> TextureReturnState.BLINK2;
+                    break;
+            case APPLY_BLINK2 : switch (currentTextureState) {
+                case NORMAL_PATCHED :
+                case BLINK_PATCHED :
+                    currentTextureState = TextureReturnState.BLINK2_PATCHED;break;
+                default : currentTextureState = TextureReturnState.BLINK2;break;
             };
             //shouldn't ever call but may need in future
 //            case APPLY_PATCH -> currentTextureState= switch (currentTextureState){
@@ -558,29 +562,29 @@ public class ETFTexture {
 
     @NotNull
     private Identifier identifierOfCurrentState() {
-        return switch (currentTextureState) {
-            case NORMAL -> thisIdentifier;
-            case NORMAL_PATCHED -> thisIdentifier_Patched;
-            case BLINK -> blinkIdentifier;
-            case BLINK_PATCHED -> blinkIdentifier_Patched;
-            case BLINK2 -> blink2Identifier;
-            case BLINK2_PATCHED -> blink2Identifier_Patched;
-            default ->
+         switch (currentTextureState) {
+             case NORMAL :return thisIdentifier;
+            case NORMAL_PATCHED :return thisIdentifier_Patched;
+            case BLINK :return blinkIdentifier;
+            case BLINK_PATCHED :return blinkIdentifier_Patched;
+            case BLINK2 :return blink2Identifier;
+            case BLINK2_PATCHED :return blink2Identifier_Patched;
+            default :return
                 //ETFUtils.logError("identifierOfCurrentState failed, it should not have, returning default");
                     thisIdentifier;
-        };
+        }
     }
 
     @Nullable
     public Identifier getEmissiveIdentifierOfCurrentState() {
-        return switch (currentTextureState) {
-            case NORMAL, NORMAL_PATCHED -> emissiveIdentifier;
-            case BLINK, BLINK_PATCHED -> emissiveBlinkIdentifier;
-            case BLINK2, BLINK2_PATCHED -> emissiveBlink2Identifier;
-            default ->
+        switch (currentTextureState) {
+            case NORMAL:case NORMAL_PATCHED :return emissiveIdentifier;
+            case BLINK:case BLINK_PATCHED :return emissiveBlinkIdentifier;
+            case BLINK2:case BLINK2_PATCHED :return emissiveBlink2Identifier;
+            default :return
                 //ETFUtils.logError("identifierOfCurrentState failed, it should not have, returning default");
                     null;
-        };
+        }
     }
 
     public enum TextureReturnState {
@@ -597,17 +601,18 @@ public class ETFTexture {
 
         @Override
         public String toString() {
-            return switch (this) {
-                case NORMAL -> "normal";
-                case BLINK -> "blink";
-                case BLINK2 -> "blink2";
-                case NORMAL_PATCHED -> "normal_patched";
-                case BLINK_PATCHED -> "blink_patched";
-                case BLINK2_PATCHED -> "blink2_patched";
-                case APPLY_BLINK -> "apply_blink";
-                case APPLY_BLINK2 -> "apply_blink2";
-                case APPLY_PATCH -> "apply_patch";
-            };
+            switch (this) {
+                case NORMAL :return "normal";
+                case BLINK :return "blink";
+                case BLINK2 :return "blink2";
+                case NORMAL_PATCHED :return "normal_patched";
+                case BLINK_PATCHED :return "blink_patched";
+                case BLINK2_PATCHED :return "blink2_patched";
+                case APPLY_BLINK :return "apply_blink";
+                case APPLY_BLINK2 :return "apply_blink2";
+                case APPLY_PATCH :return "apply_patch";
+                default:return "null";
+            }
         }
     }
 

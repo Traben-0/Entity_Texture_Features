@@ -6,6 +6,7 @@ import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.LecternBlockEntityRenderer;
 import net.minecraft.client.render.entity.model.BookModel;
@@ -19,6 +20,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.utils.ETFUtils2;
 
@@ -28,7 +30,7 @@ import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 import static traben.entity_texture_features.texture_handlers.ETFManager.lecternHasCustomTexture;
 
 @Mixin(LecternBlockEntityRenderer.class)
-public abstract class MixinLecternBlockEntityRenderer implements BlockEntityRenderer<LecternBlockEntity> {
+public abstract class MixinLecternBlockEntityRenderer extends BlockEntityRenderer<LecternBlockEntity> {
 
     private static final String LECTERN_BOOK_PATH = "minecraft:textures/entity/lectern_book.png";
 
@@ -36,6 +38,10 @@ public abstract class MixinLecternBlockEntityRenderer implements BlockEntityRend
     @Final
     private BookModel book;
     private VertexConsumerProvider recentVert = null;
+
+    public MixinLecternBlockEntityRenderer(BlockEntityRenderDispatcher dispatcher) {
+        super(dispatcher);
+    }
 
     @Inject(method = "render(Lnet/minecraft/block/entity/LecternBlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/BookModel;renderBook(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V",
@@ -56,7 +62,7 @@ public abstract class MixinLecternBlockEntityRenderer implements BlockEntityRend
 
     //so is not caught by other injects
     private void etf$redirectingEmissiveRender(MatrixStack matrixStack, VertexConsumer vertexConsumer, int overlay) {
-        this.book.renderBook(matrixStack, vertexConsumer, LightmapTextureManager.MAX_LIGHT_COORDINATE, overlay, 1, 1, 1, 1);
+        this.book.renderBook(matrixStack, vertexConsumer, ETFClientCommon.MAX_LIGHT_COORDINATE, overlay, 1, 1, 1, 1);
     }
 
     @Inject(method = "render(Lnet/minecraft/block/entity/LecternBlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II)V",

@@ -6,7 +6,7 @@ import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.EntityRendererFactory;
+import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
@@ -17,6 +17,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFPlayerTexture;
 
@@ -26,9 +27,10 @@ import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
     public int timerBeforeTrySkin = 200;
 
-    public MixinPlayerEntityRenderer(EntityRendererFactory.Context ctx, PlayerEntityModel<AbstractClientPlayerEntity> model, float shadowRadius) {
-        super(ctx, model, shadowRadius);
+    public MixinPlayerEntityRenderer(EntityRenderDispatcher dispatcher, PlayerEntityModel<AbstractClientPlayerEntity> model, float shadowRadius) {
+        super(dispatcher, model, shadowRadius);
     }
+
 
     @Inject(method = "renderArm",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/PlayerEntityModel;setAngles(Lnet/minecraft/entity/LivingEntity;FFFFF)V",
@@ -49,8 +51,8 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
                         sleeve.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(etfTexture)), light, OverlayTexture.DEFAULT_UV);
                         Identifier emissive = thisETFPlayerTexture.getBaseTextureEmissiveIdentifierOrNullForNone();
                         if (emissive != null) {
-                            arm.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(emissive)), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV);
-                            sleeve.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(emissive)), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV);
+                            arm.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(emissive)), ETFClientCommon.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV);
+                            sleeve.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(emissive)), ETFClientCommon.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV);
                         }
                         if (thisETFPlayerTexture.baseEnchantIdentifier != null) {
                             arm.render(matrices, ItemRenderer.getArmorGlintConsumer(vertexConsumers, RenderLayer.getArmorCutoutNoCull(thisETFPlayerTexture.baseEnchantIdentifier), false, true), 15728640, OverlayTexture.DEFAULT_UV);

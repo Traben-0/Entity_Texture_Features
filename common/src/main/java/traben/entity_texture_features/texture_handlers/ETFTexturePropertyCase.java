@@ -259,7 +259,7 @@ public class ETFTexturePropertyCase {
             if (isUpdate && ETFConfigData.restrictHeight && ETFConfigData.restrictUpdateProperties && spawnConditions !=null && spawnConditions.size() >2) {
                 entityHeight = Integer.parseInt(spawnConditions.get(1).trim());
             } else {
-                entityHeight = entity.getBlockY();
+                entityHeight = (int) entity.getY();
             }
             boolean check = false;
             for (int i :
@@ -279,7 +279,7 @@ public class ETFTexturePropertyCase {
             for (String str :
                     PROFESSION_VALUES) {
                 //str could be   librarian:1,3-4
-                str = str.toLowerCase().replaceAll("\s*", "").replace("minecraft:", "");
+                str = str.toLowerCase().replaceAll("\\s*", "").replace("minecraft:", "");
                 //could be   "minecraft:cleric:1-4
                 if (str.contains(":")) {
                     //splits at seperator for profession level check only
@@ -325,28 +325,28 @@ public class ETFTexturePropertyCase {
 
             wasEntityTestedByAnUpdatableProperty = true;
             String entityColor;
-            if (entity instanceof WolfEntity wolf) {
-                entityColor = wolf.getCollarColor().asString().toLowerCase();
-            } else if (entity instanceof SheepEntity sheep) {
-                entityColor = sheep.getColor().asString().toLowerCase();
-            } else if (entity instanceof LlamaEntity llama) {
-                DyeColor str = llama.getCarpetColor();
+            if (entity instanceof WolfEntity) {
+                entityColor = ((WolfEntity)entity).getCollarColor().asString().toLowerCase();
+            } else if (entity instanceof SheepEntity ) {
+                entityColor = ((SheepEntity)entity).getColor().asString().toLowerCase();
+            } else if (entity instanceof LlamaEntity ) {
+                DyeColor str = ((LlamaEntity)entity).getCarpetColor();
                 if (str != null) {
                     entityColor = str.asString().toLowerCase();
                 } else {
                     entityColor = "NOT_A_COLOR";
                 }
-            } else if (entity instanceof CatEntity cat) {
-                entityColor = cat.getCollarColor().asString().toLowerCase();
-            } else if (entity instanceof ShulkerEntity shulker) {
-                DyeColor str = shulker.getColor();
+            } else if (entity instanceof CatEntity) {
+                entityColor = ((CatEntity)entity).getCollarColor().asString().toLowerCase();
+            } else if (entity instanceof ShulkerEntity) {
+                DyeColor str = ((ShulkerEntity)entity).getColor();
                 if (str != null) {
                     entityColor = str.asString().toLowerCase();
                 } else {
                     entityColor = "NOT_A_COLOR";
                 }
-            } else if (entity instanceof TropicalFishEntity fishy) {
-                DyeColor str = TropicalFishEntity.getBaseDyeColor(fishy.getVariant());
+            } else if (entity instanceof TropicalFishEntity ) {
+                DyeColor str = TropicalFishEntity.getBaseDyeColor(((TropicalFishEntity)entity).getVariant());
                 if (str != null) {
                     entityColor = str.asString().toLowerCase();
                 } else {
@@ -490,7 +490,7 @@ public class ETFTexturePropertyCase {
             boolean check1 = false;
             for (String block :
                     BLOCK_VALUES) {
-                block = block.strip();
+                block = block.trim();
                 if (block.startsWith("!")) {
                     block = block.replaceFirst("!", "");
                     if (!block.replace("minecraft:", "").equalsIgnoreCase(entityOnBlocks[0])) {
@@ -508,7 +508,7 @@ public class ETFTexturePropertyCase {
             }
             for (String block :
                     BLOCK_VALUES) {
-                block = block.strip();
+                block = block.trim();
                 if (block.startsWith("!")) {
                     block = block.replaceFirst("!", "");
                     if (!block.replace("minecraft:", "").equalsIgnoreCase(entityOnBlocks[1])) {
@@ -559,9 +559,9 @@ public class ETFTexturePropertyCase {
         if (doesEntityMeetThisCaseTest && SIZE_VALUES.length > 0 &&
                 (entity instanceof SlimeEntity || entity instanceof PhantomEntity)) {
             int size;
-            if (entity instanceof SlimeEntity slime) {
+            if (entity instanceof SlimeEntity) {
                 //magma cube too
-                size = slime.getSize();
+                size = ((SlimeEntity)entity).getSize();
             } else {
                 size = ((PhantomEntity) entity).getPhantomSize();
             }
@@ -610,7 +610,7 @@ public class ETFTexturePropertyCase {
         // 6 block2
         //checks to speed up runtime as values potentially won't be used but can't be null
         @NotNull String biome = !ETFConfigData.restrictBiome ? "" : ETFVersionDifferenceHandler.getBiomeString(entity.world,entity.getBlockPos());
-        @NotNull String height = !ETFConfigData.restrictHeight ? "" : "" + entity.getBlockY();
+        @NotNull String height = !ETFConfigData.restrictHeight ? "" : "" + (int)entity.getY();
         @NotNull String block = !ETFConfigData.restrictBlock ? "" : entity.world.getBlockState(entity.getBlockPos().down()).toString()
                 .replaceFirst("minecraft:", "")
                 .replaceFirst("Block\\{", "")

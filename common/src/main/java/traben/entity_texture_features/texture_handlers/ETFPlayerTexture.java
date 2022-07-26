@@ -20,9 +20,11 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.utils.ETFUtils2;
 
+import java.io.File;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -95,8 +97,8 @@ public class ETFPlayerTexture {
         Set<Integer> matchColors = new HashSet<>();
         for (int x = boundsToCheck[0]; x <= boundsToCheck[2]; x++) {
             for (int y = boundsToCheck[1]; y <= boundsToCheck[3]; y++) {
-                if (baseSkin.getOpacity(x, y) != 0) {
-                    matchColors.add(baseSkin.getColor(x, y));
+                if (baseSkin.getPixelOpacity(x, y) != 0) {
+                    matchColors.add(baseSkin.getPixelColor(x, y));
                 }
             }
         }
@@ -113,8 +115,8 @@ public class ETFPlayerTexture {
             }
             for (int x = 0; x < texture.getWidth(); x++) {
                 for (int y = 0; y < texture.getHeight(); y++) {
-                    if (!matchColors.contains(texture.getColor(x, y))) {
-                        texture.setColor(x, y, 0);
+                    if (!matchColors.contains(texture.getPixelColor(x, y))) {
+                        texture.setPixelColor(x, y, 0);
                     }
                 }
             }
@@ -129,7 +131,7 @@ public class ETFPlayerTexture {
         upper:
         for (int x = 0; x < imageToCheck.getWidth(); x++) {
             for (int y = 0; y < imageToCheck.getHeight(); y++) {
-                if (imageToCheck.getColor(x, y) != 0) {
+                if (imageToCheck.getPixelColor(x, y) != 0) {
                     foundAPixel = true;
                     break upper;
                 }
@@ -174,34 +176,34 @@ public class ETFPlayerTexture {
     }
 
     private static int[] getSkinPixelBounds(String choiceKey) {
-        return switch (choiceKey) {
-            case "marker1" -> new int[]{56, 16, 63, 23};
-            case "marker2" -> new int[]{56, 24, 63, 31};
-            case "marker3" -> new int[]{56, 32, 63, 39};
-            case "marker4" -> new int[]{56, 40, 63, 47};
-            case "optimizedEyeSmall" -> new int[]{12, 16, 19, 16};
-            case "optimizedEye2High" -> new int[]{12, 16, 19, 17};
-            case "optimizedEye2High_second" -> new int[]{12, 18, 19, 19};
-            case "optimizedEye4High" -> new int[]{12, 16, 19, 19};
-            case "optimizedEye4High_second" -> new int[]{36, 16, 43, 19};
-            case "face1" -> new int[]{0, 0, 7, 7};
-            case "face2" -> new int[]{24, 0, 31, 7};
-            case "face3" -> new int[]{32, 0, 39, 7};
-            case "face4" -> new int[]{56, 0, 63, 7};
-            case "cape1" -> new int[]{12, 32, 19, 35};
-            case "cape2" -> new int[]{36, 32, 43, 35};
-            case "cape3" -> new int[]{12, 48, 19, 51};
-            case "cape4" -> new int[]{28, 48, 35, 51};
-            case "cape5.1" -> new int[]{44, 48, 45, 51};
-            case "cape5.2" -> new int[]{46, 48, 47, 51};
-            case "cape5.3" -> new int[]{48, 48, 49, 51};
-            case "cape5.4" -> new int[]{50, 48, 51, 51};
-            case "capeVertL" -> new int[]{1, 1, 1, 16};
-            case "capeVertR" -> new int[]{10, 1, 10, 16};
-            case "capeHorizL" -> new int[]{1, 1, 10, 1};
-            case "capeHorizR" -> new int[]{1, 16, 10, 16};
-            default -> new int[]{0, 0, 0, 0};
-        };
+        switch (choiceKey) {
+            case "marker1" : return new int[]{56, 16, 63, 23};
+            case "marker2" : return  new int[]{56, 24, 63, 31};
+            case "marker3" : return  new int[]{56, 32, 63, 39};
+            case "marker4" : return  new int[]{56, 40, 63, 47};
+            case "optimizedEyeSmall" : return  new int[]{12, 16, 19, 16};
+            case "optimizedEye2High" : return  new int[]{12, 16, 19, 17};
+            case "optimizedEye2High_second" : return  new int[]{12, 18, 19, 19};
+            case "optimizedEye4High" : return  new int[]{12, 16, 19, 19};
+            case "optimizedEye4High_second" : return  new int[]{36, 16, 43, 19};
+            case "face1" : return  new int[]{0, 0, 7, 7};
+            case "face2" : return  new int[]{24, 0, 31, 7};
+            case "face3" : return  new int[]{32, 0, 39, 7};
+            case "face4" : return  new int[]{56, 0, 63, 7};
+            case "cape1" : return  new int[]{12, 32, 19, 35};
+            case "cape2" : return  new int[]{36, 32, 43, 35};
+            case "cape3" : return  new int[]{12, 48, 19, 51};
+            case "cape4" : return  new int[]{28, 48, 35, 51};
+            case "cape5.1" : return  new int[]{44, 48, 45, 51};
+            case "cape5.2" : return  new int[]{46, 48, 47, 51};
+            case "cape5.3" : return  new int[]{48, 48, 49, 51};
+            case "cape5.4" : return  new int[]{50, 48, 51, 51};
+            case "capeVertL" : return  new int[]{1, 1, 1, 16};
+            case "capeVertR" : return  new int[]{10, 1, 10, 16};
+            case "capeHorizL" : return  new int[]{1, 1, 10, 1};
+            case "capeHorizR" : return  new int[]{1, 16, 10, 16};
+            default : return  new int[]{0, 0, 0, 0};
+        }
     }
 
     private static NativeImage returnOptimizedBlinkFace(NativeImage baseSkin, int[] eyeBounds, int eyeHeightFromTopDown) {
@@ -225,7 +227,7 @@ public class ETFPlayerTexture {
         for (int x = x1; x <= x2; x++) {
             for (int y = y1; y <= y2; y++) {
                 //ranges from  0 to 127  then wraps around negatively -127 to -1  totalling 0 to 255
-                int i = img.getOpacity(x, y);
+                int i = img.getPixelOpacity(x, y);
                 if (i < 0) {
                     i += 256;
                 }
@@ -290,7 +292,7 @@ public class ETFPlayerTexture {
         int copyToYRelative = copyToY - y1;
         for (int x = x1; x <= x2; x++) {
             for (int y = y1; y <= y2; y++) {
-                dest.setColor(x + copyToXRelative, y + copyToYRelative, source.getColor(x, y));
+                dest.setPixelColor(x + copyToXRelative, y + copyToYRelative, source.getPixelColor(x, y));
             }
         }
     }
@@ -298,7 +300,7 @@ public class ETFPlayerTexture {
     private static void deletePixels(NativeImage source, int x1, int y1, int x2, int y2) {
         for (int x = x1; x <= x2; x++) {
             for (int y = y1; y <= y2; y++) {
-                source.setColor(x, y, 0);
+                source.setPixelColor(x, y, 0);
             }
         }
     }
@@ -306,35 +308,35 @@ public class ETFPlayerTexture {
     private static int getSkinPixelColourToNumber(int color) {
         //            pink   cyan     red       green      brown    blue     orange     yellow
         //colours = -65281, -256, -16776961, -16711936, -16760705, -65536, -16744449, -14483457
-        return switch (color) {
-            case -65281 -> 1;
-            case -256 -> 2;
-            case -16776961 -> 3;
-            case -16711936 -> 4;
-            case -16760705 -> 5;
-            case -65536 -> 6;
-            case -16744449 -> 7;
-            case -14483457 -> 8;
-            case -12362096 -> 666; //villager nose color
-            default -> 0;
-        };
+        switch (color) {
+            case -65281 : return 1;
+            case -256 : return 2;
+            case -16776961 : return 3;
+            case -16711936 : return 4;
+            case -16760705 : return 5;
+            case -65536 : return 6;
+            case -16744449 : return 7;
+            case -14483457 : return 8;
+            case -12362096 : return 666; //villager nose color
+            default : return 0;
+        }
     }
 
     public static void printPlayerSkinCopyWithFeatureOverlay(NativeImage skinImage) {
         if ((ETFVersionDifferenceHandler.isFabric() == ETFVersionDifferenceHandler.isThisModLoaded("fabric") ) && CONFIG_DIR != null) {
-            Path outputDirectory = Path.of(CONFIG_DIR.toString(), "ETF_player_skin_printout.png");
+            File outputDirectory = new File(CONFIG_DIR.toString(), "ETF_player_skin_printout.png");
             //NativeImage skinImage = ETFUtils.getNativeImageFromID(new Identifier(SKIN_NAMESPACE + playerID + ".png"));
             NativeImage skinFeatureImage = ETFUtils2.getNativeImageElseNull(new Identifier(MOD_ID, "textures/skin_feature_printout.png"));
             try {
                 for (int x = 0; x < skinImage.getWidth(); x++) {
                     for (int y = 0; y < skinImage.getHeight(); y++) {
                         //noinspection ConstantConditions
-                        if (skinFeatureImage.getColor(x, y) != 0) {
-                            skinImage.setColor(x, y, skinFeatureImage.getColor(x, y));
+                        if (skinFeatureImage.getPixelColor(x, y) != 0) {
+                            skinImage.setPixelColor(x, y, skinFeatureImage.getPixelColor(x, y));
                         }
                     }
                 }
-                skinImage.writeTo(outputDirectory);
+                skinImage.writeFile(outputDirectory);
                 ETFUtils2.logMessage("Skin feature layout successfully applied to a copy of your skin and has been saved to the config folder.", true);
             } catch (Exception e) {
                 ETFUtils2.logMessage("Skin feature layout could not be applied to a copy of your skin and has not been saved. Error written to log.", true);
@@ -376,11 +378,11 @@ public class ETFPlayerTexture {
 
                 if (etfCapeEmissiveIdentifier != null) {
                     VertexConsumer emissiveVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(etfCapeEmissiveIdentifier));
-                    model.renderCape(matrixStack, emissiveVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV);
+                    model.renderCape(matrixStack, emissiveVert, ETFClientCommon.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV);
                 }
                 if (etfCapeEnchantedIdentifier != null) {
                     VertexConsumer enchantVert = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(etfCapeEnchantedIdentifier), false, true);
-                    model.renderCape(matrixStack, enchantVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV);
+                    model.renderCape(matrixStack, enchantVert, ETFClientCommon.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV);
                 }
 
             }
@@ -409,15 +411,15 @@ public class ETFPlayerTexture {
 
 
             //coat features
-            ItemStack armour = player.getInventory().getArmorStack(1);
+            ItemStack armour = player.inventory.getArmorStack(1);
             if (coatIdentifier != null &&
                     player.isPartVisible(PlayerModelPart.JACKET) &&
-                    !(armour.isOf(Items.CHAINMAIL_LEGGINGS) ||
-                            armour.isOf(Items.LEATHER_LEGGINGS) ||
-                            armour.isOf(Items.DIAMOND_LEGGINGS) ||
-                            armour.isOf(Items.GOLDEN_LEGGINGS) ||
-                            armour.isOf(Items.IRON_LEGGINGS) ||
-                            armour.isOf(Items.NETHERITE_LEGGINGS))
+                    !(armour.getItem() == Items.CHAINMAIL_LEGGINGS ||
+                            armour.getItem() == (Items.LEATHER_LEGGINGS) ||
+                            armour.getItem() == (Items.DIAMOND_LEGGINGS) ||
+                            armour.getItem() == (Items.GOLDEN_LEGGINGS) ||
+                            armour.getItem() == (Items.IRON_LEGGINGS) ||
+                            armour.getItem() == (Items.NETHERITE_LEGGINGS))
             ) {
                 //String coat = ETFPlayerSkinUtils.SKIN_NAMESPACE + id + "_coat.png";
 
@@ -437,9 +439,9 @@ public class ETFPlayerTexture {
                 if (coatEnchantedIdentifier != null) {
                     VertexConsumer enchantVert = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(coatEnchantedIdentifier), false, true);
                     if (hasFatCoat) {
-                        customPlayerModel.fatJacket.render(matrixStack, enchantVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1,1,1,0.16f);
+                        customPlayerModel.fatJacket.render(matrixStack, enchantVert, ETFClientCommon.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1,1,1,0.16f);
                     } else {
-                        customPlayerModel.jacket.render(matrixStack, enchantVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV,  1,1,1,0.16f);
+                        customPlayerModel.jacket.render(matrixStack, enchantVert, ETFClientCommon.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV,  1,1,1,0.16f);
                     }
                 }
 
@@ -453,9 +455,9 @@ public class ETFPlayerTexture {
                     }
 
                     if (hasFatCoat) {
-                        customPlayerModel.fatJacket.render(matrixStack, emissiveVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                        customPlayerModel.fatJacket.render(matrixStack, emissiveVert, ETFClientCommon.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
                     } else {
-                        customPlayerModel.jacket.render(matrixStack, emissiveVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                        customPlayerModel.jacket.render(matrixStack, emissiveVert, ETFClientCommon.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
                     }
                 }
 
@@ -464,13 +466,19 @@ public class ETFPlayerTexture {
 
             //perform texture features
             if (hasEnchant && baseEnchantIdentifier != null) {
+                Identifier identifierFromSwitch;
+                switch (etfTextureOfFinalBaseSkin.currentTextureState) {
+                    case BLINK:
+                        case BLINK_PATCHED:
+                            case APPLY_BLINK : identifierFromSwitch=baseEnchantBlinkIdentifier;break;
+                    case BLINK2:
+                    case BLINK2_PATCHED:
+                        case APPLY_BLINK2 : identifierFromSwitch=baseEnchantBlink2Identifier;break;
+                    default : identifierFromSwitch=baseEnchantIdentifier;break;
+                }
                 VertexConsumer enchantVert = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(
-                        switch (etfTextureOfFinalBaseSkin.currentTextureState) {
-                            case BLINK, BLINK_PATCHED, APPLY_BLINK -> baseEnchantBlinkIdentifier;
-                            case BLINK2, BLINK2_PATCHED, APPLY_BLINK2 -> baseEnchantBlink2Identifier;
-                            default -> baseEnchantIdentifier;
-                        }), false, true);
-                model.render(matrixStack, enchantVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV,1,1,1,0.16f);
+                        identifierFromSwitch), false, true);
+                model.render(matrixStack, enchantVert, ETFClientCommon.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV,1,1,1,0.16f);
             }
             if (hasEmissives && etfTextureOfFinalBaseSkin != null) {
                 etfTextureOfFinalBaseSkin.renderEmissive(matrixStack, vertexConsumerProvider, model);
@@ -616,7 +624,7 @@ public class ETFPlayerTexture {
             try (NativeImage resizedImage = ETFUtils2.emptyNativeImage(newWidth, newHeight)) {
                 for (int x = 0; x < capeImage.getWidth(); x++) {
                     for (int y = 0; y < capeImage.getHeight(); y++) {
-                        resizedImage.setColor(x, y, capeImage.getColor(x, y));
+                        resizedImage.setPixelColor(x, y, capeImage.getPixelColor(x, y));
                     }
                 }
                 capeImage = resizedImage;
@@ -691,18 +699,18 @@ public class ETFPlayerTexture {
             ETFUtils2.saveConfig();
         }
         if (originalSkin != null) {
-            if (originalSkin.getColor(1, 16) == -16776961 &&
-                    originalSkin.getColor(0, 16) == -16777089 &&
-                    originalSkin.getColor(0, 17) == -16776961 &&
-                    originalSkin.getColor(2, 16) == -16711936 &&
-                    originalSkin.getColor(3, 16) == -16744704 &&
-                    originalSkin.getColor(3, 17) == -16711936 &&
-                    originalSkin.getColor(0, 18) == -65536 &&
-                    originalSkin.getColor(0, 19) == -8454144 &&
-                    originalSkin.getColor(1, 19) == -65536 &&
-                    originalSkin.getColor(3, 18) == -1 &&
-                    originalSkin.getColor(2, 19) == -1 &&
-                    originalSkin.getColor(3, 18) == -1
+            if (originalSkin.getPixelColor(1, 16) == -16776961 &&
+                    originalSkin.getPixelColor(0, 16) == -16777089 &&
+                    originalSkin.getPixelColor(0, 17) == -16776961 &&
+                    originalSkin.getPixelColor(2, 16) == -16711936 &&
+                    originalSkin.getPixelColor(3, 16) == -16744704 &&
+                    originalSkin.getPixelColor(3, 17) == -16711936 &&
+                    originalSkin.getPixelColor(0, 18) == -65536 &&
+                    originalSkin.getPixelColor(0, 19) == -8454144 &&
+                    originalSkin.getPixelColor(1, 19) == -65536 &&
+                    originalSkin.getPixelColor(3, 18) == -1 &&
+                    originalSkin.getPixelColor(2, 19) == -1 &&
+                    originalSkin.getPixelColor(3, 18) == -1
             ) {
                 customPlayerModel = new ETFCustomPlayerFeatureModel<>();
 
@@ -710,20 +718,20 @@ public class ETFPlayerTexture {
                 ETFUtils2.logMessage("Found Player {" + player.getName().getString() + "} with texture features in skin.", false);
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //locate and convert choices to ints
-                int[] choiceBoxChoices = {getSkinPixelColourToNumber(originalSkin.getColor(52, 16)),
-                        getSkinPixelColourToNumber(originalSkin.getColor(52, 17)),
-                        getSkinPixelColourToNumber(originalSkin.getColor(52, 18)),
-                        getSkinPixelColourToNumber(originalSkin.getColor(52, 19)),
-                        getSkinPixelColourToNumber(originalSkin.getColor(53, 16)),
-                        -1,//getSkinPixelColourToNumber(originalSkin.getColor(53, 17)),       this one is used for actual color value but still fill the array to preserve index number
-                        getSkinPixelColourToNumber(originalSkin.getColor(53, 18))};
+                int[] choiceBoxChoices = {getSkinPixelColourToNumber(originalSkin.getPixelColor(52, 16)),
+                        getSkinPixelColourToNumber(originalSkin.getPixelColor(52, 17)),
+                        getSkinPixelColourToNumber(originalSkin.getPixelColor(52, 18)),
+                        getSkinPixelColourToNumber(originalSkin.getPixelColor(52, 19)),
+                        getSkinPixelColourToNumber(originalSkin.getPixelColor(53, 16)),
+                        -1,//getSkinPixelColourToNumber(originalSkin.getPixelColor(53, 17)),       this one is used for actual color value but still fill the array to preserve index number
+                        getSkinPixelColourToNumber(originalSkin.getPixelColor(53, 18))};
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                boolean noseUpper = (getSkinPixelColourToNumber(originalSkin.getColor(43, 13)) == 666 && getSkinPixelColourToNumber(originalSkin.getColor(44, 13)) == 666 &&
-                        getSkinPixelColourToNumber(originalSkin.getColor(43, 14)) == 666 && getSkinPixelColourToNumber(originalSkin.getColor(44, 14)) == 666 &&
-                        getSkinPixelColourToNumber(originalSkin.getColor(43, 15)) == 666 && getSkinPixelColourToNumber(originalSkin.getColor(44, 15)) == 666);
-                boolean noseLower = (getSkinPixelColourToNumber(originalSkin.getColor(11, 13)) == 666 && getSkinPixelColourToNumber(originalSkin.getColor(12, 13)) == 666 &&
-                        getSkinPixelColourToNumber(originalSkin.getColor(11, 14)) == 666 && getSkinPixelColourToNumber(originalSkin.getColor(12, 14)) == 666 &&
-                        getSkinPixelColourToNumber(originalSkin.getColor(11, 15)) == 666 && getSkinPixelColourToNumber(originalSkin.getColor(12, 15)) == 666);
+                boolean noseUpper = (getSkinPixelColourToNumber(originalSkin.getPixelColor(43, 13)) == 666 && getSkinPixelColourToNumber(originalSkin.getPixelColor(44, 13)) == 666 &&
+                        getSkinPixelColourToNumber(originalSkin.getPixelColor(43, 14)) == 666 && getSkinPixelColourToNumber(originalSkin.getPixelColor(44, 14)) == 666 &&
+                        getSkinPixelColourToNumber(originalSkin.getPixelColor(43, 15)) == 666 && getSkinPixelColourToNumber(originalSkin.getPixelColor(44, 15)) == 666);
+                boolean noseLower = (getSkinPixelColourToNumber(originalSkin.getPixelColor(11, 13)) == 666 && getSkinPixelColourToNumber(originalSkin.getPixelColor(12, 13)) == 666 &&
+                        getSkinPixelColourToNumber(originalSkin.getPixelColor(11, 14)) == 666 && getSkinPixelColourToNumber(originalSkin.getPixelColor(12, 14)) == 666 &&
+                        getSkinPixelColourToNumber(originalSkin.getPixelColor(11, 15)) == 666 && getSkinPixelColourToNumber(originalSkin.getPixelColor(12, 15)) == 666);
                 hasVillagerNose = noseLower || noseUpper;
                 if (noseUpper) {
                     deletePixels(modifiedSkin, 43, 13, 44, 15);
@@ -820,24 +828,26 @@ public class ETFPlayerTexture {
                 //downloadImageFromUrl(player, "https://drive.google.com/uc?export=download&id=1rn1swLadqdMiLirz9Nrae0_VHFrTaJQe", "etf$CAPE",null,true);
                 if ((capeChoice1 >= 1 && capeChoice1 <= 3) || capeChoice1 == 666) {
                     switch (capeChoice1) {
-                        case 1 -> //custom in skin
+                        case 1 : //custom in skin
                                 modifiedCape = returnCustomTexturedCape(originalSkin);
-                        case 2 -> {
+                                break;
+                        case 2 : {
                             modifiedCape = null;
                             // minecraft capes mod
                             //https://minecraftcapes.net/profile/fd22e573178c415a94fee476b328abfd/cape/
                             initiateThirdPartyCapeDownload("https://minecraftcapes.net/profile/" + player.getUuidAsString().replace("-", "") + "/cape/");
 
-                        }
-                        case 3 -> {
+                        }break;
+                        case 3 : {
                             modifiedCape = null;
                             //  https://optifine.net/capes/Benjamin.png
                             initiateThirdPartyCapeDownload("https://optifine.net/capes/" + player.getName().getString() + ".png");
 
-                        }
-                        case 666 ->
+                        }break;
+                        case 666 :
                                 modifiedCape = ETFUtils2.getNativeImageElseNull(new Identifier(MOD_ID,"textures/capes/error.png"));
-                        default -> {
+                                break;
+                        default : {
                             // cape = getNativeImageFromID(new Identifier("etf:capes/blank.png"));
                         }
                     }
@@ -852,10 +862,11 @@ public class ETFPlayerTexture {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //check for marker choices
                 //  1 = Emissives,  2 = Enchanted
-                List<Integer> markerChoices = List.of(getSkinPixelColourToNumber(originalSkin.getColor(1, 17)),
-                        getSkinPixelColourToNumber(originalSkin.getColor(1, 18)),
-                        getSkinPixelColourToNumber(originalSkin.getColor(2, 17)),
-                        getSkinPixelColourToNumber(originalSkin.getColor(2, 18)));
+                List<Integer> markerChoices = new ArrayList<>();
+                markerChoices.add(getSkinPixelColourToNumber(originalSkin.getPixelColor(1, 17)));
+                markerChoices.add(getSkinPixelColourToNumber(originalSkin.getPixelColor(1, 18)));
+                markerChoices.add(getSkinPixelColourToNumber(originalSkin.getPixelColor(2, 17)));
+                markerChoices.add(getSkinPixelColourToNumber(originalSkin.getPixelColor(2, 18)));
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //emissives
                 Identifier emissiveIdentifier = null;

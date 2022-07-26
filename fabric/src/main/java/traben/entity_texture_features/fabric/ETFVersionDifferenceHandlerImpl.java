@@ -7,9 +7,9 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.fabric.config.ETFConfigScreenFabric;
 
@@ -43,7 +43,7 @@ public class ETFVersionDifferenceHandlerImpl {
 
     public static Logger getLogger() {
         //1.19 & 1.18.2 variation
-        return LoggerFactory.getLogger("Entity Texture Features");
+        return LogManager.getLogger("Entity Texture Features");
     }
 
     public static Text getTextFromTranslation(String translationKey) {

@@ -16,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
 
@@ -49,7 +50,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
                 //} else {
                     textureVert = arg2.getBuffer(RenderLayer.getArmorCutoutNoCull(emissive));
                 //}
-                arg3.render(arg, textureVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, f, g, h, 1.0F);
+                arg3.render(arg, textureVert, ETFClientCommon.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, f, g, h, 1.0F);
             }
         }
 

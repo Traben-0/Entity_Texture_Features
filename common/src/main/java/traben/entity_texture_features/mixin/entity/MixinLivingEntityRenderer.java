@@ -2,8 +2,8 @@ package traben.entity_texture_features.mixin.entity;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.EntityModel;
@@ -34,11 +34,10 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
     private ETFTexture thisETFTexture = null;
     private ETFPlayerTexture thisETFPlayerTexture = null;
 
-
-    protected MixinLivingEntityRenderer(EntityRendererFactory.Context ctx) {
-        super(ctx);
-
+    protected MixinLivingEntityRenderer(EntityRenderDispatcher dispatcher) {
+        super(dispatcher);
     }
+
 
     @Shadow
     public abstract M getModel();
@@ -74,7 +73,8 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
 
         @SuppressWarnings("unchecked") T entity = (T) inentity;
 
-        if (ETFConfigData.skinFeaturesEnabled && entity instanceof PlayerEntity player) {
+        if (ETFConfigData.skinFeaturesEnabled && entity instanceof PlayerEntity) {
+            PlayerEntity player = (PlayerEntity) entity;
             thisETFPlayerTexture = ETFManager.getPlayerTexture(player);
             if (thisETFPlayerTexture != null) {
                 Identifier etfTexture = thisETFPlayerTexture.getBaseTextureIdentifierOrNullForVanilla(player);
@@ -105,7 +105,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
             switch (ETFConfigData.enchantedPotionEffects) {
                 case ENCHANTED -> {
                     textureVert = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(thisETFTexture.getTextureIdentifier(livingEntity)), false, true);
-                    this.getModel().render(matrixStack, textureVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, potionColorAverage.getRed()/255f, potionColorAverage.getGreen()/255f, potionColorAverage.getBlue()/255f, 0.16F);
+                    this.getModel().render(matrixStack, textureVert, ETFClientCommon.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, potionColorAverage.getRed()/255f, potionColorAverage.getGreen()/255f, potionColorAverage.getBlue()/255f, 0.16F);
                 }
                 case GLOWING -> {
                     //textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(etf$returnAlteredTexture((LivingEntityRenderer) (Object) this, livingEntity), true));
@@ -115,13 +115,13 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
                         textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(thisETFTexture.getTextureIdentifier(livingEntity)));
                     }
 
-                    this.getModel().render(matrixStack, textureVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, potionColorAverage.getRed()/255f, potionColorAverage.getGreen()/255f, potionColorAverage.getBlue()/255f, 0.16F);
+                    this.getModel().render(matrixStack, textureVert, ETFClientCommon.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, potionColorAverage.getRed()/255f, potionColorAverage.getGreen()/255f, potionColorAverage.getBlue()/255f, 0.16F);
                 }
                 case CREEPER_CHARGE -> {
                     int f = (int) ((float) livingEntity.world.getTime()/10);
                     VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEnergySwirl(new Identifier("textures/entity/creeper/creeper_armor.png"), f * 0.01F % 1.0F, f * 0.01F % 1.0F));
                     matrixStack.scale(1.1f, 1.1f, 1.1f);
-                    this.getModel().render(matrixStack, vertexConsumer, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, potionColorAverage.getRed()/255f, potionColorAverage.getGreen()/255f, potionColorAverage.getBlue()/255f, 0.5F);
+                    this.getModel().render(matrixStack, vertexConsumer, ETFClientCommon.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, potionColorAverage.getRed()/255f, potionColorAverage.getGreen()/255f, potionColorAverage.getBlue()/255f, 0.5F);
                     matrixStack.scale(1f, 1f, 1f);
                 }
             }

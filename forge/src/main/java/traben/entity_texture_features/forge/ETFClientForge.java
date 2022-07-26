@@ -1,15 +1,19 @@
 package traben.entity_texture_features.forge;
 
+import me.shedaniel.clothconfig2.forge.api.ConfigScreen;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.IExtensionPoint;
+import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.client.ConfigGuiHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.fmlclient.ConfigGuiHandler;
+import net.minecraftforge.fml.network.FMLNetworkConstants;
+import org.apache.commons.lang3.tuple.Pair;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 
-import static net.minecraftforge.fmllegacy.network.FMLNetworkConstants.IGNORESERVERONLY;
+import static net.minecraftforge.fml.network.FMLNetworkConstants.IGNORESERVERONLY;
+
 
 @Mod("entity_texture_features")
 public class ETFClientForge {
@@ -18,15 +22,17 @@ public class ETFClientForge {
         //EventBuses.registerModEventBus(ExampleMod.MOD_ID, FMLJavaModLoadingContext.get().getModEventBus());
         if(FMLEnvironment.dist == Dist.CLIENT) {
             try {
+
                 ModLoadingContext.get().registerExtensionPoint(
-                        ConfigGuiHandler.ConfigGuiFactory.class,
-                        () -> new ConfigGuiHandler.ConfigGuiFactory((minecraftClient, screen) -> ETFVersionDifferenceHandler.getConfigScreen(screen, false)));
+                        ExtensionPoint.CONFIGGUIFACTORY,
+                                                () -> (mc, screen) -> ETFVersionDifferenceHandler.getConfigScreen(screen, false)
+                );
+
             } catch (NoClassDefFoundError e) {
                 System.out.println("[Entity Texture Features]: Mod settings cannot be edited in GUI without cloth config");
             }
 
-
-            ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> IGNORESERVERONLY, (a, b) -> true));
+            ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, ()-> Pair.of(()-> FMLNetworkConstants.IGNORESERVERONLY, (version, network) -> {return true;}));
             ETFClientCommon.start();
         } else {
 

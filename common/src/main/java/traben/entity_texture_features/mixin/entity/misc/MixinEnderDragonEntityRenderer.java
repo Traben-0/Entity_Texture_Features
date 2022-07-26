@@ -4,8 +4,8 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EnderDragonEntityRenderer;
+import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.util.Identifier;
@@ -45,9 +45,10 @@ public abstract class MixinEnderDragonEntityRenderer extends EntityRenderer<Ende
     @Shadow
     private EnderDragonEntityRenderer.DragonEntityModel model;
 
-    protected MixinEnderDragonEntityRenderer(EntityRendererFactory.Context ctx) {
-        super(ctx);
+    protected MixinEnderDragonEntityRenderer(EntityRenderDispatcher dispatcher) {
+        super(dispatcher);
     }
+
 
     @Inject(
             method = "render(Lnet/minecraft/entity/boss/dragon/EnderDragonEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",

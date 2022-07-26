@@ -226,14 +226,14 @@ public abstract class ETFManager {
                     ETFUtils2.logMessage("entity cache size = " + ENTITY_TEXTURE_MAP.size() +
                             "\ntexture cache size = " + ETF_TEXTURE_CACHE.size() +
                             "\noriginal spawn state = " + ENTITY_SPAWN_CONDITIONS_CACHE.get(cacheKey) +
-                            "\noptifine property key count = " + (OPTIFINE_PROPERTY_CACHE.containsKey(vanillaIdentifier) ? Objects.requireNonNullElse(OPTIFINE_PROPERTY_CACHE.get(vanillaIdentifier), new ArrayList<>()).size() : 0) +
+                            "\noptifine property key count = " +  ((OPTIFINE_PROPERTY_CACHE.containsKey(vanillaIdentifier) ? ((ArrayList<?>)ETFUtils2.requireNonNullElseGet(OPTIFINE_PROPERTY_CACHE.get(vanillaIdentifier), new ArrayList<>())).size() : 0)) +
                             "\ntrue random count = " + TRUE_RANDOM_COUNT_CACHE.getInt(vanillaIdentifier), inChat);
 
                     ENTITY_DEBUG_QUEUE.remove(id);
                 }
                 if (ENTITY_UPDATE_QUEUE.contains(id)) {
                     Identifier newVariantIdentifier = returnNewAlreadyConfirmedOptifineTexture(entity, vanillaIdentifier, true);
-                    ENTITY_TEXTURE_MAP.put(cacheKey, Objects.requireNonNullElse(getOrCreateETFTexture(vanillaIdentifier, Objects.requireNonNullElse(newVariantIdentifier, vanillaIdentifier)), getETFDefaultTexture(vanillaIdentifier)));
+                    ENTITY_TEXTURE_MAP.put(cacheKey, (ETFTexture) ETFUtils2.requireNonNullElseGet(getOrCreateETFTexture(vanillaIdentifier, (Identifier) ETFUtils2.requireNonNullElseGet(newVariantIdentifier, vanillaIdentifier)), getETFDefaultTexture(vanillaIdentifier)));
 
                     ENTITY_UPDATE_QUEUE.remove(id);
                 } else {
@@ -258,7 +258,7 @@ public abstract class ETFManager {
         }
 
         ETFTexture foundTexture;
-        foundTexture = Objects.requireNonNullElse(getOrCreateETFTexture(vanillaIdentifier, possibleIdentifier == null ? vanillaIdentifier : possibleIdentifier), getETFDefaultTexture(vanillaIdentifier));
+        foundTexture = (ETFTexture) ETFUtils2.requireNonNullElseGet(getOrCreateETFTexture(vanillaIdentifier, possibleIdentifier == null ? vanillaIdentifier : possibleIdentifier), getETFDefaultTexture(vanillaIdentifier));
         ENTITY_TEXTURE_MAP.put(cacheKey, foundTexture);
         return foundTexture;
 
@@ -411,13 +411,13 @@ public abstract class ETFManager {
                     Integer[] sizes = {};
 
                     if (props.containsKey("skins." + num) || props.containsKey("textures." + num)) {
-                        String dataFromProps = props.containsKey("skins." + num) ? props.getProperty("skins." + num).strip() : props.getProperty("textures." + num).strip();
-                        String[] skinData = dataFromProps.split("\s+");
+                        String dataFromProps = props.containsKey("skins." + num) ? props.getProperty("skins." + num).trim() : props.getProperty("textures." + num).trim();
+                        String[] skinData = dataFromProps.split("\\s+");
                         ArrayList<Integer> suffixNumbers = new ArrayList<>();
                         for (String data :
                                 skinData) {
                             //check if range
-                            data = data.strip();
+                            data = data.trim();
                             if (!data.replaceAll("\\D", "").isEmpty()) {
                                 if (data.contains("-")) {
                                     suffixNumbers.addAll(Arrays.asList(ETFUtils2.getIntRange(data)));
@@ -435,7 +435,7 @@ public abstract class ETFManager {
                     }
                     if (props.containsKey("weights." + num)) {
                         String dataFromProps = props.getProperty("weights." + num).trim();
-                        String[] weightData = dataFromProps.split("\s+");
+                        String[] weightData = dataFromProps.split("\\s+");
                         ArrayList<Integer> builder = new ArrayList<>();
                         for (String s :
                                 weightData) {
@@ -452,34 +452,44 @@ public abstract class ETFManager {
                         weights = builder.toArray(new Integer[0]);
                     }
                     if (props.containsKey("biomes." + num)) {
-                        String dataFromProps = props.getProperty("biomes." + num).strip();
-                        String[] biomeList = dataFromProps.toLowerCase().split("\s+");
+                        String dataFromProps = props.getProperty("biomes." + num).trim();
+                        String[] biomeList = dataFromProps.toLowerCase().split("\\s+");
 
                         //strip out old format optifine biome names
                         //I could be way more in-depth and make these line up to all variants but this is legacy code
                         //only here for compat, pack makers need to fix these
                         if(biomeList.length > 0) {
                             for (int i = 0; i < biomeList.length; i++) {
-                                String biome = biomeList[i].strip();
+                                String biome = biomeList[i].trim();
                                 switch (biome) {
-                                    case "Ocean" -> biomeList[i] = "ocean";
-                                    case "Plains" -> biomeList[i] = "plains";
-                                    case "ExtremeHills" -> biomeList[i] = "stony_peaks";
-                                    case "Forest", "ForestHills" -> biomeList[i] = "forest";
-                                    case "Taiga", "TaigaHills" -> biomeList[i] = "taiga";
-                                    case "Swampland" -> biomeList[i] = "swamp";
-                                    case "River" -> biomeList[i] = "river";
-                                    case "Hell" -> biomeList[i] = "nether_wastes";
-                                    case "Sky" -> biomeList[i] = "the_end";
-                                    case "FrozenOcean" -> biomeList[i] = "frozen_ocean";
-                                    case "FrozenRiver" -> biomeList[i] = "frozen_river";
-                                    case "IcePlains" -> biomeList[i] = "snowy_plains";
-                                    case "IceMountains" -> biomeList[i] = "snowy_slopes";
-                                    case "MushroomIsland", "MushroomIslandShore" -> biomeList[i] = "mushroom_fields";
-                                    case "Beach" -> biomeList[i] = "beach";
-                                    case "DesertHills", "Desert" -> biomeList[i] = "desert";
-                                    case "ExtremeHillsEdge" -> biomeList[i] = "meadow";
-                                    case "Jungle", "JungleHills" -> biomeList[i] = "jungle";
+                                    case "Ocean" : biomeList[i] = "ocean";break;
+                                    case "Plains" : biomeList[i] = "plains";break;
+                                    case "ExtremeHills" : biomeList[i] = "stony_peaks";break;
+                                    case "Forest" :
+                                    case "ForestHills" :
+                                        biomeList[i] = "forest";break;
+                                    case "Taiga" :
+                                    case "TaigaHills" :
+                                        biomeList[i] = "taiga";break;
+                                    case "Swampland" : biomeList[i] = "swamp";break;
+                                    case "River" : biomeList[i] = "river";break;
+                                    case "Hell" : biomeList[i] = "nether_wastes";break;
+                                    case "Sky" : biomeList[i] = "the_end";break;
+                                    case "FrozenOcean" : biomeList[i] = "frozen_ocean";break;
+                                    case "FrozenRiver" : biomeList[i] = "frozen_river";break;
+                                    case "IcePlains" : biomeList[i] = "snowy_plains";break;
+                                    case "IceMountains" : biomeList[i] = "snowy_slopes";break;
+                                    case "MushroomIsland":
+                                    case "MushroomIslandShore" :
+                                        biomeList[i] = "mushroom_fields";break;
+                                    case "Beach" : biomeList[i] = "beach";break;
+                                    case "DesertHills" :
+                                    case "Desert" :
+                                        biomeList[i] = "desert";break;
+                                    case "ExtremeHillsEdge" : biomeList[i] = "meadow";break;
+                                    case "Jungle":
+                                    case "JungleHills" :
+                                        biomeList[i] = "jungle";break;
                                 }
                             }
                             biomes = biomeList;
@@ -491,16 +501,16 @@ public abstract class ETFManager {
                         String min = "-64";
                         String max = "319";
                         if (props.containsKey("minHeight." + num)) {
-                            min = props.getProperty("minHeight." + num).strip();
+                            min = props.getProperty("minHeight." + num).trim();
                         }
                         if (props.containsKey("maxHeight." + num)) {
-                            max = props.getProperty("maxHeight." + num).strip();
+                            max = props.getProperty("maxHeight." + num).trim();
                         }
                         props.put("heights." + num, min + "-" + max);
                     }
                     if (props.containsKey("heights." + num)) {
                         String dataFromProps = props.getProperty("heights." + num).trim();
-                        String[] heightData = dataFromProps.split("\s+");
+                        String[] heightData = dataFromProps.split("\\s+");
                         ArrayList<Integer> heightNumbers = new ArrayList<>();
                         for (String data :
                                 heightData) {
@@ -548,32 +558,32 @@ public abstract class ETFManager {
                         names.add(dataFromProps);
                     }
                     if (props.containsKey("professions." + num)) {
-                        professions = props.getProperty("professions." + num).trim().split("\s+");
+                        professions = props.getProperty("professions." + num).trim().split("\\s+");
                     }
                     if (props.containsKey("collarColors." + num) || props.containsKey("colors." + num)) {
-                        collarColours = props.containsKey("collarColors." + num) ? props.getProperty("collarColors." + num).trim().split("\s+") : props.getProperty("colors." + num).trim().split("\s+");
+                        collarColours = props.containsKey("collarColors." + num) ? props.getProperty("collarColors." + num).trim().split("\\s+") : props.getProperty("colors." + num).trim().split("\\s+");
                     }
                     if (props.containsKey("baby." + num)) {
                         String dataFromProps = props.getProperty("baby." + num).trim();
                         switch (dataFromProps) {
-                            case "true" -> baby = 1;
-                            case "false" -> baby = 2;
+                            case "true" : baby = 1;
+                            case "false" : baby = 2;
                         }
                     }
                     if (props.containsKey("weather." + num)) {
                         String dataFromProps = props.getProperty("weather." + num).trim();
                         switch (dataFromProps) {
-                            case "clear" -> weather = 1;
-                            case "rain" -> weather = 2;
-                            case "thunder" -> weather = 3;
+                            case "clear" : weather = 1;
+                            case "rain" : weather = 2;
+                            case "thunder" : weather = 3;
                         }
                     }
                     if (props.containsKey("health." + num)) {
-                        health = props.getProperty("health." + num).trim().split("\s+");
+                        health = props.getProperty("health." + num).trim().split("\\s+");
                     }
                     if (props.containsKey("moonPhase." + num)) {
                         String dataFromProps = props.getProperty("moonPhase." + num).trim();
-                        String[] moonData = dataFromProps.split("\s+");
+                        String[] moonData = dataFromProps.split("\\s+");
                         ArrayList<Integer> moonNumbers = new ArrayList<>();
                         for (String data :
                                 moonData) {
@@ -595,12 +605,12 @@ public abstract class ETFManager {
                         moon = moonNumbers.toArray(new Integer[0]);
                     }
                     if (props.containsKey("dayTime." + num)) {
-                        daytime = props.getProperty("dayTime." + num).trim().split("\s+");
+                        daytime = props.getProperty("dayTime." + num).trim().split("\\s+");
                     }
                     if (props.containsKey("blocks." + num)) {
-                        blocks = props.getProperty("blocks." + num).trim().split("\s+");
+                        blocks = props.getProperty("blocks." + num).trim().split("\\s+");
                     } else if (props.containsKey("block." + num)) {
-                        blocks = props.getProperty("block." + num).trim().split("\s+");
+                        blocks = props.getProperty("block." + num).trim().split("\\s+");
                     }
                     if (props.containsKey("teams." + num)) {
                         String teamData = props.getProperty("teams." + num).trim();
@@ -622,7 +632,7 @@ public abstract class ETFManager {
 
                     if (props.containsKey("sizes." + num)) {
                         String dataFromProps = props.getProperty("sizes." + num).trim();
-                        String[] sizeData = dataFromProps.split("\s+");
+                        String[] sizeData = dataFromProps.split("\\s+");
                         ArrayList<Integer> sizeNumbers = new ArrayList<>();
                         for (String data :
                                 sizeData) {

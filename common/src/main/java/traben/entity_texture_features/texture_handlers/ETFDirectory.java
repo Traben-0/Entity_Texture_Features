@@ -33,12 +33,12 @@ public enum ETFDirectory {
     @Nullable
     public static Identifier getDirectoryVersionOf(Identifier vanillaIdentifier) {
         ETFDirectory directory = getDirectoryOf(vanillaIdentifier);
-        return switch (directory) {
-            case DOES_NOT_EXIST -> null;
-            case VANILLA -> vanillaIdentifier;
-            default ->
-                    ETFUtils2.replaceIdentifier(vanillaIdentifier, directory.replaceStrings[0], directory.replaceStrings[1]);
-        };
+
+        switch (directory) {
+            case DOES_NOT_EXIST : return null;
+            case VANILLA : return vanillaIdentifier;
+            default : return ETFUtils2.replaceIdentifier(vanillaIdentifier, directory.replaceStrings[0], directory.replaceStrings[1]);
+        }
     }
 
     @NotNull

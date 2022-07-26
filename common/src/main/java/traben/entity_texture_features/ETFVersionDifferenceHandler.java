@@ -5,9 +5,10 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 import java.io.File;
 
@@ -61,6 +62,6 @@ public class ETFVersionDifferenceHandler {
     @NotNull
     @ExpectPlatform
     public static Logger getLogger() {
-        return LoggerFactory.getLogger("Entity Texture Features");
+        return LogManager.getLogger("Entity Texture Features");
     }
 }

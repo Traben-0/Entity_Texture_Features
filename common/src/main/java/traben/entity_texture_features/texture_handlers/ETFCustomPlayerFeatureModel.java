@@ -26,21 +26,35 @@ public class ETFCustomPlayerFeatureModel<T extends PlayerEntity> extends EntityM
     public ETFCustomPlayerFeatureModel(Function<Identifier, RenderLayer> renderLayerFactory) {
         super(renderLayerFactory);
 
-        ModelPartData data = getModelData(new Dilation(0)).getRoot();
-        this.jacket = data.getChild("jacket").createPart(64, 64);
-        this.fatJacket = data.getChild("fatJacket").createPart(64, 64);
-        this.villagerNose = data.getChild("nose").createPart(64, 64); //23   15
+        this.villagerNose = (new ModelPart(this)).setTextureSize(64, 64);
+        this.villagerNose.setPivot(0.0F, -2.0F, 0.0F);
+        this.villagerNose.setTextureOffset(24, 0).addCuboid(-1.0F, -1.0F, -6.0F, 2.0F, 4.0F, 2.0F, 0.0f);
+
+
+        this.jacket = (new ModelPart(this)).setTextureSize(64, 64);
+        //this.villagerNose.setPivot(0.0F, -2.0F, 0.0F);
+        this.jacket.setTextureOffset(16, 32).addCuboid(-4.0F, 12.5F, -2.0F, 8.0F, 12.0F, 4.0F, 0.25f);
+
+        this.fatJacket = (new ModelPart(this)).setTextureSize(64, 64);
+        //this.villagerNose.setPivot(0.0F, -2.0F, 0.0F);
+        this.fatJacket.setTextureOffset(16, 32).addCuboid(-4.0F, 12.5F, -2.0F, 8.0F, 12.0F, 4.0F, 0.375f);
+
+
+//        ModelPartData data = getModelData(new Dilation(0)).getRoot();
+//        this.jacket = data.getChild("jacket").createPart(64, 64);
+//        this.fatJacket = data.getChild("fatJacket").createPart(64, 64);
+//        this.villagerNose = data.getChild("nose").createPart(64, 64); //23   15
     }
 
-    public static ModelData getModelData(Dilation dilation) {
-        ModelData modelData = new ModelData();
-        ModelPartData modelPartData = modelData.getRoot();
-        modelPartData.addChild("jacket", ModelPartBuilder.create().uv(16, 32).cuboid(-4.0F, 12.5F, -2.0F, 8.0F, 12.0F, 4.0F, dilation.add(0.25F)), ModelTransform.NONE);
-        modelPartData.addChild("fatJacket", ModelPartBuilder.create().uv(16, 32).cuboid(-4.0F, 12.5F, -2.0F, 8.0F, 12.0F, 4.0F, dilation.add(0.25F).add(0.5F)), ModelTransform.NONE);
-        modelPartData.addChild("nose", ModelPartBuilder.create().uv(24, 0).cuboid(-1.0F, -3.0F, -6.0F, 2.0F, 4.0F, 2.0F), ModelTransform.pivot(0.0F, -2.0F, 0.0F));
-
-        return modelData;
-    }
+//    public static ModelData getModelData(Dilation dilation) {
+//        ModelData modelData = new ModelData();
+//        ModelPartData modelPartData = modelData.getRoot();
+//        modelPartData.addChild("jacket", ModelPartBuilder.create().uv(16, 32).cuboid(-4.0F, 12.5F, -2.0F, 8.0F, 12.0F, 4.0F, dilation.add(0.25F)), ModelTransform.NONE);
+//        modelPartData.addChild("fatJacket", ModelPartBuilder.create().uv(16, 32).cuboid(-4.0F, 12.5F, -2.0F, 8.0F, 12.0F, 4.0F, dilation.add(0.25F).add(0.5F)), ModelTransform.NONE);
+//        modelPartData.addChild("nose", ModelPartBuilder.create().uv(24, 0).cuboid(-1.0F, -3.0F, -6.0F, 2.0F, 4.0F, 2.0F), ModelTransform.pivot(0.0F, -2.0F, 0.0F));
+//
+//        return modelData;
+//    }
 
     @Override
     public void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha) {

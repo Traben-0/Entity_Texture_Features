@@ -12,6 +12,7 @@ import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.ChestBlockEntityRenderer;
 import net.minecraft.client.util.SpriteIdentifier;
@@ -36,13 +37,17 @@ import java.util.UUID;
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
 @Mixin(ChestBlockEntityRenderer.class)
-public abstract class MixinChestBlockEntityRenderer<T extends BlockEntity & ChestAnimationProgress> implements BlockEntityRenderer<T> {
+public abstract class MixinChestBlockEntityRenderer<T extends BlockEntity & ChestAnimationProgress> extends BlockEntityRenderer<T> {
 
     private ETFTexture thisETFTexture = null;
     private boolean isAnimatedTexture = false;
     private ArmorStandEntity etf$chestStandInDummy = null;
     private Identifier etf$textureOfThis = null;
     private VertexConsumerProvider etf$vertexConsumerProviderOfThis = null;
+
+    public MixinChestBlockEntityRenderer(BlockEntityRenderDispatcher dispatcher) {
+        super(dispatcher);
+    }
 
     @ModifyArg(method = "render(Lnet/minecraft/block/entity/BlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/block/entity/ChestBlockEntityRenderer;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;Lnet/minecraft/client/model/ModelPart;Lnet/minecraft/client/model/ModelPart;Lnet/minecraft/client/model/ModelPart;FII)V"),
@@ -73,7 +78,8 @@ public abstract class MixinChestBlockEntityRenderer<T extends BlockEntity & Ches
                 etf$chestStandInDummy = new ArmorStandEntity(EntityType.ARMOR_STAND, MinecraftClient.getInstance().world);
                 etf$chestStandInDummy.setPos(entity.getPos().getX(), entity.getPos().getY(), entity.getPos().getZ());
                 String identifier = "chest" + entity.getPos().toString() + chestType.asString();
-                if (entity instanceof Nameable nameable) {
+                if (entity instanceof Nameable) {
+                    Nameable nameable = (Nameable) entity;
                     etf$chestStandInDummy.setCustomName(nameable.getCustomName());
                     etf$chestStandInDummy.setCustomNameVisible(nameable.hasCustomName());
                     if (nameable.hasCustomName()) {

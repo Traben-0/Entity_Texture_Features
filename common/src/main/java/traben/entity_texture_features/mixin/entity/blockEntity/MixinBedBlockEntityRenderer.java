@@ -7,6 +7,7 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BedBlockEntityRenderer;
+import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.client.util.math.MatrixStack;
@@ -14,7 +15,9 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
@@ -29,15 +32,22 @@ import java.util.UUID;
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
 @Mixin(BedBlockEntityRenderer.class)
-public abstract class MixinBedBlockEntityRenderer implements BlockEntityRenderer<BedBlockEntity> {
+public abstract class MixinBedBlockEntityRenderer extends BlockEntityRenderer<BedBlockEntity> {
 
+    @Shadow @Final private ModelPart field_20813;
+    @Shadow @Final private ModelPart field_20814;
+    @Shadow @Final private ModelPart[] legs;
     private boolean isAnimatedTexture = false;
     private ETFTexture thisETFTexture = null;
     private ArmorStandEntity etf$bedStandInDummy = null;
     private Identifier etf$textureOfThis = null;
     private VertexConsumerProvider etf$vertexConsumerProviderOfThis = null;
 
-    @ModifyArg(method = "renderPart",
+    public MixinBedBlockEntityRenderer(BlockEntityRenderDispatcher dispatcher) {
+        super(dispatcher);
+    }
+
+    @ModifyArg(method = "method_3558",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/ModelPart;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;II)V"),
             index = 1)
     private VertexConsumer etf$alterTexture(VertexConsumer vertices) {
@@ -73,15 +83,22 @@ public abstract class MixinBedBlockEntityRenderer implements BlockEntityRenderer
         }
     }
 
-    @Inject(method = "renderPart",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/ModelPart;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;II)V",
-                    shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILSOFT)
-    private void etf$applyEmissiveBed(MatrixStack matrices, VertexConsumerProvider vertexConsumers, ModelPart part, Direction direction, SpriteIdentifier sprite, int light, int overlay, boolean isFoot, CallbackInfo ci, VertexConsumer vertexConsumer) {
+    @Inject(method = "method_3558",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;pop()V",
+                    shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILSOFT)
+    private void etf$applyEmissiveBed(MatrixStack matrix, VertexConsumerProvider vertexConsumerProvider, boolean bl, Direction direction, SpriteIdentifier spriteIdentifier, int light, int overlay, boolean bl2, CallbackInfo ci, VertexConsumer vertexConsumer) {
         //hopefully works in modded scenarios, assumes the mod dev uses the actual vanilla code process and texture pathing rules
         if (!isAnimatedTexture && ETFConfigData.enableEmissiveBlockEntities && (thisETFTexture != null)) {
-            thisETFTexture.renderEmissive(matrices, vertexConsumers, part, ETFManager.EmissiveRenderModes.blockEntityMode());
+            thisETFTexture.renderEmissive(matrix, vertexConsumerProvider, this.field_20813, ETFManager.EmissiveRenderModes.blockEntityMode());
+            thisETFTexture.renderEmissive(matrix, vertexConsumerProvider, this.field_20814, ETFManager.EmissiveRenderModes.blockEntityMode());
+            thisETFTexture.renderEmissive(matrix, vertexConsumerProvider, this.legs[0], ETFManager.EmissiveRenderModes.blockEntityMode());
+            thisETFTexture.renderEmissive(matrix, vertexConsumerProvider, this.legs[1], ETFManager.EmissiveRenderModes.blockEntityMode());
+            thisETFTexture.renderEmissive(matrix, vertexConsumerProvider, this.legs[2], ETFManager.EmissiveRenderModes.blockEntityMode());
+            thisETFTexture.renderEmissive(matrix, vertexConsumerProvider, this.legs[3], ETFManager.EmissiveRenderModes.blockEntityMode());
         }
     }
+
+
 }
 
 

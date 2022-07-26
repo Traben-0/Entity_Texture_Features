@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.client.model.ModelPart;
-import org.slf4j.Logger;
+import org.apache.logging.log4j.Logger;
 import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.utils.ETFUtils2;
 
@@ -24,6 +24,9 @@ public class ETFClientCommon {
 
     //need for 1.18
     public static final ObjectOpenHashSet<ModelPart> ELYTRA_MODELPART_TO_SKIP = new ObjectOpenHashSet<>();//
+
+    //need for 1.16
+    public static final int MAX_LIGHT_COORDINATE = 15728880;
 
 
     public static void start() {

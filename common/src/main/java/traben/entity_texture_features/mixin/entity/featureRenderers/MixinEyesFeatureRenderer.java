@@ -56,7 +56,7 @@ public abstract class MixinEyesFeatureRenderer<T extends Entity, M extends Entit
                 if (!altered.toString().equals(check)) {
                     VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEyes(altered));
 
-                    this.getContextModel().render(matrices, vertexConsumer, 15728640/* light value to match vanilla not LightmapTextureManager.MAX_LIGHT_COORDINATE*/, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                    this.getContextModel().render(matrices, vertexConsumer, 15728640/* light value to match vanilla not ETFClientCommon.MAX_LIGHT_COORDINATE*/, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
                     ci.cancel();//cancel prevents the vanilla eyes rendering
                 }
             }

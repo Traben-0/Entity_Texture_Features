@@ -30,8 +30,8 @@ public class ETFLruCache<X, Y> {
     public void put(X key, Y value) {
         if (cache.size() >= capacity * (ETFConfigData.advanced_IncreaseCacheSizeModifier > 1 ? ETFConfigData.advanced_IncreaseCacheSizeModifier : 1)) {
             X lastKey = cache.lastKey();
-            if (lastKey instanceof ETFCacheKey ETFKey) {
-                ETFManager.removeThisEntityDataFromAllStorage(ETFKey);
+            if (lastKey instanceof ETFCacheKey) {
+                ETFManager.removeThisEntityDataFromAllStorage((ETFCacheKey) lastKey);
             } else {
                 cache.remove(lastKey);
             }
