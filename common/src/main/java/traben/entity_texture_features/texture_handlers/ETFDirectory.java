@@ -82,7 +82,8 @@ public enum ETFDirectory {
                 resource.ifPresent(value -> resourcePackNames.put(value.getResourcePackName(), directory));
             }
 
-            String returnedPack = ETFUtils2.returnNameOfHighestPackFrom(resourcePackNames.keySet());
+            String[] strArray =  resourcePackNames.keySet().toArray(new String[0]);
+            String returnedPack = ETFUtils2.returnNameOfHighestPackFromTheseMultiple(strArray);
             if (returnedPack != null) {
                 return resourcePackNames.get(returnedPack);
             } else {

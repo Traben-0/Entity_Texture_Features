@@ -79,10 +79,10 @@ public abstract class MixinElytraFeatureRenderer<T extends LivingEntity, M exten
                 if (otherWing.isPresent() && thisWing.isPresent()) {
                     String otherName = otherWing.get().getResourcePackName();
                     String thisName = thisWing.get().getResourcePackName();
-                    ObjectSet<String> set = new ObjectOpenHashSet<>();
-                    set.add(thisName);
-                    set.add(otherName);
-                    if (otherName.equals(ETFUtils2.returnNameOfHighestPackFrom(set))) {
+                    //ObjectSet<String> set = new ObjectOpenHashSet<>();
+                    //set.add(thisName);
+                    //set.add(otherName);
+                    if (otherName.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(new String[]{thisName, otherName}))) {
                         TEXTURE_MAP_TO_OPPOSITE_ELYTRA.put(identifier, new ETFTexture(otherWingIdentifier));
                     }
                 }

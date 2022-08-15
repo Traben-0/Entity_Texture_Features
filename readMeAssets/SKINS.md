@@ -12,7 +12,6 @@ ___
 <img src="customCape.png" alt="img" width="146"/>
 <img src="capeex.png" alt="img" width="185"/>
 
-most of these examples are downloadable [[HERE]](https://github.com/Traben-0/EmissiveMod/raw/master/Skin_Feature_Examples.ZIP)
 - Player skins can use emissive, blinking, enchanted, and transparency texture features and more...
 - 100% optional, controlled by the skin file you upload to Mojang, and options to prevent abuse of features in PVP
 
