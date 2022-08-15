@@ -1,6 +1,6 @@
 [**ETF Changelog:**
 
-[V4.0.2 - 1.18-backport]
+[V4.0.2 - 1.17-backport]
 - no changes
 
 [V4.0.2]
