@@ -7,7 +7,7 @@ assignees: Traben-0
 
 ---
 
-*please make sure you are using the latest ETF version before submitting an issue, you might also find a dev build fixing this issue already on my [discord](https://discord.com/invite/rURmwrzUcz) in the #dev-log channel*
+*please make sure you are using the latest ETF version before submitting an issue, you might also find a dev build fixing this issue already on my discord https://discord.com/invite/rURmwrzUcz in the #dev-log channel*
 
 **Describe the issue**
 - What happened? [e.g. crashed, texture is broken]
@@ -19,7 +19,7 @@ assignees: Traben-0
 **Crash log**
 - If the issue is a crash you **must** provide a crash log or nothing can be done.
 - If it is not a crash your latest.log is always helpful to diagnose potential issues.
-- ["how to find your crash log file"](https://minecraft.fandom.com/wiki/Tutorials/How_to_get_a_crash_report)
+- https://minecraft.fandom.com/wiki/Tutorials/How_to_get_a_crash_report
 
 **Your setup: (please complete the following information):**
  - Minecraft version: [e.g. 1.19.2]
