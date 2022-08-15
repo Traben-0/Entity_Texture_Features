@@ -81,10 +81,11 @@ public abstract class MixinElytraFeatureRenderer<T extends LivingEntity, M exten
                     try {
                         String otherName = MinecraftClient.getInstance().getResourceManager().getResource(otherWingIdentifier).getResourcePackName();
                         String thisName = MinecraftClient.getInstance().getResourceManager().getResource(identifier).getResourcePackName();
-                        ObjectSet<String> set = new ObjectOpenHashSet<>();
-                        set.add(thisName);
-                        set.add(otherName);
-                        if (otherName.equals(ETFUtils2.returnNameOfHighestPackFrom(set))) {
+                        //ObjectSet<String> set = new ObjectOpenHashSet<>();
+                        //set.add(thisName);
+                        //set.add(otherName);
+                        if (otherName.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(new String[]{thisName, otherName}))) {
+
                             TEXTURE_MAP_TO_OPPOSITE_ELYTRA.put(identifier, new ETFTexture(otherWingIdentifier));
                         }
                     }catch(Exception ignored){

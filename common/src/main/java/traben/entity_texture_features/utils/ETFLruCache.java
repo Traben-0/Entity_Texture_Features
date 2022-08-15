@@ -10,11 +10,18 @@ public class ETFLruCache<X, Y> {
 
     //cache with lru functionality
     final Object2ObjectLinkedOpenHashMap<X, Y> cache;
-    final int capacity = 2048;
+    int capacity = 2048;
 
-    public ETFLruCache() {
-        this.cache = new Object2ObjectLinkedOpenHashMap<>(capacity);
+    public ETFLruCache(int upperCapacity) {
+        capacity = upperCapacity;
+        this.cache = new Object2ObjectLinkedOpenHashMap<>();//( 64 +(int)(capacity * (ETFConfigData.advanced_IncreaseCacheSizeModifier > 1 ? ETFConfigData.advanced_IncreaseCacheSizeModifier : 1))));
+
         //this.capacity = capacity - 1;
+    }
+    public ETFLruCache() {
+        this.cache = new Object2ObjectLinkedOpenHashMap<>();//( 64 +(int)(capacity * (ETFConfigData.advanced_IncreaseCacheSizeModifier > 1 ? ETFConfigData.advanced_IncreaseCacheSizeModifier : 1))));
+        //this.capacity = capacity - 1;
+
     }
 
     public boolean containsKey(X key) {
@@ -30,11 +37,13 @@ public class ETFLruCache<X, Y> {
     public void put(X key, Y value) {
         if (cache.size() >= capacity * (ETFConfigData.advanced_IncreaseCacheSizeModifier > 1 ? ETFConfigData.advanced_IncreaseCacheSizeModifier : 1)) {
             X lastKey = cache.lastKey();
-            if (lastKey instanceof ETFCacheKey) {
-                ETFManager.removeThisEntityDataFromAllStorage((ETFCacheKey) lastKey);
-            } else {
+            if(!lastKey.equals(key)){
+                if (lastKey instanceof ETFCacheKey) {
+                    ETFManager.removeThisEntityDataFromAllStorage((ETFCacheKey) lastKey);
+                }
                 cache.remove(lastKey);
             }
+
         }
         cache.putAndMoveToFirst(key, value);
     }

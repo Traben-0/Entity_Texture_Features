@@ -1,7 +1,13 @@
 [**ETF Changelog:**
 
-[V4.0.1 - 1.18-backport]
+[V4.0.2 - 1.16-backport]
 - no changes
+
+[V4.0.2]
+- fixed ArrayIndexOutOfBoundsException crash
+- fixed excessive lag with shields and tridents in the rewrite
+- added russian translation thanks to @Felix14-v2
+- added more translation support where it was missing
 
 [V4.0.1]
 - fixed cape mod compatibility

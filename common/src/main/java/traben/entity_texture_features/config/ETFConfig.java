@@ -1,5 +1,9 @@
 package traben.entity_texture_features.config;
 
+import traben.entity_texture_features.ETFVersionDifferenceHandler;
+
+import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
+
 public class ETFConfig {
     public boolean allowIllegalTexturePaths = false;
     public boolean enableCustomTextures = true;
@@ -61,13 +65,40 @@ public class ETFConfig {
         public int getDelay() {
             return delay;
         }
+
+        @Override
+        public String toString() {
+            return ETFVersionDifferenceHandler.getTextFromTranslation(getKey()).getString();
+        }
+
+        private String getKey(){
+            //non enhanced switch for back compatibility
+            switch (delay){
+                case -1: return "config."+MOD_ID+".update_frequency.never";
+                case 80: return "config."+MOD_ID+".update_frequency.slow";
+                case 20: return "config."+MOD_ID+".update_frequency.average";
+                case 5: return "config."+MOD_ID+".update_frequency.fast";
+                case 1: return "config."+MOD_ID+".update_frequency.instant";
+                default: return "config."+MOD_ID+".error";
+            }
+        }
     }
 
     @SuppressWarnings("unused")
     public enum DebugLogMode {
-        None,
-        Log,
-        Chat
+        None("config."+MOD_ID+".Debug_log_mode.none"),
+        Log("config."+MOD_ID+".Debug_log_mode.log"),
+        Chat("config."+MOD_ID+".Debug_log_mode.chat");
+
+        private final String key;
+
+        DebugLogMode(String key){
+            this.key = key;
+        }
+        @Override
+        public String toString() {
+            return ETFVersionDifferenceHandler.getTextFromTranslation(key).getString();
+        }
     }
 
 }

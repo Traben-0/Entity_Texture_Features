@@ -47,8 +47,6 @@
   "config.entity_texture_features.skin_features_enable_transparency.tooltip": "Allows player skins to be transparent on the base texture\nthe texture can only be an average of\n 60% transparent to prevent abuse\n- uses transparency in the skin texture itself",
   "config.entity_texture_features.skin_features_enable_full_transparency.title": "Player Skin Feature: FULL Transparency",
   "config.entity_texture_features.skin_features_enable_full_transparency.tooltip": "Allows player skins to be FULLY transparent\nWARNING: this overrides the 60% transparency check\n for player skins so they can be completely invisible\n this option only changes what you can see and will\n not make you invisible to others, it is meant for fun.\n//REQUIRES RESTART\\\\",
-  "config.entity_texture_features.enchanted_potion_effects.title": "Custom potion effects",
-  "config.entity_texture_features.enchanted_potion_effects.tooltip": "currently only works when the mob first loads\nWill display enchanted mobs with different\neffects other than just particles",
   "config.entity_texture_features.enable_tridents.title": "Enable Custom Tridents",
   "config.entity_texture_features.enable_tridents.tooltip": "Allows tridents to use custom & emissive textures\nThis toggle is here to support possible future CIT mod updates\nThe trident item name will choose the texture file to use\nThe texture 'trident_bobbys_trident.png; will be chosen by the names:\n'Bobby's Trident', ' BoBb%Ys   Trid##en t', & 'bobbys_trident'\nThe texture 'trident_bobbys_trident_e.png; will be emissive.",
   "config.entity_texture_features.elytra_thickness_fix.title": "Elytra size fix",
@@ -74,5 +72,15 @@
   "config.entity_texture_features.emissive_shield.title": "Emissive Shields",
   "config.entity_texture_features.emissive_shield.tooltip": "enables emissive shield textures",
   "config.entity_texture_features.iris_pbr_fix.title": "enable iris PBR fix",
-  "config.entity_texture_features.iris_pbr_fix.tooltip": "only necessary while using the iris PBR versions currently in beta\nthis disables ETF texture patching to allow iris PBR to function\n (TEMPORARY FIX)\n (expect z-fighting with etf emissive textures when using shaders)"
+  "config.entity_texture_features.iris_pbr_fix.tooltip": "only necessary while using the iris PBR versions currently in beta\nthis disables ETF texture patching to allow iris PBR to function\n (TEMPORARY FIX)\n (expect z-fighting with etf emissive textures when using shaders)",
+  "config.entity_texture_features.Debug_log_mode.none": "None",
+  "config.entity_texture_features.Debug_log_mode.log": "Log",
+  "config.entity_texture_features.Debug_log_mode.chat": "Chat",
+  "config.entity_texture_features.update_frequency.never": "Never",
+  "config.entity_texture_features.update_frequency.instant": "Instant",
+  "config.entity_texture_features.update_frequency.slow": "Slow",
+  "config.entity_texture_features.update_frequency.average": "Average",
+  "config.entity_texture_features.update_frequency.fast": "Fast",
+  "config.entity_texture_features.error": "Error!"
+
 }

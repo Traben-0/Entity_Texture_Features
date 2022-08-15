@@ -8,6 +8,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
+import net.minecraft.resource.ResourcePack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3i;
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +23,7 @@ import traben.entity_texture_features.utils.ETFUtils2;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
@@ -47,7 +49,7 @@ public abstract class ETFManager {
     //trident entities do not send item name data to clients when thrown, this is to keep that name in memory so custom tridents can at least display until reloading
     public static final Object2ReferenceOpenHashMap<UUID, String> UUID_TRIDENT_NAME = new Object2ReferenceOpenHashMap<>();
     public static final ETFLruCache<ETFCacheKey, ETFTexture> ENTITY_TEXTURE_MAP = new ETFLruCache<>();
-    public static final ETFLruCache<UUID, ETFPlayerTexture> PLAYER_TEXTURE_MAP = new ETFLruCache<>();
+    public static final ETFLruCache<UUID, ETFPlayerTexture> PLAYER_TEXTURE_MAP = new ETFLruCache<>(512);
     static final Object2LongOpenHashMap<UUID> ENTITY_BLINK_TIME = new Object2LongOpenHashMap<>();
     //if false variant 1 will need to use vanilla texture otherwise vanilla texture has an override in other directory
     private static final Object2BooleanOpenHashMap<Identifier> OPTIFINE_1_HAS_REPLACEMENT = new Object2BooleanOpenHashMap<>();
@@ -75,6 +77,11 @@ public abstract class ETFManager {
     public static ETFTexture redMooshroomAlt = null;
     public static ETFTexture brownMooshroomAlt = null;
 
+    public static ArrayList<String> knownResourcePackOrder = new ArrayList<>();
+
+    //todo extend this to as many isPresent() calls as possible to lower repeated resource manager calls, may need to consider LRUCache usage if this is expanded too greatly
+    public static final Object2BooleanOpenHashMap<Identifier> DOES_IDENTIFIER_EXIST_CACHED_RESULT = new Object2BooleanOpenHashMap<>();
+
     private static ETFTexture getErrorETFTexture() {
         ETFUtils2.registerNativeImageToIdentifier(ETFUtils2.emptyNativeImage(), new Identifier("etf:error.png"));
         ETFUtils2.logWarn("getErrorETFTexture() was called, investigate this if called too much");
@@ -82,6 +89,17 @@ public abstract class ETFManager {
     }
 
     public static void reset() {
+
+        knownResourcePackOrder.clear();
+        for (Iterator<ResourcePack> it = MinecraftClient.getInstance().getResourceManager().streamResourcePacks().iterator(); it.hasNext(); ) {
+
+                ResourcePack pack = it.next();
+                //loops from lowest to highest pack
+                knownResourcePackOrder.add(pack.getName());
+
+        }
+
+        DOES_IDENTIFIER_EXIST_CACHED_RESULT.clear();
 
         ETFClientCommon.etf$loadConfig();
         OPTIFINE_1_HAS_REPLACEMENT.clear();
@@ -153,7 +171,6 @@ public abstract class ETFManager {
         ENTITY_TEXTURE_MAP.removeEntryOnly(ETFId);
         //ENTITY_FEATURE_MAP.clear();
         ENTITY_SPAWN_CONDITIONS_CACHE.removeEntryOnly(ETFId);
-
 
         UUID uuid = ETFId.getMobUUID();
         ENTITY_IS_UPDATABLE.removeBoolean(uuid);
@@ -340,13 +357,14 @@ public abstract class ETFManager {
                 try{p2pngPackName = resources.getResource(possible2PNG).getResourcePackName();}catch (Exception ignored){}
                 String propertiesPackName = null;
                 try{propertiesPackName = resources.getResource(possibleProperty).getResourcePackName();}catch (Exception ignored){}
-                ObjectOpenHashSet<String> packs = new ObjectOpenHashSet<>();
+                //ObjectOpenHashSet<String> packs = new ObjectOpenHashSet<>();
                 //if (p2pngPackName != null)
-                packs.add(p2pngPackName);
+                //packs.add(p2pngPackName);
                 //if (propertiesPackName != null)
-                packs.add(propertiesPackName);
+                //packs.add(propertiesPackName);
+
                 // System.out.println("debug6534="+p2pngPackName+","+propertiesPackName+","+ETFUtils2.returnNameOfHighestPackFrom(packs));
-                if (propertiesPackName != null && propertiesPackName.equals(ETFUtils2.returnNameOfHighestPackFrom(packs))) {
+                if (propertiesPackName != null && propertiesPackName.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(new String[]{p2pngPackName, propertiesPackName}))) {
                     newOptifineTextureFound(vanillaIdentifier, possibleProperty);
                     return returnNewAlreadyConfirmedOptifineTexture(entity, vanillaIdentifier, false);
                 } else {
@@ -566,16 +584,16 @@ public abstract class ETFManager {
                     if (props.containsKey("baby." + num)) {
                         String dataFromProps = props.getProperty("baby." + num).trim();
                         switch (dataFromProps) {
-                            case "true" : baby = 1;
-                            case "false" : baby = 2;
+                            case "true" : baby = 1;break;
+                            case "false" : baby = 2;break;
                         }
                     }
                     if (props.containsKey("weather." + num)) {
                         String dataFromProps = props.getProperty("weather." + num).trim();
                         switch (dataFromProps) {
-                            case "clear" : weather = 1;
-                            case "rain" : weather = 2;
-                            case "thunder" : weather = 3;
+                            case "clear" : weather = 1;break;
+                            case "rain" : weather = 2;break;
+                            case "thunder" : weather = 3;break;
                         }
                     }
                     if (props.containsKey("health." + num)) {
@@ -688,7 +706,7 @@ public abstract class ETFManager {
     private static void newTrueRandomTextureFound(Identifier vanillaIdentifier, Identifier variant2PNG) {
         //here 2.png is confirmed to exist and has its directory already applied
         //I'm going to ignore 1.png that will be hardcoded as vanilla or optifine replaced
-        ResourceManager resources = MinecraftClient.getInstance().getResourceManager();
+        //ResourceManager resources = MinecraftClient.getInstance().getResourceManager();
         int totalTextureCount = 2;
         while (ETFUtils2.isExistingResource(ETFUtils2.replaceIdentifier(variant2PNG, "[0-9]+(?=\\.png)", String.valueOf((totalTextureCount + 1))))) {
             totalTextureCount++;
