@@ -81,6 +81,7 @@
   "config.entity_texture_features.update_frequency.slow": "§aМедленно§r",
   "config.entity_texture_features.update_frequency.average": "§eСредне§r",
   "config.entity_texture_features.update_frequency.fast": "§6Быстро§r",
-  "config.entity_texture_features.error": "Ошибка!"
-
+  "config.entity_texture_features.error": "Ошибка!",
+  "modmenu.summaryTranslation.entity_texture_features": "Новые возможности в улучшении текстур сущностей при помощи наборов ресурсов.",
+  "modmenu.descriptionTranslation.entity_texture_features": "Этот мод расширяет возможности улучшения текстур сущностей при помощи наборов ресурсов.\nПоддерживаются старые функции Optifine:\n • Случайные и особые текстуры\n • Светящиеся текстуры\n...а также совершенно новые, такие как:\n • Мерцающие текстуры\n • Персонализация скинов"
 }
