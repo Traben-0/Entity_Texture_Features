@@ -2,7 +2,6 @@ package traben.entity_texture_features.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import it.unimi.dsi.fastutil.objects.ObjectSet;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.texture.NativeImage;
@@ -13,15 +12,16 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFClientCommon;
+import traben.entity_texture_features.texture_handlers.ETFManager;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Properties;
 
 import static traben.entity_texture_features.ETFClientCommon.CONFIG_DIR;
@@ -34,25 +34,53 @@ public abstract class ETFUtils2 {
         return new Identifier(id.getNamespace(), id.getPath().replaceFirst(regex, replace));
     }
 
+
     @Nullable
-    public static String returnNameOfHighestPackFrom(ObjectSet<String> packNameList) {
-        for (
-                ResourcePack pack :
-                MinecraftClient.getInstance().getResourceManager().streamResourcePacks().toList()) {
-            //loops from lowest to highest pack
-            String packName = pack.getName();
-            if (packNameList.contains(packName)) {
-                //simply loops through packs and removes them from the list to check
-                if (packNameList.size() <= 1) {
-                    //if there is only 1 left we have our winner in the highest resource-pack
-                    return (String) packNameList.toArray()[0];
-                } else {
-                    packNameList.remove(packName);
-                }
+    public static String returnNameOfHighestPackFromTheseMultiple(String[] packNameList) {
+        ArrayList<String> packNames = new ArrayList<>(Arrays.asList(packNameList));
+        //loop through and remove the one from the lowest pack of the first 2 entries
+        //this iterates over the whole array
+        while(packNames.size() >= 2){
+            if(ETFManager.knownResourcePackOrder.indexOf(packNames.get(0)) >= ETFManager.knownResourcePackOrder.indexOf(packNames.get(1))){
+                packNames.remove(1);
+            }else{
+                packNames.remove(0);
             }
         }
-        logError("highest pack check failed");
-        return null;
+        //here the array is down to 1 entry which should be the one in the highest pack
+        return packNames.get(0);
+    }
+    @Nullable
+    public static String returnNameOfHighestPackFromTheseTwo(String[] packNameList) {
+        //simpler faster 2 length array logic
+        if(packNameList.length != 2){
+            logError("highest pack check failed");
+            return null;
+        }
+        if(packNameList[0].equals(packNameList[1])){
+            return packNameList[0];
+        }
+        if(ETFManager.knownResourcePackOrder.indexOf(packNameList[0]) >= ETFManager.knownResourcePackOrder.indexOf(packNameList[1])){
+            return packNameList[0];
+        }else{
+            return packNameList[1];
+        }
+
+
+//        for (
+//
+//            if (packNameList.contains(packName)) {
+//                //simply loops through packs and removes them from the list to check
+//                if (packNameList.size() <= 1) {
+//                    //if there is only 1 left we have our winner in the highest resource-pack
+//                    return (String) packNameList.toArray()[0];
+//                } else {
+//                    packNameList.remove(packName);
+//                }
+//            }
+//        }
+
+        //return null;
     }
 
     @Nullable
