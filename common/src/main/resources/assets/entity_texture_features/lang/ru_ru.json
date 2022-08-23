@@ -47,8 +47,6 @@
   "config.entity_texture_features.skin_features_enable_transparency.tooltip": "Включить поддержку частично прозрачных скинов.\nМаксимальная §l §rпозрачность§l  §rограничена §l §rдо §l §r60%,\nчтобы§l §rизбежать§l §rзлоупотребления§l §rэтой§l §rфункцией.\n\n§6ℹ§7 Прозрачность определяется самим файлом скина.",
   "config.entity_texture_features.skin_features_enable_full_transparency.title": "Разрешить полную прозрачность",
   "config.entity_texture_features.skin_features_enable_full_transparency.tooltip": "Включить§l §rподдержку  полностью§l §rпрозрачных§l §rскинов.\nЭто§l §rотменяет  ограничение  в  60%,  и  скины§l §rдругих\nигроков могут стать полностью невидимыми§l §rдля вас.\n\n§c⚠§8 Применение настройки требует перезапуска игры.",
-  "config.entity_texture_features.enchanted_potion_effects.title": "Улучшенный вид эффектов",
-  "config.entity_texture_features.enchanted_potion_effects.tooltip": "Разрешить отображение эффектов мобов прямо\nна их текстуре, а не только в виде частиц.",
   "config.entity_texture_features.enable_tridents.title": "Пользовательские трезубцы",
   "config.entity_texture_features.enable_tridents.tooltip": "Включить  поддержку  пользовательских  и\nсветящихся§l §rтекстур§l §rдля§l §rтрезубца.\nСоздано для будущих обновлений CIT Resewn.\nТекстура§l §rтрезубца зависит§l §rот§l §rего§l §rназвания.\nТекстура  \"§8trident_bobbys_trident.png§r\"  будет\nиспользоваться§l §rпри§l §rследующих§l §rназваниях:\n\n • \"§b§oBobby's Trident§r\"\n • \"§b§o BoBb§8%§b§oYs   Trid§8##§b§oen t§r\"\n • \"§b§obobbys_trident§r\"\n • и других подобных.\n\n§6ℹ§l §7Для§l §7свечения§l §7используется\n   \"§8trident_bobbys_trident_e.png§r\"§7.",
   "config.entity_texture_features.elytra_thickness_fix.title": "Естестенные элитры",
@@ -74,5 +72,16 @@
   "config.entity_texture_features.emissive_shield.title": "Свечение щитов",
   "config.entity_texture_features.emissive_shield.tooltip": "Включить поддержку светящихся\nтекстур для щитов.",
   "config.entity_texture_features.iris_pbr_fix.title": "Исправление для PBR в Iris",
-  "config.entity_texture_features.iris_pbr_fix.tooltip": "Отключить обработку§l §rнекоторых текстур,\nчтобы  позволить  PBR  функционировать.\nПригодится §l §rтолько  при  использовании\nтестовых§l §rсборок§l §rIris§l §rс§l §rподдержкой§l §rPBR.\n\n§c⚠§l §8Временное§l §8решение,§l §8возможно\n§l   §8мерцание светящихся текстур\n§l   §8при игре с шейдерами."
+  "config.entity_texture_features.iris_pbr_fix.tooltip": "Отключить обработку§l §rнекоторых текстур,\nчтобы  позволить  PBR  функционировать.\nПригодится §l §rтолько  при  использовании\nтестовых§l §rсборок§l §rIris§l §rс§l §rподдержкой§l §rPBR.\n\n§c⚠§l §8Временное§l §8решение,§l §8возможно\n§l   §8мерцание светящихся текстур\n§l   §8при игре с шейдерами.",
+  "config.entity_texture_features.Debug_log_mode.none": "Отключено",
+  "config.entity_texture_features.Debug_log_mode.log": "Журнал",
+  "config.entity_texture_features.Debug_log_mode.chat": "Чат",
+  "config.entity_texture_features.update_frequency.never": "§9Никогда§r",
+  "config.entity_texture_features.update_frequency.instant": "§cМгновенно§r",
+  "config.entity_texture_features.update_frequency.slow": "§aМедленно§r",
+  "config.entity_texture_features.update_frequency.average": "§eСредне§r",
+  "config.entity_texture_features.update_frequency.fast": "§6Быстро§r",
+  "config.entity_texture_features.error": "Ошибка!",
+  "modmenu.summaryTranslation.entity_texture_features": "Новые возможности в улучшении текстур сущностей при помощи наборов ресурсов.",
+  "modmenu.descriptionTranslation.entity_texture_features": "Этот мод расширяет возможности улучшения текстур сущностей при помощи наборов ресурсов.\nПоддерживаются старые функции Optifine:\n • Случайные и особые текстуры\n • Светящиеся текстуры\n...а также совершенно новые, такие как:\n • Мерцающие текстуры\n • Персонализация скинов"
 }
