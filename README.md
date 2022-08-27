@@ -1,82 +1,62 @@
+<div align="center">
 
-# this branch holds the rewrite ported to architechtury so fabric and forge can utilise a single codebase
+<img source=">
+# Entity Texture Features
 
+[![CurseForge](https://cf.way2muchnoise.eu/full_568563_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/entity-texture-features-fabric) [![Modrinth](https://img.shields.io/badge/dynamic/json?color=dark-green&label=downloads&prefix=+%20&query=downloads&url=https://api.modrinth.com/api/v1/mod/BVzZfTc1&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMSAxMSIgd2lkdGg9IjE0LjY2NyIgaGVpZ2h0PSIxNC42NjciICB4bWxuczp2PSJodHRwczovL3ZlY3RhLmlvL25hbm8iPjxkZWZzPjxjbGlwUGF0aCBpZD0iQSI+PHBhdGggZD0iTTAgMGgxMXYxMUgweiIvPjwvY2xpcFBhdGg+PC9kZWZzPjxnIGNsaXAtcGF0aD0idXJsKCNBKSI+PHBhdGggZD0iTTEuMzA5IDcuODU3YTQuNjQgNC42NCAwIDAgMS0uNDYxLTEuMDYzSDBDLjU5MSA5LjIwNiAyLjc5NiAxMSA1LjQyMiAxMWMxLjk4MSAwIDMuNzIyLTEuMDIgNC43MTEtMi41NTZoMGwtLjc1LS4zNDVjLS44NTQgMS4yNjEtMi4zMSAyLjA5Mi0zLjk2MSAyLjA5MmE0Ljc4IDQuNzggMCAwIDEtMy4wMDUtMS4wNTVsMS44MDktMS40NzQuOTg0Ljg0NyAxLjkwNS0xLjAwM0w4LjE3NCA1LjgybC0uMzg0LS43ODYtMS4xMTYuNjM1LS41MTYuNjk0LS42MjYuMjM2LS44NzMtLjM4N2gwbC0uMjEzLS45MS4zNTUtLjU2Ljc4Ny0uMzcuODQ1LS45NTktLjcwMi0uNTEtMS44NzQuNzEzLTEuMzYyIDEuNjUxLjY0NSAxLjA5OC0xLjgzMSAxLjQ5MnptOS42MTQtMS40NEE1LjQ0IDUuNDQgMCAwIDAgMTEgNS41QzExIDIuNDY0IDguNTAxIDAgNS40MjIgMCAyLjc5NiAwIC41OTEgMS43OTQgMCA0LjIwNmguODQ4QzEuNDE5IDIuMjQ1IDMuMjUyLjgwOSA1LjQyMi44MDljMi42MjYgMCA0Ljc1OCAyLjEwMiA0Ljc1OCA0LjY5MSAwIC4xOS0uMDEyLjM3Ni0uMDM0LjU2bC43NzcuMzU3aDB6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGZpbGw9IiM1ZGE0MjYiLz48L2c+PC9zdmc+)](https://modrinth.com/mod/entitytexturefeatures)
 
+![Enviroment](https://img.shields.io/badge/Enviroment-client-blue)
+[![Discord](https://img.shields.io/discord/950942125225283634?color=blue&logo=discord&label=Discord)](https://discord.com/invite/rURmwrzUcz)
 
+[![Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/traben)
 
-<img src="readMeAssets/title.png" alt="Entity Texture Features Title" width="650"/>
-
-___
-
-## A Minecraft Fabric Mod enabling random, emissive textures for Mobs, Skins and much more...
-
-### compatible with the Optifine Format & Sodium :)
-
-___
-
-### [[Discord]](https://discord.gg/rURmwrzUcz) - [[CurseForge]](https://www.curseforge.com/minecraft/mc-mods/entity-texture-features-fabric) - [[Modrinth]](https://modrinth.com/mod/entitytexturefeatures) - [[Report Issues]](https://github.com/Traben-0/EmissiveMod/issues) - [[Donate (Ko-Fi)]](https://ko-fi.com/traben)
-
-___
-<img src="readMeAssets/main.png" alt="img" width="650"/>
+</div>
 
 ## What does this mod do? 🤔
 
-This Client-side Fabric mod adds support for a bunch of entity texture features, including **Optifine Features**, that
-can be set in compatible **Resourcepacks** or **Player skins**.  
-This allows most Optifine Resourcepacks to be used on Fabric, as long as they change
-**Textures only**, for Custom models *(Like Fresh Animations)* you will also need the
-[Custom Entity Models Mod](https://www.curseforge.com/minecraft/mc-mods/custom-entity-models-cem)
-and it's Dependencies.
+This Fabric & Forge mod adds support for many  _Entity Texture Features_ (:trollface:), including many entity-related texture features, using the OptiFine's format player skin features!  
+This way, ETF provides more OptiFine parity on the Fabric mod loader. If you want more OptiFine features availiable on Fabric, you can either check [this list](https://lambdaurora.dev/optifine_alternatives), made by LambdaAurora, **or** you can use the [Fabulously Optimized modpack](https://modrinth.com/modpack/fabulously-optimized), which includes _all_ the OptiFine parity mods!
 
-For more Optifine features on fabric check out
-[this list](https://lambdaurora.dev/optifine_alternatives/)
+### Mod's features so far:
 
-### The features of this mod so far:
-
-- 🎲 Custom & Random entity textures just like Optifine & compatible with Optifine Resourcepacks.
-  (Customised just like Optifine, by Biome, Name, Height, etc. with even more properties)
-- 💡 Emissive/Glowing entity textures just like Optifine & compatible with Optifine Resourcepacks.
+- 🎲 Custom & random entity textures with the OptiFine format, including biome, name and height properies, like OptiFine, with even more!
+- 💡 Emissive/glowing entity textures with the OptiFine format
 - 😑️ Blinking mobs
 - ⚗️ Alternate potion visuals for mobs
-- 🎨 Player Skin Features & Additions, including support for most of the above features
+- 🎨 Player skin features & additions, including support for most of the above features
 
-Everything can be enabled or disabled in the config or Mod Menu settings
-
+Everything can be enabled, disabled or configured via Mod Menu settings menu, or by modifying the config file.
 
 ---
 
 ## Compatibility
 
-- ✅ALL! Optifine Random / Custom or Emissive Entity resourcepacks
-- ✅[Custom Entity Models **(CEM)**](https://www.curseforge.com/minecraft/mc-mods/custom-entity-models-cem)
-  **(fully compatible)** *(keep in mind CEM is in ALPHA and doesn't support every model)*
-- ✅[Sodium](https://www.curseforge.com/minecraft/mc-mods/sodium) **(fully compatible)**
-- ✅[Mod Menu](https://www.curseforge.com/minecraft/mc-mods/modmenu) & Clothconfig *- optional*
-- ✅[Iris Shaders](https://www.curseforge.com/minecraft/mc-mods/irisshaders) **(fully compatible)**
-  *(Support varies depending on the shader)*
-- ✅Mod added entities *(only if the mod creator used the vanilla rendering code to render their mobs)*
+- ✅ OptiFine's random / custom or emissive entity texture resource packs - **Fully compatable**
+- ✅ [Custom Entity Models mod](https://www.curseforge.com/minecraft/mc-mods/custom-entity-models-cem) - **Fully compatible**
+_(Keep in mind CEM is still in alpha and doesn't support every entity model just yet)_
+- ✅ [Sodium](https://www.curseforge.com/minecraft/mc-mods/sodium) **- Fully compatible**
+- ✅ [Iris Shaders](https://www.curseforge.com/minecraft/mc-mods/irisshaders) - **Fully compatible** _(Support varies depending on the shader)_
+- ✅ Mod added entities _(only if the mod creator used the vanilla rendering code to render their mobs)_
 
 ---
 
-# Wiki & Guides
+## Wiki & Guides
 
----
-
-## 🎲 Random / Custom entity textures - [Optifine]
+### 🎲 Random / Custom entity textures - [OptiFine]
 
 <img src="readMeAssets/randoms.png" alt="img" width="650"/>
 
 - For custom & random entity textures to work you can use a resource-pack that supports the
-  **Optifine format** for custom / random textures, including all Biome, Height, Name, etc. properties settings. and
+  **OptiFine format** for custom / random textures, including all Biome, Height, Name, etc. properties settings. and
   even more added by ETF
   - [***-> Random / Custom entity textures guide <-***](readMeAssets/RANDOM_GUIDE.md)
 
 ---
-## 💡 Emissive entity textures - [Optifine]
+## 💡 Emissive entity textures - [OptiFine]
 <img src="readMeAssets/emissives.png" alt="img" width="650"/>
 
 - For emissive & random entity textures to work you can use a resource-pack that supports the 
-**Optifine format** for emissive textures.   
+**OptiFine format** for emissive textures.   
   - [***-> Emissive entity textures guide <-***](readMeAssets/EMISSIVE_GUIDE.md)
 
 ---
