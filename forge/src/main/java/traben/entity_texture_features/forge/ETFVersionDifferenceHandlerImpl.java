@@ -1,6 +1,5 @@
 package traben.entity_texture_features.forge;
 
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -9,14 +8,11 @@ import net.minecraftforge.fml.loading.FMLConfig;
 import net.minecraftforge.fml.loading.FMLPaths;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import traben.entity_texture_features.forge.config.ETFConfigScreenForge;
 
 import java.io.File;
 
 public class ETFVersionDifferenceHandlerImpl {
-    public static Screen getConfigScreen(Screen parent, boolean isTransparent) {
-        return ETFConfigScreenForge.getConfigScreen(parent,isTransparent);
-    }
+
 
     public static boolean isThisModLoaded(String modId) {
         return ModList.get().isLoaded(modId);

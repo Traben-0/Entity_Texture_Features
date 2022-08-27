@@ -1,6 +1,12 @@
 package traben.entity_texture_features.config;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
+import traben.entity_texture_features.config.screens.ETFConfigScreenWarnings;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 
@@ -28,9 +34,6 @@ public class ETFConfig {
     public boolean skinFeaturesEnableTransparency = true;
     public boolean skinFeaturesEnableFullTransparency = false;
     public boolean skinFeaturesPrintETFReadySkin = false;
-
-    public boolean ignoreConfigWarnings = false;
-
     public boolean enableEnemyTeamPlayersSkinFeatures = true;
     public boolean enableBlinking = true;
     public int blinkFrequency = 150;
@@ -45,8 +48,16 @@ public class ETFConfig {
 
     public boolean temporary_fixIrisPBR = false;
 
+    public Set<ETFConfigScreenWarnings.ConfigWarning> ignoredConfigs = new HashSet<>();
+
     //string name stuff more in-depth than other enum for backwards compatibility
 
+    public static ETFConfig copyFrom(ETFConfig source) {
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+        return gson.fromJson(gson.toJson(source), ETFConfig.class);
+    }
 
     @SuppressWarnings("unused")
     public enum UpdateFrequency {
@@ -71,33 +82,68 @@ public class ETFConfig {
             return ETFVersionDifferenceHandler.getTextFromTranslation(getKey()).getString();
         }
 
-        private String getKey(){
+        private String getKey() {
             //non enhanced switch for back compatibility
-            switch (delay){
-                case -1: return "config."+MOD_ID+".update_frequency.never";
-                case 80: return "config."+MOD_ID+".update_frequency.slow";
-                case 20: return "config."+MOD_ID+".update_frequency.average";
-                case 5: return "config."+MOD_ID+".update_frequency.fast";
-                case 1: return "config."+MOD_ID+".update_frequency.instant";
-                default: return "config."+MOD_ID+".error";
+            switch (delay) {
+                case -1:
+                    return "config." + MOD_ID + ".update_frequency.never";
+                case 80:
+                    return "config." + MOD_ID + ".update_frequency.slow";
+                case 20:
+                    return "config." + MOD_ID + ".update_frequency.average";
+                case 5:
+                    return "config." + MOD_ID + ".update_frequency.fast";
+                case 1:
+                    return "config." + MOD_ID + ".update_frequency.instant";
+                default:
+                    return "config." + MOD_ID + ".error";
+            }
+        }
+
+        public UpdateFrequency next() {
+            //not enhanced for 1.16 version compat
+            switch (this) {
+                case Never:
+                    return Slow;
+                case Slow:
+                    return Average;
+                case Fast:
+                    return Instant;
+                case Instant:
+                    return Never;
+                default:
+                    return Fast;
             }
         }
     }
 
     @SuppressWarnings("unused")
     public enum DebugLogMode {
-        None("config."+MOD_ID+".Debug_log_mode.none"),
-        Log("config."+MOD_ID+".Debug_log_mode.log"),
-        Chat("config."+MOD_ID+".Debug_log_mode.chat");
+        None("config." + MOD_ID + ".Debug_log_mode.none"),
+        Log("config." + MOD_ID + ".Debug_log_mode.log"),
+        Chat("config." + MOD_ID + ".Debug_log_mode.chat");
 
         private final String key;
 
-        DebugLogMode(String key){
+        DebugLogMode(String key) {
             this.key = key;
         }
+
         @Override
         public String toString() {
             return ETFVersionDifferenceHandler.getTextFromTranslation(key).getString();
+        }
+
+        public DebugLogMode next() {
+            //not enhanced for 1.16 version compat
+            switch (this) {
+                case None:
+                    return Log;
+                case Log:
+                    return Chat;
+                default:
+                    return None;
+            }
         }
     }
 

@@ -6,10 +6,8 @@ import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
-import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ArmorItem;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -38,7 +36,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
 
     @Inject(method = "renderModel",
             at = @At(value = "TAIL"))
-    private void etf$applyEmissive(MatrixStack arg, VertexConsumerProvider arg2, int i, boolean bl, Model arg3, float f, float g, float h, Identifier armorResource,CallbackInfo ci) {
+    private void etf$applyEmissive(MatrixStack arg, VertexConsumerProvider arg2, int i, boolean bl, Model arg3, float f, float g, float h, Identifier armorResource, CallbackInfo ci) {
         //UUID id = livingEntity.getUuid();
         if (thisETFTexture != null && ETFConfigData.enableEmissiveTextures) {
             Identifier emissive = thisETFTexture.getEmissiveIdentifierOfCurrentState();
@@ -47,7 +45,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
                 //if (ETFManager.getEmissiveMode() == ETFManager.EmissiveRenderModes.BRIGHT) {
                 //    textureVert = ItemRenderer.getArmorGlintConsumer(vertexConsumers, RenderLayer.getBeaconBeam(emissive, true), false, usesSecondLayer);
                 //} else {
-                    textureVert = arg2.getBuffer(RenderLayer.getArmorCutoutNoCull(emissive));
+                textureVert = arg2.getBuffer(RenderLayer.getArmorCutoutNoCull(emissive));
                 //}
                 arg3.render(arg, textureVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, f, g, h, 1.0F);
             }

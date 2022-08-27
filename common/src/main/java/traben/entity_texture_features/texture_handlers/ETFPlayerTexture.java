@@ -28,7 +28,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import static traben.entity_texture_features.ETFClientCommon.*;
@@ -45,17 +44,23 @@ public class ETFPlayerTexture {
     public static final UUID Dev = UUID.fromString("fd22e573-178c-415a-94fe-e476b328abfd");
     //public static final UUID Dev2 = UUID.fromString("bc2d6979-ddde-4452-8c7d-caefa4aceb01");
     public static final UUID Wife = UUID.fromString("cab7d2e2-519f-4b34-afbd-b65f4542b8a1");
+    public static NativeImage clientPlayerOriginalSkinImageForTool = null;
     public Identifier baseEnchantIdentifier = null;
     public Identifier baseEnchantBlinkIdentifier = null;
     public Identifier baseEnchantBlink2Identifier = null;
     public Identifier etfCapeIdentifier = null;
+    public boolean hasVillagerNose = false;
+    public boolean hasFeatures = false;
+    public int coatStyle = 0;
+    public int coatLength = 1;
+    public int blinkType = 0;
+    public int blinkHeight = 1;
+    public boolean THIS_SKIN_IS_IN_EDITOR = false;
     boolean hasEmissives = false;
     boolean hasEnchant = false;
-    boolean hasVillagerNose = false;
     PlayerEntity player;
     private ETFCustomPlayerFeatureModel<PlayerEntity> customPlayerModel;
     private boolean isTextureReady = false;
-    private boolean hasFeatures = false;
     private boolean hasVanillaCape = false;
     private NativeImage originalSkin;
     private NativeImage originalCape;
@@ -72,11 +77,25 @@ public class ETFPlayerTexture {
     //all ETFPlayerTexture needs to do is build those textures and register them before this ETFTexture is made, and it will auto locate and apply them
     private ETFTexture etfTextureOfFinalBaseSkin;
 
-
     ETFPlayerTexture(PlayerEntity player) {
         //initiate texture download as we need unprocessed texture from the skin server
         this.player = player;
         triggerSkinDownload();
+    }
+
+    public ETFPlayerTexture() {
+        THIS_SKIN_IS_IN_EDITOR = true;
+        //exists only for tool
+        this.player = MinecraftClient.getInstance().player;
+        if (player != null) {
+            NativeImage skin = ETFUtils2.getNativeImageElseNull(MinecraftClient.getInstance().player.getSkinTexture());
+            if (skin != null) {
+                clientPlayerOriginalSkinImageForTool = skin;
+                changeSkinToThisForTool(skin);
+                return;
+            }
+        }
+        ETFUtils2.logError("ETFPlayerTexture went wrong");
     }
 
     @Nullable
@@ -138,12 +157,11 @@ public class ETFPlayerTexture {
         return foundAPixel ? imageToCheck : null;
     }
 
-
     private static NativeImage returnCustomTexturedCape(NativeImage skin) {
         NativeImage cape = ETFUtils2.emptyNativeImage(64, 32);
         NativeImage elytra = ETFUtils2.getNativeImageElseNull(new Identifier("textures/entity/elytra.png"));
         if (elytra == null || elytra.getWidth() != 64 || elytra.getHeight() != 32) {
-            elytra = ETFUtils2.getNativeImageElseNull(new Identifier(MOD_ID,"textures/capes/default_elytra.png"));
+            elytra = ETFUtils2.getNativeImageElseNull(new Identifier(MOD_ID, "textures/capes/default_elytra.png"));
         }//not else
         if (elytra != null) {
             cape.copyFrom(elytra);
@@ -321,7 +339,7 @@ public class ETFPlayerTexture {
     }
 
     public static void printPlayerSkinCopyWithFeatureOverlay(NativeImage skinImage) {
-        if ((ETFVersionDifferenceHandler.isFabric() == ETFVersionDifferenceHandler.isThisModLoaded("fabric") ) && CONFIG_DIR != null) {
+        if ((ETFVersionDifferenceHandler.isFabric() == ETFVersionDifferenceHandler.isThisModLoaded("fabric")) && CONFIG_DIR != null) {
             Path outputDirectory = Path.of(CONFIG_DIR.toString(), "ETF_player_skin_printout.png");
             //NativeImage skinImage = ETFUtils.getNativeImageFromID(new Identifier(SKIN_NAMESPACE + playerID + ".png"));
             NativeImage skinFeatureImage = ETFUtils2.getNativeImageElseNull(new Identifier(MOD_ID, "textures/skin_feature_printout.png"));
@@ -407,7 +425,6 @@ public class ETFPlayerTexture {
             }
 
 
-
             //coat features
             ItemStack armour = player.getInventory().getArmorStack(1);
             if (coatIdentifier != null &&
@@ -437,9 +454,9 @@ public class ETFPlayerTexture {
                 if (coatEnchantedIdentifier != null) {
                     VertexConsumer enchantVert = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(coatEnchantedIdentifier), false, true);
                     if (hasFatCoat) {
-                        customPlayerModel.fatJacket.render(matrixStack, enchantVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1,1,1,0.16f);
+                        customPlayerModel.fatJacket.render(matrixStack, enchantVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 0.16f);
                     } else {
-                        customPlayerModel.jacket.render(matrixStack, enchantVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV,  1,1,1,0.16f);
+                        customPlayerModel.jacket.render(matrixStack, enchantVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 0.16f);
                     }
                 }
 
@@ -470,7 +487,7 @@ public class ETFPlayerTexture {
                             case BLINK2, BLINK2_PATCHED, APPLY_BLINK2 -> baseEnchantBlink2Identifier;
                             default -> baseEnchantIdentifier;
                         }), false, true);
-                model.render(matrixStack, enchantVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV,1,1,1,0.16f);
+                model.render(matrixStack, enchantVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 0.16f);
             }
             if (hasEmissives && etfTextureOfFinalBaseSkin != null) {
                 etfTextureOfFinalBaseSkin.renderEmissive(matrixStack, vertexConsumerProvider, model);
@@ -603,7 +620,7 @@ public class ETFPlayerTexture {
     public void receiveThirdPartyCape(@NotNull NativeImage capeImage) {
         //optifine resizes them for space cause expensive servers I guess
 
-        Identifier newCapeId = new Identifier(SKIN_NAMESPACE, player.getUuid().toString().replaceAll( "/[^a-z]/g", "" )  + "_cape_third_party.png");
+        Identifier newCapeId = new Identifier(SKIN_NAMESPACE, player.getUuid().toString().replaceAll("/[^a-z]/g", "") + "_cape_third_party.png");
         if (capeImage.getWidth() % capeImage.getHeight() != 0) {
             //resize optifine image
             int newWidth = 64;
@@ -618,7 +635,7 @@ public class ETFPlayerTexture {
                     }
                 }
                 capeImage = resizedImage;
-            }catch (Exception e){
+            } catch (Exception e) {
                 ETFUtils2.logError("optifine cape resize failed");
             }
         }
@@ -630,7 +647,7 @@ public class ETFPlayerTexture {
             Identifier newCapeEmissive = new Identifier(SKIN_NAMESPACE, player.getUuid() + "_cape_third_party_e.png");
             ETFUtils2.registerNativeImageToIdentifier(checkCapeEmissive, newCapeEmissive);
             etfCapeEmissiveIdentifier = newCapeEmissive;
-        }else{
+        } else {
             etfCapeEmissiveIdentifier = null;
         }
         NativeImage checkCapeEnchant = returnMatchPixels(originalSkin, enchantCapeBounds, capeImage);
@@ -639,23 +656,30 @@ public class ETFPlayerTexture {
             Identifier newCapeEnchanted = new Identifier(SKIN_NAMESPACE, player.getUuid() + "_cape_third_party_enchant.png");
             ETFUtils2.registerNativeImageToIdentifier(checkCapeEnchant, newCapeEnchanted);
             etfCapeEnchantedIdentifier = newCapeEnchanted;
-        }else{
+        } else {
             etfCapeEnchantedIdentifier = null;
         }
         etfCapeIdentifier = newCapeId;
     }
 
     private void skinFailed(boolean preventFurtherChecks) {
-        if (preventFurtherChecks) {
-            PLAYER_TEXTURE_MAP.put(player.getUuid(), null);
+        if (!THIS_SKIN_IS_IN_EDITOR) {
+            if (preventFurtherChecks) {
+                PLAYER_TEXTURE_MAP.put(player.getUuid(), null);
+            } else {
+                PLAYER_TEXTURE_MAP.removeEntryOnly(player.getUuid());
+            }
         } else {
-            PLAYER_TEXTURE_MAP.removeEntryOnly(player.getUuid());
+            ETFUtils2.logError("something went wrong applying skin in tool, or skin features are not added");
         }
         //this object is now unreachable
     }
 
     public void receiveSkin(@NotNull NativeImage skinImage) {
         this.originalSkin = skinImage;
+        if (MinecraftClient.getInstance().player != null && player.getUuid().equals(MinecraftClient.getInstance().player.getUuid())) {
+            clientPlayerOriginalSkinImageForTool = skinImage;
+        }
         if (!this.hasVanillaCape || this.originalCape != null) {
             onTexturesDownloaded();
         }
@@ -733,7 +757,9 @@ public class ETFPlayerTexture {
                 NativeImage coatSkin = null;
                 int controllerCoat = choiceBoxChoices[1];
                 if (controllerCoat >= 1 && controllerCoat <= 8) {
+                    coatStyle = controllerCoat;
                     int lengthOfCoat = choiceBoxChoices[2] - 1;
+                    coatLength = lengthOfCoat + 1;
                     coatIdentifier = new Identifier(SKIN_NAMESPACE, id + "_coat.png");
                     coatSkin = getCoatTexture(originalSkin, lengthOfCoat, controllerCoat >= 5);
                     ETFUtils2.registerNativeImageToIdentifier(coatSkin, coatIdentifier);
@@ -767,6 +793,7 @@ public class ETFPlayerTexture {
                 Identifier blink2Identifier = new Identifier(SKIN_NAMESPACE, id + "_blink2.png");
 
                 int blinkChoice = choiceBoxChoices[0];
+                this.blinkType = blinkChoice;
                 if (blinkChoice >= 1 && blinkChoice <= 5) {
 
                     //check if lazy blink
@@ -782,6 +809,7 @@ public class ETFPlayerTexture {
                         }
                     } else {//optimized blink
                         int eyeHeightTopDown = choiceBoxChoices[3];
+                        this.blinkHeight = eyeHeightTopDown;
                         if (eyeHeightTopDown > 8 || eyeHeightTopDown < 1) {
                             eyeHeightTopDown = 1;
                         }
@@ -834,7 +862,7 @@ public class ETFPlayerTexture {
 
                         }
                         case 666 ->
-                                modifiedCape = ETFUtils2.getNativeImageElseNull(new Identifier(MOD_ID,"textures/capes/error.png"));
+                                modifiedCape = ETFUtils2.getNativeImageElseNull(new Identifier(MOD_ID, "textures/capes/error.png"));
                         default -> {
                             // cape = getNativeImageFromID(new Identifier("etf:capes/blank.png"));
                         }
@@ -842,7 +870,7 @@ public class ETFPlayerTexture {
                 }
                 if (modifiedCape != null) {
                     if ((capeChoice1 >= 1 && capeChoice1 <= 3) || capeChoice1 == 666) {//custom chosen
-                        etfCapeIdentifier = new Identifier(SKIN_NAMESPACE, id.toString().replaceAll( "/[^a-z]/g", "" ) + "_cape.png");
+                        etfCapeIdentifier = new Identifier(SKIN_NAMESPACE, id.toString().replaceAll("/[^a-z]/g", "") + "_cape.png");
                         ETFUtils2.registerNativeImageToIdentifier(modifiedCape, etfCapeIdentifier);
                         //UUID_PLAYER_HAS_CUSTOM_CAPE.put(id, true);
                     }
@@ -967,4 +995,35 @@ public class ETFPlayerTexture {
         }
         isTextureReady = true;
     }
+
+    public void changeSkinToThisForTool(NativeImage image) {
+        this.etfCapeEmissiveIdentifier = null;
+        this.etfCapeIdentifier = null;
+        this.baseEnchantBlinkIdentifier = null;
+        this.etfCapeEnchantedIdentifier = null;
+        this.baseEnchantIdentifier = null;
+        this.coatEmissiveIdentifier = null;
+        this.coatEnchantedIdentifier = null;
+        this.baseEnchantBlink2Identifier = null;
+        this.etfTextureOfFinalBaseSkin = null;
+        this.coatIdentifier = null;
+        this.hasEmissives = false;
+        this.hasEnchant = false;
+        this.hasFatCoat = false;
+        this.hasFeatures = false;
+        this.hasVillagerNose = false;
+        this.hasVanillaCape = false;
+        this.isTextureReady = false;
+
+        this.coatStyle = 0;
+        this.coatLength = 1;
+        this.blinkHeight = 1;
+        this.blinkType = 0;
+
+
+        THIS_SKIN_IS_IN_EDITOR = true;
+        this.originalSkin = image;
+        onTexturesDownloaded();
+    }
+
 }

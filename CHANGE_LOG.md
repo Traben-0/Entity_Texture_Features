@@ -1,5 +1,15 @@
 [**ETF Changelog:**
 
+[V4.1.dev.1]
+- cloth config no longer required on forge or included in fabric
+- updated russian translation thanks to @Felix14-v2
+- fixed color property being broken for light_blue/blue & light_gray/gray colors
+- fixed a crash when reading corrupt or broken config files
+- complete GUI overhaul
+- added GUI for selecting player features and printing a player feature ready skin with all your choices *(W.I.P)*
+- added many new texture properties *(speedRange, jumpRange, maxHealth, llamaInventory, trapHorse, angry, 
+wardenAngerLevel, angryAtClient, hiddenGene, isPlayerCreated, isScreamingGoat)*
+
 [V4.0.2]
 - fixed ArrayIndexOutOfBoundsException crash
 - fixed excessive lag with shields and tridents in the rewrite

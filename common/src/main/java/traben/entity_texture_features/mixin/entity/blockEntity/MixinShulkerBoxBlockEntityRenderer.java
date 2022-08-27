@@ -24,7 +24,6 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import traben.entity_texture_features.mixin.accessor.SpriteAccessor;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
-import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.UUID;
 

@@ -4,6 +4,8 @@ import it.unimi.dsi.fastutil.objects.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.mob.Angriness;
+import net.minecraft.entity.passive.PandaEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
@@ -48,13 +50,15 @@ public abstract class ETFManager {
     public static final Object2ReferenceOpenHashMap<UUID, String> UUID_TRIDENT_NAME = new Object2ReferenceOpenHashMap<>();
     public static final ETFLruCache<ETFCacheKey, ETFTexture> ENTITY_TEXTURE_MAP = new ETFLruCache<>();
     public static final ETFLruCache<UUID, ETFPlayerTexture> PLAYER_TEXTURE_MAP = new ETFLruCache<>(512);
-    static final Object2LongOpenHashMap<UUID> ENTITY_BLINK_TIME = new Object2LongOpenHashMap<>();
+    static public final Object2LongOpenHashMap<UUID> ENTITY_BLINK_TIME = new Object2LongOpenHashMap<>();
+    public static final Object2ObjectOpenHashMap<UUID, ETFCacheKey> UUID_TO_MOB_CACHE_KEY_MAP_FOR_FEATURE_USAGE = new Object2ObjectOpenHashMap<>();
+    public final static Object2ObjectOpenHashMap<Identifier, ETFTexture> TEXTURE_MAP_TO_OPPOSITE_ELYTRA = new Object2ObjectOpenHashMap<>();
+    //private static final Object2ReferenceOpenHashMap<@NotNull UUID, @NotNull ETFTexture> ENTITY_TEXTURE_MAP = new Object2ReferenceOpenHashMap<>();
+    //todo extend this to as many isPresent() calls as possible to lower repeated resource manager calls, may need to consider LRUCache usage if this is expanded too greatly
+    public static final Object2BooleanOpenHashMap<Identifier> DOES_IDENTIFIER_EXIST_CACHED_RESULT = new Object2BooleanOpenHashMap<>();
+    static final ETFLruCache<ETFCacheKey, ObjectImmutableList<String>> ENTITY_SPAWN_CONDITIONS_CACHE = new ETFLruCache<>();
     //if false variant 1 will need to use vanilla texture otherwise vanilla texture has an override in other directory
     private static final Object2BooleanOpenHashMap<Identifier> OPTIFINE_1_HAS_REPLACEMENT = new Object2BooleanOpenHashMap<>();
-    static final ETFLruCache<ETFCacheKey, ObjectImmutableList<String>> ENTITY_SPAWN_CONDITIONS_CACHE = new ETFLruCache<>();
-    //private static final Object2ReferenceOpenHashMap<@NotNull UUID, @NotNull ETFTexture> ENTITY_TEXTURE_MAP = new Object2ReferenceOpenHashMap<>();
-
-    public static final Object2ObjectOpenHashMap<UUID, ETFCacheKey> UUID_TO_MOB_CACHE_KEY_MAP_FOR_FEATURE_USAGE = new Object2ObjectOpenHashMap<>();
     //this is a cache of all known ETFTexture versions of any existing resource-pack texture, used to prevent remaking objects
     private static final Object2ReferenceOpenHashMap<@NotNull Identifier, @Nullable ETFTexture> ETF_TEXTURE_CACHE = new Object2ReferenceOpenHashMap<>();
     //null means it is true random as in no properties
@@ -71,14 +75,9 @@ public abstract class ETFManager {
     //marks whether mooshroom mushroom overrides exist
     public static int mooshroomRedCustomShroom = 0;
     public static Boolean lecternHasCustomTexture = null;
-    public final static Object2ObjectOpenHashMap<Identifier, ETFTexture> TEXTURE_MAP_TO_OPPOSITE_ELYTRA = new Object2ObjectOpenHashMap<>();
     public static ETFTexture redMooshroomAlt = null;
     public static ETFTexture brownMooshroomAlt = null;
-
     public static ArrayList<String> knownResourcePackOrder = new ArrayList<>();
-
-    //todo extend this to as many isPresent() calls as possible to lower repeated resource manager calls, may need to consider LRUCache usage if this is expanded too greatly
-    public static final Object2BooleanOpenHashMap<Identifier> DOES_IDENTIFIER_EXIST_CACHED_RESULT = new Object2BooleanOpenHashMap<>();
 
     private static ETFTexture getErrorETFTexture() {
         ETFUtils2.registerNativeImageToIdentifier(ETFUtils2.emptyNativeImage(), new Identifier("etf:error.png"));
@@ -91,7 +90,7 @@ public abstract class ETFManager {
         knownResourcePackOrder.clear();
         for (ResourcePack pack :
                 MinecraftClient.getInstance().getResourceManager().streamResourcePacks().toList()
-            ) {
+        ) {
             //loops from lowest to highest pack
             knownResourcePackOrder.add(pack.getName());
         }
@@ -215,10 +214,10 @@ public abstract class ETFManager {
         }
         UUID id = entity.getUuid();
         //use custom cache id this differentiates feature renderer calls here and makes the base feature still identifiable by uuid only when features are called
-        ETFCacheKey cacheKey = new ETFCacheKey(id,vanillaIdentifier); //source == TextureSource.ENTITY_FEATURE ? vanillaIdentifier : null);
-        if(source == TextureSource.ENTITY){
+        ETFCacheKey cacheKey = new ETFCacheKey(id, vanillaIdentifier); //source == TextureSource.ENTITY_FEATURE ? vanillaIdentifier : null);
+        if (source == TextureSource.ENTITY) {
             //this is so feature renderers can find the 'base texture' of the mob to test it's variant if required
-            UUID_TO_MOB_CACHE_KEY_MAP_FOR_FEATURE_USAGE.put(id,cacheKey);
+            UUID_TO_MOB_CACHE_KEY_MAP_FOR_FEATURE_USAGE.put(id, cacheKey);
         }
 
         //fastest in subsequent runs
@@ -288,12 +287,12 @@ public abstract class ETFManager {
 
             ETFCacheKey baseCacheId = UUID_TO_MOB_CACHE_KEY_MAP_FOR_FEATURE_USAGE.get(entity.getUuid()); //new ETFCacheKey(entity.getUuid(), null);
 
-                if (baseCacheId != null && ENTITY_TEXTURE_MAP.containsKey(baseCacheId)) {
-                    ETFTexture baseETFTexture = ENTITY_TEXTURE_MAP.get(baseCacheId);
-                    if (baseETFTexture != null) {
-                        return baseETFTexture.getFeatureTexture(vanillaIdentifier);
-                    }
+            if (baseCacheId != null && ENTITY_TEXTURE_MAP.containsKey(baseCacheId)) {
+                ETFTexture baseETFTexture = ENTITY_TEXTURE_MAP.get(baseCacheId);
+                if (baseETFTexture != null) {
+                    return baseETFTexture.getFeatureTexture(vanillaIdentifier);
                 }
+            }
 
         } else {
             return regularReturnIdentifier;
@@ -390,7 +389,7 @@ public abstract class ETFManager {
                 for (String str :
                         propIds) {
                     str = str.replaceAll("\\D", "");
-                    if(!str.isEmpty()) {
+                    if (!str.isEmpty()) {
                         try {
                             numbers.add(Integer.parseInt(str));
                         } catch (NumberFormatException e) {
@@ -422,6 +421,17 @@ public abstract class ETFManager {
                     String[] blocks = {};
                     String[] teams = {};
                     Integer[] sizes = {};
+                    @Nullable Double[] speedMinMax = null;
+                    @Nullable Double[] jumpMinMax = null;
+                    @Nullable String[] maxHealthStrings = null;
+                    @Nullable Integer[] inventoryColumns = null;
+                    @Nullable Boolean isTrapHorse = null;
+                    @Nullable Boolean isAngry = null;
+                    @Nullable PandaEntity.Gene[] hiddenGene = null;
+                    @Nullable Angriness[] wardenAngriness = null;
+                    @Nullable Boolean isAngryWithClient = null;
+                    @Nullable Boolean isPlayerCreated = null;
+                    @Nullable Boolean isScreamingGoat = null;
 
                     if (props.containsKey("skins." + num) || props.containsKey("textures." + num)) {
                         String dataFromProps = props.containsKey("skins." + num) ? props.getProperty("skins." + num).strip() : props.getProperty("textures." + num).strip();
@@ -438,7 +448,7 @@ public abstract class ETFManager {
                                     try {
                                         int tryNumber = Integer.parseInt(data.replaceAll("\\D", ""));
                                         suffixNumbers.add(tryNumber);
-                                    }catch (NumberFormatException e){
+                                    } catch (NumberFormatException e) {
                                         ETFUtils2.logWarn("properties files number error in skins / textures category");
                                     }
                                 }
@@ -457,7 +467,7 @@ public abstract class ETFManager {
                                 try {
                                     int tryNumber = Integer.parseInt(s.replaceAll("\\D", ""));
                                     builder.add(tryNumber);
-                                }catch (NumberFormatException e){
+                                } catch (NumberFormatException e) {
                                     ETFUtils2.logWarn("properties files number error in weights category");
                                 }
                             }
@@ -471,7 +481,7 @@ public abstract class ETFManager {
                         //strip out old format optifine biome names
                         //I could be way more in-depth and make these line up to all variants but this is legacy code
                         //only here for compat, pack makers need to fix these
-                        if(biomeList.length > 0) {
+                        if (biomeList.length > 0) {
                             for (int i = 0; i < biomeList.length; i++) {
                                 String biome = biomeList[i].strip();
                                 switch (biome) {
@@ -527,7 +537,7 @@ public abstract class ETFManager {
                                     try {
                                         int tryNumber = Integer.parseInt(data.replaceAll("\\D", ""));
                                         heightNumbers.add(tryNumber);
-                                    }catch (NumberFormatException e){
+                                    } catch (NumberFormatException e) {
                                         ETFUtils2.logWarn("properties files number error in height category");
                                     }
                                 }
@@ -599,7 +609,7 @@ public abstract class ETFManager {
                                     try {
                                         int tryNumber = Integer.parseInt(data.replaceAll("\\D", ""));
                                         moonNumbers.add(tryNumber);
-                                    }catch (NumberFormatException e){
+                                    } catch (NumberFormatException e) {
                                         ETFUtils2.logWarn("properties files number error in moon phase category");
                                     }
                                 }
@@ -649,7 +659,7 @@ public abstract class ETFManager {
                                     try {
                                         int tryNumber = Integer.parseInt(data.replaceAll("\\D", ""));
                                         sizeNumbers.add(tryNumber);
-                                    }catch (NumberFormatException e){
+                                    } catch (NumberFormatException e) {
                                         ETFUtils2.logWarn("properties files number error in sizes category");
                                     }
 
@@ -659,12 +669,196 @@ public abstract class ETFManager {
                         sizes = sizeNumbers.toArray(new Integer[0]);
                     }
 
+                    if (props.containsKey("speedRange." + num)) {
+                        String dataFromProps = props.getProperty("speedRange." + num).trim();
+                        String[] rangeData = dataFromProps.split("-");
+                        if (rangeData.length == 2) {
+                            try {
+                                double tryMinNumber = Double.parseDouble(rangeData[0].replaceAll("[^\\.\\d]", ""));
+                                double tryMaxNumber = Double.parseDouble(rangeData[1].replaceAll("[^\\.\\d]", ""));
+                                speedMinMax = new Double[]{tryMinNumber, tryMaxNumber};
+                            } catch (NumberFormatException e) {
+                                ETFUtils2.logWarn("properties files number error in speedRange category");
+                            }
+                        } else {
+                            ETFUtils2.logWarn("properties files number error in speedRange category");
+                        }
+
+                    }
+                    if (props.containsKey("jumpRange." + num)) {
+                        String dataFromProps = props.getProperty("jumpRange." + num).trim();
+                        String[] rangeData = dataFromProps.split("-");
+                        if (rangeData.length == 2) {
+                            try {
+                                double tryMinNumber = Double.parseDouble(rangeData[0].replaceAll("[^\\.\\d]", ""));
+                                double tryMaxNumber = Double.parseDouble(rangeData[1].replaceAll("[^\\.\\d]", ""));
+                                jumpMinMax = new Double[]{tryMinNumber, tryMaxNumber};
+                            } catch (NumberFormatException e) {
+                                ETFUtils2.logWarn("properties files number error in jumpRange category");
+                            }
+                        } else {
+                            ETFUtils2.logWarn("properties files number error in jumpRange category");
+                        }
+
+                    }
+                    if (props.containsKey("maxHealth." + num)) {
+                        maxHealthStrings = props.getProperty("maxHealth." + num).trim().split("\s+");
+
+                    }
+
+                    if (props.containsKey("llamaInventory." + num)) {
+                        String dataFromProps = props.getProperty("llamaInventory." + num).trim();
+                        String[] columnData = dataFromProps.split("\s+");
+                        ArrayList<Integer> columnNumbers = new ArrayList<>();
+                        for (String data :
+                                columnData) {
+                            data = data.replaceAll("\\(", "").replaceAll("\\)", "");
+                            //check if range
+                            data = data.trim();
+                            if (!data.replaceAll("\\D", "").isEmpty()) {
+                                if (data.contains("-")) {
+                                    columnNumbers.addAll(Arrays.asList(ETFUtils2.getIntRange(data)));
+                                } else {
+                                    try {
+                                        int tryNumber = Integer.parseInt(data.replaceAll("\\D", ""));
+                                        columnNumbers.add(tryNumber);
+                                    } catch (NumberFormatException e) {
+                                        ETFUtils2.logWarn("properties files number error in llamaInventory category");
+                                    }
+                                }
+                            }
+                        }
+                        inventoryColumns = columnNumbers.toArray(new Integer[0]);
+                    }
+                    if (props.containsKey("trapHorse." + num)) {
+                        String input = props.getProperty("trapHorse." + num).trim();
+                        if (input.equals("true") || input.equals("false")) {
+                            isTrapHorse = input.equals("true");
+                        } else {
+                            ETFUtils2.logWarn("properties files number error in trapHorse category");
+                        }
+                    }
+                    if (props.containsKey("angry." + num)) {
+                        String input = props.getProperty("angry." + num).trim();
+                        if (input.equals("true") || input.equals("false")) {
+                            isAngry = input.equals("true");
+                        } else {
+                            ETFUtils2.logWarn("properties files number error in angry category");
+                        }
+                    }
+                    if (props.containsKey("hiddenGene." + num)) {
+                        String[] input = props.getProperty("hiddenGene." + num).trim().split("\s+");
+                        ArrayList<PandaEntity.Gene> genes = new ArrayList<>();
+                        for (String gene :
+                                input) {
+                            //no enhanced for back compat
+                            switch (gene.trim()) {
+                                case "normal":
+                                    genes.add(PandaEntity.Gene.NORMAL);
+                                    break;
+                                case "lazy":
+                                    genes.add(PandaEntity.Gene.LAZY);
+                                    break;
+                                case "worried":
+                                    genes.add(PandaEntity.Gene.WORRIED);
+                                    break;
+                                case "playful":
+                                    genes.add(PandaEntity.Gene.PLAYFUL);
+                                    break;
+                                case "brown":
+                                    genes.add(PandaEntity.Gene.BROWN);
+                                    break;
+                                case "weak":
+                                    genes.add(PandaEntity.Gene.WEAK);
+                                    break;
+                                case "aggressive":
+                                    genes.add(PandaEntity.Gene.AGGRESSIVE);
+                                    break;
+                                default:
+                                    ETFUtils2.logWarn("properties files number error in hiddenGene category, caused by input: " + gene);
+                            }
+                        }
+                        hiddenGene = genes.toArray(new PandaEntity.Gene[0]);
+                    }
+                    if (props.containsKey("wardenAngerLevel." + num)) {
+                        String[] input = props.getProperty("wardenAngerLevel." + num).trim().split("\s+");
+                        ArrayList<Angriness> angery = new ArrayList<>();
+                        for (String anger :
+                                input) {
+                            //no enhanced for back compat
+                            switch (anger.trim()) {
+                                case "calm":
+                                    angery.add(Angriness.CALM);
+                                    break;
+                                case "agitated":
+                                    angery.add(Angriness.AGITATED);
+                                    break;
+                                case "angry":
+                                    angery.add(Angriness.ANGRY);
+                                    break;
+                                default:
+                                    ETFUtils2.logWarn("properties files number error in wardenAngerLevel category, caused by input: " + anger);
+                            }
+                        }
+                        wardenAngriness = angery.toArray(new Angriness[0]);
+                    }
+                    if (props.containsKey("angryAtClient." + num)) {
+                        String input = props.getProperty("angryAtClient." + num).trim();
+                        if (input.equals("true") || input.equals("false")) {
+                            isAngryWithClient = input.equals("true");
+                        } else {
+                            ETFUtils2.logWarn("properties files number error in angryAtClient category");
+                        }
+                    }
+                    if (props.containsKey("isPlayerCreated." + num)) {
+                        String input = props.getProperty("isPlayerCreated." + num).trim();
+                        if (input.equals("true") || input.equals("false")) {
+                            isPlayerCreated = input.equals("true");
+                        } else {
+                            ETFUtils2.logWarn("properties files number error in isPlayerCreated category");
+                        }
+                    }
+                    if (props.containsKey("isScreamingGoat." + num)) {
+                        String input = props.getProperty("isScreamingGoat." + num).trim();
+                        if (input.equals("true") || input.equals("false")) {
+                            isScreamingGoat = input.equals("true");
+                        } else {
+                            ETFUtils2.logWarn("properties files number error in isScreamingGoat category");
+                        }
+                    }
                     //array faster to use
                     //list easier to build
                     String[] namesArray = names.toArray(new String[0]);
 
+
                     if (suffixes.length != 0) {
-                        allCasesForTexture.add(new ETFTexturePropertyCase(suffixes, weights, biomes, heights, namesArray, professions, collarColours, baby, weather, health, moon, daytime, blocks, teams, /*num,*/ sizes));
+                        allCasesForTexture.add(new ETFTexturePropertyCase(
+                                suffixes,
+                                weights,
+                                biomes,
+                                heights,
+                                namesArray,
+                                professions,
+                                collarColours,
+                                baby,
+                                weather,
+                                health,
+                                moon,
+                                daytime,
+                                blocks,
+                                teams,
+                                /*num,*/ sizes,
+                                speedMinMax,
+                                jumpMinMax,
+                                maxHealthStrings,
+                                inventoryColumns,
+                                isTrapHorse,
+                                isAngry,
+                                hiddenGene,
+                                wardenAngriness,
+                                isAngryWithClient,
+                                isPlayerCreated,
+                                isScreamingGoat));
                     }
                 }
                 if (!allCasesForTexture.isEmpty()) {
@@ -778,7 +972,6 @@ public abstract class ETFManager {
     }
 
 
-
     @NotNull
     private static ETFTexture getOrCreateETFTexture(Identifier vanillaIdentifier, Identifier variantIdentifier) {
         if (ETF_TEXTURE_CACHE.containsKey(variantIdentifier)) {
@@ -849,6 +1042,7 @@ public abstract class ETFManager {
         BLOCK_ENTITY,
         ENTITY_FEATURE
     }
+
     public enum EmissiveRenderModes {
         DULL,
         BRIGHT;

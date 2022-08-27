@@ -3,13 +3,14 @@ package traben.entity_texture_features.texture_handlers;
 
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectImmutableList;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.mob.PhantomEntity;
-import net.minecraft.entity.mob.ShulkerEntity;
-import net.minecraft.entity.mob.SlimeEntity;
+import net.minecraft.entity.boss.WitherEntity;
+import net.minecraft.entity.mob.*;
 import net.minecraft.entity.passive.*;
 import net.minecraft.util.DyeColor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.utils.ETFCacheKey;
 import traben.entity_texture_features.utils.ETFUtils2;
@@ -39,6 +40,19 @@ public class ETFTexturePropertyCase {
     private final String[] TEAM_VALUES;
     private final Integer[] SIZE_VALUES;
 
+    private final Double[] SPEED_MIN_MAX;
+    private final Double[] JUMP_MIN_MAX;
+    private final String[] MAX_HEALTH_STRINGS;
+    private final Integer[] INVENTORY_COLUMNS;
+    private final Boolean IS_TRAP_HORSE;
+    private final Boolean IS_ANGRY;
+    private final PandaEntity.Gene[] HIDDEN_GENE;
+    private final Angriness[] WARDEN_ANGRINESS;
+    private final Boolean IS_ANGRY_WITH_CLIENT;
+    private final Boolean IS_PLAYER_CREATED;
+    private final Boolean IS_SCREAMING_GOAT;
+
+
     //whether case should be ignored by updates
 
 
@@ -56,9 +70,35 @@ public class ETFTexturePropertyCase {
                                   String[] daytimeX,
                                   String[] blocksX,
                                   String[] teamsX,
-                                  //int propNumber,
-                                  Integer[] sizeX
+                                  Integer[] sizeX,
+                                  @Nullable Double[] speedMinMax,
+                                  @Nullable Double[] jumpMinMax,
+                                  @Nullable String[] maxHealthStrings,
+                                  @Nullable Integer[] inventoryColumns,
+                                  @Nullable Boolean isTrapHorse,
+                                  @Nullable Boolean isAngry,
+                                  @Nullable PandaEntity.Gene[] hiddenGene,
+                                  @Nullable Angriness[] wardenAngriness,
+                                  @Nullable Boolean isAngryWithClient,
+                                  @Nullable Boolean isPlayerCreated,
+                                  @Nullable Boolean isScreamingGoat
+
+
     ) {
+
+
+        SPEED_MIN_MAX = speedMinMax;
+        JUMP_MIN_MAX = jumpMinMax;
+        MAX_HEALTH_STRINGS = maxHealthStrings;
+        INVENTORY_COLUMNS = inventoryColumns;
+        IS_TRAP_HORSE = isTrapHorse;
+        IS_ANGRY = isAngry;
+        HIDDEN_GENE = hiddenGene;
+        WARDEN_ANGRINESS = wardenAngriness;
+        IS_ANGRY_WITH_CLIENT = isAngryWithClient;
+        IS_PLAYER_CREATED = isPlayerCreated;
+        IS_SCREAMING_GOAT = isScreamingGoat;
+
 
         BIOME_VALUES = biomesX != null ? biomesX : new String[0];
         HEIGHT_Y_VALUES = heightsX != null ? heightsX : new Integer[0];
@@ -135,6 +175,17 @@ public class ETFTexturePropertyCase {
                 && BLOCK_VALUES.length == 0
                 && TEAM_VALUES.length == 0
                 && SIZE_VALUES.length == 0
+                && SPEED_MIN_MAX == null
+                && JUMP_MIN_MAX == null
+                && MAX_HEALTH_STRINGS == null
+                && INVENTORY_COLUMNS == null
+                && IS_TRAP_HORSE == null
+                && IS_ANGRY == null
+                && HIDDEN_GENE == null
+                && WARDEN_ANGRINESS == null
+                && IS_ANGRY_WITH_CLIENT == null
+                && IS_PLAYER_CREATED == null
+                && IS_SCREAMING_GOAT == null
         ) {
             return true;
         }
@@ -166,10 +217,10 @@ public class ETFTexturePropertyCase {
             //String entityBiome = entity.world.getBiome(entity.getBlockPos()).toString();
             //example  "Optional[minecraft:worldgen/biome / minecraft:river]"
             String entityBiome;
-            if (isUpdate && ETFConfigData.restrictBiome && ETFConfigData.restrictUpdateProperties && spawnConditions !=null && spawnConditions.size() >1) {
+            if (isUpdate && ETFConfigData.restrictBiome && ETFConfigData.restrictUpdateProperties && spawnConditions != null && spawnConditions.size() > 1) {
                 entityBiome = spawnConditions.get(0).trim();
             } else {
-                entityBiome = ETFVersionDifferenceHandler.getBiomeString(entity.world,entity.getBlockPos());
+                entityBiome = ETFVersionDifferenceHandler.getBiomeString(entity.world, entity.getBlockPos());
             }
 //            } else if (MinecraftVersion.CURRENT.getName().equals("1.18") || MinecraftVersion.CURRENT.getName().equals("1.18.1")) {
 //                entityBiome = ETF_1_18_1_versionPatch.getBiome(entity.world, entity.getBlockPos());
@@ -256,7 +307,7 @@ public class ETFTexturePropertyCase {
         if (doesEntityMeetThisCaseTest && HEIGHT_Y_VALUES.length > 0) {
             if (!ETFConfigData.restrictHeight) wasEntityTestedByAnUpdatableProperty = true;
             int entityHeight;
-            if (isUpdate && ETFConfigData.restrictHeight && ETFConfigData.restrictUpdateProperties && spawnConditions !=null && spawnConditions.size() >2) {
+            if (isUpdate && ETFConfigData.restrictHeight && ETFConfigData.restrictUpdateProperties && spawnConditions != null && spawnConditions.size() > 2) {
                 entityHeight = Integer.parseInt(spawnConditions.get(1).trim());
             } else {
                 entityHeight = entity.getBlockY();
@@ -326,29 +377,29 @@ public class ETFTexturePropertyCase {
             wasEntityTestedByAnUpdatableProperty = true;
             String entityColor;
             if (entity instanceof WolfEntity wolf) {
-                entityColor = wolf.getCollarColor().asString().toLowerCase();
+                entityColor = wolf.getCollarColor().getName().toLowerCase();
             } else if (entity instanceof SheepEntity sheep) {
-                entityColor = sheep.getColor().asString().toLowerCase();
+                entityColor = sheep.getColor().getName().toLowerCase();
             } else if (entity instanceof LlamaEntity llama) {
                 DyeColor str = llama.getCarpetColor();
                 if (str != null) {
-                    entityColor = str.asString().toLowerCase();
+                    entityColor = str.getName().toLowerCase();
                 } else {
                     entityColor = "NOT_A_COLOR";
                 }
             } else if (entity instanceof CatEntity cat) {
-                entityColor = cat.getCollarColor().asString().toLowerCase();
+                entityColor = cat.getCollarColor().getName().toLowerCase();
             } else if (entity instanceof ShulkerEntity shulker) {
                 DyeColor str = shulker.getColor();
                 if (str != null) {
-                    entityColor = str.asString().toLowerCase();
+                    entityColor = str.getName().toLowerCase();
                 } else {
                     entityColor = "NOT_A_COLOR";
                 }
             } else if (entity instanceof TropicalFishEntity fishy) {
                 DyeColor str = TropicalFishEntity.getBaseDyeColor(fishy.getVariant());
                 if (str != null) {
-                    entityColor = str.asString().toLowerCase();
+                    entityColor = str.getName().toLowerCase();
                 } else {
                     entityColor = "NOT_A_COLOR";
                 }
@@ -356,11 +407,12 @@ public class ETFTexturePropertyCase {
                 entityColor = "NOT_A_COLOR";
             }
 
+
             boolean check = false;
             for (String i :
                     COLOR_VALUES) {
                 i = i.toLowerCase();
-                if (i.contains(entityColor) || entityColor.contains(i)) {
+                if (i.equals(entityColor)) {
                     check = true;
                     break;
                 }
@@ -376,7 +428,7 @@ public class ETFTexturePropertyCase {
             if (!ETFConfigData.restrictWeather) wasEntityTestedByAnUpdatableProperty = true;
             boolean raining;
             boolean thundering;
-            if (isUpdate && ETFConfigData.restrictWeather && ETFConfigData.restrictUpdateProperties && spawnConditions !=null && spawnConditions.size() >=4) {
+            if (isUpdate && ETFConfigData.restrictWeather && ETFConfigData.restrictUpdateProperties && spawnConditions != null && spawnConditions.size() >= 4) {
                 String[] data = spawnConditions.get(3).split("-");
                 raining = data[0].trim().equals("1");
                 thundering = data[1].trim().equals("1");
@@ -422,7 +474,7 @@ public class ETFTexturePropertyCase {
         if (doesEntityMeetThisCaseTest && MOON_PHASE_VALUES.length > 0) {
             if (!ETFConfigData.restrictMoonPhase) wasEntityTestedByAnUpdatableProperty = true;
             int moonPhase;
-            if (isUpdate && ETFConfigData.restrictMoonPhase && ETFConfigData.restrictUpdateProperties && spawnConditions !=null && spawnConditions.size() > 5) {
+            if (isUpdate && ETFConfigData.restrictMoonPhase && ETFConfigData.restrictUpdateProperties && spawnConditions != null && spawnConditions.size() > 5) {
                 moonPhase = Integer.parseInt(spawnConditions.get(5).trim());
             } else {
                 moonPhase = entity.world.getMoonPhase();
@@ -441,7 +493,7 @@ public class ETFTexturePropertyCase {
             if (!ETFConfigData.restrictDayTime) wasEntityTestedByAnUpdatableProperty = true;
             long time;
             boolean check = false;
-            if (isUpdate && ETFConfigData.restrictDayTime && ETFConfigData.restrictUpdateProperties && spawnConditions !=null && spawnConditions.size() >4) {
+            if (isUpdate && ETFConfigData.restrictDayTime && ETFConfigData.restrictUpdateProperties && spawnConditions != null && spawnConditions.size() > 4) {
                 time = Long.parseLong(spawnConditions.get(4).trim());
             } else {
                 time = entity.world.getTimeOfDay();
@@ -470,7 +522,7 @@ public class ETFTexturePropertyCase {
             //check block
 
             String[] entityOnBlocks;
-            if (isUpdate && ETFConfigData.restrictBlock && ETFConfigData.restrictUpdateProperties && spawnConditions !=null && spawnConditions.size() > 6) {
+            if (isUpdate && ETFConfigData.restrictBlock && ETFConfigData.restrictUpdateProperties && spawnConditions != null && spawnConditions.size() > 6) {
                 entityOnBlocks = new String[]{spawnConditions.get(2).trim(), spawnConditions.get(6).trim()};
             } else {
                 String entityOnBlock1 = entity.world.getBlockState(entity.getBlockPos().down()).toString()
@@ -578,6 +630,98 @@ public class ETFTexturePropertyCase {
         }
 
 
+        if (doesEntityMeetThisCaseTest && SPEED_MIN_MAX != null) {
+            double speed = entity.getMovementSpeed();
+            doesEntityMeetThisCaseTest = (speed >= SPEED_MIN_MAX[0] && speed <= SPEED_MIN_MAX[1]);
+        }
+        if (doesEntityMeetThisCaseTest && JUMP_MIN_MAX != null && entity instanceof AbstractHorseEntity) {
+            double jumpHeight = ((AbstractHorseEntity) entity).getJumpStrength();
+            doesEntityMeetThisCaseTest = (jumpHeight >= JUMP_MIN_MAX[0] && jumpHeight <= JUMP_MIN_MAX[1]);
+        }
+        if (doesEntityMeetThisCaseTest && MAX_HEALTH_STRINGS != null) {
+            boolean check = false;
+            //always check percentage
+            float checkValue = entity.getMaxHealth();
+            for (String hlth :
+                    MAX_HEALTH_STRINGS) {
+                if (hlth.contains("-")) {
+                    String[] str = hlth.split("-");
+                    if (checkValue >= Integer.parseInt(str[0].replaceAll("\\D", ""))
+                            && checkValue <= Integer.parseInt(str[1].replaceAll("\\D", ""))) {
+                        check = true;
+                        break;
+                    }
+
+                } else {
+                    if (checkValue == Integer.parseInt(hlth.replaceAll("\\D", ""))) {
+                        check = true;
+                        break;
+                    }
+                }
+            }
+            doesEntityMeetThisCaseTest = check;
+
+        }
+        if (doesEntityMeetThisCaseTest && INVENTORY_COLUMNS != null && entity instanceof LlamaEntity) {
+            boolean found = false;
+            for (int columns :
+                    INVENTORY_COLUMNS) {
+                if (((LlamaEntity) entity).getInventoryColumns() == columns) {
+                    found = true;
+                    break;
+                }
+            }
+            doesEntityMeetThisCaseTest = found;
+        }
+        if (doesEntityMeetThisCaseTest && IS_TRAP_HORSE != null && entity instanceof SkeletonHorseEntity) {
+            wasEntityTestedByAnUpdatableProperty = true;
+            doesEntityMeetThisCaseTest = ((SkeletonHorseEntity) entity).isTrapped() == IS_TRAP_HORSE;
+        }
+        if (doesEntityMeetThisCaseTest && IS_ANGRY != null && entity instanceof Angerable) {
+            wasEntityTestedByAnUpdatableProperty = true;
+            doesEntityMeetThisCaseTest = (((Angerable) entity).getAngryAt() != null) == IS_ANGRY;
+        }
+        if (doesEntityMeetThisCaseTest && IS_ANGRY_WITH_CLIENT != null && MinecraftClient.getInstance().player != null) {
+            wasEntityTestedByAnUpdatableProperty = true;
+            if (entity instanceof Angerable) {
+                doesEntityMeetThisCaseTest = (MinecraftClient.getInstance().player.getUuid().equals(((Angerable) entity).getAngryAt())) == IS_ANGRY_WITH_CLIENT;
+            } else if (entity instanceof WardenEntity) {
+                doesEntityMeetThisCaseTest = ((WardenEntity) entity).isAngryAt(MinecraftClient.getInstance().player) == IS_ANGRY_WITH_CLIENT;
+            } else if (entity instanceof WitherEntity) {
+                doesEntityMeetThisCaseTest = ((WitherEntity) entity).isAngryAt(MinecraftClient.getInstance().player) == IS_ANGRY_WITH_CLIENT;
+            }
+        }
+        if (doesEntityMeetThisCaseTest && HIDDEN_GENE != null && entity instanceof PandaEntity) {
+            boolean found = false;
+            for (PandaEntity.Gene gene :
+                    HIDDEN_GENE) {
+                if (((PandaEntity) entity).getHiddenGene() == gene) {
+                    found = true;
+                    break;
+                }
+            }
+            doesEntityMeetThisCaseTest = found;
+        }
+        if (doesEntityMeetThisCaseTest && WARDEN_ANGRINESS != null && entity instanceof WardenEntity) {
+            wasEntityTestedByAnUpdatableProperty = true;
+            boolean found = false;
+            for (Angriness angry :
+                    WARDEN_ANGRINESS) {
+                if (((WardenEntity) entity).getAngriness() == angry) {
+                    found = true;
+                    break;
+                }
+            }
+            doesEntityMeetThisCaseTest = found;
+        }
+        if (doesEntityMeetThisCaseTest && IS_PLAYER_CREATED != null && entity instanceof IronGolemEntity) {
+            doesEntityMeetThisCaseTest = ((IronGolemEntity) entity).isPlayerCreated() == IS_PLAYER_CREATED;
+        }
+        if (doesEntityMeetThisCaseTest && IS_SCREAMING_GOAT != null && entity instanceof GoatEntity) {
+            doesEntityMeetThisCaseTest = ((GoatEntity) entity).isScreaming() == IS_SCREAMING_GOAT;
+        }
+
+
         if (wasEntityTestedByAnUpdatableProperty) {
             UUID_CaseHasUpdateablesCustom.put(entity.getUuid(), true);
         }
@@ -609,7 +753,7 @@ public class ETFTexturePropertyCase {
         // 5 moon-phase
         // 6 block2
         //checks to speed up runtime as values potentially won't be used but can't be null
-        @NotNull String biome = !ETFConfigData.restrictBiome ? "" : ETFVersionDifferenceHandler.getBiomeString(entity.world,entity.getBlockPos());
+        @NotNull String biome = !ETFConfigData.restrictBiome ? "" : ETFVersionDifferenceHandler.getBiomeString(entity.world, entity.getBlockPos());
         @NotNull String height = !ETFConfigData.restrictHeight ? "" : "" + entity.getBlockY();
         @NotNull String block = !ETFConfigData.restrictBlock ? "" : entity.world.getBlockState(entity.getBlockPos().down()).toString()
                 .replaceFirst("minecraft:", "")

@@ -1,8 +1,6 @@
 package traben.entity_texture_features.mixin.entity.featureRenderers;
 
 import com.google.common.collect.ImmutableList;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import it.unimi.dsi.fastutil.objects.ObjectSet;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.*;
@@ -118,7 +116,7 @@ public abstract class MixinElytraFeatureRenderer<T extends LivingEntity, M exten
 
         if (ETFConfigData.enableElytra && ETFConfigData.enableEmissiveTextures && thisETFTexture != null) {
             Identifier emissive = thisETFTexture.getEmissiveIdentifierOfCurrentState();
-            if(emissive != null) {
+            if (emissive != null) {
                 VertexConsumer textureVert = vertexConsumerProvider.getBuffer(RenderLayer.getArmorCutoutNoCull(emissive));
                 if (etf$vanillaVisibility != null) {
 

@@ -20,6 +20,9 @@ import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 
 @Mixin(CapeFeatureRenderer.class)
 public abstract class MixinCapeFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
+    private static final Identifier dev_cape = new Identifier(MOD_ID, "textures/capes/dev.png");
+    private static final Identifier dev_cape_e = new Identifier(MOD_ID, "textures/capes/dev_e.png");
+    private static final Identifier wife_cape = new Identifier(MOD_ID, "textures/capes/wife.png");
     public MixinCapeFeatureRenderer(FeatureRendererContext<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> context) {
         super(context);
     }
@@ -34,7 +37,7 @@ public abstract class MixinCapeFeatureRenderer extends FeatureRenderer<AbstractC
         boolean cancelVanillaRender = false;
         if (playerTexture != null) {
             cancelVanillaRender = playerTexture.hasCustomCape();
-            if(cancelVanillaRender) {
+            if (cancelVanillaRender) {
                 playerTexture.renderCapeAndFeatures(matrixStack, vertexConsumerProvider, i, this.getContextModel());
             }
         }
@@ -51,15 +54,11 @@ public abstract class MixinCapeFeatureRenderer extends FeatureRenderer<AbstractC
                 (this.getContextModel()).renderCape(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV);
             }
         }
-        if(cancelVanillaRender) {
+        if (cancelVanillaRender) {
             matrixStack.pop();
             ci.cancel();
         }
     }
-
-    private static final Identifier dev_cape =new Identifier(MOD_ID, "textures/capes/dev.png");
-    private static final Identifier dev_cape_e =new Identifier(MOD_ID, "textures/capes/dev_e.png");
-    private static final Identifier wife_cape =new Identifier(MOD_ID, "textures/capes/wife.png");
 
 
 }
