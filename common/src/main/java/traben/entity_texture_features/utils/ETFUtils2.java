@@ -246,13 +246,15 @@ public abstract class ETFUtils2 {
         }
     }
 
-    public static void registerNativeImageToIdentifier(NativeImage img, Identifier identifier) {
+    public static boolean registerNativeImageToIdentifier(NativeImage img, Identifier identifier) {
         if (img != null && identifier != null) {
             NativeImageBackedTexture bob = new NativeImageBackedTexture(img);
             MinecraftClient.getInstance().getTextureManager().registerTexture(identifier, bob);
             //MinecraftClient.getInstance().getResourceManager().
+            return true;
         } else {
             logError("registering native image failed: " + img + ", " + identifier);
+            return false;
         }
     }
 

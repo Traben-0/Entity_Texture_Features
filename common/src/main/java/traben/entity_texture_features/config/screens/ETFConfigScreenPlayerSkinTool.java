@@ -4,12 +4,14 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.texture_handlers.ETFPlayerTexture;
@@ -24,27 +26,22 @@ import static traben.entity_texture_features.texture_handlers.ETFManager.PLAYER_
 
 //inspired by puzzles custom gui code
 public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
-    public final boolean originalEnableBlinking;
-    public final int originalBlinkFrequency;
-    public final int originalBlinkLength;
-    ETFPlayerTexture thisETFPlayerTexture = null;
-    NativeImage currentEditorSkin = null;
+    public  Boolean originalEnableBlinking;
+    public  Integer originalBlinkLength;
+    public ETFPlayerTexture thisETFPlayerTexture = null;
+    public NativeImage currentEditorSkin = null;
     ButtonWidget printSkinFileButton = null;
     ButtonWidget villagerNoseButton = null;
     ButtonWidget coatButton = null;
     ButtonWidget coatLengthButton = null;
     ButtonWidget blinkButton = null;
     ButtonWidget blinkHeightButton = null;
+    ButtonWidget emissiveButton = null;
+    ButtonWidget emissiveSelectButton = null;
+    ButtonWidget enchantButton = null;
+    ButtonWidget enchantSelectButton = null;
     protected ETFConfigScreenPlayerSkinTool(Screen parent) {
         super(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_features.title"), parent);
-
-        //make blinking faster in skin tool
-        originalEnableBlinking = ETFConfigData.enableBlinking;
-        originalBlinkFrequency = ETFConfigData.blinkFrequency;
-        originalBlinkLength = ETFConfigData.blinkLength;
-        ETFConfigData.blinkLength = 10;
-        ETFConfigData.enableBlinking = true;
-        ETFConfigData.blinkFrequency = 30;
 
     }
 
@@ -74,21 +71,34 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
 
     private void onExit() {
         ETFConfigData.enableBlinking = originalEnableBlinking;
-        ETFConfigData.blinkFrequency = originalBlinkFrequency;
         ETFConfigData.blinkLength = originalBlinkLength;
         if (MinecraftClient.getInstance().player != null) {
             PLAYER_TEXTURE_MAP.removeEntryOnly(MinecraftClient.getInstance().player.getUuid());
             ENTITY_BLINK_TIME.put(MinecraftClient.getInstance().player.getUuid(), 0L);
         }
-
+        thisETFPlayerTexture = null;
+        currentEditorSkin = null;
+    }
+    @Override
+    public void close() {
+        onExit();
+        super.close();
     }
 
     @Override
     protected void init() {
         super.init();
 
+        //make blinking faster in skin tool
+        if(originalEnableBlinking ==null && originalBlinkLength == null) {
+            originalEnableBlinking = ETFConfigData.enableBlinking;
+            originalBlinkLength = ETFConfigData.blinkLength;
+            ETFConfigData.blinkLength = 10;
+            ETFConfigData.enableBlinking = true;
+        }
 
-        if (MinecraftClient.getInstance().player != null) {
+
+        if (MinecraftClient.getInstance().player != null && thisETFPlayerTexture == null) {
             thisETFPlayerTexture = PLAYER_TEXTURE_MAP.get(MinecraftClient.getInstance().player.getUuid());
             if (thisETFPlayerTexture == null) {
                 ETFPlayerTexture etfPlayerTexture = new ETFPlayerTexture();
@@ -96,8 +106,10 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
                 thisETFPlayerTexture = etfPlayerTexture;
             }
         }
-        currentEditorSkin = ETFUtils2.emptyNativeImage(64, 64);
-        currentEditorSkin.copyFrom(ETFPlayerTexture.clientPlayerOriginalSkinImageForTool);
+        if(currentEditorSkin == null) {
+            currentEditorSkin = ETFUtils2.emptyNativeImage(64, 64);
+            currentEditorSkin.copyFrom(ETFPlayerTexture.clientPlayerOriginalSkinImageForTool);
+        }
 
         this.addDrawableChild(new ButtonWidget(this.width / 2 - 210, (int) (this.height * 0.9), 200, 20, ScreenTexts.CANCEL, (button) -> {
             onExit();
@@ -233,6 +245,57 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
                     }, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.blink_height.tooltip")
             );
 
+            emissiveButton = getETFButton((int) (this.width * 0.25), (int) (this.height * 0.5), (int) (this.width * 0.42), 20,
+                    Text.of( ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.emissive_enable.button").getString()
+                            + (thisETFPlayerTexture.hasEmissives ? ScreenTexts.ON : ScreenTexts.OFF).getString()),
+                    (button) -> {
+
+
+                        if (thisETFPlayerTexture.hasEmissives) {
+                            currentEditorSkin.setColor(1, 17, 0);
+                        } else  {
+                            currentEditorSkin.setColor(1, 17, getPixelColour(1));
+                        }
+
+                        thisETFPlayerTexture.changeSkinToThisForTool(currentEditorSkin);
+                        button.setMessage(Text.of( ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.emissive_enable.button").getString()
+                                + (thisETFPlayerTexture.hasEmissives ? ScreenTexts.ON : ScreenTexts.OFF).getString()));
+                        updateButtons();
+                    }, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.emissive_enable.tooltip")
+            );
+
+            emissiveSelectButton = getETFButton((int) (this.width * 0.695), (int) (this.height * 0.5), (int) (this.width * 0.275), 20,
+                    ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.emissive_select.button"),
+                    (button) -> {
+                        Objects.requireNonNull(client).setScreen(new ETFConfigScreenPlayerSkinToolPixelSelect(this, ETFConfigScreenPlayerSkinToolPixelSelect.SelectionMode.EMISSIVE));
+                    }
+            );
+
+            enchantButton = getETFButton((int) (this.width * 0.25), (int) (this.height * 0.6), (int) (this.width * 0.42), 20,
+                    Text.of( ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.enchant_enable.button").getString()
+                            + (thisETFPlayerTexture.hasEnchant ? ScreenTexts.ON : ScreenTexts.OFF).getString()),
+                    (button) -> {
+
+
+                        if (thisETFPlayerTexture.hasEnchant) {
+                            currentEditorSkin.setColor(1, 18, 0);
+                        } else  {
+                            currentEditorSkin.setColor(1, 18, getPixelColour(2));
+                        }
+
+                        thisETFPlayerTexture.changeSkinToThisForTool(currentEditorSkin);
+                        button.setMessage(Text.of( ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.enchant_enable.button").getString()
+                                + (thisETFPlayerTexture.hasEnchant ? ScreenTexts.ON : ScreenTexts.OFF).getString()));
+                        updateButtons();
+                    }, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.enchant_enable.tooltip")
+            );
+
+            enchantSelectButton = getETFButton((int) (this.width * 0.695), (int) (this.height * 0.6), (int) (this.width * 0.275), 20,
+                    ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.enchant_select.button"),
+                    (button) -> {
+                        Objects.requireNonNull(client).setScreen(new ETFConfigScreenPlayerSkinToolPixelSelect(this, ETFConfigScreenPlayerSkinToolPixelSelect.SelectionMode.ENCHANTED));
+                    }
+            );
 
             updateButtons();
             this.addDrawableChild(villagerNoseButton);
@@ -240,6 +303,10 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
             this.addDrawableChild(coatLengthButton);
             this.addDrawableChild(blinkButton);
             this.addDrawableChild(blinkHeightButton);
+            this.addDrawableChild(emissiveButton);
+            this.addDrawableChild(emissiveSelectButton);
+            this.addDrawableChild(enchantButton);
+            this.addDrawableChild(enchantSelectButton);
 
 
         }
@@ -274,6 +341,24 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
                     && BlinkType.get(thisETFPlayerTexture.blinkType) != BlinkType.WHOLE_FACE;
             blinkHeightButton.setMessage(Text.of(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.blink_height.title").getString()
                     + thisETFPlayerTexture.blinkHeight));
+        }
+        if (emissiveButton != null) {
+            emissiveButton.active = activeFeatures;
+            emissiveButton.setMessage(Text.of( ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.emissive_enable.button").getString()
+                    + (thisETFPlayerTexture.hasEmissives ? ScreenTexts.ON : ScreenTexts.OFF).getString()));
+        }
+        if (emissiveSelectButton != null) {
+            emissiveSelectButton.active = activeFeatures
+                    && thisETFPlayerTexture.hasEmissives;
+        }
+        if (enchantButton != null) {
+            enchantButton.active = activeFeatures;
+            enchantButton.setMessage(Text.of( ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.enchant_enable.button").getString()
+                    + (thisETFPlayerTexture.hasEnchant ? ScreenTexts.ON : ScreenTexts.OFF).getString()));
+        }
+        if (enchantSelectButton != null) {
+            enchantSelectButton.active = activeFeatures
+                    && thisETFPlayerTexture.hasEnchant;
         }
     }
 
@@ -338,6 +423,7 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
             try {
                 currentEditorSkin.writeTo(outputDirectory);
                 ETFUtils2.logMessage(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.print_skin.result.success").getString(), true);
+
                 return true;
             } catch (Exception e) {
                 ETFUtils2.logMessage("Skin feature layout could not be applied to a copy of your skin and has not been saved. Error written to log.", true);

@@ -56,8 +56,8 @@ public class ETFPlayerTexture {
     public int blinkType = 0;
     public int blinkHeight = 1;
     public boolean THIS_SKIN_IS_IN_EDITOR = false;
-    boolean hasEmissives = false;
-    boolean hasEnchant = false;
+    public boolean hasEmissives = false;
+    public boolean hasEnchant = false;
     PlayerEntity player;
     private ETFCustomPlayerFeatureModel<PlayerEntity> customPlayerModel;
     private boolean isTextureReady = false;

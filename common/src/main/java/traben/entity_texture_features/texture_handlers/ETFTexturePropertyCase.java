@@ -51,6 +51,7 @@ public class ETFTexturePropertyCase {
     private final Boolean IS_ANGRY_WITH_CLIENT;
     private final Boolean IS_PLAYER_CREATED;
     private final Boolean IS_SCREAMING_GOAT;
+    private final String[] DISTANCE_TO_PLAYER;
 
 
     //whether case should be ignored by updates
@@ -81,11 +82,13 @@ public class ETFTexturePropertyCase {
                                   @Nullable Angriness[] wardenAngriness,
                                   @Nullable Boolean isAngryWithClient,
                                   @Nullable Boolean isPlayerCreated,
-                                  @Nullable Boolean isScreamingGoat
+                                  @Nullable Boolean isScreamingGoat,
+                                  @Nullable String[] distanceToPlayer
 
 
     ) {
 
+        DISTANCE_TO_PLAYER = distanceToPlayer;
 
         SPEED_MIN_MAX = speedMinMax;
         JUMP_MIN_MAX = jumpMinMax;
@@ -719,6 +722,30 @@ public class ETFTexturePropertyCase {
         }
         if (doesEntityMeetThisCaseTest && IS_SCREAMING_GOAT != null && entity instanceof GoatEntity) {
             doesEntityMeetThisCaseTest = ((GoatEntity) entity).isScreaming() == IS_SCREAMING_GOAT;
+        }
+        if (doesEntityMeetThisCaseTest && DISTANCE_TO_PLAYER != null && MinecraftClient.getInstance().player != null) {
+            boolean check = false;
+            //always check percentage
+            float checkValue = entity.distanceTo(MinecraftClient.getInstance().player);
+            for (String distances :
+                    DISTANCE_TO_PLAYER) {
+                if (distances.contains("-")) {
+                    String[] str = distances.split("-");
+                    if (checkValue >= Integer.parseInt(str[0].replaceAll("\\D", ""))
+                            && checkValue <= Integer.parseInt(str[1].replaceAll("\\D", ""))) {
+                        check = true;
+                        break;
+                    }
+
+                } else {
+                    if (((int)checkValue) == Integer.parseInt(distances.replaceAll("\\D", ""))) {
+                        check = true;
+                        break;
+                    }
+                }
+            }
+            doesEntityMeetThisCaseTest = check;
+
         }
 
 

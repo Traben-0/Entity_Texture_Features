@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_17",
   "client": [
     "MixinIdentifier",
+    "MixinPackScreen",
     "accessor.ElytraEntityModelAccessor",
     "accessor.SpriteAccessor",
     "cacheReloaders.MixinMinecraftClient",

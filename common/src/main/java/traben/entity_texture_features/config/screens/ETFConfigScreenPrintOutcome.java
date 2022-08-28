@@ -5,12 +5,16 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
+import net.minecraft.util.Util;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static traben.entity_texture_features.ETFClientCommon.CONFIG_DIR;
 
 //inspired by puzzles custom gui code
 public class ETFConfigScreenPrintOutcome extends ETFConfigScreen {
@@ -24,11 +28,25 @@ public class ETFConfigScreenPrintOutcome extends ETFConfigScreen {
     @Override
     protected void init() {
         super.init();
+
+
         this.addDrawableChild(new ButtonWidget((int) (this.width * 0.55), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,
-                ScreenTexts.PROCEED,
+                ScreenTexts.DONE,
                 (button) -> {
                     Objects.requireNonNull(client).setScreen(parent);
                 }));
+        if(didSucceed) {
+            this.addDrawableChild(new ButtonWidget((int) (this.width * 0.15), (int) (this.height * 0.7), (int) (this.width * 0.7), 20,
+                    ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.print_skin.open"),
+                    (button) -> {
+                        try {
+                            @SuppressWarnings("ConstantConditions")
+                            Path outputDirectory = Path.of(CONFIG_DIR.getParent());
+                            Util.getOperatingSystem().open(outputDirectory.toFile());
+                        } catch (Exception ignored) {
+                        }
+                    }));
+        }
     }
 
 

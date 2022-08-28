@@ -432,6 +432,7 @@ public abstract class ETFManager {
                     @Nullable Boolean isAngryWithClient = null;
                     @Nullable Boolean isPlayerCreated = null;
                     @Nullable Boolean isScreamingGoat = null;
+                    @Nullable String[] distanceFromPlayer = null;
 
                     if (props.containsKey("skins." + num) || props.containsKey("textures." + num)) {
                         String dataFromProps = props.containsKey("skins." + num) ? props.getProperty("skins." + num).strip() : props.getProperty("textures." + num).strip();
@@ -669,8 +670,8 @@ public abstract class ETFManager {
                         sizes = sizeNumbers.toArray(new Integer[0]);
                     }
 
-                    if (props.containsKey("speedRange." + num)) {
-                        String dataFromProps = props.getProperty("speedRange." + num).trim();
+                    if (props.containsKey("speed." + num)) {
+                        String dataFromProps = props.getProperty("speed." + num).trim();
                         String[] rangeData = dataFromProps.split("-");
                         if (rangeData.length == 2) {
                             try {
@@ -678,15 +679,15 @@ public abstract class ETFManager {
                                 double tryMaxNumber = Double.parseDouble(rangeData[1].replaceAll("[^\\.\\d]", ""));
                                 speedMinMax = new Double[]{tryMinNumber, tryMaxNumber};
                             } catch (NumberFormatException e) {
-                                ETFUtils2.logWarn("properties files number error in speedRange category");
+                                ETFUtils2.logWarn("properties files number error in speed category");
                             }
                         } else {
-                            ETFUtils2.logWarn("properties files number error in speedRange category");
+                            ETFUtils2.logWarn("properties files number error in speed category");
                         }
 
                     }
-                    if (props.containsKey("jumpRange." + num)) {
-                        String dataFromProps = props.getProperty("jumpRange." + num).trim();
+                    if (props.containsKey("jumpStrength." + num)) {
+                        String dataFromProps = props.getProperty("jumpStrength." + num).trim();
                         String[] rangeData = dataFromProps.split("-");
                         if (rangeData.length == 2) {
                             try {
@@ -694,10 +695,10 @@ public abstract class ETFManager {
                                 double tryMaxNumber = Double.parseDouble(rangeData[1].replaceAll("[^\\.\\d]", ""));
                                 jumpMinMax = new Double[]{tryMinNumber, tryMaxNumber};
                             } catch (NumberFormatException e) {
-                                ETFUtils2.logWarn("properties files number error in jumpRange category");
+                                ETFUtils2.logWarn("properties files number error in jumpStrength category");
                             }
                         } else {
-                            ETFUtils2.logWarn("properties files number error in jumpRange category");
+                            ETFUtils2.logWarn("properties files number error in jumpStrength category");
                         }
 
                     }
@@ -802,30 +803,35 @@ public abstract class ETFManager {
                         }
                         wardenAngriness = angery.toArray(new Angriness[0]);
                     }
-                    if (props.containsKey("angryAtClient." + num)) {
-                        String input = props.getProperty("angryAtClient." + num).trim();
+                    if (props.containsKey("angryAtPlayer." + num)) {
+                        String input = props.getProperty("angryAtPlayer." + num).trim();
                         if (input.equals("true") || input.equals("false")) {
                             isAngryWithClient = input.equals("true");
                         } else {
-                            ETFUtils2.logWarn("properties files number error in angryAtClient category");
+                            ETFUtils2.logWarn("properties files number error in angryAtPlayer category");
                         }
                     }
-                    if (props.containsKey("isPlayerCreated." + num)) {
-                        String input = props.getProperty("isPlayerCreated." + num).trim();
+                    if (props.containsKey("playerCreated." + num)) {
+                        String input = props.getProperty("playerCreated." + num).trim();
                         if (input.equals("true") || input.equals("false")) {
                             isPlayerCreated = input.equals("true");
                         } else {
-                            ETFUtils2.logWarn("properties files number error in isPlayerCreated category");
+                            ETFUtils2.logWarn("properties files number error in playerCreated category");
                         }
                     }
-                    if (props.containsKey("isScreamingGoat." + num)) {
-                        String input = props.getProperty("isScreamingGoat." + num).trim();
+                    if (props.containsKey("screamingGoat." + num)) {
+                        String input = props.getProperty("screamingGoat." + num).trim();
                         if (input.equals("true") || input.equals("false")) {
                             isScreamingGoat = input.equals("true");
                         } else {
-                            ETFUtils2.logWarn("properties files number error in isScreamingGoat category");
+                            ETFUtils2.logWarn("properties files number error in screamingGoat category");
                         }
                     }
+                    if (props.containsKey("distanceFromPlayer." + num)) {
+                        distanceFromPlayer = props.getProperty("distanceFromPlayer." + num).trim().split("\s+");
+
+                    }
+
                     //array faster to use
                     //list easier to build
                     String[] namesArray = names.toArray(new String[0]);
@@ -858,7 +864,8 @@ public abstract class ETFManager {
                                 wardenAngriness,
                                 isAngryWithClient,
                                 isPlayerCreated,
-                                isScreamingGoat));
+                                isScreamingGoat,
+                                distanceFromPlayer));
                     }
                 }
                 if (!allCasesForTexture.isEmpty()) {
