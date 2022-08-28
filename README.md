@@ -26,8 +26,6 @@ This way, ETF provides more OptiFine parity on the Fabric mod loader. If you wan
 - ⚗️ Alternate potion visuals for mobs
 - 🎨 Player skin features & additions, including support for most of the above features
 
----
-
 ## Compatibility
 
 - OptiFine's random / custom or emissive entity texture resource packs - ✅ **Fully compatable**
@@ -35,8 +33,6 @@ This way, ETF provides more OptiFine parity on the Fabric mod loader. If you wan
 - [Sodium](https://modrinth.com/mod/sodium) - ✅ **Fully compatible**
 - [Iris Shaders](https://modrinth.com/mod/iris) - ✅ **Fully compatible** _(Support varies depending on the shader)_
 - Mod added entities - ✅ **Compatible** _(only if the mod creator used the vanilla rendering code to render their mobs)_
-
----
 
 ## Wiki & Guides
 
@@ -98,7 +94,6 @@ abuse of features in PvP
 
 </div>
 
-
 ### 😑 Blinking textures
 
 <div align="center">
@@ -125,8 +120,6 @@ abuse of features in PvP
 
 - There's a setting in the mod which allows you to make it so mobs with potions effects can glow, appear enchanted or have creeper charge fields around them
 - This was inspired by enchanted mobs in Minecraft Dungeons
-
----
 
 ## Settings & configuration
 
