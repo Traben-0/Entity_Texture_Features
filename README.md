@@ -20,7 +20,7 @@ This way, ETF provides more OptiFine parity on the Fabric mod loader. If you wan
 
 ### Mod's features so far:
 
-- 🎲 Custom & random entity textures with the OptiFine format, including biome, name and height properies, like OptiFine, with even more!
+- 🎲 Custom & random entity textures with the OptiFine format, including biome, name, height and even more properties!
 - 💡 Emissive/glowing entity textures with the OptiFine format
 - 😑️ Blinking mobs
 - ⚗️ Alternate potion visuals for mobs
@@ -115,7 +115,11 @@ abuse of features in PvP
 - Mobs with the blindness potion effect will have either their eyes closed or half closed depending on what is available
 - Blinking _is_ supported on the player skin features
 - Resource packs can set specific blinking length and frequency per texture via properties files next to the blinking texture:
-<img src="README-assets/blinkProperties.png" alt="img" width="250">
+<div align="center">
+
+<img src="README-assets/blinkProperties.png" alt="img" width="280">
+
+</div>
 
 ### ⚗️ Alternate potion effects
 
@@ -131,7 +135,7 @@ abuse of features in PvP
 
 <div align="center">
 
-<img src="README-assets/options.png" alt="  Options" width="450">
+<img src="README-assets/options.png" alt="Options" width="450">
 
 </div>
 
