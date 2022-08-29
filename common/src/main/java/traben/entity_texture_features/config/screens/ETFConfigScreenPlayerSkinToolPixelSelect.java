@@ -62,6 +62,12 @@ public class ETFConfigScreenPlayerSkinToolPixelSelect extends ETFConfigScreen {
             }
         }
 
+        this.addDrawableChild(new ButtonWidget((int) (this.width * 0.024), (int) (this.height * 0.2), 20, 20,
+                Text.of("⟳"),
+                (button) -> {
+                    etfParent.flipView = !etfParent.flipView;
+                }));
+
 
         this.addDrawableChild(new ButtonWidget((int) (this.width * 0.55), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,
                 ScreenTexts.BACK,
@@ -152,7 +158,7 @@ public class ETFConfigScreenPlayerSkinToolPixelSelect extends ETFConfigScreen {
 
     }
 
-    public static void drawEntity(int x, int y, int size, float mouseX, float mouseY, LivingEntity entity) {
+    public void drawEntity(int x, int y, int size, float mouseX, float mouseY, LivingEntity entity) {
         float f = (float)Math.atan((double)(mouseX / 40.0F));
         float g = (float)Math.atan((double)(mouseY / 40.0F));
         MatrixStack matrixStack = RenderSystem.getModelViewStack();
@@ -172,8 +178,8 @@ public class ETFConfigScreenPlayerSkinToolPixelSelect extends ETFConfigScreen {
         float j = entity.getPitch();
         float k = entity.prevHeadYaw;
         float l = entity.headYaw;
-        entity.bodyYaw = 180.0F + f * 20.0F;
-        entity.setYaw(180.0F + f * 40.0F);
+        entity.bodyYaw = (etfParent.flipView ? 0 : 180.0F) + f * 20.0F;
+        entity.setYaw((etfParent.flipView ? 0 : 180.0F) + f * 40.0F);
         entity.setPitch(-g * 20.0F);
         entity.headYaw = entity.getYaw();
         entity.prevHeadYaw = entity.getYaw();

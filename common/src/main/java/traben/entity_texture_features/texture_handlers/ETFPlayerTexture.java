@@ -21,6 +21,7 @@ import net.minecraft.util.Util;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
+import traben.entity_texture_features.config.screens.ETFConfigScreenPlayerSkinTool;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.io.InputStream;
@@ -108,7 +109,7 @@ public class ETFPlayerTexture {
     // will also return null if there is nothing to check or no matching pixels
     @Nullable
     private static NativeImage returnMatchPixels(NativeImage baseSkin, int[] boundsToCheck, @Nullable NativeImage second) {
-        if (baseSkin == null) return null;
+        if (baseSkin == null || boundsToCheck == null) return null;
 
         boolean hasSecondImageToBeUsedAsBase = second != null;
         Set<Integer> matchColors = new HashSet<>();
@@ -605,13 +606,14 @@ public class ETFPlayerTexture {
                             NativeImage one = NativeImage.read(inputStream);
                             this.receiveThirdPartyCape(one);
                         } catch (Exception e) {
-                            ETFUtils2.logError("ThirdPartyCapeDownload failed for player:" + player.getName().getString() + "retrying again later");
+                            ETFUtils2.logError("ThirdPartyCapeDownload failed for player:" + player.getName().getString() + "retrying again later "+e);
+                            e.printStackTrace();
                             //this.skinFailed(false);
                         }
                     });
                 }
             } catch (Exception var6) {
-                ETFUtils2.logError("ThirdPartyCapeDownload failed for player:" + player.getName().getString() + "retrying again later");
+                ETFUtils2.logError("ThirdPartyCapeDownload2 failed for player:" + player.getName().getString() + "retrying again later"+var6);
                 //this.skinFailed(false);
             }
         }, Util.getMainWorkerExecutor());
@@ -621,6 +623,8 @@ public class ETFPlayerTexture {
         //optifine resizes them for space cause expensive servers I guess
 
         Identifier newCapeId = new Identifier(SKIN_NAMESPACE, player.getUuid().toString().replaceAll("/[^a-z]/g", "") + "_cape_third_party.png");
+        boolean changed = false;
+        NativeImage resizedImage;
         if (capeImage.getWidth() % capeImage.getHeight() != 0) {
             //resize optifine image
             int newWidth = 64;
@@ -628,19 +632,25 @@ public class ETFPlayerTexture {
                 newWidth = newWidth + newWidth;
             }
             int newHeight = newWidth / 2;
-            try (NativeImage resizedImage = ETFUtils2.emptyNativeImage(newWidth, newHeight)) {
+            try {
+                resizedImage = ETFUtils2.emptyNativeImage(newWidth, newHeight);
                 for (int x = 0; x < capeImage.getWidth(); x++) {
                     for (int y = 0; y < capeImage.getHeight(); y++) {
                         resizedImage.setColor(x, y, capeImage.getColor(x, y));
                     }
                 }
-                capeImage = resizedImage;
+                ETFUtils2.registerNativeImageToIdentifier( resizedImage, newCapeId);
+                //capeImage = resizedImage;
+                changed=true;
             } catch (Exception e) {
                 ETFUtils2.logError("optifine cape resize failed");
             }
         }
-        ETFUtils2.registerNativeImageToIdentifier(capeImage, newCapeId);
-
+        if(changed){
+            capeImage = ETFUtils2.getNativeImageElseNull(newCapeId);
+        }else {
+            ETFUtils2.registerNativeImageToIdentifier(capeImage, newCapeId);
+        }
         NativeImage checkCapeEmissive = returnMatchPixels(originalSkin, emissiveCapeBounds, capeImage);
         //UUID_PLAYER_HAS_EMISSIVE_CAPE.put(id, checkCape != null);
         if (checkCapeEmissive != null) {
@@ -693,6 +703,8 @@ public class ETFPlayerTexture {
             onTexturesDownloaded();
         }
     }
+
+    public ETFConfigScreenPlayerSkinTool.CapeType capeType = ETFConfigScreenPlayerSkinTool.CapeType.NONE;
 
     public void onTexturesDownloaded() {
         UUID id = player.getUuid();
@@ -844,11 +856,14 @@ public class ETFPlayerTexture {
                 // custom cape data experiment
                 // https://drive.google.com/uc?export=download&id=1rn1swLadqdMiLirz9Nrae0_VHFrTaJQe
                 //downloadImageFromUrl(player, "https://drive.google.com/uc?export=download&id=1rn1swLadqdMiLirz9Nrae0_VHFrTaJQe", "etf$CAPE",null,true);
-                if ((capeChoice1 >= 1 && capeChoice1 <= 3) || capeChoice1 == 666) {
+                if ((capeChoice1 >= 1 && capeChoice1 <= 4) || capeChoice1 == 666) {
                     switch (capeChoice1) {
-                        case 1 -> //custom in skin
+                        case 1 ->{ //custom in skin
+                                capeType = ETFConfigScreenPlayerSkinTool.CapeType.CUSTOM;
                                 modifiedCape = returnCustomTexturedCape(originalSkin);
+                        }
                         case 2 -> {
+                            capeType = ETFConfigScreenPlayerSkinTool.CapeType.MINECRAFT_CAPES_NET;
                             modifiedCape = null;
                             // minecraft capes mod
                             //https://minecraftcapes.net/profile/fd22e573178c415a94fee476b328abfd/cape/
@@ -856,10 +871,15 @@ public class ETFPlayerTexture {
 
                         }
                         case 3 -> {
+                            capeType = ETFConfigScreenPlayerSkinTool.CapeType.OPTIFINE;
                             modifiedCape = null;
                             //  https://optifine.net/capes/Benjamin.png
                             initiateThirdPartyCapeDownload("https://optifine.net/capes/" + player.getName().getString() + ".png");
 
+                        }
+                        case 4 -> {
+                            capeType = ETFConfigScreenPlayerSkinTool.CapeType.ETF;
+                            modifiedCape = ETFUtils2.getNativeImageElseNull(new Identifier(MOD_ID, "textures/capes/etf.png"));
                         }
                         case 666 ->
                                 modifiedCape = ETFUtils2.getNativeImageElseNull(new Identifier(MOD_ID, "textures/capes/error.png"));
@@ -869,7 +889,7 @@ public class ETFPlayerTexture {
                     }
                 }
                 if (modifiedCape != null) {
-                    if ((capeChoice1 >= 1 && capeChoice1 <= 3) || capeChoice1 == 666) {//custom chosen
+                    if ((capeChoice1 >= 1 && capeChoice1 <= 4) || capeChoice1 == 666) {//custom chosen
                         etfCapeIdentifier = new Identifier(SKIN_NAMESPACE, id.toString().replaceAll("/[^a-z]/g", "") + "_cape.png");
                         ETFUtils2.registerNativeImageToIdentifier(modifiedCape, etfCapeIdentifier);
                         //UUID_PLAYER_HAS_CUSTOM_CAPE.put(id, true);
@@ -1019,6 +1039,7 @@ public class ETFPlayerTexture {
         this.coatLength = 1;
         this.blinkHeight = 1;
         this.blinkType = 0;
+        this.capeType = ETFConfigScreenPlayerSkinTool.CapeType.NONE;
 
 
         THIS_SKIN_IS_IN_EDITOR = true;

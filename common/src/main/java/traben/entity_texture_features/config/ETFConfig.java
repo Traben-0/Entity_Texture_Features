@@ -50,6 +50,8 @@ public class ETFConfig {
 
     public Set<ETFConfigScreenWarnings.ConfigWarning> ignoredConfigs = new HashSet<>();
 
+    public boolean hideConfigButton = false;
+
     //string name stuff more in-depth than other enum for backwards compatibility
 
     public static ETFConfig copyFrom(ETFConfig source) {

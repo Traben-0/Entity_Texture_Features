@@ -1,4 +1,9 @@
-[**ETF Changelog:**
+[**ETF Changelog:**]
+
+[V4.1.dev.3]
+- added config option "hideConfigButton" to disable ETF config button in the resource-pack screen *(only available in the config.json file)*
+- added cape options to skin tool
+- fixed third party capes not loading correctly*(OptiFine and minecraftcapes.net)*
 
 [V4.1.dev.2]
 - tweaked new property names

@@ -37,11 +37,13 @@ public abstract class MixinPackScreen extends Screen {
 
     @Inject(method = "init", at = @At("TAIL"))
     private void etf$illegalPathOverride(CallbackInfo ci) {
-        this.addDrawableChild(new TexturedButtonWidget((this.width-48), (this.height-40), 32, 32,
-                0,0,32, new Identifier(MOD_ID+":textures/gui/settings.png"),32,64,
-                (button) -> {
-                    Objects.requireNonNull(client).setScreen(new ETFConfigScreenMain(this));
-                }));
+        if(!ETFConfigData.hideConfigButton) {
+            this.addDrawableChild(new TexturedButtonWidget((this.width - 48), (this.height - 40), 32, 32,
+                    0, 0, 32, new Identifier(MOD_ID + ":textures/gui/settings.png"), 32, 64,
+                    (button) -> {
+                        Objects.requireNonNull(client).setScreen(new ETFConfigScreenMain(this));
+                    }));
+        }
     }
 }
 
