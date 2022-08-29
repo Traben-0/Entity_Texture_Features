@@ -1,16 +1,16 @@
-[**ETF Changelog:**
+# ETF Changelog:
 
-[V4.0.2]
+## [V4.0.2]
 - fixed ArrayIndexOutOfBoundsException crash
 - fixed excessive lag with shields and tridents in the rewrite
 - added russian translation thanks to @Felix14-v2
 - added more translation support where it was missing
 
-[V4.0.1]
+## [V4.0.1]
 - fixed cape mod compatibility
 - added quark compatibility warning that disables incompatible features
 
-[V4.0]
+## [V4.0]
 
 *changes since last stable release*
 
@@ -44,53 +44,53 @@ Groundwork has been laid to more easily backport the mod to 1.16, 1.17 & 1.18 th
 - changed: block entity features will not render if the texture is animated as it is not supported *(no need to change settings)*
 
 - broke: puzzle support will be broken for a short period after release until I PR a fix to the dev
-]()
-[V3.1.4]
+
+## [V3.1.4]
 - fixed a logic mistake causing high lag when additional mob textures *(like sheep_fur.png)* did not have the same or higher number of variations as the base texture
 - the Blocks property now also check the block the mob spawned inside *(allowing things like water, cave_air, flowers, torches, etc. to be used, and also fixes issues with soul-sand and mud not reading correctly)*
 - added an option to enable / disable block entity emissive and custom textures as they currently do not support vanilla animated textures and may want to be disabled by such users
 - added some missed translation support *(Still only english atm :/)*
 
-[V3.1.3]
+## [V3.1.3]
 - sheep wool support added *(wool doesn't apply dye color to the emissive texture, use custom texture colour properties to set an altered coloured texture instead if required. A sheep using sheep2.png will try and use the equivalent wool2.png and will use the default otherwise )*
 - fixed a crash due to an incorrect texture path for custom capes skin feature
 - tweaked property file loading to be more consistent with resource-pack order *(using folders like "etf/random" & the vanilla locations will no longer accidentally override or be overridden by packs out of order)*
-- iron golem cracking texture support added *(an iron_golem using texture2.png will try and use "crack_texture2.png" and will use the default if it doesn't exist)*
+- iron golem cracking texture support added *(an iron_golem using texture2.png will try and use "crack_texture2.png" and will use the default if it doesn't exist*
 
 
-[V3.1.2]
+## [V3.1.2]
 
 - fixed a crash related to player skins that could occur when leaving a server
 
-[V3.1.1]
+## [V3.1.1]
 
 - fixed other Mod integrations for 1.19 *(Mod menu, iris, etc)*
 - elytra size fix now set disabled by default
 
-[V3.1.0]
+## [V3.1.0]
 
 - updated to 1.19 *(for now 1.18.2 will remain supported with feature updates, but 1.18.1 & 1.18.0 will no longer be supported moving forwards, due to very annoying workarounds required)*
 - support added for the wardens many texture layers
 
-[V3.0.4]
+## [V3.0.4]
 
 - chest & shulker custom texture caching is more consistent
 - texture cache data now also resets on game disconnect
 
-[V3.0.3]
+## [V3.0.3]
 
 - fixed names property not working with chests (they will still not function on servers unless a mod is used to send
   blockEntity name data to clients)
 
-[V3.0.2]
+## [V3.0.2]
 
 - fixed certain blocks not reading correctly for the Blocks texture property
 
-[V3.0.1]
+## [V3.0.1]
 
 - fixed emissive armour & works with CIT Resewn
 
-[V3.0.0]
+## [V3.0.0]
 
 Changed:
 
