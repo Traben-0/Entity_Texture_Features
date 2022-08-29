@@ -33,7 +33,7 @@ This way, ETF provides more OptiFine parity on the Fabric mod loader. If you wan
 - [Iris Shaders](https://modrinth.com/mod/iris) - ✅ **Fully compatible** _(Support varies depending on the shader)_
 - Mod added entities - ✅ **Compatible** _(only if the mod creator used the vanilla rendering code to render their mobs)_
 
-## Wiki & Guides
+## Wiki & guides
 
 ### 🎲 Random / Custom entity textures - [OptiFine]
 
@@ -126,7 +126,7 @@ abuse of features in PvP
 
 </div>
 
-## Mod Support
+## Mod support
 
 - This mod should be compatible with any mod added entities as long as they extend `LivingEntityRenderer` class for rendering and utilise it correctly
 - Any mod displaying an entity in a custom GUI can force the default texture by having the `entity.getblockstate` set to either `null` or of type `VOID_AIR`
