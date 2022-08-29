@@ -133,11 +133,25 @@ abuse of features in PvP
 
 ## FAQ
 
+> My entities are invisible/broken!
+
 - Custom Entity Models is not a feature provided by ETF. If your entities are invisible or look corrupted you'll need to instal the [CEM mod](https://modrinth.com/mod/cem) (this includes resource packs such as Fresh Animations). Keep in mind that the CEM mod is still in alpha development and may still occur issues.
+
+> Blocks and items are not emissive!
+
 - ETF does not support emissive block and item texture, for that you'll need to install [Continuity](https://modrinth.com/mod/continuity).
+
+> My game is lagging, help!
+
 - If you are experiencing lag please check your most recent log file to see if any errors are being logged, sometimes an incorrectly written properties file or missing textures may lag the system.
-- Please check any issue is not actually a problem in the properties file, a few packs seem to be pointing to a texture that doesn't exist.
+
+> It doesn't work!
+
+- Check if any issues are not actually a problem in the properties file, a few packs seem to be pointing to a texture that doesn't exist.
 - So far all mob entities support random & emissive textures, but there may still be some quirks. If you find bugs you can either [report them in GitHub](https://github.com/Traben-0/Entity_Texture_Features/issues/new?assignees=Traben-0&labels=bug&template=bug_report.md&title=%5BBUG%5D+%22short+issue+description%22) or get support in the Discord server (linked on the top of the page).
+
+> Emissives are broken with Complimentary shaders, what do I do?
+
 - Complimentary shaders has its own in-built emissive textures that usually work fine but will conflict with some resource packs. You can either disable Complimentary's emissives or ETF's emissives to fix this.
 
 
