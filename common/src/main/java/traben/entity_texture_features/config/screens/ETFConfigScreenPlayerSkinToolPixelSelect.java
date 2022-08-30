@@ -2,13 +2,9 @@ package traben.entity_texture_features.config.screens;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.DiffuseLighting;
-import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.util.math.MatrixStack;
@@ -22,8 +18,10 @@ import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.utils.ETFUtils2;
 
-import javax.swing.text.Style;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
@@ -64,16 +62,12 @@ public class ETFConfigScreenPlayerSkinToolPixelSelect extends ETFConfigScreen {
 
         this.addDrawableChild(new ButtonWidget((int) (this.width * 0.024), (int) (this.height * 0.2), 20, 20,
                 Text.of("⟳"),
-                (button) -> {
-                    etfParent.flipView = !etfParent.flipView;
-                }));
+                (button) -> etfParent.flipView = !etfParent.flipView));
 
 
         this.addDrawableChild(new ButtonWidget((int) (this.width * 0.55), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,
                 ScreenTexts.BACK,
-                (button) -> {
-                    Objects.requireNonNull(client).setScreen(parent);
-                }));
+                (button) -> Objects.requireNonNull(client).setScreen(parent)));
 
         int pixelSize = (int)(this.height*0.7/64);
 
@@ -159,11 +153,11 @@ public class ETFConfigScreenPlayerSkinToolPixelSelect extends ETFConfigScreen {
     }
 
     public void drawEntity(int x, int y, int size, float mouseX, float mouseY, LivingEntity entity) {
-        float f = (float)Math.atan((double)(mouseX / 40.0F));
-        float g = (float)Math.atan((double)(mouseY / 40.0F));
+        float f = (float)Math.atan((mouseX / 40.0F));
+        float g = (float)Math.atan((mouseY / 40.0F));
         MatrixStack matrixStack = RenderSystem.getModelViewStack();
         matrixStack.push();
-        matrixStack.translate((double)x, (double)y, 1050.0);
+        matrixStack.translate(x, y, 1050.0);
         matrixStack.scale(1.0F, 1.0F, -1.0F);
         RenderSystem.applyModelViewMatrix();
         MatrixStack matrixStack2 = new MatrixStack();
@@ -189,9 +183,7 @@ public class ETFConfigScreenPlayerSkinToolPixelSelect extends ETFConfigScreen {
         entityRenderDispatcher.setRotation(quaternion2);
         entityRenderDispatcher.setRenderShadows(false);
         VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
-        RenderSystem.runAsFancy(() -> {
-            entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, matrixStack2, immediate, 0x800080 /*15728880*/);
-        });
+        RenderSystem.runAsFancy(() -> entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, matrixStack2, immediate, 0x800080 /*15728880*/));
         immediate.draw();
         entityRenderDispatcher.setRenderShadows(true);
         entity.bodyYaw = h;
@@ -206,8 +198,7 @@ public class ETFConfigScreenPlayerSkinToolPixelSelect extends ETFConfigScreen {
 
     public enum SelectionMode{
         EMISSIVE(56, 16),
-        ENCHANTED(56, 24),
-        FUTURE_OPTIONS(0,0);
+        ENCHANTED(56, 24);
 
         final int startX;
         final int startY;

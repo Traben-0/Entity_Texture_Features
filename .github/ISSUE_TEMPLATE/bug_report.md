@@ -11,7 +11,7 @@ assignees: Traben-0
 
 **Describe the issue**
 - What happened? [e.g. crashed, texture is broken]
-- What were you doing when it happened? [e.g. loading the game, playing multiplayer, singleplayer]
+- What were you doing when it happened? [e.g. loading the game, playing multiplayer, single-player]
 
 **Screenshots**
 - If applicable, add screenshots to help explain your problem.
@@ -23,6 +23,6 @@ assignees: Traben-0
 
 **Your setup: (please complete the following information):**
  - Minecraft version: [e.g. 1.19.2]
- - Modloader: [e.g forge/fabric]
+ - ModLoader: [e.g forge/fabric]
  - ETF Version [e.g. 4.0.1]
  - Does the issue persist with only ETF (and cloth config for forge versions) installed?

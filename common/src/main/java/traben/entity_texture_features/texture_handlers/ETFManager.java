@@ -58,7 +58,7 @@ public abstract class ETFManager {
     public static final Object2BooleanOpenHashMap<Identifier> DOES_IDENTIFIER_EXIST_CACHED_RESULT = new Object2BooleanOpenHashMap<>();
     static final ETFLruCache<ETFCacheKey, ObjectImmutableList<String>> ENTITY_SPAWN_CONDITIONS_CACHE = new ETFLruCache<>();
     //if false variant 1 will need to use vanilla texture otherwise vanilla texture has an override in other directory
-    private static final Object2BooleanOpenHashMap<Identifier> OPTIFINE_1_HAS_REPLACEMENT = new Object2BooleanOpenHashMap<>();
+    //private static final Object2BooleanOpenHashMap<Identifier> OPTIFINE_1_HAS_REPLACEMENT = new Object2BooleanOpenHashMap<>();
     //this is a cache of all known ETFTexture versions of any existing resource-pack texture, used to prevent remaking objects
     private static final Object2ReferenceOpenHashMap<@NotNull Identifier, @Nullable ETFTexture> ETF_TEXTURE_CACHE = new Object2ReferenceOpenHashMap<>();
     //null means it is true random as in no properties
@@ -77,7 +77,7 @@ public abstract class ETFManager {
     public static Boolean lecternHasCustomTexture = null;
     public static ETFTexture redMooshroomAlt = null;
     public static ETFTexture brownMooshroomAlt = null;
-    public static ArrayList<String> knownResourcePackOrder = new ArrayList<>();
+    public static final ArrayList<String> knownResourcePackOrder = new ArrayList<>();
 
     private static ETFTexture getErrorETFTexture() {
         ETFUtils2.registerNativeImageToIdentifier(ETFUtils2.emptyNativeImage(), new Identifier("etf:error.png"));
@@ -98,7 +98,7 @@ public abstract class ETFManager {
         DOES_IDENTIFIER_EXIST_CACHED_RESULT.clear();
 
         ETFClientCommon.etf$loadConfig();
-        OPTIFINE_1_HAS_REPLACEMENT.clear();
+        //OPTIFINE_1_HAS_REPLACEMENT.clear();
         TEXTURE_MAP_TO_OPPOSITE_ELYTRA.clear();
         ETF_TEXTURE_CACHE.clear();
         ENTITY_TEXTURE_MAP.clearCache();
@@ -235,12 +235,14 @@ public abstract class ETFManager {
             if (source == TextureSource.ENTITY) {
                 if (ENTITY_DEBUG_QUEUE.contains(id)) {
                     boolean inChat = ETFConfigData.debugLoggingMode == ETFConfig.DebugLogMode.Chat;
-                    ETFUtils2.logMessage(quickReturn.toString(), inChat);
-                    ETFUtils2.logMessage("entity cache size = " + ENTITY_TEXTURE_MAP.size() +
-                            "\ntexture cache size = " + ETF_TEXTURE_CACHE.size() +
-                            "\noriginal spawn state = " + ENTITY_SPAWN_CONDITIONS_CACHE.get(cacheKey) +
-                            "\noptifine property key count = " + (OPTIFINE_PROPERTY_CACHE.containsKey(vanillaIdentifier) ? Objects.requireNonNullElse(OPTIFINE_PROPERTY_CACHE.get(vanillaIdentifier), new ArrayList<>()).size() : 0) +
-                            "\ntrue random count = " + TRUE_RANDOM_COUNT_CACHE.getInt(vanillaIdentifier), inChat);
+                    ETFUtils2.logMessage(
+                            "\nGeneral ETF:"+
+                            "\n\tTexture cache size: " + ETF_TEXTURE_CACHE.size() +
+                            "\nThis "+ entity.getType().toString()+
+                            "\n\tTexture: "+quickReturn+"\nEntity cache size: " + ENTITY_TEXTURE_MAP.size() +
+                            "\n\tOriginal spawn state: " + ENTITY_SPAWN_CONDITIONS_CACHE.get(cacheKey) +
+                            "\n\tOptiFine property key count: " + (OPTIFINE_PROPERTY_CACHE.containsKey(vanillaIdentifier) ? Objects.requireNonNullElse(OPTIFINE_PROPERTY_CACHE.get(vanillaIdentifier), new ArrayList<>()).size() : 0) +
+                            "\n\tNon property random total: " + TRUE_RANDOM_COUNT_CACHE.getInt(vanillaIdentifier), inChat);
 
                     ENTITY_DEBUG_QUEUE.remove(id);
                 }
@@ -272,7 +274,8 @@ public abstract class ETFManager {
 
         ETFTexture foundTexture;
         foundTexture = Objects.requireNonNullElse(getOrCreateETFTexture(vanillaIdentifier, possibleIdentifier == null ? vanillaIdentifier : possibleIdentifier), getETFDefaultTexture(vanillaIdentifier));
-        ENTITY_TEXTURE_MAP.put(cacheKey, foundTexture);
+        //if(!(source == TextureSource.ENTITY_FEATURE && possibleIdentifier == null))
+            ENTITY_TEXTURE_MAP.put(cacheKey, foundTexture);
         return foundTexture;
 
 
@@ -433,6 +436,7 @@ public abstract class ETFManager {
                     @Nullable Boolean isPlayerCreated = null;
                     @Nullable Boolean isScreamingGoat = null;
                     @Nullable String[] distanceFromPlayer = null;
+                    @Nullable Boolean creeperCharged = null;
 
                     if (props.containsKey("skins." + num) || props.containsKey("textures." + num)) {
                         String dataFromProps = props.containsKey("skins." + num) ? props.getProperty("skins." + num).strip() : props.getProperty("textures." + num).strip();
@@ -831,6 +835,14 @@ public abstract class ETFManager {
                         distanceFromPlayer = props.getProperty("distanceFromPlayer." + num).trim().split("\s+");
 
                     }
+                    if (props.containsKey("creeperCharged." + num)) {
+                        String input = props.getProperty("creeperCharged." + num).trim();
+                        if (input.equals("true") || input.equals("false")) {
+                            creeperCharged = input.equals("true");
+                        } else {
+                            ETFUtils2.logWarn("properties files number error in creeperCharged category");
+                        }
+                    }
 
                     //array faster to use
                     //list easier to build
@@ -865,7 +877,8 @@ public abstract class ETFManager {
                                 isAngryWithClient,
                                 isPlayerCreated,
                                 isScreamingGoat,
-                                distanceFromPlayer));
+                                distanceFromPlayer,
+                                creeperCharged));
                     }
                 }
                 if (!allCasesForTexture.isEmpty()) {

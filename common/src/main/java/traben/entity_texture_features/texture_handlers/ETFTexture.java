@@ -382,6 +382,7 @@ public class ETFTexture {
                 return possibleFeatureVariantIdentifier;
             }
         }
+        //System.out.println("feature="+vanillaFeatureTexture.toString()+thisIdentifier.toString()+directory.toString());
         //here we have no number and are likely vanilla texture or something went wrong in which case vanilla anyway
         //ETFUtils2.logWarn("getFeatureTexture() either vanilla or failed");
         ETFDirectory tryDirectory = ETFDirectory.getDirectoryOf(vanillaFeatureTexture);

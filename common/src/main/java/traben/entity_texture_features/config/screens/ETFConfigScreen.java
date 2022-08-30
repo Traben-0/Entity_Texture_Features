@@ -17,7 +17,7 @@ import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 
 //inspired by puzzles custom gui code
 public abstract class ETFConfigScreen extends Screen {
-    static RotatingCubeMapRenderer backgroundCube = new RotatingCubeMapRenderer(new CubeMapRenderer(new Identifier(MOD_ID + ":textures/gui/background/panorama")));
+    static final RotatingCubeMapRenderer backgroundCube = new RotatingCubeMapRenderer(new CubeMapRenderer(new Identifier(MOD_ID + ":textures/gui/background/panorama")));
     final Screen parent;
 
     //todo translatable text for menus
@@ -63,11 +63,7 @@ public abstract class ETFConfigScreen extends Screen {
         tessellator.draw();
     }
 
-    @Override
-    protected void init() {
-        super.init();
 
-    }
 
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
@@ -83,7 +79,7 @@ public abstract class ETFConfigScreen extends Screen {
         super.render(matrices, mouseX, mouseY, delta);
     }
 
-    ButtonWidget getETFButton(int x, int y, int width, int height, Text buttonText, ButtonWidget.PressAction onPress) {
+    ButtonWidget getETFButton(int x, int y, int width, @SuppressWarnings("SameParameterValue") int height, Text buttonText, ButtonWidget.PressAction onPress) {
         return getETFButton(x, y, width, height, buttonText, onPress, Text.of(""));
     }
 

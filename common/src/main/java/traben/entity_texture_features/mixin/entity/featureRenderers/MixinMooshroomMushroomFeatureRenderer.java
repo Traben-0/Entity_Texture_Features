@@ -116,20 +116,22 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
         if (originalImagePreFlip != null) {
             try {
                 //flip vertically
-                NativeImage flippedOriginalImage = ETFUtils2.emptyNativeImage(originalImagePreFlip.getWidth(), originalImagePreFlip.getHeight());
-                for (int x = 0; x < flippedOriginalImage.getWidth(); x++) {
-                    for (int y = 0; y < flippedOriginalImage.getHeight(); y++) {
-                        flippedOriginalImage.setColor(x, y, originalImagePreFlip.getColor(x, originalImagePreFlip.getHeight() - 1 - y));
+                NativeImage newImage;
+                try (NativeImage flippedOriginalImage = ETFUtils2.emptyNativeImage(originalImagePreFlip.getWidth(), originalImagePreFlip.getHeight())) {
+                    for (int x = 0; x < flippedOriginalImage.getWidth(); x++) {
+                        for (int y = 0; y < flippedOriginalImage.getHeight(); y++) {
+                            flippedOriginalImage.setColor(x, y, originalImagePreFlip.getColor(x, originalImagePreFlip.getHeight() - 1 - y));
+                        }
                     }
-                }
-                //mirror 2x wide texture for entity rendering
-                NativeImage newImage = ETFUtils2.emptyNativeImage(flippedOriginalImage.getWidth() * 2, flippedOriginalImage.getHeight());
-                for (int x = 0; x < newImage.getWidth(); x++) {
-                    for (int y = 0; y < newImage.getHeight(); y++) {
-                        if (x < flippedOriginalImage.getWidth()) {
-                            newImage.setColor(x, y, flippedOriginalImage.getColor(x, y));
-                        } else {
-                            newImage.setColor(x, y, flippedOriginalImage.getColor(flippedOriginalImage.getWidth() - 1 - (x - flippedOriginalImage.getWidth()), y));
+                    //mirror 2x wide texture for entity rendering
+                    newImage = ETFUtils2.emptyNativeImage(flippedOriginalImage.getWidth() * 2, flippedOriginalImage.getHeight());
+                    for (int x = 0; x < newImage.getWidth(); x++) {
+                        for (int y = 0; y < newImage.getHeight(); y++) {
+                            if (x < flippedOriginalImage.getWidth()) {
+                                newImage.setColor(x, y, flippedOriginalImage.getColor(x, y));
+                            } else {
+                                newImage.setColor(x, y, flippedOriginalImage.getColor(flippedOriginalImage.getWidth() - 1 - (x - flippedOriginalImage.getWidth()), y));
+                            }
                         }
                     }
                 }

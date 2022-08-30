@@ -10,7 +10,7 @@ public class ETFApi {
     //provides access to the ETF config object to read AND modify it's values
     //please be sure to run the save config method below after any changes
     public static ETFConfig getETFConfigObject = ETFClientCommon.ETFConfigData;
-    int ETFApiVersion = 1;
+    final public static int ETFApiVersion = 1;
 
     //saves any config changes to file and resets ETF to function with the new settings
     public static void saveETFConfigChangesAndResetETF() {

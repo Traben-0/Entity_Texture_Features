@@ -4,7 +4,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.loading.FMLConfig;
 import net.minecraftforge.fml.loading.FMLPaths;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +18,7 @@ public class ETFVersionDifferenceHandlerImpl {
     }
 
     public static File getConfigDir() {
-        return FMLPaths.GAMEDIR.get().resolve(FMLConfig.defaultConfigPath()).toFile();
+        return FMLPaths.GAMEDIR.get().resolve(FMLPaths.CONFIGDIR.get()).toFile();
     }
 
     public static boolean isForge() {

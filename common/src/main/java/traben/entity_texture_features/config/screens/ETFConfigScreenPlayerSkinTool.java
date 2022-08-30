@@ -3,9 +3,7 @@ package traben.entity_texture_features.config.screens;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -16,7 +14,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Util;
 import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3f;
 import traben.entity_texture_features.ETFClientCommon;
@@ -118,7 +115,16 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
         }
         if(currentEditorSkin == null) {
             currentEditorSkin = ETFUtils2.emptyNativeImage(64, 64);
-            currentEditorSkin.copyFrom(ETFPlayerTexture.clientPlayerOriginalSkinImageForTool);
+            NativeImage skin = ETFPlayerTexture.clientPlayerOriginalSkinImageForTool;
+            if(skin != null) {
+                currentEditorSkin.copyFrom(ETFPlayerTexture.clientPlayerOriginalSkinImageForTool);
+            }else{
+
+                    onExit();
+                    ETFUtils2.logError("could not load tool as skin could not be loaded");
+                    Objects.requireNonNull(client).setScreen(parent);
+
+            }
         }
 
         this.addDrawableChild(new ButtonWidget(this.width / 2 - 210, (int) (this.height * 0.9), 200, 20, ScreenTexts.CANCEL, (button) -> {
@@ -128,9 +134,7 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
 
         this.addDrawableChild(new ButtonWidget((int) (this.width * 0.024), (int) (this.height * 0.2), 20, 20,
                 Text.of("⟳"),
-                (button) -> {
-                    flipView = !flipView;
-        }));
+                (button) -> flipView = !flipView));
 
         printSkinFileButton = new ButtonWidget(this.width / 2 + 10, (int) (this.height * 0.9), 200, 20,
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.print_skin"),
@@ -166,27 +170,18 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
                         updateButtons();
                     }));
 
-            //todo will need to be properly enum data driven when more nose options added
-            villagerNoseButton = new ButtonWidget((int) (this.width * 0.25), (int) (this.height * 0.7), (int) (this.width * 0.3), 20,
+            villagerNoseButton = getETFButton((int) (this.width * 0.25), (int) (this.height * 0.7), (int) (this.width * 0.3), 20,
                     Text.of(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.button").getString()+
-                            (thisETFPlayerTexture.hasVillagerNose ? NoseType.VILLAGER.buttonText
-                             :NoseType.NONE.buttonText).getString()),
+                            thisETFPlayerTexture.noseType.getButtonText().getString()),
                     (button) -> {
-                        int colour = thisETFPlayerTexture.hasVillagerNose ? 0 : -12362096;
+                        int colour = thisETFPlayerTexture.noseType.next().getNosePixelColour();
 
-                        currentEditorSkin.setColor(43, 13, colour);
-                        currentEditorSkin.setColor(44, 13, colour);
-                        currentEditorSkin.setColor(43, 14, colour);
-                        currentEditorSkin.setColor(44, 14, colour);
-                        currentEditorSkin.setColor(43, 15, colour);
-                        currentEditorSkin.setColor(44, 15, colour);
-
+                        currentEditorSkin.setColor(53, 17, colour);
                         thisETFPlayerTexture.changeSkinToThisForTool(currentEditorSkin);
 
                         button.setMessage(Text.of(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.button").getString()+
-                                (thisETFPlayerTexture.hasVillagerNose ? NoseType.VILLAGER.buttonText
-                                        :NoseType.NONE.buttonText).getString()));
-                    });
+                                thisETFPlayerTexture.noseType.getButtonText().getString()));
+                    },ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.tooltip"));
 
             capeButton = getETFButton((int) (this.width * 0.6), (int) (this.height * 0.7), (int) (this.width * 0.3), 20,
                     Text.of(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.cape.button").getString()+
@@ -280,7 +275,7 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
 
             emissiveButton = getETFButton((int) (this.width * 0.25), (int) (this.height * 0.5), (int) (this.width * 0.42), 20,
                     Text.of( ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.emissive_enable.button").getString()
-                            + (thisETFPlayerTexture.hasEmissives ? ScreenTexts.ON : ScreenTexts.OFF).getString()),
+                            + (currentEditorSkin.getColor(1, 17) == getPixelColour(1) ? ScreenTexts.ON : ScreenTexts.OFF).getString()),
                     (button) -> {
 
 
@@ -292,21 +287,19 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
 
                         thisETFPlayerTexture.changeSkinToThisForTool(currentEditorSkin);
                         button.setMessage(Text.of( ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.emissive_enable.button").getString()
-                                + (thisETFPlayerTexture.hasEmissives ? ScreenTexts.ON : ScreenTexts.OFF).getString()));
+                                + (currentEditorSkin.getColor(1, 17) == getPixelColour(1) ? ScreenTexts.ON : ScreenTexts.OFF).getString()));
                         updateButtons();
                     }, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.emissive_enable.tooltip")
             );
 
             emissiveSelectButton = getETFButton((int) (this.width * 0.695), (int) (this.height * 0.5), (int) (this.width * 0.275), 20,
                     ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.emissive_select.button"),
-                    (button) -> {
-                        Objects.requireNonNull(client).setScreen(new ETFConfigScreenPlayerSkinToolPixelSelect(this, ETFConfigScreenPlayerSkinToolPixelSelect.SelectionMode.EMISSIVE));
-                    }
+                    (button) -> Objects.requireNonNull(client).setScreen(new ETFConfigScreenPlayerSkinToolPixelSelect(this, ETFConfigScreenPlayerSkinToolPixelSelect.SelectionMode.EMISSIVE))
             );
 
             enchantButton = getETFButton((int) (this.width * 0.25), (int) (this.height * 0.6), (int) (this.width * 0.42), 20,
                     Text.of( ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.enchant_enable.button").getString()
-                            + (thisETFPlayerTexture.hasEnchant ? ScreenTexts.ON : ScreenTexts.OFF).getString()),
+                            + (currentEditorSkin.getColor(1, 18) == getPixelColour(2) ? ScreenTexts.ON : ScreenTexts.OFF).getString()),
                     (button) -> {
 
 
@@ -318,16 +311,14 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
 
                         thisETFPlayerTexture.changeSkinToThisForTool(currentEditorSkin);
                         button.setMessage(Text.of( ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.enchant_enable.button").getString()
-                                + (thisETFPlayerTexture.hasEnchant ? ScreenTexts.ON : ScreenTexts.OFF).getString()));
+                                + (currentEditorSkin.getColor(1, 18) == getPixelColour(2) ? ScreenTexts.ON : ScreenTexts.OFF).getString()));
                         updateButtons();
                     }, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.enchant_enable.tooltip")
             );
 
             enchantSelectButton = getETFButton((int) (this.width * 0.695), (int) (this.height * 0.6), (int) (this.width * 0.275), 20,
                     ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.enchant_select.button"),
-                    (button) -> {
-                        Objects.requireNonNull(client).setScreen(new ETFConfigScreenPlayerSkinToolPixelSelect(this, ETFConfigScreenPlayerSkinToolPixelSelect.SelectionMode.ENCHANTED));
-                    }
+                    (button) -> Objects.requireNonNull(client).setScreen(new ETFConfigScreenPlayerSkinToolPixelSelect(this, ETFConfigScreenPlayerSkinToolPixelSelect.SelectionMode.ENCHANTED))
             );
 
             updateButtons();
@@ -352,8 +343,7 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
         if (villagerNoseButton != null) {
             villagerNoseButton.active = activeFeatures;
             villagerNoseButton.setMessage(Text.of(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.button").getString()+
-                    (thisETFPlayerTexture.hasVillagerNose ? NoseType.VILLAGER.buttonText
-                            :NoseType.NONE.buttonText).getString()));
+                    thisETFPlayerTexture.noseType.getButtonText().getString()));
         }
         if (coatButton != null) {
             coatButton.active = activeFeatures;
@@ -379,20 +369,20 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
         if (emissiveButton != null) {
             emissiveButton.active = activeFeatures;
             emissiveButton.setMessage(Text.of( ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.emissive_enable.button").getString()
-                    + (thisETFPlayerTexture.hasEmissives ? ScreenTexts.ON : ScreenTexts.OFF).getString()));
+                    + (currentEditorSkin.getColor(1, 17) == getPixelColour(1) ? ScreenTexts.ON : ScreenTexts.OFF).getString()));
         }
         if (emissiveSelectButton != null) {
             emissiveSelectButton.active = activeFeatures
-                    && thisETFPlayerTexture.hasEmissives;
+                    && currentEditorSkin.getColor(1, 17) == getPixelColour(1);
         }
         if (enchantButton != null) {
             enchantButton.active = activeFeatures;
             enchantButton.setMessage(Text.of( ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.enchant_enable.button").getString()
-                    + (thisETFPlayerTexture.hasEnchant ? ScreenTexts.ON : ScreenTexts.OFF).getString()));
+                    + (currentEditorSkin.getColor(1, 18) == getPixelColour(2) ? ScreenTexts.ON : ScreenTexts.OFF).getString()));
         }
         if (enchantSelectButton != null) {
             enchantSelectButton.active = activeFeatures
-                    && thisETFPlayerTexture.hasEnchant;
+                    && currentEditorSkin.getColor(1, 18) == getPixelColour(2);
         }
         if (capeButton != null) {
             capeButton.active = activeFeatures;
@@ -490,12 +480,11 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
 
         public CapeType next(){
             switch (this){
-                case NONE: return OPTIFINE;
-                case OPTIFINE: return MINECRAFT_CAPES_NET;
-                case MINECRAFT_CAPES_NET: return ETF;
+                case NONE: return ETF;
                 case ETF: return CUSTOM;
+                case CUSTOM: return MINECRAFT_CAPES_NET;
+                case MINECRAFT_CAPES_NET: return OPTIFINE;
                 default : return NONE;
-
             }
         }
 
@@ -519,7 +508,11 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
 
     public enum NoseType{
         VILLAGER(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.villager")),
-        //TEXTURED,
+        TEXTURED_1(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.1")),
+        TEXTURED_2(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.2")),
+        TEXTURED_3(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.3")),
+        TEXTURED_4(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.4")),
+        TEXTURED_5(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.5")),
         NONE(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.none"));
 
         public Text getButtonText() {
@@ -530,7 +523,25 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
         public NoseType next(){
             switch (this){
                 case NONE: return VILLAGER;
+                case VILLAGER: return TEXTURED_1;
+                case TEXTURED_1: return TEXTURED_2;
+                case TEXTURED_2: return TEXTURED_3;
+                case TEXTURED_3: return TEXTURED_4;
+                case TEXTURED_4: return TEXTURED_5;
                 default : return NONE;
+
+            }
+        }
+
+        public int getNosePixelColour(){
+            switch (this){
+                case VILLAGER: return getPixelColour(1);
+                case TEXTURED_1: return getPixelColour(2);
+                case TEXTURED_2: return getPixelColour(3);
+                case TEXTURED_3: return getPixelColour(4);
+                case TEXTURED_4: return getPixelColour(5);
+                case TEXTURED_5: return getPixelColour(6);
+                default : return 0;
 
             }
         }
@@ -747,11 +758,11 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
     }
 
     public void drawEntity(int x, int y, int size, float mouseX, float mouseY, LivingEntity entity) {
-        float f = (float)Math.atan((double)(mouseX / 40.0F));
-        float g = (float)Math.atan((double)(mouseY / 40.0F));
+        float f = (float)Math.atan((mouseX / 40.0f));
+        float g = (float)Math.atan((mouseY / 40.0F));
         MatrixStack matrixStack = RenderSystem.getModelViewStack();
         matrixStack.push();
-        matrixStack.translate((double)x, (double)y, 1050.0);
+        matrixStack.translate(x, y, 1050.0);
         matrixStack.scale(1.0F, 1.0F, -1.0F);
         RenderSystem.applyModelViewMatrix();
         MatrixStack matrixStack2 = new MatrixStack();
@@ -777,9 +788,7 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
         entityRenderDispatcher.setRotation(quaternion2);
         entityRenderDispatcher.setRenderShadows(false);
         VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
-        RenderSystem.runAsFancy(() -> {
-            entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, matrixStack2, immediate, 15728880);
-        });
+        RenderSystem.runAsFancy(() -> entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, matrixStack2, immediate, 15728880));
         immediate.draw();
         entityRenderDispatcher.setRenderShadows(true);
         entity.bodyYaw = h;

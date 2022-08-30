@@ -13,7 +13,7 @@ import java.util.Objects;
 
 //inspired by puzzles custom gui code
 public class ETFConfigScreenWarnings extends ETFConfigScreen {
-    ObjectOpenHashSet<ConfigWarning> warningsFound;
+    final ObjectOpenHashSet<ConfigWarning> warningsFound;
 
     protected ETFConfigScreenWarnings(Screen parent, ObjectOpenHashSet<ConfigWarning> warningsFound) {
         super(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".general_settings.title"), parent);
@@ -26,9 +26,7 @@ public class ETFConfigScreenWarnings extends ETFConfigScreen {
         super.init();
         this.addDrawableChild(new ButtonWidget((int) (this.width * 0.55), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,
                 ScreenTexts.BACK,
-                (button) -> {
-                    Objects.requireNonNull(client).setScreen(parent);
-                }));
+                (button) -> Objects.requireNonNull(client).setScreen(parent)));
         this.addDrawableChild(new ButtonWidget((int) (this.width * 0.25), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".enable_all"),
                 (button) -> {

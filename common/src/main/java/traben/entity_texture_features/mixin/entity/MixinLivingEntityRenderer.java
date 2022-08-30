@@ -51,12 +51,14 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
         //UUID id = livingEntity.getUuid();
         if (livingEntity instanceof PlayerEntity) {
             if (ETFConfigData.skinFeaturesEnabled && thisETFPlayerTexture != null) {
-                //noinspection unchecked
+                //System.out.println("test 1");
+                // noinspection unchecked
                 thisETFPlayerTexture.renderFeatures(matrixStack, vertexConsumerProvider, i, (PlayerEntityModel<PlayerEntity>) this.getModel());
-                //just a little harmless particle effect on the dev
-                if (livingEntity.getUuid().equals(ETFPlayerTexture.Dev) && !MinecraftClient.getInstance().isPaused() && livingEntity.getRandom().nextInt(64) == 0 && (MinecraftClient.getInstance().player == null || !(ETFVersionDifferenceHandler.areShadersInUse() == ETFPlayerTexture.Dev.equals(MinecraftClient.getInstance().player.getUuid())))) {
-                    livingEntity.world.addParticle(ParticleTypes.TOTEM_OF_UNDYING, livingEntity.getX(), livingEntity.getRandomBodyY(), livingEntity.getZ(), livingEntity.getRandom().nextFloat() - 0.5, livingEntity.getRandom().nextFloat() * 0.5, livingEntity.getRandom().nextFloat() - 0.5);
-                }
+                //System.out.println("test 2");
+            }
+            //just a little harmless particle effect on the dev
+            if (livingEntity.getUuid().equals(ETFPlayerTexture.Dev) && !MinecraftClient.getInstance().isPaused() && livingEntity.getRandom().nextInt(64) == 0 && (MinecraftClient.getInstance().player == null || !(ETFVersionDifferenceHandler.areShadersInUse() == ETFPlayerTexture.Dev.equals(MinecraftClient.getInstance().player.getUuid())))) {
+                livingEntity.world.addParticle(ParticleTypes.TOTEM_OF_UNDYING, livingEntity.getX(), livingEntity.getRandomBodyY(), livingEntity.getZ(), livingEntity.getRandom().nextFloat() - 0.5, livingEntity.getRandom().nextFloat() * 0.5, livingEntity.getRandom().nextFloat() - 0.5);
             }
             //else nothing
         } else {

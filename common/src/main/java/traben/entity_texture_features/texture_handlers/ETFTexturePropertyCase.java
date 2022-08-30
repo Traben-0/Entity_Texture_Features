@@ -52,7 +52,7 @@ public class ETFTexturePropertyCase {
     private final Boolean IS_PLAYER_CREATED;
     private final Boolean IS_SCREAMING_GOAT;
     private final String[] DISTANCE_TO_PLAYER;
-
+    private final Boolean CREEPER_CHARGED;
 
     //whether case should be ignored by updates
 
@@ -83,11 +83,13 @@ public class ETFTexturePropertyCase {
                                   @Nullable Boolean isAngryWithClient,
                                   @Nullable Boolean isPlayerCreated,
                                   @Nullable Boolean isScreamingGoat,
-                                  @Nullable String[] distanceToPlayer
+                                  @Nullable String[] distanceToPlayer,
+                                  @Nullable Boolean creeperCharged
 
 
     ) {
 
+        CREEPER_CHARGED = creeperCharged;
         DISTANCE_TO_PLAYER = distanceToPlayer;
 
         SPEED_MIN_MAX = speedMinMax;
@@ -189,6 +191,8 @@ public class ETFTexturePropertyCase {
                 && IS_ANGRY_WITH_CLIENT == null
                 && IS_PLAYER_CREATED == null
                 && IS_SCREAMING_GOAT == null
+                && DISTANCE_TO_PLAYER == null
+                && CREEPER_CHARGED == null
         ) {
             return true;
         }
@@ -724,6 +728,7 @@ public class ETFTexturePropertyCase {
             doesEntityMeetThisCaseTest = ((GoatEntity) entity).isScreaming() == IS_SCREAMING_GOAT;
         }
         if (doesEntityMeetThisCaseTest && DISTANCE_TO_PLAYER != null && MinecraftClient.getInstance().player != null) {
+            wasEntityTestedByAnUpdatableProperty = true;
             boolean check = false;
             //always check percentage
             float checkValue = entity.distanceTo(MinecraftClient.getInstance().player);
@@ -746,6 +751,10 @@ public class ETFTexturePropertyCase {
             }
             doesEntityMeetThisCaseTest = check;
 
+        }
+        if (doesEntityMeetThisCaseTest && CREEPER_CHARGED != null && entity instanceof CreeperEntity) {
+            wasEntityTestedByAnUpdatableProperty = true;
+            doesEntityMeetThisCaseTest = ((CreeperEntity) entity).shouldRenderOverlay() == CREEPER_CHARGED;
         }
 
 
