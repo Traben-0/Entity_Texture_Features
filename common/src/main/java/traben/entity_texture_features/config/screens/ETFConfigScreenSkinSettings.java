@@ -24,10 +24,10 @@ public class ETFConfigScreenSkinSettings extends ETFConfigScreen {
     @Override
     protected void init() {
         super.init();
-        this.addDrawableChild(new ButtonWidget((int) (this.width * 0.55), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,
+        this.addDrawableChild(getETFButton((int) (this.width * 0.55), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,
                 ScreenTexts.BACK,
                 (button) -> Objects.requireNonNull(client).setScreen(parent)));
-        this.addDrawableChild(new ButtonWidget((int) (this.width * 0.25), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,
+        this.addDrawableChild(getETFButton((int) (this.width * 0.25), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".reset_defaults"),
                 (button) -> {
                     //temporaryETFConfig = new ETFConfig();

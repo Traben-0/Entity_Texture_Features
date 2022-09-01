@@ -16,6 +16,7 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
+import traben.entity_texture_features.config.screens.ETFConfigScreen;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.Optional;
@@ -80,7 +81,10 @@ public class ETFTexture {
                       @Nullable Identifier blink2Identifier,
                       @Nullable Identifier emissiveIdentifier,
                       @Nullable Identifier blinkEmissiveIdentifier,
-                      @Nullable Identifier blink2EmissiveIdentifier) {
+                      @Nullable Identifier blink2EmissiveIdentifier,
+                      @Nullable Identifier modifiedSkinPatchedIdentifier,
+                      @Nullable Identifier modifiedSkinBlinkPatchedIdentifier,
+                      @Nullable Identifier modifiedSkinBlink2PatchedIdentifier) {
 
         //ALL input already tested and confirmed existing
         this.variantNumber = 0;
@@ -90,9 +94,12 @@ public class ETFTexture {
         this.emissiveIdentifier = emissiveIdentifier;
         this.emissiveBlinkIdentifier = blinkEmissiveIdentifier;
         this.emissiveBlink2Identifier = blink2EmissiveIdentifier;
+        this.thisIdentifier_Patched = modifiedSkinPatchedIdentifier;
+        this.blinkIdentifier_Patched = modifiedSkinBlinkPatchedIdentifier;
+        this.blink2Identifier_Patched = modifiedSkinBlink2PatchedIdentifier;
         //setupBlinking(); neither required
         //setupEmissives();
-        createPatchedTextures();
+        //createPatchedTextures();
     }
 
     //alternative initiator for already known textures used for MooShroom's mushrooms
@@ -105,7 +112,7 @@ public class ETFTexture {
         this.emissiveIdentifier = emissiveIdentifier;
         //setupBlinking(); neither required
         //setupEmissives();
-        createPatchedTextures();
+        //createPatchedTextures();
     }
 
 
@@ -223,7 +230,7 @@ public class ETFTexture {
     }
 
     private void createPatchedTextures() {
-        if (ETFVersionDifferenceHandler.isFabric() && ETFConfigData.temporary_fixIrisPBR) {
+        if (ETFVersionDifferenceHandler.isFabric() && !ETFConfigData.removePixelsUnderEmissive) {
             return;
         }
         //here we will 'patch' the base texture to prevent z-fighting with various shaders
@@ -335,7 +342,7 @@ public class ETFTexture {
         }
     }
 
-    private void patchTextureToRemoveZFightingWithOtherTexture(NativeImage baseImage, NativeImage otherImage) throws IndexOutOfBoundsException {
+    public static void patchTextureToRemoveZFightingWithOtherTexture(NativeImage baseImage, NativeImage otherImage) throws IndexOutOfBoundsException {
         //here we alter the first image removing all pixels that are present in the second image to prevent z fighting
         //this does not support transparency and is a hard counter to f-fighting
         try {
@@ -406,7 +413,7 @@ public class ETFTexture {
     @NotNull
     public Identifier getTextureIdentifier(@Nullable LivingEntity entity, boolean forcePatchedTexture) {
 
-        if (isPatched() && (forcePatchedTexture || (ETFConfigData.enableEmissiveTextures && ETFVersionDifferenceHandler.areShadersInUse()))) {
+        if (isPatched() && (forcePatchedTexture || (ETFConfigData.enableEmissiveTextures && ETFVersionDifferenceHandler.areShadersInUse()) || MinecraftClient.getInstance().currentScreen instanceof ETFConfigScreen)) {
             //patched required
             currentTextureState = TextureReturnState.NORMAL_PATCHED;
             return getBlinkingIdentifier(entity);
@@ -519,7 +526,9 @@ public class ETFTexture {
 //                    return vertexConsumerProvider.getBuffer(RenderLayer.getItemEntityTranslucentCull(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString)));
 //                }
             Identifier emissiveToUse = getEmissiveIdentifierOfCurrentState();
+
             if (emissiveToUse != null) {
+
                 if (modeToUsePossiblyManuallyChosen == ETFManager.EmissiveRenderModes.BRIGHT) {
                     return vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(emissiveToUse, !ETFVersionDifferenceHandler.areShadersInUse()));
                 } else {

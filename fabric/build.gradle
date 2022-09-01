@@ -41,6 +41,9 @@ dependencies {
         exclude(group: "net.fabricmc.fabric-api")
     }
     //include("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}")
+
+    include group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.10'
+    implementation group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.10'
 }
 
 processResources {

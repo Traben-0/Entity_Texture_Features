@@ -1,7 +1,12 @@
 [**ETF Changelog:**]
 
-[V4.1.dev.4]
+[V4.1.dev.5]
+- fixed an ArrayIndexOutOfBoundsException crash related to caches
+- fixed broken gui buttons in smaller gui scales
+- added skin uploading to the skin tool
+- reworked the iris pbr fix setting into the emissive settings screen and renamed it to reflect its more general fix possibilities
 
+[V4.1.dev.4]
 - added extra nose options available from skin tool
 - added *"creeperCharged"* texture property
 - fixed an issue with additional textures *(drowned_outer_layer & sheep_fur & more)* not loading right when in the

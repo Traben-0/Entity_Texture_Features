@@ -60,12 +60,12 @@ public class ETFConfigScreenPlayerSkinToolPixelSelect extends ETFConfigScreen {
             }
         }
 
-        this.addDrawableChild(new ButtonWidget((int) (this.width * 0.024), (int) (this.height * 0.2), 20, 20,
+        this.addDrawableChild(getETFButton((int) (this.width * 0.024), (int) (this.height * 0.2), 20, 20,
                 Text.of("⟳"),
                 (button) -> etfParent.flipView = !etfParent.flipView));
 
 
-        this.addDrawableChild(new ButtonWidget((int) (this.width * 0.55), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,
+        this.addDrawableChild(getETFButton((int) (this.width * 0.55), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,
                 ScreenTexts.BACK,
                 (button) -> Objects.requireNonNull(client).setScreen(parent)));
 
@@ -85,6 +85,7 @@ public class ETFConfigScreenPlayerSkinToolPixelSelect extends ETFConfigScreen {
                             }else{
                                 selectedPixels.add(colorAtPixel);
                             }
+
                             applyCurrentSelectedPixels();
                             etfParent.thisETFPlayerTexture.changeSkinToThisForTool(etfParent.currentEditorSkin);
                             Identifier randomID2 = new Identifier(MOD_ID+"_ignore","gui_skin_" + System.currentTimeMillis()+".png");
@@ -149,6 +150,8 @@ public class ETFConfigScreenPlayerSkinToolPixelSelect extends ETFConfigScreen {
             }
         }
 
+        if(MODE == SelectionMode.EMISSIVE && ETFVersionDifferenceHandler.isThisModLoaded("iris"))
+            drawTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.iris_message"), width / 8, (int) (this.height * 0.15), 0xFF5555);
 
     }
 

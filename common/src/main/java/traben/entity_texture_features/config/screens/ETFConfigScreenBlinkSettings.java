@@ -24,12 +24,12 @@ public class ETFConfigScreenBlinkSettings extends ETFConfigScreen {
     @Override
     protected void init() {
         super.init();
-        this.addDrawableChild(new ButtonWidget((int) (this.width * 0.55), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,
+        this.addDrawableChild(getETFButton((int) (this.width * 0.55), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,
                 ScreenTexts.BACK,
                 (button) -> {
                     Objects.requireNonNull(client).setScreen(parent);
                 }));
-        this.addDrawableChild(new ButtonWidget((int) (this.width * 0.25), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,
+        this.addDrawableChild(getETFButton((int) (this.width * 0.25), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".reset_defaults"),
                 (button) -> {
                     //temporaryETFConfig = new ETFConfig();
@@ -53,9 +53,15 @@ public class ETFConfigScreenBlinkSettings extends ETFConfigScreen {
                 },
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".blinking_mob_settings.tooltip")
         ));
-
-
-        this.addDrawableChild(new SliderWidget((int) (this.width * 0.025), (int) (this.height * 0.3), (int) (this.width * 0.45), 20,
+        int sliderWidth = (int) (this.width * 0.025);
+        int sliderHeight = 20;
+        if (sliderWidth > 400)
+            sliderHeight = 40;
+        if (sliderWidth > 800)
+            sliderHeight=80;
+        if (sliderWidth > 1600)
+            sliderHeight=16;
+        this.addDrawableChild(new SliderWidget((int) (this.width * 0.025), (int) (this.height * 0.3), (int) (this.width * 0.45), sliderHeight,
                 Text.of(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".blink_frequency.title").getString()
                         + ": " + (ETFConfigScreenMain.temporaryETFConfig.blinkFrequency)),
                 ETFConfigScreenMain.temporaryETFConfig.blinkFrequency / 1024f
@@ -73,7 +79,7 @@ public class ETFConfigScreenBlinkSettings extends ETFConfigScreen {
             }
         });
 
-        this.addDrawableChild(new SliderWidget((int) (this.width * 0.025), (int) (this.height * 0.4), (int) (this.width * 0.45), 20,
+        this.addDrawableChild(new SliderWidget((int) (this.width * 0.025), (int) (this.height * 0.4), (int) (this.width * 0.45), sliderHeight,
                 Text.of(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".blink_length.title").getString()
                         + ": " + (ETFConfigScreenMain.temporaryETFConfig.blinkLength)),
                 ETFConfigScreenMain.temporaryETFConfig.blinkLength / 20f

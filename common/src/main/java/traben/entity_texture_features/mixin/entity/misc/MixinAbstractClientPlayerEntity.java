@@ -54,6 +54,7 @@ public abstract class MixinAbstractClientPlayerEntity extends PlayerEntity {
             at = @At("RETURN"),
             cancellable = true)
     private void changeCapeReturnsBoolean(CallbackInfoReturnable<Boolean> cir) {
+        //returns null if skin features disabled check is inbuilt
         ETFPlayerTexture textureData = ETFManager.getPlayerTexture(this);
         if ((textureData != null && textureData.hasCustomCape())
                 || getUuid().equals(ETFPlayerTexture.Dev)

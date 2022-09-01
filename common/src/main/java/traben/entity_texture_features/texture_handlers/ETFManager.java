@@ -49,7 +49,7 @@ public abstract class ETFManager {
     //trident entities do not send item name data to clients when thrown, this is to keep that name in memory so custom tridents can at least display until reloading
     public static final Object2ReferenceOpenHashMap<UUID, String> UUID_TRIDENT_NAME = new Object2ReferenceOpenHashMap<>();
     public static final ETFLruCache<ETFCacheKey, ETFTexture> ENTITY_TEXTURE_MAP = new ETFLruCache<>();
-    public static final ETFLruCache<UUID, ETFPlayerTexture> PLAYER_TEXTURE_MAP = new ETFLruCache<>(512);
+    public static final ETFLruCache<UUID, ETFPlayerTexture> PLAYER_TEXTURE_MAP = new ETFLruCache<>();
     static public final Object2LongOpenHashMap<UUID> ENTITY_BLINK_TIME = new Object2LongOpenHashMap<>();
     public static final Object2ObjectOpenHashMap<UUID, ETFCacheKey> UUID_TO_MOB_CACHE_KEY_MAP_FOR_FEATURE_USAGE = new Object2ObjectOpenHashMap<>();
     public final static Object2ObjectOpenHashMap<Identifier, ETFTexture> TEXTURE_MAP_TO_OPPOSITE_ELYTRA = new Object2ObjectOpenHashMap<>();
@@ -96,6 +96,8 @@ public abstract class ETFManager {
         }
 
         DOES_IDENTIFIER_EXIST_CACHED_RESULT.clear();
+
+        ETFUtils2.KNOWN_NATIVE_IMAGES.clearCache();
 
         ETFClientCommon.etf$loadConfig();
         //OPTIFINE_1_HAS_REPLACEMENT.clear();

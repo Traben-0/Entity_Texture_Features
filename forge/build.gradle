@@ -42,6 +42,9 @@ dependencies {
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 
     modApi ("me.shedaniel.cloth:cloth-config-forge:${project.cloth_config_version}")
+
+    implementation(forgeDependencies("org.apache.httpcomponents:httpmime:4.5.10"))
+    shadow("org.apache.httpcomponents:httpmime:4.5.10")
 }
 
 processResources {

@@ -47,8 +47,6 @@
   "config.entity_texture_features.general_settings.title": "General Settings",
   "config.entity_texture_features.ignore_warnings.title": "Ignore / hide config warnings",
   "config.entity_texture_features.ignore_warnings.tooltip": "This option only appears if a warning is displayed or it is enabled.\nIf enabled ETF will ignore and hide warnings and will no longer disable\nfeatures automatically for compatibility reasons\nThe amount of warnings currently being ignored is ",
-  "config.entity_texture_features.iris_pbr_fix.title": "iris shaders PBR beta fix",
-  "config.entity_texture_features.iris_pbr_fix.tooltip": "only necessary while using the iris PBR versions currently in beta\nthis disables ETF texture patching to allow iris PBR to function\n (TEMPORARY FIX)\n (expect z-fighting with etf emissive textures when using shaders)",
   "config.entity_texture_features.player_skin_editor.add_features": "Add ETF features to skin.",
   "config.entity_texture_features.player_skin_editor.nose.button": "Nose: ",
   "config.entity_texture_features.player_skin_editor.nose.villager": "villager",
@@ -99,7 +97,7 @@
   "config.entity_texture_features.player_skin_editor.enchant_enable.tooltip": "Allows selecting pixels in your skin to be enchanted",
   "config.entity_texture_features.player_skin_editor.enchant_select.button": "Select pixels",
   "config.entity_texture_features.player_skin_editor.fail_tooltip": "Tool is only usable while in game!\nload a single-player world and then open this menu.\nYou must also give ETF a moment to download your skin\nTool is not available in offline mode\n\nIf using Fabric, then Fabric-Api is also required.",
-  "config.entity_texture_features.player_skin_editor.print_skin.open": "Click here to open folder skin was saved too.",
+  "config.entity_texture_features.player_skin_editor.print_skin.open": "Click here to open the folder your skin was saved too.",
   "config.entity_texture_features.player_skin_editor.print_skin": "Finish & Save skin file",
   "config.entity_texture_features.player_skin_editor.print_skin.result": "Skin file saving: result...",
   "config.entity_texture_features.player_skin_editor.print_skin.result.fail": "Skin file failed to save to file.\ncheck you log for errors.",
@@ -154,5 +152,11 @@
   "config.entity_texture_features.update_frequency.slow": "Slow",
   "config.entity_texture_features.warn_instruction": "Click a warning button to ignore it",
   "config.entity_texture_features.warn_instruction2": "Some warnings disable conflicting ETF settings, unless ignored",
-  "config.entity_texture_features.warnings_main": "Warnings: "
+  "config.entity_texture_features.warnings_main": "Warnings: ",
+  "config.entity_texture_features.player_skin_editor.upload_skin": "Click here to upload this skin to your minecraft account.",
+  "config.entity_texture_features.player_skin_editor.upload_skin.success": "upload succeeded! restart Minecraft to see changes.",
+  "config.entity_texture_features.player_skin_editor.upload_skin.fail": "upload failed!",
+  "config.entity_texture_features.player_skin_editor.iris_message": "Due to iris mod limitations, emissive pixels appear enchanted here!",
+  "config.entity_texture_features.remove_pixels.title": "Remove pixels underneath emissives to prevent z-fighting: ",
+  "config.entity_texture_features.remove_pixels.tooltip": "ETF removes pixels underneath emissives to prevent z-fighting.\ndisabling this may invite z-fighting with shaders\ndisabling this setting also fixes some Iris PBR Beta problems\ndisabling this can also fix animated textures having\nmissing pixels with some mods"
 }

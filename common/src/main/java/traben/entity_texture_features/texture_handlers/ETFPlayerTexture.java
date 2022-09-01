@@ -21,6 +21,7 @@ import net.minecraft.util.Util;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
+import traben.entity_texture_features.config.screens.ETFConfigScreen;
 import traben.entity_texture_features.config.screens.ETFConfigScreenPlayerSkinTool;
 import traben.entity_texture_features.utils.ETFUtils2;
 
@@ -80,7 +81,7 @@ public class ETFPlayerTexture {
     private boolean hasFatCoat = false;
     //provides emissive patching and blinking functionality
     //all ETFPlayerTexture needs to do is build those textures and register them before this ETFTexture is made, and it will auto locate and apply them
-    private ETFTexture etfTextureOfFinalBaseSkin;
+    public ETFTexture etfTextureOfFinalBaseSkin;
 
     ETFPlayerTexture(PlayerEntity player) {
         //initiate texture download as we need unprocessed texture from the skin server
@@ -504,6 +505,19 @@ public class ETFPlayerTexture {
                 matrixStack.pop();
             }
 
+            if (hasEmissives && etfTextureOfFinalBaseSkin != null) {
+                if(MinecraftClient.getInstance().currentScreen instanceof ETFConfigScreen){
+                    //try to render over the skin in ui when iris is installed, as it breaks it in the ui
+                    VertexConsumer vertexC = vertexConsumerProvider.getBuffer(RenderLayer.getArmorCutoutNoCull(etfTextureOfFinalBaseSkin.getEmissiveIdentifierOfCurrentState()));//ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(emissiveToUse), false, false);
+                    if (vertexC != null) {
+                        model.render(matrixStack, vertexC, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
+                    }
+                    //return vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent /*RenderLayer.getEntityTranslucent*/(emissiveToUse));
+                }else {
+                    etfTextureOfFinalBaseSkin.renderEmissive(matrixStack, vertexConsumerProvider, model);
+                }
+
+            }
             //perform texture features
             if (hasEnchant && baseEnchantIdentifier != null) {
                 VertexConsumer enchantVert = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(
@@ -514,9 +528,7 @@ public class ETFPlayerTexture {
                         }), false, true);
                 model.render(matrixStack, enchantVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 0.16f);
             }
-            if (hasEmissives && etfTextureOfFinalBaseSkin != null) {
-                etfTextureOfFinalBaseSkin.renderEmissive(matrixStack, vertexConsumerProvider, model);
-            }
+
         }
     }
 
@@ -992,6 +1004,9 @@ public class ETFPlayerTexture {
                         getSkinPixelColourToNumber(originalSkin.getColor(2, 18)));
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //emissives
+                NativeImage emissiveImage = null;
+                NativeImage emissiveBlinkImage = null;
+                NativeImage emissiveBlink2Image = null;
                 Identifier emissiveIdentifier = null;
                 Identifier blinkEmissiveIdentifier = null;//new Identifier( SKIN_NAMESPACE , id + "_blink_e.png");
                 Identifier blink2EmissiveIdentifier = null;//new Identifier( SKIN_NAMESPACE , id + "_blink2_e.png");
@@ -999,23 +1014,23 @@ public class ETFPlayerTexture {
                 if (hasEmissives) {
                     int[] boxChosenBounds = getSkinPixelBounds("marker" + (markerChoices.indexOf(1) + 1));
                     emissiveCapeBounds = boxChosenBounds;
-                    NativeImage check = returnMatchPixels(modifiedSkin, boxChosenBounds);
-                    if (check != null) {
+                    emissiveImage = returnMatchPixels(modifiedSkin, boxChosenBounds);
+                    if (emissiveImage != null) {
                         emissiveIdentifier = new Identifier(SKIN_NAMESPACE, id + "_e.png");
-                        ETFUtils2.registerNativeImageToIdentifier(check, emissiveIdentifier);
+                        ETFUtils2.registerNativeImageToIdentifier(emissiveImage, emissiveIdentifier);
                         if (blinkSkinFile != null) {
-                            NativeImage checkBlink = returnMatchPixels(blinkSkinFile, boxChosenBounds);
-                            if (checkBlink != null) {
+                            emissiveBlinkImage = returnMatchPixels(blinkSkinFile, boxChosenBounds);
+                            if (emissiveBlinkImage != null) {
                                 blinkEmissiveIdentifier = new Identifier(SKIN_NAMESPACE, id + "_blink_e.png");
-                                ETFUtils2.registerNativeImageToIdentifier(checkBlink, blinkEmissiveIdentifier);
+                                ETFUtils2.registerNativeImageToIdentifier(emissiveBlinkImage, blinkEmissiveIdentifier);
                             }
                             //registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkBlink, ETFUtils2::emptyNativeImage), SKIN_NAMESPACE + id + "_blink_e.png");
                         }
                         if (blinkSkinFile2 != null) {
-                            NativeImage checkBlink = returnMatchPixels(blinkSkinFile2, boxChosenBounds);
-                            if (checkBlink != null) {
+                            emissiveBlink2Image = returnMatchPixels(blinkSkinFile2, boxChosenBounds);
+                            if (emissiveBlink2Image != null) {
                                 blink2EmissiveIdentifier = new Identifier(SKIN_NAMESPACE, id + "_blink2_e.png");
-                                ETFUtils2.registerNativeImageToIdentifier(checkBlink, blink2EmissiveIdentifier);
+                                ETFUtils2.registerNativeImageToIdentifier(emissiveBlink2Image, blink2EmissiveIdentifier);
                             }
                             //registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkBlink, ETFUtils2::emptyNativeImage), SKIN_NAMESPACE + id + "_blink2_e.png");
                         }
@@ -1107,10 +1122,34 @@ public class ETFPlayerTexture {
                     }
                 }
 
+
+
                 Identifier modifiedSkinIdentifier = new Identifier(SKIN_NAMESPACE, id + ".png");
                 ETFUtils2.registerNativeImageToIdentifier(modifiedSkin, modifiedSkinIdentifier);
+
+                Identifier modifiedSkinBlinkPatchedIdentifier = null;
+                Identifier modifiedSkinPatchedIdentifier = null;
+                Identifier modifiedSkinBlink2PatchedIdentifier = null;
+                if(emissiveImage != null){
+                    modifiedSkinPatchedIdentifier = new Identifier(SKIN_NAMESPACE, id + "_e_patched.png");
+                    ETFTexture.patchTextureToRemoveZFightingWithOtherTexture(modifiedSkin,emissiveImage);
+                    ETFUtils2.registerNativeImageToIdentifier(modifiedSkin, modifiedSkinPatchedIdentifier);
+                    if(blinkSkinFile != null ){
+                        modifiedSkinBlinkPatchedIdentifier = new Identifier(SKIN_NAMESPACE, id + "_blink_e_patched.png");
+                        ETFTexture.patchTextureToRemoveZFightingWithOtherTexture(blinkSkinFile,emissiveBlinkImage);
+                        ETFUtils2.registerNativeImageToIdentifier(blinkSkinFile, modifiedSkinBlinkPatchedIdentifier);
+                    }
+                    if(blinkSkinFile2 != null ){
+                        modifiedSkinBlink2PatchedIdentifier = new Identifier(SKIN_NAMESPACE, id + "_blink2_e_patched.png");
+                        ETFTexture.patchTextureToRemoveZFightingWithOtherTexture(blinkSkinFile2,emissiveBlink2Image);
+                        ETFUtils2.registerNativeImageToIdentifier(blinkSkinFile2, modifiedSkinBlink2PatchedIdentifier);
+                    }
+                }
+
+
+
                 //create etf texture with player initiator
-                etfTextureOfFinalBaseSkin = new ETFTexture(modifiedSkinIdentifier, blinkIdentifier, blink2Identifier, emissiveIdentifier, blinkEmissiveIdentifier, blink2EmissiveIdentifier);
+                etfTextureOfFinalBaseSkin = new ETFTexture(modifiedSkinIdentifier, blinkIdentifier, blink2Identifier, emissiveIdentifier, blinkEmissiveIdentifier, blink2EmissiveIdentifier,modifiedSkinPatchedIdentifier,modifiedSkinBlinkPatchedIdentifier,modifiedSkinBlink2PatchedIdentifier);
             } else {
                 skinFailed(true);
             }

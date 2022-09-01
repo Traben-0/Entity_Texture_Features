@@ -46,7 +46,7 @@ public class ETFConfig {
 
     public DebugLogMode debugLoggingMode = DebugLogMode.None;
 
-    public boolean temporary_fixIrisPBR = false;
+    public boolean removePixelsUnderEmissive = true;
 
     public Set<ETFConfigScreenWarnings.ConfigWarning> ignoredConfigs = new HashSet<>();
 

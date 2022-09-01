@@ -84,6 +84,12 @@ public abstract class ETFConfigScreen extends Screen {
     }
 
     ButtonWidget getETFButton(int x, int y, int width, int height, Text buttonText, ButtonWidget.PressAction onPress, Text toolTipText) {
+        if (width > 384)
+            width = 384;
+//        if (width > 800)
+//            height=80;
+//        if (width > 1600)
+//            height=16;
         boolean tooltipIsEmpty = toolTipText.getString().isBlank();
         String[] strings = toolTipText.getString().split("\n");
         List<Text> lines = new ArrayList<>();
@@ -91,6 +97,7 @@ public abstract class ETFConfigScreen extends Screen {
                 strings) {
             lines.add(Text.of(str.strip()));
         }
+
         return new ButtonWidget(x, y, width, height,
                 buttonText,
                 onPress,

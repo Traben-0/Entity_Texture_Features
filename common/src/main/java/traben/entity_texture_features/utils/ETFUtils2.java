@@ -2,6 +2,7 @@ package traben.entity_texture_features.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.texture.NativeImage;
@@ -16,6 +17,7 @@ import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.screens.ETFConfigScreenWarnings;
 import traben.entity_texture_features.texture_handlers.ETFManager;
+import traben.entity_texture_features.texture_handlers.ETFPlayerTexture;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -24,6 +26,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Properties;
+import java.util.UUID;
 
 import static traben.entity_texture_features.ETFClientCommon.CONFIG_DIR;
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
@@ -106,7 +109,14 @@ public abstract class ETFUtils2 {
 
     }
 
+    public static final ETFLruCache<Identifier, NativeImage> KNOWN_NATIVE_IMAGES = new ETFLruCache<>();
+
     public static NativeImage getNativeImageElseNull(@Nullable Identifier identifier) {
+        if(identifier != null){
+            if(KNOWN_NATIVE_IMAGES.get(identifier) != null){
+                return KNOWN_NATIVE_IMAGES.get(identifier);
+            }
+        }
         NativeImage img;
         try {
             @SuppressWarnings("OptionalGetWithoutIsPresent") //try catch is intended
@@ -114,6 +124,7 @@ public abstract class ETFUtils2 {
             try {
                 img = NativeImage.read(in);
                 in.close();
+                KNOWN_NATIVE_IMAGES.put(identifier,img);
                 return img;
             } catch (Exception e) {
                 //resource.close();
@@ -251,6 +262,7 @@ public abstract class ETFUtils2 {
             NativeImageBackedTexture bob = new NativeImageBackedTexture(img);
             MinecraftClient.getInstance().getTextureManager().registerTexture(identifier, bob);
             //MinecraftClient.getInstance().getResourceManager().
+            KNOWN_NATIVE_IMAGES.put(identifier,img);
             return true;
         } else {
             logError("registering native image failed: " + img + ", " + identifier);

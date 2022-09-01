@@ -4,13 +4,19 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.render.DiffuseLighting;
-import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.*;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
+import net.minecraft.client.render.entity.EntityRenderer;
+import net.minecraft.client.render.entity.LivingEntityRenderer;
+import net.minecraft.client.render.entity.PlayerEntityRenderer;
+import net.minecraft.client.render.entity.model.EntityModel;
+import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -127,16 +133,16 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
             }
         }
 
-        this.addDrawableChild(new ButtonWidget(this.width / 2 - 210, (int) (this.height * 0.9), 200, 20, ScreenTexts.CANCEL, (button) -> {
+        this.addDrawableChild(getETFButton(this.width / 2 - 210, (int) (this.height * 0.9), 200, 20, ScreenTexts.CANCEL, (button) -> {
             onExit();
             Objects.requireNonNull(client).setScreen(parent);
         }));
 
-        this.addDrawableChild(new ButtonWidget((int) (this.width * 0.024), (int) (this.height * 0.2), 20, 20,
+        this.addDrawableChild(getETFButton((int) (this.width * 0.024), (int) (this.height * 0.2), 20, 20,
                 Text.of("⟳"),
                 (button) -> flipView = !flipView));
 
-        printSkinFileButton = new ButtonWidget(this.width / 2 + 10, (int) (this.height * 0.9), 200, 20,
+        printSkinFileButton = getETFButton(this.width / 2 + 10, (int) (this.height * 0.9), 200, 20,
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.print_skin"),
                 (button) -> {
                     boolean result = false;
@@ -153,7 +159,7 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
 
             //skin feature buttons
 
-            this.addDrawableChild(new ButtonWidget((int) (this.width * 0.55), (int) (this.height * 0.2), (int) (this.width * 0.4), 20,
+            this.addDrawableChild(getETFButton((int) (this.width * 0.55), (int) (this.height * 0.2), (int) (this.width * 0.4), 20,
                     thisETFPlayerTexture.hasFeatures ?
                             ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.remove_features") :
                             ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.add_features"),
@@ -417,7 +423,8 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
 
         drawTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.crouch_message"), width / 40, (int) (this.height * 0.8), 0x555555);
         drawTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.blink_message"), width / 40, (int) (this.height * 0.1), 0x555555);
-
+        if(ETFVersionDifferenceHandler.isThisModLoaded("iris"))
+            drawTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.iris_message"), width / 8, (int) (this.height * 0.15), 0xFF5555);
     }
 
     public void applyExistingOverlayToSkin(Identifier overlayTexture) {
@@ -455,13 +462,13 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
 
                 return true;
             } catch (Exception e) {
-                ETFUtils2.logMessage("Skin feature layout could not be applied to a copy of your skin and has not been saved. Error written to log.", true);
+                //ETFUtils2.logMessage("Skin feature layout could not be applied to a copy of your skin and has not been saved. Error written to log.", true);
                 ETFUtils2.logError(e.toString(), false);
             }
 
         } else {
             //requires fab api to read from mod resources
-            ETFUtils2.logError("Fabric API required for skin printout, cancelling.", true);
+            //ETFUtils2.logError("Fabric API required for skin printout, cancelling.", true);
         }
         return false;
     }
@@ -757,7 +764,7 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
         }
     }
 
-    public void drawEntity(int x, int y, int size, float mouseX, float mouseY, LivingEntity entity) {
+    public void  drawEntity(int x, int y, int size, float mouseX, float mouseY, LivingEntity entity) {
         float f = (float)Math.atan((mouseX / 40.0f));
         float g = (float)Math.atan((mouseY / 40.0F));
         MatrixStack matrixStack = RenderSystem.getModelViewStack();
@@ -788,8 +795,24 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
         entityRenderDispatcher.setRotation(quaternion2);
         entityRenderDispatcher.setRenderShadows(false);
         VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
-        RenderSystem.runAsFancy(() -> entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, matrixStack2, immediate, 15728880));
-        immediate.draw();
+            RenderSystem.runAsFancy(() -> {
+                entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, matrixStack2, immediate, 15728880);
+//                if(thisETFPlayerTexture != null && entity instanceof AbstractClientPlayerEntity) {
+//                    RenderLayer layer = RenderLayer.getEntityTranslucent(thisETFPlayerTexture.etfTextureOfFinalBaseSkin.getEmissiveIdentifierOfCurrentState());
+//
+//                VertexConsumer vertexC = immediate.getBuffer(layer);
+//                if (vertexC != null) {
+//                    EntityRenderer<?> bob = entityRenderDispatcher.getRenderer(entity);
+//                    if (bob instanceof LivingEntityRenderer<?, ?>) {
+//                        System.out.println("rendered");
+//                        ((LivingEntityRenderer<PlayerEntity, PlayerEntityModel<PlayerEntity>>) bob).render((PlayerEntity) entity, 0, 1, matrixStack2, immediate, 0xE000E0);
+//                        ((LivingEntityRenderer<?, ?>) bob).getModel().render(matrixStack, vertexC, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
+//                    }
+//                }
+
+            });
+            immediate.draw();
+
         entityRenderDispatcher.setRenderShadows(true);
         entity.bodyYaw = h;
         entity.setYaw(i);
