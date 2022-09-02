@@ -156,7 +156,6 @@
   "config.entity_texture_features.player_skin_editor.upload_skin": "Click here to upload this skin to your minecraft account.",
   "config.entity_texture_features.player_skin_editor.upload_skin.success": "upload succeeded! restart Minecraft to see changes.",
   "config.entity_texture_features.player_skin_editor.upload_skin.fail": "upload failed!",
-  "config.entity_texture_features.player_skin_editor.iris_message": "Due to iris mod limitations, emissive pixels appear enchanted here!",
   "config.entity_texture_features.remove_pixels.title": "Remove pixels underneath emissives to prevent z-fighting: ",
   "config.entity_texture_features.remove_pixels.tooltip": "ETF removes pixels underneath emissives to prevent z-fighting.\ndisabling this may invite z-fighting with shaders\ndisabling this setting also fixes some Iris PBR Beta problems\ndisabling this can also fix animated textures having\nmissing pixels with some mods"
 }

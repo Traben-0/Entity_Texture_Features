@@ -208,79 +208,82 @@ public abstract class ETFManager {
         return getOrCreateETFTexture(vanillaIdentifier, vanillaIdentifier);
     }
 
-    @NotNull
+    @Nullable
     public static <T extends Entity> ETFTexture getETFTexture(@NotNull Identifier vanillaIdentifier, @Nullable T entity, @NotNull TextureSource source) {
-        if (entity == null) {
-            //this should only purposefully call for features like armor or elytra that append to players and have no ETF customizing
-            return getETFDefaultTexture(vanillaIdentifier);
-        }
-        UUID id = entity.getUuid();
-        //use custom cache id this differentiates feature renderer calls here and makes the base feature still identifiable by uuid only when features are called
-        ETFCacheKey cacheKey = new ETFCacheKey(id, vanillaIdentifier); //source == TextureSource.ENTITY_FEATURE ? vanillaIdentifier : null);
-        if (source == TextureSource.ENTITY) {
-            //this is so feature renderers can find the 'base texture' of the mob to test it's variant if required
-            UUID_TO_MOB_CACHE_KEY_MAP_FOR_FEATURE_USAGE.put(id, cacheKey);
-        }
-
-        //fastest in subsequent runs
-        if (id == ETF_GENERIC_UUID || entity.getBlockPos().equals(Vec3i.ZERO)) {
-            return getETFDefaultTexture(vanillaIdentifier);
-        }
-        if (ENTITY_TEXTURE_MAP.containsKey(cacheKey)) {
-            ETFTexture quickReturn = ENTITY_TEXTURE_MAP.get(cacheKey);
-            if (quickReturn == null) {
-                ETFTexture vanillaETF = getETFDefaultTexture(vanillaIdentifier);
-                ENTITY_TEXTURE_MAP.put(cacheKey, vanillaETF);
-                quickReturn = vanillaETF;
-
+        try {
+            if (entity == null) {
+                //this should only purposefully call for features like armor or elytra that append to players and have no ETF customizing
+                return getETFDefaultTexture(vanillaIdentifier);
             }
+            UUID id = entity.getUuid();
+            //use custom cache id this differentiates feature renderer calls here and makes the base feature still identifiable by uuid only when features are called
+            ETFCacheKey cacheKey = new ETFCacheKey(id, vanillaIdentifier); //source == TextureSource.ENTITY_FEATURE ? vanillaIdentifier : null);
             if (source == TextureSource.ENTITY) {
-                if (ENTITY_DEBUG_QUEUE.contains(id)) {
-                    boolean inChat = ETFConfigData.debugLoggingMode == ETFConfig.DebugLogMode.Chat;
-                    ETFUtils2.logMessage(
-                            "\nGeneral ETF:"+
-                            "\n\tTexture cache size: " + ETF_TEXTURE_CACHE.size() +
-                            "\nThis "+ entity.getType().toString()+
-                            "\n\tTexture: "+quickReturn+"\nEntity cache size: " + ENTITY_TEXTURE_MAP.size() +
-                            "\n\tOriginal spawn state: " + ENTITY_SPAWN_CONDITIONS_CACHE.get(cacheKey) +
-                            "\n\tOptiFine property key count: " + (OPTIFINE_PROPERTY_CACHE.containsKey(vanillaIdentifier) ? Objects.requireNonNullElse(OPTIFINE_PROPERTY_CACHE.get(vanillaIdentifier), new ArrayList<>()).size() : 0) +
-                            "\n\tNon property random total: " + TRUE_RANDOM_COUNT_CACHE.getInt(vanillaIdentifier), inChat);
-
-                    ENTITY_DEBUG_QUEUE.remove(id);
-                }
-                if (ENTITY_UPDATE_QUEUE.contains(id)) {
-                    Identifier newVariantIdentifier = returnNewAlreadyConfirmedOptifineTexture(entity, vanillaIdentifier, true);
-                    ENTITY_TEXTURE_MAP.put(cacheKey, Objects.requireNonNullElse(getOrCreateETFTexture(vanillaIdentifier, Objects.requireNonNullElse(newVariantIdentifier, vanillaIdentifier)), getETFDefaultTexture(vanillaIdentifier)));
-
-                    ENTITY_UPDATE_QUEUE.remove(id);
-                } else {
-                    checkIfShouldTriggerUpdate(id);
-                }
+                //this is so feature renderers can find the 'base texture' of the mob to test it's variant if required
+                UUID_TO_MOB_CACHE_KEY_MAP_FOR_FEATURE_USAGE.put(id, cacheKey);
             }
-            //this is where 99.99% of calls here will end only the very first call to this method by an entity goes further
-            //the first call by any entity of a type will go the furthest and be the slowest as it triggers the initial setup, this makes all future calls by the same entity type faster
-            //this is as close as possible to method start I can move this without losing update and debug functionality
-            //this is the focal point of the rewrite where all the optimization is expected
-            return quickReturn;
-        }
-        //need to create or find an ETFTexture object for entity and find or add to cache and entity map
-        //firstly just going to check if this mob is some sort of gui element or not a real mod
+
+            //fastest in subsequent runs
+            if (id == ETF_GENERIC_UUID || entity.getBlockPos().equals(Vec3i.ZERO)) {
+                return getETFDefaultTexture(vanillaIdentifier);
+            }
+            if (ENTITY_TEXTURE_MAP.containsKey(cacheKey)) {
+                ETFTexture quickReturn = ENTITY_TEXTURE_MAP.get(cacheKey);
+                if (quickReturn == null) {
+                    ETFTexture vanillaETF = getETFDefaultTexture(vanillaIdentifier);
+                    ENTITY_TEXTURE_MAP.put(cacheKey, vanillaETF);
+                    quickReturn = vanillaETF;
+
+                }
+                if (source == TextureSource.ENTITY) {
+                    if (ENTITY_DEBUG_QUEUE.contains(id)) {
+                        boolean inChat = ETFConfigData.debugLoggingMode == ETFConfig.DebugLogMode.Chat;
+                        ETFUtils2.logMessage(
+                                "\nGeneral ETF:" +
+                                        "\n\tTexture cache size: " + ETF_TEXTURE_CACHE.size() +
+                                        "\nThis " + entity.getType().toString() +
+                                        "\n\tTexture: " + quickReturn + "\nEntity cache size: " + ENTITY_TEXTURE_MAP.size() +
+                                        "\n\tOriginal spawn state: " + ENTITY_SPAWN_CONDITIONS_CACHE.get(cacheKey) +
+                                        "\n\tOptiFine property key count: " + (OPTIFINE_PROPERTY_CACHE.containsKey(vanillaIdentifier) ? Objects.requireNonNullElse(OPTIFINE_PROPERTY_CACHE.get(vanillaIdentifier), new ArrayList<>()).size() : 0) +
+                                        "\n\tNon property random total: " + TRUE_RANDOM_COUNT_CACHE.getInt(vanillaIdentifier), inChat);
+
+                        ENTITY_DEBUG_QUEUE.remove(id);
+                    }
+                    if (ENTITY_UPDATE_QUEUE.contains(id)) {
+                        Identifier newVariantIdentifier = returnNewAlreadyConfirmedOptifineTexture(entity, vanillaIdentifier, true);
+                        ENTITY_TEXTURE_MAP.put(cacheKey, Objects.requireNonNullElse(getOrCreateETFTexture(vanillaIdentifier, Objects.requireNonNullElse(newVariantIdentifier, vanillaIdentifier)), getETFDefaultTexture(vanillaIdentifier)));
+
+                        ENTITY_UPDATE_QUEUE.remove(id);
+                    } else {
+                        checkIfShouldTriggerUpdate(id);
+                    }
+                }
+                //this is where 99.99% of calls here will end only the very first call to this method by an entity goes further
+                //the first call by any entity of a type will go the furthest and be the slowest as it triggers the initial setup, this makes all future calls by the same entity type faster
+                //this is as close as possible to method start I can move this without losing update and debug functionality
+                //this is the focal point of the rewrite where all the optimization is expected
+                return quickReturn;
+            }
+            //need to create or find an ETFTexture object for entity and find or add to cache and entity map
+            //firstly just going to check if this mob is some sort of gui element or not a real mod
 
 
-        Identifier possibleIdentifier;
-        if (source == TextureSource.ENTITY_FEATURE) {
-            possibleIdentifier = getPossibleVariantIdentifierRedirectForFeatures(entity, vanillaIdentifier, source);
-        } else {
-            possibleIdentifier = getPossibleVariantIdentifier(entity, vanillaIdentifier, source);
-        }
+            Identifier possibleIdentifier;
+            if (source == TextureSource.ENTITY_FEATURE) {
+                possibleIdentifier = getPossibleVariantIdentifierRedirectForFeatures(entity, vanillaIdentifier, source);
+            } else {
+                possibleIdentifier = getPossibleVariantIdentifier(entity, vanillaIdentifier, source);
+            }
 
-        ETFTexture foundTexture;
-        foundTexture = Objects.requireNonNullElse(getOrCreateETFTexture(vanillaIdentifier, possibleIdentifier == null ? vanillaIdentifier : possibleIdentifier), getETFDefaultTexture(vanillaIdentifier));
-        //if(!(source == TextureSource.ENTITY_FEATURE && possibleIdentifier == null))
+            ETFTexture foundTexture;
+            foundTexture = Objects.requireNonNullElse(getOrCreateETFTexture(vanillaIdentifier, possibleIdentifier == null ? vanillaIdentifier : possibleIdentifier), getETFDefaultTexture(vanillaIdentifier));
+            //if(!(source == TextureSource.ENTITY_FEATURE && possibleIdentifier == null))
             ENTITY_TEXTURE_MAP.put(cacheKey, foundTexture);
-        return foundTexture;
+            return foundTexture;
 
-
+        }catch (Exception e){
+            return null;
+        }
     }
 
     @Nullable //when vanilla
@@ -1029,32 +1032,36 @@ public abstract class ETFManager {
 
     @Nullable
     public static ETFPlayerTexture getPlayerTexture(PlayerEntity player) {
-        UUID id = player.getUuid();
-        if (PLAYER_TEXTURE_MAP.containsKey(id)) {
-            return PLAYER_TEXTURE_MAP.get(id);
-        } else {
-            if (LAST_PLAYER_CHECK_TIME.containsKey(id)) {
-                int attemptCount = PLAYER_CHECK_COUNT.getInt(id);
-                if (attemptCount > 6) {
-                    //no more checking always return null now
-                    //player ahs no features it seems
-                    LAST_PLAYER_CHECK_TIME.removeLong(id);
-                    PLAYER_CHECK_COUNT.removeInt(id);
-                    PLAYER_TEXTURE_MAP.put(id, null);
-                    return null;
-                }
+        try {
+            UUID id = player.getUuid();
+            if (PLAYER_TEXTURE_MAP.containsKey(id)) {
+                return PLAYER_TEXTURE_MAP.get(id);
+            } else {
+                if (LAST_PLAYER_CHECK_TIME.containsKey(id)) {
+                    int attemptCount = PLAYER_CHECK_COUNT.getInt(id);
+                    if (attemptCount > 6) {
+                        //no more checking always return null now
+                        //player ahs no features it seems
+                        LAST_PLAYER_CHECK_TIME.removeLong(id);
+                        PLAYER_CHECK_COUNT.removeInt(id);
+                        PLAYER_TEXTURE_MAP.put(id, null);
+                        return null;
+                    }
 
-                if (LAST_PLAYER_CHECK_TIME.getLong(id) + 3000 > System.currentTimeMillis()) {
-                    //not time to check again
-                    return null;
+                    if (LAST_PLAYER_CHECK_TIME.getLong(id) + 3000 > System.currentTimeMillis()) {
+                        //not time to check again
+                        return null;
+                    }
+                    PLAYER_CHECK_COUNT.put(id, attemptCount + 1);
+                    //allowed to continue if time has passed and not exceeded attempt limit
                 }
-                PLAYER_CHECK_COUNT.put(id, attemptCount + 1);
-                //allowed to continue if time has passed and not exceeded attempt limit
+                LAST_PLAYER_CHECK_TIME.put(id, System.currentTimeMillis());
+                ETFPlayerTexture etfPlayerTexture = new ETFPlayerTexture(player);
+                PLAYER_TEXTURE_MAP.put(id, etfPlayerTexture);
+                return etfPlayerTexture;
             }
-            LAST_PLAYER_CHECK_TIME.put(id, System.currentTimeMillis());
-            ETFPlayerTexture etfPlayerTexture = new ETFPlayerTexture(player);
-            PLAYER_TEXTURE_MAP.put(id, etfPlayerTexture);
-            return etfPlayerTexture;
+        }catch (Exception e){
+            return null;
         }
 
     }

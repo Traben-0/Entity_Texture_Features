@@ -15,6 +15,7 @@ import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.screen.ScreenTexts;
@@ -423,9 +424,9 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
 
         drawTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.crouch_message"), width / 40, (int) (this.height * 0.8), 0x555555);
         drawTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.blink_message"), width / 40, (int) (this.height * 0.1), 0x555555);
-        if(ETFVersionDifferenceHandler.isThisModLoaded("iris"))
-            drawTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.iris_message"), width / 8, (int) (this.height * 0.15), 0xFF5555);
-    }
+//        if(ETFVersionDifferenceHandler.isThisModLoaded("iris"))
+//            drawTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.iris_message"), width / 8, (int) (this.height * 0.15), 0xFF5555);
+   }
 
     public void applyExistingOverlayToSkin(Identifier overlayTexture) {
         if ((ETFVersionDifferenceHandler.isFabric() == ETFVersionDifferenceHandler.isThisModLoaded("fabric"))) {
@@ -794,25 +795,30 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
         quaternion2.conjugate();
         entityRenderDispatcher.setRotation(quaternion2);
         entityRenderDispatcher.setRenderShadows(false);
+
         VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
-            RenderSystem.runAsFancy(() -> {
-                entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, matrixStack2, immediate, 15728880);
-//                if(thisETFPlayerTexture != null && entity instanceof AbstractClientPlayerEntity) {
-//                    RenderLayer layer = RenderLayer.getEntityTranslucent(thisETFPlayerTexture.etfTextureOfFinalBaseSkin.getEmissiveIdentifierOfCurrentState());
-//
-//                VertexConsumer vertexC = immediate.getBuffer(layer);
-//                if (vertexC != null) {
-//                    EntityRenderer<?> bob = entityRenderDispatcher.getRenderer(entity);
-//                    if (bob instanceof LivingEntityRenderer<?, ?>) {
-//                        System.out.println("rendered");
-//                        ((LivingEntityRenderer<PlayerEntity, PlayerEntityModel<PlayerEntity>>) bob).render((PlayerEntity) entity, 0, 1, matrixStack2, immediate, 0xE000E0);
-//                        ((LivingEntityRenderer<?, ?>) bob).getModel().render(matrixStack, vertexC, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
-//                    }
-//                }
+        RenderSystem.runAsFancy(() -> entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, matrixStack2, immediate, 15728880));
+        immediate.draw();
 
-            });
-            immediate.draw();
+        //second render required for iris
+        VertexConsumerProvider.Immediate immediate2 = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
+        RenderSystem.runAsFancy(() -> {
+            //entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, matrixStack2, immediate2, 15728880);
+                if(thisETFPlayerTexture != null && entity instanceof AbstractClientPlayerEntity) {
+                    RenderLayer layer = RenderLayer.getEntityTranslucent(thisETFPlayerTexture.etfTextureOfFinalBaseSkin.getEmissiveIdentifierOfCurrentState());
 
+                    VertexConsumer vertexC = immediate.getBuffer(layer);
+                    if (vertexC != null) {
+                        EntityRenderer<?> bob = entityRenderDispatcher.getRenderer(entity);
+                        if (bob instanceof LivingEntityRenderer<?, ?>) {
+                            System.out.println("rendered");
+                            //((LivingEntityRenderer<PlayerEntity, PlayerEntityModel<PlayerEntity>>) bob).render((PlayerEntity) entity, 0, 1, matrixStack2, immediate, 0xE000E0);
+                            ((LivingEntityRenderer<?, ?>) bob).getModel().render(matrixStack, vertexC, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
+                        }
+                    }
+                }
+        });
+        immediate2.draw();
         entityRenderDispatcher.setRenderShadows(true);
         entity.bodyYaw = h;
         entity.setYaw(i);

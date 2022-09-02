@@ -1,5 +1,11 @@
 [**ETF Changelog:**]
 
+[V4.1.dev.6]
+- improved the fix for ArrayIndexOutOfBoundsException crash related to caches
+- added more crash prevention, most features should simply not work instead of immediately crashing
+- fixed emissive textures not displaying on skin in skin tool with iris installed
+- disabled armour rendering in skin tool
+
 [V4.1.dev.5]
 - fixed an ArrayIndexOutOfBoundsException crash related to caches
 - fixed broken gui buttons in smaller gui scales

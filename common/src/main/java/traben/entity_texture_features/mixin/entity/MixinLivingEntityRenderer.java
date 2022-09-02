@@ -85,10 +85,10 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
             return getTexture(entity);
         }
         thisETFTexture = ETFManager.getETFTexture(getTexture(entity), entity, ETFManager.TextureSource.ENTITY);
-
-        return thisETFTexture.getTextureIdentifier(entity);
-
-
+        if(thisETFTexture != null) {
+            return thisETFTexture.getTextureIdentifier(entity);
+        }
+        return getTexture(entity);
     }
 
 //    @Inject(

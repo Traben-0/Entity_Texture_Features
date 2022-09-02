@@ -506,16 +506,16 @@ public class ETFPlayerTexture {
             }
 
             if (hasEmissives && etfTextureOfFinalBaseSkin != null) {
-                if(MinecraftClient.getInstance().currentScreen instanceof ETFConfigScreen){
-                    //try to render over the skin in ui when iris is installed, as it breaks it in the ui
-                    VertexConsumer vertexC = vertexConsumerProvider.getBuffer(RenderLayer.getArmorCutoutNoCull(etfTextureOfFinalBaseSkin.getEmissiveIdentifierOfCurrentState()));//ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(emissiveToUse), false, false);
-                    if (vertexC != null) {
-                        model.render(matrixStack, vertexC, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
-                    }
-                    //return vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent /*RenderLayer.getEntityTranslucent*/(emissiveToUse));
-                }else {
+//                if(MinecraftClient.getInstance().currentScreen instanceof ETFConfigScreen){
+//                    //try to render over the skin in ui when iris is installed, as it breaks it in the ui
+//                    VertexConsumer vertexC = vertexConsumerProvider.getBuffer(RenderLayer.getArmorCutoutNoCull(etfTextureOfFinalBaseSkin.getEmissiveIdentifierOfCurrentState()));//ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(emissiveToUse), false, false);
+//                    if (vertexC != null) {
+//                        model.render(matrixStack, vertexC, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
+//                    }
+//                    //return vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent /*RenderLayer.getEntityTranslucent*/(emissiveToUse));
+//                }else {
                     etfTextureOfFinalBaseSkin.renderEmissive(matrixStack, vertexConsumerProvider, model);
-                }
+//                }
 
             }
             //perform texture features
