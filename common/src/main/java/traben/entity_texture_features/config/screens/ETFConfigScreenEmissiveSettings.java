@@ -1,7 +1,6 @@
 package traben.entity_texture_features.config.screens;
 
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
@@ -36,7 +35,6 @@ public class ETFConfigScreenEmissiveSettings extends ETFConfigScreen {
                     ETFConfigScreenMain.temporaryETFConfig.enableElytra = true;
                     ETFConfigScreenMain.temporaryETFConfig.specialEmissiveShield = true;
                     ETFConfigScreenMain.temporaryETFConfig.enableEmissiveBlockEntities = true;
-                    ETFConfigScreenMain.temporaryETFConfig.removePixelsUnderEmissive = true;
                     this.clearAndInit();
                     //Objects.requireNonNull(client).setScreen(parent);
                 }));
@@ -78,17 +76,9 @@ public class ETFConfigScreenEmissiveSettings extends ETFConfigScreen {
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".always_check_vanilla_emissive_suffix.tooltip")
         ));
 
-        this.addDrawableChild(getETFButton((int) (this.width * 0.025), (int) (this.height * 0.6), (int) (this.width * 0.8), 20,
-                Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
-                        "config." + ETFClientCommon.MOD_ID + ".remove_pixels.title"
-                ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.removePixelsUnderEmissive ? ScreenTexts.ON : ScreenTexts.OFF).getString()),
-                (button) -> {
-                    ETFConfigScreenMain.temporaryETFConfig.removePixelsUnderEmissive = !ETFConfigScreenMain.temporaryETFConfig.removePixelsUnderEmissive;
-                    button.setMessage(Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
-                            "config." + ETFClientCommon.MOD_ID + ".remove_pixels.title"
-                    ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.removePixelsUnderEmissive ? ScreenTexts.ON : ScreenTexts.OFF).getString()));
-                },
-                ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".remove_pixels.tooltip")
+        this.addDrawableChild(getETFButton((int) (this.width * 0.025), (int) (this.height * 0.7), (int) (this.width * 0.8), 20,
+                ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".emissive_fix.button"),
+                (button) -> Objects.requireNonNull(client).setScreen(new ETFConfigScreenEmissiveFixSettings(this))
         ));
 
 

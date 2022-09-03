@@ -23,8 +23,6 @@ import traben.entity_texture_features.utils.ETFUtils2;
 import java.util.UUID;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
-import static traben.entity_texture_features.texture_handlers.ETFManager.ENTITY_TEXTURE_MAP;
-import static traben.entity_texture_features.texture_handlers.ETFManager.UUID_TRIDENT_NAME;
 
 @Mixin(TridentEntityRenderer.class)
 public abstract class MixinTridentEntityRenderer implements SynchronousResourceReloader {
@@ -50,22 +48,22 @@ public abstract class MixinTridentEntityRenderer implements SynchronousResourceR
         if (ETFConfigData.enableTridents) {
             UUID id = tridentEntity.getUuid();
             ETFCacheKey key = new ETFCacheKey(id, null);
-            if (ENTITY_TEXTURE_MAP.containsKey(key)) {
-                thisETFTexture = ENTITY_TEXTURE_MAP.get(key);
+            if (ETFManager.getInstance().ENTITY_TEXTURE_MAP.containsKey(key)) {
+                thisETFTexture = ETFManager.getInstance().ENTITY_TEXTURE_MAP.get(key);
                 if (thisETFTexture != null) {
                     return thisETFTexture.thisIdentifier;
                 }
             } else {
-                if (UUID_TRIDENT_NAME.get(id) != null) {
+                if (ETFManager.getInstance().UUID_TRIDENT_NAME.get(id) != null) {
                     String path = TridentEntityModel.TEXTURE.toString();
-                    String name = UUID_TRIDENT_NAME.get(id).toLowerCase().replaceAll("[^a-z\\d/_.-]", "");
+                    String name = ETFManager.getInstance().UUID_TRIDENT_NAME.get(id).toLowerCase().replaceAll("[^a-z\\d/_.-]", "");
                     Identifier possibleId = new Identifier(path.replace(".png", "_" + name + ".png"));
                     if (MinecraftClient.getInstance().getResourceManager().getResource(possibleId).isPresent()) {
                         Identifier emissive = ETFUtils2.replaceIdentifier(possibleId, ".png", "_e.png");
                         if (MinecraftClient.getInstance().getResourceManager().getResource(emissive).isEmpty()) {
                             emissive = null;
                         }
-                        ENTITY_TEXTURE_MAP.put(key, new ETFTexture(possibleId, emissive));
+                        ETFManager.getInstance().ENTITY_TEXTURE_MAP.put(key, new ETFTexture(possibleId, emissive));
                         return possibleId;
                     }
                 }

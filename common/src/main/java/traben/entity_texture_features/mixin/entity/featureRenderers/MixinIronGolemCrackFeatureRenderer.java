@@ -17,6 +17,8 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
 
+import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
+
 @Mixin(IronGolemCrackFeatureRenderer.class)
 public abstract class MixinIronGolemCrackFeatureRenderer extends FeatureRenderer<IronGolemEntity, IronGolemEntityModel<IronGolemEntity>> {
 
@@ -52,7 +54,7 @@ public abstract class MixinIronGolemCrackFeatureRenderer extends FeatureRenderer
             , index = 1)
     private Identifier etf$returnAlteredTexture(Identifier texture) {
 
-        thisETFTexture = ETFManager.getETFTexture(texture, etf$entity, ETFManager.TextureSource.ENTITY_FEATURE);
+        thisETFTexture = ETFManager.getInstance().getETFTexture(texture, etf$entity, ETFManager.TextureSource.ENTITY_FEATURE, ETFConfigData.removePixelsUnderEmissiveMobs);
         return thisETFTexture.getTextureIdentifier(etf$entity);
     }
 }

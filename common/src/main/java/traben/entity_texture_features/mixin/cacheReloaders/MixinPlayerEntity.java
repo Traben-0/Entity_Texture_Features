@@ -26,7 +26,7 @@ public abstract class MixinPlayerEntity {
 //                UUID_DEBUG_EXPLANATION_MARKER.add(entity.getUuid());
 //            if (!UUID_ENTITY_AWAITING_DATA_CLEARING.containsKey(entity.getUuid())) {
 //                UUID_ENTITY_AWAITING_DATA_CLEARING.put(entity.getUuid(), System.currentTimeMillis());
-                ETFManager.markEntityForDebugPrint(entity.getUuid());
+                ETFManager.getInstance().markEntityForDebugPrint(entity.getUuid());
         }
     }
 

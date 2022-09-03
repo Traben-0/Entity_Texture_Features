@@ -27,6 +27,7 @@ public class ETFClientCommon {
         ETFUtils2.checkModCompatabilities();
     }
 
+
     // config code based on bedrockify & actually unbreaking fabric config code
     // https://github.com/juancarloscp52/BedrockIfy/blob/1.17.x/src/main/java/me/juancarloscp52/bedrockify/Bedrockify.java
     // https://github.com/wutdahack/ActuallyUnbreakingFabric/blob/1.18.1/src/main/java/wutdahack/actuallyunbreaking/ActuallyUnbreaking.java

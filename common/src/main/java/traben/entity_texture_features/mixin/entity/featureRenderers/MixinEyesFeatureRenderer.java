@@ -51,7 +51,7 @@ public abstract class MixinEyesFeatureRenderer<T extends Entity, M extends Entit
             }
 
             if (check != null) {
-                Identifier altered = ETFManager.getETFTexture(new Identifier(check), entity, ETFManager.TextureSource.ENTITY_FEATURE).getTextureIdentifier((LivingEntity) entity);
+                Identifier altered = ETFManager.getInstance().getETFTexture(new Identifier(check), entity, ETFManager.TextureSource.ENTITY_FEATURE, ETFConfigData.removePixelsUnderEmissiveMobs).getTextureIdentifier((LivingEntity) entity);
                 //if the feature has changed to a variant perform the custom render and cancel the vanilla render
                 if (!altered.toString().equals(check)) {
                     VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEyes(altered));

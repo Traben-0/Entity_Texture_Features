@@ -22,7 +22,6 @@ import traben.entity_texture_features.texture_handlers.ETFTexture;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
-import static traben.entity_texture_features.texture_handlers.ETFManager.EMISSIVE_SUFFIX_LIST;
 
 @Mixin(MooshroomMushroomFeatureRenderer.class)
 public abstract class MixinMooshroomMushroomFeatureRenderer {
@@ -49,22 +48,22 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
         //enable custom mooshroom mushrooms
         if (ETFConfigData.enableCustomTextures) {
             if (mushroomState.isOf(Blocks.RED_MUSHROOM)) {
-                switch (ETFManager.mooshroomRedCustomShroom) {
+                switch (ETFManager.getInstance().mooshroomRedCustomShroom) {
                     case 1:
                         return null;
                     case 2:
                         return true;
                     default: {
                         if (MinecraftClient.getInstance().getResourceManager().getResource(RED_SHROOM).isPresent()) {
-                            ETFManager.mooshroomRedCustomShroom = 2;
+                            ETFManager.getInstance().mooshroomRedCustomShroom = 2;
                             return prepareMushroomTextures(true);
                         } else {
-                            ETFManager.mooshroomRedCustomShroom = 1;
+                            ETFManager.getInstance().mooshroomRedCustomShroom = 1;
                         }
                     }
                 }
             } else if (mushroomState.isOf(Blocks.BROWN_MUSHROOM)) {
-                switch (ETFManager.mooshroomBrownCustomShroom) {
+                switch (ETFManager.getInstance().mooshroomBrownCustomShroom) {
                     case 1:
                         return null;
                     case 2:
@@ -72,10 +71,10 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
                     default: {
                         if (MinecraftClient.getInstance().getResourceManager().getResource(BROWN_SHROOM).isPresent()) {
 
-                            ETFManager.mooshroomBrownCustomShroom = 2;
+                            ETFManager.getInstance().mooshroomBrownCustomShroom = 2;
                             return prepareMushroomTextures(false);
                         } else {
-                            ETFManager.mooshroomBrownCustomShroom = 1;
+                            ETFManager.getInstance().mooshroomBrownCustomShroom = 1;
                         }
                     }
                 }
@@ -96,7 +95,7 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
         if (doingEmissive) {
             boolean found = false;
             for (String str :
-                    EMISSIVE_SUFFIX_LIST) {
+                    ETFManager.getInstance().EMISSIVE_SUFFIX_LIST) {
                 Identifier test = new Identifier(idOfOriginal.toString().replace(".png", str + ".png"));
                 //System.out.println("trying "+test.toString());
                 if (MinecraftClient.getInstance().getResourceManager().getResource(test).isPresent()) {
@@ -154,9 +153,9 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
                 if (!doingEmissive) {
                     prepareMushroomTextures(isRed, true);
                     if (isRed) {
-                        ETFManager.redMooshroomAlt = new ETFTexture(idOfNew, redEmissive);
+                        ETFManager.getInstance().redMooshroomAlt = new ETFTexture(idOfNew, redEmissive);
                     } else {
-                        ETFManager.brownMooshroomAlt = new ETFTexture(idOfNew, brownEmissive);
+                        ETFManager.getInstance().brownMooshroomAlt = new ETFTexture(idOfNew, brownEmissive);
                     }
                 }
                 return isRed;
@@ -174,7 +173,7 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
 
         Boolean shroomType = returnRedTrueBrownFalseVanillaNull(mushroomState);
         if (shroomType != null) {
-            ETFTexture thisTexture = shroomType ? ETFManager.redMooshroomAlt : ETFManager.brownMooshroomAlt;
+            ETFTexture thisTexture = shroomType ? ETFManager.getInstance().redMooshroomAlt : ETFManager.getInstance().brownMooshroomAlt;
             if (thisTexture != null) {
                 for (ModelPart model :
                         shroomAsEntityModel) {

@@ -14,7 +14,7 @@ public abstract class MixinMinecraftClient {
 
     @Inject(method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;)V", at = @At("TAIL"))
     private void etf$injected(Screen screen, CallbackInfo ci) {
-        ETFManager.reset();
+        ETFManager.getInstance().reset();
     }
 }
 

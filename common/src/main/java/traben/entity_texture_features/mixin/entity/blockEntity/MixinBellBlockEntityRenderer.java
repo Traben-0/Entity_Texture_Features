@@ -14,6 +14,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 
 @Mixin(BellBlockEntityRenderer.class)
@@ -32,7 +33,7 @@ public abstract class MixinBellBlockEntityRenderer implements BlockEntityRendere
     private void etf$applyEmissiveBell(BellBlockEntity bellBlockEntity, float f, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j, CallbackInfo ci) {
 
         String texture = BELL_BODY_TEXTURE.getTextureId().toString();
-        ETFManager.getETFDefaultTexture(new Identifier(texture)).renderEmissive(matrixStack, vertexConsumerProvider, this.bellBody, ETFManager.EmissiveRenderModes.blockEntityMode());
+        ETFManager.getInstance().getETFDefaultTexture(new Identifier(texture), ETFClientCommon.ETFConfigData.removePixelsUnderEmissiveBlockEntity).renderEmissive(matrixStack, vertexConsumerProvider, this.bellBody, ETFManager.EmissiveRenderModes.blockEntityMode());
     }
 }
 

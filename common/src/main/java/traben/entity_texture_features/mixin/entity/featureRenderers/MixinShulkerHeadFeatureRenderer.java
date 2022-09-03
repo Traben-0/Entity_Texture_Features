@@ -16,6 +16,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
 
+import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
+
 @Mixin(ShulkerHeadFeatureRenderer.class)
 public abstract class MixinShulkerHeadFeatureRenderer extends FeatureRenderer<ShulkerEntity, ShulkerEntityModel<ShulkerEntity>> {
 
@@ -48,7 +50,7 @@ public abstract class MixinShulkerHeadFeatureRenderer extends FeatureRenderer<Sh
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/RenderLayer;getEntitySolid(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;"))
     private Identifier etf$returnAlteredTexture(Identifier texture) {
 
-        thisETFTexture = ETFManager.getETFTexture(texture, etf$shulker, ETFManager.TextureSource.ENTITY);
+        thisETFTexture = ETFManager.getInstance().getETFTexture(texture, etf$shulker, ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs);
         return thisETFTexture.getTextureIdentifier(etf$shulker);
     }
 }

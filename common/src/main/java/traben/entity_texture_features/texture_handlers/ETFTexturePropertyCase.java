@@ -21,7 +21,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
-import static traben.entity_texture_features.texture_handlers.ETFManager.ENTITY_SPAWN_CONDITIONS_CACHE;
 
 public class ETFTexturePropertyCase {
     //public final int PROPERTY_NUMBER;
@@ -204,11 +203,11 @@ public class ETFTexturePropertyCase {
 
         ObjectImmutableList<String> spawnConditions = null;
         if (ETFConfigData.restrictUpdateProperties) {
-            if (ENTITY_SPAWN_CONDITIONS_CACHE.containsKey(CacheId)) {
-                spawnConditions = (ENTITY_SPAWN_CONDITIONS_CACHE.get(CacheId));
+            if (ETFManager.getInstance().ENTITY_SPAWN_CONDITIONS_CACHE.containsKey(CacheId)) {
+                spawnConditions = (ETFManager.getInstance().ENTITY_SPAWN_CONDITIONS_CACHE.get(CacheId));
             } else {
                 spawnConditions = readAllSpawnConditionsForCache(entity);
-                ENTITY_SPAWN_CONDITIONS_CACHE.put(CacheId, spawnConditions);
+                ETFManager.getInstance().ENTITY_SPAWN_CONDITIONS_CACHE.put(CacheId, spawnConditions);
             }
         }
 
@@ -743,7 +742,7 @@ public class ETFTexturePropertyCase {
                     }
 
                 } else {
-                    if (((int)checkValue) == Integer.parseInt(distances.replaceAll("\\D", ""))) {
+                    if (((int) checkValue) == Integer.parseInt(distances.replaceAll("\\D", ""))) {
                         check = true;
                         break;
                     }

@@ -1,18 +1,27 @@
 [**ETF Changelog:**]
 
+[V4.1.dev.7]
+
+- reworked the emissive fix options to have sub categories and its own settings page
+- fixed some crashes in skin screen
+
 [V4.1.dev.6]
+
 - improved the fix for ArrayIndexOutOfBoundsException crash related to caches
 - added more crash prevention, most features should simply not work instead of immediately crashing
 - fixed emissive textures not displaying on skin in skin tool with iris installed
 - disabled armour rendering in skin tool
 
 [V4.1.dev.5]
+
 - fixed an ArrayIndexOutOfBoundsException crash related to caches
 - fixed broken gui buttons in smaller gui scales
 - added skin uploading to the skin tool
-- reworked the iris pbr fix setting into the emissive settings screen and renamed it to reflect its more general fix possibilities
+- reworked the iris pbr fix setting into the emissive settings screen and renamed it to reflect its more general fix
+  possibilities
 
 [V4.1.dev.4]
+
 - added extra nose options available from skin tool
 - added *"creeperCharged"* texture property
 - fixed an issue with additional textures *(drowned_outer_layer & sheep_fur & more)* not loading right when in the
@@ -105,8 +114,8 @@ Groundwork has been laid to more easily backport the mod to 1.16, 1.17 & 1.18 th
 - changed: block entity features will not render if the texture is animated as it is not supported *(no need to change
   settings)*
 
+[V3.1.4]
 
-  [V3.1.4]
 - fixed a logic mistake causing high lag when additional mob textures *(like sheep_fur.png)* did not have the same or
   higher number of variations as the base texture
 - the blocks property now also check the block the mob spawned inside *(allowing things like water, cave_air, flowers,

@@ -18,6 +18,7 @@ import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3f;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
+import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.ArrayList;
@@ -27,7 +28,6 @@ import java.util.Set;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
-import static traben.entity_texture_features.texture_handlers.ETFManager.ENTITY_BLINK_TIME;
 
 //inspired by puzzles custom gui code
 public class ETFConfigScreenPlayerSkinToolPixelSelect extends ETFConfigScreen {
@@ -35,8 +35,11 @@ public class ETFConfigScreenPlayerSkinToolPixelSelect extends ETFConfigScreen {
     private final SelectionMode MODE;
 
     private final ETFConfigScreenPlayerSkinTool etfParent;
-    protected ETFConfigScreenPlayerSkinToolPixelSelect(ETFConfigScreenPlayerSkinTool parent,SelectionMode mode) {
-        super(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + (mode == SelectionMode.EMISSIVE ? ".emissive_select" :".enchanted_select" )+".title"), parent);
+    Set<Integer> selectedPixels;
+    Identifier currentSkinToRender = new Identifier(MOD_ID + ":textures/gui/icon.png");
+
+    protected ETFConfigScreenPlayerSkinToolPixelSelect(ETFConfigScreenPlayerSkinTool parent, SelectionMode mode) {
+        super(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + (mode == SelectionMode.EMISSIVE ? ".emissive_select" : ".enchanted_select") + ".title"), parent);
         this.MODE = mode;
         etfParent = parent;
 
@@ -47,16 +50,16 @@ public class ETFConfigScreenPlayerSkinToolPixelSelect extends ETFConfigScreen {
     protected void init() {
         super.init();
 
-        Identifier randomID = new Identifier(MOD_ID+"_ignore","gui_skin_" + System.currentTimeMillis()+".png");
-        if(ETFUtils2.registerNativeImageToIdentifier(etfParent.currentEditorSkin,randomID)) {
+        Identifier randomID = new Identifier(MOD_ID + "_ignore", "gui_skin_" + System.currentTimeMillis() + ".png");
+        if (ETFUtils2.registerNativeImageToIdentifier(etfParent.currentEditorSkin, randomID)) {
             currentSkinToRender = randomID;
         }
 
         selectedPixels = new HashSet<>();
-        for (int x = MODE.startX; x < MODE.startX+8; x++) {
-            for (int y = MODE.startY; y < MODE.startY+8; y++) {
-                int color = etfParent.currentEditorSkin.getColor(x,y);
-                if(color != 0){
+        for (int x = MODE.startX; x < MODE.startX + 8; x++) {
+            for (int y = MODE.startY; y < MODE.startY + 8; y++) {
+                int color = etfParent.currentEditorSkin.getColor(x, y);
+                if (color != 0) {
                     selectedPixels.add(color);
                 }
             }
@@ -71,76 +74,70 @@ public class ETFConfigScreenPlayerSkinToolPixelSelect extends ETFConfigScreen {
                 ScreenTexts.BACK,
                 (button) -> Objects.requireNonNull(client).setScreen(parent)));
 
-        int pixelSize = (int)(this.height*0.7/64);
+        int pixelSize = (int) (this.height * 0.7 / 64);
 
         //todo could save on using 4096 buttons by finding a way to extrapolate mouse position from the render method, but meh
         for (int x = 0; x < 64; x++) {
             for (int y = 0; y < 64; y++) {
                 int finalX = x;
                 int finalY = y;
-                ButtonWidget butt = new ButtonWidget((int)((this.width*0.35)+(x*pixelSize)), (int)((this.height*0.2)+(y*pixelSize)), pixelSize, pixelSize,
+                ButtonWidget butt = new ButtonWidget((int) ((this.width * 0.35) + (x * pixelSize)), (int) ((this.height * 0.2) + (y * pixelSize)), pixelSize, pixelSize,
                         Text.of(""),
                         (button) -> {
                             int colorAtPixel = etfParent.currentEditorSkin.getColor(finalX, finalY);
-                            if(selectedPixels.contains(colorAtPixel)){
+                            if (selectedPixels.contains(colorAtPixel)) {
                                 selectedPixels.remove(colorAtPixel);
-                            }else{
+                            } else {
                                 selectedPixels.add(colorAtPixel);
                             }
 
                             applyCurrentSelectedPixels();
                             etfParent.thisETFPlayerTexture.changeSkinToThisForTool(etfParent.currentEditorSkin);
-                            Identifier randomID2 = new Identifier(MOD_ID+"_ignore","gui_skin_" + System.currentTimeMillis()+".png");
-                            if(ETFUtils2.registerNativeImageToIdentifier(etfParent.currentEditorSkin,randomID2)) {
+                            Identifier randomID2 = new Identifier(MOD_ID + "_ignore", "gui_skin_" + System.currentTimeMillis() + ".png");
+                            if (ETFUtils2.registerNativeImageToIdentifier(etfParent.currentEditorSkin, randomID2)) {
                                 currentSkinToRender = randomID2;
                             }
-                        }){
+                        }) {
                     @Override
                     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
                         //invisible lol
                     }
                 };
 
-            this.addDrawableChild(butt);
+                this.addDrawableChild(butt);
             }
         }
 
     }
 
-    Set<Integer> selectedPixels;
-
-    private void applyCurrentSelectedPixels(){
+    private void applyCurrentSelectedPixels() {
         ArrayList<Integer> integerSet = new ArrayList<>(selectedPixels);
 
         for (int x = MODE.startX; x < MODE.startX + 8; x++) {
             for (int y = MODE.startY; y < MODE.startY + 8; y++) {
                 if (integerSet.isEmpty()) {
-                    etfParent.currentEditorSkin.setColor(x, y,0);
+                    etfParent.currentEditorSkin.setColor(x, y, 0);
                 } else {
-                    etfParent.currentEditorSkin.setColor(x, y,integerSet.get(0));
+                    etfParent.currentEditorSkin.setColor(x, y, integerSet.get(0));
                     integerSet.remove(0);
                 }
             }
         }
     }
 
-    Identifier currentSkinToRender = new Identifier(MOD_ID + ":textures/gui/icon.png");
-
-
-
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         super.render(matrices, mouseX, mouseY, delta);
-        int pixelSize = (int)(this.height*0.7/64);
-        renderGUITexture(currentSkinToRender, (int)((this.width*0.35)), (int)((this.height*0.2)), (int)((this.width*0.35)+(64*pixelSize)), (int)((this.height*0.2)+(64*pixelSize)));
-        drawTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config."+MOD_ID+".skin_select"+(selectedPixels.size() > 64 ? ".warn" :".hint")), width / 7, (int) (this.height * 0.8), selectedPixels.size() > 64 ?0xff1515 : 0xFFFFFF);
+        int pixelSize = (int) (this.height * 0.7 / 64);
+        renderGUITexture(currentSkinToRender, (int) ((this.width * 0.35)), (int) ((this.height * 0.2)), (int) ((this.width * 0.35) + (64 * pixelSize)), (int) ((this.height * 0.2) + (64 * pixelSize)));
+        drawTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".skin_select" + (selectedPixels.size() > 64 ? ".warn" : ".hint")), width / 7, (int) (this.height * 0.8), selectedPixels.size() > 64 ? 0xff1515 : 0xFFFFFF);
 
         if (MinecraftClient.getInstance() != null) {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             if (player != null) {
 
                 int blinkModifierBySystemTimeInTicks = (int) ((System.currentTimeMillis() / 50) % (30 + (ETFConfigData.blinkLength * 2)));
-                ENTITY_BLINK_TIME.put(player.getUuid(), player.world.getTime() + blinkModifierBySystemTimeInTicks - (15 + ETFConfigData.blinkLength));
+                ETFManager.getInstance().ENTITY_BLINK_TIME.put(player.getUuid(), player.world.getTime() + blinkModifierBySystemTimeInTicks - (15 + ETFConfigData.blinkLength));
 
 
                 int height = (int) (this.height * 0.75);
@@ -158,8 +155,8 @@ public class ETFConfigScreenPlayerSkinToolPixelSelect extends ETFConfigScreen {
     }
 
     public void drawEntity(int x, int y, int size, float mouseX, float mouseY, LivingEntity entity) {
-        float f = (float)Math.atan((mouseX / 40.0F));
-        float g = (float)Math.atan((mouseY / 40.0F));
+        float f = (float) Math.atan((mouseX / 40.0F));
+        float g = (float) Math.atan((mouseY / 40.0F));
         MatrixStack matrixStack = RenderSystem.getModelViewStack();
         matrixStack.push();
         matrixStack.translate(x, y, 1050.0);
@@ -167,7 +164,7 @@ public class ETFConfigScreenPlayerSkinToolPixelSelect extends ETFConfigScreen {
         RenderSystem.applyModelViewMatrix();
         MatrixStack matrixStack2 = new MatrixStack();
         matrixStack2.translate(0.0, 0.0, 1000.0);
-        matrixStack2.scale((float)size, (float)size, (float)size);
+        matrixStack2.scale((float) size, (float) size, (float) size);
         Quaternion quaternion = Vec3f.POSITIVE_Z.getDegreesQuaternion(180.0F);
         Quaternion quaternion2 = Vec3f.POSITIVE_X.getDegreesQuaternion(g * 20.0F);
         quaternion.hamiltonProduct(quaternion2);
@@ -195,7 +192,7 @@ public class ETFConfigScreenPlayerSkinToolPixelSelect extends ETFConfigScreen {
         VertexConsumerProvider.Immediate immediate2 = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
         RenderSystem.runAsFancy(() -> {
             //entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, matrixStack2, immediate2, 15728880);
-            if(etfParent.thisETFPlayerTexture != null && entity instanceof AbstractClientPlayerEntity) {
+            if (etfParent.thisETFPlayerTexture != null && entity instanceof AbstractClientPlayerEntity) {
                 Identifier emissive = etfParent.thisETFPlayerTexture.etfTextureOfFinalBaseSkin.getEmissiveIdentifierOfCurrentState();
                 if (emissive != null) {
                     RenderLayer layer = RenderLayer.getEntityTranslucent(emissive);
@@ -204,7 +201,7 @@ public class ETFConfigScreenPlayerSkinToolPixelSelect extends ETFConfigScreen {
                     if (vertexC != null) {
                         EntityRenderer<?> bob = entityRenderDispatcher.getRenderer(entity);
                         if (bob instanceof LivingEntityRenderer<?, ?>) {
-                            System.out.println("rendered");
+                            // System.out.println("rendered");
                             //((LivingEntityRenderer<PlayerEntity, PlayerEntityModel<PlayerEntity>>) bob).render((PlayerEntity) entity, 0, 1, matrixStack2, immediate, 0xE000E0);
                             ((LivingEntityRenderer<?, ?>) bob).getModel().render(matrixStack, vertexC, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
                         }
@@ -224,16 +221,16 @@ public class ETFConfigScreenPlayerSkinToolPixelSelect extends ETFConfigScreen {
         DiffuseLighting.enableGuiDepthLighting();
     }
 
-    public enum SelectionMode{
+    public enum SelectionMode {
         EMISSIVE(56, 16),
         ENCHANTED(56, 24);
 
         final int startX;
         final int startY;
 
-        SelectionMode(int startx,int starty){
+        SelectionMode(int startx, int starty) {
             startX = startx;
-            startY=starty;
+            startY = starty;
         }
     }
 

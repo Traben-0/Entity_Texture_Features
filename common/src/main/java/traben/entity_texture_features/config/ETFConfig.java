@@ -11,6 +11,8 @@ import java.util.Set;
 import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 
 public class ETFConfig {
+
+
     public boolean allowIllegalTexturePaths = false;
     public boolean enableCustomTextures = true;
     public boolean enableCustomBlockEntities = true;
@@ -46,7 +48,13 @@ public class ETFConfig {
 
     public DebugLogMode debugLoggingMode = DebugLogMode.None;
 
-    public boolean removePixelsUnderEmissive = true;
+
+    public boolean removePixelsUnderEmissiveElytra = true;
+    public boolean removePixelsUnderEmissiveArmour = true;
+    public boolean removePixelsUnderEmissivePlayers = true;
+    public boolean removePixelsUnderEmissiveMobs = true;
+    public boolean removePixelsUnderEmissiveBlockEntity = true;
+
 
     public Set<ETFConfigScreenWarnings.ConfigWarning> ignoredConfigs = new HashSet<>();
 

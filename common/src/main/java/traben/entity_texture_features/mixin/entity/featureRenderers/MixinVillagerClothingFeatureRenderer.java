@@ -18,6 +18,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
 
+import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
+
 @Mixin(VillagerClothingFeatureRenderer.class)
 public abstract class MixinVillagerClothingFeatureRenderer<T extends LivingEntity & VillagerDataContainer, M extends EntityModel<T> & ModelWithHat> extends FeatureRenderer<T, M> {
 
@@ -38,7 +40,7 @@ public abstract class MixinVillagerClothingFeatureRenderer<T extends LivingEntit
             at = @At(value = "RETURN"), cancellable = true)
     private void etf$returnAlteredTexture(String keyType, Identifier keyId, CallbackInfoReturnable<Identifier> cir) {
         if (etf$villager != null) {
-            thisETFTexture = ETFManager.getETFTexture(cir.getReturnValue(), etf$villager, ETFManager.TextureSource.ENTITY_FEATURE);
+            thisETFTexture = ETFManager.getInstance().getETFTexture(cir.getReturnValue(), etf$villager, ETFManager.TextureSource.ENTITY_FEATURE, ETFConfigData.removePixelsUnderEmissiveMobs);
             //just in case
             if (thisETFTexture != null)
                 cir.setReturnValue(thisETFTexture.getTextureIdentifier(etf$villager));

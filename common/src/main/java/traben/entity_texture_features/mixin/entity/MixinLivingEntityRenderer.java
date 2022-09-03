@@ -1,7 +1,7 @@
 package traben.entity_texture_features.mixin.entity;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.*;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
@@ -16,12 +16,11 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.*;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
-import traben.entity_texture_features.config.screens.ETFConfigScreen;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFPlayerTexture;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
@@ -73,10 +72,12 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
             method = "getRenderLayer",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/LivingEntityRenderer;getTexture(Lnet/minecraft/entity/Entity;)Lnet/minecraft/util/Identifier;"))
     private Identifier etf$alterTexture(LivingEntityRenderer<T, M> instance, Entity inentity) {
+
+
         @SuppressWarnings("unchecked") T entity = (T) inentity;
 
         if (ETFConfigData.skinFeaturesEnabled && entity instanceof PlayerEntity player) {
-            thisETFPlayerTexture = ETFManager.getPlayerTexture(player);
+            thisETFPlayerTexture = ETFManager.getInstance().getPlayerTexture(player);
             if (thisETFPlayerTexture != null) {
 
                 Identifier etfTexture = thisETFPlayerTexture.getBaseTextureIdentifierOrNullForVanilla(player);
@@ -84,11 +85,13 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
             }
             return getTexture(entity);
         }
-        thisETFTexture = ETFManager.getETFTexture(getTexture(entity), entity, ETFManager.TextureSource.ENTITY);
-        if(thisETFTexture != null) {
-            return thisETFTexture.getTextureIdentifier(entity);
-        }
-        return getTexture(entity);
+        thisETFTexture = ETFManager.getInstance().getETFTexture(getTexture(entity), entity, ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs);
+
+        return thisETFTexture.getTextureIdentifier(entity);
+
+
+//
+//        return getTexture(entity);
     }
 
 //    @Inject(

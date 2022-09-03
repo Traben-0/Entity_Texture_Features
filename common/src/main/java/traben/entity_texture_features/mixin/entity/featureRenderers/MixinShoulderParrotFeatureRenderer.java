@@ -27,6 +27,8 @@ import traben.entity_texture_features.texture_handlers.ETFTexture;
 
 import java.util.UUID;
 
+import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
+
 @Mixin(ShoulderParrotFeatureRenderer.class)
 public abstract class MixinShoulderParrotFeatureRenderer<T extends PlayerEntity> extends FeatureRenderer<T, PlayerEntityModel<T>> {
 
@@ -67,7 +69,7 @@ public abstract class MixinShoulderParrotFeatureRenderer<T extends PlayerEntity>
         //System.out.println(id);
         parrot.setUuid(id);
 
-        thisETFTexture = ETFManager.getETFTexture(ParrotEntityRenderer.TEXTURES[parrotNBT.getInt("Variant")], parrot, ETFManager.TextureSource.ENTITY);
+        thisETFTexture = ETFManager.getInstance().getETFTexture(ParrotEntityRenderer.TEXTURES[parrotNBT.getInt("Variant")], parrot, ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs);
         return thisETFTexture.getTextureIdentifier(parrot);
     }
 

@@ -1,7 +1,6 @@
 package traben.entity_texture_features.config.screens;
 
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.SliderWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.ScreenTexts;
@@ -58,9 +57,9 @@ public class ETFConfigScreenBlinkSettings extends ETFConfigScreen {
         if (sliderWidth > 400)
             sliderHeight = 40;
         if (sliderWidth > 800)
-            sliderHeight=80;
+            sliderHeight = 80;
         if (sliderWidth > 1600)
-            sliderHeight=16;
+            sliderHeight = 16;
         this.addDrawableChild(new SliderWidget((int) (this.width * 0.025), (int) (this.height * 0.3), (int) (this.width * 0.45), sliderHeight,
                 Text.of(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".blink_frequency.title").getString()
                         + ": " + (ETFConfigScreenMain.temporaryETFConfig.blinkFrequency)),

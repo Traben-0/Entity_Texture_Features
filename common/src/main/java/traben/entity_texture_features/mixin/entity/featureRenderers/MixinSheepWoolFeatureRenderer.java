@@ -21,6 +21,8 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
 
+import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
+
 @Mixin(SheepWoolFeatureRenderer.class)
 public abstract class MixinSheepWoolFeatureRenderer extends FeatureRenderer<SheepEntity, SheepEntityModel<SheepEntity>> {
 
@@ -57,7 +59,7 @@ public abstract class MixinSheepWoolFeatureRenderer extends FeatureRenderer<Shee
                     target = "Lnet/minecraft/client/render/entity/feature/SheepWoolFeatureRenderer;render(Lnet/minecraft/client/render/entity/model/EntityModel;Lnet/minecraft/client/render/entity/model/EntityModel;Lnet/minecraft/util/Identifier;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFFFFF)V")
             , index = 2)
     private Identifier etf$returnAlteredTexture(Identifier texture) {
-        thisETFTexture = ETFManager.getETFTexture(SKIN, etf$entity, ETFManager.TextureSource.ENTITY_FEATURE);
+        thisETFTexture = ETFManager.getInstance().getETFTexture(SKIN, etf$entity, ETFManager.TextureSource.ENTITY_FEATURE, ETFConfigData.removePixelsUnderEmissiveMobs);
         return thisETFTexture.getTextureIdentifier(etf$entity);
     }
 }

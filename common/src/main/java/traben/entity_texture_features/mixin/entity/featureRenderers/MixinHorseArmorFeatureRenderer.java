@@ -21,6 +21,8 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
 
+import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
+
 @Mixin(HorseArmorFeatureRenderer.class)
 public abstract class MixinHorseArmorFeatureRenderer extends FeatureRenderer<HorseEntity, HorseEntityModel<HorseEntity>> {
 
@@ -49,7 +51,7 @@ public abstract class MixinHorseArmorFeatureRenderer extends FeatureRenderer<Hor
     private Identifier etf$returnAlteredTexture(Identifier texture) {
 
 
-        thisETFTexture = ETFManager.getETFTexture(texture, etf$entity, ETFManager.TextureSource.ENTITY_FEATURE);
+        thisETFTexture = ETFManager.getInstance().getETFTexture(texture, etf$entity, ETFManager.TextureSource.ENTITY_FEATURE, ETFConfigData.removePixelsUnderEmissiveArmour);
         return thisETFTexture.getTextureIdentifier(etf$entity);
 
     }

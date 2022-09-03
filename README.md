@@ -1,8 +1,4 @@
-
 # this branch holds the rewrite ported to architechtury so fabric and forge can utilise a single codebase
-
-
-
 
 <img src="readMeAssets/title.png" alt="Entity Texture Features Title" width="650"/>
 
@@ -69,18 +65,22 @@ Everything can be enabled or disabled in the config or Mod Menu settings
 - For custom & random entity textures to work you can use a resource-pack that supports the
   **Optifine format** for custom / random textures, including all Biome, Height, Name, etc. properties settings. and
   even more added by ETF
-  - [***-> Random / Custom entity textures guide <-***](readMeAssets/RANDOM_GUIDE.md)
+    - [***-> Random / Custom entity textures guide <-***](readMeAssets/RANDOM_GUIDE.md)
 
 ---
+
 ## 💡 Emissive entity textures - [Optifine]
+
 <img src="readMeAssets/emissives.png" alt="img" width="650"/>
 
-- For emissive & random entity textures to work you can use a resource-pack that supports the 
-**Optifine format** for emissive textures.   
-  - [***-> Emissive entity textures guide <-***](readMeAssets/EMISSIVE_GUIDE.md)
+- For emissive & random entity textures to work you can use a resource-pack that supports the
+  **Optifine format** for emissive textures.
+    - [***-> Emissive entity textures guide <-***](readMeAssets/EMISSIVE_GUIDE.md)
 
 ---
-## 🎨  Player skin features
+
+## 🎨 Player skin features
+
 <img src="readMeAssets/skins1.png" alt="img" width="650"/><br>
 <img src="readMeAssets/skins2.png" alt="img" width="650"/><br>
 <img src="readMeAssets/skins3.png" alt="img" width="650"/><br>
@@ -89,16 +89,18 @@ Everything can be enabled or disabled in the config or Mod Menu settings
 <img src="readMeAssets/customCape.png" alt="img" width="180"/>
 <img src="readMeAssets/capeex.png" alt="img" width="228"/>
 
-- Player skins can use emissive, blinking, enchanted, transparency texture features, 
-as well as other things like capes & jacket / dress extensions.
-- these are 100% optional, controlled by the skin file you upload to Mojang, and options to prevent 
-abuse of features in PVP
+- Player skins can use emissive, blinking, enchanted, transparency texture features,
+  as well as other things like capes & jacket / dress extensions.
+- these are 100% optional, controlled by the skin file you upload to Mojang, and options to prevent
+  abuse of features in PVP
 - Follow this guide to use these skin features
-  - [***-> Player Skin Features guide <-***](readMeAssets/SKINS.md)
-  - join the [[Discord]](https://discord.gg/rURmwrzUcz) if you still need help :)
+    - [***-> Player Skin Features guide <-***](readMeAssets/SKINS.md)
+    - join the [[Discord]](https://discord.gg/rURmwrzUcz) if you still need help :)
 
 ---
+
 ## 😑 Blinking feature
+
 <img src="readMeAssets/blink.png" alt="img" width="650"/>
 
 - Allows a textures to be set by a Resource-pack so that mobs can Blink randomly over a set period

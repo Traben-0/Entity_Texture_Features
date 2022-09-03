@@ -44,12 +44,12 @@ public abstract class MixinBedBlockEntityRenderer implements BlockEntityRenderer
 
         if (isAnimatedTexture || !ETFConfigData.enableCustomTextures || !ETFConfigData.enableCustomBlockEntities)
             return vertices;
-        thisETFTexture = ETFManager.getETFTexture(etf$textureOfThis, etf$bedStandInDummy, ETFManager.TextureSource.BLOCK_ENTITY);
+        thisETFTexture = ETFManager.getInstance().getETFTexture(etf$textureOfThis, etf$bedStandInDummy, ETFManager.TextureSource.BLOCK_ENTITY, ETFConfigData.removePixelsUnderEmissiveBlockEntity);
 
 
         //return thisETFTexture.getTextureIdentifier();
 
-        VertexConsumer alteredReturn = etf$vertexConsumerProviderOfThis.getBuffer(RenderLayer.getEntityCutout(thisETFTexture.getTextureIdentifier(etf$bedStandInDummy)));
+        VertexConsumer alteredReturn = thisETFTexture == null ? null : etf$vertexConsumerProviderOfThis.getBuffer(RenderLayer.getEntityCutout(thisETFTexture.getTextureIdentifier(etf$bedStandInDummy)));
         return alteredReturn == null ? vertices : alteredReturn;
     }
 

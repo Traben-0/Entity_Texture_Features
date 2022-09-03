@@ -32,8 +32,11 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
     @ModifyArg(method = "renderModel",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/RenderLayer;getArmorCutoutNoCull(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;"))
     private Identifier etf$changeTexture(Identifier texture) {
-        thisETFTexture = ETFManager.getETFTexture(texture, null, ETFManager.TextureSource.ENTITY_FEATURE);
-        return thisETFTexture.getTextureIdentifier(null, ETFConfigData.enableEmissiveTextures);
+        thisETFTexture = ETFManager.getInstance().getETFTexture(texture, null, ETFManager.TextureSource.ENTITY_FEATURE, ETFConfigData.removePixelsUnderEmissiveArmour);
+        if (thisETFTexture != null) {
+            return thisETFTexture.getTextureIdentifier(null, ETFConfigData.enableEmissiveTextures);
+        }
+        return texture;
     }
 
     @Inject(method = "renderModel",
@@ -56,10 +59,10 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
     }
 
     @Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
-            at = @At(value = "HEAD"),cancellable = true)
+            at = @At(value = "HEAD"), cancellable = true)
     private void etf$cancelIfUi(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
-        if(MinecraftClient.getInstance() != null) {
-            if(MinecraftClient.getInstance().currentScreen instanceof ETFConfigScreen) {
+        if (MinecraftClient.getInstance() != null) {
+            if (MinecraftClient.getInstance().currentScreen instanceof ETFConfigScreen) {
                 //cancel armour rendering
                 ci.cancel();
             }

@@ -52,19 +52,19 @@ public enum ETFDirectory {
     @NotNull
     private static ETFDirectory findDirectoryOf(Identifier vanillaIdentifier) {
         //check already directory'd textures
-        if(vanillaIdentifier.getPath().contains("etf/random/entity")){
-            Optional<Resource> resource =  MinecraftClient.getInstance().getResourceManager().getResource(vanillaIdentifier);
-            if(resource.isPresent()){
+        if (vanillaIdentifier.getPath().contains("etf/random/entity")) {
+            Optional<Resource> resource = MinecraftClient.getInstance().getResourceManager().getResource(vanillaIdentifier);
+            if (resource.isPresent()) {
                 return ETF;
             }
-        }else if(vanillaIdentifier.getPath().contains("optifine/random/entity")){
-            Optional<Resource> resource =  MinecraftClient.getInstance().getResourceManager().getResource(vanillaIdentifier);
-            if(resource.isPresent()){
+        } else if (vanillaIdentifier.getPath().contains("optifine/random/entity")) {
+            Optional<Resource> resource = MinecraftClient.getInstance().getResourceManager().getResource(vanillaIdentifier);
+            if (resource.isPresent()) {
                 return OPTIFINE;
             }
-        }else if(vanillaIdentifier.getPath().contains("optifine/mob")){
-            Optional<Resource> resource =  MinecraftClient.getInstance().getResourceManager().getResource(vanillaIdentifier);
-            if(resource.isPresent()){
+        } else if (vanillaIdentifier.getPath().contains("optifine/mob")) {
+            Optional<Resource> resource = MinecraftClient.getInstance().getResourceManager().getResource(vanillaIdentifier);
+            if (resource.isPresent()) {
                 return OLD_OPTIFINE;
             }
         }

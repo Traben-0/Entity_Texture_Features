@@ -57,7 +57,6 @@
   "config.entity_texture_features.player_skin_editor.nose.textured.5": "textured #5",
   "config.entity_texture_features.player_skin_editor.nose.none": "none",
   "config.entity_texture_features.player_skin_editor.nose.tooltip": "Select a nose type for your skin",
-
   "config.entity_texture_features.player_skin_editor.cape.button": "Cape: ",
   "config.entity_texture_features.player_skin_editor.cape.optifine": "OptiFine",
   "config.entity_texture_features.player_skin_editor.cape.tooltip": "lets you select between using various capes:\nOptifine cape, if you have one\nminecraftcapes.net cape if you have one\nThe ETF cape\nor texture your own custom cape in your skin",
@@ -65,7 +64,6 @@
   "config.entity_texture_features.player_skin_editor.cape.custom": "Custom in skin",
   "config.entity_texture_features.player_skin_editor.cape.etf": "ETF",
   "config.entity_texture_features.player_skin_editor.cape.none": "none",
-
   "config.entity_texture_features.player_skin_editor.blink_height.title": "Eye position: ",
   "config.entity_texture_features.player_skin_editor.blink_height.tooltip": "What position on the head should blinking occur\n 1 = top of head\n8 = bottom of head",
   "config.entity_texture_features.player_skin_editor.blink_message": "blinking has been enabled and slowed down",
@@ -156,6 +154,12 @@
   "config.entity_texture_features.player_skin_editor.upload_skin": "Click here to upload this skin to your minecraft account.",
   "config.entity_texture_features.player_skin_editor.upload_skin.success": "upload succeeded! restart Minecraft to see changes.",
   "config.entity_texture_features.player_skin_editor.upload_skin.fail": "upload failed!",
-  "config.entity_texture_features.remove_pixels.title": "Remove pixels underneath emissives to prevent z-fighting: ",
-  "config.entity_texture_features.remove_pixels.tooltip": "ETF removes pixels underneath emissives to prevent z-fighting.\ndisabling this may invite z-fighting with shaders\ndisabling this setting also fixes some Iris PBR Beta problems\ndisabling this can also fix animated textures having\nmissing pixels with some mods"
+  "config.entity_texture_features.emissive_fix.button": "Fixes for emissive problems",
+  "config.entity_texture_features.emissive_fix.title": "Fixes for emissive problems",
+  "config.entity_texture_features.remove_pixels.info": "ETF removes pixels underneath\n emissives to prevent z-fighting.\n \nDisabling these may:\n\n cause z-fighting with some shaders\n\nfix some Iris PBR Beta problems\n\nfix animated textures having\nmissing pixels with some mods\n\nbreak armour legging emissives when\n a chest-plate is equipped",
+  "config.entity_texture_features.emissive_fix.elytra": "Remove Elytra pixels: ",
+  "config.entity_texture_features.emissive_fix.armour": "Remove Armour pixels: ",
+  "config.entity_texture_features.emissive_fix.players": "Remove Player pixels: ",
+  "config.entity_texture_features.emissive_fix.mobs": "Remove Mob pixels: ",
+  "config.entity_texture_features.emissive_fix.block_entity": "Remove Block Entity pixels: "
 }

@@ -16,6 +16,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
 
+import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
+
 @Mixin(SlimeOverlayFeatureRenderer.class)
 public abstract class MixinSlimeOverlayFeatureRenderer<T extends LivingEntity> extends FeatureRenderer<T, SlimeEntityModel<T>> {
 
@@ -47,7 +49,7 @@ public abstract class MixinSlimeOverlayFeatureRenderer<T extends LivingEntity> e
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/RenderLayer;getEntityTranslucent(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;",
                     ordinal = 0))
     private Identifier etf$returnAlteredTexture(Identifier texture) {
-        thisETFTexture = ETFManager.getETFTexture(texture, etf$slime, ETFManager.TextureSource.ENTITY);
+        thisETFTexture = ETFManager.getInstance().getETFTexture(texture, etf$slime, ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs);
         return thisETFTexture.getTextureIdentifier(etf$slime);
     }
 }

@@ -40,7 +40,7 @@ public class ETFLruCache<X, Y> {
             X lastKey = cache.lastKey();
             if (!lastKey.equals(key)) {
                 if (lastKey instanceof ETFCacheKey ETFKey) {
-                    ETFManager.removeThisEntityDataFromAllStorage(ETFKey);
+                    ETFManager.getInstance().removeThisEntityDataFromAllStorage(ETFKey);
                 }
                 cache.remove(lastKey);
             }

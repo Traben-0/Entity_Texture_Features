@@ -24,6 +24,7 @@ public abstract class MixinCapeFeatureRenderer extends FeatureRenderer<AbstractC
     private static final Identifier dev_cape = new Identifier(MOD_ID, "textures/capes/dev.png");
     private static final Identifier dev_cape_e = new Identifier(MOD_ID, "textures/capes/dev_e.png");
     private static final Identifier wife_cape = new Identifier(MOD_ID, "textures/capes/wife.png");
+
     public MixinCapeFeatureRenderer(FeatureRendererContext<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> context) {
         super(context);
     }
@@ -34,13 +35,13 @@ public abstract class MixinCapeFeatureRenderer extends FeatureRenderer<AbstractC
     private void etf$injected(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, AbstractClientPlayerEntity abstractClientPlayerEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
         //custom rendering required as ETF uses a different render layer to allow transparent capes
         // the return of getCapeTexture() from abstract client is ignored here, but it was required for enabling capes to render for those players and also for elytras
-        ETFPlayerTexture playerTexture = ETFManager.getPlayerTexture(abstractClientPlayerEntity);
+        ETFPlayerTexture playerTexture = ETFManager.getInstance().getPlayerTexture(abstractClientPlayerEntity);
         boolean cancelVanillaRender = false;
         if (playerTexture != null) {
             cancelVanillaRender = playerTexture.hasCustomCape();
-            if((abstractClientPlayerEntity.getUuid().equals(ETFPlayerTexture.Dev) || abstractClientPlayerEntity.getUuid().equals(ETFPlayerTexture.Wife))
+            if ((abstractClientPlayerEntity.getUuid().equals(ETFPlayerTexture.Dev) || abstractClientPlayerEntity.getUuid().equals(ETFPlayerTexture.Wife))
                     && playerTexture.capeType == ETFConfigScreenPlayerSkinTool.CapeType.NONE
-                    && ETFVersionDifferenceHandler.isFabric() == ETFVersionDifferenceHandler.isThisModLoaded("fabric")){
+                    && ETFVersionDifferenceHandler.isFabric() == ETFVersionDifferenceHandler.isThisModLoaded("fabric")) {
                 cancelVanillaRender = false;
             }
             if (cancelVanillaRender) {

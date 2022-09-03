@@ -23,11 +23,7 @@ import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 public class ETFConfigScreenMain extends ETFConfigScreen {
 
     static ETFConfig temporaryETFConfig = null;
-    boolean shownWarning = false;
-    int warningCount = 0;
     final ObjectOpenHashSet<ETFConfigScreenWarnings.ConfigWarning> warningsFound = new ObjectOpenHashSet<>();
-
-
     //todo translatable text for menus
     final ETFConfigScreenWarnings warningsScreen;
     final ETFConfigScreenSkinSettings playerSkinSettingsScreen = new ETFConfigScreenSkinSettings(this);
@@ -35,6 +31,9 @@ public class ETFConfigScreenMain extends ETFConfigScreen {
     final ETFConfigScreenEmissiveSettings emissiveSettingsScreen = new ETFConfigScreenEmissiveSettings(this);
     final ETFConfigScreenBlinkSettings blinkSettingsScreen = new ETFConfigScreenBlinkSettings(this);
     final ETFConfigScreenGeneralSettings generalSettingsScreen = new ETFConfigScreenGeneralSettings(this);
+    boolean shownWarning = false;
+    int warningCount = 0;
+
     public ETFConfigScreenMain(Screen parent) {
         super(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".title"), parent);
         temporaryETFConfig = ETFConfig.copyFrom(ETFConfigData);
@@ -82,7 +81,7 @@ public class ETFConfigScreenMain extends ETFConfigScreen {
                     ETFConfigData = temporaryETFConfig;
                     ETFUtils2.saveConfig();
                     ETFUtils2.checkModCompatabilities();
-                    ETFManager.reset();
+                    ETFManager.getInstance().reset();
                     Objects.requireNonNull(client).setScreen(parent);
                 }));
         this.addDrawableChild(new ButtonWidget((int) (this.width * 0.4), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,

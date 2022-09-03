@@ -2,7 +2,6 @@ package traben.entity_texture_features.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.texture.NativeImage;
@@ -17,7 +16,6 @@ import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.screens.ETFConfigScreenWarnings;
 import traben.entity_texture_features.texture_handlers.ETFManager;
-import traben.entity_texture_features.texture_handlers.ETFPlayerTexture;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -26,18 +24,18 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Properties;
-import java.util.UUID;
 
 import static traben.entity_texture_features.ETFClientCommon.CONFIG_DIR;
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
 public abstract class ETFUtils2 {
+    public static final ETFLruCache<Identifier, NativeImage> KNOWN_NATIVE_IMAGES = new ETFLruCache<>();
+
     @Nullable
     public static Identifier replaceIdentifier(Identifier id, String regex, String replace) {
         if (id == null) return null;
         return new Identifier(id.getNamespace(), id.getPath().replaceFirst(regex, replace));
     }
-
 
     @Nullable
     public static String returnNameOfHighestPackFromTheseMultiple(String[] packNameList) {
@@ -45,7 +43,7 @@ public abstract class ETFUtils2 {
         //loop through and remove the one from the lowest pack of the first 2 entries
         //this iterates over the whole array
         while (packNames.size() >= 2) {
-            if (ETFManager.knownResourcePackOrder.indexOf(packNames.get(0)) >= ETFManager.knownResourcePackOrder.indexOf(packNames.get(1))) {
+            if (ETFManager.getInstance().knownResourcePackOrder.indexOf(packNames.get(0)) >= ETFManager.getInstance().knownResourcePackOrder.indexOf(packNames.get(1))) {
                 packNames.remove(1);
             } else {
                 packNames.remove(0);
@@ -65,7 +63,7 @@ public abstract class ETFUtils2 {
         if (packNameList[0].equals(packNameList[1])) {
             return packNameList[0];
         }
-        if (ETFManager.knownResourcePackOrder.indexOf(packNameList[0]) >= ETFManager.knownResourcePackOrder.indexOf(packNameList[1])) {
+        if (ETFManager.getInstance().knownResourcePackOrder.indexOf(packNameList[0]) >= ETFManager.getInstance().knownResourcePackOrder.indexOf(packNameList[1])) {
             return packNameList[0];
         } else {
             return packNameList[1];
@@ -109,22 +107,21 @@ public abstract class ETFUtils2 {
 
     }
 
-    public static final ETFLruCache<Identifier, NativeImage> KNOWN_NATIVE_IMAGES = new ETFLruCache<>();
-
     public static NativeImage getNativeImageElseNull(@Nullable Identifier identifier) {
-        if(identifier != null){
-            if(KNOWN_NATIVE_IMAGES.get(identifier) != null){
+        if (identifier != null) {
+            if (KNOWN_NATIVE_IMAGES.get(identifier) != null) {
                 return KNOWN_NATIVE_IMAGES.get(identifier);
             }
         }
         NativeImage img;
         try {
-            @SuppressWarnings("OptionalGetWithoutIsPresent") //try catch is intended
+            //try catch is intended
+            //noinspection OptionalGetWithoutIsPresent
             InputStream in = MinecraftClient.getInstance().getResourceManager().getResource(identifier).get().getInputStream();
             try {
                 img = NativeImage.read(in);
                 in.close();
-                KNOWN_NATIVE_IMAGES.put(identifier,img);
+                KNOWN_NATIVE_IMAGES.put(identifier, img);
                 return img;
             } catch (Exception e) {
                 //resource.close();
@@ -262,7 +259,7 @@ public abstract class ETFUtils2 {
             NativeImageBackedTexture bob = new NativeImageBackedTexture(img);
             MinecraftClient.getInstance().getTextureManager().registerTexture(identifier, bob);
             //MinecraftClient.getInstance().getResourceManager().
-            KNOWN_NATIVE_IMAGES.put(identifier,img);
+            KNOWN_NATIVE_IMAGES.put(identifier, img);
             return true;
         } else {
             logError("registering native image failed: " + img + ", " + identifier);

@@ -64,7 +64,6 @@ public abstract class ETFConfigScreen extends Screen {
     }
 
 
-
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         // ETFUtils2.renderBackgroundTexture(0,new Identifier("textures/block/deepslate_tiles.png"),this.height,this.width);
