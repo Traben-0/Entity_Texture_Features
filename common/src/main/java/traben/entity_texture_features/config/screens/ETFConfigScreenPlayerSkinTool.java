@@ -805,15 +805,18 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
         RenderSystem.runAsFancy(() -> {
             //entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, matrixStack2, immediate2, 15728880);
                 if(thisETFPlayerTexture != null && entity instanceof AbstractClientPlayerEntity) {
-                    RenderLayer layer = RenderLayer.getEntityTranslucent(thisETFPlayerTexture.etfTextureOfFinalBaseSkin.getEmissiveIdentifierOfCurrentState());
+                    Identifier emissive = thisETFPlayerTexture.etfTextureOfFinalBaseSkin.getEmissiveIdentifierOfCurrentState();
+                    if (emissive != null) {
+                        RenderLayer layer = RenderLayer.getEntityTranslucent(emissive);
 
-                    VertexConsumer vertexC = immediate.getBuffer(layer);
-                    if (vertexC != null) {
-                        EntityRenderer<?> bob = entityRenderDispatcher.getRenderer(entity);
-                        if (bob instanceof LivingEntityRenderer<?, ?>) {
-                            System.out.println("rendered");
-                            //((LivingEntityRenderer<PlayerEntity, PlayerEntityModel<PlayerEntity>>) bob).render((PlayerEntity) entity, 0, 1, matrixStack2, immediate, 0xE000E0);
-                            ((LivingEntityRenderer<?, ?>) bob).getModel().render(matrixStack, vertexC, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
+                        VertexConsumer vertexC = immediate.getBuffer(layer);
+                        if (vertexC != null) {
+                            EntityRenderer<?> bob = entityRenderDispatcher.getRenderer(entity);
+                            if (bob instanceof LivingEntityRenderer<?, ?>) {
+                                System.out.println("rendered");
+                                //((LivingEntityRenderer<PlayerEntity, PlayerEntityModel<PlayerEntity>>) bob).render((PlayerEntity) entity, 0, 1, matrixStack2, immediate, 0xE000E0);
+                                ((LivingEntityRenderer<?, ?>) bob).getModel().render(matrixStack, vertexC, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
+                            }
                         }
                     }
                 }
