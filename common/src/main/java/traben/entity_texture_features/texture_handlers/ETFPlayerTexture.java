@@ -992,7 +992,7 @@ public class ETFPlayerTexture {
                         case 4 -> {
                             capeType = ETFConfigScreenPlayerSkinTool.CapeType.ETF;
                             NativeImage cape = ETFUtils2.getNativeImageElseNull(new Identifier(MOD_ID, "textures/capes/etf.png"));
-                            if (cape != null) {
+                            if (cape != null && !ETFUtils2.isNativeImageEmpty(modifiedCape)) {
                                 modifiedCape.copyFrom(cape);
                             }
                         }
@@ -1001,7 +1001,7 @@ public class ETFPlayerTexture {
                         }
                     }
                 }
-                if (modifiedCape != null) {
+                if (modifiedCape != null && !ETFUtils2.isNativeImageEmpty(modifiedCape)) {
                     //if ((capeChoice1 >= 1 && capeChoice1 <= 4) || capeChoice1 == 666) {//custom chosen
                     etfCapeIdentifier = new Identifier(SKIN_NAMESPACE, id.toString().replaceAll("/[^a-z]/g", "") + "_cape.png");
                     ETFUtils2.registerNativeImageToIdentifier(modifiedCape, etfCapeIdentifier);

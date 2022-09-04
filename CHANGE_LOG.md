@@ -1,5 +1,10 @@
 [**ETF Changelog:**]
 
+[V4.1.dev.8]
+
+- fixed more crashes
+- fixed invisible elytras in previous dev builds
+
 [V4.1.dev.7]
 
 - reworked the emissive fix options to have sub categories and its own settings page

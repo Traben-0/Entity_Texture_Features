@@ -508,7 +508,7 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
         VertexConsumerProvider.Immediate immediate2 = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
         RenderSystem.runAsFancy(() -> {
             //entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, matrixStack2, immediate2, 15728880);
-            if (thisETFPlayerTexture != null && entity instanceof AbstractClientPlayerEntity) {
+            if (thisETFPlayerTexture != null && thisETFPlayerTexture.etfTextureOfFinalBaseSkin != null && entity instanceof AbstractClientPlayerEntity) {
                 Identifier emissive = thisETFPlayerTexture.etfTextureOfFinalBaseSkin.getEmissiveIdentifierOfCurrentState();
                 if (emissive != null) {
                     RenderLayer layer = RenderLayer.getEntityTranslucent(emissive);

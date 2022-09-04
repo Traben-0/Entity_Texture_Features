@@ -11,6 +11,7 @@ import net.minecraft.text.LiteralTextContent;
 import net.minecraft.text.MutableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
@@ -51,6 +52,20 @@ public abstract class ETFUtils2 {
         }
         //here the array is down to 1 entry which should be the one in the highest pack
         return packNames.get(0);
+    }
+
+    public static boolean isNativeImageEmpty(@NotNull NativeImage image){
+        boolean foundNonEmptyPixel = false;
+        for (int x = 0; x <image.getWidth() ; x++) {
+            for (int y = 0; y < image.getHeight(); y++) {
+                if(image.getColor(x,y) != 0){
+                    foundNonEmptyPixel = true;
+                    break;
+                }
+            }
+            if(foundNonEmptyPixel) break;
+        }
+        return !foundNonEmptyPixel;
     }
 
     @Nullable
