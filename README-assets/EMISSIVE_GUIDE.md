@@ -18,15 +18,17 @@
 
 - Emissive textures allow parts of a mob / entity's texture to glow as in the image above
 - An emissive texture is a copy of the regular mob texture including only the parts you want glow
-- To render correctly, the emissive texture should be the exact same size as the original mob's texture, otherwise you
-  may get Z-Fighting with shaders enabled
-- Emissive textures must be in the same folder as the texture it is glowing over and must be named like this: `TextureName#.png`, with `#` being the suffix set by the topmost OptiFine format resource pack,otherwise it will default to `_e` (Meaning that the file name should be `TextureName_e.png`)
+- To render correctly, the emissive texture should be the exact same size as the original mob's texture,<br />otherwise you may get Z-Fighting with shaders enabled
+- Emissive textures must be in the same folder as the texture it is glowing over and must be named like this: `TextureName#.png`,<br />with `#` being the suffix set by the topmost OptiFine format resource pack,otherwise it will default to `_e`<br />(Meaning that the file name should be `TextureName_e.png`)
 - Elytra & armour emissives have CIT Resewn mod support and will apply based on the CIT texture
 - Tridents support emissive texturesand can be customized via the special case rules in the random / custom mob guide
-- Block entities such as chests, shulker boxes, beds, bells, enchanting table & lectern books **support** emissive textures with ETF, other blocks will need the in-development Continuity mod's emissive blocks feature
-- Enhanced Block Entities (A mod which changes the block entity render to block render for performance optimizations) breaks ETF's support for block entities 
-- Player skins support emissive textures, see [Player Skin Features Guide](SKINS.md)
-- Emissive textures can render in two different ways, set by the config. The two images below show the two rendering modes:
+- Block entities such as chests, shulker boxes, beds, bells, enchanting table & lectern books **support** emissive textures with ETF,<br />other blocks will need the in-development Continuity mod's emissive blocks feature
+- Enhanced Block Entities (A mod which changes the block entity render to block render for performance optimizations)<br />breaks ETF's support for block entities 
+- Player skins support emissive textures, see [player skin features guide](SKINS.md)
+
+---
+
+Emissive textures can render in two different ways, set by the config. The two images below show the two rendering modes:
 
 ### Dull Emmisives
 
