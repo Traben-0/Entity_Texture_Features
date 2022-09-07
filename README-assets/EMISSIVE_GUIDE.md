@@ -1,4 +1,4 @@
-# 💡Emissive Textures Guide:
+# 💡 Emissive textures guide
 
 <div align="center">
 
