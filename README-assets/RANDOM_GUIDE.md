@@ -1,28 +1,28 @@
-# 🎲 Custom / Random / Varied Entity Textures Guide:
-<img src="randoms.png" alt="img" width="650"/>
+# 🎲 Custom / random textures guide:
 
----
-### This mod is completely Optifine format compatible!!!!
+<div align="center">
 
-- ETF supports all optifine random entity texture properties including Biomes, Names, Heights, etc...
-  *(ETF also adds some of its own)*
-- For documentation see the [ETF random entities format doc](random_entities.properties)
-- For examples try any optifine or ETF random mob resource-packs, and it will work.
-- This mod also adds a few extra features that Optifine does not have, Most notably you can put everything in the
-  default *"minecraft/textures/entity"* or the *etf/random* directory as well as Optifine's directories
+<img src="randoms.png" alt="Random mobs" width="500">
 
----
-## Guide & how it works:
+</div>
 
-- Random textures are applied to each mob on the client-side  
-  *(based on it's UUID, meaning that mob will always have the same random texture unless texture packs are changed, this
-  will even be the same between players if they have the same packs.)*
+## OptiFine compatibility
 
+- ETF supports all OptiFine random entity texture properties including biome, name, heights, etc., + many new ones provided by ETF itself
+- Besides the OptiFine directory, you can use `/assets/minecraft/textures/entity` or `/assets/etf/random`, both are supported by this mod!
+- For documentation on the properties see the [random_entities.properties](random_entities.properties) example
+
+
+## Guide
+
+- Random textures are applied to each mob **on the client only**, based on their UUID. This means that the mobs will always have the same random texture unless the resource pack changes (it will even be the same between players if they have the same pack!)
+
+<!-- Todo: Finish below-->
 - Random textures **must** be in one of the following folders in the resource-pack, and will be checked from the top
   directory first, only using the last directory if none of the others are used
   - the ETF override directory *"etf/random/entity"*
-  - the Optifine Random directory *"optifine/random/entity"* ****Highly Recommended***
-  - the Optifine legacy directory *"optifine/mob"*
+  - the OptiFine Random directory *"OptiFine/random/entity"* ****Highly Recommended***
+  - the OptiFine legacy directory *"OptiFine/mob"*
   - the Vanilla directory *"minecraft/textures/entity"*
 
 - the random textures **must** be named like *"TextureName#.png"* with # being any number that **must** start from 2,  
@@ -30,11 +30,11 @@
   be manually called by using the number 0 in the properties)*
 - A *"TextureName.properties"* file can be placed alongside these random textures to determine special cases for
   different random textures to be selected, this properties file must support
-  the [ETF / Optifine format](random_entities.properties)
+  the [ETF / OptiFine format](random_entities.properties)
   and if one isn't present the game will instead pick randomly from the available random textures present.   
   *(Note. when randomly picked like this, the random textures must contain numbers in sequence from 2 -> however many
   there are, if there are any gaps then textures after the gap will be ignored)*
-- The properties file functions just as it does with Optifine and if a specific entity does not match any of the
+- The properties file functions just as it does with OptiFine and if a specific entity does not match any of the
   conditions in the properties file it will default to the vanilla texture.
 - This mod also adds a few texture Properties "names", "blocks" & "teams", as well as extending "colors" and other minor
   tweaks

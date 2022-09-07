@@ -9,11 +9,10 @@
 ## OptiFine compatability
 
 - ETF supports all OptiFine emissive texture resource packs
-- A custom emissive texture suffix may be set just like OptiFine but with a few optional changes,
-  see the [emissive.properties](emissive.properties) example.
+- A custom emissive texture suffix may be set just like OptiFine but with a few optional changes, see the [emissive.properties](emissive.properties) example.
 - Please try and use only the default emissive suffix `_e` it makes things easier for everyone :)
 
-## Guide:
+## Guide
 
 - Emissive textures allow parts of a mob / entity's texture to glow as in the image above
 - An emissive texture is a copy of the regular mob texture including only the parts you want glow
