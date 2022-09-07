@@ -16,7 +16,7 @@
 ## What does this mod do? 🤔
 
 This Fabric & Forge mod adds support for many  _Entity Texture Features :trollface:_, including entity-related texture features and player skin features!  
-This way, ETF provides more OptiFine parity on the Fabric mod loader. If you want more OptiFine features availiable on Fabric, you can either check [this list](https://lambdaurora.dev/optifine_alternatives), made by LambdaAurora, **or** you can use the [Fabulously Optimized modpack](https://modrinth.com/modpack/fabulously-optimized), which includes _all_ the OptiFine parity mods!
+This way, ETF provides more OptiFine parity on the Fabric mod loader. If you want more OptiFine features availiable on Fabric, you can either check [this list](https://lambdaurora.dev/optifine_alternatives), made by LambdaAurora, **or** you can use the [Fabulously Optimized modpack](https://modrinth.com/modpack/fabulously-optimized), which includes **all** the OptiFine parity mods!
 
 ### Mod's features so far:
 
