@@ -56,7 +56,7 @@ Block entities will always use this mode unless Iris is installed, due to render
 <table>
 <tr>
 <td>
-<img src="emissiveBright.png" alt="Bright Emissives" width="450">
+<img src="emissiveBright.png" alt="Bright Emissives" width="400">
 </td>
 <td>
 
@@ -66,7 +66,7 @@ They:
 - Are noticeably bright in sunlight and can look out of style with vanilla
 - Have more bloom with shaders
 - Have global illumination and does not shade differently over the model
-- Are brighter than tHE default Dull Emissives
+- Are brighter than the default Dull Emissives
 
 </td>
 </tr>
