@@ -1,86 +1,85 @@
 # 💡Emissive Textures Guide:
-<img src="emissives.png" alt="img" width="650"/>
 
----
-### This mod is completely Optifine format compatible!!!!
+<div align="center">
 
-- ETF supports all optifine Emissive Texture Resource-packs
-- A custom emissive texture suffix may be set just like optifine but with a few optional changes,
-  see [[ETF example] emissive.properties ](emissive.properties)
-- please try and use only the default emissive suffix "_e" it makes things easier for everyone :)
+<img src="emissives.png" alt="Emissive mobs" width="450">
 
----
-## The Guide:
+</div>
 
-- Emissive textures allow parts of a mob / entity's texture to glow as in the above image
 
-- An emissive texture is a copy of the regular mob texture with only the parts you want to be glowing
-- to render correctly the emissive texture should be the exact same size as the original mob's texture, otherwise you
-  may get z-fighting with shaders enabled
-- Emissive textures must be in the same folder as the texture it is glowing over and must be named like (
-  TextureName#.png)
-  *(with "#" being the suffix set by the topmost optifine format resource-pack, it will otherwise default to "_e"
-  meaning the file name should be (TextureName_e.png)*
+## OptiFine compatability
 
-- Elytra & Armour emissives have CIT Resewn mod support and will apply based on the CIT texture
-- Tridents support emissive textures customized via the special case rules in the Random / Custom mob Guide
+- ETF supports all OptiFine emissive texture resource packs
+- A custom emissive texture suffix may be set just like OptiFine but with a few optional changes,
+  see the [emissive.properties](emissive.properties) example.
+- Please try and use only the default emissive suffix `_e` it makes things easier for everyone :)
 
-- Block entities like: Chests, shulker boxes, Beds, Bells, Enchanting table & Lectern books, all support emissive
-  textures with ETF, other blocks will need the in-development Continuity mod's emissive blocks feature
-- Enhanced Block Entities (A popular block entity lag fixing mod) will break ETF's support for: Chests, shulker boxes,
-  Beds, Bells, Enchanting table & Lectern books.
+## Guide:
 
-- Player Skins support emissive textures, see [Player Skin Features Guide](SKINS.md)
+- Emissive textures allow parts of a mob / entity's texture to glow as in the image above
+- An emissive texture is a copy of the regular mob texture including only the parts you want glow
+- To render correctly, the emissive texture should be the exact same size as the original mob's texture, otherwise you
+  may get Z-Fighting with shaders enabled
+- Emissive textures must be in the same folder as the texture it is glowing over and must be named like this: `TextureName#.png`, with `#` being the suffix set by the topmost OptiFine format resource pack,otherwise it will default to `_e` (Meaning that the file name should be `TextureName_e.png`)
+- Elytra & armour emissives have CIT Resewn mod support and will apply based on the CIT texture
+- Tridents support emissive texturesand can be customized via the special case rules in the random / custom mob guide
+- Block entities such as chests, shulker boxes, beds, bells, enchanting table & lectern books **support** emissive textures with ETF, other blocks will need the in-development Continuity mod's emissive blocks feature
+- Enhanced Block Entities (A mod which changes the block entity render to block render for performance optimizations) breaks ETF's support for block entities 
+- Player skins support emissive textures, see [Player Skin Features Guide](SKINS.md)
+- Emissive textures can render in two different ways, set by the config. The two images below show the two rendering modes:
 
-### Emissive textures can render in two different ways set by the config or mod-menu options the two images below show the two rendering modes:
+### Dull Emmisives
 
 <table>
 <tr>
 <td>
-<img src="emissiveDull.png" alt="img" width="350"/>
+<img src="emissiveDull.png" alt="Dull Emissives" width="450">
 </td>
 <td>
 
-This image shows an example of the Default *"Dull"* rendering mode
+They:
 
-- is like Optifine emissives
-- are not overly bright in sunlight
-- has directional light shading *(some sides are shaded differently)*
-- has an upper brightness limit more inline with typical entity rendering
-- Block entities will always use this mode unless iris is installed *(due to rendering issues in vanilla)*
-- Is expected to be more stable with certain shaders
+- Are like OptiFine emissives
+- Are not overly bright in sunlight
+- Have directional light shading (some sides are shaded differently)
+- Have an upper brightness limit more inline with typical entity rendering
+- Are expected to be more stable with certain shaders
 
-</td>
-</tr>
-</table>
-<table>
-<tr>
-<td>
-<img src="emissiveBright.png" alt="img" width="350"/>
-</td>
-<td>
-
-This image shows an example of the optional *"Bright"* rendering mode
-
-- is brighter than Optifine emissives
-- are noticeably bright in sunlight and can look out of style with vanilla
-- typically, has more bloom with shaders
-- has global illumination and does not shade differently over the model
-- brighter than Default *"Dull"* mode
+Block entities will always use this mode unless Iris is installed, due to rendering issues in vanilla
 
 </td>
 </tr>
 </table>
 
+### Bright Emissives
 
+<table>
+<tr>
+<td>
+<img src="emissiveBright.png" alt="Bright Emissives" width="450">
+</td>
+<td>
 
----
+They:
+
+- Are brighter than OptiFine emissives
+- Are noticeably bright in sunlight and can look out of style with vanilla
+- Have more bloom with shaders
+- Have global illumination and does not shade differently over the model
+- Are brighter than teh default Dull Emissives
+
+</td>
+</tr>
+</table>
+
 
 ## Examples
 
-<img src="format_example.png" alt="img" width="650"/>
+<div align="center">
 
-- The example image above shows red glowing eyes for the texture *"zombie3.png"*
-- Emissives are applied after randomised textures they must contain the same number system as the random files they
-  apply too  
-  *(e.g "zombie_e.png" will not apply to "zombie3.png" but "zombie3_e.png" will)*
+<img src="format_example.png" alt="img" width="450">
+
+</div>
+
+- The example image above shows red glowing eyes for the texture `zombie3.png`
+- Emissives are applied after randomised textures and they must contain the same number system as the random files they apply too.<br/>For example, `zombie_e.png` will not apply to `zombie3.png`, but `zombie3_e.png` will
