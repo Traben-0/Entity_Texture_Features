@@ -6,6 +6,7 @@
     "MixinIdentifier",
     "MixinPackScreen",
     "accessor.ElytraEntityModelAccessor",
+    "accessor.MooshroomEntityAccessor",
     "accessor.SpriteAccessor",
     "cacheReloaders.MixinMinecraftClient",
     "cacheReloaders.MixinPlayerEntity",

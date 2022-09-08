@@ -18,7 +18,7 @@ public abstract class MixinSimpleResourceReload {
         if (cir.getReturnValue() == 1.0) {
             if (etf$falseAfterFirstRun) {
                 etf$falseAfterFirstRun = false;
-                ETFManager.getInstance().reset();
+                ETFManager.resetInstance();
             }
         } else {
             etf$falseAfterFirstRun = true;

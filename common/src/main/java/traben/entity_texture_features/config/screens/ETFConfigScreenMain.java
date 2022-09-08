@@ -81,7 +81,7 @@ public class ETFConfigScreenMain extends ETFConfigScreen {
                     ETFConfigData = temporaryETFConfig;
                     ETFUtils2.saveConfig();
                     ETFUtils2.checkModCompatabilities();
-                    ETFManager.getInstance().reset();
+                    ETFManager.resetInstance();
                     Objects.requireNonNull(client).setScreen(parent);
                 }));
         this.addDrawableChild(new ButtonWidget((int) (this.width * 0.4), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,

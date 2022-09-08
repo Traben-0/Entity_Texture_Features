@@ -1,5 +1,12 @@
 [**ETF Changelog:**]
 
+[V4.1.dev.9]
+
+- fixed the cause of a bunch of issues with array/hashmap access logic previously only being caught
+- added "statusEffect" texture property to vary textures by status effect or Brown MooShroom suspicious stew variants
+- changed etf settings button texture to fit vanilla button style
+- other small tweaks and code improvements
+
 [V4.1.dev.8]
 
 - fixed more crashes

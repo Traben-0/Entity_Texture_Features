@@ -6,12 +6,14 @@ import it.unimi.dsi.fastutil.objects.ObjectImmutableList;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.boss.WitherEntity;
+import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.mob.*;
 import net.minecraft.entity.passive.*;
 import net.minecraft.util.DyeColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
+import traben.entity_texture_features.mixin.accessor.MooshroomEntityAccessor;
 import traben.entity_texture_features.utils.ETFCacheKey;
 import traben.entity_texture_features.utils.ETFUtils2;
 
@@ -25,52 +27,54 @@ import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 public class ETFTexturePropertyCase {
     //public final int PROPERTY_NUMBER;
     private final Integer[] SUFFIX_NUMBERS_WEIGHTED;
-    private final String[] BIOME_VALUES;
-    private final Integer[] HEIGHT_Y_VALUES;
-    private final String[] NAME_STRINGS;//add
-    private final String[] PROFESSION_VALUES;
-    private final String[] COLOR_VALUES;//add
+    private final @Nullable String[] BIOME_VALUES;
+    private final @Nullable Integer[] HEIGHT_Y_VALUES;
+    private final @Nullable String[] NAME_STRINGS;//add
+    private final @Nullable String[] PROFESSION_VALUES;
+    private final @Nullable String[] COLOR_VALUES;//add
     private final int IS_BABY; // 0 1 2 - don't true false
     private final int WEATHER_TYPE; //0,1,2,3 - no clear rain thunder
-    private final String[] HEALTH_RANGE_STRINGS;
-    private final Integer[] MOON_PHASE_VALUES;
-    private final String[] TIME_RANGE_STRINGS;
-    private final String[] BLOCK_VALUES;
-    private final String[] TEAM_VALUES;
-    private final Integer[] SIZE_VALUES;
+    private final @Nullable String[] HEALTH_RANGE_STRINGS;
+    private final @Nullable Integer[] MOON_PHASE_VALUES;
+    private final @Nullable String[] TIME_RANGE_STRINGS;
+    private final @Nullable String[] BLOCK_VALUES;
+    private final @Nullable String[] TEAM_VALUES;
+    private final @Nullable Integer[] SIZE_VALUES;
 
-    private final Double[] SPEED_MIN_MAX;
-    private final Double[] JUMP_MIN_MAX;
-    private final String[] MAX_HEALTH_STRINGS;
-    private final Integer[] INVENTORY_COLUMNS;
-    private final Boolean IS_TRAP_HORSE;
-    private final Boolean IS_ANGRY;
-    private final PandaEntity.Gene[] HIDDEN_GENE;
-    private final Angriness[] WARDEN_ANGRINESS;
-    private final Boolean IS_ANGRY_WITH_CLIENT;
-    private final Boolean IS_PLAYER_CREATED;
-    private final Boolean IS_SCREAMING_GOAT;
-    private final String[] DISTANCE_TO_PLAYER;
-    private final Boolean CREEPER_CHARGED;
+    private final @Nullable Double[] SPEED_MIN_MAX;
+    private final @Nullable Double[] JUMP_MIN_MAX;
+    private final @Nullable String[] MAX_HEALTH_STRINGS;
+    private final @Nullable Integer[] INVENTORY_COLUMNS;
+    private final @Nullable Boolean IS_TRAP_HORSE;
+    private final @Nullable Boolean IS_ANGRY;
+    private final @Nullable PandaEntity.Gene[] HIDDEN_GENE;
+    private final @Nullable Angriness[] WARDEN_ANGRINESS;
+    private final @Nullable Boolean IS_ANGRY_WITH_CLIENT;
+    private final @Nullable Boolean IS_PLAYER_CREATED;
+    private final @Nullable Boolean IS_SCREAMING_GOAT;
+    private final @Nullable String[] DISTANCE_TO_PLAYER;
+    private final @Nullable Boolean CREEPER_CHARGED;
+
+    private final @Nullable StatusEffect[] STATUS_EFFECT;
 
     //whether case should be ignored by updates
 
 
     public ETFTexturePropertyCase(Integer[] suffixesX,
-                                  Integer[] weightsX,
-                                  String[] biomesX,
-                                  Integer[] heightsX,
-                                  String[] namesX,
-                                  String[] professionsX,
-                                  String[] collarColoursX,
+                                  @Nullable Integer[] weightsX,
+                                  @Nullable String[] biomesX,
+                                  @Nullable Integer[] heightsX,
+                                  @Nullable String[] namesX,
+                                  @Nullable String[] professionsX,
+                                  @Nullable String[] collarColoursX,
                                   int baby012,
                                   int weather0123,
-                                  String[] healthX,
-                                  Integer[] moonX,
-                                  String[] daytimeX,
-                                  String[] blocksX,
-                                  String[] teamsX,
-                                  Integer[] sizeX,
+                                  @Nullable String[] healthX,
+                                  @Nullable Integer[] moonX,
+                                  @Nullable String[] daytimeX,
+                                  @Nullable String[] blocksX,
+                                  @Nullable String[] teamsX,
+                                  @Nullable Integer[] sizeX,
                                   @Nullable Double[] speedMinMax,
                                   @Nullable Double[] jumpMinMax,
                                   @Nullable String[] maxHealthStrings,
@@ -83,10 +87,12 @@ public class ETFTexturePropertyCase {
                                   @Nullable Boolean isPlayerCreated,
                                   @Nullable Boolean isScreamingGoat,
                                   @Nullable String[] distanceToPlayer,
-                                  @Nullable Boolean creeperCharged
+                                  @Nullable Boolean creeperCharged,
+                                  @Nullable StatusEffect[] statusEffect
 
 
     ) {
+        STATUS_EFFECT = statusEffect;
 
         CREEPER_CHARGED = creeperCharged;
         DISTANCE_TO_PLAYER = distanceToPlayer;
@@ -131,9 +137,12 @@ public class ETFTexturePropertyCase {
                 int index = 0;
                 for (int suffix :
                         suffixesX) {
-                    for (int i = 0; i < weightsX[index]; i++) {
-                        //adds the suffix as many times as it is weighted
-                        buildWeighted.add(suffix);
+                    Integer weightValue = weightsX[index];
+                    if (weightValue != null) {
+                        for (int i = 0; i < weightValue; i++) {
+                            //adds the suffix as many times as it is weighted
+                            buildWeighted.add(suffix);
+                        }
                     }
                     index++;
                 }
@@ -166,19 +175,19 @@ public class ETFTexturePropertyCase {
         //System.out.println("checking property number "+propertyNumber);
 
 
-        if (BIOME_VALUES.length == 0
-                && NAME_STRINGS.length == 0
-                && HEIGHT_Y_VALUES.length == 0
-                && PROFESSION_VALUES.length == 0
-                && COLOR_VALUES.length == 0
+        if (BIOME_VALUES == null
+                && NAME_STRINGS == null
+                && HEIGHT_Y_VALUES == null
+                && PROFESSION_VALUES == null
+                && COLOR_VALUES == null
                 && IS_BABY == 0
                 && WEATHER_TYPE == 0
-                && HEALTH_RANGE_STRINGS.length == 0
-                && MOON_PHASE_VALUES.length == 0
-                && TIME_RANGE_STRINGS.length == 0
-                && BLOCK_VALUES.length == 0
-                && TEAM_VALUES.length == 0
-                && SIZE_VALUES.length == 0
+                && HEALTH_RANGE_STRINGS == null
+                && MOON_PHASE_VALUES == null
+                && TIME_RANGE_STRINGS == null
+                && BLOCK_VALUES == null
+                && TEAM_VALUES == null
+                && SIZE_VALUES == null
                 && SPEED_MIN_MAX == null
                 && JUMP_MIN_MAX == null
                 && MAX_HEALTH_STRINGS == null
@@ -192,6 +201,7 @@ public class ETFTexturePropertyCase {
                 && IS_SCREAMING_GOAT == null
                 && DISTANCE_TO_PLAYER == null
                 && CREEPER_CHARGED == null
+                && STATUS_EFFECT == null
         ) {
             return true;
         }
@@ -214,7 +224,7 @@ public class ETFTexturePropertyCase {
 
         boolean wasEntityTestedByAnUpdatableProperty = false;
         boolean doesEntityMeetThisCaseTest = true;
-        if (BIOME_VALUES.length > 0) {
+        if (BIOME_VALUES != null) {
             if (!ETFConfigData.restrictBiome) wasEntityTestedByAnUpdatableProperty = true;
             //String entityBiome = entity.world.getBiome(entity.getBlockPos()).getCategory().getName();//has no caps// desert
             //1.18.1 old mapping String entityBiome = Objects.requireNonNull(entity.world.getRegistryManager().get(Registry.BIOME_KEY).getId(entity.world.getBiome(entity.getBlockPos()))).toString();
@@ -240,7 +250,7 @@ public class ETFTexturePropertyCase {
             for (String str :
                     BIOME_VALUES) {
                 //System.out.println("biometest="+str);
-                if (entityBiome.replace("minecraft:", "").equals(str.trim().toLowerCase().replace("minecraft:", ""))) {
+                if (str != null && entityBiome.replace("minecraft:", "").equals(str.trim().toLowerCase().replace("minecraft:", ""))) {
                     check = true;
                     break;
                 }
@@ -248,7 +258,7 @@ public class ETFTexturePropertyCase {
 
             doesEntityMeetThisCaseTest = check;
         }
-        if (doesEntityMeetThisCaseTest && NAME_STRINGS.length > 0) {
+        if (doesEntityMeetThisCaseTest && NAME_STRINGS != null) {
             wasEntityTestedByAnUpdatableProperty = true;
             if (entity.hasCustomName()) {
                 String entityName = Objects.requireNonNull(entity.getCustomName()).getString();
@@ -257,60 +267,61 @@ public class ETFTexturePropertyCase {
                 boolean invert = false;
                 for (String str :
                         NAME_STRINGS) {
-                    str = str.trim();
-                    if (str.startsWith("!")) {
-                        str = str.replaceFirst("!", "");
-                        invert = true;
-                        check = true;
+                    if (str != null) {
+                        str = str.trim();
+                        if (str.startsWith("!")) {
+                            str = str.replaceFirst("!", "");
+                            invert = true;
+                            check = true;
+                        }
+
+                        if (str.contains("regex:")) {
+                            if (str.contains("iregex:")) {
+                                str = str.split(":")[1];
+                                if (entityName.matches("(?i)" + str)) {
+                                    check = !invert;
+                                    break;
+                                }
+                            } else {
+                                str = str.split(":")[1];
+                                if (entityName.matches(str)) {
+                                    check = !invert;
+                                    break;
+                                }
+                            }
+
+                            //I do not understand pattern in optifine and no-one has ever had a problem with this implementation
+                            //is this really it, doesn't feel right???
+                        } else if (str.contains("pattern:")) {
+                            str = str.replace("?", ".?").replace("*", ".*");
+                            if (str.contains("ipattern:")) {
+                                str = str.replace("ipattern:", "");
+                                if (entityName.matches("(?i)" + str)) {
+                                    check = !invert;
+                                    break;
+                                }
+                            } else {
+                                str = str.replace("pattern:", "");
+                                if (entityName.matches(str)) {
+                                    check = !invert;
+                                    break;
+                                }
+                            }
+                        } else {//direct comparison
+                            if (entityName.equals(str)) {
+                                check = !invert;
+                                break;
+                            }
+                        }
+
                     }
-
-                    if (str.contains("regex:")) {
-                        if (str.contains("iregex:")) {
-                            str = str.split(":")[1];
-                            if (entityName.matches("(?i)" + str)) {
-                                check = !invert;
-                                break;
-                            }
-                        } else {
-                            str = str.split(":")[1];
-                            if (entityName.matches(str)) {
-                                check = !invert;
-                                break;
-                            }
-                        }
-
-                        //I do not understand pattern in optifine and no-one has ever had a problem with this implementation
-                        //is this really it, doesn't feel right???
-                    } else if (str.contains("pattern:")) {
-                        str = str.replace("?", ".?").replace("*", ".*");
-                        if (str.contains("ipattern:")) {
-                            str = str.replace("ipattern:", "");
-                            if (entityName.matches("(?i)" + str)) {
-                                check = !invert;
-                                break;
-                            }
-                        } else {
-                            str = str.replace("pattern:", "");
-                            if (entityName.matches(str)) {
-                                check = !invert;
-                                break;
-                            }
-                        }
-                    } else {//direct comparison
-                        if (entityName.equals(str)) {
-                            check = !invert;
-                            break;
-                        }
-                    }
-
                 }
-
                 doesEntityMeetThisCaseTest = check;
             } else {
                 doesEntityMeetThisCaseTest = false;
             }
         }
-        if (doesEntityMeetThisCaseTest && HEIGHT_Y_VALUES.length > 0) {
+        if (doesEntityMeetThisCaseTest && HEIGHT_Y_VALUES != null) {
             if (!ETFConfigData.restrictHeight) wasEntityTestedByAnUpdatableProperty = true;
             int entityHeight;
             if (isUpdate && ETFConfigData.restrictHeight && ETFConfigData.restrictUpdateProperties && spawnConditions != null && spawnConditions.size() > 2) {
@@ -328,57 +339,59 @@ public class ETFTexturePropertyCase {
             }
             doesEntityMeetThisCaseTest = check;
         }
-        if (doesEntityMeetThisCaseTest && PROFESSION_VALUES.length > 0 && entity instanceof VillagerEntity) {
+        if (doesEntityMeetThisCaseTest && PROFESSION_VALUES != null && entity instanceof VillagerEntity) {
             wasEntityTestedByAnUpdatableProperty = true;
             String entityProfession = ((VillagerEntity) entity).getVillagerData().getProfession().toString().toLowerCase().replace("minecraft:", "");
             int entityProfessionLevel = ((VillagerEntity) entity).getVillagerData().getLevel();
             boolean check = false;
             for (String str :
                     PROFESSION_VALUES) {
-                //str could be   librarian:1,3-4
-                str = str.toLowerCase().replaceAll("\s*", "").replace("minecraft:", "");
-                //could be   "minecraft:cleric:1-4
-                if (str.contains(":")) {
-                    //splits at seperator for profession level check only
-                    String[] data = str.split(":\\d");
-                    if (entityProfession.contains(data[0]) || data[0].contains(entityProfession)) {
-                        //has profession now check level
-                        if (data.length == 2) {
-                            String[] levels = data[1].split(",");
-                            ArrayList<Integer> levelData = new ArrayList<>();
-                            for (String lvls :
-                                    levels) {
-                                if (lvls.contains("-")) {
-                                    levelData.addAll(Arrays.asList(ETFUtils2.getIntRange(lvls)));
-                                } else {
-                                    levelData.add(Integer.parseInt(lvls.replaceAll("\\D", "")));
+                if (str != null) {
+                    //str could be   librarian:1,3-4
+                    str = str.toLowerCase().replaceAll("\s*", "").replace("minecraft:", "");
+                    //could be   "minecraft:cleric:1-4
+                    if (str.contains(":")) {
+                        //splits at seperator for profession level check only
+                        String[] data = str.split(":\\d");
+                        if (entityProfession.contains(data[0]) || data[0].contains(entityProfession)) {
+                            //has profession now check level
+                            if (data.length == 2) {
+                                String[] levels = data[1].split(",");
+                                ArrayList<Integer> levelData = new ArrayList<>();
+                                for (String lvls :
+                                        levels) {
+                                    if (lvls.contains("-")) {
+                                        levelData.addAll(Arrays.asList(ETFUtils2.getIntRange(lvls)));
+                                    } else {
+                                        levelData.add(Integer.parseInt(lvls.replaceAll("\\D", "")));
+                                    }
                                 }
-                            }
-                            //now check levels
-                            for (Integer i :
-                                    levelData) {
-                                if (i == entityProfessionLevel) {
-                                    check = true;
-                                    break;
+                                //now check levels
+                                for (Integer i :
+                                        levelData) {
+                                    if (i == entityProfessionLevel) {
+                                        check = true;
+                                        break;
+                                    }
                                 }
+                            } else {
+                                //no levels just send profession match confirmation
+                                check = true;
+                                break;
                             }
-                        } else {
-                            //no levels just send profession match confirmation
+                        }
+                    } else {
+                        if (entityProfession.contains(str) || str.contains(entityProfession)) {
                             check = true;
                             break;
                         }
-                    }
-                } else {
-                    if (entityProfession.contains(str) || str.contains(entityProfession)) {
-                        check = true;
-                        break;
                     }
                 }
             }
             doesEntityMeetThisCaseTest = check;
         }
 
-        if (doesEntityMeetThisCaseTest && COLOR_VALUES.length > 0) {
+        if (doesEntityMeetThisCaseTest && COLOR_VALUES != null) {
 
             wasEntityTestedByAnUpdatableProperty = true;
             String entityColor;
@@ -417,10 +430,12 @@ public class ETFTexturePropertyCase {
             boolean check = false;
             for (String i :
                     COLOR_VALUES) {
-                i = i.toLowerCase();
-                if (i.equals(entityColor)) {
-                    check = true;
-                    break;
+                if (i != null) {
+                    i = i.toLowerCase();
+                    if (i.equals(entityColor)) {
+                        check = true;
+                        break;
+                    }
                 }
             }
             doesEntityMeetThisCaseTest = check;
@@ -452,7 +467,7 @@ public class ETFTexturePropertyCase {
             }
             doesEntityMeetThisCaseTest = check;
         }
-        if (doesEntityMeetThisCaseTest && HEALTH_RANGE_STRINGS.length > 0) {
+        if (doesEntityMeetThisCaseTest && HEALTH_RANGE_STRINGS != null) {
             wasEntityTestedByAnUpdatableProperty = true;
             //float entityHealth = entity.getHealth();
             boolean check = false;
@@ -460,24 +475,26 @@ public class ETFTexturePropertyCase {
             float checkValue = entity.getHealth() / entity.getMaxHealth() * 100;
             for (String hlth :
                     HEALTH_RANGE_STRINGS) {
-                if (hlth.contains("-")) {
-                    String[] str = hlth.split("-");
-                    if (checkValue >= Integer.parseInt(str[0].replaceAll("\\D", ""))
-                            && checkValue <= Integer.parseInt(str[1].replaceAll("\\D", ""))) {
-                        check = true;
-                        break;
-                    }
+                if (hlth != null) {
+                    if (hlth.contains("-")) {
+                        String[] str = hlth.split("-");
+                        if (checkValue >= Integer.parseInt(str[0].replaceAll("\\D", ""))
+                                && checkValue <= Integer.parseInt(str[1].replaceAll("\\D", ""))) {
+                            check = true;
+                            break;
+                        }
 
-                } else {
-                    if (checkValue == Integer.parseInt(hlth.replaceAll("\\D", ""))) {
-                        check = true;
-                        break;
+                    } else {
+                        if (checkValue == Integer.parseInt(hlth.replaceAll("\\D", ""))) {
+                            check = true;
+                            break;
+                        }
                     }
                 }
             }
             doesEntityMeetThisCaseTest = check;
         }
-        if (doesEntityMeetThisCaseTest && MOON_PHASE_VALUES.length > 0) {
+        if (doesEntityMeetThisCaseTest && MOON_PHASE_VALUES != null) {
             if (!ETFConfigData.restrictMoonPhase) wasEntityTestedByAnUpdatableProperty = true;
             int moonPhase;
             if (isUpdate && ETFConfigData.restrictMoonPhase && ETFConfigData.restrictUpdateProperties && spawnConditions != null && spawnConditions.size() > 5) {
@@ -495,7 +512,7 @@ public class ETFTexturePropertyCase {
             }
             doesEntityMeetThisCaseTest = check;
         }
-        if (doesEntityMeetThisCaseTest && TIME_RANGE_STRINGS.length > 0) {
+        if (doesEntityMeetThisCaseTest && TIME_RANGE_STRINGS != null) {
             if (!ETFConfigData.restrictDayTime) wasEntityTestedByAnUpdatableProperty = true;
             long time;
             boolean check = false;
@@ -506,24 +523,26 @@ public class ETFTexturePropertyCase {
             }
             for (String rangeOfTime :
                     TIME_RANGE_STRINGS) {
-                if (rangeOfTime.contains("-")) {
-                    String[] str = rangeOfTime.split("-");
-                    if (time >= Long.parseLong(str[0].replaceAll("\\D", ""))
-                            && time <= Long.parseLong(str[1].replaceAll("\\D", ""))) {
-                        check = true;
-                        break;
-                    }
+                if (rangeOfTime != null) {
+                    if (rangeOfTime.contains("-")) {
+                        String[] str = rangeOfTime.split("-");
+                        if (time >= Long.parseLong(str[0].replaceAll("\\D", ""))
+                                && time <= Long.parseLong(str[1].replaceAll("\\D", ""))) {
+                            check = true;
+                            break;
+                        }
 
-                } else {
-                    if (time == Long.parseLong(rangeOfTime.replaceAll("\\D", ""))) {
-                        check = true;
-                        break;
+                    } else {
+                        if (time == Long.parseLong(rangeOfTime.replaceAll("\\D", ""))) {
+                            check = true;
+                            break;
+                        }
                     }
                 }
             }
             doesEntityMeetThisCaseTest = check;
         }
-        if (doesEntityMeetThisCaseTest && BLOCK_VALUES.length > 0) {
+        if (doesEntityMeetThisCaseTest && BLOCK_VALUES != null) {
             if (!ETFConfigData.restrictBlock) wasEntityTestedByAnUpdatableProperty = true;
             //check block
 
@@ -548,38 +567,42 @@ public class ETFTexturePropertyCase {
             boolean check1 = false;
             for (String block :
                     BLOCK_VALUES) {
-                block = block.strip();
-                if (block.startsWith("!")) {
-                    block = block.replaceFirst("!", "");
-                    if (!block.replace("minecraft:", "").equalsIgnoreCase(entityOnBlocks[0])) {
-                        //can continue to check cases
-                        check1 = true;
-                    } else {
-                        //will prevent future checking
-                        doesEntityMeetThisCaseTest = false;
+                if (block != null) {
+                    block = block.strip();
+                    if (block.startsWith("!")) {
+                        block = block.replaceFirst("!", "");
+                        if (!block.replace("minecraft:", "").equalsIgnoreCase(entityOnBlocks[0])) {
+                            //can continue to check cases
+                            check1 = true;
+                        } else {
+                            //will prevent future checking
+                            doesEntityMeetThisCaseTest = false;
 
+                        }
+                    } else if (block.replace("minecraft:", "").equalsIgnoreCase(entityOnBlocks[0])) {
+                        check1 = true;
+                        break;
                     }
-                } else if (block.replace("minecraft:", "").equalsIgnoreCase(entityOnBlocks[0])) {
-                    check1 = true;
-                    break;
                 }
             }
             for (String block :
                     BLOCK_VALUES) {
-                block = block.strip();
-                if (block.startsWith("!")) {
-                    block = block.replaceFirst("!", "");
-                    if (!block.replace("minecraft:", "").equalsIgnoreCase(entityOnBlocks[1])) {
-                        //can continue to check cases
-                        check2 = true;
-                    } else {
-                        //will prevent future checking
-                        doesEntityMeetThisCaseTest = false;
+                if (block != null) {
+                    block = block.strip();
+                    if (block.startsWith("!")) {
+                        block = block.replaceFirst("!", "");
+                        if (!block.replace("minecraft:", "").equalsIgnoreCase(entityOnBlocks[1])) {
+                            //can continue to check cases
+                            check2 = true;
+                        } else {
+                            //will prevent future checking
+                            doesEntityMeetThisCaseTest = false;
 
+                        }
+                    } else if (block.replace("minecraft:", "").equalsIgnoreCase(entityOnBlocks[1])) {
+                        check2 = true;
+                        break;
                     }
-                } else if (block.replace("minecraft:", "").equalsIgnoreCase(entityOnBlocks[1])) {
-                    check2 = true;
-                    break;
                 }
             }
             //will just leave if a negative check matched
@@ -589,7 +612,7 @@ public class ETFTexturePropertyCase {
                 doesEntityMeetThisCaseTest = check1 || check2;
             }
         }
-        if (doesEntityMeetThisCaseTest && TEAM_VALUES.length > 0) {
+        if (doesEntityMeetThisCaseTest && TEAM_VALUES != null) {
             wasEntityTestedByAnUpdatableProperty = true;
             if (entity.getScoreboardTeam() != null) {
                 String teamName = entity.getScoreboardTeam().getName();
@@ -598,15 +621,17 @@ public class ETFTexturePropertyCase {
                 boolean invert = false;
                 for (String str :
                         TEAM_VALUES) {
-                    str = str.trim();
-                    if (str.startsWith("!")) {
-                        str = str.replaceFirst("!", "");
-                        invert = true;
-                        check = true;
-                    }
-                    if (teamName.equals(str)) {
-                        check = !invert;
-                        break;
+                    if (str != null) {
+                        str = str.trim();
+                        if (str.startsWith("!")) {
+                            str = str.replaceFirst("!", "");
+                            invert = true;
+                            check = true;
+                        }
+                        if (teamName.equals(str)) {
+                            check = !invert;
+                            break;
+                        }
                     }
                 }
                 doesEntityMeetThisCaseTest = check;
@@ -614,7 +639,7 @@ public class ETFTexturePropertyCase {
                 doesEntityMeetThisCaseTest = false;
             }
         }
-        if (doesEntityMeetThisCaseTest && SIZE_VALUES.length > 0 &&
+        if (doesEntityMeetThisCaseTest && SIZE_VALUES != null &&
                 (entity instanceof SlimeEntity || entity instanceof PhantomEntity)) {
             int size;
             if (entity instanceof SlimeEntity slime) {
@@ -638,11 +663,19 @@ public class ETFTexturePropertyCase {
 
         if (doesEntityMeetThisCaseTest && SPEED_MIN_MAX != null) {
             double speed = entity.getMovementSpeed();
-            doesEntityMeetThisCaseTest = (speed >= SPEED_MIN_MAX[0] && speed <= SPEED_MIN_MAX[1]);
+            Double min = SPEED_MIN_MAX[0];
+            Double max = SPEED_MIN_MAX[1];
+            if (min != null && max != null) {
+                doesEntityMeetThisCaseTest = (speed >= min && speed <= max);
+            }
         }
         if (doesEntityMeetThisCaseTest && JUMP_MIN_MAX != null && entity instanceof AbstractHorseEntity) {
             double jumpHeight = ((AbstractHorseEntity) entity).getJumpStrength();
-            doesEntityMeetThisCaseTest = (jumpHeight >= JUMP_MIN_MAX[0] && jumpHeight <= JUMP_MIN_MAX[1]);
+            Double min = JUMP_MIN_MAX[0];
+            Double max = JUMP_MIN_MAX[1];
+            if (min != null && max != null) {
+                doesEntityMeetThisCaseTest = (jumpHeight >= min && jumpHeight <= max);
+            }
         }
         if (doesEntityMeetThisCaseTest && MAX_HEALTH_STRINGS != null) {
             boolean check = false;
@@ -650,18 +683,20 @@ public class ETFTexturePropertyCase {
             float checkValue = entity.getMaxHealth();
             for (String hlth :
                     MAX_HEALTH_STRINGS) {
-                if (hlth.contains("-")) {
-                    String[] str = hlth.split("-");
-                    if (checkValue >= Integer.parseInt(str[0].replaceAll("\\D", ""))
-                            && checkValue <= Integer.parseInt(str[1].replaceAll("\\D", ""))) {
-                        check = true;
-                        break;
-                    }
+                if (hlth != null) {
+                    if (hlth.contains("-")) {
+                        String[] str = hlth.split("-");
+                        if (checkValue >= Integer.parseInt(str[0].replaceAll("\\D", ""))
+                                && checkValue <= Integer.parseInt(str[1].replaceAll("\\D", ""))) {
+                            check = true;
+                            break;
+                        }
 
-                } else {
-                    if (checkValue == Integer.parseInt(hlth.replaceAll("\\D", ""))) {
-                        check = true;
-                        break;
+                    } else {
+                        if (checkValue == Integer.parseInt(hlth.replaceAll("\\D", ""))) {
+                            check = true;
+                            break;
+                        }
                     }
                 }
             }
@@ -733,18 +768,20 @@ public class ETFTexturePropertyCase {
             float checkValue = entity.distanceTo(MinecraftClient.getInstance().player);
             for (String distances :
                     DISTANCE_TO_PLAYER) {
-                if (distances.contains("-")) {
-                    String[] str = distances.split("-");
-                    if (checkValue >= Integer.parseInt(str[0].replaceAll("\\D", ""))
-                            && checkValue <= Integer.parseInt(str[1].replaceAll("\\D", ""))) {
-                        check = true;
-                        break;
-                    }
+                if (distances != null) {
+                    if (distances.contains("-")) {
+                        String[] str = distances.split("-");
+                        if (checkValue >= Integer.parseInt(str[0].replaceAll("\\D", ""))
+                                && checkValue <= Integer.parseInt(str[1].replaceAll("\\D", ""))) {
+                            check = true;
+                            break;
+                        }
 
-                } else {
-                    if (((int) checkValue) == Integer.parseInt(distances.replaceAll("\\D", ""))) {
-                        check = true;
-                        break;
+                    } else {
+                        if (((int) checkValue) == Integer.parseInt(distances.replaceAll("\\D", ""))) {
+                            check = true;
+                            break;
+                        }
                     }
                 }
             }
@@ -754,6 +791,30 @@ public class ETFTexturePropertyCase {
         if (doesEntityMeetThisCaseTest && CREEPER_CHARGED != null && entity instanceof CreeperEntity) {
             wasEntityTestedByAnUpdatableProperty = true;
             doesEntityMeetThisCaseTest = ((CreeperEntity) entity).shouldRenderOverlay() == CREEPER_CHARGED;
+        }
+        if (doesEntityMeetThisCaseTest && STATUS_EFFECT != null) {
+            wasEntityTestedByAnUpdatableProperty = true;
+            boolean found = false;
+            for (StatusEffect effect :
+                    STATUS_EFFECT) {
+                if (entity.hasStatusEffect(effect)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found && entity instanceof MooshroomEntity) {
+                //noinspection PatternVariableCanBeUsed
+                MooshroomEntity shroom = (MooshroomEntity) entity;
+                for (StatusEffect effect :
+                        STATUS_EFFECT) {
+                    if (effect != null && effect.equals(((MooshroomEntityAccessor) shroom).getStewEffect())) {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+
+            doesEntityMeetThisCaseTest = found;
         }
 
 

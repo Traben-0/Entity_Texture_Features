@@ -30,7 +30,7 @@ import static traben.entity_texture_features.ETFClientCommon.CONFIG_DIR;
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
 public abstract class ETFUtils2 {
-    public static final ETFLruCache<Identifier, NativeImage> KNOWN_NATIVE_IMAGES = new ETFLruCache<>();
+    public static ETFLruCache<Identifier, NativeImage> KNOWN_NATIVE_IMAGES = new ETFLruCache<>();
 
     @Nullable
     public static Identifier replaceIdentifier(Identifier id, String regex, String replace) {
@@ -54,16 +54,16 @@ public abstract class ETFUtils2 {
         return packNames.get(0);
     }
 
-    public static boolean isNativeImageEmpty(@NotNull NativeImage image){
+    public static boolean isNativeImageEmpty(@NotNull NativeImage image) {
         boolean foundNonEmptyPixel = false;
-        for (int x = 0; x <image.getWidth() ; x++) {
+        for (int x = 0; x < image.getWidth(); x++) {
             for (int y = 0; y < image.getHeight(); y++) {
-                if(image.getColor(x,y) != 0){
+                if (image.getColor(x, y) != 0) {
                     foundNonEmptyPixel = true;
                     break;
                 }
             }
-            if(foundNonEmptyPixel) break;
+            if (foundNonEmptyPixel) break;
         }
         return !foundNonEmptyPixel;
     }

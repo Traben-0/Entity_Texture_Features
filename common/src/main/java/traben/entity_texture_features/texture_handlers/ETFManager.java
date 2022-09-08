@@ -4,12 +4,12 @@ import it.unimi.dsi.fastutil.objects.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.mob.Angriness;
 import net.minecraft.entity.passive.PandaEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.resource.ResourcePack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3i;
 import org.jetbrains.annotations.NotNull;
@@ -55,6 +55,7 @@ public class ETFManager {
     public final Object2LongOpenHashMap<UUID> ENTITY_BLINK_TIME = new Object2LongOpenHashMap<>();
     public final Object2ObjectOpenHashMap<UUID, ETFCacheKey> UUID_TO_MOB_CACHE_KEY_MAP_FOR_FEATURE_USAGE = new Object2ObjectOpenHashMap<>();
     //private static final Object2ReferenceOpenHashMap<@NotNull UUID, @NotNull ETFTexture> ENTITY_TEXTURE_MAP = new Object2ReferenceOpenHashMap<>();
+
     //todo extend this to as many isPresent() calls as possible to lower repeated resource manager calls, may need to consider LRUCache usage if this is expanded too greatly
     public final Object2BooleanOpenHashMap<Identifier> DOES_IDENTIFIER_EXIST_CACHED_RESULT = new Object2BooleanOpenHashMap<>();
     public final ArrayList<String> knownResourcePackOrder = new ArrayList<>();
@@ -80,70 +81,7 @@ public class ETFManager {
     public ETFTexture redMooshroomAlt = null;
     public ETFTexture brownMooshroomAlt = null;
 
-    public static ETFManager getInstance() {
-        if (manager == null)
-            manager = new ETFManager();
-        return manager;
-    }
-
-
-    private static ETFTexture getErrorETFTexture() {
-        ETFUtils2.registerNativeImageToIdentifier(ETFUtils2.emptyNativeImage(), new Identifier("etf:error.png"));
-        ETFUtils2.logWarn("getErrorETFTexture() was called, investigate this if called too much");
-        return new ETFTexture(new Identifier("etf:error.png"), false);//, ETFTexture.TextureSource.GENERIC_DEBUG);
-    }
-
-    public static EmissiveRenderModes getEmissiveMode() {
-        if (ETFConfigData.fullBrightEmissives) {
-            return EmissiveRenderModes.BRIGHT;
-        } else {
-            return EmissiveRenderModes.DULL;
-        }
-    }
-
-    public void reset() {
-
-        knownResourcePackOrder.clear();
-        for (ResourcePack pack :
-                MinecraftClient.getInstance().getResourceManager().streamResourcePacks().toList()
-        ) {
-            //loops from lowest to highest pack
-            knownResourcePackOrder.add(pack.getName());
-        }
-
-        DOES_IDENTIFIER_EXIST_CACHED_RESULT.clear();
-
-        ETFUtils2.KNOWN_NATIVE_IMAGES.clearCache();
-
-        ETFClientCommon.etf$loadConfig();
-        //OPTIFINE_1_HAS_REPLACEMENT.clear();
-        TEXTURE_MAP_TO_OPPOSITE_ELYTRA.clear();
-        ETF_TEXTURE_CACHE.clear();
-        ENTITY_TEXTURE_MAP.clearCache();
-        //ENTITY_FEATURE_MAP.clear();
-        ENTITY_SPAWN_CONDITIONS_CACHE.clearCache();
-        OPTIFINE_PROPERTY_CACHE.clear();
-        ENTITY_IS_UPDATABLE.clear();
-        ENTITY_UPDATE_QUEUE.clear();
-        ENTITY_DEBUG_QUEUE.clear();
-        TRUE_RANDOM_COUNT_CACHE.clear();
-        ENTITY_BLINK_TIME.clear();
-
-        UUID_TO_MOB_CACHE_KEY_MAP_FOR_FEATURE_USAGE.clear();
-
-        redMooshroomAlt = null;
-        brownMooshroomAlt = null;
-        mooshroomRedCustomShroom = 0;
-        mooshroomBrownCustomShroom = 0;
-
-
-        PLAYER_TEXTURE_MAP.clearCache();
-        LAST_PLAYER_CHECK_TIME.clear();
-        PLAYER_CHECK_COUNT.clear();
-
-        ETFDirectory.clear();
-        //reset emissive suffix
-        EMISSIVE_SUFFIX_LIST.clear();
+    private ETFManager() {
         try {
             List<Properties> props = new ArrayList<>();
             String[] paths = {"optifine/emissive.properties", "textures/emissive.properties", "etf/emissive.properties"};
@@ -180,6 +118,37 @@ public class ETFManager {
             EMISSIVE_SUFFIX_LIST.add("_e");
         }
     }
+
+    public static ETFManager getInstance() {
+        if (manager == null)
+            manager = new ETFManager();
+        return manager;
+    }
+
+    public static void resetInstance() {
+        ETFUtils2.KNOWN_NATIVE_IMAGES = new ETFLruCache<>();
+        ETFClientCommon.etf$loadConfig();
+        ETFDirectory.clear();
+
+        //instance based format solves the issue of hashmaps and arrays being clearing while also being accessed
+        //as now those rare transitional (reading during clearing) occurrences will simply read from the previous instance of manager
+        manager = new ETFManager();
+    }
+
+    private static ETFTexture getErrorETFTexture() {
+        ETFUtils2.registerNativeImageToIdentifier(ETFUtils2.emptyNativeImage(), new Identifier("etf:error.png"));
+        ETFUtils2.logWarn("getErrorETFTexture() was called, investigate this if called too much");
+        return new ETFTexture(new Identifier("etf:error.png"), false);//, ETFTexture.TextureSource.GENERIC_DEBUG);
+    }
+
+    public static EmissiveRenderModes getEmissiveMode() {
+        if (ETFConfigData.fullBrightEmissives) {
+            return EmissiveRenderModes.BRIGHT;
+        } else {
+            return EmissiveRenderModes.DULL;
+        }
+    }
+
 
     public void removeThisEntityDataFromAllStorage(ETFCacheKey ETFId) {
         ENTITY_TEXTURE_MAP.removeEntryOnly(ETFId);
@@ -298,6 +267,7 @@ public class ETFManager {
             return foundTexture;
 
         } catch (Exception e) {
+            ETFUtils2.logWarn("ETF Texture error! if this happens more than a couple times, then something is wrong");
             return getETFDefaultTexture(vanillaIdentifier, canBePatched);
         }
     }
@@ -370,7 +340,8 @@ public class ETFManager {
                 //optifine random confirmed
                 newOptifineTextureFound(vanillaIdentifier, possibleProperty);
                 return returnNewAlreadyConfirmedOptifineTexture(entity, vanillaIdentifier, false);
-            } else {//neither null this will be annoying
+            } else //noinspection CommentedOutCode
+            {//neither null this will be annoying
                 //if 2.png is higher it MUST be treated as true random confirmed
                 ResourceManager resources = MinecraftClient.getInstance().getResourceManager();
                 String p2pngPackName = resources.getResource(possible2PNG).isPresent() ? resources.getResource(possible2PNG).get().getResourcePackName() : null;
@@ -430,21 +401,21 @@ public class ETFManager {
                     //System.out.println("constructed as "+num);
                     //loops through each known number in properties
                     //all case.1 ect should be processed here
-                    Integer[] suffixes = {};
-                    Integer[] weights = {};
-                    String[] biomes = {};
-                    Integer[] heights = {};
-                    ArrayList<String> names = new ArrayList<>();
-                    String[] professions = {};
-                    String[] collarColours = {};
+                    Integer[] suffixes = null;
+                    @Nullable Integer[] weights = null;
+                    @Nullable String[] biomes = null;
+                    @Nullable Integer[] heights = null;
+                    @Nullable ArrayList<String> names = null;
+                    @Nullable String[] professions = null;
+                    @Nullable String[] collarColours = null;
                     int baby = 0; // 0 1 2 - don't true false
                     int weather = 0; //0,1,2,3 - no clear rain thunder
-                    String[] health = {};
-                    Integer[] moon = {};
-                    String[] daytime = {};
-                    String[] blocks = {};
-                    String[] teams = {};
-                    Integer[] sizes = {};
+                    @Nullable String[] health = null;
+                    @Nullable Integer[] moon = null;
+                    @Nullable String[] daytime = null;
+                    @Nullable String[] blocks = null;
+                    @Nullable String[] teams = null;
+                    @Nullable Integer[] sizes = null;
                     @Nullable Double[] speedMinMax = null;
                     @Nullable Double[] jumpMinMax = null;
                     @Nullable String[] maxHealthStrings = null;
@@ -458,6 +429,7 @@ public class ETFManager {
                     @Nullable Boolean isScreamingGoat = null;
                     @Nullable String[] distanceFromPlayer = null;
                     @Nullable Boolean creeperCharged = null;
+                    @Nullable StatusEffect[] statusEffects = null;
 
                     if (props.containsKey("skins." + num) || props.containsKey("textures." + num)) {
                         String dataFromProps = props.containsKey("skins." + num) ? props.getProperty("skins." + num).strip() : props.getProperty("textures." + num).strip();
@@ -778,6 +750,7 @@ public class ETFManager {
                         for (String gene :
                                 input) {
                             //no enhanced for back compat
+                            //noinspection EnhancedSwitchMigration
                             switch (gene.trim()) {
                                 case "normal":
                                     genes.add(PandaEntity.Gene.NORMAL);
@@ -812,6 +785,7 @@ public class ETFManager {
                         for (String anger :
                                 input) {
                             //no enhanced for back compat
+                            //noinspection EnhancedSwitchMigration
                             switch (anger.trim()) {
                                 case "calm":
                                     angery.add(Angriness.CALM);
@@ -864,6 +838,30 @@ public class ETFManager {
                             ETFUtils2.logWarn("properties files number error in creeperCharged category");
                         }
                     }
+                    if (props.containsKey("statusEffect." + num)) {
+                        String dataFromProps = props.getProperty("statusEffect." + num).trim();
+                        String[] columnData = dataFromProps.split("\s+");
+                        ArrayList<StatusEffect> statuses = new ArrayList<>();
+                        for (String data :
+                                columnData) {
+                            data = data.replaceAll("\\(", "").replaceAll("\\)", "");
+                            //check if range
+                            data = data.trim();
+                            if (!data.replaceAll("\\D", "").isEmpty()) {
+                                try {
+                                    int tryNumber = Integer.parseInt(data.replaceAll("\\D", ""));
+                                    StatusEffect attempt = StatusEffect.byRawId(tryNumber);
+                                    if (attempt != null) {
+                                        statuses.add(attempt);
+                                    }
+                                } catch (NumberFormatException e) {
+                                    ETFUtils2.logWarn("properties files number error in statusEffects category");
+                                }
+
+                            }
+                        }
+                        statusEffects = statuses.toArray(new StatusEffect[0]);
+                    }
 
                     //array faster to use
                     //list easier to build
@@ -899,7 +897,8 @@ public class ETFManager {
                                 isPlayerCreated,
                                 isScreamingGoat,
                                 distanceFromPlayer,
-                                creeperCharged));
+                                creeperCharged,
+                                statusEffects));
                     }
                 }
                 if (!allCasesForTexture.isEmpty()) {

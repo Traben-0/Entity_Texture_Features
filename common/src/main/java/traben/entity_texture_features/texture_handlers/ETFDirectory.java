@@ -19,7 +19,7 @@ public enum ETFDirectory {
     OPTIFINE(new String[]{"textures", "optifine/random"}),
     VANILLA(null);
 
-    private static final Object2ReferenceOpenHashMap<@NotNull Identifier, @NotNull ETFDirectory> ETF_DIRECTORY_CACHE = new Object2ReferenceOpenHashMap<>();
+    private static Object2ReferenceOpenHashMap<@NotNull Identifier, @NotNull ETFDirectory> ETF_DIRECTORY_CACHE = new Object2ReferenceOpenHashMap<>();
     private final String[] replaceStrings;
 
     ETFDirectory(String[] replaceStrings) {
@@ -27,7 +27,7 @@ public enum ETFDirectory {
     }
 
     public static void clear() {
-        ETF_DIRECTORY_CACHE.clear();
+        ETF_DIRECTORY_CACHE = new Object2ReferenceOpenHashMap<>();
     }
 
     @Nullable

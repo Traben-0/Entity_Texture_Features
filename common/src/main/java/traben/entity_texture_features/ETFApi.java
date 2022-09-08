@@ -15,7 +15,7 @@ public class ETFApi {
     //saves any config changes to file and resets ETF to function with the new settings
     public static void saveETFConfigChangesAndResetETF() {
         ETFUtils2.saveConfig();
-        ETFManager.getInstance().reset();
+        ETFManager.resetInstance();
     }
 
     //for now only puzzle support has been considered
