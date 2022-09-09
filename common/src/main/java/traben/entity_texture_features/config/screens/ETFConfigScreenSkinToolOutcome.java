@@ -27,10 +27,10 @@ import java.util.Objects;
 import static traben.entity_texture_features.ETFClientCommon.CONFIG_DIR;
 
 //inspired by puzzles custom gui code
-public class ETFConfigScreenPrintOutcome extends ETFConfigScreen {
+public class ETFConfigScreenSkinToolOutcome extends ETFConfigScreen {
     private final boolean didSucceed;
 
-    protected ETFConfigScreenPrintOutcome(Screen parent, boolean success) {
+    protected ETFConfigScreenSkinToolOutcome(Screen parent, boolean success) {
         super(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".print_skin.result"), parent);
         didSucceed = success;
     }
@@ -78,9 +78,7 @@ public class ETFConfigScreenPrintOutcome extends ETFConfigScreen {
 
         this.addDrawableChild(getETFButton((int) (this.width * 0.55), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,
                 ScreenTexts.DONE,
-                (button) -> {
-                    Objects.requireNonNull(client).setScreen(parent);
-                }));
+                (button) -> Objects.requireNonNull(client).setScreen(parent)));
         if (didSucceed) {
             this.addDrawableChild(getETFButton((int) (this.width * 0.15), (int) (this.height * 0.7), (int) (this.width * 0.7), 20,
                     ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.print_skin.open"),

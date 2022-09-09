@@ -30,7 +30,8 @@ import java.util.Objects;
 import static traben.entity_texture_features.ETFClientCommon.*;
 
 //inspired by puzzles custom gui code
-public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
+@SuppressWarnings("EnhancedSwitchMigration")
+public class ETFConfigScreenSkinTool extends ETFConfigScreen {
     public Boolean originalEnableBlinking;
     public Integer originalBlinkLength;
     public ETFPlayerTexture thisETFPlayerTexture = null;
@@ -48,7 +49,7 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
     ButtonWidget enchantSelectButton = null;
     ButtonWidget capeButton = null;
 
-    protected ETFConfigScreenPlayerSkinTool(Screen parent) {
+    protected ETFConfigScreenSkinTool(Screen parent) {
         super(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_features.title"), parent);
 
     }
@@ -146,7 +147,7 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
                         result = printPlayerSkinCopy();
                     }
                     onExit();
-                    Objects.requireNonNull(client).setScreen(new ETFConfigScreenPrintOutcome(parent, result));
+                    Objects.requireNonNull(client).setScreen(new ETFConfigScreenSkinToolOutcome(parent, result));
                 });
         this.addDrawableChild(printSkinFileButton);
 
@@ -296,7 +297,7 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
 
             emissiveSelectButton = getETFButton((int) (this.width * 0.695), (int) (this.height * 0.5), (int) (this.width * 0.275), 20,
                     ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.emissive_select.button"),
-                    (button) -> Objects.requireNonNull(client).setScreen(new ETFConfigScreenPlayerSkinToolPixelSelect(this, ETFConfigScreenPlayerSkinToolPixelSelect.SelectionMode.EMISSIVE))
+                    (button) -> Objects.requireNonNull(client).setScreen(new ETFConfigScreenSkinToolPixelSelection(this, ETFConfigScreenSkinToolPixelSelection.SelectionMode.EMISSIVE))
             );
 
             enchantButton = getETFButton((int) (this.width * 0.25), (int) (this.height * 0.6), (int) (this.width * 0.42), 20,
@@ -320,7 +321,7 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
 
             enchantSelectButton = getETFButton((int) (this.width * 0.695), (int) (this.height * 0.6), (int) (this.width * 0.275), 20,
                     ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.enchant_select.button"),
-                    (button) -> Objects.requireNonNull(client).setScreen(new ETFConfigScreenPlayerSkinToolPixelSelect(this, ETFConfigScreenPlayerSkinToolPixelSelect.SelectionMode.ENCHANTED))
+                    (button) -> Objects.requireNonNull(client).setScreen(new ETFConfigScreenSkinToolPixelSelection(this, ETFConfigScreenSkinToolPixelSelection.SelectionMode.ENCHANTED))
             );
 
             updateButtons();
@@ -462,9 +463,6 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
                 ETFUtils2.logError(e.toString(), false);
             }
 
-        } else {
-            //requires fab api to read from mod resources
-            //ETFUtils2.logError("Fabric API required for skin printout, cancelling.", true);
         }
         return false;
     }
@@ -537,6 +535,7 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
         DiffuseLighting.enableGuiDepthLighting();
     }
 
+    @SuppressWarnings("EnhancedSwitchMigration")
     public enum CapeType {
         OPTIFINE(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.cape.optifine")),
         MINECRAFT_CAPES_NET(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.cape.minecraftcapes")),
@@ -587,6 +586,7 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
         }
     }
 
+    @SuppressWarnings("EnhancedSwitchMigration")
     public enum NoseType {
         VILLAGER(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.villager")),
         TEXTURED_1(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.1")),
@@ -648,6 +648,7 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
         }
     }
 
+    @SuppressWarnings("EnhancedSwitchMigration")
     public enum CoatStyle {
         COPIED_THIN_TOP,
         MOVED_THIN_TOP,
@@ -757,6 +758,7 @@ public class ETFConfigScreenPlayerSkinTool extends ETFConfigScreen {
         }
     }
 
+    @SuppressWarnings("EnhancedSwitchMigration")
     public enum BlinkType {
         ONE_PIXEL,
         TWO_PIXEL,

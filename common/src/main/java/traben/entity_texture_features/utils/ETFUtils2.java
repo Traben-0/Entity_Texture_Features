@@ -54,6 +54,7 @@ public abstract class ETFUtils2 {
         return packNames.get(0);
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted") //makes more logical sense
     public static boolean isNativeImageEmpty(@NotNull NativeImage image) {
         boolean foundNonEmptyPixel = false;
         for (int x = 0; x < image.getWidth(); x++) {
@@ -283,7 +284,7 @@ public abstract class ETFUtils2 {
     }
 
 
-    public static void checkModCompatabilities() {
+    public static void checkModCompatibility() {
         if (ETFVersionDifferenceHandler.isThisModLoaded("quark") && !ETFConfigData.ignoredConfigs.contains(ETFConfigScreenWarnings.ConfigWarning.QUARK)) {
             ETFConfigData.enableCustomBlockEntities = false;
             ETFConfigData.enableEmissiveBlockEntities = false;

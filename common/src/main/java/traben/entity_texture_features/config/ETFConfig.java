@@ -10,6 +10,7 @@ import java.util.Set;
 
 import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 
+@SuppressWarnings("CanBeFinal")
 public class ETFConfig {
 
 
@@ -69,7 +70,7 @@ public class ETFConfig {
         return gson.fromJson(gson.toJson(source), ETFConfig.class);
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "EnhancedSwitchMigration"})
     public enum UpdateFrequency {
         Never(-1),
         Slow(80),
@@ -94,6 +95,7 @@ public class ETFConfig {
 
         private String getKey() {
             //non enhanced switch for back compatibility
+            //noinspection EnhancedSwitchMigration
             switch (delay) {
                 case -1:
                     return "config." + MOD_ID + ".update_frequency.never";
@@ -112,6 +114,7 @@ public class ETFConfig {
 
         public UpdateFrequency next() {
             //not enhanced for 1.16 version compat
+            //noinspection EnhancedSwitchMigration
             switch (this) {
                 case Never:
                     return Slow;
@@ -127,7 +130,7 @@ public class ETFConfig {
         }
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "EnhancedSwitchMigration"})
     public enum DebugLogMode {
         None("config." + MOD_ID + ".Debug_log_mode.none"),
         Log("config." + MOD_ID + ".Debug_log_mode.log"),

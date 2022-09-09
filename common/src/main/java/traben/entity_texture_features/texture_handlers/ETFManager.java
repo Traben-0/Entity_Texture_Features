@@ -73,7 +73,7 @@ public class ETFManager {
     private final Object2IntOpenHashMap<Identifier> TRUE_RANDOM_COUNT_CACHE = new Object2IntOpenHashMap<>();
     private final Object2LongOpenHashMap<UUID> LAST_PLAYER_CHECK_TIME = new Object2LongOpenHashMap<>();
     private final Object2IntOpenHashMap<UUID> PLAYER_CHECK_COUNT = new Object2IntOpenHashMap<>();
-    public Object2ObjectOpenHashMap<Identifier, ETFTexture> TEXTURE_MAP_TO_OPPOSITE_ELYTRA = new Object2ObjectOpenHashMap<>();
+    public final Object2ObjectOpenHashMap<Identifier, ETFTexture> TEXTURE_MAP_TO_OPPOSITE_ELYTRA = new Object2ObjectOpenHashMap<>();
     public int mooshroomBrownCustomShroom = 0;
     //marks whether mooshroom mushroom overrides exist
     public int mooshroomRedCustomShroom = 0;
@@ -420,11 +420,11 @@ public class ETFManager {
                     @Nullable Double[] jumpMinMax = null;
                     @Nullable String[] maxHealthStrings = null;
                     @Nullable Integer[] inventoryColumns = null;
-                    @Nullable Boolean isTrapHorse = null;
-                    @Nullable Boolean isAngry = null;
+//                    @Nullable Boolean isTrapHorse = null;
+//                    @Nullable Boolean isAngry = null;
                     @Nullable PandaEntity.Gene[] hiddenGene = null;
-                    @Nullable Angriness[] wardenAngriness = null;
-                    @Nullable Boolean isAngryWithClient = null;
+//                    @Nullable Angriness[] wardenAngriness = null;
+//                    @Nullable Boolean isAngryWithClient = null;
                     @Nullable Boolean isPlayerCreated = null;
                     @Nullable Boolean isScreamingGoat = null;
                     @Nullable String[] distanceFromPlayer = null;
@@ -543,7 +543,7 @@ public class ETFManager {
                         }
                         heights = heightNumbers.toArray(new Integer[0]);
                     }
-
+                    names = new ArrayList<>();
                     if (props.containsKey("names." + num)) {
                         String dataFromProps = props.getProperty("names." + num).trim();
                         if (dataFromProps.contains("regex:") || dataFromProps.contains("pattern:")) {
@@ -567,6 +567,9 @@ public class ETFManager {
                     if (props.containsKey("name." + num)) {
                         String dataFromProps = props.getProperty("name." + num).trim();
                         names.add(dataFromProps);
+                    }
+                    if (names.isEmpty()){
+                        names=null;
                     }
                     if (props.containsKey("professions." + num)) {
                         professions = props.getProperty("professions." + num).trim().split("\s+");
@@ -728,22 +731,22 @@ public class ETFManager {
                         }
                         inventoryColumns = columnNumbers.toArray(new Integer[0]);
                     }
-                    if (props.containsKey("trapHorse." + num)) {
-                        String input = props.getProperty("trapHorse." + num).trim();
-                        if (input.equals("true") || input.equals("false")) {
-                            isTrapHorse = input.equals("true");
-                        } else {
-                            ETFUtils2.logWarn("properties files number error in trapHorse category");
-                        }
-                    }
-                    if (props.containsKey("angry." + num)) {
-                        String input = props.getProperty("angry." + num).trim();
-                        if (input.equals("true") || input.equals("false")) {
-                            isAngry = input.equals("true");
-                        } else {
-                            ETFUtils2.logWarn("properties files number error in angry category");
-                        }
-                    }
+//                    if (props.containsKey("trapHorse." + num)) {
+//                        String input = props.getProperty("trapHorse." + num).trim();
+//                        if (input.equals("true") || input.equals("false")) {
+//                            isTrapHorse = input.equals("true");
+//                        } else {
+//                            ETFUtils2.logWarn("properties files number error in trapHorse category");
+//                        }
+//                    }
+//                    if (props.containsKey("angry." + num)) {
+//                        String input = props.getProperty("angry." + num).trim();
+//                        if (input.equals("true") || input.equals("false")) {
+//                            isAngry = input.equals("true");
+//                        } else {
+//                            ETFUtils2.logWarn("properties files number error in angry category");
+//                        }
+//                    }
                     if (props.containsKey("hiddenGene." + num)) {
                         String[] input = props.getProperty("hiddenGene." + num).trim().split("\s+");
                         ArrayList<PandaEntity.Gene> genes = new ArrayList<>();
@@ -779,37 +782,37 @@ public class ETFManager {
                         }
                         hiddenGene = genes.toArray(new PandaEntity.Gene[0]);
                     }
-                    if (props.containsKey("wardenAngerLevel." + num)) {
-                        String[] input = props.getProperty("wardenAngerLevel." + num).trim().split("\s+");
-                        ArrayList<Angriness> angery = new ArrayList<>();
-                        for (String anger :
-                                input) {
-                            //no enhanced for back compat
-                            //noinspection EnhancedSwitchMigration
-                            switch (anger.trim()) {
-                                case "calm":
-                                    angery.add(Angriness.CALM);
-                                    break;
-                                case "agitated":
-                                    angery.add(Angriness.AGITATED);
-                                    break;
-                                case "angry":
-                                    angery.add(Angriness.ANGRY);
-                                    break;
-                                default:
-                                    ETFUtils2.logWarn("properties files number error in wardenAngerLevel category, caused by input: " + anger);
-                            }
-                        }
-                        wardenAngriness = angery.toArray(new Angriness[0]);
-                    }
-                    if (props.containsKey("angryAtPlayer." + num)) {
-                        String input = props.getProperty("angryAtPlayer." + num).trim();
-                        if (input.equals("true") || input.equals("false")) {
-                            isAngryWithClient = input.equals("true");
-                        } else {
-                            ETFUtils2.logWarn("properties files number error in angryAtPlayer category");
-                        }
-                    }
+//                    if (props.containsKey("wardenAngerLevel." + num)) {
+//                        String[] input = props.getProperty("wardenAngerLevel." + num).trim().split("\s+");
+//                        ArrayList<Angriness> angery = new ArrayList<>();
+//                        for (String anger :
+//                                input) {
+//                            //no enhanced for back compat
+//                            //noinspection EnhancedSwitchMigration
+//                            switch (anger.trim()) {
+//                                case "calm":
+//                                    angery.add(Angriness.CALM);
+//                                    break;
+//                                case "agitated":
+//                                    angery.add(Angriness.AGITATED);
+//                                    break;
+//                                case "angry":
+//                                    angery.add(Angriness.ANGRY);
+//                                    break;
+//                                default:
+//                                    ETFUtils2.logWarn("properties files number error in wardenAngerLevel category, caused by input: " + anger);
+//                            }
+//                        }
+//                        wardenAngriness = angery.toArray(new Angriness[0]);
+//                    }
+//                    if (props.containsKey("angryAtPlayer." + num)) {
+//                        String input = props.getProperty("angryAtPlayer." + num).trim();
+//                        if (input.equals("true") || input.equals("false")) {
+//                            isAngryWithClient = input.equals("true");
+//                        } else {
+//                            ETFUtils2.logWarn("properties files number error in angryAtPlayer category");
+//                        }
+//                    }
                     if (props.containsKey("playerCreated." + num)) {
                         String input = props.getProperty("playerCreated." + num).trim();
                         if (input.equals("true") || input.equals("false")) {
@@ -865,7 +868,7 @@ public class ETFManager {
 
                     //array faster to use
                     //list easier to build
-                    String[] namesArray = names.toArray(new String[0]);
+                    String[] namesArray = names == null ? null : names.toArray(new String[0]);
 
 
                     if (suffixes.length != 0) {
@@ -889,11 +892,11 @@ public class ETFManager {
                                 jumpMinMax,
                                 maxHealthStrings,
                                 inventoryColumns,
-                                isTrapHorse,
-                                isAngry,
+//                                isTrapHorse,
+//                                isAngry,
                                 hiddenGene,
-                                wardenAngriness,
-                                isAngryWithClient,
+//                                wardenAngriness,
+//                                isAngryWithClient,
                                 isPlayerCreated,
                                 isScreamingGoat,
                                 distanceFromPlayer,

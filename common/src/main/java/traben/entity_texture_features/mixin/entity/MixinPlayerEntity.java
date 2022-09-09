@@ -1,4 +1,4 @@
-package traben.entity_texture_features.mixin.cacheReloaders;
+package traben.entity_texture_features.mixin.entity;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;

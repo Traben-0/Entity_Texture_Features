@@ -8,7 +8,7 @@ import traben.entity_texture_features.utils.ETFUtils2;
 public class ETFApi {
 
     final public static int ETFApiVersion = 1;
-    //provides access to the ETF config object to read AND modify it's values
+    //provides access to the ETF config object to read AND modify its values
     //please be sure to run the save config method below after any changes
     public static ETFConfig getETFConfigObject = ETFClientCommon.ETFConfigData;
 

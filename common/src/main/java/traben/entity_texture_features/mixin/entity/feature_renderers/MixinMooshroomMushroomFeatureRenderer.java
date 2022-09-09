@@ -1,4 +1,4 @@
-package traben.entity_texture_features.mixin.entity.featureRenderers;
+package traben.entity_texture_features.mixin.entity.feature_renderers;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;

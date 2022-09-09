@@ -21,7 +21,7 @@ import net.minecraft.util.Util;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
-import traben.entity_texture_features.config.screens.ETFConfigScreenPlayerSkinTool;
+import traben.entity_texture_features.config.screens.ETFConfigScreenSkinTool;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.io.InputStream;
@@ -38,6 +38,7 @@ import static traben.entity_texture_features.ETFClientCommon.*;
 //this class will initialize a skin download and will then create any needed emissive / blinking textures
 //so that an ETFTexture can be created and used for regular rendering
 //additional features requiring further rendering will then be handled here also
+@SuppressWarnings("EnhancedSwitchMigration")
 public class ETFPlayerTexture {
 
     public static final String SKIN_NAMESPACE = "etf_skin";
@@ -65,8 +66,8 @@ public class ETFPlayerTexture {
     //provides emissive patching and blinking functionality
     //all ETFPlayerTexture needs to do is build those textures and register them before this ETFTexture is made, and it will auto locate and apply them
     public ETFTexture etfTextureOfFinalBaseSkin;
-    public ETFConfigScreenPlayerSkinTool.CapeType capeType = ETFConfigScreenPlayerSkinTool.CapeType.NONE;
-    public ETFConfigScreenPlayerSkinTool.NoseType noseType = ETFConfigScreenPlayerSkinTool.NoseType.NONE;
+    public ETFConfigScreenSkinTool.CapeType capeType = ETFConfigScreenSkinTool.CapeType.NONE;
+    public ETFConfigScreenSkinTool.NoseType noseType = ETFConfigScreenSkinTool.NoseType.NONE;
     PlayerEntity player;
     private ETFCustomPlayerFeatureModel<PlayerEntity> customPlayerModel;
     private boolean isTextureReady = false;
@@ -818,29 +819,29 @@ public class ETFPlayerTexture {
                 if (noseChoice >= 1 && noseChoice <= 6) {
                     if (noseChoice == 1) {
                         hasVillagerNose = true;
-                        noseType = ETFConfigScreenPlayerSkinTool.NoseType.VILLAGER;
+                        noseType = ETFConfigScreenSkinTool.NoseType.VILLAGER;
                     } else {
                         noseTexture = ETFUtils2.emptyNativeImage(8, 8);
                         int[] bounds;
                         switch (noseChoice) {
                             case 3:
-                                noseType = ETFConfigScreenPlayerSkinTool.NoseType.TEXTURED_2;
+                                noseType = ETFConfigScreenSkinTool.NoseType.TEXTURED_2;
                                 bounds = getSkinPixelBounds("cape2");
                                 break;
                             case 4:
-                                noseType = ETFConfigScreenPlayerSkinTool.NoseType.TEXTURED_3;
+                                noseType = ETFConfigScreenSkinTool.NoseType.TEXTURED_3;
                                 bounds = getSkinPixelBounds("cape3");
                                 break;
                             case 5:
-                                noseType = ETFConfigScreenPlayerSkinTool.NoseType.TEXTURED_4;
+                                noseType = ETFConfigScreenSkinTool.NoseType.TEXTURED_4;
                                 bounds = getSkinPixelBounds("cape4");
                                 break;
                             case 6:
-                                noseType = ETFConfigScreenPlayerSkinTool.NoseType.TEXTURED_5;
+                                noseType = ETFConfigScreenSkinTool.NoseType.TEXTURED_5;
                                 bounds = getSkinPixelBounds("cape5");
                                 break;
                             default:
-                                noseType = ETFConfigScreenPlayerSkinTool.NoseType.TEXTURED_1;
+                                noseType = ETFConfigScreenSkinTool.NoseType.TEXTURED_1;
                                 bounds = getSkinPixelBounds("cape1");
                                 break;
                         }
@@ -971,11 +972,11 @@ public class ETFPlayerTexture {
                 if ((capeChoice1 >= 1 && capeChoice1 <= 4)) {
                     switch (capeChoice1) {
                         case 1 -> { //custom in skin
-                            capeType = ETFConfigScreenPlayerSkinTool.CapeType.CUSTOM;
+                            capeType = ETFConfigScreenSkinTool.CapeType.CUSTOM;
                             modifiedCape.copyFrom(returnCustomTexturedCape(originalSkin));
                         }
                         case 2 -> {
-                            capeType = ETFConfigScreenPlayerSkinTool.CapeType.MINECRAFT_CAPES_NET;
+                            capeType = ETFConfigScreenSkinTool.CapeType.MINECRAFT_CAPES_NET;
                             modifiedCape = null;
                             // minecraft capes mod
                             //https://minecraftcapes.net/profile/fd22e573178c415a94fee476b328abfd/cape/
@@ -983,14 +984,14 @@ public class ETFPlayerTexture {
 
                         }
                         case 3 -> {
-                            capeType = ETFConfigScreenPlayerSkinTool.CapeType.OPTIFINE;
+                            capeType = ETFConfigScreenSkinTool.CapeType.OPTIFINE;
                             modifiedCape = null;
                             //  https://optifine.net/capes/Benjamin.png
                             initiateThirdPartyCapeDownload("https://optifine.net/capes/" + player.getName().getString() + ".png");
 
                         }
                         case 4 -> {
-                            capeType = ETFConfigScreenPlayerSkinTool.CapeType.ETF;
+                            capeType = ETFConfigScreenSkinTool.CapeType.ETF;
                             NativeImage cape = ETFUtils2.getNativeImageElseNull(new Identifier(MOD_ID, "textures/capes/etf.png"));
                             if (cape != null && !ETFUtils2.isNativeImageEmpty(modifiedCape)) {
                                 modifiedCape.copyFrom(cape);
@@ -1201,11 +1202,11 @@ public class ETFPlayerTexture {
         this.coatLength = 1;
         this.blinkHeight = 1;
         this.blinkType = 0;
-        this.capeType = ETFConfigScreenPlayerSkinTool.CapeType.NONE;
+        this.capeType = ETFConfigScreenSkinTool.CapeType.NONE;
         this.texturedNoseIdentifier = null;
         this.texturedNoseIdentifierEmissive = null;
         this.texturedNoseIdentifierEnchanted = null;
-        this.noseType = ETFConfigScreenPlayerSkinTool.NoseType.NONE;
+        this.noseType = ETFConfigScreenSkinTool.NoseType.NONE;
 
         THIS_SKIN_IS_IN_EDITOR = true;
         this.originalSkin = image;

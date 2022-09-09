@@ -1,4 +1,4 @@
-package traben.entity_texture_features.mixin.cacheReloaders;
+package traben.entity_texture_features.mixin.reloading;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -14,7 +14,7 @@ public abstract class MixinMinecraftClient {
 
     @Inject(method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;)V", at = @At("TAIL"))
     private void etf$injected(Screen screen, CallbackInfo ci) {
-        ETFManager.getInstance().resetInstance();
+        ETFManager.resetInstance();
     }
 }
 

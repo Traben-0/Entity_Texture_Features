@@ -14,7 +14,7 @@ import java.util.Objects;
 
 //inspired by puzzles custom gui code
 public class ETFConfigScreenSkinSettings extends ETFConfigScreen {
-    final ETFConfigScreenPlayerSkinTool playerSkinEditorScreen = new ETFConfigScreenPlayerSkinTool(this);
+    final ETFConfigScreenSkinTool playerSkinEditorScreen = new ETFConfigScreenSkinTool(this);
 
     protected ETFConfigScreenSkinSettings(Screen parent) {
         super(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_settings.title"), parent);

@@ -80,7 +80,7 @@ public class ETFConfigScreenMain extends ETFConfigScreen {
                 (button) -> {
                     ETFConfigData = temporaryETFConfig;
                     ETFUtils2.saveConfig();
-                    ETFUtils2.checkModCompatabilities();
+                    ETFUtils2.checkModCompatibility();
                     ETFManager.resetInstance();
                     Objects.requireNonNull(client).setScreen(parent);
                 }));

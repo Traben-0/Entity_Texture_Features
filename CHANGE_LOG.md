@@ -1,5 +1,10 @@
 [**ETF Changelog:**]
 
+[V4.1.dev.10]
+
+- fixed texture properties breaking last dev build
+- removed several dev build texture properties after testing that do not ever sync to clients
+
 [V4.1.dev.9]
 
 - fixed the cause of a bunch of issues with array/hashmap access logic previously only being caught

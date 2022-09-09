@@ -1,4 +1,4 @@
-package traben.entity_texture_features.mixin.entity.featureRenderers;
+package traben.entity_texture_features.mixin.entity.feature_renderers;
 
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.*;
@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
-import traben.entity_texture_features.config.screens.ETFConfigScreenPlayerSkinTool;
+import traben.entity_texture_features.config.screens.ETFConfigScreenSkinTool;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFPlayerTexture;
 
@@ -40,7 +40,7 @@ public abstract class MixinCapeFeatureRenderer extends FeatureRenderer<AbstractC
         if (playerTexture != null) {
             cancelVanillaRender = playerTexture.hasCustomCape();
             if ((abstractClientPlayerEntity.getUuid().equals(ETFPlayerTexture.Dev) || abstractClientPlayerEntity.getUuid().equals(ETFPlayerTexture.Wife))
-                    && playerTexture.capeType == ETFConfigScreenPlayerSkinTool.CapeType.NONE
+                    && playerTexture.capeType == ETFConfigScreenSkinTool.CapeType.NONE
                     && ETFVersionDifferenceHandler.isFabric() == ETFVersionDifferenceHandler.isThisModLoaded("fabric")) {
                 cancelVanillaRender = false;
             }

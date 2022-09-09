@@ -30,15 +30,15 @@ import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 
 //inspired by puzzles custom gui code
-public class ETFConfigScreenPlayerSkinToolPixelSelect extends ETFConfigScreen {
+public class ETFConfigScreenSkinToolPixelSelection extends ETFConfigScreen {
 
     private final SelectionMode MODE;
 
-    private final ETFConfigScreenPlayerSkinTool etfParent;
+    private final ETFConfigScreenSkinTool etfParent;
     Set<Integer> selectedPixels;
     Identifier currentSkinToRender = new Identifier(MOD_ID + ":textures/gui/icon.png");
 
-    protected ETFConfigScreenPlayerSkinToolPixelSelect(ETFConfigScreenPlayerSkinTool parent, SelectionMode mode) {
+    protected ETFConfigScreenSkinToolPixelSelection(ETFConfigScreenSkinTool parent, SelectionMode mode) {
         super(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + (mode == SelectionMode.EMISSIVE ? ".emissive_select" : ".enchanted_select") + ".title"), parent);
         this.MODE = mode;
         etfParent = parent;
@@ -228,9 +228,9 @@ public class ETFConfigScreenPlayerSkinToolPixelSelect extends ETFConfigScreen {
         final int startX;
         final int startY;
 
-        SelectionMode(int startx, int starty) {
-            startX = startx;
-            startY = starty;
+        SelectionMode(@SuppressWarnings("SameParameterValue") int start_x, int start_y) {
+            startX = start_x;
+            startY = start_y;
         }
     }
 

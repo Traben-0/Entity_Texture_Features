@@ -254,7 +254,7 @@ public class ETFTexture {
     }
 
     private void createPatchedTextures() {
-        if (this.canPatch == true && ETFVersionDifferenceHandler.isFabric()/* && !ETFConfigData.removePixelsUnderEmissive*/) {
+        if (this.canPatch && ETFVersionDifferenceHandler.isFabric()/* && !ETFConfigData.removePixelsUnderEmissive*/) {
             return;
         }
         //here we will 'patch' the base texture to prevent z-fighting with various shaders
