@@ -93,9 +93,11 @@ Everything can be enabled or disabled in the config or Mod Menu settings
   as well as other things like capes & jacket / dress extensions.
 - these are 100% optional, controlled by the skin file you upload to Mojang, and options to prevent
   abuse of features in PVP
-- Follow this guide to use these skin features
-    - [***-> Player Skin Features guide <-***](readMeAssets/SKINS.md)
-    - join the [[Discord]](https://discord.gg/rURmwrzUcz) if you still need help :)
+- Skin features can be selected from the **Skin Tool** in ETF's settings available via modmenu or from a button in the resource-pack select screen
+- After choosing your features you can either upload it directly from the tool or save the skin image to tweak it further
+- If you have trouble see the Documentation, or ask for help in the Discord
+    - [*Player Skin Features documentation*](readMeAssets/SKINS.md)
+    - [[*Discord*]](https://discord.gg/rURmwrzUcz)
 
 ---
 

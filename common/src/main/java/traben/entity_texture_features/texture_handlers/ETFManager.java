@@ -59,7 +59,7 @@ public class ETFManager {
     //todo extend this to as many isPresent() calls as possible to lower repeated resource manager calls, may need to consider LRUCache usage if this is expanded too greatly
     public final Object2BooleanOpenHashMap<Identifier> DOES_IDENTIFIER_EXIST_CACHED_RESULT = new Object2BooleanOpenHashMap<>();
     public final ArrayList<String> knownResourcePackOrder = new ArrayList<>();
-    final ETFLruCache<ETFCacheKey, ObjectImmutableList<String>> ENTITY_SPAWN_CONDITIONS_CACHE = new ETFLruCache<>();
+    final ETFLruCache<UUID, ObjectImmutableList<String>> ENTITY_SPAWN_CONDITIONS_CACHE = new ETFLruCache<>();
     //if false variant 1 will need to use vanilla texture otherwise vanilla texture has an override in other directory
     //private static final Object2BooleanOpenHashMap<Identifier> OPTIFINE_1_HAS_REPLACEMENT = new Object2BooleanOpenHashMap<>();
     //this is a cache of all known ETFTexture versions of any existing resource-pack texture, used to prevent remaking objects
@@ -153,9 +153,10 @@ public class ETFManager {
     public void removeThisEntityDataFromAllStorage(ETFCacheKey ETFId) {
         ENTITY_TEXTURE_MAP.removeEntryOnly(ETFId);
         //ENTITY_FEATURE_MAP.clear();
-        ENTITY_SPAWN_CONDITIONS_CACHE.removeEntryOnly(ETFId);
+
 
         UUID uuid = ETFId.getMobUUID();
+        ENTITY_SPAWN_CONDITIONS_CACHE.removeEntryOnly(uuid);
         ENTITY_IS_UPDATABLE.removeBoolean(uuid);
         ENTITY_UPDATE_QUEUE.remove(uuid);
         ENTITY_DEBUG_QUEUE.remove(uuid);
@@ -225,12 +226,12 @@ public class ETFManager {
                         boolean inChat = ETFConfigData.debugLoggingMode == ETFConfig.DebugLogMode.Chat;
                         ETFUtils2.logMessage(
                                 "\nGeneral ETF:" +
-                                        "\n\tTexture cache size: " + ETF_TEXTURE_CACHE.size() +
-                                        "\nThis " + entity.getType().toString() +
-                                        "\n\tTexture: " + quickReturn + "\nEntity cache size: " + ENTITY_TEXTURE_MAP.size() +
-                                        "\n\tOriginal spawn state: " + ENTITY_SPAWN_CONDITIONS_CACHE.get(cacheKey) +
-                                        "\n\tOptiFine property key count: " + (OPTIFINE_PROPERTY_CACHE.containsKey(vanillaIdentifier) ? Objects.requireNonNullElse(OPTIFINE_PROPERTY_CACHE.get(vanillaIdentifier), new ArrayList<>()).size() : 0) +
-                                        "\n\tNon property random total: " + TRUE_RANDOM_COUNT_CACHE.getInt(vanillaIdentifier), inChat);
+                                        "\n - Texture cache size: " + ETF_TEXTURE_CACHE.size() +
+                                        "\nThis " + entity.getType().toString() +":"+
+                                        "\n - Texture: " + quickReturn + "\nEntity cache size: " + ENTITY_TEXTURE_MAP.size() +
+                                        "\n - Original spawn state: " + ENTITY_SPAWN_CONDITIONS_CACHE.get(id) +
+                                        "\n - OptiFine property count: " + (OPTIFINE_PROPERTY_CACHE.containsKey(vanillaIdentifier) ? Objects.requireNonNullElse(OPTIFINE_PROPERTY_CACHE.get(vanillaIdentifier), new ArrayList<>()).size() : 0) +
+                                        "\n - Non property random total: " + TRUE_RANDOM_COUNT_CACHE.getInt(vanillaIdentifier), inChat);
 
                         ENTITY_DEBUG_QUEUE.remove(id);
                     }
@@ -871,7 +872,7 @@ public class ETFManager {
                     String[] namesArray = names == null ? null : names.toArray(new String[0]);
 
 
-                    if (suffixes.length != 0) {
+                    if (suffixes != null && suffixes.length != 0) {
                         allCasesForTexture.add(new ETFTexturePropertyCase(
                                 suffixes,
                                 weights,
@@ -902,6 +903,8 @@ public class ETFManager {
                                 distanceFromPlayer,
                                 creeperCharged,
                                 statusEffects));
+                    }else{
+                        ETFUtils2.logWarn("property number \""+num+". in file \""+vanillaIdentifier+". failed to read.");
                     }
                 }
                 if (!allCasesForTexture.isEmpty()) {
@@ -917,7 +920,8 @@ public class ETFManager {
                 OPTIFINE_PROPERTY_CACHE.put(vanillaIdentifier, null);
             }
         } catch (Exception e) {
-            ETFUtils2.logWarn("Ignoring properties file that caused Exception @ " + vanillaIdentifier + e, false);
+            ETFUtils2.logWarn("Ignoring properties file that caused Exception @ " + vanillaIdentifier +"\n" + e, false);
+            e.printStackTrace();
             OPTIFINE_PROPERTY_CACHE.put(vanillaIdentifier, null);
         }
 

@@ -39,6 +39,10 @@ public class ETFConfigScreenMain extends ETFConfigScreen {
         temporaryETFConfig = ETFConfig.copyFrom(ETFConfigData);
 
 
+        if(ETFClientCommon.configHadLoadError){
+            shownWarning = true;
+            warningCount++;
+        }
         //this warning disables skin features with figura present
         if (FabricLoader.getInstance().isModLoaded(ETFConfigScreenWarnings.ConfigWarning.FIGURA.getMod_id())) {
             shownWarning = true;
@@ -82,6 +86,7 @@ public class ETFConfigScreenMain extends ETFConfigScreen {
                     ETFUtils2.saveConfig();
                     ETFUtils2.checkModCompatibility();
                     ETFManager.resetInstance();
+                    ETFClientCommon.configHadLoadError=false;
                     Objects.requireNonNull(client).setScreen(parent);
                 }));
         this.addDrawableChild(new ButtonWidget((int) (this.width * 0.4), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,

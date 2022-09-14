@@ -519,7 +519,7 @@ public class ETFPlayerTexture {
 
             }
             //perform texture features
-            if (hasEnchant && baseEnchantIdentifier != null) {
+            if (hasEnchant && baseEnchantIdentifier != null  && etfTextureOfFinalBaseSkin != null) {
                 VertexConsumer enchantVert = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(
                         switch (etfTextureOfFinalBaseSkin.currentTextureState) {
                             case BLINK, BLINK_PATCHED, APPLY_BLINK -> baseEnchantBlinkIdentifier;
@@ -1164,6 +1164,16 @@ public class ETFPlayerTexture {
 
                 //create etf texture with player initiator
                 etfTextureOfFinalBaseSkin = new ETFTexture(modifiedSkinIdentifier, blinkIdentifier, blink2Identifier, emissiveIdentifier, blinkEmissiveIdentifier, blink2EmissiveIdentifier, modifiedSkinPatchedIdentifier, modifiedSkinBlinkPatchedIdentifier, modifiedSkinBlink2PatchedIdentifier);
+
+                //if vanilla cape and there is no enchant or emissive
+                //then just clear it from etf to defer to cape mods
+                if(capeType == ETFConfigScreenSkinTool.CapeType.NONE
+                        && etfCapeIdentifier != null
+                        && etfCapeEnchantedIdentifier == null
+                        && etfCapeEmissiveIdentifier == null){
+                    etfCapeIdentifier = null;
+                }
+
 
                 if (modifiedCape != null) {
                     modifiedCape.close();

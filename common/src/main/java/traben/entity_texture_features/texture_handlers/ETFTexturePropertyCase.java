@@ -210,16 +210,18 @@ public class ETFTexturePropertyCase {
         if (!ETFConfigData.restrictUpdateProperties) {
             isUpdate = false;
         }
-        ETFCacheKey CacheId = new ETFCacheKey(entity.getUuid(), null);
+        UUID id = entity.getUuid();
 
-        ObjectImmutableList<String> spawnConditions = null;
+        ObjectImmutableList<String> spawnConditions ;
         if (ETFConfigData.restrictUpdateProperties) {
-            if (ETFManager.getInstance().ENTITY_SPAWN_CONDITIONS_CACHE.containsKey(CacheId)) {
-                spawnConditions = (ETFManager.getInstance().ENTITY_SPAWN_CONDITIONS_CACHE.get(CacheId));
+            if (ETFManager.getInstance().ENTITY_SPAWN_CONDITIONS_CACHE.containsKey(id)) {
+                spawnConditions = (ETFManager.getInstance().ENTITY_SPAWN_CONDITIONS_CACHE.get(id));
             } else {
                 spawnConditions = readAllSpawnConditionsForCache(entity);
-                ETFManager.getInstance().ENTITY_SPAWN_CONDITIONS_CACHE.put(CacheId, spawnConditions);
+                ETFManager.getInstance().ENTITY_SPAWN_CONDITIONS_CACHE.put(id, spawnConditions);
             }
+        }else{
+            spawnConditions = null;
         }
 
 

@@ -1,76 +1,53 @@
 [**ETF Changelog:**]
 
-[V4.1.dev.10]
+[V4.1.0]
 
-- fixed texture properties breaking last dev build
-- removed several dev build texture properties after testing that do not ever sync to clients
+*Update summary:*
 
-[V4.1.dev.9]
+ETF 4.1 mostly brings the new skin feature tool, with a redesigned GUI to fit, as well as several
+new texture properties to further customize your mob textures beyond what OptiFine offers
 
-- fixed the cause of a bunch of issues with array/hashmap access logic previously only being caught
-- added "statusEffect" texture property to vary textures by status effect or Brown MooShroom suspicious stew variants
-- changed etf settings button texture to fit vanilla button style
-- other small tweaks and code improvements
+And of course many fixes, enjoy :)
 
-[V4.1.dev.8]
 
-- fixed more crashes
-- fixed invisible elytras in previous dev builds
+- redesigned the settings GUI, cloth config is no longer required on Forge *(Openable from modmenu or a new button in the resource-pack screen)*
+- added a GUI for selecting player features and saving or uploading a player feature ready skin with all your choices *(openable when in-game from the new settings GUI)*
+- added new mob texture properties: *([Documentation Here.](readMeAssets/random_entities.properties))*
+  1. "speed" texture property to vary textures by their top speed *(useful for horses, and all mobs)*
+  2. "jumpStrength" texture property to vary textures by their jump strength *(useful for horses)*
+  3. "maxHealth" texture property to vary textures by their max health *(useful for horses, and all mobs)*
+  4. "llamaInventory" texture property to vary llama textures by their carry capacity 
+  5. "hiddenGene" texture property to vary panda textures by their hidden gene
+  6. "playerCreated" texture property to vary iron golem textures by whether they were created by a player
+  7. "screamingGoat" texture property to vary goat textures by whether they are the screaming variant
+  8. "distanceFromPlayer" texture property to vary mob textures by their distance from the player
+  9. "creeperCharged" texture property to vary creeper textures by whether the creeper has been charged by lightning
+  10. "statusEffect" texture property to vary textures by status effect or Brown MooShroom suspicious stew variants 
+- added more crash prevention, most features should simply not work, and log an error, instead of immediately crashing
+- added a new skin feature option "nose" available from the new skin tool GUI
+- added an extra skin feature cape option (ETF) available from the new skin tool GUI
+- added config option "hideConfigButton" to disable ETF config button in the resource-pack screen *(only available in the config.json file)*
 
-[V4.1.dev.7]
 
-- reworked the emissive fix options to have sub categories and its own settings page
-- fixed some crashes in skin screen
+- changed the iris pbr fix setting into the emissive fix settings screen with several options to reflect the more general fix
+  possibilities *(fixes for animation mods, iris PBR and a few others)*
+- updated russian translation thanks to @Felix14-v2
+- tweaked the debug printout
 
-[V4.1.dev.6]
-
-- improved the fix for ArrayIndexOutOfBoundsException crash related to caches
-- added more crash prevention, most features should simply not work instead of immediately crashing
-- fixed emissive textures not displaying on skin in skin tool with iris installed
-- disabled armour rendering in skin tool
-
-[V4.1.dev.5]
 
 - fixed an ArrayIndexOutOfBoundsException crash related to caches
-- fixed broken gui buttons in smaller gui scales
-- added skin uploading to the skin tool
-- reworked the iris pbr fix setting into the emissive settings screen and renamed it to reflect its more general fix
-  possibilities
-
-[V4.1.dev.4]
-
-- added extra nose options available from skin tool
-- added *"creeperCharged"* texture property
 - fixed an issue with additional textures *(drowned_outer_layer & sheep_fur & more)* not loading right when in the
   optifine or ETF folders
-- fixed elytra_left.png not working
-- fixed forge using */defaultconfigs/* instead of */config/* folder
+- fixed elytra_left.png not working and other asymmetrical elytra issues
+- fixed forge using the */defaultconfigs/* folder instead of the */config/* folder
 - fixed vanilla capes *(like migrator capes)* not using emissive and enchanted data from skin features
-- tweaked debug printout
-
-[V4.1.dev.3]
-
-- added config option "hideConfigButton" to disable ETF config button in the resource-pack screen *(only available in
-  the config.json file)*
-- added cape options to skin tool
-- added an extra cape option (ETF)
 - fixed third party capes not loading correctly*(OptiFine and minecraftcapes.net)*
-
-[V4.1.dev.2]
-
-- tweaked new property names
-- added another property distanceToPlayer
-- improved skin tool added enchanted and emissive options
-
-[V4.1.dev.1]
-
-- cloth config no longer required on forge or included in fabric
-- updated russian translation thanks to @Felix14-v2
 - fixed color property being broken for light_blue/blue & light_gray/gray colors
 - fixed a crash when reading corrupt or broken config files
-- complete GUI overhaul
-- added GUI for selecting player features and printing a player feature ready skin with all your choices *(W.I.P)*
-- added many new texture properties
+
+
+- and many more minor tweaks and fixes :)
+
 
 [V4.0.2]
 

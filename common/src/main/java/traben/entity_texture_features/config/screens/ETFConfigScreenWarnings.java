@@ -37,6 +37,12 @@ public class ETFConfigScreenWarnings extends ETFConfigScreen {
                 }));
 
         double offset = 0.0;
+
+        //render config error first
+        if(ETFClientCommon.configHadLoadError){
+            offset = 0.1;
+        }
+
         for (ConfigWarning warning :
                 warningsFound) {
 
@@ -65,7 +71,9 @@ public class ETFConfigScreenWarnings extends ETFConfigScreen {
 
         drawCenteredText(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".warn_instruction"), (int) (width * 0.5), (int) (height * 0.20), 0xFFFFFF);
         drawCenteredText(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".warn_instruction2"), (int) (width * 0.5), (int) (height * 0.25), 0x888888);
-
+        if(ETFClientCommon.configHadLoadError){
+            drawCenteredText(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".warn_config_load"), (int) (width * 0.5), (int) (height * 0.325), 11546150);
+        }
     }
 
     public enum ConfigWarning {

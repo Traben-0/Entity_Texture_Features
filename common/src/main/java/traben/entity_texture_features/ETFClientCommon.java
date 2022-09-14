@@ -20,6 +20,9 @@ public class ETFClientCommon {
     //config object
     public static ETFConfig ETFConfigData = new ETFConfig();
 
+    //sets whether to display config load warning in gui
+    public static boolean configHadLoadError = false;
+
 
     public static void start() {
         LOGGER.info("Loading Entity Texture Features, Thank you for 1 Million downloads :)");
@@ -45,6 +48,7 @@ public class ETFClientCommon {
                     ETFUtils2.logMessage("Config could not be loaded, using defaults", false);
                     ETFConfigData = new ETFConfig();
                     ETFUtils2.saveConfig();
+                    configHadLoadError=true;
                 }
             } else {
                 ETFConfigData = new ETFConfig();
@@ -53,10 +57,12 @@ public class ETFClientCommon {
             if (ETFConfigData == null) {
                 ETFUtils2.logMessage("Config was null, using defaults", false);
                 ETFConfigData = new ETFConfig();
+                configHadLoadError=true;
             }
         } catch (Exception e) {
             ETFUtils2.logError("Config was corrupt or broken, using defaults", false);
             ETFConfigData = new ETFConfig();
+            configHadLoadError=true;
         }
     }
 

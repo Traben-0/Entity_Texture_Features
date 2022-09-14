@@ -6,7 +6,7 @@ ___
 
 ___
 
-# 🎨 Player skin features Guide
+# 🎨 Player skin features Guide 
 
 <img src="skins1.png" alt="img" width="450"/><br>
 <img src="skins2.png" alt="img" width="450"/><br>
@@ -21,7 +21,19 @@ ___
 
 # How can you do this?
 
-## The Example Skin File
+## The easy way: [V4.1.0+]
+
+<img src="skin_tool.png" alt="img" width="650"/>
+
+- Skin features can be selected from the **Skin Tool** in ETF's settings available via modmenu or from a button in the resource-pack select screen
+- After choosing your features you can either upload it directly to mojang from the tool or save the skin image to tweak it further and upload yourself
+
+
+
+
+## The manual way:
+
+### The Example Skin File
 
 ###### *Not as scary as it looks all will be explained below*
 
