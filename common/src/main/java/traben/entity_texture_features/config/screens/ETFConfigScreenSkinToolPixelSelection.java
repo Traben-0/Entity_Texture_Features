@@ -173,8 +173,8 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFConfigScreen {
         float j = entity.pitch;
         float k = entity.prevHeadYaw;
         float l = entity.headYaw;
-        entity.bodyYaw = (etfParent.flipView ? 0 : 180.0F) + + f * 20.0F;
-        entity.yaw = (etfParent.flipView ? 0 : 180.0F) + + f * 40.0F;
+        entity.bodyYaw = (etfParent.flipView ? 0 : 180.0F)  + f * 20.0F;
+        entity.yaw = (etfParent.flipView ? 0 : 180.0F)  + f * 40.0F;
         entity.pitch = -g * 20.0F;
         entity.headYaw = entity.yaw;
         entity.prevHeadYaw = entity.yaw;

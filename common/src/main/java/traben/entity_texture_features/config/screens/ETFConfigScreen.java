@@ -38,7 +38,7 @@ public abstract class ETFConfigScreen extends Screen {
 //        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         MinecraftClient.getInstance().getTextureManager().bindTexture(texture);
 
-        bufferBuilder.begin(7, VertexFormats.POSITION_TEXTURE);
+        bufferBuilder.begin(7, VertexFormats.POSITION_TEXTURE_COLOR);
         bufferBuilder.vertex(x1, y2, 0.0).texture(0, 1/*(float)x1, (float)y2*heightYValue*/).color(255, 255, 255, 255).next();
         bufferBuilder.vertex(x2, y2, 0.0).texture(1, 1/*(float)x2*widthXValue, (float)y2*heightYValue*/).color(255, 255, 255, 255).next();
         bufferBuilder.vertex(x2, y1, 0.0).texture(1, 0/*(float)x2*widthXValue, (float)y1*/).color(255, 255, 255, 255).next();
@@ -60,17 +60,15 @@ public abstract class ETFConfigScreen extends Screen {
 //        RenderSystem.setShaderTexture(0, texture);
 //        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         MinecraftClient.getInstance().getTextureManager().bindTexture(texture);
-
-        bufferBuilder.begin(7, VertexFormats.POSITION_TEXTURE);
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        bufferBuilder.begin(7, VertexFormats.POSITION_TEXTURE_COLOR);
 //        bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
         bufferBuilder.vertex(0.0, height, 0.0).texture(0.0F, (float) height / 32.0F + (float) vOffset).color(64, 64, 64, 255).next();
         bufferBuilder.vertex(width, height, 0.0).texture((float) width / 32.0F, (float) height / 32.0F + (float) vOffset).color(64, 64, 64, 255).next();
         bufferBuilder.vertex(width, minHeight, 0.0).texture((float) width / 32.0F, (float) minHeight / 32.0F + (float) vOffset).color(64, 64, 64, 255).next();
         bufferBuilder.vertex(0.0, minHeight, 0.0).texture(0.0F, (float) minHeight / 32.0F + (float) vOffset).color(64, 64, 64, 255).next();
-        bufferBuilder.end();
-        RenderSystem.enableAlphaTest();
-        BufferRenderer.draw(bufferBuilder);
-        //tessellator.draw();
+
+        tessellator.draw();
     }
 
 
