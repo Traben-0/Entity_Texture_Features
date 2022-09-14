@@ -43,8 +43,7 @@
   },
   "suggests": {
     "fabric": ">=0.55",
-    "modmenu": ">=4",
-    "clothconfig": ">=7.0"
+    "modmenu": ">=4"
   },
   "conflicts": {
     "optifabric": "*"
