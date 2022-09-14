@@ -14,6 +14,7 @@ import java.util.function.Function;
 
 public class ETFCustomPlayerFeatureModel<T extends PlayerEntity> extends EntityModel<T> {
     public final ModelPart villagerNose;
+    public final ModelPart textureNose;
     public final ModelPart jacket;
     public final ModelPart fatJacket;
     //public boolean sneaking;
@@ -38,6 +39,10 @@ public class ETFCustomPlayerFeatureModel<T extends PlayerEntity> extends EntityM
         this.fatJacket = (new ModelPart(this)).setTextureSize(64, 64);
         //this.villagerNose.setPivot(0.0F, -2.0F, 0.0F);
         this.fatJacket.setTextureOffset(16, 32).addCuboid(-4.0F, 12.5F, -2.0F, 8.0F, 12.0F, 4.0F, 0.375f);
+
+        this.textureNose = (new ModelPart(this)).setTextureSize(8, 8);
+        this.textureNose.setPivot(0.0F, -2.0F, 0.0F);
+        this.textureNose.setTextureOffset(0, 0).addCuboid(0.0F, -8.0F, -8.0F, 0.0F, 8.0F, 4.0F);
 
 
 //        ModelPartData data = getModelData(new Dilation(0)).getRoot();
@@ -70,6 +75,9 @@ public class ETFCustomPlayerFeatureModel<T extends PlayerEntity> extends EntityM
         this.villagerNose.yaw = headYaw * 0.017453292F;
         this.villagerNose.pitch = headPitch * 0.017453292F;
         this.villagerNose.roll = 0.0F;
+        this.textureNose.yaw = headYaw * 0.017453292F;
+        this.textureNose.pitch = headPitch * 0.017453292F;
+        this.textureNose.roll = 0.0F;
 
         this.jacket.yaw = 0.0F;
         if (livingEntity.isSneaking()) {

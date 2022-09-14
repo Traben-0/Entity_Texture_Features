@@ -1,7 +1,9 @@
 # 💡Emissive Textures Guide:
+
 <img src="emissives.png" alt="img" width="650"/>
 
 ---
+
 ### This mod is completely Optifine format compatible!!!!
 
 - ETF supports all optifine Emissive Texture Resource-packs
@@ -10,6 +12,7 @@
 - please try and use only the default emissive suffix "_e" it makes things easier for everyone :)
 
 ---
+
 ## The Guide:
 
 - Emissive textures allow parts of a mob / entity's texture to glow as in the above image

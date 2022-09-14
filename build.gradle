@@ -22,6 +22,7 @@ subprojects {
         //mappings "net.fabricmc:yarn:1.19+build.4:v2"
         mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 
+        implementation group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.10'
     }
 }
 
@@ -42,6 +43,9 @@ allprojects {
         // for more information about repositories.
         maven {
             url = "https://api.modrinth.com/maven"
+        }
+        maven {
+            url = "https://www.cursemaven.com/"
         }
         maven { url "https://maven.shedaniel.me/" }
         maven { url "https://maven.terraformersmc.com/releases/" }

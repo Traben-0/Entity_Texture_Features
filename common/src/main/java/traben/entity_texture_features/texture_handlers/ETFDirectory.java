@@ -19,7 +19,7 @@ public enum ETFDirectory {
     OPTIFINE(new String[]{"textures", "optifine/random"}),
     VANILLA(null);
 
-    private static final Object2ReferenceOpenHashMap<@NotNull Identifier, @NotNull ETFDirectory> ETF_DIRECTORY_CACHE = new Object2ReferenceOpenHashMap<>();
+    private static Object2ReferenceOpenHashMap<@NotNull Identifier, @NotNull ETFDirectory> ETF_DIRECTORY_CACHE = new Object2ReferenceOpenHashMap<>();
     private final String[] replaceStrings;
 
     ETFDirectory(String[] replaceStrings) {
@@ -27,7 +27,7 @@ public enum ETFDirectory {
     }
 
     public static void clear() {
-        ETF_DIRECTORY_CACHE.clear();
+        ETF_DIRECTORY_CACHE = new Object2ReferenceOpenHashMap<>();
     }
 
     @Nullable
@@ -51,6 +51,24 @@ public enum ETFDirectory {
 
     @NotNull
     private static ETFDirectory findDirectoryOf(Identifier vanillaIdentifier) {
+        //check already directory'd textures
+        if (vanillaIdentifier.getPath().contains("etf/random/entity")) {
+            //Optional<Resource> resource = MinecraftClient.getInstance().getResourceManager().getResource(vanillaIdentifier);
+            if (ETFUtils2.isExistingResource(vanillaIdentifier)) {
+                return ETF;
+            }
+        } else if (vanillaIdentifier.getPath().contains("optifine/random/entity")) {
+            //Optional<Resource> resource = MinecraftClient.getInstance().getResourceManager().getResource(vanillaIdentifier);
+            if (ETFUtils2.isExistingResource(vanillaIdentifier)) {
+                return OPTIFINE;
+            }
+        } else if (vanillaIdentifier.getPath().contains("optifine/mob")) {
+            //Optional<Resource> resource = MinecraftClient.getInstance().getResourceManager().getResource(vanillaIdentifier);
+            if (ETFUtils2.isExistingResource(vanillaIdentifier)) {
+                return OLD_OPTIFINE;
+            }
+        }
+
         //it is not cached and does not need to be
         //may either be properties or image
         ObjectArrayList<ETFDirectory> foundDirectories = new ObjectArrayList<>();
@@ -85,7 +103,7 @@ public enum ETFDirectory {
                 }catch(Exception ignored){}
             }
 
-            String[] strArray =  resourcePackNames.keySet().toArray(new String[0]);
+            String[] strArray = resourcePackNames.keySet().toArray(new String[0]);
             String returnedPack = ETFUtils2.returnNameOfHighestPackFromTheseMultiple(strArray);
             if (returnedPack != null) {
                 return resourcePackNames.get(returnedPack);

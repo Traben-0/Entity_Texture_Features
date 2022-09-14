@@ -43,7 +43,7 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
             timerBeforeTrySkin--;
         } else {
             if (ETFConfigData.skinFeaturesEnabled) {
-                ETFPlayerTexture thisETFPlayerTexture = ETFManager.getPlayerTexture(player);
+                ETFPlayerTexture thisETFPlayerTexture = ETFManager.getInstance().getPlayerTexture(player);
                 if (thisETFPlayerTexture != null) {
                     Identifier etfTexture = thisETFPlayerTexture.getBaseTextureIdentifierOrNullForVanilla(player);
                     if (etfTexture != null) {

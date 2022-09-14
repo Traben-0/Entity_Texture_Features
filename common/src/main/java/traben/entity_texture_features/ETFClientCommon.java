@@ -28,41 +28,49 @@ public class ETFClientCommon {
     //need for 1.16
     public static final int MAX_LIGHT_COORDINATE = 15728880;
 
+    //sets whether to display config load warning in gui
+    public static boolean configHadLoadError = false;
+
 
     public static void start() {
-        LOGGER.info("Loading 1.19.84");
+        LOGGER.info("Loading Entity Texture Features, Thank you for 1 Million downloads :)");
         etf$loadConfig();
-        if(ETFVersionDifferenceHandler.isThisModLoaded("quark")){
-            ETFConfigData.enableCustomBlockEntities = false;
-            ETFConfigData.enableEmissiveBlockEntities = false;
-            ETFUtils2.saveConfig();
-        }
+        ETFUtils2.checkModCompatibility();
     }
+
 
     // config code based on bedrockify & actually unbreaking fabric config code
     // https://github.com/juancarloscp52/BedrockIfy/blob/1.17.x/src/main/java/me/juancarloscp52/bedrockify/Bedrockify.java
     // https://github.com/wutdahack/ActuallyUnbreakingFabric/blob/1.18.1/src/main/java/wutdahack/actuallyunbreaking/ActuallyUnbreaking.java
     public static void etf$loadConfig() {
-        File config = new File(CONFIG_DIR, "entity_texture_features.json");
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        if (config.exists()) {
-            try {
-                FileReader fileReader = new FileReader(config);
-                ETFConfigData = gson.fromJson(fileReader, ETFConfig.class);
-                fileReader.close();
-                ETFUtils2.saveConfig();
-            } catch (IOException e) {
-                ETFUtils2.logMessage("Config could not be loaded, using defaults", false);
+        try {
+            File config = new File(CONFIG_DIR, "entity_texture_features.json");
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            if (config.exists()) {
+                try {
+                    FileReader fileReader = new FileReader(config);
+                    ETFConfigData = gson.fromJson(fileReader, ETFConfig.class);
+                    fileReader.close();
+                    ETFUtils2.saveConfig();
+                } catch (IOException e) {
+                    ETFUtils2.logMessage("Config could not be loaded, using defaults", false);
+                    ETFConfigData = new ETFConfig();
+                    ETFUtils2.saveConfig();
+                    configHadLoadError=true;
+                }
+            } else {
                 ETFConfigData = new ETFConfig();
                 ETFUtils2.saveConfig();
             }
-        } else {
+            if (ETFConfigData == null) {
+                ETFUtils2.logMessage("Config was null, using defaults", false);
+                ETFConfigData = new ETFConfig();
+                configHadLoadError=true;
+            }
+        } catch (Exception e) {
+            ETFUtils2.logError("Config was corrupt or broken, using defaults", false);
             ETFConfigData = new ETFConfig();
-            ETFUtils2.saveConfig();
-        }
-        if(ETFConfigData == null){
-            ETFUtils2.logMessage("Config was null, using defaults", false);
-            ETFConfigData = new ETFConfig();
+            configHadLoadError=true;
         }
     }
 

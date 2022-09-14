@@ -2,7 +2,7 @@ modLoader = "javafml"
 loaderVersion = "[36,)"
 issueTrackerURL = "https://github.com/Traben-0/EmissiveMod/issues"
 license = "LGPL-3.0"
-showAsResourcePack=false
+showAsResourcePack = false
 
 [[mods]]
 modId = "entity_texture_features"
@@ -34,10 +34,3 @@ mandatory = true
 versionRange = "[1.16.5,)"
 ordering = "NONE"
 side = "CLIENT"
-
-[[dependencies.entity_texture_features]]
-modId="cloth-config"
-mandatory=true
-versionRange="[4.0.0,)"
-ordering="NONE"
-side="CLIENT"

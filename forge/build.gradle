@@ -22,7 +22,6 @@ loom {
 }
 
 
-
 configurations {
     common
     shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
@@ -41,7 +40,9 @@ dependencies {
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 
-    modApi ("me.shedaniel.cloth:cloth-config-forge:${project.cloth_config_version}")
+
+    implementation(forgeDependencies("org.apache.httpcomponents:httpmime:4.5.10"))
+    shadow("org.apache.httpcomponents:httpmime:4.5.10")
 }
 
 processResources {

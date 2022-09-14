@@ -1,15 +1,14 @@
 package traben.entity_texture_features.forge.mixin;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
-import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ArmorItem;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,6 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
+import traben.entity_texture_features.config.screens.ETFConfigScreen;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
@@ -33,13 +33,16 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
     @ModifyArg(method = "renderModel",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/RenderLayer;getArmorCutoutNoCull(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;"))
     private Identifier etf$changeTexture(Identifier texture) {
-        thisETFTexture = ETFManager.getETFTexture(texture, null, ETFManager.TextureSource.ENTITY_FEATURE);
-        return thisETFTexture.getTextureIdentifier(null, ETFConfigData.enableEmissiveTextures);
+        thisETFTexture = ETFManager.getInstance().getETFTexture(texture, null, ETFManager.TextureSource.ENTITY_FEATURE, ETFConfigData.removePixelsUnderEmissiveArmour);
+        if (thisETFTexture != null) {
+            return thisETFTexture.getTextureIdentifier(null, ETFConfigData.enableEmissiveTextures);
+        }
+        return texture;
     }
 
     @Inject(method = "renderModel",
             at = @At(value = "TAIL"))
-    private void etf$applyEmissive(MatrixStack arg, VertexConsumerProvider arg2, int i, boolean bl, A arg3, float f, float g, float h, Identifier armorResource,CallbackInfo ci) {
+    private void etf$applyEmissive(MatrixStack arg, VertexConsumerProvider arg2, int i, boolean bl, A arg3, float f, float g, float h, Identifier armorResource, CallbackInfo ci) {
         //UUID id = livingEntity.getUuid();
         if (thisETFTexture != null && ETFConfigData.enableEmissiveTextures) {
             Identifier emissive = thisETFTexture.getEmissiveIdentifierOfCurrentState();
@@ -48,12 +51,23 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
                 //if (ETFManager.getEmissiveMode() == ETFManager.EmissiveRenderModes.BRIGHT) {
                 //    textureVert = ItemRenderer.getArmorGlintConsumer(vertexConsumers, RenderLayer.getBeaconBeam(emissive, true), false, usesSecondLayer);
                 //} else {
-                    textureVert = arg2.getBuffer(RenderLayer.getArmorCutoutNoCull(emissive));
+                textureVert = arg2.getBuffer(RenderLayer.getArmorCutoutNoCull(emissive));
                 //}
                 arg3.render(arg, textureVert, ETFClientCommon.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, f, g, h, 1.0F);
             }
         }
 
+    }
+
+    @Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
+            at = @At(value = "HEAD"), cancellable = true)
+    private void etf$cancelIfUi(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
+        if (MinecraftClient.getInstance() != null) {
+            if (MinecraftClient.getInstance().currentScreen instanceof ETFConfigScreen) {
+                //cancel armour rendering
+                ci.cancel();
+            }
+        }
     }
 
 }

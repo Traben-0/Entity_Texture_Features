@@ -1,7 +1,6 @@
 package traben.entity_texture_features;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -12,12 +11,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
+@SuppressWarnings("SameReturnValue")
 public class ETFVersionDifferenceHandler {
-
-    @ExpectPlatform
-    public static Screen getConfigScreen(Screen parent, boolean isTransparent) {
-        return null;
-    }
 
     @ExpectPlatform
     public static boolean isThisModLoaded(String modId) {

@@ -67,13 +67,13 @@ public abstract class MixinEnderDragonEntityRenderer extends EntityRenderer<Ende
                 Identifier alteredTexture;
                 RenderLayer layerToReturn = null;
                 if (texturedRenderLayer.equals(DRAGON_DECAL)) {
-                    alteredTexture = ETFManager.getETFTexture(TEXTURE, etf$entity, ETFManager.TextureSource.ENTITY_FEATURE).getTextureIdentifier(etf$entity);
+                    alteredTexture = ETFManager.getInstance().getETFTexture(TEXTURE, etf$entity, ETFManager.TextureSource.ENTITY_FEATURE, ETFConfigData.removePixelsUnderEmissiveMobs).getTextureIdentifier(etf$entity);
                     layerToReturn = RenderLayer.getEntityDecal(alteredTexture);
                 } else if (texturedRenderLayer.equals(DRAGON_CUTOUT)) {
-                    alteredTexture = ETFManager.getETFTexture(TEXTURE, etf$entity, ETFManager.TextureSource.ENTITY).getTextureIdentifier(etf$entity);
+                    alteredTexture = ETFManager.getInstance().getETFTexture(TEXTURE, etf$entity, ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs).getTextureIdentifier(etf$entity);
                     layerToReturn = RenderLayer.getEntityCutoutNoCull(alteredTexture);
                 } else if (texturedRenderLayer.equals(DRAGON_EYES)) {
-                    layerToReturn = RenderLayer.getEyes(ETFManager.getETFTexture(EYE_TEXTURE, etf$entity, ETFManager.TextureSource.ENTITY_FEATURE).getTextureIdentifier(etf$entity));
+                    layerToReturn = RenderLayer.getEyes(ETFManager.getInstance().getETFTexture(EYE_TEXTURE, etf$entity, ETFManager.TextureSource.ENTITY_FEATURE, ETFConfigData.removePixelsUnderEmissiveMobs).getTextureIdentifier(etf$entity));
                 }
                 if (layerToReturn != null) return layerToReturn;
 
@@ -90,7 +90,7 @@ public abstract class MixinEnderDragonEntityRenderer extends EntityRenderer<Ende
                     shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILSOFT)
     private void etf$applyEmissive(EnderDragonEntity enderDragonEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci, float h, float j, boolean bl, VertexConsumer vertexConsumer3) {
         //UUID id = livingEntity.getUuid();
-        ETFManager.getETFTexture(TEXTURE, etf$entity, ETFManager.TextureSource.ENTITY).renderEmissive(matrixStack, vertexConsumerProvider, model);
+        ETFManager.getInstance().getETFTexture(TEXTURE, etf$entity, ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs).renderEmissive(matrixStack, vertexConsumerProvider, model);
 
     }
 
