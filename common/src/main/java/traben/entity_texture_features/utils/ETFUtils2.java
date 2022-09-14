@@ -11,8 +11,11 @@ import net.minecraft.text.LiteralTextContent;
 import net.minecraft.text.MutableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFClientCommon;
+import traben.entity_texture_features.ETFVersionDifferenceHandler;
+import traben.entity_texture_features.config.screens.ETFConfigScreenWarnings;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 
 import java.io.File;
@@ -27,41 +30,58 @@ import static traben.entity_texture_features.ETFClientCommon.CONFIG_DIR;
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
 public abstract class ETFUtils2 {
+    public static ETFLruCache<Identifier, NativeImage> KNOWN_NATIVE_IMAGES = new ETFLruCache<>();
+
     @Nullable
     public static Identifier replaceIdentifier(Identifier id, String regex, String replace) {
-        if(id == null) return null;
+        if (id == null) return null;
         return new Identifier(id.getNamespace(), id.getPath().replaceFirst(regex, replace));
     }
-
 
     @Nullable
     public static String returnNameOfHighestPackFromTheseMultiple(String[] packNameList) {
         ArrayList<String> packNames = new ArrayList<>(Arrays.asList(packNameList));
         //loop through and remove the one from the lowest pack of the first 2 entries
         //this iterates over the whole array
-        while(packNames.size() >= 2){
-            if(ETFManager.knownResourcePackOrder.indexOf(packNames.get(0)) >= ETFManager.knownResourcePackOrder.indexOf(packNames.get(1))){
+        while (packNames.size() >= 2) {
+            if (ETFManager.getInstance().KNOWN_RESOURCEPACK_ORDER.indexOf(packNames.get(0)) >= ETFManager.getInstance().KNOWN_RESOURCEPACK_ORDER.indexOf(packNames.get(1))) {
                 packNames.remove(1);
-            }else{
+            } else {
                 packNames.remove(0);
             }
         }
         //here the array is down to 1 entry which should be the one in the highest pack
         return packNames.get(0);
     }
+
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted") //makes more logical sense
+    public static boolean isNativeImageEmpty(@NotNull NativeImage image) {
+        boolean foundNonEmptyPixel = false;
+        for (int x = 0; x < image.getWidth(); x++) {
+            for (int y = 0; y < image.getHeight(); y++) {
+                if (image.getColor(x, y) != 0) {
+                    foundNonEmptyPixel = true;
+                    break;
+                }
+            }
+            if (foundNonEmptyPixel) break;
+        }
+        return !foundNonEmptyPixel;
+    }
+
     @Nullable
     public static String returnNameOfHighestPackFromTheseTwo(String[] packNameList) {
         //simpler faster 2 length array logic
-        if(packNameList.length != 2){
+        if (packNameList.length != 2) {
             logError("highest pack check failed");
             return null;
         }
-        if(packNameList[0].equals(packNameList[1])){
+        if (packNameList[0].equals(packNameList[1])) {
             return packNameList[0];
         }
-        if(ETFManager.knownResourcePackOrder.indexOf(packNameList[0]) >= ETFManager.knownResourcePackOrder.indexOf(packNameList[1])){
+        if (ETFManager.getInstance().KNOWN_RESOURCEPACK_ORDER.indexOf(packNameList[0]) >= ETFManager.getInstance().KNOWN_RESOURCEPACK_ORDER.indexOf(packNameList[1])) {
             return packNameList[0];
-        }else{
+        } else {
             return packNameList[1];
         }
 
@@ -104,13 +124,20 @@ public abstract class ETFUtils2 {
     }
 
     public static NativeImage getNativeImageElseNull(@Nullable Identifier identifier) {
+        if (identifier != null) {
+            if (KNOWN_NATIVE_IMAGES.get(identifier) != null) {
+                return KNOWN_NATIVE_IMAGES.get(identifier);
+            }
+        }
         NativeImage img;
         try {
-            @SuppressWarnings("OptionalGetWithoutIsPresent") //try catch is intended
+            //try catch is intended
+            //noinspection OptionalGetWithoutIsPresent
             InputStream in = MinecraftClient.getInstance().getResourceManager().getResource(identifier).get().getInputStream();
             try {
                 img = NativeImage.read(in);
                 in.close();
+                KNOWN_NATIVE_IMAGES.put(identifier, img);
                 return img;
             } catch (Exception e) {
                 //resource.close();
@@ -243,13 +270,30 @@ public abstract class ETFUtils2 {
         }
     }
 
-    public static void registerNativeImageToIdentifier(NativeImage img, Identifier identifier) {
-        if(img != null && identifier != null) {
+    public static boolean registerNativeImageToIdentifier(NativeImage img, Identifier identifier) {
+        if (img != null && identifier != null) {
             NativeImageBackedTexture bob = new NativeImageBackedTexture(img);
             MinecraftClient.getInstance().getTextureManager().registerTexture(identifier, bob);
             //MinecraftClient.getInstance().getResourceManager().
-        }else{
-            logError("registering native image failed: "+img+", "+identifier);
+            KNOWN_NATIVE_IMAGES.put(identifier, img);
+            return true;
+        } else {
+            logError("registering native image failed: " + img + ", " + identifier);
+            return false;
         }
     }
+
+
+    public static void checkModCompatibility() {
+        if (ETFVersionDifferenceHandler.isThisModLoaded("quark") && !ETFConfigData.ignoredConfigs.contains(ETFConfigScreenWarnings.ConfigWarning.QUARK)) {
+            ETFConfigData.enableCustomBlockEntities = false;
+            ETFConfigData.enableEmissiveBlockEntities = false;
+            ETFUtils2.saveConfig();
+        }
+        if (ETFVersionDifferenceHandler.isThisModLoaded("figura") && !ETFConfigData.ignoredConfigs.contains(ETFConfigScreenWarnings.ConfigWarning.FIGURA)) {
+            ETFConfigData.skinFeaturesEnabled = false;
+            ETFUtils2.saveConfig();
+        }
+    }
+
 }

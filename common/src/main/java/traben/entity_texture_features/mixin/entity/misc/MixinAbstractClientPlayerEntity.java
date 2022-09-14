@@ -38,7 +38,7 @@ public abstract class MixinAbstractClientPlayerEntity extends PlayerEntity {
                 return;
             }
         }
-        ETFPlayerTexture textureData = ETFManager.getPlayerTexture(this);
+        ETFPlayerTexture textureData = ETFManager.getInstance().getPlayerTexture(this);
         if (textureData != null && textureData.hasCustomCape()) {
             cir.setReturnValue(textureData.etfCapeIdentifier);
         }
@@ -54,7 +54,8 @@ public abstract class MixinAbstractClientPlayerEntity extends PlayerEntity {
             at = @At("RETURN"),
             cancellable = true)
     private void changeCapeReturnsBoolean(CallbackInfoReturnable<Boolean> cir) {
-        ETFPlayerTexture textureData = ETFManager.getPlayerTexture(this);
+        //returns null if skin features disabled check is inbuilt
+        ETFPlayerTexture textureData = ETFManager.getInstance().getPlayerTexture(this);
         if ((textureData != null && textureData.hasCustomCape())
                 || getUuid().equals(ETFPlayerTexture.Dev)
                 || getUuid().equals(ETFPlayerTexture.Wife)) {

@@ -7,8 +7,6 @@ import traben.entity_texture_features.ETFClientCommon;
 public class ETFClientFabric implements ClientModInitializer {
 
 
-
-
     @Override
     public void onInitializeClient() {
         ETFClientCommon.start();

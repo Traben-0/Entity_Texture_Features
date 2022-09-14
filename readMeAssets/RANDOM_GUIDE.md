@@ -1,7 +1,9 @@
 # 🎲 Custom / Random / Varied Entity Textures Guide:
+
 <img src="randoms.png" alt="img" width="650"/>
 
 ---
+
 ### This mod is completely Optifine format compatible!!!!
 
 - ETF supports all optifine random entity texture properties including Biomes, Names, Heights, etc...
@@ -12,6 +14,7 @@
   default *"minecraft/textures/entity"* or the *etf/random* directory as well as Optifine's directories
 
 ---
+
 ## Guide & how it works:
 
 - Random textures are applied to each mob on the client-side  
@@ -20,10 +23,10 @@
 
 - Random textures **must** be in one of the following folders in the resource-pack, and will be checked from the top
   directory first, only using the last directory if none of the others are used
-  - the ETF override directory *"etf/random/entity"*
-  - the Optifine Random directory *"optifine/random/entity"* ****Highly Recommended***
-  - the Optifine legacy directory *"optifine/mob"*
-  - the Vanilla directory *"minecraft/textures/entity"*
+    - the ETF override directory *"etf/random/entity"*
+    - the Optifine Random directory *"optifine/random/entity"* ****Highly Recommended***
+    - the Optifine legacy directory *"optifine/mob"*
+    - the Vanilla directory *"minecraft/textures/entity"*
 
 - the random textures **must** be named like *"TextureName#.png"* with # being any number that **must** start from 2,  
   *(if 1.png does not exist then calling 1 in the properties will use the vanilla texture, the vanilla texture can also
@@ -41,8 +44,9 @@
 - The "names" property works exactly the same as the "name" property except it will allow you to set multiple names for
   a condition a little easier
 - The "blocks" property works exactly the same as the "biomes" property except it will allow you to set the texture of
-  the entity based on the block it spawned on *(or first rendered on)* *(it also checks the block it spawns in allowing things like water, cave_air, flowers, etc. to be used)*
-, an example of the "blocks" property follows:  
+  the entity based on the block it spawned on *(or first rendered on)* *(it also checks the block it spawns in allowing
+  things like water, cave_air, flowers, etc. to be used)*
+  , an example of the "blocks" property follows:  
   *blocks.1= stone !bedrock minecraft:stone mod_name:marble oak_sapling*
 - The "teams" Property works exactly the same as the "names" property except it will allow you to set the texture of the
   entity based on the scoreboard team it is in
@@ -50,13 +54,17 @@
   an example of the "teams" property follows:  
   *teams.1= !red_team "Blue Team" blue_team*
 - Additionally, the Names & Teams property support grouping names that have spaces within double quotes e.g "John Smith"
-- Mobs with additional textures like "sheep & wool", "horse & markings & armour", iron_golem & cracking textures, etc. 
-will have the additional texture try and match whatever variant the main texture uses. *(e.g. a sheep using "sheep2.png will
-try and use wool2.png and if that doesn't exist it will use the default texture)*
-- Villagers are the exception to the above rule and each texture for villagers will apply their own rules, whether they be randomly assigned or set by a .properties file
+- Mobs with additional textures like "sheep & wool", "horse & markings & armour", iron_golem & cracking textures, etc.
+  will have the additional texture try and match whatever variant the main texture uses. *(e.g. a sheep using "
+  sheep2.png will
+  try and use wool2.png and if that doesn't exist it will use the default texture)*
+- Villagers are the exception to the above rule and each texture for villagers will apply their own rules, whether they
+  be randomly assigned or set by a .properties file
 
 ---
+
 ## Example properties file
+
 <img src="format_example.png" alt="img" width="650"/>
 
 - The example image above shows that any zombie in a desert will have a 10/17 chance of using "zombie1.png"
@@ -69,9 +77,10 @@ try and use wool2.png and if that doesn't exist it will use the default texture)
 - Certain conditions in the properties file will update the mobs texture, based on the texture update speed, when
   changes are detected, these are:
   *("name", "profession", "collarColors", "baby", "health", "teams")*.
-- All the other conditions such as "biomes" & "blocks" will by default only be applied to the Mob when it first spawns / loads.  
-*(for example a Zombie spawned in a desert will take the "desert skin" and it will not change to the "forest skin" 
-when they walk into a forest biome.)*  
+- All the other conditions such as "biomes" & "blocks" will by default only be applied to the Mob when it first spawns /
+  loads.  
+  *(for example a Zombie spawned in a desert will take the "desert skin" and it will not change to the "forest skin"
+  when they walk into a forest biome.)*
 - This can be disabled by the config option "Property update restrictions" for each of these properties individually.  
   *(if update restrictions are disabled for biomes, the above example Zombie with the "desert skin" would indeed change
   to the "forest skin"
@@ -122,9 +131,9 @@ when they walk into a forest biome.)*
 </td>
 <td>
 
-- If a custom mushroom texture is placed in *"minecraft/textures/entity/cow/red_mushroom.png"* or 
-*"minecraft/textures/entity/cow/brown_mushroom.png"*, it will overwrite the mushrooms on the back
-of the respective mooshroom.
+- If a custom mushroom texture is placed in *"minecraft/textures/entity/cow/red_mushroom.png"* or
+  *"minecraft/textures/entity/cow/brown_mushroom.png"*, it will overwrite the mushrooms on the back
+  of the respective mooshroom.
 
 </td>
 </tr>

@@ -18,6 +18,7 @@ public class ETFLruCache<X, Y> {
 
         //this.capacity = capacity - 1;
     }
+
     public ETFLruCache() {
         this.cache = new Object2ObjectLinkedOpenHashMap<>();//( 64 +(int)(capacity * (ETFConfigData.advanced_IncreaseCacheSizeModifier > 1 ? ETFConfigData.advanced_IncreaseCacheSizeModifier : 1))));
         //this.capacity = capacity - 1;
@@ -37,9 +38,9 @@ public class ETFLruCache<X, Y> {
     public void put(X key, Y value) {
         if (cache.size() >= capacity * (ETFConfigData.advanced_IncreaseCacheSizeModifier > 1 ? ETFConfigData.advanced_IncreaseCacheSizeModifier : 1)) {
             X lastKey = cache.lastKey();
-            if(!lastKey.equals(key)) {
+            if (!lastKey.equals(key)) {
                 if (lastKey instanceof ETFCacheKey ETFKey) {
-                    ETFManager.removeThisEntityDataFromAllStorage(ETFKey);
+                    ETFManager.getInstance().removeThisEntityDataFromAllStorage(ETFKey);
                 }
                 cache.remove(lastKey);
             }

@@ -2,7 +2,7 @@ plugins {
     id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
-archivesBaseName = rootProject.archives_base_name+"_fabric_1.19.x"
+archivesBaseName = rootProject.archives_base_name + "_fabric_1.19.x"
 
 architectury {
     platformSetupLoomIde()
@@ -37,10 +37,10 @@ dependencies {
     modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}") {
         exclude(group: "net.fabricmc.fabric-api")
     }
-    modImplementation("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
-        exclude(group: "net.fabricmc.fabric-api")
-    }
-    include("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}")
+
+
+    include group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.10'
+    implementation group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.10'
 }
 
 processResources {
