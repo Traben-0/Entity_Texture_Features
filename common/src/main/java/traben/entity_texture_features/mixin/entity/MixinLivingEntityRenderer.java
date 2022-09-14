@@ -44,7 +44,6 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
     public abstract M getModel();
 
 
-
     @Inject(method = "render(Lnet/minecraft/entity/LivingEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/EntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V", shift = At.Shift.AFTER)
     )
@@ -52,12 +51,14 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
         //UUID id = livingEntity.getUuid();
         if (livingEntity instanceof PlayerEntity) {
             if (ETFConfigData.skinFeaturesEnabled && thisETFPlayerTexture != null) {
-                //noinspection unchecked
+                //System.out.println("test 1");
+                // noinspection unchecked
                 thisETFPlayerTexture.renderFeatures(matrixStack, vertexConsumerProvider, i, (PlayerEntityModel<PlayerEntity>) this.getModel());
-                //just a little harmless particle effect on the dev
-                if (livingEntity.getUuid().equals(ETFPlayerTexture.Dev) && !MinecraftClient.getInstance().isPaused() && livingEntity.getRandom().nextInt(64) == 0 && (MinecraftClient.getInstance().player == null || !(ETFVersionDifferenceHandler.areShadersInUse() == ETFPlayerTexture.Dev.equals(MinecraftClient.getInstance().player.getUuid())))) {
-                    livingEntity.world.addParticle(ParticleTypes.TOTEM_OF_UNDYING,livingEntity.getX(),livingEntity.getRandomBodyY(),livingEntity.getZ(), livingEntity.getRandom().nextFloat()-0.5, livingEntity.getRandom().nextFloat()*0.5, livingEntity.getRandom().nextFloat()-0.5);
-                }
+                //System.out.println("test 2");
+            }
+            //just a little harmless particle effect on the dev
+            if (livingEntity.getUuid().equals(ETFPlayerTexture.Dev) && !MinecraftClient.getInstance().isPaused() && livingEntity.getRandom().nextInt(64) == 0 && (MinecraftClient.getInstance().player == null || !(ETFVersionDifferenceHandler.areShadersInUse() == ETFPlayerTexture.Dev.equals(MinecraftClient.getInstance().player.getUuid())))) {
+                livingEntity.world.addParticle(ParticleTypes.TOTEM_OF_UNDYING, livingEntity.getX(), livingEntity.getRandomBodyY(), livingEntity.getZ(), livingEntity.getRandom().nextFloat() - 0.5, livingEntity.getRandom().nextFloat() * 0.5, livingEntity.getRandom().nextFloat() - 0.5);
             }
             //else nothing
         } else {
@@ -70,24 +71,43 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
     @Redirect(
             method = "getRenderLayer",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/LivingEntityRenderer;getTexture(Lnet/minecraft/entity/Entity;)Lnet/minecraft/util/Identifier;"))
-    private Identifier etf$alterTexture(LivingEntityRenderer<T,M> instance, Entity inentity) {
+    private Identifier etf$alterTexture(LivingEntityRenderer<T, M> instance, Entity inentity) {
+
 
         @SuppressWarnings("unchecked") T entity = (T) inentity;
 
         if (ETFConfigData.skinFeaturesEnabled && entity instanceof PlayerEntity player) {
-            thisETFPlayerTexture = ETFManager.getPlayerTexture(player);
+            thisETFPlayerTexture = ETFManager.getInstance().getPlayerTexture(player);
             if (thisETFPlayerTexture != null) {
+
                 Identifier etfTexture = thisETFPlayerTexture.getBaseTextureIdentifierOrNullForVanilla(player);
                 return etfTexture == null ? getTexture(entity) : etfTexture;
             }
             return getTexture(entity);
         }
-        thisETFTexture = ETFManager.getETFTexture(getTexture(entity), entity, ETFManager.TextureSource.ENTITY);
+        thisETFTexture = ETFManager.getInstance().getETFTexture(getTexture(entity), entity, ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs);
 
         return thisETFTexture.getTextureIdentifier(entity);
 
 
+//
+//        return getTexture(entity);
     }
+
+//    @Inject(
+//            method = "getRenderLayer",
+//            at = @At(value = "RETURN"),cancellable = true)
+//    private void etf$alterTextureLayerForGUI(T entity, boolean showBody, boolean translucent, boolean showOutline, CallbackInfoReturnable<RenderLayer> cir) {
+//
+//        if (ETFConfigData.skinFeaturesEnabled && entity instanceof PlayerEntity && MinecraftClient.getInstance().currentScreen instanceof ETFConfigScreen) {
+//            System.out.println(cir.getReturnValue().toString());
+//            PlayerEntity player = (PlayerEntity) entity;
+//            thisETFPlayerTexture = ETFManager.getPlayerTexture(player);
+//            if (thisETFPlayerTexture != null) {
+//                cir.setReturnValue( RenderLayer.getEntityTranslucentCull(thisETFPlayerTexture.getBaseTextureIdentifierOrNullForVanilla(player)));
+//            }
+//        }
+//    }
 /*
      potion effects - pre rewrite feature
      potion status is just not sent to clients except in first seen / spawn packet

@@ -46,6 +46,9 @@
     "modmenu": ">=3",
     "clothconfig": ">=6.0"
   },
+  "conflicts": {
+    "optifabric": "*"
+  },
   "custom": {
     "modmenu": {
       "links": {

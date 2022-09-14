@@ -8,18 +8,18 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.network.NetworkConstants;
 import traben.entity_texture_features.ETFClientCommon;
-import traben.entity_texture_features.ETFVersionDifferenceHandler;
+import traben.entity_texture_features.config.screens.ETFConfigScreenMain;
 
 @Mod("entity_texture_features")
 public class ETFClientForge {
     public ETFClientForge() {
         // Submit our event bus to let architectury register our content on the right time
         //EventBuses.registerModEventBus(ExampleMod.MOD_ID, FMLJavaModLoadingContext.get().getModEventBus());
-        if(FMLEnvironment.dist == Dist.CLIENT) {
+        if (FMLEnvironment.dist == Dist.CLIENT) {
             try {
                 ModLoadingContext.get().registerExtensionPoint(
                         ConfigGuiHandler.ConfigGuiFactory.class,
-                        () -> new ConfigGuiHandler.ConfigGuiFactory((minecraftClient, screen) -> ETFVersionDifferenceHandler.getConfigScreen(screen, false)));
+                        () -> new ConfigGuiHandler.ConfigGuiFactory((minecraftClient, screen) -> new ETFConfigScreenMain(screen)));
             } catch (NoClassDefFoundError e) {
                 System.out.println("[Entity Texture Features]: Mod settings cannot be edited in GUI without cloth config");
             }
