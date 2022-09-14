@@ -87,9 +87,12 @@ public class ETFManager {
 
     private ETFManager() {
 
-        for (ResourcePack pack:
-                MinecraftClient.getInstance().getResourceManager().streamResourcePacks().toList()) {
-            KNOWN_RESOURCEPACK_ORDER.add(pack.getName());
+        for (Object obj:
+                MinecraftClient.getInstance().getResourceManager().streamResourcePacks().toArray()) {
+            if(obj instanceof ResourcePack) {
+                ResourcePack pack = (ResourcePack) obj;
+                KNOWN_RESOURCEPACK_ORDER.add(pack.getName());
+            }
         }
 
         try {
