@@ -1,7 +1,6 @@
 package traben.entity_texture_features.config.screens;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
@@ -44,22 +43,22 @@ public class ETFConfigScreenMain extends ETFConfigScreen {
             warningCount++;
         }
         //this warning disables skin features with figura present
-        if (FabricLoader.getInstance().isModLoaded(ETFConfigScreenWarnings.ConfigWarning.FIGURA.getMod_id())) {
+        if (ETFVersionDifferenceHandler.isThisModLoaded(ETFConfigScreenWarnings.ConfigWarning.FIGURA.getMod_id())) {
             shownWarning = true;
             warningCount++;
             warningsFound.add(ETFConfigScreenWarnings.ConfigWarning.FIGURA);
         }
-        if (FabricLoader.getInstance().isModLoaded(ETFConfigScreenWarnings.ConfigWarning.SKINLAYERS.getMod_id())) {
+        if (ETFVersionDifferenceHandler.isThisModLoaded(ETFConfigScreenWarnings.ConfigWarning.SKINLAYERS.getMod_id())) {
             shownWarning = true;
             warningCount++;
             warningsFound.add(ETFConfigScreenWarnings.ConfigWarning.SKINLAYERS);
         }
-        if (FabricLoader.getInstance().isModLoaded(ETFConfigScreenWarnings.ConfigWarning.QUARK.getMod_id())) {
+        if (ETFVersionDifferenceHandler.isThisModLoaded(ETFConfigScreenWarnings.ConfigWarning.QUARK.getMod_id())) {
             shownWarning = true;
             warningCount++;
             warningsFound.add(ETFConfigScreenWarnings.ConfigWarning.QUARK);
         }
-        if (FabricLoader.getInstance().isModLoaded(ETFConfigScreenWarnings.ConfigWarning.ENHANCED_BLOCK_ENTITIES.getMod_id())) {
+        if (ETFVersionDifferenceHandler.isThisModLoaded(ETFConfigScreenWarnings.ConfigWarning.ENHANCED_BLOCK_ENTITIES.getMod_id())) {
             shownWarning = true;
             warningCount++;
             warningsFound.add(ETFConfigScreenWarnings.ConfigWarning.ENHANCED_BLOCK_ENTITIES);
