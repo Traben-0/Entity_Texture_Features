@@ -7,10 +7,7 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.resource.Resource;
-import net.minecraft.resource.ResourcePack;
-import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -67,7 +64,7 @@ public abstract class ETFUtils2 {
         //loop through and remove the one from the lowest pack of the first 2 entries
         //this iterates over the whole array
         while (packNames.size() >= 2) {
-            if (ETFManager.getInstance().knownResourcePackOrder.indexOf(packNames.get(0)) >= ETFManager.getInstance().knownResourcePackOrder.indexOf(packNames.get(1))) {
+            if (ETFManager.getInstance().KNOWN_RESOURCEPACK_ORDER.indexOf(packNames.get(0)) >= ETFManager.getInstance().KNOWN_RESOURCEPACK_ORDER.indexOf(packNames.get(1))) {
                 packNames.remove(1);
             } else {
                 packNames.remove(0);
@@ -102,7 +99,7 @@ public abstract class ETFUtils2 {
         if (packNameList[0].equals(packNameList[1])) {
             return packNameList[0];
         }
-        if (ETFManager.getInstance().knownResourcePackOrder.indexOf(packNameList[0]) >= ETFManager.getInstance().knownResourcePackOrder.indexOf(packNameList[1])) {
+        if (ETFManager.getInstance().KNOWN_RESOURCEPACK_ORDER.indexOf(packNameList[0]) >= ETFManager.getInstance().KNOWN_RESOURCEPACK_ORDER.indexOf(packNameList[1])) {
             return packNameList[0];
         } else {
             return packNameList[1];

@@ -24,7 +24,6 @@ import traben.entity_texture_features.utils.ETFUtils2;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
@@ -63,7 +62,7 @@ public class ETFManager {
 
     //todo extend this to as many isPresent() calls as possible to lower repeated resource manager calls, may need to consider LRUCache usage if this is expanded too greatly
     public final Object2BooleanOpenHashMap<Identifier> DOES_IDENTIFIER_EXIST_CACHED_RESULT = new Object2BooleanOpenHashMap<>();
-    public final ArrayList<String> knownResourcePackOrder = new ArrayList<>();
+    public final ArrayList<String> KNOWN_RESOURCEPACK_ORDER = new ArrayList<>();
     //if false variant 1 will need to use vanilla texture otherwise vanilla texture has an override in other directory
     //private static final Object2BooleanOpenHashMap<Identifier> OPTIFINE_1_HAS_REPLACEMENT = new Object2BooleanOpenHashMap<>();
     //this is a cache of all known ETFTexture versions of any existing resource-pack texture, used to prevent remaking objects
@@ -87,13 +86,12 @@ public class ETFManager {
 
 
     private ETFManager() {
-        for (Iterator<ResourcePack> it = MinecraftClient.getInstance().getResourceManager().streamResourcePacks().iterator(); it.hasNext(); ) {
 
-                ResourcePack pack = it.next();
-                //loops from lowest to highest pack
-                knownResourcePackOrder.add(pack.getName());
-
+        for (ResourcePack pack:
+                MinecraftClient.getInstance().getResourceManager().streamResourcePacks().toList()) {
+            KNOWN_RESOURCEPACK_ORDER.add(pack.getName());
         }
+
         try {
             List<Properties> props = new ArrayList<>();
             String[] paths = {"optifine/emissive.properties", "textures/emissive.properties", "etf/emissive.properties"};
