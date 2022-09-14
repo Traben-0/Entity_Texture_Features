@@ -1,7 +1,6 @@
 package traben.entity_texture_features.fabric;
 
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.BlockPos;
@@ -10,16 +9,13 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import traben.entity_texture_features.ETFClientCommon;
-import traben.entity_texture_features.fabric.config.ETFConfigScreenFabric;
 
 import java.io.File;
 import java.util.Objects;
 
+@SuppressWarnings("SameReturnValue")
 public class ETFVersionDifferenceHandlerImpl {
-    public static Screen getConfigScreen(Screen parent, boolean isTransparent) {
-        return ETFConfigScreenFabric.getConfigScreen(parent,isTransparent);
-    }
+
 
     public static boolean isThisModLoaded(String modId) {
         return FabricLoader.getInstance().isModLoaded(modId);

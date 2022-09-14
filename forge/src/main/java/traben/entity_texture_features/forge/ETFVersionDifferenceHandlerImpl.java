@@ -1,32 +1,28 @@
 package traben.entity_texture_features.forge;
 
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.loading.FMLConfig;
 import net.minecraftforge.fml.loading.FMLPaths;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import traben.entity_texture_features.forge.config.ETFConfigScreenForge;
 
 import java.io.File;
 import java.util.Objects;
 
+@SuppressWarnings("SameReturnValue")
 public class ETFVersionDifferenceHandlerImpl {
-    public static Screen getConfigScreen(Screen parent, boolean isTransparent) {
-        return ETFConfigScreenForge.getConfigScreen(parent,isTransparent);
-    }
+
 
     public static boolean isThisModLoaded(String modId) {
         return ModList.get().isLoaded(modId);
     }
 
     public static File getConfigDir() {
-        return FMLPaths.GAMEDIR.get().resolve(FMLConfig.defaultConfigPath()).toFile();
+        return FMLPaths.GAMEDIR.get().resolve(FMLPaths.CONFIGDIR.get()).toFile();
     }
 
     public static boolean isForge() {

@@ -1,8 +1,6 @@
 package traben.entity_texture_features.texture_handlers;
 
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import it.unimi.dsi.fastutil.objects.ObjectSet;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.ModelPart;
@@ -18,6 +16,7 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
+import traben.entity_texture_features.config.screens.ETFConfigScreen;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.Optional;
@@ -27,8 +26,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
-import static traben.entity_texture_features.texture_handlers.ETFManager.EMISSIVE_SUFFIX_LIST;
-import static traben.entity_texture_features.texture_handlers.ETFManager.ENTITY_BLINK_TIME;
 
 
 //can either refer to a vanilla identifier or a variant
@@ -58,9 +55,11 @@ public class ETFTexture {
     private Integer blinkLength = ETFConfigData.blinkLength;
     private Integer blinkFrequency = ETFConfigData.blinkFrequency;
 
+    private boolean canPatch = true;
+
     // private final TextureSource source;
 
-    public ETFTexture(/*@NotNull Identifier vanillaIdentifier,*/ @NotNull Identifier variantIdentifier) {//,TextureSource source) {
+    public ETFTexture(/*@NotNull Identifier vanillaIdentifier,*/ @NotNull Identifier variantIdentifier, boolean allowedToPatch) {//,TextureSource source) {
         //this.vanillaIdentifier = vanillaIdentifier;
         //this.source = source;
         this.thisIdentifier = variantIdentifier;
@@ -71,6 +70,7 @@ public class ETFTexture {
         } else {
             this.variantNumber = 0;
         }
+        canPatch = allowedToPatch;
         setupBlinking();
         setupEmissives();
 
@@ -82,7 +82,10 @@ public class ETFTexture {
                       @Nullable Identifier blink2Identifier,
                       @Nullable Identifier emissiveIdentifier,
                       @Nullable Identifier blinkEmissiveIdentifier,
-                      @Nullable Identifier blink2EmissiveIdentifier) {
+                      @Nullable Identifier blink2EmissiveIdentifier,
+                      @Nullable Identifier modifiedSkinPatchedIdentifier,
+                      @Nullable Identifier modifiedSkinBlinkPatchedIdentifier,
+                      @Nullable Identifier modifiedSkinBlink2PatchedIdentifier) {
 
         //ALL input already tested and confirmed existing
         this.variantNumber = 0;
@@ -92,9 +95,12 @@ public class ETFTexture {
         this.emissiveIdentifier = emissiveIdentifier;
         this.emissiveBlinkIdentifier = blinkEmissiveIdentifier;
         this.emissiveBlink2Identifier = blink2EmissiveIdentifier;
+        this.thisIdentifier_Patched = modifiedSkinPatchedIdentifier;
+        this.blinkIdentifier_Patched = modifiedSkinBlinkPatchedIdentifier;
+        this.blink2Identifier_Patched = modifiedSkinBlink2PatchedIdentifier;
         //setupBlinking(); neither required
         //setupEmissives();
-        createPatchedTextures();
+        //createPatchedTextures();
     }
 
     //alternative initiator for already known textures used for MooShroom's mushrooms
@@ -107,9 +113,32 @@ public class ETFTexture {
         this.emissiveIdentifier = emissiveIdentifier;
         //setupBlinking(); neither required
         //setupEmissives();
-        createPatchedTextures();
+        //createPatchedTextures();
     }
 
+    public static void patchTextureToRemoveZFightingWithOtherTexture(NativeImage baseImage, NativeImage otherImage) throws IndexOutOfBoundsException {
+        //here we alter the first image removing all pixels that are present in the second image to prevent z fighting
+        //this does not support transparency and is a hard counter to f-fighting
+        try {
+            if (otherImage.getWidth() == baseImage.getWidth() && otherImage.getHeight() == baseImage.getHeight()) {
+                //float widthMultipleEmissive  = originalCopy.getWidth()  / (float)emissive.getWidth();
+                //float heightMultipleEmissive = originalCopy.getHeight() / (float)emissive.getHeight();
+
+                for (int x = 0; x < baseImage.getWidth(); x++) {
+                    for (int y = 0; y < baseImage.getHeight(); y++) {
+                        //int newX = Math.min((int)(x*widthMultipleEmissive),originalCopy.getWidth()-1);
+                        //int newY = Math.min((int)(y*heightMultipleEmissive),originalCopy.getHeight()-1);
+                        if (otherImage.getOpacity(x, y) != 0) {
+                            baseImage.setColor(x, y, 0);
+                        }
+                    }
+                }
+            }
+            //return baseImage;
+        } catch (Exception e) {
+            throw new IndexOutOfBoundsException("additional texture is not the correct size, ETF has crashed in the patching stage");
+        }
+    }
 
     private void setupBlinking() {
         try {
@@ -174,7 +203,7 @@ public class ETFTexture {
             ResourceManager resourceManager = MinecraftClient.getInstance().getResourceManager();
             try {
                 for (String possibleEmissiveSuffix :
-                        EMISSIVE_SUFFIX_LIST) {
+                        ETFManager.getInstance().EMISSIVE_SUFFIX_LIST) {
 
                     if (ETFUtils2.isExistingResource(thisIdentifier)) {
                         Resource vanillaR1 = resourceManager.getResource(thisIdentifier);
@@ -227,7 +256,7 @@ public class ETFTexture {
     }
 
     private void createPatchedTextures() {
-        if(ETFVersionDifferenceHandler.isFabric() && ETFConfigData.temporary_fixIrisPBR){
+        if (this.canPatch && ETFVersionDifferenceHandler.isFabric()/* && !ETFConfigData.removePixelsUnderEmissive*/) {
             return;
         }
         //here we will 'patch' the base texture to prevent z-fighting with various shaders
@@ -292,7 +321,6 @@ public class ETFTexture {
 //            }
 
 
-
         //patch out emissive textures for shader z fighting fix
         if (this.emissiveIdentifier != null && ETFConfigData.enableEmissiveTextures) {
             //create patched texture
@@ -340,30 +368,6 @@ public class ETFTexture {
         }
     }
 
-    private void patchTextureToRemoveZFightingWithOtherTexture(NativeImage baseImage, NativeImage otherImage) throws IndexOutOfBoundsException {
-        //here we alter the first image removing all pixels that are present in the second image to prevent z fighting
-        //this does not support transparency and is a hard counter to f-fighting
-        try {
-            if (otherImage.getWidth() == baseImage.getWidth() && otherImage.getHeight() == baseImage.getHeight()) {
-                //float widthMultipleEmissive  = originalCopy.getWidth()  / (float)emissive.getWidth();
-                //float heightMultipleEmissive = originalCopy.getHeight() / (float)emissive.getHeight();
-
-                for (int x = 0; x < baseImage.getWidth(); x++) {
-                    for (int y = 0; y < baseImage.getHeight(); y++) {
-                        //int newX = Math.min((int)(x*widthMultipleEmissive),originalCopy.getWidth()-1);
-                        //int newY = Math.min((int)(y*heightMultipleEmissive),originalCopy.getHeight()-1);
-                        if (otherImage.getOpacity(x, y) != 0) {
-                            baseImage.setColor(x, y, 0);
-                        }
-                    }
-                }
-            }
-            //return baseImage;
-        } catch (Exception e) {
-            throw new IndexOutOfBoundsException("additional texture is not the correct size, ETF has crashed in the patching stage");
-        }
-    }
-
     @NotNull
     Identifier getFeatureTexture(Identifier vanillaFeatureTexture) {
 
@@ -387,6 +391,7 @@ public class ETFTexture {
                 return possibleFeatureVariantIdentifier;
             }
         }
+        //System.out.println("feature="+vanillaFeatureTexture.toString()+thisIdentifier.toString()+directory.toString());
         //here we have no number and are likely vanilla texture or something went wrong in which case vanilla anyway
         //ETFUtils2.logWarn("getFeatureTexture() either vanilla or failed");
         ETFDirectory tryDirectory = ETFDirectory.getDirectoryOf(vanillaFeatureTexture);
@@ -410,7 +415,7 @@ public class ETFTexture {
     @NotNull
     public Identifier getTextureIdentifier(@Nullable LivingEntity entity, boolean forcePatchedTexture) {
 
-        if (isPatched() && (forcePatchedTexture || (ETFConfigData.enableEmissiveTextures && ETFVersionDifferenceHandler.areShadersInUse()))) {
+        if (isPatched() && (forcePatchedTexture || (ETFConfigData.enableEmissiveTextures && ETFVersionDifferenceHandler.areShadersInUse()) || MinecraftClient.getInstance().currentScreen instanceof ETFConfigScreen)) {
             //patched required
             currentTextureState = TextureReturnState.NORMAL_PATCHED;
             return getBlinkingIdentifier(entity);
@@ -439,11 +444,11 @@ public class ETFTexture {
             //do regular blinking
             if (entity.world != null) {
                 UUID id = entity.getUuid();
-                if (!ENTITY_BLINK_TIME.containsKey(id)) {
-                    ENTITY_BLINK_TIME.put(id, entity.world.getTime() + blinkLength + 1);
+                if (!ETFManager.getInstance().ENTITY_BLINK_TIME.containsKey(id)) {
+                    ETFManager.getInstance().ENTITY_BLINK_TIME.put(id, entity.world.getTime() + blinkLength + 1);
                     return identifierOfCurrentState();
                 }
-                long nextBlink = ENTITY_BLINK_TIME.getLong(id);
+                long nextBlink = ETFManager.getInstance().ENTITY_BLINK_TIME.getLong(id);
                 long currentTime = entity.world.getTime();
 
                 if (currentTime >= nextBlink - blinkLength && currentTime <= nextBlink + blinkLength) {
@@ -460,7 +465,7 @@ public class ETFTexture {
                     }
                 } else if (currentTime > nextBlink + blinkLength) {
                     //calculate new next blink
-                    ENTITY_BLINK_TIME.put(id, currentTime + entity.getRandom().nextInt(blinkFrequency) + 20);
+                    ETFManager.getInstance().ENTITY_BLINK_TIME.put(id, currentTime + entity.getRandom().nextInt(blinkFrequency) + 20);
                 }
             }
         }
@@ -523,7 +528,9 @@ public class ETFTexture {
 //                    return vertexConsumerProvider.getBuffer(RenderLayer.getItemEntityTranslucentCull(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString)));
 //                }
             Identifier emissiveToUse = getEmissiveIdentifierOfCurrentState();
+
             if (emissiveToUse != null) {
+
                 if (modeToUsePossiblyManuallyChosen == ETFManager.EmissiveRenderModes.BRIGHT) {
                     return vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(emissiveToUse, !ETFVersionDifferenceHandler.areShadersInUse()));
                 } else {
