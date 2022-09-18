@@ -31,7 +31,7 @@ public class ETFConfigScreenSkinToolOutcome extends ETFConfigScreen {
     private final boolean didSucceed;
 
     protected ETFConfigScreenSkinToolOutcome(Screen parent, boolean success) {
-        super(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".print_skin.result"), parent);
+        super(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.print_skin.result"), parent);
         didSucceed = success;
     }
 
@@ -80,7 +80,7 @@ public class ETFConfigScreenSkinToolOutcome extends ETFConfigScreen {
                 ScreenTexts.DONE,
                 (button) -> Objects.requireNonNull(client).setScreen(parent)));
         if (didSucceed) {
-            this.addDrawableChild(getETFButton((int) (this.width * 0.15), (int) (this.height * 0.7), (int) (this.width * 0.7), 20,
+            this.addDrawableChild(getETFButton((int) (this.width * 0.3), (int) (this.height * 0.6), (int) (this.width * 0.4), 20,
                     ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.print_skin.open"),
                     (button) -> {
                         try {
@@ -90,7 +90,7 @@ public class ETFConfigScreenSkinToolOutcome extends ETFConfigScreen {
                         } catch (Exception ignored) {
                         }
                     }));
-            this.addDrawableChild(getETFButton((int) (this.width * 0.15), (int) (this.height * 0.6), (int) (this.width * 0.7), 20,
+            this.addDrawableChild(getETFButton((int) (this.width * 0.15), (int) (this.height * 0.4), (int) (this.width * 0.7), 20,
                     ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.upload_skin"),
                     (button) -> {
                         boolean skinType = true;//true for steve false for alex
@@ -105,6 +105,7 @@ public class ETFConfigScreenSkinToolOutcome extends ETFConfigScreen {
                         }
                         button.setMessage(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.upload_skin." +
                                 (uploadSkin(skinType) ? "success" : "fail")));
+                        button.active = false;
                     }));
         }
     }

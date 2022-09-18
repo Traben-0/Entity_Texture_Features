@@ -13,6 +13,7 @@ import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.utils.ETFUtils2;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
@@ -63,7 +64,12 @@ public class ETFConfigScreenMain extends ETFConfigScreen {
             warningCount++;
             warningsFound.add(ETFConfigScreenWarnings.ConfigWarning.ENHANCED_BLOCK_ENTITIES);
         }
-
+        if (ETFVersionDifferenceHandler.isThisModLoaded(ETFConfigScreenWarnings.ConfigWarning.IRIS.getMod_id())) {
+            shownWarning = true;
+            warningCount++;
+            warningsFound.add(ETFConfigScreenWarnings.ConfigWarning.IRIS);
+        }
+        //warningsFound.addAll(Arrays.asList(ETFConfigScreenWarnings.ConfigWarning.values()));
         warningsScreen = new ETFConfigScreenWarnings(this, warningsFound);
     }
 
@@ -79,7 +85,7 @@ public class ETFConfigScreenMain extends ETFConfigScreen {
         }
 
         this.addDrawableChild(new ButtonWidget((int) (this.width * 0.7), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,
-                ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".save_and_exit"),
+                ETFVersionDifferenceHandler.getTextFromTranslation("gui.done"),
                 (button) -> {
                     ETFConfigData = temporaryETFConfig;
                     ETFUtils2.saveConfig();
@@ -88,8 +94,8 @@ public class ETFConfigScreenMain extends ETFConfigScreen {
                     ETFClientCommon.configHadLoadError=false;
                     Objects.requireNonNull(client).setScreen(parent);
                 }));
-        this.addDrawableChild(new ButtonWidget((int) (this.width * 0.4), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,
-                ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".reset_defaults"),
+        this.addDrawableChild(new ButtonWidget((int) (this.width * 0.4), (int) (this.height * 0.9), (int) (this.width * 0.22), 20,
+                ETFVersionDifferenceHandler.getTextFromTranslation("dataPack.validation.reset"),
                 (button) -> {
                     temporaryETFConfig = new ETFConfig();
                     this.clearAndInit();
@@ -103,11 +109,11 @@ public class ETFConfigScreenMain extends ETFConfigScreen {
                 }));
 
 
-        this.addDrawableChild(new ButtonWidget((int) (this.width * 0.3) + 75, (int) (this.height * 0.5) + 17, 140, 20,
+        this.addDrawableChild(new ButtonWidget((int) (this.width * 0.3) + 75, (int) (this.height * 0.5) + 17, 165, 20,
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".blinking_mob_settings_sub.title"),
                 (button) -> Objects.requireNonNull(client).setScreen(blinkSettingsScreen)));
 
-        this.addDrawableChild(new ButtonWidget((int) (this.width * 0.3) + 75, (int) (this.height * 0.5) - 10, 120, 20,
+        this.addDrawableChild(new ButtonWidget((int) (this.width * 0.3) + 75, (int) (this.height * 0.5) - 10, 165, 20,
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_settings.title"),
                 (button) -> Objects.requireNonNull(client).setScreen(playerSkinSettingsScreen)));
 
@@ -115,11 +121,11 @@ public class ETFConfigScreenMain extends ETFConfigScreen {
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".random_settings.title"),
                 (button) -> Objects.requireNonNull(client).setScreen(randomSettingsScreen)));
 
-        this.addDrawableChild(new ButtonWidget((int) (this.width * 0.3) + 75, (int) (this.height * 0.5) - 37, 145, 20,
+        this.addDrawableChild(new ButtonWidget((int) (this.width * 0.3) + 75, (int) (this.height * 0.5) - 37, 165, 20,
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".emissive_settings.title"),
                 (button) -> Objects.requireNonNull(client).setScreen(emissiveSettingsScreen)));
 
-        this.addDrawableChild(new ButtonWidget((int) (this.width * 0.3) + 75, (int) (this.height * 0.5) + 44, 120, 20,
+        this.addDrawableChild(new ButtonWidget((int) (this.width * 0.3) + 75, (int) (this.height * 0.5) + 44, 165, 20,
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".general_settings.title"),
                 (button) -> Objects.requireNonNull(client).setScreen(generalSettingsScreen)));
 
@@ -133,7 +139,7 @@ public class ETFConfigScreenMain extends ETFConfigScreen {
         if (shownWarning) {
             drawCenteredText(matrices, textRenderer,
                     Text.of(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".warnings_main").getString() + warningCount),
-                    (int) (width * 0.2), (int) (height * 0.1) - 9, 0xFF1111);
+                    (int) (width * 0.2), (int) (height * 0.1) - 9, 11546150);
         }
 
     }
