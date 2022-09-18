@@ -16,7 +16,7 @@ import java.util.Objects;
 @SuppressWarnings("AnonymousInnerClassMayBeStatic")
 public class ETFConfigScreenBlinkSettings extends ETFConfigScreen {
     protected ETFConfigScreenBlinkSettings(Screen parent) {
-        super(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".blinking_mob_settings_sub.title"), parent);
+        super(ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.blinking_mob_settings_sub.title"), parent);
 
     }
 
@@ -27,8 +27,8 @@ public class ETFConfigScreenBlinkSettings extends ETFConfigScreen {
         this.addDrawableChild(getETFButton((int) (this.width * 0.55), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,
                 ScreenTexts.BACK,
                 (button) -> Objects.requireNonNull(client).setScreen(parent)));
-        this.addDrawableChild(getETFButton((int) (this.width * 0.25), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,
-                ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".reset_defaults"),
+        this.addDrawableChild(getETFButton((int) (this.width * 0.25), (int) (this.height * 0.9), (int) (this.width * 0.22), 20,
+                ETFVersionDifferenceHandler.getTextFromTranslation("dataPack.validation.reset"),
                 (button) -> {
                     //temporaryETFConfig = new ETFConfig();
                     ETFConfigScreenMain.temporaryETFConfig.enableBlinking = true;
