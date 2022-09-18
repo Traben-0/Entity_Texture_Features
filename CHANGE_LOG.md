@@ -8,6 +8,7 @@
 - tweaked many button positions in the GUI for consistency
 - tweaked translations
 - russian translation updated for the 4.1.0 GUI thanks to @Felix14-v2
+- optimized texture sizes in jar thanks to @robotkoer
 - fixed parrots not being random or emissive on player shoulders
 
 [V4.1.0]
