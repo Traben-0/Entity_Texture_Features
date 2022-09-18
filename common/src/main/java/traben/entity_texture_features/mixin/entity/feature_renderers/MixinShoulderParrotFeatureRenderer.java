@@ -24,7 +24,9 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
+import traben.entity_texture_features.utils.ETFUtils2;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
@@ -43,7 +45,7 @@ public abstract class MixinShoulderParrotFeatureRenderer<T extends PlayerEntity>
         super(context);
     }
 
-    @Inject(method = "method_17958(Lnet/minecraft/client/util/math/MatrixStack;ZLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/nbt/NbtCompound;IFFFFLnet/minecraft/entity/EntityType;)V",
+    @Inject(method ="method_17958(Lnet/minecraft/client/util/math/MatrixStack;ZLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/nbt/NbtCompound;IFFFFLnet/minecraft/entity/EntityType;)V",
             at = @At(value = "HEAD"))
     private <M extends Entity> void etf$getNBT(MatrixStack matrixStack, boolean bl, PlayerEntity playerEntity, VertexConsumerProvider vertexConsumerProvider, NbtCompound nbtCompound, int i, float f, float g, float h, float j, EntityType<M> type, CallbackInfo ci) {
         parrotNBT = nbtCompound;
@@ -55,22 +57,29 @@ public abstract class MixinShoulderParrotFeatureRenderer<T extends PlayerEntity>
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/VertexConsumerProvider;getBuffer(Lnet/minecraft/client/render/RenderLayer;)Lnet/minecraft/client/render/VertexConsumer;"))
     private RenderLayer etf$alterTexture(RenderLayer layer) {
         if (parrotNBT != null) {
-            return RenderLayer.getEntityTranslucent(etf$returnAlteredIdentifier());
+            return RenderLayer.getEntityCutoutNoCull(etf$returnAlteredIdentifier());
         }
         //vanilla
         return layer;
     }
 
     private Identifier etf$returnAlteredIdentifier() {
-        ParrotEntity parrot = new ParrotEntity(EntityType.PARROT, player.world);
-        parrot.readCustomDataFromNbt(parrotNBT);
-        // uuid not manually read from above code
-        UUID id = parrotNBT.getUuid("UUID");
-        //System.out.println(id);
-        parrot.setUuid(id);
+        EntityType.getEntityFromNbt(parrotNBT,player.world);
+        Optional<Entity> optionalEntity = EntityType.getEntityFromNbt(parrotNBT,player.world);
+        if(optionalEntity.isPresent() && optionalEntity.get() instanceof ParrotEntity) {
+            ParrotEntity parrot = (ParrotEntity) optionalEntity.get(); //  new ParrotEntity(EntityType.PARROT, player.world);
+                    //parrot.readCustomDataFromNbt(parrotNBT);
+                    // uuid not manually read from above code
+            //UUID id = parrotNBT.getUuid("UUID");
+            //System.out.println(id);
+            //parrot.setUuid(id);
 
-        thisETFTexture = ETFManager.getInstance().getETFTexture(ParrotEntityRenderer.TEXTURES[parrotNBT.getInt("Variant")], parrot, ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs);
-        return thisETFTexture.getTextureIdentifier(parrot);
+            thisETFTexture = ETFManager.getInstance().getETFTexture(ParrotEntityRenderer.TEXTURES[parrot.getVariant()], parrot, ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs);
+            return thisETFTexture.getTextureIdentifier(parrot,true);
+        }else{
+            ETFUtils2.logError("shoulder parrot error");
+            return ParrotEntityRenderer.TEXTURES[parrotNBT.getInt("Variant")];
+        }
     }
 
     @Inject(method = "method_17958(Lnet/minecraft/client/util/math/MatrixStack;ZLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/nbt/NbtCompound;IFFFFLnet/minecraft/entity/EntityType;)V",

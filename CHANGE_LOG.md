@@ -1,5 +1,15 @@
 [**ETF Changelog:**]
 
+[V4.1.1]
+
+- added more screens to better separate button groups
+- added an option in gui to disable resource-pack screen button
+- tweaked the warning screen format
+- tweaked many button positions in the GUI for consistency
+- tweaked translations
+- russian translation updated for the 4.1.0 GUI thanks to @Felix14-v2
+- fixed parrots not being random or emissive on player shoulders
+
 [V4.1.0]
 
 *Update summary:*
