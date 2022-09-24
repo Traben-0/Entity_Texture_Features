@@ -2,15 +2,21 @@
 
 ## [4.1.1]
 
-- added more screens to better separate button groups
+- Added more screens to better separate button groups
 
-- added an option in gui to disable resource-pack screen button
-- tweaked the warning screen format
-- tweaked many button positions in the GUI for consistency
-- tweaked translations
-- russian translation updated for the 4.1.0 GUI thanks to @Felix14-v2
-- optimized texture sizes in jar thanks to @robotkoer
-- fixed parrots not being random or emissive on player shoulders
+- Added an option in gui to disable resource-pack screen button
+
+- Tweaked the warning screen format
+
+- Tweaked many button positions in the GUI for consistency
+
+- Tweaked translations
+
+- Russian translation updated for the 4.1.0 GUI thanks to @Felix14-v2
+
+- Optimized texture sizes in jar thanks to @robotkoer
+
+- Fixed parrots not being random or emissive on player shoulders
 
 ## [V4.1.0]
 
@@ -20,53 +26,53 @@ ETF 4.1 mostly brings the new skin feature tool, with a redesigned GUI to fit, a
 
 And of course many fixes, enjoy :)
 
-- redesigned the settings GUI, cloth config is no longer required on Forge (Openable from modmenu or a new button in the resource-pack screen)
+- Redesigned the settings GUI, cloth config is no longer required on Forge (Openable from modmenu or a new button in the resource-pack screen)
 
-- added a GUI for selecting player features and saving or uploading a player feature ready skin with all your choices (openable when in-game from the new settings GUI)
+- Added a GUI for selecting player features and saving or uploading a player feature ready skin with all your choices (openable when in-game from the new settings GUI)
 
-- added new mob texture properties: (Documentation Here.)
-    "speed" texture property to vary textures by their top speed (useful for horses, and all mobs)
-    "jumpStrength" texture property to vary textures by their jump strength (useful for horses)
-    "maxHealth" texture property to vary textures by their max health (useful for horses, and all mobs)
-    "llamaInventory" texture property to vary llama textures by their carry capacity
-    "hiddenGene" texture property to vary panda textures by their hidden gene
-    "playerCreated" texture property to vary iron golem textures by whether they were created by a player
-    "screamingGoat" texture property to vary goat textures by whether they are the screaming variant
-    "distanceFromPlayer" texture property to vary mob textures by their distance from the player
-    "creeperCharged" texture property to vary creeper textures by whether the creeper has been charged by lightning
-    "statusEffect" texture property to vary textures by status effect or Brown MooShroom suspicious stew variants
+- Added new mob texture properties: (Documentation Here.)
+    `speed` texture property to vary textures by their top speed (useful for horses, and all mobs)
+    `jumpStrength` texture property to vary textures by their jump strength (useful for horses)
+    `maxHealth` texture property to vary textures by their max health (useful for horses, and all mobs)
+    `llamaInventory` texture property to vary llama textures by their carry capacity
+    `hiddenGene` texture property to vary panda textures by their hidden gene
+    `playerCreated` texture property to vary iron golem textures by whether they were created by a player
+    `screamingGoat` texture property to vary goat textures by whether they are the screaming variant
+    `distanceFromPlayer` texture property to vary mob textures by their distance from the player
+    `creeperCharged` texture property to vary creeper textures by whether the creeper has been charged by lightning
+    `statusEffect` texture property to vary textures by status effect or Brown MooShroom suspicious stew variants
 
-- added more crash prevention, most features should simply not work, and log an error, instead of immediately crashing
+- Added more crash prevention, most features should simply not work, and log an error, instead of immediately crashing
 
-- added a new skin feature option "nose" available from the new skin tool GUI
+- Added a new skin feature option "nose" available from the new skin tool GUI
 
-- added an extra skin feature cape option (ETF) available from the new skin tool GUI
+- Added an extra skin feature cape option (ETF) available from the new skin tool GUI
 
-- added config option "hideConfigButton" to disable ETF config button in the resource-pack screen (only available in the config.json file)
+- Added config option "hideConfigButton" to disable ETF config button in the resource-pack screen (only available in the config.json file)
 
-- changed the iris pbr fix setting into the emissive fix settings screen with several options to reflect the more general fix possibilities (fixes for animation mods, iris PBR and a few others)
+- Changed the iris pbr fix setting into the emissive fix settings screen with several options to reflect the more general fix possibilities (fixes for animation mods, iris PBR and a few others)
 
-- updated russian translation thanks to @Felix14-v2
+- Updated russian translation thanks to @Felix14-v2
 
-- tweaked the debug printout
+- Tweaked the debug printout
 
-- fixed an ArrayIndexOutOfBoundsException crash related to caches
+- Fixed an `ArrayIndexOutOfBoundsException` crash related to caches
 
-- fixed an issue with additional textures (drowned_outer_layer & sheep_fur & more) not loading right when in the optifine or ETF folders
+- Fixed an issue with additional textures (`drowned_outer_layer`, `sheep_fur` & more) not loading right when in the OptiFine or ETF folders
 
-- fixed elytra_left.png not working and other asymmetrical elytra issues
+- Fixed `elytra_left.png` not working and other asymmetrical elytra issues
 
-- fixed forge using the /defaultconfigs/ folder instead of the /config/ folder
+- Fixed Forge using the `/defaultconfigs/` folder instead of the `/config/` folder
 
-- fixed vanilla capes (like migrator capes) not using emissive and enchanted data from skin features
+- Fixed vanilla capes not using emissive and enchanted data from skin features
 
-- fixed third party capes not loading correctly*(OptiFine and minecraftcapes.net)*
+- Fixed third party capes not loading correctly _(OptiFine and minecraftcapes.net)_
 
-- fixed color property being broken for light_blue/blue & light_gray/gray colors
+- Fixed color property being broken for `light_blue`/`blue` & `light_gray`/`gray` colors
 
-- fixed a crash when reading corrupt or broken config files
+- Fixed a crash when reading corrupt or broken config files
 
-- and many more minor tweaks and fixes :)
+- Many more minor tweaks and fixes :)
 
 ## [V4.0.2]
 - fixed ArrayIndexOutOfBoundsException crash
