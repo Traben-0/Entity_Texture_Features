@@ -33,7 +33,7 @@ Emissive textures can render in two different ways, set by the config. The two i
 <table>
 <tr>
 <td>
-<img src="emissiveDull.png" alt="Dull Emissives" width="450">
+<img src="dull-emissives.png" alt="Dull Emissives" width="450">
 </td>
 <td>
 
@@ -56,7 +56,7 @@ Block entities will always use this mode unless Iris is installed, due to render
 <table>
 <tr>
 <td>
-<img src="emissiveBright.png" alt="Bright Emissives" width="400">
+<img src="bright-emissives.png" alt="Bright Emissives" width="400">
 </td>
 <td>
 
@@ -77,7 +77,7 @@ They:
 
 <div align="center">
 
-<img src="format_example.png" alt="Format example" width="450">
+<img src="format-example.png" alt="Format example" width="450">
 
 </div>
 

@@ -39,7 +39,7 @@ This way, ETF achieves more OptiFine parity on the Fabric mod loader. If you wan
 
 <div align="center">
 
-<img src="README-assets/randoms.png" alt="Random / custo entities" width="450">
+<img src="README-assets/random-mobs.png" alt="Random / custom entities" width="450">
 
 </div>
 
@@ -77,9 +77,9 @@ This way, ETF achieves more OptiFine parity on the Fabric mod loader. If you wan
 <img src="README-assets/skins2.png" alt="Skin2" width="450"><br/>
 <img src="README-assets/skins3.png" alt="Skin3" width="450"><br/>
 <img src="README-assets/jacket.png" alt="Jacket" width="450"><br/>
-<img src="README-assets/villagerNose.png" alt="Vllager Nose" width="275">
-<img src="README-assets/customCape.png" alt="Custom Cape" width="180">
-<img src="README-assets/capeex.png" alt="Cape" width="228">
+<img src="README-assets/villager-nose.png" alt="Vllager Nose" width="275">
+<img src="README-assets/custom-cape.png" alt="Custom Cape" width="180">
+<img src="README-assets/cape-example.png" alt="Cape" width="228">
 
 </div>
 
