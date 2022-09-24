@@ -1,0 +1,156 @@
+<div align="center">
+
+<img src="https://raw.githubusercontent.com/Traben-0/Entity_Texture_Features/master/readMeAssets/icon.png" width="150">
+
+# Entity Texture Features
+
+[![CurseForge](https://cf.way2muchnoise.eu/full_568563_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/entity-texture-features-fabric) [![Modrinth](https://img.shields.io/badge/dynamic/json?color=158000&label=downloads&prefix=+%20&query=downloads&url=https://api.modrinth.com/api/v1/mod/BVzZfTc1&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMSAxMSIgd2lkdGg9IjE0LjY2NyIgaGVpZ2h0PSIxNC42NjciICB4bWxuczp2PSJodHRwczovL3ZlY3RhLmlvL25hbm8iPjxkZWZzPjxjbGlwUGF0aCBpZD0iQSI+PHBhdGggZD0iTTAgMGgxMXYxMUgweiIvPjwvY2xpcFBhdGg+PC9kZWZzPjxnIGNsaXAtcGF0aD0idXJsKCNBKSI+PHBhdGggZD0iTTEuMzA5IDcuODU3YTQuNjQgNC42NCAwIDAgMS0uNDYxLTEuMDYzSDBDLjU5MSA5LjIwNiAyLjc5NiAxMSA1LjQyMiAxMWMxLjk4MSAwIDMuNzIyLTEuMDIgNC43MTEtMi41NTZoMGwtLjc1LS4zNDVjLS44NTQgMS4yNjEtMi4zMSAyLjA5Mi0zLjk2MSAyLjA5MmE0Ljc4IDQuNzggMCAwIDEtMy4wMDUtMS4wNTVsMS44MDktMS40NzQuOTg0Ljg0NyAxLjkwNS0xLjAwM0w4LjE3NCA1LjgybC0uMzg0LS43ODYtMS4xMTYuNjM1LS41MTYuNjk0LS42MjYuMjM2LS44NzMtLjM4N2gwbC0uMjEzLS45MS4zNTUtLjU2Ljc4Ny0uMzcuODQ1LS45NTktLjcwMi0uNTEtMS44NzQuNzEzLTEuMzYyIDEuNjUxLjY0NSAxLjA5OC0xLjgzMSAxLjQ5MnptOS42MTQtMS40NEE1LjQ0IDUuNDQgMCAwIDAgMTEgNS41QzExIDIuNDY0IDguNTAxIDAgNS40MjIgMCAyLjc5NiAwIC41OTEgMS43OTQgMCA0LjIwNmguODQ4QzEuNDE5IDIuMjQ1IDMuMjUyLjgwOSA1LjQyMi44MDljMi42MjYgMCA0Ljc1OCAyLjEwMiA0Ljc1OCA0LjY5MSAwIC4xOS0uMDEyLjM3Ni0uMDM0LjU2bC43NzcuMzU3aDB6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGZpbGw9IiM1ZGE0MjYiLz48L2c+PC9zdmc+)](https://modrinth.com/mod/entitytexturefeatures)
+
+[![Mod Loader](https://img.shields.io/badge/Mod%20Loader-Fabric%20&%20Forge-lightyellow?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAAFHGlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDIgNzkuMTYwOTI0LCAyMDE3LzA3LzEzLTAxOjA2OjM5ICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgeG1sbnM6cGhvdG9zaG9wPSJodHRwOi8vbnMuYWRvYmUuY29tL3Bob3Rvc2hvcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ0MgMjAxOCAoV2luZG93cykiIHhtcDpDcmVhdGVEYXRlPSIyMDE4LTEyLTE2VDE2OjU0OjE3LTA4OjAwIiB4bXA6TW9kaWZ5RGF0ZT0iMjAxOS0wNy0yOFQyMToxNzo0OC0wNzowMCIgeG1wOk1ldGFkYXRhRGF0ZT0iMjAxOS0wNy0yOFQyMToxNzo0OC0wNzowMCIgZGM6Zm9ybWF0PSJpbWFnZS9wbmciIHBob3Rvc2hvcDpDb2xvck1vZGU9IjMiIHBob3Rvc2hvcDpJQ0NQcm9maWxlPSJzUkdCIElFQzYxOTY2LTIuMSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDowZWRiMWMyYy1mZjhjLWU0NDEtOTMxZi00OTVkNGYxNGM3NjAiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6MGVkYjFjMmMtZmY4Yy1lNDQxLTkzMWYtNDk1ZDRmMTRjNzYwIiB4bXBNTTpPcmlnaW5hbERvY3VtZW50SUQ9InhtcC5kaWQ6MGVkYjFjMmMtZmY4Yy1lNDQxLTkzMWYtNDk1ZDRmMTRjNzYwIj4gPHhtcE1NOkhpc3Rvcnk+IDxyZGY6U2VxPiA8cmRmOmxpIHN0RXZ0OmFjdGlvbj0iY3JlYXRlZCIgc3RFdnQ6aW5zdGFuY2VJRD0ieG1wLmlpZDowZWRiMWMyYy1mZjhjLWU0NDEtOTMxZi00OTVkNGYxNGM3NjAiIHN0RXZ0OndoZW49IjIwMTgtMTItMTZUMTY6NTQ6MTctMDg6MDAiIHN0RXZ0OnNvZnR3YXJlQWdlbnQ9IkFkb2JlIFBob3Rvc2hvcCBDQyAyMDE4IChXaW5kb3dzKSIvPiA8L3JkZjpTZXE+IDwveG1wTU06SGlzdG9yeT4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz4/HiGMAAAAtUlEQVRYw+XXrQqAMBQF4D2P2eBL+QIG8RnEJFaNBjEum+0+zMQLtwwv+wV3ZzhhMDgfJ0wUSinxZUQWgKos1JP/AbD4OneIDyQPwCFniA+EJ4CaXm4TxAXCC0BNHgLhAdAnx9hC8PwGSRtAFVMQjF7cNTWED8B1cgwW20yfJgAvrssAsZ1cB3g/xckAxr6FmCDU5N6f488BrpCQ4rQBJkiMYh4ACmLzwOQF0CExinkCsvw7vgGikl+OotaKRwAAAABJRU5ErkJggg==)](https://fabricmc.net)
+![Enviroment](https://img.shields.io/badge/Enviroment-Client-purple)
+[![Discord](https://img.shields.io/discord/950942125225283634?color=blue&logo=discord&label=Discord)](https://discord.com/invite/rURmwrzUcz)
+
+[![Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/traben)
+
+</div>
+
+## What does this mod do? 🤔
+
+This Fabric & Forge mod adds support for many  _Entity Texture Features :trollface:_, including entity-related texture features and player skin features!  
+This way, ETF provides more OptiFine parity on the Fabric mod loader. If you want more OptiFine features availiable on Fabric, you can either check [this list](https://lambdaurora.dev/optifine_alternatives), made by LambdaAurora, **or** you can use the [Fabulously Optimized modpack](https://modrinth.com/modpack/fabulously-optimized), which includes **all** the OptiFine parity mods!
+
+### Mod's features so far:
+
+- 🎲 Custom & random entity textures with the OptiFine format, including biome, name, height and even more properties!
+- 💡 Emissive/glowing entity textures with the OptiFine format
+- 😑️ Blinking mobs
+- 🎨 Player skin features & additions, including support for most of the above features
+
+## Compatibility
+
+- OptiFine's random / custom or emissive entity texture resource packs - ✅ **Fully compatable**
+- [Custom Entity Models mod](https://modrinth.com/mod/cem) - ✅ **Fully compatible**
+- [Sodium](https://modrinth.com/mod/sodium) - ✅ **Fully compatible**
+- [Iris Shaders](https://modrinth.com/mod/iris) - ✅ **Fully compatible** _(Support varies depending on the shader)_
+- Mod added entities - ✅ **Compatible** _(only if the mod creator used the vanilla rendering code to render their mobs)_
+
+## Wiki & guides
+
+### 🎲 Random / Custom entity textures - [OptiFine]
+
+<div align="center">
+
+<img src="README-assets/randoms.png" alt="Random / custo entities" width="450">
+
+</div>
+
+- For custom & random entity textures to work you can use a resource pack that supports the
+**OptiFine format** for custom / random textures. ETF supports all OptFine custom and random entities, including all biome, height, name, etc. properties, and even more added by ETF!
+
+<div align="center">
+
+#### [-> Random / custom entity textures guide <-](README-assets/RANDOM_GUIDE.md)
+
+</div>
+
+### 💡 Emissive entity textures - [OptiFine]
+
+<div align="center">
+
+<img src="README-assets/emissives.png" alt="Emissive entities" width="450">
+
+</div>
+
+- For emissive & random entity textures to work you can use a resource pack that supports the 
+**OptiFine format** and includes emissive entity textures. 
+
+<div align="center">
+
+#### [-> Emissive entity textures guide <-](README-assets/EMISSIVE_GUIDE.md)
+
+</div>
+
+### 🎨  Player skin features
+
+<div align="center">
+
+<img src="README-assets/skins1.png" alt="Skin1" width="450"><br/>
+<img src="README-assets/skins2.png" alt="Skin2" width="450"><br/>
+<img src="README-assets/skins3.png" alt="Skin3" width="450"><br/>
+<img src="README-assets/jacket.png" alt="Jacket" width="450"><br/>
+<img src="README-assets/villagerNose.png" alt="Vllager Nose" width="275">
+<img src="README-assets/customCape.png" alt="Custom Cape" width="180">
+<img src="README-assets/capeex.png" alt="Cape" width="228">
+
+</div>
+
+- Player skins can use emissive, blinking, enchanted, transparency texture features, as well as other cosmetics like capes, jackets, dress extensions...
+- They are 100% optional, controlled by the skin file you upload to Mojang, and options to prevent 
+abuse of features in PvP
+
+<div align="center">
+
+#### [-> Player skin features guide <-](README-assets/SKINS.md)
+
+</div>
+
+### 😑 Blinking textures
+
+<div align="center">
+
+<img src="README-assets/blink.png" alt="Blinking textures" width="450">
+
+</div>
+
+- Allows resource packs to add textures in order to make mobs blink over a customizable period of time.
+- Mobs will blink periodically if they have a texture named `TEXTURE_blink.png`
+- Optionally you can also use a texture named `TEXTURE_blink2.png` with the eyes half closed to achieve a smoother animation for large eyes
+- Random blinking frequency can be altered in settings
+- Sleeping mobs will have their eyes closed if possible
+- Mobs with the blindness potion effect will have either their eyes closed or half closed depending on what is available
+- Blinking _is_ supported on the player skin features
+- Resource packs can set specific blinking length and frequency per texture via properties files next to the blinking texture:
+<div align="center">
+
+<img src="README-assets/blinkProperties.png" alt="Blinking properties" width="280">
+
+</div>
+
+## Settings & configuration
+
+- Settings can be changed in-game using [Mod Menu](https://modrinth.com/mod/modmenu) or  by editing the config file, located under `config/entity_texture_features.json` 
+- A few of these options can also be changed via the [Puzzle mod](https://modrinth.com/mod/puzzle)
+
+<div align="center">
+
+<img src="README-assets/options.png" alt="Options" width="450">
+
+</div>
+
+## Mod support
+
+- This mod should be compatible with any mod added entities as long as they extend `LivingEntityRenderer` class for rendering and utilise it correctly
+- Any mod displaying an entity in a custom GUI can force the default texture by having the `entity.getblockstate` set to either `null` or of type `VOID_AIR`
+
+## FAQ
+
+> My entities are invisible/broken!
+
+- Custom Entity Models is not a feature provided by ETF. If your entities are invisible or look corrupted you'll need to instal the [CEM mod](https://modrinth.com/mod/cem) (this includes resource packs such as Fresh Animations). Keep in mind that the CEM mod is still in alpha development and may still occur issues.
+
+> Blocks and items are not emissive!
+
+- ETF does not support emissive block and item texture, for that you'll need to install [Continuity](https://modrinth.com/mod/continuity).
+
+> My game is lagging, help!
+
+- If you are experiencing lag please check your most recent log file to see if any errors are being logged, sometimes an incorrectly written properties file or missing textures may lag the system.
+
+> It doesn't work!
+
+- Check if any issues are not actually a problem in the properties file, a few packs seem to be pointing to a texture that doesn't exist.
+- So far all mob entities support random & emissive textures, but there may still be some quirks. If you find bugs you can either [report them in GitHub](https://github.com/Traben-0/Entity_Texture_Features/issues/new?assignees=Traben-0&labels=bug&template=bug_report.md&title=%5BBUG%5D+%22short+issue+description%22) or get support in the Discord server (linked on the top of the page).
+
+> Emissives are broken with Complimentary shaders, what do I do?
+
+- Complimentary shaders has its own in-built emissive textures that usually work fine but will conflict with some resource packs. You can either disable Complimentary's emissives or ETF's emissives to fix this.
