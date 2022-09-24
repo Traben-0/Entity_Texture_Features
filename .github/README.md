@@ -154,3 +154,7 @@ abuse of features in PvP
 > Emissives are broken with Complimentary shaders, what do I do?
 
 - Complimentary shaders has its own in-built emissive textures that usually work fine but will conflict with some resource packs. You can either disable Complimentary's emissives or ETF's emissives to fix this.
+
+## License
+
+This mod is under the [GNU Lesser General Public License v3.0](LICENSE)
