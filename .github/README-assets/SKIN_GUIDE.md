@@ -1,21 +1,16 @@
-<img src="title.png" alt="Entity Texture Features Title" width="650"/>
+# 🎨 Player skin features 
 
-___
+<div align="center">
 
-### [[Discord]](https://discord.gg/rURmwrzUcz) - [[CurseForge]](https://www.curseforge.com/minecraft/mc-mods/entity-texture-features-fabric) - [[Modrinth]](https://modrinth.com/mod/entitytexturefeatures) - [[Report Issues]](https://github.com/Traben-0/EmissiveMod/issues) - [[Donate]](https://ko-fi.com/traben)
+<img src="skins1.png" alt="img" width="450"> <img src="skins2.png" alt="img" width="450"><br />
+<img src="jacket.png" alt="img" width="450"><br />
+<img src="skins3.png" alt="img" width="450"><br />
+<img src="villager-nose.png" alt="img" width="225">
+<img src="custom-cape.png" alt="img" width="146">
+<img src="cape-example.png" alt="img" width="185">
 
-___
-
-# 🎨 Player skin features Guide 
-
-<img src="skins1.png" alt="img" width="450"/><br>
-<img src="skins2.png" alt="img" width="450"/><br>
-<img src="skins3.png" alt="img" width="450"/><br>
-<img src="jacket.png" alt="img" width="450"/><br>
-<img src="villagerNose.png" alt="img" width="225"/>
-<img src="customCape.png" alt="img" width="146"/>
-<img src="capeex.png" alt="img" width="185"/>
-
+ </div>
+ 
 - Player skins can use emissive, blinking, enchanted, and transparency texture features and more...
 - 100% optional, controlled by the skin file you upload to Mojang, and options to prevent abuse of features in PVP
 
