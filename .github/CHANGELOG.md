@@ -20,39 +20,45 @@
 
 ## [V4.1.0]
 
-Update summary:
-
-ETF 4.1 mostly brings the new skin feature tool, with a redesigned GUI to fit, as well as several new texture properties to further customize your mob textures beyond what OptiFine offers
-
-And of course many fixes, enjoy :)
+ETF 4.1 brings the new skin feature tool, a redesigned GUI as well as several new texture properties for further customization on your mob textures, beyond what OptiFine offers! Enjoy:
 
 - Redesigned the settings GUI, cloth config is no longer required on Forge (Openable from modmenu or a new button in the resource-pack screen)
 
 - Added a GUI for selecting player features and saving or uploading a player feature ready skin with all your choices (openable when in-game from the new settings GUI)
 
-- Added new mob texture properties: (Documentation Here.)
-    `speed` texture property to vary textures by their top speed (useful for horses, and all mobs)
-    `jumpStrength` texture property to vary textures by their jump strength (useful for horses)
-    `maxHealth` texture property to vary textures by their max health (useful for horses, and all mobs)
-    `llamaInventory` texture property to vary llama textures by their carry capacity
-    `hiddenGene` texture property to vary panda textures by their hidden gene
-    `playerCreated` texture property to vary iron golem textures by whether they were created by a player
-    `screamingGoat` texture property to vary goat textures by whether they are the screaming variant
-    `distanceFromPlayer` texture property to vary mob textures by their distance from the player
-    `creeperCharged` texture property to vary creeper textures by whether the creeper has been charged by lightning
-    `statusEffect` texture property to vary textures by status effect or Brown MooShroom suspicious stew variants
+- Added new mob texture properties: ([Documentation]())
+
+    - `speed` texture property to vary textures by their top speed
+    
+    - `jumpStrength` texture property to vary textures by their jump strength
+    
+    - `maxHealth` texture property to vary textures by their max health
+    
+    - `llamaInventory` texture property to vary llama textures by their carry capacity
+    
+    - `hiddenGene` texture property to vary panda textures by their hidden gene
+    
+    - `playerCreated` texture property to vary iron golem textures on whether they were created by a player
+    
+    - `screamingGoat` texture property to vary goat textures by whether they are the screaming
+    
+    - `distanceFromPlayer` texture property to vary mob textures by their distance from the player
+    
+    - `creeperCharged` texture property to vary creeper textures by whether the creeper has been charged by lightning
+    
+    - `statusEffect` texture property to vary textures by status effect or Brown Mooshroom suspicious stew variants
 
 - Added more crash prevention, most features should simply not work, and log an error, instead of immediately crashing
 
-- Added a new skin feature option "nose" available from the new skin tool GUI
+- Added a new skin feature option`"nose` available from the new skin tool GUI
 
 - Added an extra skin feature cape option (ETF) available from the new skin tool GUI
 
-- Added config option "hideConfigButton" to disable ETF config button in the resource-pack screen (only available in the config.json file)
+- Added config option `hideConfigButton` to disable ETF config button in the resource-pack screen (only available in the config.json file)
 
-- Changed the iris pbr fix setting into the emissive fix settings screen with several options to reflect the more general fix possibilities (fixes for animation mods, iris PBR and a few others)
+- Changed the Iris PBR fix setting into the emissive fix settings screen with several options to reflect the more general fix possibilities (fixes for animation mods, Iris PBR and a few others)
 
-- Updated russian translation thanks to @Felix14-v2
+- Updated Russian translation thanks to @Felix14-v2
 
 - Tweaked the debug printout
 
@@ -75,18 +81,22 @@ And of course many fixes, enjoy :)
 - Many more minor tweaks and fixes :)
 
 ## [V4.0.2]
-- fixed ArrayIndexOutOfBoundsException crash
-- fixed excessive lag with shields and tridents in the rewrite
-- added russian translation thanks to @Felix14-v2
-- added more translation support where it was missing
+
+- Fixed `ArrayIndexOutOfBoundsException` crash
+
+- Fixed excessive lag with shields and tridents in the rewrite
+
+- Added Russian translation thanks to @Felix14-v2
+
+- Added more translation support where it was missing
 
 ## [V4.0.1]
-- fixed cape mod compatibility
-- added quark compatibility warning that disables incompatible features
+
+- Fixed cape mod compatibility
+
+- Added Quark compatibility warning that disables incompatible features
 
 ## [V4.0]
-
-*changes since last stable release*
 
 ETF's source code has been almost entirely rewritten with a focus on optimization.
 
