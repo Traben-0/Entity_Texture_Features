@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/Traben-0/Entity_Texture_Features/master/readMeAssets/icon.png" width="150">
+<img src="README-assets/icon.png" width="150">
 
 # Entity Texture Features
 
@@ -13,12 +13,12 @@
 
 </div>
 
-## What does this mod do? 🤔
+## 🤔 What does this mod do?
 
 ETF is a Fabric (Quilt compatible) & Forge mod providing support for many  _Entity Texture Features_ :trollface:, including entity-related texture features and player skin features!  
 This way, ETF achieves more OptiFine parity on the Fabric mod loader. If you want more OptiFine features on Fabric, you can either check [this list](https://lambdaurora.dev/optifine_alternatives), made by LambdaAurora, **or** you can use the [Fabulously Optimized modpack](https://modrinth.com/modpack/fabulously-optimized), which includes **all** the OptiFine parity mods!
 
-### Mod's features so far:
+### Featuring:
 
 - 🎲 Custom & random entity textures with the OptiFine format, including biome, name, height and even more properties!
 - 💡 Emissive/glowing entity textures with the OptiFine format
@@ -27,15 +27,16 @@ This way, ETF achieves more OptiFine parity on the Fabric mod loader. If you wan
 
 ## Compatibility
 
-- OptiFine's random / custom or emissive entity texture resource packs - ✅ **Fully compatable**
+- OptiFine's random/custom or emissive entity resource packs - ✅ **Fully compatable**
 - [Custom Entity Models mod](https://modrinth.com/mod/cem) - ✅ **Fully compatible**
 - [Sodium](https://modrinth.com/mod/sodium) - ✅ **Fully compatible**
 - [Iris Shaders](https://modrinth.com/mod/iris) - ✅ **Fully compatible** _(Support varies depending on the shader)_
-- Mod added entities - ✅ **Compatible** _(only if the mod creator used the vanilla rendering code to render their mobs)_
+- Mod added entities - ✅ **Compatible** _(Only if the mod creator used the vanilla rendering code to render their mobs)_
 
-## Wiki & guides
-
-### 🎲 Random / Custom entity textures - [OptiFine]
+<div align="center">
+<details><summary><h2>Wiki & guides</h2></summary>
+  
+## 🎲 Random / Custom entities
 
 <div align="center">
 
@@ -43,8 +44,7 @@ This way, ETF achieves more OptiFine parity on the Fabric mod loader. If you wan
 
 </div>
 
-- For custom & random entity textures to work you can use a resource pack that supports the
-**OptiFine format** for custom / random textures. ETF supports all OptFine custom and random entities, including all biome, height, name, etc. properties, and even more added by ETF!
+- For custom & random entity textures you can use a resource pack that supports the **OptiFine format**. ETF supports all OptFine custom and random entities, including all the properties and even more added by ETF!
 
 <div align="center">
 
@@ -52,7 +52,7 @@ This way, ETF achieves more OptiFine parity on the Fabric mod loader. If you wan
 
 </div>
 
-### 💡 Emissive entity textures - [OptiFine]
+## 💡 Emissive entities
 
 <div align="center">
 
@@ -60,18 +60,11 @@ This way, ETF achieves more OptiFine parity on the Fabric mod loader. If you wan
 
 </div>
 
-- For emissive & random entity textures to work you can use a resource pack that supports the 
-**OptiFine format** and includes emissive entity textures. 
-
-<div align="center">
+- For emissive & random entity textures you can use a resource pack that supports the **OptiFine format** and includes emissive entity textures. 
 
 #### [-> Emissive entity textures guide <-](README-assets/EMISSIVE_GUIDE.md)
 
-</div>
-
-### 🎨  Player skin features
-
-<div align="center">
+## 🎨  Player skin features
 
 <img src="README-assets/skins1.png" alt="Skin1" width="450"><br/>
 <img src="README-assets/skins2.png" alt="Skin2" width="450"><br/>
@@ -81,25 +74,20 @@ This way, ETF achieves more OptiFine parity on the Fabric mod loader. If you wan
 <img src="README-assets/custom-cape.png" alt="Custom Cape" width="180">
 <img src="README-assets/cape-example.png" alt="Cape" width="228">
 
+<div align="left">
+
+- Player skins can use emissive, blinking, enchanted, transparency texture features, as well as other cosmetics like capes, jackets, dress extensions and more
+- They are 100% optional, controlled by the skin file you upload to Mojang and options to prevent abuse of features in PvP
+
 </div>
-
-- Player skins can use emissive, blinking, enchanted, transparency texture features, as well as other cosmetics like capes, jackets, dress extensions...
-- They are 100% optional, controlled by the skin file you upload to Mojang, and options to prevent 
-abuse of features in PvP
-
-<div align="center">
-
+  
 #### [-> Player skin features guide <-](README-assets/SKINS.md)
 
-</div>
-
-### 😑 Blinking textures
-
-<div align="center">
+## 😑 Blinking textures
 
 <img src="README-assets/blink.png" alt="Blinking textures" width="450">
 
-</div>
+<div align="left">
 
 - Allows resource packs to add textures in order to make mobs blink over a customizable period of time.
 - Mobs will blink periodically if they have a texture named `TEXTURE_blink.png`
@@ -109,9 +97,12 @@ abuse of features in PvP
 - Mobs with the blindness potion effect will have either their eyes closed or half closed depending on what is available
 - Blinking _is_ supported on the player skin features
 - Resource packs can set specific blinking length and frequency per texture via properties files next to the blinking texture:
-<div align="center">
 
-<img src="README-assets/blinkProperties.png" alt="Blinking properties" width="280">
+</div>
+
+<img src="README-assets/blink-properties.png" alt="Blinking properties" width="280">
+
+</details>
 
 </div>
 
