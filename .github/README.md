@@ -35,36 +35,44 @@ This way, ETF achieves more OptiFine parity on the Fabric mod loader. If you wan
 
 <div align="center">
 <details><summary><h2>Wiki & guides</h2></summary>
-  
+
+<div align="left">
+
 ## 🎲 Random / Custom entities
 
-<div align="center">
+</div>
 
 <img src="README-assets/random-mobs.png" alt="Random / custom entities" width="450">
 
-</div>
+<div align="left">
 
 - For custom & random entity textures you can use a resource pack that supports the **OptiFine format**. ETF supports all OptFine custom and random entities, including all the properties and even more added by ETF!
 
-<div align="center">
+</div>
 
 #### [-> Random / custom entity textures guide <-](README-assets/RANDOM_GUIDE.md)
 
-</div>
+<div align="left">
 
 ## 💡 Emissive entities
 
-<div align="center">
+</div>
 
 <img src="README-assets/emissives.png" alt="Emissive entities" width="450">
 
-</div>
+<div align="left">
 
 - For emissive & random entity textures you can use a resource pack that supports the **OptiFine format** and includes emissive entity textures. 
 
+</div>
+
 #### [-> Emissive entity textures guide <-](README-assets/EMISSIVE_GUIDE.md)
 
+<div align="left">
+
 ## 🎨  Player skin features
+
+</div>
 
 <img src="README-assets/skins1.png" alt="Skin1" width="450"><br/>
 <img src="README-assets/skins2.png" alt="Skin2" width="450"><br/>
@@ -83,7 +91,11 @@ This way, ETF achieves more OptiFine parity on the Fabric mod loader. If you wan
   
 #### [-> Player skin features guide <-](README-assets/SKINS.md)
 
+<div align="left">
+
 ## 😑 Blinking textures
+
+</div>
 
 <img src="README-assets/blink.png" alt="Blinking textures" width="450">
 
