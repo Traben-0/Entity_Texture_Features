@@ -9,7 +9,7 @@
 ## OptiFine compatability
 
 - ETF supports all OptiFine random entity texture properties including `biome`, `name`, `height` etc.
-- The documentation is availiable in the [random_entities.properties](random_entities.properties) example file.
+- The documentation is availiable in the [`random_entities.properties`](random_entities.properties) example file.
 - ETF also adds a few extra features that OptiFine does not have. For instance, ETF includes many texture properties that OptiFine doesn't have, random entity files can be placed under `/assets/minecraft/textures/entity` or and in ETF directory, `/assets/etf/random/` directory as well as OptiFine's directories.
 
 ## Guide:
@@ -26,8 +26,8 @@ If `1.png` does not exist then calling `1` in the properties will use the vanill
 <br />(The vanilla texture can also be manually called by using number `0`)
 
 - A `TextureName.properties` file can be placed alongside these random textures to determine special cases for different random textures to be selected.
-<br />This properties file must support the [ETF/OptiFine format](random_entities.properties) and if one isn't present,
-the game will instead pick randomly from the available random textures present. When picked randomly, the random textures must contain numbers in sequence from `2` -> however many there are and if there are any gaps, then textures after the gap will be ignored
+This properties file must support the [ETF/OptiFine format](random_entities.properties) and if one isn't present,
+the game will instead pick randomly from the available random textures present. When picked randomly, the random textures must contain numbers in sequence from `2` -> however many there are. If there are any gaps, then textures after the gap will be ignored
 
 - The properties file functions exactly like OptiFine and if a specific entity does not match any of the conditions in the properties file it will default to the vanilla texture.
 
