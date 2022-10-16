@@ -1,4 +1,4 @@
-# 💡 Emissive textures guide
+# 💡 Emissive textures
 
 <div align="center">
 
@@ -10,7 +10,7 @@
 
 - ETF supports all OptiFine emissive texture resource packs
 - A custom emissive texture suffix may be set just like OptiFine but with a few optional changes, see the [emissive.properties](emissive.properties) example.
-- Please try and use only the default emissive suffix `_e` it makes things easier for everyone :)
+- Please try and use only the default emissive suffix `_e`, it makes things easier for everyone :)
 
 ## Guide
 
@@ -72,7 +72,6 @@ They:
 </tr>
 </table>
 
-
 ## Examples
 
 <div align="center">
@@ -82,4 +81,4 @@ They:
 </div>
 
 - The example image above shows red glowing eyes for the texture `zombie3.png`
-- Emissives are applied after randomised textures and they must contain the same number system as the random files they apply too.<br/>For example, `zombie_e.png` will not apply to `zombie3.png`, but `zombie3_e.png` will
+- Emissives are applied after randomised textures and they must contain the same number system as the random files they apply too.<br/>For example, `zombie_e.png` will not apply to `zombie3.png`, but `zombie3_e.png` will.
