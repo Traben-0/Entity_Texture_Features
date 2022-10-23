@@ -1,116 +1,104 @@
-# ETF Changelog:
+[**ETF Changelog:**]
 
-## [4.1.1]
+[V4.1.1]
 
-- Added more screens to better separate button groups
+- added more screens to better separate button groups
+- added an option in gui to disable resource-pack screen button
+- tweaked the warning screen format
+- tweaked many button positions in the GUI for consistency
+- tweaked translations
+- russian translation updated for the 4.1.0 GUI thanks to @Felix14-v2
+- optimized texture sizes in jar thanks to @robotkoer
+- fixed parrots not being random or emissive on player shoulders
 
-- Added an option in gui to disable resource-pack screen button
+[V4.1.0]
 
-- Tweaked the warning screen format
+*Update summary:*
 
-- Tweaked many button positions in the GUI for consistency
+ETF 4.1 mostly brings the new skin feature tool, with a redesigned GUI to fit, as well as several
+new texture properties to further customize your mob textures beyond what OptiFine offers
 
-- Tweaked translations
+And of course many fixes, enjoy :)
 
-- Russian translation updated for the 4.1.0 GUI thanks to @Felix14-v2
 
-- Optimized texture sizes in jar thanks to @robotkoer
+- redesigned the settings GUI, cloth config is no longer required on Forge *(Openable from modmenu or a new button in the resource-pack screen)*
+- added a GUI for selecting player features and saving or uploading a player feature ready skin with all your choices *(openable when in-game from the new settings GUI)*
+- added new mob texture properties: *([Documentation Here.](readMeAssets/random_entities.properties))*
+  1. "speed" texture property to vary textures by their top speed *(useful for horses, and all mobs)*
+  2. "jumpStrength" texture property to vary textures by their jump strength *(useful for horses)*
+  3. "maxHealth" texture property to vary textures by their max health *(useful for horses, and all mobs)*
+  4. "llamaInventory" texture property to vary llama textures by their carry capacity 
+  5. "hiddenGene" texture property to vary panda textures by their hidden gene
+  6. "playerCreated" texture property to vary iron golem textures by whether they were created by a player
+  7. "screamingGoat" texture property to vary goat textures by whether they are the screaming variant
+  8. "distanceFromPlayer" texture property to vary mob textures by their distance from the player
+  9. "creeperCharged" texture property to vary creeper textures by whether the creeper has been charged by lightning
+  10. "statusEffect" texture property to vary textures by status effect or Brown MooShroom suspicious stew variants 
+- added more crash prevention, most features should simply not work, and log an error, instead of immediately crashing
+- added a new skin feature option "nose" available from the new skin tool GUI
+- added an extra skin feature cape option (ETF) available from the new skin tool GUI
+- added config option "hideConfigButton" to disable ETF config button in the resource-pack screen *(only available in the config.json file)*
 
-- Fixed parrots not being random or emissive on player shoulders
 
-## [V4.1.0]
+- changed the iris pbr fix setting into the emissive fix settings screen with several options to reflect the more general fix
+  possibilities *(fixes for animation mods, iris PBR and a few others)*
+- updated russian translation thanks to @Felix14-v2
+- tweaked the debug printout
 
-ETF 4.1 brings the new skin feature tool, a redesigned GUI as well as several new texture properties for further customization on your mob textures, beyond what OptiFine offers! Enjoy:
 
-- Redesigned the settings GUI, cloth config is no longer required on Forge (Openable from modmenu or a new button in the resource-pack screen)
+- fixed an ArrayIndexOutOfBoundsException crash related to caches
+- fixed an issue with additional textures *(drowned_outer_layer & sheep_fur & more)* not loading right when in the
+  optifine or ETF folders
+- fixed elytra_left.png not working and other asymmetrical elytra issues
+- fixed forge using the */defaultconfigs/* folder instead of the */config/* folder
+- fixed vanilla capes *(like migrator capes)* not using emissive and enchanted data from skin features
+- fixed third party capes not loading correctly*(OptiFine and minecraftcapes.net)*
+- fixed color property being broken for light_blue/blue & light_gray/gray colors
+- fixed a crash when reading corrupt or broken config files
 
-- Added a GUI for selecting player features and saving or uploading a player feature ready skin with all your choices (openable when in-game from the new settings GUI)
 
-- Added new mob texture properties: ([Documentation]())
+- and many more minor tweaks and fixes :)
 
-    - `speed` texture property to vary textures by their top speed
-    
-    - `jumpStrength` texture property to vary textures by their jump strength
-    
-    - `maxHealth` texture property to vary textures by their max health
-    
-    - `llamaInventory` texture property to vary llama textures by their carry capacity
-    
-    - `hiddenGene` texture property to vary panda textures by their hidden gene
-    
-    - `playerCreated` texture property to vary iron golem textures on whether they were created by a player
-    
-    - `screamingGoat` texture property to vary goat textures by whether they are the screaming
-    
-    - `distanceFromPlayer` texture property to vary mob textures by their distance from the player
-    
-    - `creeperCharged` texture property to vary creeper textures by whether the creeper has been charged by lightning
-    
-    - `statusEffect` texture property to vary textures by status effect or Brown Mooshroom suspicious stew variants
 
-- Added more crash prevention, most features should simply not work, and log an error, instead of immediately crashing
+[V4.0.2]
 
-- Added a new skin feature option`"nose` available from the new skin tool GUI
+- fixed ArrayIndexOutOfBoundsException crash
+- fixed excessive lag with shields and tridents in the rewrite
+- added russian translation thanks to @Felix14-v2
+- added more translation support where it was missing
 
-- Added an extra skin feature cape option (ETF) available from the new skin tool GUI
+[V4.0.1]
 
-- Added config option `hideConfigButton` to disable ETF config button in the resource-pack screen (only available in the config.json file)
+- fixed cape mod compatibility
+- added quark compatibility warning that disables incompatible features
 
-- Changed the Iris PBR fix setting into the emissive fix settings screen with several options to reflect the more general fix possibilities (fixes for animation mods, Iris PBR and a few others)
+[V4.0]
 
-- Updated Russian translation thanks to @Felix14-v2
-
-- Tweaked the debug printout
-
-- Fixed an `ArrayIndexOutOfBoundsException` crash related to caches
-
-- Fixed an issue with additional textures (`drowned_outer_layer`, `sheep_fur` & more) not loading right when in the OptiFine or ETF folders
-
-- Fixed `elytra_left.png` not working and other asymmetrical elytra issues
-
-- Fixed Forge using the `/defaultconfigs/` folder instead of the `/config/` folder
-
-- Fixed vanilla capes not using emissive and enchanted data from skin features
-
-- Fixed third party capes not loading correctly _(OptiFine and minecraftcapes.net)_
-
-- Fixed color property being broken for `light_blue`/`blue` & `light_gray`/`gray` colors
-
-- Fixed a crash when reading corrupt or broken config files
-
-- Many more minor tweaks and fixes :)
-
-## [V4.0.2]
-
-- Fixed `ArrayIndexOutOfBoundsException` crash
-
-- Fixed excessive lag with shields and tridents in the rewrite
-
-- Added Russian translation thanks to @Felix14-v2
-
-- Added more translation support where it was missing
-
-## [V4.0.1]
-
-- Fixed cape mod compatibility
-
-- Added Quark compatibility warning that disables incompatible features
-
-## [V4.0]
+*changes since last stable release*
 
 ETF's source code has been almost entirely rewritten with a focus on optimization.
 
-Some scenarios exhibit up to 11 times less processing time usage, and in general the mod is much more stable and efficient
+Some scenarios exhibit up to 11 times less processing time usage, and in general the mod is much more stable and
+efficient
 
-The source code has also been ported to a single codebase for forge and fabric using architechtury to streamline same time updating of both. 
+The source code has also been ported to a single codebase for forge and fabric using architechtury to streamline same
+time updating of both.
 
 Groundwork has been laid to more easily backport the mod to 1.16, 1.17 & 1.18 these will come later
 
-- added legacy optifine biome name support e.g. "ForestHills" *(it is only mapped to current best fit, it is up to RP creators to keep their things updated)*
-- added option to disable ETF texture patching to allow iris PBR to function *(this implementation may or may not be final)* *(expect possible z-fighting with etf emissive textures when using certain shaders)*
-- added: additional mob textures like "sheep_fur.png" can now optionally utilize a "sheep_fur.properties" file to have settings different to the 'base' texture, if this properties file is not present ETF will try and use the same variant number as the 'base' texture the mob is using, failing all of these it will default to the regular vanilla texture for this variant
-- added: config option "advanced_IncreaseCacheSizeModifier" which will only show in the config file, this should only be increased in the event of an extremely modded instance having over 2000 entities loaded on the client (the amount ETF now keeps track of at any given time), to prevent them being removed from ETF's memory.
-- added: option to have a different texture on the left elytra wing using *"elytra_left.png"* *(compatible with CITResewn)*
+- added legacy optifine biome name support e.g. "ForestHills" *(it is only mapped to current best fit, it is up to RP
+  creators to keep their things updated)*
+- added option to disable ETF texture patching to allow iris PBR to function *(this implementation may or may not be
+  final)* *(expect possible z-fighting with etf emissive textures when using certain shaders)*
+- added: additional mob textures like "sheep_fur.png" can now optionally utilize a "sheep_fur.properties" file to have
+  settings different to the 'base' texture, if this properties file is not present ETF will try and use the same variant
+  number as the 'base' texture the mob is using, failing all of these it will default to the regular vanilla texture for
+  this variant
+- added: config option "advanced_IncreaseCacheSizeModifier" which will only show in the config file, this should only be
+  increased in the event of an extremely modded instance having over 2000 entities loaded on the client (the amount ETF
+  now keeps track of at any given time), to prevent them being removed from ETF's memory.
+- added: option to have a different texture on the left elytra wing using *"elytra_left.png"* *(compatible with
+  CITResewn)*
 
 - fixed blocks property not also checking the block spawned inside correctly
 - fixed: issue with capes, and other skin features, having incorrect enchanted pixels
@@ -123,58 +111,69 @@ Groundwork has been laid to more easily backport the mod to 1.16, 1.17 & 1.18 th
 - fixed: shulker box emissive bright mode bug
 - fixed: elytra emissive bright mode bug
 
-- changed: custom potion effects have been removed as due to limits of client/server data transparency there is no reliable way to have it update during-game *(potion info is **only** sent to clients in the mobs first seen/spawn packet :/ )*
-- changed: textures with property files that do not read correctly and cause problems will now fall back to the vanilla texture instead of randomly picking and causing confusion
-- changed: block entity features will not render if the texture is animated as it is not supported *(no need to change settings)*
+- changed: custom potion effects have been removed as due to limits of client/server data transparency there is no
+  reliable way to have it update during-game *(potion info is **only** sent to clients in the mobs first seen/spawn
+  packet :/ )*
+- changed: textures with property files that do not read correctly and cause problems will now fall back to the vanilla
+  texture instead of randomly picking and causing confusion
+- changed: block entity features will not render if the texture is animated as it is not supported *(no need to change
+  settings)*
 
-- broke: puzzle support will be broken for a short period after release until I PR a fix to the dev
+[V3.1.4]
 
-## [V3.1.4]
-- fixed a logic mistake causing high lag when additional mob textures *(like sheep_fur.png)* did not have the same or higher number of variations as the base texture
-- the Blocks property now also check the block the mob spawned inside *(allowing things like water, cave_air, flowers, torches, etc. to be used, and also fixes issues with soul-sand and mud not reading correctly)*
-- added an option to enable / disable block entity emissive and custom textures as they currently do not support vanilla animated textures and may want to be disabled by such users
+- fixed a logic mistake causing high lag when additional mob textures *(like sheep_fur.png)* did not have the same or
+  higher number of variations as the base texture
+- the blocks property now also check the block the mob spawned inside *(allowing things like water, cave_air, flowers,
+  torches, etc. to be used, and also fixes issues with soul-sand and mud not reading correctly)*
+- added an option to enable / disable block entity emissive and custom textures as they currently do not support vanilla
+  animated textures and may want to be disabled by such users
 - added some missed translation support *(Still only english atm :/)*
 
-## [V3.1.3]
-- sheep wool support added *(wool doesn't apply dye color to the emissive texture, use custom texture colour properties to set an altered coloured texture instead if required. A sheep using sheep2.png will try and use the equivalent wool2.png and will use the default otherwise )*
+[V3.1.3]
+
+- sheep wool support added *(wool doesn't apply dye color to the emissive texture, use custom texture colour properties
+  to set an altered coloured texture instead if required. A sheep using sheep2.png will try and use the equivalent
+  wool2.png and will use the default otherwise )*
 - fixed a crash due to an incorrect texture path for custom capes skin feature
-- tweaked property file loading to be more consistent with resource-pack order *(using folders like "etf/random" & the vanilla locations will no longer accidentally override or be overridden by packs out of order)*
-- iron golem cracking texture support added *(an iron_golem using texture2.png will try and use "crack_texture2.png" and will use the default if it doesn't exist*
+- tweaked property file loading to be more consistent with resource-pack order *(using folders like "etf/random" & the
+  vanilla locations will no longer accidentally override or be overridden by packs out of order)*
+- iron golem cracking texture support added *(an iron_golem using texture2.png will try and use "crack_texture2.png" and
+  will use the default if it doesn't exist)*
 
-
-## [V3.1.2]
+[V3.1.2]
 
 - fixed a crash related to player skins that could occur when leaving a server
 
-## [V3.1.1]
+[V3.1.1]
 
 - fixed other Mod integrations for 1.19 *(Mod menu, iris, etc)*
 - elytra size fix now set disabled by default
 
-## [V3.1.0]
+[V3.1.0]
 
-- updated to 1.19 *(for now 1.18.2 will remain supported with feature updates, but 1.18.1 & 1.18.0 will no longer be supported moving forwards, due to very annoying workarounds required)*
+- updated to 1.19 *(for now 1.18.2 will remain supported with feature updates, but 1.18.1 & 1.18.0 will no longer be
+  supported moving forwards, due to very annoying workarounds required)*
 - support added for the wardens many texture layers
 
-## [V3.0.4]
+[V3.0.4]
 
 - chest & shulker custom texture caching is more consistent
 - texture cache data now also resets on game disconnect
 
-## [V3.0.3]
+[V3.0.3]
 
 - fixed names property not working with chests (they will still not function on servers unless a mod is used to send
   blockEntity name data to clients)
 
-## [V3.0.2]
+[V3.0.2]
 
 - fixed certain blocks not reading correctly for the Blocks texture property
 
-## [V3.0.1]
+[V3.0.1]
 
 - fixed emissive armour & works with CIT Resewn
 
-## [V3.0.0]
+[V3.0.0]
 
 Changed:
 
@@ -187,6 +186,7 @@ Changed:
   john smith"})
 
 Added:
+
 - Optifine parity: Size & Color texture properties
 - Ender Dragon random / custom and emissive texture support
 - drowned outer layers support random and emissive textures using the vanilla format
@@ -207,6 +207,7 @@ Added:
 - translation support
 
 Fixed:
+
 - memory leak / usage issue in V2.6.0 - was related to entity glowing eyes code
 - litematica compatibility
 - blocks property not working for certain blocks with extra data
