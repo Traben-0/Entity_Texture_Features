@@ -16,7 +16,7 @@
 
 ## Adding them to your skin
 
-### The easy way (> v.4.1.0): 
+### The easy way (_v.4.1+_): 
 
 <div align="center">
 
@@ -29,7 +29,7 @@
 
 <div align="center">
 
- <details><summary><h3>The manual way:</h3><br /><h4>(It's a comfusing way, please contact us in the <a href="https://discord.com/invite/rURmwrzUcz">Discord server</a> for better support)</h4></summary>
+ <details><summary><h3>The manual way:</h3><br /><h4>(The manual documentation can be confusing and is no longer updated, please contact us in the <a href="https://discord.com/invite/rURmwrzUcz">Discord server</a> for better support)</h4></summary>
 
 <img src="mod-data-detailed-example.png" alt="Example details" width="500">
 

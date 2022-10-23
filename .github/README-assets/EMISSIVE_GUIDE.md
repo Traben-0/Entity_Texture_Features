@@ -19,16 +19,16 @@
 - To render correctly, the emissive texture should be the exact same size as the original mob's texture,<br />otherwise you may get Z-Fighting with shaders enabled
 - Emissive textures must be in the same folder as the texture it is glowing over and must be named like this: `TextureName#.png`,<br />with `#` being the suffix set by the topmost OptiFine format resource pack,otherwise it will default to `_e`<br />(Meaning that the file name should be `TextureName_e.png`)
 - Elytra & armour emissives have CIT Resewn mod support and will apply based on the CIT texture
-- Tridents support emissive texturesand can be customized via the special case rules in the random / custom mob guide
+- Tridents support emissive textures and can be customized via the special case rules in the [`random / custom mob guide`](RANDOM_GUIDE.md)
 - Block entities such as chests, shulker boxes, beds, bells, enchanting table & lectern books **support** emissive textures with ETF,<br />other blocks require [Continuity](https://modrinth.com/mod/continuity)
-- Enhanced Block Entities (A mod which changes the block entity render to block render for performance optimizations)<br />breaks ETF's support for block entities 
-- Player skins support emissive textures, see [player skin features guide](SKINS.md)
+  - Enhanced Block Entities (A mod which changes the block entity render to block render for performance optimizations)<br />breaks ETF's support for block entities 
+- Player skins support emissive textures, see the [`player skin features guide`](SKINS.md)
 
 ---
 
 Emissive textures can render in two different ways, set by the config. The two images below show the two rendering modes:
 
-### Dull Emmisives
+### Dull Emmisives [default]
 
 <table>
 <tr>
@@ -64,9 +64,10 @@ They:
 
 - Are brighter than OptiFine emissives
 - Are noticeably bright in sunlight and can look out of style with vanilla
-- Have more bloom with shaders
-- Have global illumination and does not shade differently over the model
+- Typically, have more bloom with shaders
+- Have global illumination and do not shade differently over the model
 - Are brighter than the default Dull Emissives
+- More likely to break with certain shaders enabled
 
 </td>
 </tr>

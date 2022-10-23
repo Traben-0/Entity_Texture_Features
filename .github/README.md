@@ -15,7 +15,7 @@
 
 ## 🤔 What does this mod do?
 
-ETF is a Fabric (Quilt compatible) & Forge mod adds many new _Entity Texture Features_ :trollface:, including entity and player skin features!  
+ETF is a Fabric *(Quilt compatible)* & Forge mod that adds many new _Entity Texture Features_ :trollface:, including entity and player skin features!  
 This way, ETF achieves more OptiFine parity on the Fabric mod loader. If you want more OptiFine features on Fabric, you can either check [this list](https://lambdaurora.dev/optifine_alternatives), made by LambdaAurora, **or** you can use the [Fabulously Optimized modpack](https://modrinth.com/modpack/fabulously-optimized), which includes **all** the OptiFine parity mods!
 
 ### Featuring:
@@ -34,7 +34,7 @@ This way, ETF achieves more OptiFine parity on the Fabric mod loader. If you wan
 - Mod added entities - <img src="https://emojipedia-us.s3.amazonaws.com/source/skype/289/check-mark-button_2705.png" alt="✅" width="15"> **Compatible**<br />(Only if the mod creator used the vanilla rendering code to render their mobs)
 
 <div align="center">
-<details><summary><h2>Wiki & guides</h2></summary>
+<details><summary><h1>Wiki & guides</h1></summary>
 
 <div align="left">
 
@@ -89,7 +89,7 @@ This way, ETF achieves more OptiFine parity on the Fabric mod loader. If you wan
 
 </div>
   
-#### [-> Player skin features guide <-](README-assets/SKINS.md)
+#### [-> Player skin features guide <-](README-assets/SKIN_GUIDE.md)
 
 <div align="left">
 
@@ -120,7 +120,7 @@ This way, ETF achieves more OptiFine parity on the Fabric mod loader. If you wan
 
 ## Settings & configuration
 
-- Settings can be changed in-game using [Mod Menu](https://modrinth.com/mod/modmenu) or  by editing the config file, located under `config/entity_texture_features.json` 
+- Settings can be changed in-game using [Mod Menu](https://modrinth.com/mod/modmenu), the settings button in the resource pack screen, or  by editing the config file, located under `config/entity_texture_features.json` 
 - A few of these options can also be changed via the [Puzzle mod](https://modrinth.com/mod/puzzle)
 
 <div align="center">
@@ -132,7 +132,7 @@ This way, ETF achieves more OptiFine parity on the Fabric mod loader. If you wan
 ## Mod support
 
 - This mod should be compatible with any mod added entities as long as they extend `LivingEntityRenderer` class for rendering and utilise it correctly
-- Any mod displaying an entity in a custom GUI can force the default texture by having the `entity.getblockstate` set to either `null` or of type `VOID_AIR`
+- Any mod displaying an entity in a custom GUI can force the default texture by having the `entity.getblockstate` set to either return `null` or `VOID_AIR`, the same can be achieved by settings the display mob's UUID to `UUID.nameUUIDFromBytes(("GENERIC").getBytes())`. 
 
 ## FAQ
 
@@ -156,6 +156,14 @@ This way, ETF achieves more OptiFine parity on the Fabric mod loader. If you wan
 > Emissives are broken with Complimentary shaders, what do I do?
 
 - Complimentary shaders has its own in-built emissive textures that usually work fine but will conflict with some resource packs. You can either disable Complimentary's emissives or ETF's emissives to fix this.
+
+> My question isn't here! 
+
+- Feel free to check ETF's [Discord](https://discord.com/invite/rURmwrzUcz) to ask your questions or check the FAQ there :)
+
+## Change log
+
+ [[V4.1.1] & prior](CHANGELOG.md).
 
 ## License
 
