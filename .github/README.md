@@ -23,15 +23,15 @@ This way, ETF achieves more OptiFine parity on the Fabric mod loader. If you wan
 - 🎲 Custom & random entity textures with the OptiFine format, including biome, name, height and even more properties!
 - 💡 Emissive/glowing entity textures with the OptiFine format
 - 😑️ Blinking mobs
-- 🎨 Player skin features & additions, including support for most of the above features
+- 🎨 Player skin features
 
 ## Compatibility
 
-- OptiFine's random/custom or emissive entity resource packs - ✅ **Fully compatable**
-- [Custom Entity Models mod](https://modrinth.com/mod/cem) - ✅ **Fully compatible**
-- [Sodium](https://modrinth.com/mod/sodium) - ✅ **Fully compatible**
-- [Iris Shaders](https://modrinth.com/mod/iris) - ✅ **Fully compatible** _(Support varies depending on the shader)_
-- Mod added entities - ✅ **Compatible** _(Only if the mod creator used the vanilla rendering code to render their mobs)_
+- OptiFine's random/custom or emissive entity resource packs - <img src="https://emojipedia-us.s3.amazonaws.com/source/skype/289/check-mark-button_2705.png" alt="✅" width="15"> **Fully compatable**
+- [Custom Entity Models mod](https://modrinth.com/mod/cem) - <img src="https://emojipedia-us.s3.amazonaws.com/source/skype/289/check-mark-button_2705.png" alt="✅" width="15"> **Fully compatible**
+- [Sodium](https://modrinth.com/mod/sodium) - <img src="https://emojipedia-us.s3.amazonaws.com/source/skype/289/check-mark-button_2705.png" alt="✅" width="15">  **Fully compatible**
+- [Iris Shaders](https://modrinth.com/mod/iris) - <img src="https://emojipedia-us.s3.amazonaws.com/source/skype/289/check-mark-button_2705.png" alt="✅" width="15"> **Fully compatible**<br />(Support varies depending on the shader)
+- Mod added entities - <img src="https://emojipedia-us.s3.amazonaws.com/source/skype/289/check-mark-button_2705.png" alt="✅" width="15"> **Compatible**<br />(Only if the mod creator used the vanilla rendering code to render their mobs)
 
 <div align="center">
 <details><summary><h2>Wiki & guides</h2></summary>
