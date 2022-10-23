@@ -12,30 +12,28 @@
  </div>
  
 - Player skins can use emissive, blinking, enchanted, and transparency texture features and more...
-- 100% optional, controlled by the skin file you upload to Mojang, and options to prevent abuse of features in PVP
+- They are 100% optional, controlled by the skin file you upload to Mojang. ETF also provides options to prevent abuse of such features in PvP
 
-# How can you do this?
+## Adding them to your skin
 
-## The easy way: [V4.1.0+]
+### The easy way (> v.4.1.0): 
 
-<img src="skin_tool.png" alt="img" width="650"/>
+<div align="center">
 
-- Skin features can be selected from the **Skin Tool** in ETF's settings available via modmenu or from a button in the resource-pack select screen
-- After choosing your features you can either upload it directly to mojang from the tool or save the skin image to tweak it further and upload yourself
+<img src="skin-tool.png" alt="Skin tool" width="500">
 
+</div>
 
+- Skin features can be selected from the Skin Tool in ETF's settings available via Mod Menu and/or the ETF button in the resource pack menu
+- After choosing your features you can either upload them directly to Mojang from the tool or save the skin image and it upload yourself
 
+<div align="center">
 
-## The manual way:
+ <details><summary><h3>The manual way:</h3><br /><h4>(It's a comfusing way, please contact us in the <a href="https://discord.com/invite/rURmwrzUcz">Discord server</a> for better support)</h4></summary>
 
-### The Example Skin File
+<img src="mod-data-detailed-example.png" alt="Example details" width="500">
 
-###### *Not as scary as it looks all will be explained below*
-
-  <img src="mod_data_example_details.png" alt="img" width="650"/>
-
-[*Downloadable example skin*](mod_data_example.png)  
-![downloadable](mod_data_example.png)
+<div align="left">
 
 ## Getting started
 
@@ -309,24 +307,8 @@ I am supporting the people who have donated to the Optifine Dev
   in the #5 slot of the choice box in your skin and your Optifine cape will show to anyone with this mod and player
   features enabled.
 
----
+</div>
 
-# To confusing or not working?
+</details>
 
-join the [[Discord]](https://discord.gg/rURmwrzUcz) and We'll be happy to help
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+</div>
