@@ -32,6 +32,7 @@ public class ETFConfigScreenGeneralSettings extends ETFConfigScreen {
                     ETFConfigScreenMain.temporaryETFConfig.debugLoggingMode = ETFConfig.DebugLogMode.None;
                     ETFConfigScreenMain.temporaryETFConfig.allowIllegalTexturePaths = false;
                     ETFConfigScreenMain.temporaryETFConfig.hideConfigButton = false;
+                    ETFConfigScreenMain.temporaryETFConfig.zombiePiglinRightEarEnabled = false;
                     //ETFConfigScreenMain.temporaryETFConfig.temporary_fixIrisPBR = false;
                     this.clearAndInit();
                     //Objects.requireNonNull(client).setScreen(parent);
@@ -85,7 +86,18 @@ public class ETFConfigScreenGeneralSettings extends ETFConfigScreen {
                 },
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".hide_button.tooltip")
         ));
-
+        this.addDrawableChild(getETFButton((int) (this.width * 0.2), (int) (this.height * 0.6), (int) (this.width * 0.6), 20,
+                Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
+                        "config." + ETFClientCommon.MOD_ID + ".piglin_ear.button"
+                ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.hideConfigButton ? ScreenTexts.ON : ScreenTexts.OFF).getString()),
+                (button) -> {
+                    ETFConfigScreenMain.temporaryETFConfig.zombiePiglinRightEarEnabled = !ETFConfigScreenMain.temporaryETFConfig.zombiePiglinRightEarEnabled;
+                    button.setMessage(Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
+                            "config." + ETFClientCommon.MOD_ID + ".piglin_ear.button"
+                    ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.zombiePiglinRightEarEnabled ? ScreenTexts.ON : ScreenTexts.OFF).getString()));
+                },
+                ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".piglin_ear.tooltip")
+        ));
     }
 
 

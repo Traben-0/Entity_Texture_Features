@@ -56,6 +56,8 @@ public class ETFConfig {
     public boolean removePixelsUnderEmissiveMobs = true;
     public boolean removePixelsUnderEmissiveBlockEntity = true;
 
+    public boolean zombiePiglinRightEarEnabled = false;
+
 
     public Set<ETFConfigScreenWarnings.ConfigWarning> ignoredConfigs = new HashSet<>();
 

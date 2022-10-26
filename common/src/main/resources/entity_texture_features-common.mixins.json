@@ -8,10 +8,8 @@
     "accessor.ElytraEntityModelAccessor",
     "accessor.MooshroomEntityAccessor",
     "accessor.SpriteAccessor",
-    "reloading.MixinMinecraftClient",
-    "entity.MixinPlayerEntity",
-    "reloading.MixinSimpleResourceReload",
     "entity.MixinLivingEntityRenderer",
+    "entity.MixinPlayerEntity",
     "entity.MixinPlayerEntityRenderer",
     "entity.block_entity.MixinBedBlockEntityRenderer",
     "entity.block_entity.MixinBellBlockEntityRenderer",
@@ -27,6 +25,7 @@
     "entity.feature_renderers.MixinHorsemarkingFeatureRenderer",
     "entity.feature_renderers.MixinIronGolemCrackFeatureRenderer",
     "entity.feature_renderers.MixinMooshroomMushroomFeatureRenderer",
+    "entity.feature_renderers.MixinSaddleFeatureRenderer",
     "entity.feature_renderers.MixinSheepWoolFeatureRenderer",
     "entity.feature_renderers.MixinShoulderParrotFeatureRenderer",
     "entity.feature_renderers.MixinShulkerHeadFeatureRenderer",
@@ -38,8 +37,11 @@
     "entity.misc.MixinElytraEntityModel",
     "entity.misc.MixinEnderDragonEntityRenderer",
     "entity.misc.MixinMobSpawnerBlockEntityRenderer",
+    "entity.misc.MixinPiglinEntityRenderer",
     "entity.misc.MixinTridentEntity",
-    "entity.misc.MixinTridentEntityRenderer"
+    "entity.misc.MixinTridentEntityRenderer",
+    "reloading.MixinMinecraftClient",
+    "reloading.MixinSimpleResourceReload"
   ],
   "mixins": [
   ],

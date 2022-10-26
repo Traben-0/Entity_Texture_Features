@@ -163,7 +163,7 @@ This way, ETF achieves more OptiFine parity on the Fabric mod loader. If you wan
 
 ## Change log
 
- [[V4.1.1] & prior](CHANGELOG.md).
+ [[V4.1.1] & prior](../common/CHANGELOG.md).
 
 ## License
 

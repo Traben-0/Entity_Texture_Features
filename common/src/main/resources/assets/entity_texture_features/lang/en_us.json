@@ -69,7 +69,7 @@
   "config.entity_texture_features.player_skin_editor.cape.custom": "Custom in skin",
   "config.entity_texture_features.player_skin_editor.cape.etf": "ETF",
   "config.entity_texture_features.player_skin_editor.cape.minecraftcapes": "minecraftcapes.net",
-  "config.entity_texture_features.player_skin_editor.cape.none": "none",
+  "config.entity_texture_features.player_skin_editor.cape.none": "Vanilla",
   "config.entity_texture_features.player_skin_editor.cape.optifine": "OptiFine",
   "config.entity_texture_features.player_skin_editor.cape.tooltip": "Lets you select between using various capes:\nOptiFine cape\nminecraftcapes.net cape \nThe ETF cape\nor texture your own custom cape in your skin",
   "config.entity_texture_features.player_skin_editor.coat_length.title": "Extension length: ",
@@ -170,5 +170,8 @@
   "config.entity_texture_features.warnings.title": "Mod conflicts / warnings",
   "config.entity_texture_features.warnings_main": "Warnings: ",
   "config.entity_texture_features.ignore_all": "Ignore all",
-  "config.entity_texture_features.ignore_description": "If this warning / conflict\nis ignored it will no longer\naffect ETF settings"
+  "config.entity_texture_features.ignore_description": "If this warning / conflict\nis ignored it will no longer\naffect ETF settings",
+
+  "config.entity_texture_features.piglin_ear.button": "un-hide zombie piglin right ears",
+  "config.entity_texture_features.piglin_ear.tooltip": "Vanilla minecraft hides the right ear of\nZombie Piglins, this setting re-enables them."
 }

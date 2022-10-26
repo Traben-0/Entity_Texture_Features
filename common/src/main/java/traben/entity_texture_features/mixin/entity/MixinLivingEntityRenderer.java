@@ -12,6 +12,8 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
@@ -43,6 +45,8 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
     @Shadow
     public abstract M getModel();
 
+    private static Boolean disguiseHeadsWorkaround = null;
+
 
     @Inject(method = "render(Lnet/minecraft/entity/LivingEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/EntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V", shift = At.Shift.AFTER)
@@ -50,16 +54,27 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
     private void etf$applyRenderFeatures(T livingEntity, float a, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
         //UUID id = livingEntity.getUuid();
         if (livingEntity instanceof PlayerEntity) {
+
             if (ETFConfigData.skinFeaturesEnabled && thisETFPlayerTexture != null) {
-                //System.out.println("test 1");
+                //check disguise heads mod workaround
+                if(disguiseHeadsWorkaround == null){
+                    disguiseHeadsWorkaround = ETFVersionDifferenceHandler.isThisModLoaded("disguiseheads");
+                }
+                if(disguiseHeadsWorkaround) {
+                    ItemStack armour = ((PlayerEntity)livingEntity).getInventory().getArmorStack(3);
+                    if(armour.isOf(Items.PLAYER_HEAD)){
+                        return;
+                    }
+                }
+
                 // noinspection unchecked
                 thisETFPlayerTexture.renderFeatures(matrixStack, vertexConsumerProvider, i, (PlayerEntityModel<PlayerEntity>) this.getModel());
-                //System.out.println("test 2");
+
             }
             //just a little harmless particle effect on the dev
-            if (livingEntity.getUuid().equals(ETFPlayerTexture.Dev) && !MinecraftClient.getInstance().isPaused() && livingEntity.getRandom().nextInt(64) == 0 && (MinecraftClient.getInstance().player == null || !(ETFVersionDifferenceHandler.areShadersInUse() == ETFPlayerTexture.Dev.equals(MinecraftClient.getInstance().player.getUuid())))) {
-                livingEntity.world.addParticle(ParticleTypes.TOTEM_OF_UNDYING, livingEntity.getX(), livingEntity.getRandomBodyY(), livingEntity.getZ(), livingEntity.getRandom().nextFloat() - 0.5, livingEntity.getRandom().nextFloat() * 0.5, livingEntity.getRandom().nextFloat() - 0.5);
-            }
+//            if (livingEntity.getUuid().equals(ETFPlayerTexture.Dev) && !MinecraftClient.getInstance().isPaused() && livingEntity.getRandom().nextInt(64) == 0 && (MinecraftClient.getInstance().player == null || !(ETFVersionDifferenceHandler.areShadersInUse() == ETFPlayerTexture.Dev.equals(MinecraftClient.getInstance().player.getUuid())))) {
+//                livingEntity.world.addParticle(ParticleTypes.TOTEM_OF_UNDYING, livingEntity.getX(), livingEntity.getRandomBodyY(), livingEntity.getZ(), livingEntity.getRandom().nextFloat() - 0.5, livingEntity.getRandom().nextFloat() * 0.5, livingEntity.getRandom().nextFloat() - 0.5);
+//            }
             //else nothing
         } else {
             if (thisETFTexture != null) {
@@ -75,14 +90,27 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
 
 
         @SuppressWarnings("unchecked") T entity = (T) inentity;
+        if (entity instanceof PlayerEntity player) {
+            if (ETFConfigData.skinFeaturesEnabled) {
+                if (disguiseHeadsWorkaround == null) {
+                    disguiseHeadsWorkaround = ETFVersionDifferenceHandler.isThisModLoaded("disguiseheads");
+                }
+                if (disguiseHeadsWorkaround) {
+                    ItemStack armour = player.getInventory().getArmorStack(3);
+                    if (armour.isOf(Items.PLAYER_HEAD)) {
+                        return getTexture(entity);
+                    }
+                }
 
-        if (ETFConfigData.skinFeaturesEnabled && entity instanceof PlayerEntity player) {
-            thisETFPlayerTexture = ETFManager.getInstance().getPlayerTexture(player);
-            if (thisETFPlayerTexture != null) {
+                thisETFPlayerTexture = ETFManager.getInstance().getPlayerTexture(player);
+                if (thisETFPlayerTexture != null) {
 
-                Identifier etfTexture = thisETFPlayerTexture.getBaseTextureIdentifierOrNullForVanilla(player);
-                return etfTexture == null ? getTexture(entity) : etfTexture;
+                    Identifier etfTexture = thisETFPlayerTexture.getBaseTextureIdentifierOrNullForVanilla(player);
+                    return etfTexture == null ? getTexture(entity) : etfTexture;
+                }
+
             }
+            //ensure disguised head mod check is preserved if more logic is added here for offline skins
             return getTexture(entity);
         }
         thisETFTexture = ETFManager.getInstance().getETFTexture(getTexture(entity), entity, ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs);

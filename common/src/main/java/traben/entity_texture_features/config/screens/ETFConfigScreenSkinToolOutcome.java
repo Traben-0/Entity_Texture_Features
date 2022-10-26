@@ -80,7 +80,7 @@ public class ETFConfigScreenSkinToolOutcome extends ETFConfigScreen {
                 ScreenTexts.DONE,
                 (button) -> Objects.requireNonNull(client).setScreen(parent)));
         if (didSucceed) {
-            this.addDrawableChild(getETFButton((int) (this.width * 0.3), (int) (this.height * 0.6), (int) (this.width * 0.4), 20,
+            this.addDrawableChild(getETFButton((int) (this.width * 0.15), (int) (this.height * 0.6), (int) (this.width * 0.7), 20,
                     ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.print_skin.open"),
                     (button) -> {
                         try {

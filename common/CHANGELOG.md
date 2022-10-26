@@ -1,5 +1,15 @@
 [**ETF Changelog:**]
 
+[V4.1.1.dev.2]
+
+- added emissive and random texture support to saddles *(support pigs, horse-mobs and striders)*
+- added a setting to enable rendering of zombie piglin right ears *(mojang force hides them in the code :/)*
+- fixed compatibility with the disguised heads mod and skins with etf features not changing *(skin features will not display on disguised players :/)*
+- fixed player skin enchanted visuals being brighter than vanilla
+- fixed keyboard navigation in the ETF settings gui *(currently just `ESC` key to go back)*
+- tweaked button scaling to center themselves in larger gui scales
+- tweaked some gui button positions
+
 [V4.1.1]
 
 - added more screens to better separate button groups
