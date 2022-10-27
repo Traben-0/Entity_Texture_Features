@@ -18,7 +18,7 @@
 ETF is a Fabric *(Quilt compatible)* & Forge mod that adds many new _Entity Texture Features_ :trollface:, including entity and player skin features!  
 This way, ETF achieves more OptiFine parity on the Fabric mod loader. If you want more OptiFine features on Fabric, you can either check [this list](https://lambdaurora.dev/optifine_alternatives), made by LambdaAurora, **or** you can use the [Fabulously Optimized modpack](https://modrinth.com/modpack/fabulously-optimized), which includes **all** the OptiFine parity mods!
 
-### Featuring:
+## Featuring:
 
 - [🎲](README-assets/RANDOM_GUIDE.md) Custom & random entity textures with the OptiFine format, including even more properties!
 - [💡](README-assets/EMISSIVE_GUIDE.md) Emissive/glowing entity textures with the OptiFine format
@@ -117,6 +117,21 @@ This way, ETF achieves more OptiFine parity on the Fabric mod loader. If you wan
 </details>
 
 </div>
+
+## Examples
+
+<div align="center">
+<a href="https://www.curseforge.com/minecraft/texture-packs/entity-texture-features-example-pack">
+<img src="README-assets/example_pack.png" alt="example" width="450">
+</a><br>
+<a href="https://www.planetminecraft.com/texture-pack/creepers-plus-optifine-required/">
+<img src="README-assets/example_creep.png" alt="example" width="450">
+</a><br>
+<a href="https://www.curseforge.com/minecraft/texture-packs/tissous-zombie-pack-optifine-1-7x-1-19">
+<img src="README-assets/example_zomb.png" alt="example" width="450">
+</a>
+</div>
+
 
 ## Settings & configuration
 
