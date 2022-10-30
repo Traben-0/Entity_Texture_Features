@@ -79,8 +79,8 @@ ___
 - The total skin can not be less than 40% average transparency to prevent possible PVP abuse, an option has been added
   to override this for fun and only affects your point of view.
 - Transparency can be separately Disabled for enemy team players to not be abused in PVP settings.  
-  ![transparent](modskins/ghost.png)![transparent](modskins/slime.png)![transparent](modskins/chicken.png)
-  ![transparent](modskins/skelly.png)![transparent](modskins/amogus.png)
+  ![transparent](mod-skins/ghost.png)![transparent](mod-skins/slime.png)![transparent](mod-skins/chicken.png)
+  ![transparent](mod-skins/skelly.png)![transparent](mod-skins/amogus.png)
 - See examples above in the Ghost, Slime, Steve, Chicken, Skeleton, and Among us skins.
 
 ---
@@ -95,7 +95,7 @@ ___
   emissive pixels)*
 - After choosing a box on the right like this,
   any pixels present in that box will make identical pixels in the rest of the skin glow.  
-  ![transparent](modskins/ghost.png)![transparent](modskins/robot.png)![transparent](modskins/thanos.png)
+  ![transparent](mod-skins/ghost.png)![transparent](mod-skins/robot.png)![transparent](mod-skins/thanos.png)
 - See examples above in the Ghost, Robot, and Thanos's gauntlet
 
 ---
@@ -110,7 +110,7 @@ ___
   enchanted pixels)*
 - After choosing a box on the right like this,
   any pixels present in that box will make identical pixels in the rest of the skin appear enchanted.  
-  ![transparent](modskins/alex.png)![transparent](modskins/wizard.png)![transparent](modskins/thanos.png)
+  ![transparent](mod-skins/alex.png)![transparent](mod-skins/wizard.png)![transparent](mod-skins/thanos.png)
 - See examples above in the Alex, robed figure, and Thano's arm skins
 
 ---
@@ -141,7 +141,7 @@ If your skin's eyes are only 1 pixel tall - use this.
   *(For Example Default Steve's eyes are at line #5, so you would place the Brown #5 pixel in Choice Box #4)*
 - You are now done, the mod will take the light purple line below the head texture
   and replace your skin's eyes with it when it blinks  
-  ![transparent](modskins/blinkOption3.png)
+  ![transparent](mod-skins/blink-option1.png)
 - This skin uses the 1 pixel blinking
 
 #### 2 pixel blinking - [V2.4.4+]
@@ -161,7 +161,7 @@ If your skin's eyes are only 2 pixels tall - use this.
   *(For Example Default Steve's eyes are at line #5, so you would place the Brown #5 pixel in Choice Box #4)*
 - You are now done, the mod will take the appropriate eye copy below the head texture
   and replace your skin's eyes with it when it blinks  
-  ![transparent](modskins/blinkOption4.png)
+  ![transparent](mod-skins/blink-option2.png)
 - This skin uses the 2 pixel blinking
 
 #### 3-4 pixel blinking - [V2.4.4+]
@@ -183,7 +183,7 @@ This actually only supports 4 pixels, but you can simply copy an additional *non
   *(For Example Default Steve's eyes are at line #5, so you would place the Brown #5 pixel in Choice Box #4)*
 - You are now done, the mod will take the appropriate eye copy below the head textures
   and replace your skin's eyes with it when it blinks  
-  ![transparent](modskins/blinkOption5.png)
+  ![transparent](mod-skins/blink-option3.png)
 - This skin uses this 3-4 pixel blinking
 
 #### Whole face texture blinking
@@ -204,7 +204,7 @@ and may limit what features can be used in the future, this is only recommended 
   eyes
 - if you have selected a 2 frame blink repeat this process with purple boxes #2 & #4 except this time make the eyes half
   closed  
-  ![transparent](modskins/chicken.png)![transparent](modskins/slime.png)
+  ![transparent](mod-skins/chicken.png)![transparent](mod-skins/slime.png)
 - You can see this in the Chicken & Slime Tuxedo skins
 
 ---
@@ -242,25 +242,25 @@ The number for that color in the Color Guide will be the extension length from 1
 
 #### Example skins
 
-![transparent](modskins/dress.png)![transparent](modskins/dress2.png)![transparent](modskins/coat.png)![transparent](modskins/steveVillager.png)
+![transparent](mod-skins/dress.png)![transparent](mod-skins/dress2.png)![transparent](mod-skins/coat.png)![transparent](mod-skins/steve-villager.png)
 
 ---
 
 ## Villager Nose - [V2.4.5+]
 
-<img src="villagerNose.png" alt="img" width="300"/>
+<img src="villager-nose.png" alt="img" width="300"/>
 
 - This feature provides the option to have a Villager nose
 - All you need to do is add a villager nose *(six villager nose colored pixels)* into you skin's face or floating face
   section
 
-![transparent](modskins/steveVillager.png)  
+![transparent](mod-skins/steve-villager.png)  
 *(this example has a villager nose and also has a working villager cloak using the jacket extension features)*
 ---
 
 ## Capes - [V2.5.0+]
 
-<img src="capeex.png" alt="img" width="300"/><br>
+<img src="cape.png" alt="img" width="300"/><br>
 
 Capes are supported for players by this mod in 3 different ways
 
@@ -272,7 +272,7 @@ Capes are supported for players by this mod in 3 different ways
 
 ### ETF Custom Cape
 
-<img src="customCape.png" alt="img" width="250"/><img src="modskins/cape.png" alt="img" width="64"/>
+<img src="custom-cape.png" alt="img" width="250"/><img src="mod-skins/cape.png" alt="img" width="64"/>
 
 This mod supports placing a custom cape texture in your skin file you upload to Mojang.
 
@@ -282,7 +282,7 @@ This mod supports placing a custom cape texture in your skin file you upload to 
 - you can see an example skin file above to download and use.
 - For now your Elytra will be unaffected and will look like the default
 - Below is a visual guide of how the cape texture is 'cut up' and placed in the 5 orange rectangles in the skin file  
-  <img src="mod_data_example.png" alt="img" width="150"/><img src="cape.png" alt="img" width="150"/>
+  <img src="mod-data-example.png" alt="img" width="150"/><img src="cape.png" alt="img" width="150"/>
 
 ### Third party capes
 
