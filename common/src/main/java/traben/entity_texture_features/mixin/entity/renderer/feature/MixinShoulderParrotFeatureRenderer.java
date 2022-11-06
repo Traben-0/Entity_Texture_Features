@@ -1,4 +1,4 @@
-package traben.entity_texture_features.mixin.entity.feature_renderers;
+package traben.entity_texture_features.mixin.entity.renderer.feature;
 
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -27,7 +27,6 @@ import traben.entity_texture_features.texture_handlers.ETFTexture;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 

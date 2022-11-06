@@ -1,4 +1,4 @@
-package traben.entity_texture_features.mixin.entity.feature_renderers;
+package traben.entity_texture_features.mixin.entity.renderer.feature;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.MinecraftClient;

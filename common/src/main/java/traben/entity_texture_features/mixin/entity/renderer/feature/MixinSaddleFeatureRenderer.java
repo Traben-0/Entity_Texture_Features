@@ -1,20 +1,13 @@
-package traben.entity_texture_features.mixin.entity.feature_renderers;
+package traben.entity_texture_features.mixin.entity.renderer.feature;
 
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.feature.FeatureRenderer;
-import net.minecraft.client.render.entity.feature.FeatureRendererContext;
-import net.minecraft.client.render.entity.feature.HorseArmorFeatureRenderer;
 import net.minecraft.client.render.entity.feature.SaddleFeatureRenderer;
 import net.minecraft.client.render.entity.model.EntityModel;
-import net.minecraft.client.render.entity.model.HorseEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Saddleable;
-import net.minecraft.entity.passive.HorseEntity;
-import net.minecraft.item.HorseArmorItem;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

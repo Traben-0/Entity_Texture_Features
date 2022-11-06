@@ -1,5 +1,13 @@
 [**ETF Changelog:**]
 
+[V4.1.1.dev.3]
+- added new texture property `angry` used like other OptiFine properties. can be `true|false`. works only for Endermen, Blazes, Guardians, Vindicators and Evokers. Triggers when these mobs display their client side 'angered or attacking state' *(open mouth for endermen & blazes igniting)*
+- added new properties to tweak mob rendering within the .properties file, they are not numbered like the other OptiFine properties e.g `skins.1` 
+  1. `vanillaBrightnessOverride`: can be set as a number from `0-15`, this overrides the brightness of the mob, it can be used to reduce the brightness of mobs like Blazes and Allays, or increase the brightness of others.
+  2. `suppressParticles`: if set to `true` will remove ambient particles from mobs *(currently only Blazes and Glow Squids)*
+  3. `showHiddenModelParts`: if set to `true` will enable the rendering of model parts normally hidden in vanilla *(currently only zombie piglin right ears)*
+- improved block entity code, this should improve compat with armor stand affecting mods (like quark) as armor stands are no longer used as a substitute entity
+
 [V4.1.1.dev.2]
 
 - added emissive and random texture support to saddles *(support pigs, horse-mobs and striders)*

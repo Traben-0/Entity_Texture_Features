@@ -16,6 +16,7 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.HttpClientBuilder;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
+import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.io.FileInputStream;
 import java.net.InetAddress;
@@ -103,12 +104,20 @@ public class ETFConfigScreenSkinToolOutcome extends ETFConfigScreen {
                                 }
                             }
                         }
+                        boolean changeSuccess = uploadSkin(skinType);
                         button.setMessage(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.upload_skin." +
-                                (uploadSkin(skinType) ? "success" : "fail")));
+                                (changeSuccess ? "success" : "fail")));
+                        if(changeSuccess){
+                            ETFUtils2.logWarn(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.upload_skin.success" ).getString()
+                                    ,true);
+                        }
                         button.active = false;
                     }));
         }
     }
+
+
+
 
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {

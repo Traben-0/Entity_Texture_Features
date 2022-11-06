@@ -2,8 +2,14 @@ package traben.entity_texture_features;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnGroup;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 import org.slf4j.Logger;
 import traben.entity_texture_features.config.ETFConfig;
+import traben.entity_texture_features.utils.ETFPlaceholderEntity;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.io.File;
@@ -22,6 +28,8 @@ public class ETFClientCommon {
 
     //sets whether to display config load warning in gui
     public static boolean configHadLoadError = false;
+
+
 
 
     public static void start() {

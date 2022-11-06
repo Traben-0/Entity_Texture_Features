@@ -1,4 +1,4 @@
-package traben.entity_texture_features.mixin.entity;
+package traben.entity_texture_features.mixin.entity.renderer;
 
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
