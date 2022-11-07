@@ -20,7 +20,6 @@ public abstract class ETFConfigScreen extends Screen {
     static final RotatingCubeMapRenderer backgroundCube = new RotatingCubeMapRenderer(new CubeMapRenderer(new Identifier(MOD_ID + ":textures/gui/background/panorama")));
     final Screen parent;
 
-    //todo translatable text for menus
 
 
     public ETFConfigScreen(Text text, Screen parent) {
@@ -31,6 +30,7 @@ public abstract class ETFConfigScreen extends Screen {
     public boolean shouldCloseOnEsc() {
         return true;
     }
+
     @Override
     public void close() {
         assert this.client != null;

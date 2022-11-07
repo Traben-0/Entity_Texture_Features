@@ -37,7 +37,6 @@ public abstract class MixinElytraFeatureRenderer<T extends LivingEntity, M exten
     //the sneaky 3 way boolean
     boolean etf$twoTextures = false;
 
-    //todo rewrite
     @Final
     @Shadow
     private ElytraEntityModel<T> elytra;

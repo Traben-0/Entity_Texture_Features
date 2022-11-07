@@ -155,13 +155,6 @@ public class ETFManager{
         return new ETFTexture(new Identifier("etf:error.png"), false);//, ETFTexture.TextureSource.GENERIC_DEBUG);
     }
 
-    public static EmissiveRenderModes getEmissiveMode() {
-        if (ETFConfigData.fullBrightEmissives) {
-            return EmissiveRenderModes.BRIGHT;
-        } else {
-            return EmissiveRenderModes.DULL;
-        }
-    }
 
 
     public void removeThisEntityDataFromAllStorage(ETFCacheKey ETFId) {
@@ -1122,17 +1115,56 @@ public class ETFManager{
         ENTITY_FEATURE
     }
 
+
+    public static EmissiveRenderModes getEmissiveMode() {
+        if (ETFConfigData.emissiveRenderMode == EmissiveRenderModes.DULL) {
+            return EmissiveRenderModes.DULL;
+        } else {
+            if(ETFConfigData.emissiveRenderMode == EmissiveRenderModes.COMPATIBLE && ETFVersionDifferenceHandler.areShadersInUse()){
+                return EmissiveRenderModes.DULL;
+            }else{
+                return EmissiveRenderModes.BRIGHT;
+            }
+        }
+    }
+
     public enum EmissiveRenderModes {
         DULL,
-        BRIGHT;
+        BRIGHT,
+        COMPATIBLE;
 
+        @Override
+        public String toString() {
+            //noinspection EnhancedSwitchMigration
+            switch (this){
+                case DULL: return ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.emissive_mode.dull").getString();
+                case BRIGHT: return ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.emissive_mode.bright").getString();
+                default: return ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.emissive_mode.compatible").getString();
+            }
+        }
+
+        public EmissiveRenderModes next(){
+            //noinspection EnhancedSwitchMigration
+            switch (this){
+                case DULL: return BRIGHT;
+                case BRIGHT: return COMPATIBLE;
+                default: return DULL;
+            }
+        }
         public static EmissiveRenderModes blockEntityMode() {
             //iris has fixes for bright mode which is otherwise broken on block entities, does not require enabled shaders
-            if (ETFVersionDifferenceHandler.isThisModLoaded("iris") && ETFConfigData.fullBrightEmissives) {
-                return BRIGHT;
-            } else {
-                //todo investigate if block entities require a third enum for custom render mode
+            if(ETFConfigData.emissiveRenderMode == DULL){
                 return DULL;
+            }else{
+                if (ETFVersionDifferenceHandler.isThisModLoaded("iris")){
+                    if(ETFConfigData.emissiveRenderMode == COMPATIBLE && ETFVersionDifferenceHandler.areShadersInUse()){
+                        return DULL;
+                    }else{
+                        return BRIGHT;
+                    }
+                }else{
+                    return DULL;
+                }
             }
         }
     }

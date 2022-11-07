@@ -130,7 +130,7 @@ public class ETFTexturePropertyCase {
         }
 
 
-        //todo optimize selection of suffixes by weight better than this, not efficient when scaled
+        //todo optimize selection of suffixes by weight better than this, not efficient when scaled, also only happens once per property so meh
         if (weightsX.length > 0) {
             if (weightsX.length == suffixesX.length) {
                 ArrayList<Integer> buildWeighted = new ArrayList<>();

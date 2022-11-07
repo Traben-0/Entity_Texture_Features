@@ -1,5 +1,12 @@
 [**ETF Changelog:**]
 
+[V4.1.1.dev.4]
+- ETF settings button no longer appears on data pack selection screen
+- extended shader support code to include the Iris forge port `Oculus`, this should improve z-fighting and support the new compatible emissive render mode.
+- added `Compatible` emissive rendering mode. This mode uses the `Bright` emissive rendering mode normally and automatically changes to, the more shader compatible, `Default / Dull` emissive rendering mode when shaders are enabled. To have the best of both worlds.
+- added compatibility warning to disable skin features with the `impersonate` mod present
+- removed compatibility warning that disabled block entity features with the `quark` mod present, issue has been fixed.
+
 [V4.1.1.dev.3]
 - added new texture property `angry` used like other OptiFine properties. can be `true|false`. works only for Endermen, Blazes, Guardians, Vindicators and Evokers. Triggers when these mobs display their client side 'angered or attacking state' *(open mouth for endermen & blazes igniting)*
 - added new properties to tweak mob rendering within the .properties file, they are not numbered like the other OptiFine properties e.g `skins.1` 

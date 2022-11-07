@@ -13,7 +13,6 @@ import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.utils.ETFUtils2;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
@@ -43,31 +42,14 @@ public class ETFConfigScreenMain extends ETFConfigScreen {
             shownWarning = true;
             warningCount++;
         }
-        //this warning disables skin features with figura present
-        if (ETFVersionDifferenceHandler.isThisModLoaded(ETFConfigScreenWarnings.ConfigWarning.FIGURA.getMod_id())) {
-            shownWarning = true;
-            warningCount++;
-            warningsFound.add(ETFConfigScreenWarnings.ConfigWarning.FIGURA);
-        }
-        if (ETFVersionDifferenceHandler.isThisModLoaded(ETFConfigScreenWarnings.ConfigWarning.SKINLAYERS.getMod_id())) {
-            shownWarning = true;
-            warningCount++;
-            warningsFound.add(ETFConfigScreenWarnings.ConfigWarning.SKINLAYERS);
-        }
-        if (ETFVersionDifferenceHandler.isThisModLoaded(ETFConfigScreenWarnings.ConfigWarning.QUARK.getMod_id())) {
-            shownWarning = true;
-            warningCount++;
-            warningsFound.add(ETFConfigScreenWarnings.ConfigWarning.QUARK);
-        }
-        if (ETFVersionDifferenceHandler.isThisModLoaded(ETFConfigScreenWarnings.ConfigWarning.ENHANCED_BLOCK_ENTITIES.getMod_id())) {
-            shownWarning = true;
-            warningCount++;
-            warningsFound.add(ETFConfigScreenWarnings.ConfigWarning.ENHANCED_BLOCK_ENTITIES);
-        }
-        if (ETFVersionDifferenceHandler.isThisModLoaded(ETFConfigScreenWarnings.ConfigWarning.IRIS.getMod_id())) {
-            shownWarning = true;
-            warningCount++;
-            warningsFound.add(ETFConfigScreenWarnings.ConfigWarning.IRIS);
+
+        for (ETFConfigScreenWarnings.ConfigWarning warning:
+        ETFConfigScreenWarnings.ConfigWarning.values()) {
+            if (ETFVersionDifferenceHandler.isThisModLoaded(warning.getMod_id())) {
+                shownWarning = true;
+                warningCount++;
+                warningsFound.add(warning);
+            }
         }
         //warningsFound.addAll(Arrays.asList(ETFConfigScreenWarnings.ConfigWarning.values()));
         warningsScreen = new ETFConfigScreenWarnings(this, warningsFound);
