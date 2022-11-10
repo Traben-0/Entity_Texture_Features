@@ -9,6 +9,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.mob.*;
 import net.minecraft.entity.passive.*;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.DyeColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,6 +57,10 @@ public class ETFTexturePropertyCase {
 
     private final @Nullable StatusEffect[] STATUS_EFFECT;
 
+    private final @Nullable String[] ITEMS;
+
+    private final @Nullable Boolean MOVING;
+
     //whether case should be ignored by updates
 
 
@@ -87,11 +92,15 @@ public class ETFTexturePropertyCase {
                                   @Nullable Boolean isScreamingGoat,
                                   @Nullable String[] distanceToPlayer,
                                   @Nullable Boolean creeperCharged,
-                                  @Nullable StatusEffect[] statusEffect
+                                  @Nullable StatusEffect[] statusEffect,
+                                  @Nullable String[] items,
+                                  @Nullable Boolean moving
 
 
     ) {
 
+        MOVING = moving;
+        ITEMS = items;
         STATUS_EFFECT = statusEffect;
 
         CREEPER_CHARGED = creeperCharged;
@@ -202,6 +211,8 @@ public class ETFTexturePropertyCase {
                 && DISTANCE_TO_PLAYER == null
                 && CREEPER_CHARGED == null
                 && STATUS_EFFECT == null
+                && ITEMS == null
+                && MOVING == null
         ) {
             return true;
         }
@@ -836,6 +847,83 @@ public class ETFTexturePropertyCase {
             }
 
             doesEntityMeetThisCaseTest = found;
+        }
+        //System.out.println(Arrays.toString(ITEMS) +" - " +entity.getItemsEquipped().toString());
+        if (doesEntityMeetThisCaseTest && ITEMS != null ) {
+            wasEntityTestedByAnUpdatableProperty = true;
+            System.out.println(Arrays.toString(ITEMS) +" - " +entity.getItemsEquipped().toString());
+            if(ITEMS.length == 1
+                    && ("none".equals(ITEMS[0])
+                    || "any".equals(ITEMS[0])
+                    || "holding".equals(ITEMS[0])
+                    || "wearing".equals(ITEMS[0]))){
+                if (ITEMS[0].equals( "none")){
+                    Iterable<ItemStack> equipped = entity.getItemsEquipped();
+                    for (ItemStack item :
+                            equipped) {
+                        if (item != null && !item.isEmpty()) {
+                            //found a valid item break and deny
+                            doesEntityMeetThisCaseTest=false;
+                            break;
+                        }
+                    }
+                }else{
+                    Iterable<ItemStack> items;
+                    if ("any".equals(ITEMS[0])){//any
+                        items = entity.getItemsEquipped();
+                    }else if ("holding".equals(ITEMS[0])){
+                        items = entity.getItemsHand();
+                    }else {//wearing
+                        items = entity.getArmorItems();
+                    }
+                    boolean found = false;
+                    for (ItemStack item :
+                            items) {
+                        if (item != null && !item.isEmpty()) {
+                            //found a valid item break and resolve
+                            found = true;
+                            break;
+                        }
+                    }
+                    doesEntityMeetThisCaseTest = found;
+                }
+            }else {
+                //specifically named item
+
+                //both armour and hand held
+                Iterable<ItemStack> equipped = entity.getItemsEquipped();
+                boolean found = false;
+                upper: for (String itemToFind:
+                     ITEMS){
+                    if(itemToFind != null) {
+                        if (itemToFind.contains("minecraft:")) {
+                            itemToFind = itemToFind.replace("minecraft:","");
+                        }
+
+                        for (ItemStack item :
+                                equipped) {
+                            if (item != null
+                                    && !item.isEmpty()
+                                &&item.getItem().toString().replace("minecraft:","").equals(itemToFind)) {
+                                found = true;
+                                break upper;
+                            }
+                        }
+                    }
+
+                }
+                doesEntityMeetThisCaseTest = found;
+            }
+        }
+        if (doesEntityMeetThisCaseTest && MOVING != null) {
+            wasEntityTestedByAnUpdatableProperty = true;
+            //System.out.println("movement: "+entity.getVelocity().horizontalLength());
+
+            doesEntityMeetThisCaseTest = (
+                    //must be horizontal as vertical velocity has a bleed in from presumably gravity physics
+                    //99% of mob motion is horizontal anyway
+                    entity.getVelocity().horizontalLength() == 0.0
+            ) != MOVING;
         }
 
 

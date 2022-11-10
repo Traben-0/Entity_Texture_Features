@@ -1,6 +1,23 @@
 [**ETF Changelog:**]
 
+[V4.1.1.dev.5]
+
+- added entity property `entityRenderLayerOverride`, shader compatibility will vary, the possible values for this property are:
+  1. `translucent` *(allows partial transparency in entity rendering)*
+  2. `translucent_cull` *(allows partial transparency in entity rendering & culls model faces)*
+  3. `end_portal` *(looks like the end portal effect, added for fun cause it works)*
+  4. `outline` *(renders the entities outline through walls)*
+- added texture property `items` can be either:
+  1. `none`*(true if mob is holding or wearing no items)*
+  2. `any`*(true if mob is holding or wearing any items)*
+  3. `holding`*(true if mob is holding any items)*
+  4. `wearing`*(true if mob is wearing any items)*
+  5. a list of item names like `minecraft:book` or `cool_mod:sunglasses`, separated by spaces.
+- added texture property `moving` can be `true|false` to vary texture based on whether a mob is moving or not.
+- a few small tweaks on forge
+
 [V4.1.1.dev.4]
+- further russian translation updates thanks to @Felix14-v2
 - ETF settings button no longer appears on data pack selection screen
 - extended shader support code to include the Iris forge port `Oculus`, this should improve z-fighting and support the new compatible emissive render mode.
 - added `Compatible` emissive rendering mode. This mode uses the `Bright` emissive rendering mode normally and automatically changes to, the more shader compatible, `Default / Dull` emissive rendering mode when shaders are enabled. To have the best of both worlds.

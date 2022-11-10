@@ -1,5 +1,6 @@
 package traben.entity_texture_features.mixin.entity.renderer;
 
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory;
@@ -20,6 +21,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFPlayerTexture;
@@ -174,6 +177,26 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
         }
     }
 */
+
+    @Inject(method = "Lnet/minecraft/client/render/entity/LivingEntityRenderer;getRenderLayer(Lnet/minecraft/entity/LivingEntity;ZZZ)Lnet/minecraft/client/render/RenderLayer;", at = @At("RETURN"), locals = LocalCapture.CAPTURE_FAILSOFT, cancellable = true)
+    private void etf$renderLayerAlter(T entity, boolean showBody, boolean translucent, boolean showOutline, CallbackInfoReturnable<RenderLayer> cir, Identifier identifier) {
+
+        if (!translucent && showBody && ETFManager.getInstance().ENTITY_TYPE_RENDER_LAYER.containsKey(entity.getType())) {
+            //Identifier identifier = this.getTexture(entity);
+            int choice = ETFManager.getInstance().ENTITY_TYPE_RENDER_LAYER.getInt(entity.getType());
+            //noinspection EnhancedSwitchMigration
+            switch (choice){
+                case 1: cir.setReturnValue(RenderLayer.getEntityTranslucent(identifier));break;
+                case 2: cir.setReturnValue(RenderLayer.getEntityTranslucentCull(identifier));break;
+                case 3: cir.setReturnValue(RenderLayer.getEndGateway());break;
+                case 4: cir.setReturnValue(RenderLayer.getOutline(identifier));break;
+                default: cir.setReturnValue(cir.getReturnValue());break;
+            }
+        }else{
+            cir.setReturnValue(cir.getReturnValue());
+        }
+
+    }
 
 }
 

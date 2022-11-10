@@ -2,14 +2,8 @@ package traben.entity_texture_features;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnGroup;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 import org.slf4j.Logger;
 import traben.entity_texture_features.config.ETFConfig;
-import traben.entity_texture_features.utils.ETFPlaceholderEntity;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.io.File;
@@ -33,7 +27,7 @@ public class ETFClientCommon {
 
 
     public static void start() {
-        LOGGER.info("Loading Entity Texture Features, Thank you for 1 Million downloads :)");
+        LOGGER.info("Loading Entity Texture Features, Thank you for 2 Million downloads :)");
         etf$loadConfig();
         ETFUtils2.checkModCompatibility();
     }

@@ -74,6 +74,7 @@ public class ETFManager{
     public final Object2IntOpenHashMap<EntityType<?>> ENTITY_TYPE_VANILLA_BRIGHTNESS_OVERRIDE_VALUE = new Object2IntOpenHashMap<>();
 
     public final ObjectOpenHashSet<EntityType<?>> ENTITY_TYPE_IGNORE_PARTICLES = new ObjectOpenHashSet<>();
+    public final Object2IntOpenHashMap<EntityType<?>> ENTITY_TYPE_RENDER_LAYER = new Object2IntOpenHashMap<>();
     //contains the total number of variants for any given vanilla texture
     private final Object2IntOpenHashMap<Identifier> TRUE_RANDOM_COUNT_CACHE = new Object2IntOpenHashMap<>();
     private final Object2LongOpenHashMap<UUID> LAST_PLAYER_CHECK_TIME = new Object2LongOpenHashMap<>();
@@ -131,6 +132,7 @@ public class ETFManager{
             EMISSIVE_SUFFIX_LIST.add("_e");
         }
         ENTITY_TYPE_VANILLA_BRIGHTNESS_OVERRIDE_VALUE.defaultReturnValue(0);
+        ENTITY_TYPE_RENDER_LAYER.defaultReturnValue(0);
     }
 
     public static ETFManager getInstance() {
@@ -406,6 +408,20 @@ public class ETFManager{
                         && props.getProperty("suppressParticles").equals("true")) {
                     ENTITY_TYPE_IGNORE_PARTICLES.add(entity.getType());
                 }
+                //todo documentation
+                if(props.containsKey("entityRenderLayerOverride")){
+                    String layer =props.getProperty("entityRenderLayerOverride");
+                    //noinspection EnhancedSwitchMigration
+                    switch (layer){
+                        case "translucent":ENTITY_TYPE_RENDER_LAYER.put(entity.getType(),1);break;
+                        case "translucent_cull":ENTITY_TYPE_RENDER_LAYER.put(entity.getType(),2);break;
+                        case "end_portal":ENTITY_TYPE_RENDER_LAYER.put(entity.getType(),3);break;
+                        case "outline":ENTITY_TYPE_RENDER_LAYER.put(entity.getType(),4);break;
+                    }
+
+
+
+                }
 
                 Set<String> propIds = props.stringPropertyNames();
                 //set so only 1 of each
@@ -461,6 +477,8 @@ public class ETFManager{
                     @Nullable String[] distanceFromPlayer = null;
                     @Nullable Boolean creeperCharged = null;
                     @Nullable StatusEffect[] statusEffects = null;
+                    @Nullable String[] items = null;
+                    @Nullable Boolean moving = null;
 
                     if (props.containsKey("skins." + num) || props.containsKey("textures." + num)) {
                         String dataFromProps = props.containsKey("skins." + num) ? props.getProperty("skins." + num).strip() : props.getProperty("textures." + num).strip();
@@ -896,6 +914,17 @@ public class ETFManager{
                         }
                         statusEffects = statuses.toArray(new StatusEffect[0]);
                     }
+                    if (props.containsKey("items." + num)) {
+                        items = props.getProperty("items." + num).trim().split("\s+");
+                    }
+                    if (props.containsKey("moving." + num)) {
+                        String input = props.getProperty("moving." + num).trim();
+                        if (input.equals("true") || input.equals("false")) {
+                            moving = input.equals("true");
+                        } else {
+                            ETFUtils2.logWarn("properties files number error in moving category");
+                        }
+                    }
 
                     //array faster to use
                     //list easier to build
@@ -932,7 +961,10 @@ public class ETFManager{
                                 isScreamingGoat,
                                 distanceFromPlayer,
                                 creeperCharged,
-                                statusEffects));
+                                statusEffects,
+                                items,
+                                moving));
+
                     }else{
                         ETFUtils2.logWarn("property number \""+num+". in file \""+vanillaIdentifier+". failed to read.");
                     }
