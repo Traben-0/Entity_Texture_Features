@@ -34,7 +34,7 @@ This way, ETF achieves more OptiFine parity on the Fabric mod loader. If you wan
 - Mod added entities - <img src="https://emojipedia-us.s3.amazonaws.com/source/skype/289/check-mark-button_2705.png" alt="✅" width="15"> **Compatible**<br />(Only if the mod creator used the vanilla rendering code to render their mobs)
 
 <div align="center">
-<details><summary><h1>Wiki & guides</h1></summary>
+<details><summary><h1>Wiki & guides [click to open]</h1></summary>
 
 <div align="left">
 

@@ -12,7 +12,9 @@
 - The documentation is availiable in the [`random_entities.properties`](random_entities.properties) example file.
 - ETF also adds a few extra features that OptiFine does not have. For instance, random entity files can also be placed under the vanilla `/assets/minecraft/textures/entity` or ETF directory, `/assets/etf/random/` directory as well as OptiFine's directories.
 
-## Guide:
+## Guides:
+
+### OptiFine & ETF texture properties
 
 - Random textures must be in one of the following folders of a resource pack.
 <br />ETF will check from the top directory first and will only use the last directory if none of the others are used:
@@ -41,11 +43,53 @@ the game will instead pick randomly from the available random textures present. 
 
   - Additionally, the `names` & `teams` properties support grouping names that have spaces within double quotes (e.g "John Smith")
 
-  - These and the rest of the properties added by ETF are documented with examples [`here`](random_entities.properties)
+  - These and the rest of the properties added by ETF are documented with examples [here](random_entities.properties)
 
 - Mobs with additional textures like `sheep` & `wool`, `horse` & `markings` & `armour`, `iron_golem` & `cracking_textures` etc. will have the additional texture to try and match whatever variant the main texture uses. For example a sheep using `sheep2.png` will try to use `wool2.png` and if that doesn't exist it'll use the default texture
 
 - Villagers are an exception to the above rule. Each villager texture will apply their own rules, whether they'll be randomly assigned or set by a properties file
+
+### ETF entity rendering properties
+
+ETF adds a new type of property that can be placed in an entities .properties file.
+
+These properties do not get numbered *(like biomes.1)* and simply affect the rendering of all variants of the entity.
+
+Documentation and examples can be found [here](random_entities.properties).
+
+#### Entity brightness override
+<img src="brightness_override.png" alt="brightness_override" width="350">
+
+`vanillaBrightnessOverride=<0-15>`
+ - can be set as a number from 0-15
+ - this overrides the brightness of the mob
+ - it can be used to reduce the brightness of mobs like Blazes and Allays, or increase the brightness of others.
+
+
+#### Entity ambient particle override
+<img src="no_particles.png" alt="no_particles" width="350">
+
+`suppressParticles=<true|false>`
+ - if set to true this will remove ambient particles from mobs *(currently only Blazes and Glow Squids)*
+
+
+#### Entity model hiding override
+`showHiddenModelParts=<true|false>`
+- if set to true will enable the rendering of model parts normally hidden in vanilla *(currently only zombie piglin right ears)*
+
+
+
+#### Entity render layer override
+
+<img src="layer_override.png" alt="render layer override" width="450">
+
+`entityRenderLayerOverride="translucent|translucent_cull|end_portal|outline"`
+ - allows you to change the rendering layer for the entity
+ - in vanilla most entities will not support partial transparency, the translucent options will allow that to work
+ - the end_portal and outline options are for fun simply because they work they are unlikely to ever be needed
+ - Compatibility with shaders is entirely dependent on the shader
+
+
 
 ## Examples
 
@@ -68,7 +112,7 @@ the game will instead pick randomly from the available random textures present. 
 ---
 
 - Certain conditions in the properties file will update the mob's texture based on the texture update speed. These properties are:<br />
-`name`, `profession`, `collarColors`, `baby`, `health`, `teams`, `distanceFromPlayer`, `creeperCharged`
+`name`, `profession`, `collarColors`, `baby`, `health`, `teams`, `distanceFromPlayer`, `creeperCharged`, `angry`, `items`, `moving`
  
 - All the other conditions such as `biomes` & `blocks` will by default only be applied to the mob when it first spawns/loads. 
 For example, a zombie spawned in a desert will take the desert texture and it will not change to the forest texture when they walk into a forest biome

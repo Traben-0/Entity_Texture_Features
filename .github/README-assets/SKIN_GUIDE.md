@@ -29,7 +29,7 @@
 
 <div align="center">
 
- <details><summary><h3>The manual way:</h3><br /><h4>(The manual documentation can be confusing and is no longer updated, please contact us in the <a href="https://discord.com/invite/rURmwrzUcz">Discord server</a> for better support)</h4></summary>
+ <details><summary><h2>The manual way:  [click to open]</h2><br /><h4>(The manual documentation can be confusing, please contact us in the <a href="https://discord.com/invite/rURmwrzUcz">Discord server</a> if you get stuck)</h4></summary>
 
 <img src="mod-data-detailed-example.png" alt="Example details" width="500">
 
