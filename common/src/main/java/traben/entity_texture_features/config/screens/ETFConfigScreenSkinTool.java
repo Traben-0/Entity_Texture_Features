@@ -140,7 +140,7 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
                 (button) -> flipView = !flipView));
 
         printSkinFileButton = getETFButton(this.width / 2 + 10, (int) (this.height * 0.9), 200, 20,
-                ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.print_skin"),
+                ETFVersionDifferenceHandler.getTextFromTranslation("selectWorld.edit.save"),
                 (button) -> {
                     boolean result = false;
                     if (MinecraftClient.getInstance().player != null) {
@@ -156,7 +156,7 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
 
             //skin feature buttons
 
-            this.addDrawableChild(getETFButton((int) (this.width * 0.55), (int) (this.height * 0.2), (int) (this.width * 0.4), 20,
+            this.addDrawableChild(getETFButton((int) (this.width * 0.25), (int) (this.height * 0.2), (int) (this.width * 0.42), 20,
                     thisETFPlayerTexture.hasFeatures ?
                             ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.remove_features") :
                             ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.add_features"),
@@ -173,7 +173,7 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
                         updateButtons();
                     }));
 
-            villagerNoseButton = getETFButton((int) (this.width * 0.25), (int) (this.height * 0.7), (int) (this.width * 0.3), 20,
+            villagerNoseButton = getETFButton((int) (this.width * 0.25), (int) (this.height * 0.7), (int) (this.width * 0.2), 20,
                     Text.of(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.button").getString() +
                             thisETFPlayerTexture.noseType.getButtonText().getString()),
                     (button) -> {
@@ -186,7 +186,7 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
                                 thisETFPlayerTexture.noseType.getButtonText().getString()));
                     }, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.tooltip"));
 
-            capeButton = getETFButton((int) (this.width * 0.6), (int) (this.height * 0.7), (int) (this.width * 0.3), 20,
+            capeButton = getETFButton((int) (this.width * 0.47), (int) (this.height * 0.7), (int) (this.width * 0.2), 20,
                     Text.of(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.cape.button").getString() +
                             thisETFPlayerTexture.capeType.getButtonText().getString()),
                     (button) -> {
@@ -455,7 +455,7 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
             Path outputDirectory = Path.of(CONFIG_DIR.getParent(), "\\ETF_player_skin_printout.png");
             try {
                 currentEditorSkin.writeTo(outputDirectory);
-                ETFUtils2.logMessage(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.print_skin.result.success").getString(), true);
+                ETFUtils2.logMessage(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.print_skin.result.success").getString(), false);
 
                 return true;
             } catch (Exception e) {

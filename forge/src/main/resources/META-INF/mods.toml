@@ -11,7 +11,6 @@ displayName = "Entity Texture Features"
 authors = "Traben"
 description = '''
 Adds support for resource-pack driven features for entity textures including some OptiFine features
-§c!Cloth config is required to change settings with ModMenu!§7
 Supports OptiFine:
  - Random & Custom textures
  - Emissive textures

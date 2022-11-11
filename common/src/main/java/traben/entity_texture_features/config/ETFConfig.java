@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.screens.ETFConfigScreenWarnings;
+import traben.entity_texture_features.texture_handlers.ETFManager;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -28,7 +29,9 @@ public class ETFConfig {
     public boolean enableEmissiveTextures = true;
     public boolean enableEmissiveBlockEntities = true;
 
+    @Deprecated
     public boolean fullBrightEmissives = false;
+    public ETFManager.EmissiveRenderModes emissiveRenderMode = ETFManager.EmissiveRenderModes.DULL;
 
     public boolean specialEmissiveShield = true;
     public boolean alwaysCheckVanillaEmissiveSuffix = true;
@@ -55,6 +58,7 @@ public class ETFConfig {
     public boolean removePixelsUnderEmissivePlayers = true;
     public boolean removePixelsUnderEmissiveMobs = true;
     public boolean removePixelsUnderEmissiveBlockEntity = true;
+
 
 
     public Set<ETFConfigScreenWarnings.ConfigWarning> ignoredConfigs = new HashSet<>();

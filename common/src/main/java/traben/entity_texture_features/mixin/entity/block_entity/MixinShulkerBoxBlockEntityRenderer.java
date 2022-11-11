@@ -12,6 +12,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Nameable;
 import net.minecraft.util.math.Direction;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -24,6 +25,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import traben.entity_texture_features.mixin.accessor.SpriteAccessor;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
+import traben.entity_texture_features.utils.ETFPlaceholderEntity;
 
 import java.util.UUID;
 
@@ -36,7 +38,7 @@ public abstract class MixinShulkerBoxBlockEntityRenderer implements BlockEntityR
     @Shadow
     private ShulkerEntityModel<?> model;
 
-    private ArmorStandEntity etf$shulkerBoxStandInDummy = null;
+    private ETFPlaceholderEntity etf$shulkerBoxStandInDummy = null;
     private VertexConsumerProvider etf$vertexConsumerProviderOfThis = null;
     private Identifier etf$textureOfThis = null;
 
@@ -53,17 +55,23 @@ public abstract class MixinShulkerBoxBlockEntityRenderer implements BlockEntityR
             if (ETFConfigData.enableCustomTextures && ETFConfigData.enableCustomBlockEntities) {
                 etf$vertexConsumerProviderOfThis = vertexConsumerProvider;
                 try {
-                    etf$shulkerBoxStandInDummy = new ArmorStandEntity(EntityType.ARMOR_STAND, shulkerBoxBlockEntity.getWorld());
-                    etf$shulkerBoxStandInDummy.setPos(shulkerBoxBlockEntity.getPos().getX(), shulkerBoxBlockEntity.getPos().getY(), shulkerBoxBlockEntity.getPos().getZ());
+                    //etf$shulkerBoxStandInDummy = new ArmorStandEntity(EntityType.ARMOR_STAND, shulkerBoxBlockEntity.getWorld());
+                   // etf$shulkerBoxStandInDummy.setPos(shulkerBoxBlockEntity.getPos().getX(), shulkerBoxBlockEntity.getPos().getY(), shulkerBoxBlockEntity.getPos().getZ());
                     String identifier = "shulker" + shulkerBoxBlockEntity.getPos().toString() + shulkerBoxBlockEntity.getColor();
-                    etf$shulkerBoxStandInDummy.setCustomName(shulkerBoxBlockEntity.getCustomName());
-                    etf$shulkerBoxStandInDummy.setCustomNameVisible(shulkerBoxBlockEntity.hasCustomName());
+
                     if (shulkerBoxBlockEntity.hasCustomName()) {
                         //noinspection ConstantConditions
                         identifier += shulkerBoxBlockEntity.getCustomName().getString();
                     }
                     //shulker boxes don't have uuid so set UUID from something repeatable this uses blockPos & container name
-                    etf$shulkerBoxStandInDummy.setUuid(UUID.nameUUIDFromBytes(identifier.getBytes()));
+                    //etf$shulkerBoxStandInDummy.setUuid(UUID.nameUUIDFromBytes(identifier.getBytes()));
+
+                    //etf$chestStandInDummy.setPos(entity.getPos().getX(), entity.getPos().getY(), entity.getPos().getZ());
+
+                    //chests don't have uuid so set UUID from something repeatable this uses blockPos chestType & container name
+                    etf$shulkerBoxStandInDummy = new ETFPlaceholderEntity(shulkerBoxBlockEntity,UUID.nameUUIDFromBytes(identifier.getBytes()) );
+
+
                 } catch (Exception e) {
                     //ETFUtils2.logError("shulker box custom rendering failed during setup, " + e);
                 }

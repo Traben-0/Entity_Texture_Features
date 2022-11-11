@@ -29,8 +29,10 @@ public class ETFClientCommon {
     public static boolean configHadLoadError = false;
 
 
+
+
     public static void start() {
-        LOGGER.info("Loading Entity Texture Features, Thank you for 1 Million downloads :)");
+        LOGGER.info("Loading Entity Texture Features, Thank you for 2 Million downloads :)");
         etf$loadConfig();
         ETFUtils2.checkModCompatibility();
     }

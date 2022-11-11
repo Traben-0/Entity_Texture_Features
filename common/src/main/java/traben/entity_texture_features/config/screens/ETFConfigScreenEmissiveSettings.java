@@ -6,6 +6,7 @@ import net.minecraft.client.gui.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
+import traben.entity_texture_features.texture_handlers.ETFManager;
 
 import java.util.Objects;
 
@@ -23,12 +24,13 @@ public class ETFConfigScreenEmissiveSettings extends ETFConfigScreen {
         this.addDrawableChild(getETFButton((int) (this.width * 0.55), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,
                 ScreenTexts.BACK,
                 (button) -> Objects.requireNonNull(client).setScreen(parent)));
-        this.addDrawableChild(getETFButton((int) (this.width * 0.25), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,
-                ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".reset_defaults"),
+        this.addDrawableChild(getETFButton((int) (this.width * 0.25), (int) (this.height * 0.9), (int) (this.width * 0.22), 20,
+                ETFVersionDifferenceHandler.getTextFromTranslation("dataPack.validation.reset"),
                 (button) -> {
                     //temporaryETFConfig = new ETFConfig();
                     ETFConfigScreenMain.temporaryETFConfig.enableEmissiveTextures = true;
-                    ETFConfigScreenMain.temporaryETFConfig.fullBrightEmissives = false;
+                   // ETFConfigScreenMain.temporaryETFConfig.fullBrightEmissives = false;
+                    ETFConfigScreenMain.temporaryETFConfig.emissiveRenderMode = ETFManager.EmissiveRenderModes.DULL;
                     ETFConfigScreenMain.temporaryETFConfig.alwaysCheckVanillaEmissiveSuffix = true;
                     ETFConfigScreenMain.temporaryETFConfig.enableElytra = true;
                     ETFConfigScreenMain.temporaryETFConfig.specialEmissiveShield = true;
@@ -51,15 +53,15 @@ public class ETFConfigScreenEmissiveSettings extends ETFConfigScreen {
         ));
         this.addDrawableChild(getETFButton((int) (this.width * 0.025), (int) (this.height * 0.4), (int) (this.width * 0.45), 20,
                 Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
-                        "config." + ETFClientCommon.MOD_ID + ".full_bright_emissives.title"
-                ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.fullBrightEmissives ? ScreenTexts.ON : ScreenTexts.OFF).getString()),
+                        "config." + ETFClientCommon.MOD_ID + ".emissive_mode.title"
+                ).getString() + ": " + ETFConfigScreenMain.temporaryETFConfig.emissiveRenderMode.toString()),
                 (button) -> {
-                    ETFConfigScreenMain.temporaryETFConfig.fullBrightEmissives = !ETFConfigScreenMain.temporaryETFConfig.fullBrightEmissives;
+                    ETFConfigScreenMain.temporaryETFConfig.emissiveRenderMode = ETFConfigScreenMain.temporaryETFConfig.emissiveRenderMode.next();
                     button.setMessage(Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
-                            "config." + ETFClientCommon.MOD_ID + ".full_bright_emissives.title"
-                    ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.fullBrightEmissives ? ScreenTexts.ON : ScreenTexts.OFF).getString()));
+                            "config." + ETFClientCommon.MOD_ID + ".emissive_mode.title"
+                    ).getString() + ": " + ETFConfigScreenMain.temporaryETFConfig.emissiveRenderMode.toString()));
                 },
-                ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".full_bright_emissives.tooltip")
+                ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".emissive_mode.tooltip")
         ));
         this.addDrawableChild(getETFButton((int) (this.width * 0.025), (int) (this.height * 0.5), (int) (this.width * 0.45), 20,
                 Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
@@ -74,7 +76,7 @@ public class ETFConfigScreenEmissiveSettings extends ETFConfigScreen {
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".always_check_vanilla_emissive_suffix.tooltip")
         ));
 
-        this.addDrawableChild(getETFButton((int) (this.width * 0.025), (int) (this.height * 0.7), (int) (this.width * 0.8), 20,
+        this.addDrawableChild(getETFButton((int) (this.width * 0.025), (int) (this.height * 0.6), (int) (this.width * 0.45), 20,
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".emissive_fix.button"),
                 (button) -> Objects.requireNonNull(client).setScreen(new ETFConfigScreenEmissiveFixSettings(this))
         ));

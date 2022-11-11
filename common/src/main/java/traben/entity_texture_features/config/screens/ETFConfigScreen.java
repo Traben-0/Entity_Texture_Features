@@ -20,14 +20,22 @@ public abstract class ETFConfigScreen extends Screen {
     static final RotatingCubeMapRenderer backgroundCube = new RotatingCubeMapRenderer(new CubeMapRenderer(new Identifier(MOD_ID + ":textures/gui/background/panorama")));
     final Screen parent;
 
-    //todo translatable text for menus
 
 
     public ETFConfigScreen(Text text, Screen parent) {
         super(text);
         this.parent = parent;
     }
+    @Override
+    public boolean shouldCloseOnEsc() {
+        return true;
+    }
 
+    @Override
+    public void onClose() {
+        assert this.client != null;
+        this.client.setScreen(parent);
+    }
     public static void renderGUITexture(Identifier texture, double x1, double y1, double x2, double y2) {
 
         Tessellator tessellator = Tessellator.getInstance();
@@ -83,8 +91,13 @@ public abstract class ETFConfigScreen extends Screen {
     }
 
     ButtonWidget getETFButton(int x, int y, int width, int height, Text buttonText, ButtonWidget.PressAction onPress, Text toolTipText) {
-        if (width > 384)
+        int nudgeLeftEdge;
+        if (width > 384) {
+            nudgeLeftEdge = (width-384)/2;
             width = 384;
+        }else{
+            nudgeLeftEdge = 0;
+        }
 //        if (width > 800)
 //            height=80;
 //        if (width > 1600)
@@ -97,7 +110,7 @@ public abstract class ETFConfigScreen extends Screen {
             lines.add(Text.of(str.strip()));
         }
 
-        return new ButtonWidget(x, y, width, height,
+        return new ButtonWidget(x+nudgeLeftEdge, y, width, height,
                 buttonText,
                 onPress,
                 (buttonWidget, matrices, mouseX, mouseY) -> {

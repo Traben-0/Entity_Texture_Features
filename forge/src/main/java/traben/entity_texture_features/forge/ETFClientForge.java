@@ -17,13 +17,13 @@ public class ETFClientForge {
         // Submit our event bus to let architectury register our content on the right time
         //EventBuses.registerModEventBus(ExampleMod.MOD_ID, FMLJavaModLoadingContext.get().getModEventBus());
         if (FMLEnvironment.dist == Dist.CLIENT) {
-            try {
+            //try {
                 ModLoadingContext.get().registerExtensionPoint(
                         ConfigGuiHandler.ConfigGuiFactory.class,
                         () -> new ConfigGuiHandler.ConfigGuiFactory((minecraftClient, screen) -> new ETFConfigScreenMain(screen)));
-            } catch (NoClassDefFoundError e) {
-                System.out.println("[Entity Texture Features]: Mod settings cannot be edited in GUI without cloth config");
-            }
+            //}// catch (NoClassDefFoundError e) {
+               // System.out.println("[Entity Texture Features]: Mod settings cannot be edited in GUI without cloth config");
+            //}
 
 
             ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> IGNORESERVERONLY, (a, b) -> true));
