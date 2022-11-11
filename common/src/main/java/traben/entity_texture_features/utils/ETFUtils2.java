@@ -306,12 +306,16 @@ public abstract class ETFUtils2 {
 
 
     public static void checkModCompatibility() {
-        if (ETFVersionDifferenceHandler.isThisModLoaded("quark") && !ETFConfigData.ignoredConfigs.contains(ETFConfigScreenWarnings.ConfigWarning.QUARK)) {
-            ETFConfigData.enableCustomBlockEntities = false;
-            ETFConfigData.enableEmissiveBlockEntities = false;
+//        if (ETFVersionDifferenceHandler.isThisModLoaded("quark") && !ETFConfigData.ignoredConfigs.contains(ETFConfigScreenWarnings.ConfigWarning.QUARK)) {
+//            ETFConfigData.enableCustomBlockEntities = false;
+//            ETFConfigData.enableEmissiveBlockEntities = false;
+//            ETFUtils2.saveConfig();
+//        }
+        if (ETFVersionDifferenceHandler.isThisModLoaded("figura") && !ETFConfigData.ignoredConfigs.contains(ETFConfigScreenWarnings.ConfigWarning.FIGURA)) {
+            ETFConfigData.skinFeaturesEnabled = false;
             ETFUtils2.saveConfig();
         }
-        if (ETFVersionDifferenceHandler.isThisModLoaded("figura") && !ETFConfigData.ignoredConfigs.contains(ETFConfigScreenWarnings.ConfigWarning.FIGURA)) {
+        if (ETFVersionDifferenceHandler.isThisModLoaded("impersonate") && !ETFConfigData.ignoredConfigs.contains(ETFConfigScreenWarnings.ConfigWarning.IMPERSONATE)) {
             ETFConfigData.skinFeaturesEnabled = false;
             ETFUtils2.saveConfig();
         }

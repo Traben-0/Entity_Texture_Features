@@ -25,12 +25,14 @@ public class ETFConfigScreenGeneralSettings extends ETFConfigScreen {
                 ScreenTexts.BACK,
                 (button) -> Objects.requireNonNull(client).openScreen(parent)));
         this.addButton(getETFButton((int) (this.width * 0.25), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,
-                ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".reset_defaults"),
+                ETFVersionDifferenceHandler.getTextFromTranslation("dataPack.validation.reset"),
                 (button) -> {
                     //temporaryETFConfig = new ETFConfig();
                     ETFConfigScreenMain.temporaryETFConfig.elytraThicknessFix = true;
                     ETFConfigScreenMain.temporaryETFConfig.debugLoggingMode = ETFConfig.DebugLogMode.None;
                     ETFConfigScreenMain.temporaryETFConfig.allowIllegalTexturePaths = false;
+                    ETFConfigScreenMain.temporaryETFConfig.hideConfigButton = false;
+                    //ETFConfigScreenMain.temporaryETFConfig.zombiePiglinRightEarEnabled = false;
                     //ETFConfigScreenMain.temporaryETFConfig.temporary_fixIrisPBR = false;
                     Objects.requireNonNull(client).openScreen(new ETFConfigScreenGeneralSettings(parent));
                     this.removed();
@@ -72,8 +74,30 @@ public class ETFConfigScreenGeneralSettings extends ETFConfigScreen {
                 },
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".allow_illegal_texture_paths.tooltip")
         ));
-
-
+        this.addButton(getETFButton((int) (this.width * 0.2), (int) (this.height * 0.5), (int) (this.width * 0.6), 20,
+                Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
+                        "config." + ETFClientCommon.MOD_ID + ".hide_button"
+                ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.hideConfigButton ? ScreenTexts.ON : ScreenTexts.OFF).getString()),
+                (button) -> {
+                    ETFConfigScreenMain.temporaryETFConfig.hideConfigButton = !ETFConfigScreenMain.temporaryETFConfig.hideConfigButton;
+                    button.setMessage(Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
+                            "config." + ETFClientCommon.MOD_ID + ".hide_button"
+                    ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.hideConfigButton ? ScreenTexts.ON : ScreenTexts.OFF).getString()));
+                },
+                ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".hide_button.tooltip")
+        ));
+//        this.addDrawableChild(getETFButton((int) (this.width * 0.2), (int) (this.height * 0.6), (int) (this.width * 0.6), 20,
+//                Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
+//                        "config." + ETFClientCommon.MOD_ID + ".piglin_ear.button"
+//                ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.hideConfigButton ? ScreenTexts.ON : ScreenTexts.OFF).getString()),
+//                (button) -> {
+//                    ETFConfigScreenMain.temporaryETFConfig.zombiePiglinRightEarEnabled = !ETFConfigScreenMain.temporaryETFConfig.zombiePiglinRightEarEnabled;
+//                    button.setMessage(Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
+//                            "config." + ETFClientCommon.MOD_ID + ".piglin_ear.button"
+//                    ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.zombiePiglinRightEarEnabled ? ScreenTexts.ON : ScreenTexts.OFF).getString()));
+//                },
+//                ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".piglin_ear.tooltip")
+//        ));
     }
 
 

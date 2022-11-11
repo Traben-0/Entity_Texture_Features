@@ -4,8 +4,9 @@ import com.google.common.collect.ImmutableList;
 import it.unimi.dsi.fastutil.objects.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.entity.mob.ZombifiedPiglinEntity;
 import net.minecraft.entity.passive.PandaEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.resource.ResourceManager;
@@ -29,7 +30,7 @@ import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
 // ETF re-write
 //this class will ideally be where everything in vanilla interacts to get ETF stuff done
-public class ETFManager {
+public class ETFManager{
 
     public static final UUID ETF_GENERIC_UUID = UUID.nameUUIDFromBytes(("GENERIC").getBytes());
     private static final ETFTexture ETF_ERROR_TEXTURE = getErrorETFTexture();
@@ -72,6 +73,11 @@ public class ETFManager {
     private final Object2BooleanOpenHashMap<UUID> ENTITY_IS_UPDATABLE = new Object2BooleanOpenHashMap<>();
     private final ObjectOpenHashSet<UUID> ENTITY_UPDATE_QUEUE = new ObjectOpenHashSet<>();
     private final ObjectOpenHashSet<UUID> ENTITY_DEBUG_QUEUE = new ObjectOpenHashSet<>();
+
+    public final Object2IntOpenHashMap<EntityType<?>> ENTITY_TYPE_VANILLA_BRIGHTNESS_OVERRIDE_VALUE = new Object2IntOpenHashMap<>();
+
+    public final ObjectOpenHashSet<EntityType<?>> ENTITY_TYPE_IGNORE_PARTICLES = new ObjectOpenHashSet<>();
+    public final Object2IntOpenHashMap<EntityType<?>> ENTITY_TYPE_RENDER_LAYER = new Object2IntOpenHashMap<>();
     //contains the total number of variants for any given vanilla texture
     private final Object2IntOpenHashMap<Identifier> TRUE_RANDOM_COUNT_CACHE = new Object2IntOpenHashMap<>();
     private final Object2LongOpenHashMap<UUID> LAST_PLAYER_CHECK_TIME = new Object2LongOpenHashMap<>();
@@ -84,6 +90,8 @@ public class ETFManager {
     public ETFTexture redMooshroomAlt = null;
     public ETFTexture brownMooshroomAlt = null;
 
+
+    public static boolean zombiePiglinRightEarEnabled = false;
 
     private ETFManager() {
 
@@ -130,6 +138,8 @@ public class ETFManager {
             ETFUtils2.logError("emissive suffixes could not be read: default emissive suffix '_e' used");
             EMISSIVE_SUFFIX_LIST.add("_e");
         }
+        ENTITY_TYPE_VANILLA_BRIGHTNESS_OVERRIDE_VALUE.defaultReturnValue(0);
+        ENTITY_TYPE_RENDER_LAYER.defaultReturnValue(0);
     }
 
     public static ETFManager getInstance() {
@@ -154,13 +164,6 @@ public class ETFManager {
         return new ETFTexture(new Identifier("etf:error.png"), false);//, ETFTexture.TextureSource.GENERIC_DEBUG);
     }
 
-    public static EmissiveRenderModes getEmissiveMode() {
-        if (ETFConfigData.fullBrightEmissives) {
-            return EmissiveRenderModes.BRIGHT;
-        } else {
-            return EmissiveRenderModes.DULL;
-        }
-    }
 
 
     public void removeThisEntityDataFromAllStorage(ETFCacheKey ETFId) {
@@ -352,7 +355,7 @@ public class ETFManager {
                 }
             } else if (/*only*/possible2PNG == null) {
                 //optifine random confirmed
-                newOptifineTextureFound(vanillaIdentifier, possibleProperty);
+                newOptifineTextureFound(entity,vanillaIdentifier, possibleProperty);
                 return returnNewAlreadyConfirmedOptifineTexture(entity, vanillaIdentifier, false);
             } else //noinspection CommentedOutCode
             {//neither null this will be annoying
@@ -370,7 +373,7 @@ public class ETFManager {
 
                 // System.out.println("debug6534="+p2pngPackName+","+propertiesPackName+","+ETFUtils2.returnNameOfHighestPackFrom(packs));
                 if (propertiesPackName != null && propertiesPackName.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(new String[]{p2pngPackName, propertiesPackName}))) {
-                    newOptifineTextureFound(vanillaIdentifier, possibleProperty);
+                    newOptifineTextureFound(entity,vanillaIdentifier, possibleProperty);
                     return returnNewAlreadyConfirmedOptifineTexture(entity, vanillaIdentifier, false);
                 } else {
                     if (source != TextureSource.ENTITY_FEATURE) {
@@ -386,12 +389,49 @@ public class ETFManager {
         return null;
     }
 
-    private void newOptifineTextureFound(Identifier vanillaIdentifier, Identifier properties) {
+    private void newOptifineTextureFound(Entity entity,Identifier vanillaIdentifier, Identifier properties) {
 
         try {
             Properties props = ETFUtils2.readAndReturnPropertiesElseNull(properties);
 
             if (props != null) {
+                //check for etf entity properties
+                if(props.containsKey("vanillaBrightnessOverride")){
+                    String value = props.getProperty("vanillaBrightnessOverride").trim();
+                    int tryNumber;
+                    try {
+                        tryNumber =Integer.parseInt(value.replaceAll("\\D", ""));
+                    }catch(NumberFormatException e){
+                        tryNumber = 0;
+                    }
+                    if(tryNumber >= 16) tryNumber = 15;
+                    if(tryNumber < 0) tryNumber = 0;
+                    ENTITY_TYPE_VANILLA_BRIGHTNESS_OVERRIDE_VALUE.put(entity.getType(),tryNumber);
+                }
+                if(entity instanceof ZombifiedPiglinEntity
+                        && props.containsKey("showHiddenModelParts")
+                        && props.getProperty("showHiddenModelParts").equals("true")) {
+                    zombiePiglinRightEarEnabled = true;
+                }
+                if(props.containsKey("suppressParticles")
+                        && props.getProperty("suppressParticles").equals("true")) {
+                    ENTITY_TYPE_IGNORE_PARTICLES.add(entity.getType());
+                }
+                //todo documentation
+                if(props.containsKey("entityRenderLayerOverride")){
+                    String layer =props.getProperty("entityRenderLayerOverride");
+                    //noinspection EnhancedSwitchMigration
+                    switch (layer){
+                        case "translucent":ENTITY_TYPE_RENDER_LAYER.put(entity.getType(),1);break;
+                        case "translucent_cull":ENTITY_TYPE_RENDER_LAYER.put(entity.getType(),2);break;
+                        case "end_portal":ENTITY_TYPE_RENDER_LAYER.put(entity.getType(),3);break;
+                        case "outline":ENTITY_TYPE_RENDER_LAYER.put(entity.getType(),4);break;
+                    }
+
+
+
+                }
+
                 Set<String> propIds = props.stringPropertyNames();
                 //set so only 1 of each
                 Set<Integer> numbers = new HashSet<>();
@@ -437,7 +477,7 @@ public class ETFManager {
                     @Nullable String[] maxHealthStrings = null;
                     @Nullable Integer[] inventoryColumns = null;
 //                    @Nullable Boolean isTrapHorse = null;
-//                    @Nullable Boolean isAngry = null;
+                   @Nullable Boolean isAngry = null;
                     @Nullable PandaEntity.Gene[] hiddenGene = null;
 //                    @Nullable Angriness[] wardenAngriness = null;
 //                    @Nullable Boolean isAngryWithClient = null;
@@ -446,6 +486,8 @@ public class ETFManager {
                     @Nullable String[] distanceFromPlayer = null;
                     @Nullable Boolean creeperCharged = null;
                     @Nullable StatusEffect[] statusEffects = null;
+                    @Nullable String[] items = null;
+                    @Nullable Boolean moving = null;
 
                     if (props.containsKey("skins." + num) || props.containsKey("textures." + num)) {
                         String dataFromProps = props.containsKey("skins." + num) ? props.getProperty("skins." + num).trim() : props.getProperty("textures." + num).trim();
@@ -765,14 +807,14 @@ public class ETFManager {
 //                            ETFUtils2.logWarn("properties files number error in trapHorse category");
 //                        }
 //                    }
-//                    if (props.containsKey("angry." + num)) {
-//                        String input = props.getProperty("angry." + num).trim();
-//                        if (input.equals("true") || input.equals("false")) {
-//                            isAngry = input.equals("true");
-//                        } else {
-//                            ETFUtils2.logWarn("properties files number error in angry category");
-//                        }
-//                    }
+                    if (props.containsKey("angry." + num)) {
+                        String input = props.getProperty("angry." + num).trim();
+                        if (input.equals("true") || input.equals("false")) {
+                            isAngry = input.equals("true");
+                        } else {
+                            ETFUtils2.logWarn("properties files number error in angry category");
+                        }
+                    }
                     if (props.containsKey("hiddenGene." + num)) {
                         String[] input = props.getProperty("hiddenGene." + num).trim().split("\\s+");
                         ArrayList<PandaEntity.Gene> genes = new ArrayList<>();
@@ -891,6 +933,17 @@ public class ETFManager {
                         }
                         statusEffects = statuses.toArray(new StatusEffect[0]);
                     }
+                    if (props.containsKey("items." + num)) {
+                        items = props.getProperty("items." + num).trim().split("\\s+");
+                    }
+                    if (props.containsKey("moving." + num)) {
+                        String input = props.getProperty("moving." + num).trim();
+                        if (input.equals("true") || input.equals("false")) {
+                            moving = input.equals("true");
+                        } else {
+                            ETFUtils2.logWarn("properties files number error in moving category");
+                        }
+                    }
 
                     //array faster to use
                     //list easier to build
@@ -919,7 +972,7 @@ public class ETFManager {
                                 maxHealthStrings,
                                 inventoryColumns,
 //                                isTrapHorse,
-//                                isAngry,
+                                isAngry,
                                 hiddenGene,
 //                                wardenAngriness,
 //                                isAngryWithClient,
@@ -927,7 +980,10 @@ public class ETFManager {
                                 isScreamingGoat,
                                 distanceFromPlayer,
                                 creeperCharged,
-                                statusEffects));
+                                statusEffects,
+                                items,
+                                moving));
+
                     }else{
                         ETFUtils2.logWarn("property number \""+num+". in file \""+vanillaIdentifier+". failed to read.");
                     }
@@ -1011,7 +1067,7 @@ public class ETFManager {
         try {
             for (ETFTexturePropertyCase property :
                     optifineProperties) {
-                if (property.doesEntityMeetConditionsOfThisCase((LivingEntity) entity, isThisAnUpdate, ENTITY_IS_UPDATABLE)) {
+                if (property.doesEntityMeetConditionsOfThisCase(entity, isThisAnUpdate, ENTITY_IS_UPDATABLE)) {
                     return property.getAnEntityVariantSuffixFromThisCase(entity.getUuid());
                 }
             }
@@ -1112,17 +1168,56 @@ public class ETFManager {
         ENTITY_FEATURE
     }
 
+
+    public static EmissiveRenderModes getEmissiveMode() {
+        if (ETFConfigData.emissiveRenderMode == EmissiveRenderModes.DULL) {
+            return EmissiveRenderModes.DULL;
+        } else {
+            if(ETFConfigData.emissiveRenderMode == EmissiveRenderModes.COMPATIBLE && ETFVersionDifferenceHandler.areShadersInUse()){
+                return EmissiveRenderModes.DULL;
+            }else{
+                return EmissiveRenderModes.BRIGHT;
+            }
+        }
+    }
+
     public enum EmissiveRenderModes {
         DULL,
-        BRIGHT;
+        BRIGHT,
+        COMPATIBLE;
 
+        @Override
+        public String toString() {
+            //noinspection EnhancedSwitchMigration
+            switch (this){
+                case DULL: return ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.emissive_mode.dull").getString();
+                case BRIGHT: return ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.emissive_mode.bright").getString();
+                default: return ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.emissive_mode.compatible").getString();
+            }
+        }
+
+        public EmissiveRenderModes next(){
+            //noinspection EnhancedSwitchMigration
+            switch (this){
+                case DULL: return BRIGHT;
+                case BRIGHT: return COMPATIBLE;
+                default: return DULL;
+            }
+        }
         public static EmissiveRenderModes blockEntityMode() {
             //iris has fixes for bright mode which is otherwise broken on block entities, does not require enabled shaders
-            if (ETFVersionDifferenceHandler.isThisModLoaded("iris") && ETFConfigData.fullBrightEmissives) {
-                return BRIGHT;
-            } else {
-                //todo investigate if block entities require a third enum for custom render mode
+            if(ETFConfigData.emissiveRenderMode == DULL){
                 return DULL;
+            }else{
+                if (ETFVersionDifferenceHandler.isThisModLoaded("iris")){
+                    if(ETFConfigData.emissiveRenderMode == COMPATIBLE && ETFVersionDifferenceHandler.areShadersInUse()){
+                        return DULL;
+                    }else{
+                        return BRIGHT;
+                    }
+                }else{
+                    return DULL;
+                }
             }
         }
     }

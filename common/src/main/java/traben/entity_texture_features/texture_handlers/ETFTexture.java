@@ -4,9 +4,13 @@ import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.render.*;
+import net.minecraft.client.render.OverlayTexture;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffects;
@@ -20,8 +24,8 @@ import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.screens.ETFConfigScreen;
 import traben.entity_texture_features.utils.ETFUtils2;
 
-import java.util.Optional;
 import java.util.Properties;
+import java.util.Random;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -433,12 +437,12 @@ public class ETFTexture {
     }
 
     @NotNull
-    public Identifier getTextureIdentifier(LivingEntity entity) {
+    public Identifier getTextureIdentifier(Entity entity) {
         return getTextureIdentifier(entity, false);
     }
 
     @NotNull
-    public Identifier getTextureIdentifier(@Nullable LivingEntity entity, boolean forcePatchedTexture) {
+    public Identifier getTextureIdentifier(@Nullable Entity entity, boolean forcePatchedTexture) {
 
         if (isPatched() && (forcePatchedTexture || (ETFConfigData.enableEmissiveTextures && ETFVersionDifferenceHandler.areShadersInUse()) || MinecraftClient.getInstance().currentScreen instanceof ETFConfigScreen)) {
             //patched required
@@ -451,7 +455,7 @@ public class ETFTexture {
     }
 
     @NotNull
-    private Identifier getBlinkingIdentifier(@Nullable LivingEntity entity) {
+    private Identifier getBlinkingIdentifier(@Nullable Entity entity) {
         if (!doesBlink() || entity == null || !ETFConfigData.enableBlinking) {
             return identifierOfCurrentState();
         }
@@ -462,7 +466,7 @@ public class ETFTexture {
             return identifierOfCurrentState();
         }
         //force eyes closed if blinded
-        else if (entity.hasStatusEffect(StatusEffects.BLINDNESS)) {
+        else if (entity instanceof LivingEntity && ((LivingEntity)entity).hasStatusEffect(StatusEffects.BLINDNESS)) {
             modifyTextureState(doesBlink2() ? TextureReturnState.APPLY_BLINK2 : TextureReturnState.APPLY_BLINK);
             return identifierOfCurrentState();
         } else {
@@ -490,12 +494,14 @@ public class ETFTexture {
                     }
                 } else if (currentTime > nextBlink + blinkLength) {
                     //calculate new next blink
-                    ETFManager.getInstance().ENTITY_BLINK_TIME.put(id, currentTime + entity.getRandom().nextInt(blinkFrequency) + 20);
+                    ETFManager.getInstance().ENTITY_BLINK_TIME.put(id, currentTime + randomBlink.nextInt(blinkFrequency) + 20);
                 }
             }
         }
         return identifierOfCurrentState();
     }
+
+    private static final Random randomBlink = new Random();
 
     public boolean isEmissive() {
         return this.emissiveIdentifier != null;

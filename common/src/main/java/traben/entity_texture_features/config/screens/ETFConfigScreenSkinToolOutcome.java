@@ -16,6 +16,7 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.HttpClientBuilder;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
+import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,7 +34,7 @@ public class ETFConfigScreenSkinToolOutcome extends ETFConfigScreen {
     private final boolean didSucceed;
 
     protected ETFConfigScreenSkinToolOutcome(Screen parent, boolean success) {
-        super(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".print_skin.result"), parent);
+        super(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.print_skin.result"), parent);
         didSucceed = success;
     }
 
@@ -82,7 +83,7 @@ public class ETFConfigScreenSkinToolOutcome extends ETFConfigScreen {
                 ScreenTexts.DONE,
                 (button) -> Objects.requireNonNull(client).openScreen(parent)));
         if (didSucceed) {
-            this.addButton(getETFButton((int) (this.width * 0.15), (int) (this.height * 0.7), (int) (this.width * 0.7), 20,
+            this.addButton(getETFButton((int) (this.width * 0.15), (int) (this.height * 0.6), (int) (this.width * 0.7), 20,
                     ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.print_skin.open"),
                     (button) -> {
                         try {
@@ -92,7 +93,7 @@ public class ETFConfigScreenSkinToolOutcome extends ETFConfigScreen {
                         } catch (Exception ignored) {
                         }
                     }));
-            this.addButton(getETFButton((int) (this.width * 0.15), (int) (this.height * 0.6), (int) (this.width * 0.7), 20,
+            this.addButton(getETFButton((int) (this.width * 0.15), (int) (this.height * 0.4), (int) (this.width * 0.7), 20,
                     ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.upload_skin"),
                     (button) -> {
                         boolean skinType = true;//true for steve false for alex
@@ -105,11 +106,20 @@ public class ETFConfigScreenSkinToolOutcome extends ETFConfigScreen {
                                 }
                             }
                         }
+                        boolean changeSuccess = uploadSkin(skinType);
                         button.setMessage(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.upload_skin." +
-                                (uploadSkin(skinType) ? "success" : "fail")));
+                                (changeSuccess ? "success" : "fail")));
+                        if(changeSuccess){
+                            ETFUtils2.logWarn(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.upload_skin.success" ).getString()
+                                    ,true);
+                        }
+                        button.active = false;
                     }));
         }
     }
+
+
+
 
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {

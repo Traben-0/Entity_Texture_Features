@@ -26,7 +26,7 @@ public class ETFConfigScreenEmissiveFixSettings extends ETFConfigScreen {
                 ScreenTexts.BACK,
                 (button) -> Objects.requireNonNull(client).openScreen(parent)));
         this.addButton(getETFButton((int) (this.width * 0.25), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,
-                ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".reset_defaults"),
+                ETFVersionDifferenceHandler.getTextFromTranslation("dataPack.validation.reset"),
                 (button) -> {
 
                     ETFConfigScreenMain.temporaryETFConfig.removePixelsUnderEmissiveElytra = true;
@@ -39,7 +39,7 @@ public class ETFConfigScreenEmissiveFixSettings extends ETFConfigScreen {
                     this.removed();
                 }));
 
-        this.addButton(getETFButton((int) (this.width * 0.025), (int) (this.height * 0.3), (int) (this.width * 0.45), 20,
+        this.addButton(getETFButton((int) (this.width * 0.025), (int) (this.height * 0.3), (int) (this.width * 0.4), 20,
                 Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
                         "config." + ETFClientCommon.MOD_ID + ".emissive_fix.elytra"
                 ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.removePixelsUnderEmissiveElytra ? ScreenTexts.ON : ScreenTexts.OFF).getString()),
@@ -50,7 +50,7 @@ public class ETFConfigScreenEmissiveFixSettings extends ETFConfigScreen {
                     ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.removePixelsUnderEmissiveElytra ? ScreenTexts.ON : ScreenTexts.OFF).getString()));
                 }
         ));
-        this.addButton(getETFButton((int) (this.width * 0.025), (int) (this.height * 0.4), (int) (this.width * 0.45), 20,
+        this.addButton(getETFButton((int) (this.width * 0.025), (int) (this.height * 0.4), (int) (this.width * 0.4), 20,
                 Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
                         "config." + ETFClientCommon.MOD_ID + ".emissive_fix.armour"
                 ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.removePixelsUnderEmissiveArmour ? ScreenTexts.ON : ScreenTexts.OFF).getString()),
@@ -61,7 +61,7 @@ public class ETFConfigScreenEmissiveFixSettings extends ETFConfigScreen {
                     ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.removePixelsUnderEmissiveArmour ? ScreenTexts.ON : ScreenTexts.OFF).getString()));
                 }
         ));
-        this.addButton(getETFButton((int) (this.width * 0.025), (int) (this.height * 0.5), (int) (this.width * 0.45), 20,
+        this.addButton(getETFButton((int) (this.width * 0.025), (int) (this.height * 0.5), (int) (this.width * 0.4), 20,
                 Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
                         "config." + ETFClientCommon.MOD_ID + ".emissive_fix.players"
                 ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.removePixelsUnderEmissivePlayers ? ScreenTexts.ON : ScreenTexts.OFF).getString()),
@@ -72,7 +72,7 @@ public class ETFConfigScreenEmissiveFixSettings extends ETFConfigScreen {
                     ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.removePixelsUnderEmissivePlayers ? ScreenTexts.ON : ScreenTexts.OFF).getString()));
                 }
         ));
-        this.addButton(getETFButton((int) (this.width * 0.025), (int) (this.height * 0.6), (int) (this.width * 0.45), 20,
+        this.addButton(getETFButton((int) (this.width * 0.025), (int) (this.height * 0.6), (int) (this.width * 0.4), 20,
                 Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
                         "config." + ETFClientCommon.MOD_ID + ".emissive_fix.mobs"
                 ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.removePixelsUnderEmissiveMobs ? ScreenTexts.ON : ScreenTexts.OFF).getString()),
@@ -83,7 +83,7 @@ public class ETFConfigScreenEmissiveFixSettings extends ETFConfigScreen {
                     ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.removePixelsUnderEmissiveMobs ? ScreenTexts.ON : ScreenTexts.OFF).getString()));
                 }
         ));
-        this.addButton(getETFButton((int) (this.width * 0.025), (int) (this.height * 0.7), (int) (this.width * 0.45), 20,
+        this.addButton(getETFButton((int) (this.width * 0.025), (int) (this.height * 0.7), (int) (this.width * 0.4), 20,
                 Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
                         "config." + ETFClientCommon.MOD_ID + ".emissive_fix.block_entity"
                 ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.removePixelsUnderEmissiveBlockEntity ? ScreenTexts.ON : ScreenTexts.OFF).getString()),
@@ -120,12 +120,12 @@ public class ETFConfigScreenEmissiveFixSettings extends ETFConfigScreen {
 
         for (String str :
                 strings) {
-            lines.add(Text.of(str.trim()));
+            lines.add(Text.of(str));
         }
         int i = 0;
         for (Text txt :
                 lines) {
-            drawTextWithShadow(matrices, textRenderer, txt, (int) (width * 0.5), (int) (height * 0.18) + i, 0xFFFFFF);
+            drawTextWithShadow(matrices, textRenderer, txt, (int) (width * 0.45), (int) (height * 0.18) + i, 0xFFFFFF);
             i += txt.getString().isEmpty() ? 7 : 10;
         }
     }

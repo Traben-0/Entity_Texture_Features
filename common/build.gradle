@@ -26,4 +26,13 @@ publishing {
     repositories {
         // Add repositories to publish to here.
     }
+
+    jar {
+        from("LICENSE") {
+            rename { "License_${project.archivesBaseName}_${project.version}.txt" }
+        }
+        from("CHANGELOG.md") {
+            rename { "Changelog_${project.version}.md" }
+        }
+    }
 }
