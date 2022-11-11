@@ -4,17 +4,17 @@ package traben.entity_texture_features.texture_handlers;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectImmutableList;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.mob.*;
 import net.minecraft.entity.passive.*;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.DyeColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.mixin.accessor.MooshroomEntityAccessor;
-import traben.entity_texture_features.utils.ETFCacheKey;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.ArrayList;
@@ -46,7 +46,7 @@ public class ETFTexturePropertyCase {
     private final @Nullable String[] MAX_HEALTH_STRINGS;
     private final @Nullable Integer[] INVENTORY_COLUMNS;
 //    private final @Nullable Boolean IS_TRAP_HORSE;
-//    private final @Nullable Boolean IS_ANGRY;
+    private final @Nullable Boolean IS_ANGRY;
     private final @Nullable PandaEntity.Gene[] HIDDEN_GENE;
 //    private final @Nullable Angriness[] WARDEN_ANGRINESS;
 //    private final @Nullable Boolean IS_ANGRY_WITH_CLIENT;
@@ -56,6 +56,10 @@ public class ETFTexturePropertyCase {
     private final @Nullable Boolean CREEPER_CHARGED;
 
     private final @Nullable StatusEffect[] STATUS_EFFECT;
+
+    private final @Nullable String[] ITEMS;
+
+    private final @Nullable Boolean MOVING;
 
     //whether case should be ignored by updates
 
@@ -80,7 +84,7 @@ public class ETFTexturePropertyCase {
                                   @Nullable String[] maxHealthStrings,
                                   @Nullable Integer[] inventoryColumns,
 //                                  @Nullable Boolean isTrapHorse,
-//                                  @Nullable Boolean isAngry,
+                                 @Nullable Boolean isAngry,
                                   @Nullable PandaEntity.Gene[] hiddenGene,
 //                                  @Nullable Angriness[] wardenAngriness,
 //                                  @Nullable Boolean isAngryWithClient,
@@ -88,11 +92,15 @@ public class ETFTexturePropertyCase {
                                   @Nullable Boolean isScreamingGoat,
                                   @Nullable String[] distanceToPlayer,
                                   @Nullable Boolean creeperCharged,
-                                  @Nullable StatusEffect[] statusEffect
+                                  @Nullable StatusEffect[] statusEffect,
+                                  @Nullable String[] items,
+                                  @Nullable Boolean moving
 
 
     ) {
 
+        MOVING = moving;
+        ITEMS = items;
         STATUS_EFFECT = statusEffect;
 
         CREEPER_CHARGED = creeperCharged;
@@ -103,7 +111,7 @@ public class ETFTexturePropertyCase {
         MAX_HEALTH_STRINGS = maxHealthStrings;
         INVENTORY_COLUMNS = inventoryColumns;
 //        IS_TRAP_HORSE = isTrapHorse;
-//        IS_ANGRY = isAngry;
+        IS_ANGRY = isAngry;
         HIDDEN_GENE = hiddenGene;
 //        WARDEN_ANGRINESS = wardenAngriness;
 //        IS_ANGRY_WITH_CLIENT = isAngryWithClient;
@@ -131,7 +139,7 @@ public class ETFTexturePropertyCase {
         }
 
 
-        //todo optimize selection of suffixes by weight better than this, not efficient when scaled
+        //todo optimize selection of suffixes by weight better than this, not efficient when scaled, also only happens once per property so meh
         if (weightsX.length > 0) {
             if (weightsX.length == suffixesX.length) {
                 ArrayList<Integer> buildWeighted = new ArrayList<>();
@@ -170,7 +178,7 @@ public class ETFTexturePropertyCase {
     }
 
 
-    public boolean doesEntityMeetConditionsOfThisCase(LivingEntity entity, boolean isUpdate, Object2BooleanOpenHashMap<UUID> UUID_CaseHasUpdateablesCustom) {
+    public boolean doesEntityMeetConditionsOfThisCase(Entity entity, boolean isUpdate, Object2BooleanOpenHashMap<UUID> UUID_CaseHasUpdateablesCustom) {
 
 
         //System.out.println("checking property number "+propertyNumber);
@@ -194,7 +202,7 @@ public class ETFTexturePropertyCase {
                 && MAX_HEALTH_STRINGS == null
                 && INVENTORY_COLUMNS == null
 //                && IS_TRAP_HORSE == null
-//                && IS_ANGRY == null
+                && IS_ANGRY == null
                 && HIDDEN_GENE == null
 //                && WARDEN_ANGRINESS == null
 //                && IS_ANGRY_WITH_CLIENT == null
@@ -203,6 +211,8 @@ public class ETFTexturePropertyCase {
                 && DISTANCE_TO_PLAYER == null
                 && CREEPER_CHARGED == null
                 && STATUS_EFFECT == null
+                && ITEMS == null
+                && MOVING == null
         ) {
             return true;
         }
@@ -445,9 +455,9 @@ public class ETFTexturePropertyCase {
             }
             doesEntityMeetThisCaseTest = check;
         }
-        if (doesEntityMeetThisCaseTest && IS_BABY != 0) {
+        if (doesEntityMeetThisCaseTest && entity instanceof LivingEntity && IS_BABY != 0) {
             wasEntityTestedByAnUpdatableProperty = true;
-            doesEntityMeetThisCaseTest = (IS_BABY == 1) == entity.isBaby();
+            doesEntityMeetThisCaseTest = (IS_BABY == 1) == ((LivingEntity)entity).isBaby();
             //System.out.println("baby " + doesEntityMeetThisCaseTest);
         }
         if (doesEntityMeetThisCaseTest && WEATHER_TYPE != 0) {
@@ -472,12 +482,12 @@ public class ETFTexturePropertyCase {
             }
             doesEntityMeetThisCaseTest = check;
         }
-        if (doesEntityMeetThisCaseTest && HEALTH_RANGE_STRINGS != null) {
+        if (doesEntityMeetThisCaseTest && entity instanceof LivingEntity && HEALTH_RANGE_STRINGS != null) {
             wasEntityTestedByAnUpdatableProperty = true;
             //float entityHealth = entity.getHealth();
             boolean check = false;
             //always check percentage
-            float checkValue = entity.getHealth() / entity.getMaxHealth() * 100;
+            float checkValue = ((LivingEntity)entity).getHealth() / ((LivingEntity)entity).getMaxHealth() * 100;
             for (String hlth :
                     HEALTH_RANGE_STRINGS) {
                 if (hlth != null) {
@@ -666,8 +676,8 @@ public class ETFTexturePropertyCase {
         }
 
 
-        if (doesEntityMeetThisCaseTest && SPEED_MIN_MAX != null) {
-            double speed = entity.getMovementSpeed();
+        if (doesEntityMeetThisCaseTest && entity instanceof LivingEntity && SPEED_MIN_MAX != null) {
+            double speed = ((LivingEntity)entity).getMovementSpeed();
             Double min = SPEED_MIN_MAX[0];
             Double max = SPEED_MIN_MAX[1];
             if (min != null && max != null) {
@@ -682,10 +692,10 @@ public class ETFTexturePropertyCase {
                 doesEntityMeetThisCaseTest = (jumpHeight >= min && jumpHeight <= max);
             }
         }
-        if (doesEntityMeetThisCaseTest && MAX_HEALTH_STRINGS != null) {
+        if (doesEntityMeetThisCaseTest && entity instanceof LivingEntity && MAX_HEALTH_STRINGS != null) {
             boolean check = false;
             //always check percentage
-            float checkValue = entity.getMaxHealth();
+            float checkValue = ((LivingEntity)entity).getMaxHealth();
             for (String hlth :
                     MAX_HEALTH_STRINGS) {
                 if (hlth != null) {
@@ -723,18 +733,27 @@ public class ETFTexturePropertyCase {
 //            wasEntityTestedByAnUpdatableProperty = true;
 //            doesEntityMeetThisCaseTest = ((SkeletonHorseEntity) entity).isTrapped() == IS_TRAP_HORSE;
 //        }
-//        if (doesEntityMeetThisCaseTest && IS_ANGRY != null) {
-//            if (entity instanceof Angerable) {
-//                wasEntityTestedByAnUpdatableProperty = true;
-//                doesEntityMeetThisCaseTest = (((Angerable) entity).getTarget() != null) == IS_ANGRY;
-//                System.out.println("target="+((Angerable) entity).getTarget() );
-//            }else if (entity instanceof HostileEntity) {
-//                wasEntityTestedByAnUpdatableProperty = true;
-//                doesEntityMeetThisCaseTest = (((HostileEntity) entity).getTarget() != null) == IS_ANGRY;
-//            }else{
-//                doesEntityMeetThisCaseTest =false;
-//            }
-//        }
+        if (doesEntityMeetThisCaseTest && IS_ANGRY != null) {
+            if (entity instanceof EndermanEntity) {
+                wasEntityTestedByAnUpdatableProperty = true;
+                doesEntityMeetThisCaseTest = ((EndermanEntity) entity).isAngry() == IS_ANGRY;
+            }else if (entity instanceof BlazeEntity) {
+                wasEntityTestedByAnUpdatableProperty = true;
+                doesEntityMeetThisCaseTest = entity.isOnFire() == IS_ANGRY;
+            }else if (entity instanceof GuardianEntity) {
+                wasEntityTestedByAnUpdatableProperty = true;
+                doesEntityMeetThisCaseTest = (((GuardianEntity)entity).getBeamTarget() != null) == IS_ANGRY;
+            }else if (entity instanceof VindicatorEntity) {
+                wasEntityTestedByAnUpdatableProperty = true;
+                doesEntityMeetThisCaseTest = (((VindicatorEntity)entity).isAttacking()) == IS_ANGRY;
+            }else if (entity instanceof SpellcastingIllagerEntity) {
+                wasEntityTestedByAnUpdatableProperty = true;
+                doesEntityMeetThisCaseTest = (((SpellcastingIllagerEntity)entity).isSpellcasting()) == IS_ANGRY;
+            }else{
+                doesEntityMeetThisCaseTest =false;
+            }
+
+        }
 //        if (doesEntityMeetThisCaseTest && IS_ANGRY_WITH_CLIENT != null && MinecraftClient.getInstance().player != null) {
 //            wasEntityTestedByAnUpdatableProperty = true;
 //            if (entity instanceof HostileEntity) {
@@ -805,12 +824,12 @@ public class ETFTexturePropertyCase {
             wasEntityTestedByAnUpdatableProperty = true;
             doesEntityMeetThisCaseTest = ((CreeperEntity) entity).shouldRenderOverlay() == CREEPER_CHARGED;
         }
-        if (doesEntityMeetThisCaseTest && STATUS_EFFECT != null) {
+        if (doesEntityMeetThisCaseTest && entity instanceof LivingEntity && STATUS_EFFECT != null) {
             wasEntityTestedByAnUpdatableProperty = true;
             boolean found = false;
             for (StatusEffect effect :
                     STATUS_EFFECT) {
-                if (entity.hasStatusEffect(effect)) {
+                if (((LivingEntity)entity).hasStatusEffect(effect)) {
                     found = true;
                     break;
                 }
@@ -828,6 +847,83 @@ public class ETFTexturePropertyCase {
             }
 
             doesEntityMeetThisCaseTest = found;
+        }
+        //System.out.println(Arrays.toString(ITEMS) +" - " +entity.getItemsEquipped().toString());
+        if (doesEntityMeetThisCaseTest && ITEMS != null ) {
+            wasEntityTestedByAnUpdatableProperty = true;
+            System.out.println(Arrays.toString(ITEMS) +" - " +entity.getItemsEquipped().toString());
+            if(ITEMS.length == 1
+                    && ("none".equals(ITEMS[0])
+                    || "any".equals(ITEMS[0])
+                    || "holding".equals(ITEMS[0])
+                    || "wearing".equals(ITEMS[0]))){
+                if (ITEMS[0].equals( "none")){
+                    Iterable<ItemStack> equipped = entity.getItemsEquipped();
+                    for (ItemStack item :
+                            equipped) {
+                        if (item != null && !item.isEmpty()) {
+                            //found a valid item break and deny
+                            doesEntityMeetThisCaseTest=false;
+                            break;
+                        }
+                    }
+                }else{
+                    Iterable<ItemStack> items;
+                    if ("any".equals(ITEMS[0])){//any
+                        items = entity.getItemsEquipped();
+                    }else if ("holding".equals(ITEMS[0])){
+                        items = entity.getItemsHand();
+                    }else {//wearing
+                        items = entity.getArmorItems();
+                    }
+                    boolean found = false;
+                    for (ItemStack item :
+                            items) {
+                        if (item != null && !item.isEmpty()) {
+                            //found a valid item break and resolve
+                            found = true;
+                            break;
+                        }
+                    }
+                    doesEntityMeetThisCaseTest = found;
+                }
+            }else {
+                //specifically named item
+
+                //both armour and hand held
+                Iterable<ItemStack> equipped = entity.getItemsEquipped();
+                boolean found = false;
+                upper: for (String itemToFind:
+                     ITEMS){
+                    if(itemToFind != null) {
+                        if (itemToFind.contains("minecraft:")) {
+                            itemToFind = itemToFind.replace("minecraft:","");
+                        }
+
+                        for (ItemStack item :
+                                equipped) {
+                            if (item != null
+                                    && !item.isEmpty()
+                                &&item.getItem().toString().replace("minecraft:","").equals(itemToFind)) {
+                                found = true;
+                                break upper;
+                            }
+                        }
+                    }
+
+                }
+                doesEntityMeetThisCaseTest = found;
+            }
+        }
+        if (doesEntityMeetThisCaseTest && MOVING != null) {
+            wasEntityTestedByAnUpdatableProperty = true;
+            //System.out.println("movement: "+entity.getVelocity().horizontalLength());
+
+            doesEntityMeetThisCaseTest = (
+                    //must be horizontal as vertical velocity has a bleed in from presumably gravity physics
+                    //99% of mob motion is horizontal anyway
+                    entity.getVelocity().horizontalLength() == 0.0
+            ) != MOVING;
         }
 
 
@@ -851,7 +947,7 @@ public class ETFTexturePropertyCase {
     }
 
     @NotNull
-    private ObjectImmutableList<String> readAllSpawnConditionsForCache(@NotNull LivingEntity entity) {
+    private ObjectImmutableList<String> readAllSpawnConditionsForCache(@NotNull Entity entity) {
         //check to speed up processing time
 
         //must be 6 length

@@ -30,6 +30,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import traben.entity_texture_features.mixin.accessor.SpriteAccessor;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
+import traben.entity_texture_features.utils.ETFPlaceholderEntity;
 
 import java.util.UUID;
 
@@ -40,7 +41,7 @@ public abstract class MixinChestBlockEntityRenderer<T extends BlockEntity & Ches
 
     private ETFTexture thisETFTexture = null;
     private boolean isAnimatedTexture = false;
-    private ArmorStandEntity etf$chestStandInDummy = null;
+    private ETFPlaceholderEntity etf$chestStandInDummy = null;
     private Identifier etf$textureOfThis = null;
     private VertexConsumerProvider etf$vertexConsumerProviderOfThis = null;
 
@@ -70,19 +71,18 @@ public abstract class MixinChestBlockEntityRenderer<T extends BlockEntity & Ches
             etf$textureOfThis = new Identifier(nameSpace, texturePath);
             etf$vertexConsumerProviderOfThis = vertexConsumers;
             if (ETFConfigData.enableCustomTextures && ETFConfigData.enableCustomBlockEntities) {
-                etf$chestStandInDummy = new ArmorStandEntity(EntityType.ARMOR_STAND, MinecraftClient.getInstance().world);
-                etf$chestStandInDummy.setPos(entity.getPos().getX(), entity.getPos().getY(), entity.getPos().getZ());
+
+                //etf$chestStandInDummy.setPos(entity.getPos().getX(), entity.getPos().getY(), entity.getPos().getZ());
                 String identifier = "chest" + entity.getPos().toString() + chestType.asString();
                 if (entity instanceof Nameable nameable) {
-                    etf$chestStandInDummy.setCustomName(nameable.getCustomName());
-                    etf$chestStandInDummy.setCustomNameVisible(nameable.hasCustomName());
                     if (nameable.hasCustomName()) {
                         //noinspection ConstantConditions
                         identifier += nameable.getCustomName().getString();
                     }
                 }
                 //chests don't have uuid so set UUID from something repeatable this uses blockPos chestType & container name
-                etf$chestStandInDummy.setUuid(UUID.nameUUIDFromBytes(identifier.getBytes()));
+                etf$chestStandInDummy = new ETFPlaceholderEntity(entity,UUID.nameUUIDFromBytes(identifier.getBytes()) );
+
             }
         }
     }

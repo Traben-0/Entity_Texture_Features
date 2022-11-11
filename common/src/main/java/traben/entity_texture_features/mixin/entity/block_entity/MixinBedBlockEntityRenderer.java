@@ -23,6 +23,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import traben.entity_texture_features.mixin.accessor.SpriteAccessor;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
+import traben.entity_texture_features.utils.ETFPlaceholderEntity;
 
 import java.util.UUID;
 
@@ -33,7 +34,7 @@ public abstract class MixinBedBlockEntityRenderer implements BlockEntityRenderer
 
     private boolean isAnimatedTexture = false;
     private ETFTexture thisETFTexture = null;
-    private ArmorStandEntity etf$bedStandInDummy = null;
+    private ETFPlaceholderEntity etf$bedStandInDummy = null;
     private Identifier etf$textureOfThis = null;
     private VertexConsumerProvider etf$vertexConsumerProviderOfThis = null;
 
@@ -46,7 +47,7 @@ public abstract class MixinBedBlockEntityRenderer implements BlockEntityRenderer
             return vertices;
         thisETFTexture = ETFManager.getInstance().getETFTexture(etf$textureOfThis, etf$bedStandInDummy, ETFManager.TextureSource.BLOCK_ENTITY, ETFConfigData.removePixelsUnderEmissiveBlockEntity);
 
-
+        //System.out.println(thisETFTexture.toString()+thisETFTexture.thisIdentifier.toString());
         //return thisETFTexture.getTextureIdentifier();
 
         VertexConsumer alteredReturn = thisETFTexture == null ? null : etf$vertexConsumerProviderOfThis.getBuffer(RenderLayer.getEntityCutout(thisETFTexture.getTextureIdentifier(etf$bedStandInDummy)));
@@ -65,10 +66,11 @@ public abstract class MixinBedBlockEntityRenderer implements BlockEntityRenderer
             etf$textureOfThis = new Identifier(nameSpace, texturePath);
             etf$vertexConsumerProviderOfThis = vertexConsumerProvider;
             if (ETFConfigData.enableCustomTextures && ETFConfigData.enableCustomBlockEntities) {
-                etf$bedStandInDummy = new ArmorStandEntity(EntityType.ARMOR_STAND, MinecraftClient.getInstance().world);
-                etf$bedStandInDummy.setPos(bedBlockEntity.getPos().getX(), bedBlockEntity.getPos().getY(), bedBlockEntity.getPos().getZ());
+                etf$bedStandInDummy = new ETFPlaceholderEntity(bedBlockEntity,UUID.nameUUIDFromBytes((bedBlockEntity.getPos().toString() + bedBlockEntity.getColor().toString()).getBytes()));
+                //System.out.println(etf$bedStandInDummy.toString());
+                //etf$bedStandInDummy.setPos(bedBlockEntity.getPos().getX(), bedBlockEntity.getPos().getY(), bedBlockEntity.getPos().getZ());
                 //chests don't have uuid so set UUID from something repeatable I chose from block pos
-                etf$bedStandInDummy.setUuid(UUID.nameUUIDFromBytes((bedBlockEntity.getPos().toString() + bedBlockEntity.getColor().toString()).getBytes()));
+                //etf$bedStandInDummy.setUuid();
             }
         }
     }
