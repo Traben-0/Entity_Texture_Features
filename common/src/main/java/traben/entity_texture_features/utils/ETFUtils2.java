@@ -213,6 +213,7 @@ public abstract class ETFUtils2 {
     }
 
     public static boolean isExistingResource(Identifier identifier){
+        if(identifier == null) return false;
         if(ETFManager.getInstance().DOES_IDENTIFIER_EXIST_CACHED_RESULT.containsKey(identifier)){
             return ETFManager.getInstance().DOES_IDENTIFIER_EXIST_CACHED_RESULT.getBoolean(identifier);
         }
