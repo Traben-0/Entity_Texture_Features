@@ -9,6 +9,7 @@ import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.resource.Resource;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.InvalidIdentifierException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFClientCommon;
@@ -32,7 +33,16 @@ public abstract class ETFUtils2 {
     @Nullable
     public static Identifier replaceIdentifier(Identifier id, String regex, String replace) {
         if (id == null) return null;
-        return new Identifier(id.getNamespace(), id.getPath().replaceFirst(regex, replace));
+        Identifier forReturn;
+        try{
+            forReturn = new Identifier(id.getNamespace(), id.getPath().replaceFirst(regex, replace));
+        }catch(InvalidIdentifierException idFail){
+            ETFUtils2.logError(ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.illegal_path_recommendation").getString()+"\n"+idFail);
+            forReturn = null;
+        }catch (Exception e){
+            forReturn = null;
+        }
+        return forReturn;
     }
 
 
@@ -214,6 +224,7 @@ public abstract class ETFUtils2 {
     }
 
     public static boolean isExistingResource(Identifier identifier){
+        if(identifier == null) return false;
         if(ETFManager.getInstance().DOES_IDENTIFIER_EXIST_CACHED_RESULT.containsKey(identifier)){
             return ETFManager.getInstance().DOES_IDENTIFIER_EXIST_CACHED_RESULT.getBoolean(identifier);
         }
