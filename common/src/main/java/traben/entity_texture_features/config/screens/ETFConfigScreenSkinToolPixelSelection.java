@@ -76,7 +76,7 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFConfigScreen {
 
         int pixelSize = (int) (this.height * 0.7 / 64);
 
-        //todo could save on using 4096 buttons by finding a way to extrapolate mouse position from the render method, but meh
+        //todo could save on using 4096 buttons by extrapolating mouse position from the render method, but meh
         for (int x = 0; x < 64; x++) {
             for (int y = 0; y < 64; y++) {
                 int finalX = x;

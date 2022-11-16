@@ -11,6 +11,7 @@ import net.minecraft.text.LiteralTextContent;
 import net.minecraft.text.MutableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.InvalidIdentifierException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFClientCommon;
@@ -35,7 +36,16 @@ public abstract class ETFUtils2 {
     @Nullable
     public static Identifier replaceIdentifier(Identifier id, String regex, String replace) {
         if (id == null) return null;
-        return new Identifier(id.getNamespace(), id.getPath().replaceFirst(regex, replace));
+        Identifier forReturn;
+        try{
+            forReturn = new Identifier(id.getNamespace(), id.getPath().replaceFirst(regex, replace));
+        }catch(InvalidIdentifierException idFail){
+            ETFUtils2.logError(ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.illegal_path_recommendation").getString()+"\n"+idFail);
+            forReturn = null;
+        }catch (Exception e){
+            forReturn = null;
+        }
+        return forReturn;
     }
 
     @Nullable
@@ -285,12 +295,16 @@ public abstract class ETFUtils2 {
 
 
     public static void checkModCompatibility() {
-        if (ETFVersionDifferenceHandler.isThisModLoaded("quark") && !ETFConfigData.ignoredConfigs.contains(ETFConfigScreenWarnings.ConfigWarning.QUARK)) {
-            ETFConfigData.enableCustomBlockEntities = false;
-            ETFConfigData.enableEmissiveBlockEntities = false;
+//        if (ETFVersionDifferenceHandler.isThisModLoaded("quark") && !ETFConfigData.ignoredConfigs.contains(ETFConfigScreenWarnings.ConfigWarning.QUARK)) {
+//            ETFConfigData.enableCustomBlockEntities = false;
+//            ETFConfigData.enableEmissiveBlockEntities = false;
+//            ETFUtils2.saveConfig();
+//        }
+        if (ETFVersionDifferenceHandler.isThisModLoaded("figura") && !ETFConfigData.ignoredConfigs.contains(ETFConfigScreenWarnings.ConfigWarning.FIGURA)) {
+            ETFConfigData.skinFeaturesEnabled = false;
             ETFUtils2.saveConfig();
         }
-        if (ETFVersionDifferenceHandler.isThisModLoaded("figura") && !ETFConfigData.ignoredConfigs.contains(ETFConfigScreenWarnings.ConfigWarning.FIGURA)) {
+        if (ETFVersionDifferenceHandler.isThisModLoaded("impersonate") && !ETFConfigData.ignoredConfigs.contains(ETFConfigScreenWarnings.ConfigWarning.IMPERSONATE)) {
             ETFConfigData.skinFeaturesEnabled = false;
             ETFUtils2.saveConfig();
         }

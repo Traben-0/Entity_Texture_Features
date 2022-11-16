@@ -1,4 +1,4 @@
-package traben.entity_texture_features.mixin.entity;
+package traben.entity_texture_features.mixin.entity.misc;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;

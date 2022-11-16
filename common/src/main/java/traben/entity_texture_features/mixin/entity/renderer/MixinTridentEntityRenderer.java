@@ -1,4 +1,4 @@
-package traben.entity_texture_features.mixin.entity.misc;
+package traben.entity_texture_features.mixin.entity.renderer;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;

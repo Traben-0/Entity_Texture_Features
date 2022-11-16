@@ -1,4 +1,4 @@
-package traben.entity_texture_features.mixin.entity.feature_renderers;
+package traben.entity_texture_features.mixin.entity.renderer.feature;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.MinecraftClient;
@@ -37,7 +37,6 @@ public abstract class MixinElytraFeatureRenderer<T extends LivingEntity, M exten
     //the sneaky 3 way boolean
     boolean etf$twoTextures = false;
 
-    //todo rewrite
     @Final
     @Shadow
     private ElytraEntityModel<T> elytra;

@@ -1,5 +1,59 @@
 [**ETF Changelog:**]
 
+[V4.2.0]
+
+*Update summary:*
+
+
+ETF v4.2 has added many additional non OptiFine texture properties to further vary textures with, as well as adding properties
+that can vary the way the entity itself is rendered, such as brightness level, ambient particles and translucent rendering.
+
+4.2 also includes many bug fixes and suggestions that have popped up since I left on holidays.
+I hope you enjoy :), and thank you for over 2 million downloads!!!
+
+Added:
+
+- added texture property `angry`, used like other OptiFine properties, can be `true|false`. works only for Endermen, Blazes, Guardians, Vindicators and Evokers. Triggers when these mobs display their client side 'angered or attacking state' *(open mouth for endermen & blazes igniting)*
+- added texture property `moving`, used like other OptiFine properties, can be `true|false` to vary texture based on whether a mob is moving or not.
+- added texture property `items`, used like other OptiFine properties, can be either:
+  1. `none`*(true if mob is holding or wearing no items)*
+  2. `any`*(true if mob is holding or wearing any items)*
+  3. `holding`*(true if mob is holding any items)*
+  4. `wearing`*(true if mob is wearing any items)*
+  5. a list of item names like `minecraft:book` or `cool_mod:sunglasses`, separated by spaces.
+- added a new property type "Entity Property" to tweak entity rendering within the .properties file, they are not numbered like the other OptiFine properties e.g `skins.1`
+- added entity property `vanillaBrightnessOverride`: can be set as a number from `0-15`, this overrides the brightness of the mob, it can be used to reduce the brightness of mobs like Blazes and Allays, or increase the brightness of others.
+- added entity property `suppressParticles`: if set to `true` will remove ambient particles from mobs *(currently only Blazes and Glow Squids)*
+- added entity property `showHiddenModelParts`: if set to `true` will enable the rendering of model parts normally hidden in vanilla *(currently only zombie piglin right ears)*
+- added entity property `entityRenderLayerOverride`, shader compatibility will vary, the possible values for this property are:
+  1. `translucent` *(allows partial transparency in entity rendering)*
+  2. `translucent_cull` *(allows partial transparency in entity rendering & culls model faces)*
+  3. `end_portal` *(looks like the end portal effect, added for fun cause it works)*
+  4. `outline` *(renders the entities outline through walls)*
+- extended shader support code to include the Iris forge port `Oculus`, this should improve z-fighting and support the new compatible emissive render mode.
+- added `Compatible` emissive rendering mode. This mode uses the `Bright` emissive rendering mode normally and automatically changes to, the more shader compatible, `Default / Dull` emissive rendering mode when shaders are enabled. To have the best of both worlds.
+- added compatibility warning to disable skin features with the `impersonate` mod present
+- added emissive and random texture support to saddles *(supports pigs, horse-mobs and striders)*
+- added further support for some older OptiFine format biome names using `PascalCase` to be auto converted to the modern `snake_case` biome names *(e.g. `MushroomFields` becomes the correct `mushroom_fields` automatically)*
+
+changed:
+- updates russian translations thanks to @Felix14-v2
+- improved block entity code, this should improve compat with armor stand affecting mods (like quark) as armor stands are no longer used as a substitute entity
+- tweaked button scaling to center themselves in larger gui scales
+- tweaked some gui button positions
+- removed compatibility warning that disabled block entity features with the `quark` mod present, issue has been fixed.
+
+
+fixed:
+several additions listed above fix several issues however some more minor fixes include:
+- fixed quark incompatibility with ETF block entity features
+- fixed ETF settings button appearing on data pack selection screen
+- fixed additional textures *(e.g. sheep fur or villager types)* having their variant overridden by the mobs base texture even if they have their own .properties file
+- fixed compatibility with the disguised heads mod and skins with etf features not changing *(skin features will not display on disguised players :/)*
+- fixed player skin enchanted visuals being brighter than vanilla
+- fixed keyboard navigation in the ETF settings gui *(currently just `ESC` key to go back)*
+
+
 [V4.1.1]
 
 - added more screens to better separate button groups

@@ -18,7 +18,7 @@
 ETF is a Fabric *(Quilt compatible)* & Forge mod that adds many new _Entity Texture Features_ :trollface:, including entity and player skin features!  
 This way, ETF achieves more OptiFine parity on the Fabric mod loader. If you want more OptiFine features on Fabric, you can either check [this list](https://lambdaurora.dev/optifine_alternatives), made by LambdaAurora, **or** you can use the [Fabulously Optimized modpack](https://modrinth.com/modpack/fabulously-optimized), which includes **all** the OptiFine parity mods!
 
-### Featuring:
+## Featuring:
 
 - [🎲](README-assets/RANDOM_GUIDE.md) Custom & random entity textures with the OptiFine format, including even more properties!
 - [💡](README-assets/EMISSIVE_GUIDE.md) Emissive/glowing entity textures with the OptiFine format
@@ -34,7 +34,7 @@ This way, ETF achieves more OptiFine parity on the Fabric mod loader. If you wan
 - Mod added entities - <img src="https://emojipedia-us.s3.amazonaws.com/source/skype/289/check-mark-button_2705.png" alt="✅" width="15"> **Compatible**<br />(Only if the mod creator used the vanilla rendering code to render their mobs)
 
 <div align="center">
-<details><summary><h1>Wiki & guides</h1></summary>
+<details><summary><h1>Wiki & guides [click to open]</h1></summary>
 
 <div align="left">
 
@@ -118,6 +118,21 @@ This way, ETF achieves more OptiFine parity on the Fabric mod loader. If you wan
 
 </div>
 
+## Examples
+
+<div align="center">
+<a href="https://www.curseforge.com/minecraft/texture-packs/entity-texture-features-example-pack">
+<img src="README-assets/example_pack.png" alt="example" width="450">
+</a><br>
+<a href="https://www.planetminecraft.com/texture-pack/creepers-plus-optifine-required/">
+<img src="README-assets/example_creep.png" alt="example" width="450">
+</a><br>
+<a href="https://www.curseforge.com/minecraft/texture-packs/tissous-zombie-pack-optifine-1-7x-1-19">
+<img src="README-assets/example_zomb.png" alt="example" width="450">
+</a>
+</div>
+
+
 ## Settings & configuration
 
 - Settings can be changed in-game using [Mod Menu](https://modrinth.com/mod/modmenu), the settings button in the resource pack screen, or  by editing the config file, located under `config/entity_texture_features.json` 
@@ -163,7 +178,7 @@ This way, ETF achieves more OptiFine parity on the Fabric mod loader. If you wan
 
 ## Change log
 
- [[V4.1.1] & prior](CHANGELOG.md).
+ [[V4.1.1] & prior](../common/CHANGELOG.md).
 
 ## License
 
