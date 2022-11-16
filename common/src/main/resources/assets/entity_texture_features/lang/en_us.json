@@ -176,5 +176,7 @@
 
 
   "config.entity_texture_features.piglin_ear.button": "un-hide zombie piglin right ears",
-  "config.entity_texture_features.piglin_ear.tooltip": "Vanilla minecraft hides the right ear of\nZombie Piglins, this setting re-enables them."
+  "config.entity_texture_features.piglin_ear.tooltip": "Vanilla minecraft hides the right ear of\nZombie Piglins, this setting re-enables them.",
+
+  "config.entity_texture_features.illegal_path_recommendation": "ETF has detected a resource pack with a non [a-z0-9_.-] character in the file path.\nThis texture will be ignored by ETF unless you enable the [Allow broken texture paths] option in ETFs settings.\nThe Vanilla error message for the incorrect texture will now follow: "
 }

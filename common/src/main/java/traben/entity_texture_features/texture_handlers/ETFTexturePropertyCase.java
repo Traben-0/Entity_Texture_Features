@@ -158,7 +158,7 @@ public class ETFTexturePropertyCase {
                 SUFFIX_NUMBERS_WEIGHTED = buildWeighted.toArray(new Integer[0]);
 
             } else {
-                ETFUtils2.logMessage("random texture weights don't match", false);
+                ETFUtils2.logWarn("random texture weights don't match for:\n suffixes: "+ Arrays.toString(suffixesX)+"\n weights: "+Arrays.toString(weightsX), false);
                 SUFFIX_NUMBERS_WEIGHTED = suffixesX;
             }
         } else {
