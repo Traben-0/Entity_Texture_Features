@@ -285,7 +285,10 @@ public class ETFManager{
     @Nullable //when vanilla
     private <T extends Entity> Identifier getPossibleVariantIdentifierRedirectForFeatures(T entity, Identifier vanillaIdentifier, TextureSource source) {
         Identifier regularReturnIdentifier = getPossibleVariantIdentifier(entity, vanillaIdentifier, source);
-        if (regularReturnIdentifier == null || vanillaIdentifier.equals(regularReturnIdentifier)) {
+        //if the feature does not have a .properties file and returns the vanilla file or null check if we can copy the base texture's variant
+        if (OPTIFINE_PROPERTY_CACHE.get(vanillaIdentifier) == null &&
+                (regularReturnIdentifier == null ||  vanillaIdentifier.equals(regularReturnIdentifier) )
+        ) {
             //random assignment either failed or returned texture1
             //as this is a feature we will also try one last time to match it to a possible variant of the base texture
 
@@ -532,8 +535,8 @@ public class ETFManager{
                             for (int i = 0; i < biomeList.length; i++) {
                                 String biome = biomeList[i].strip();
                                 switch (biome) {
-                                    case "Ocean" -> biomeList[i] = "ocean";
-                                    case "Plains" -> biomeList[i] = "plains";
+                                    //case "Ocean" -> biomeList[i] = "ocean";
+                                    //case "Plains" -> biomeList[i] = "plains";
                                     case "ExtremeHills" -> biomeList[i] = "stony_peaks";
                                     case "Forest", "ForestHills" -> biomeList[i] = "forest";
                                     case "Taiga", "TaigaHills" -> biomeList[i] = "taiga";
@@ -541,15 +544,22 @@ public class ETFManager{
                                     case "River" -> biomeList[i] = "river";
                                     case "Hell" -> biomeList[i] = "nether_wastes";
                                     case "Sky" -> biomeList[i] = "the_end";
-                                    case "FrozenOcean" -> biomeList[i] = "frozen_ocean";
-                                    case "FrozenRiver" -> biomeList[i] = "frozen_river";
+                                    //case "FrozenOcean" -> biomeList[i] = "frozen_ocean";
+                                    //case "FrozenRiver" -> biomeList[i] = "frozen_river";
                                     case "IcePlains" -> biomeList[i] = "snowy_plains";
                                     case "IceMountains" -> biomeList[i] = "snowy_slopes";
                                     case "MushroomIsland", "MushroomIslandShore" -> biomeList[i] = "mushroom_fields";
-                                    case "Beach" -> biomeList[i] = "beach";
+                                    //case "Beach" -> biomeList[i] = "beach";
                                     case "DesertHills", "Desert" -> biomeList[i] = "desert";
                                     case "ExtremeHillsEdge" -> biomeList[i] = "meadow";
                                     case "Jungle", "JungleHills" -> biomeList[i] = "jungle";
+                                    default -> {
+                                        if(!biome.contains("_") && biome.matches("[A-Z]")){
+                                            //has capitals and no "_" it is probably the weird old format
+                                            String snake_case_version = biome.replaceAll("(\\B)([A-Z])","_$2");
+                                            biomeList[i] = snake_case_version.toLowerCase();
+                                        }
+                                    }
                                 }
                             }
                             biomes = biomeList;

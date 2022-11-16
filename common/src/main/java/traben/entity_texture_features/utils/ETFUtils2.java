@@ -11,6 +11,7 @@ import net.minecraft.text.LiteralTextContent;
 import net.minecraft.text.MutableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.InvalidIdentifierException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFClientCommon;
@@ -35,7 +36,16 @@ public abstract class ETFUtils2 {
     @Nullable
     public static Identifier replaceIdentifier(Identifier id, String regex, String replace) {
         if (id == null) return null;
-        return new Identifier(id.getNamespace(), id.getPath().replaceFirst(regex, replace));
+        Identifier forReturn;
+        try{
+            forReturn = new Identifier(id.getNamespace(), id.getPath().replaceFirst(regex, replace));
+        }catch(InvalidIdentifierException idFail){
+            ETFUtils2.logError(ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.illegal_path_recommendation").getString()+"\n"+idFail);
+            forReturn = null;
+        }catch (Exception e){
+            forReturn = null;
+        }
+        return forReturn;
     }
 
     @Nullable
