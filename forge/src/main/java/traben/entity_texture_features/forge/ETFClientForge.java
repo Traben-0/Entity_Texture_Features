@@ -1,7 +1,7 @@
 package traben.entity_texture_features.forge;
 
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.ConfigGuiHandler;
+import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -16,13 +16,13 @@ public class ETFClientForge {
         // Submit our event bus to let architectury register our content on the right time
         //EventBuses.registerModEventBus(ExampleMod.MOD_ID, FMLJavaModLoadingContext.get().getModEventBus());
         if (FMLEnvironment.dist == Dist.CLIENT) {
-            //try {
+            try {
                 ModLoadingContext.get().registerExtensionPoint(
-                        ConfigGuiHandler.ConfigGuiFactory.class,
-                        () -> new ConfigGuiHandler.ConfigGuiFactory((minecraftClient, screen) -> new ETFConfigScreenMain(screen)));
-            //}// catch (NoClassDefFoundError e) {
-               // System.out.println("[Entity Texture Features]: Mod settings cannot be edited in GUI without cloth config");
-            //}
+                        ConfigScreenHandler.ConfigScreenFactory.class,
+                        () -> new ConfigScreenHandler.ConfigScreenFactory((minecraftClient, screen) -> new ETFConfigScreenMain(screen)));
+            } catch (NoClassDefFoundError e) {
+                System.out.println("[Entity Texture Features]: Mod config broken, download latest forge version");
+            }
 
 
             ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));
