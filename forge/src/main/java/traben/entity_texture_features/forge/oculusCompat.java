@@ -6,7 +6,7 @@ import traben.entity_texture_features.ETFVersionDifferenceHandler;
 
 
 public abstract class oculusCompat {
-    public static final boolean IRIS_DETECTED = ETFVersionDifferenceHandler.isThisModLoaded("iris");
+    public static final boolean IRIS_DETECTED = ETFVersionDifferenceHandler.isThisModLoaded("oculus");
 
     private static final InternalHandler INTERNAL_HANDLER = IRIS_DETECTED ? new InternalHandlerImpl() : new InternalHandler() {
     };
