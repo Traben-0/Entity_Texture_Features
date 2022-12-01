@@ -4,14 +4,12 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.CubeMapRenderer;
 import net.minecraft.client.gui.RotatingCubeMapRenderer;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 
@@ -40,7 +38,7 @@ public abstract class ETFConfigScreen extends Screen {
 
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferBuilder = tessellator.getBuffer();
-        RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
+        RenderSystem.setShader(GameRenderer::getPositionTexColorProgram);
         RenderSystem.setShaderTexture(0, texture);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
@@ -59,7 +57,7 @@ public abstract class ETFConfigScreen extends Screen {
     public static void renderBackgroundTexture(int vOffset, Identifier texture, int height, int width, int minHeight) {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferBuilder = tessellator.getBuffer();
-        RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
+        RenderSystem.setShader(GameRenderer::getPositionTexColorProgram);
         RenderSystem.setShaderTexture(0, texture);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
@@ -103,20 +101,29 @@ public abstract class ETFConfigScreen extends Screen {
 //        if (width > 1600)
 //            height=16;
         boolean tooltipIsEmpty = toolTipText.getString().isBlank();
-        String[] strings = toolTipText.getString().split("\n");
-        List<Text> lines = new ArrayList<>();
-        for (String str :
-                strings) {
-            lines.add(Text.of(str.strip()));
+//        String[] strings = toolTipText.getString().split("\n");
+//        List<Text> lines = new ArrayList<>();
+//        for (String str :
+//                strings) {
+//            lines.add(Text.of(str.strip()));
+//        }
+
+        if(tooltipIsEmpty){
+            return ButtonWidget.builder(buttonText,onPress).dimensions(x+nudgeLeftEdge, y, width, height).build();
+        }else{
+
+            return ButtonWidget.builder(buttonText,onPress).dimensions(x+nudgeLeftEdge, y, width, height).tooltip(Tooltip.of(toolTipText)).build();
         }
 
-        return new ButtonWidget(x+nudgeLeftEdge, y, width, height,
-                buttonText,
-                onPress,
-                (buttonWidget, matrices, mouseX, mouseY) -> {
-                    if (buttonWidget.isHovered() && !tooltipIsEmpty) {
-                        this.renderTooltip(matrices, lines, mouseX, mouseY);
-                    }
-                });
+
+//        return new ButtonWidget(,
+//                buttonText,
+//                 onPress,
+//                (buttonWidget, matrices, mouseX, mouseY) -> {
+//                    if (buttonWidget. && !tooltipIsEmpty) {
+//                        this.renderTooltip(matrices, lines, mouseX, mouseY);
+//                    }
+//                }
+              //  );
     }
 }

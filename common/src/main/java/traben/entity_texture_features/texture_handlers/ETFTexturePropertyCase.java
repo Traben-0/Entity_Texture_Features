@@ -431,7 +431,7 @@ public class ETFTexturePropertyCase {
                     entityColor = "NOT_A_COLOR";
                 }
             } else if (entity instanceof TropicalFishEntity fishy) {
-                DyeColor str = TropicalFishEntity.getBaseDyeColor(fishy.getVariant());
+                DyeColor str = TropicalFishEntity.getBaseDyeColor(fishy.getVariant().getId());
                 if (str != null) {
                     entityColor = str.getName().toLowerCase();
                 } else {
@@ -872,7 +872,7 @@ public class ETFTexturePropertyCase {
                     if ("any".equals(ITEMS[0])){//any
                         items = entity.getItemsEquipped();
                     }else if ("holding".equals(ITEMS[0])){
-                        items = entity.getItemsHand();
+                        items = entity.getHandItems();
                     }else {//wearing
                         items = entity.getArmorItems();
                     }

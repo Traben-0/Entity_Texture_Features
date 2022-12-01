@@ -61,12 +61,13 @@ public class ETFConfigScreenMain extends ETFConfigScreen {
 
 
         if (shownWarning) {
-            this.addDrawableChild(new ButtonWidget((int) (this.width * 0.1), (int) (this.height * 0.1) - 15, (int) (this.width * 0.2), 20,
-                    Text.of(""),
-                    (button) -> Objects.requireNonNull(client).setScreen(warningsScreen)));
+            this.addDrawableChild(ButtonWidget.builder(Text.of(""),
+                    (button) -> Objects.requireNonNull(client).setScreen(warningsScreen))
+                    .dimensions((int) (this.width * 0.1), (int) (this.height * 0.1) - 15, (int) (this.width * 0.2), 20
+                    ).build());
         }
 
-        this.addDrawableChild(new ButtonWidget((int) (this.width * 0.7), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,
+        this.addDrawableChild(ButtonWidget.builder(
                 ETFVersionDifferenceHandler.getTextFromTranslation("gui.done"),
                 (button) -> {
                     ETFConfigData = temporaryETFConfig;
@@ -75,41 +76,46 @@ public class ETFConfigScreenMain extends ETFConfigScreen {
                     ETFManager.resetInstance();
                     ETFClientCommon.configHadLoadError=false;
                     Objects.requireNonNull(client).setScreen(parent);
-                }));
-        this.addDrawableChild(new ButtonWidget((int) (this.width * 0.4), (int) (this.height * 0.9), (int) (this.width * 0.22), 20,
+                }).dimensions((int) (this.width * 0.7), (int) (this.height * 0.9), (int) (this.width * 0.2), 20).build());
+        this.addDrawableChild(ButtonWidget.builder(
                 ETFVersionDifferenceHandler.getTextFromTranslation("dataPack.validation.reset"),
                 (button) -> {
                     temporaryETFConfig = new ETFConfig();
                     this.clearAndInit();
                     //Objects.requireNonNull(client).setScreen(parent);
-                }));
-        this.addDrawableChild(new ButtonWidget((int) (this.width * 0.1), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,
+                }).dimensions((int) (this.width * 0.4), (int) (this.height * 0.9), (int) (this.width * 0.22), 20).build());
+        this.addDrawableChild(ButtonWidget.builder(
                 ScreenTexts.CANCEL,
                 (button) -> {
                     temporaryETFConfig = null;
                     Objects.requireNonNull(client).setScreen(parent);
-                }));
+                }).dimensions((int) (this.width * 0.1), (int) (this.height * 0.9), (int) (this.width * 0.2), 20).build());
 
 
-        this.addDrawableChild(new ButtonWidget((int) (this.width * 0.3) + 75, (int) (this.height * 0.5) + 17, 165, 20,
+        this.addDrawableChild(ButtonWidget.builder(
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".blinking_mob_settings_sub.title"),
-                (button) -> Objects.requireNonNull(client).setScreen(blinkSettingsScreen)));
+                (button) -> Objects.requireNonNull(client).setScreen(blinkSettingsScreen))
+                .dimensions((int) (this.width * 0.3) + 75, (int) (this.height * 0.5) + 17, 165, 20).build());
 
-        this.addDrawableChild(new ButtonWidget((int) (this.width * 0.3) + 75, (int) (this.height * 0.5) - 10, 165, 20,
+        this.addDrawableChild(ButtonWidget.builder(
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_settings.title"),
-                (button) -> Objects.requireNonNull(client).setScreen(playerSkinSettingsScreen)));
+                (button) -> Objects.requireNonNull(client).setScreen(playerSkinSettingsScreen))
+                .dimensions((int) (this.width * 0.3) + 75, (int) (this.height * 0.5) - 10, 165, 20).build());
 
-        this.addDrawableChild(new ButtonWidget((int) (this.width * 0.3) + 75, (int) (this.height * 0.5) - 64, 165, 20,
+        this.addDrawableChild(ButtonWidget.builder(
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".random_settings.title"),
-                (button) -> Objects.requireNonNull(client).setScreen(randomSettingsScreen)));
+                (button) -> Objects.requireNonNull(client).setScreen(randomSettingsScreen))
+                .dimensions((int) (this.width * 0.3) + 75, (int) (this.height * 0.5) - 64, 165, 20).build());
 
-        this.addDrawableChild(new ButtonWidget((int) (this.width * 0.3) + 75, (int) (this.height * 0.5) - 37, 165, 20,
+        this.addDrawableChild(ButtonWidget.builder(
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".emissive_settings.title"),
-                (button) -> Objects.requireNonNull(client).setScreen(emissiveSettingsScreen)));
+                (button) -> Objects.requireNonNull(client).setScreen(emissiveSettingsScreen))
+                .dimensions((int) (this.width * 0.3) + 75, (int) (this.height * 0.5) - 37, 165, 20).build());
 
-        this.addDrawableChild(new ButtonWidget((int) (this.width * 0.3) + 75, (int) (this.height * 0.5) + 44, 165, 20,
+        this.addDrawableChild(ButtonWidget.builder(
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".general_settings.title"),
-                (button) -> Objects.requireNonNull(client).setScreen(generalSettingsScreen)));
+                (button) -> Objects.requireNonNull(client).setScreen(generalSettingsScreen))
+                .dimensions((int) (this.width * 0.3) + 75, (int) (this.height * 0.5) + 44, 165, 20).build());
 
     }
 
