@@ -23,7 +23,7 @@ public abstract class MixinAbstractClientPlayerEntity extends PlayerEntity {
 
 
     public MixinAbstractClientPlayerEntity(World world, BlockPos pos, float yaw, GameProfile profile, @Nullable PlayerPublicKey publicKey) {
-        super(world, pos, yaw, profile, publicKey);
+        super(world, pos, yaw, profile);
     }
 
     @Inject(method = "getCapeTexture",

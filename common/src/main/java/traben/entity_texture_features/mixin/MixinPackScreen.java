@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.screens.ETFConfigScreenMain;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.Objects;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
@@ -24,7 +24,7 @@ import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 public abstract class MixinPackScreen extends Screen {
 
 
-    @Shadow @Final private File file;
+    @Shadow @Final private Path file;
 
     protected MixinPackScreen(Text title) {
         super(title);

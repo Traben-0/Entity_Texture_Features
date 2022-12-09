@@ -7,7 +7,7 @@
     "MixinPackScreen",
     "accessor.ElytraEntityModelAccessor",
     "accessor.MooshroomEntityAccessor",
-    "accessor.SpriteAccessor",
+    "accessor.SpriteContentsAccessor",
     "entity.block_entity.MixinBedBlockEntityRenderer",
     "entity.block_entity.MixinBellBlockEntityRenderer",
     "entity.block_entity.MixinChestBlockEntityRenderer",
@@ -19,6 +19,7 @@
     "entity.misc.MixinBlazeEntity",
     "entity.misc.MixinBuiltinModelItemRenderer",
     "entity.misc.MixinElytraEntityModel",
+    "entity.misc.MixinGlowSquidEntity",
     "entity.misc.MixinPlayerEntity",
     "entity.misc.MixinTridentEntity",
     "entity.renderer.MixinEnderDragonEntityRenderer",
@@ -43,11 +44,9 @@
     "entity.renderer.feature.MixinVillagerClothingFeatureRenderer",
     "entity.renderer.feature.MixinWardenFeatureRenderer",
     "reloading.MixinMinecraftClient",
-    "reloading.MixinSimpleResourceReload",
-    "entity.misc.MixinGlowSquidEntity"
+    "reloading.MixinSimpleResourceReload"
   ],
   "mixins": [
-
   ],
   "injectors": {
     "defaultRequire": 1

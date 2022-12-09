@@ -4,13 +4,11 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.Packet;
-import net.minecraft.util.Arm;
+import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.util.Nameable;
-import net.minecraft.world.World;
 
 import java.util.UUID;
 
@@ -47,7 +45,7 @@ public class ETFPlaceholderEntity extends Entity {
     }
 
     @Override
-    public Packet<?> createSpawnPacket() {
+    public Packet<ClientPlayPacketListener> createSpawnPacket() {
         return null;
     }
 
