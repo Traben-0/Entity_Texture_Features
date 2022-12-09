@@ -411,7 +411,7 @@ public class ETFManager{
                         && props.getProperty("suppressParticles").equals("true")) {
                     ENTITY_TYPE_IGNORE_PARTICLES.add(entity.getType());
                 }
-                //todo documentation
+
                 if(props.containsKey("entityRenderLayerOverride")){
                     String layer =props.getProperty("entityRenderLayerOverride");
                     //noinspection EnhancedSwitchMigration

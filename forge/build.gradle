@@ -2,56 +2,62 @@ plugins {
     id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
-archivesBaseName = rootProject.archives_base_name + "_fabric_1.19.3"
+archivesBaseName = rootProject.archives_base_name + "_forge_1.19.3"
 
 architectury {
     platformSetupLoomIde()
-    fabric()
+    forge()
 }
 
 loom {
     accessWidenerPath = project(":common").loom.accessWidenerPath
+
+    forge {
+        convertAccessWideners = true
+        extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
+        mixinConfig "entity_texture_features-forge.mixins.json"
+        mixinConfig "entity_texture_features-common.mixins.json"
+
+    }
 }
+
 
 configurations {
     common
     shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
     compileClasspath.extendsFrom common
     runtimeClasspath.extendsFrom common
-    developmentFabric.extendsFrom common
+    developmentForge.extendsFrom common
 }
 
 dependencies {
-    modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
-    modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
+    forge "net.minecraftforge:forge:${rootProject.forge_version}"
     // Remove the next line if you don't want to depend on the API
-    //modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
+    //modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
+
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
-    shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
+    shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 
-    modImplementation("maven.modrinth:iris:${project.iris_version}") {
-        exclude(group: "net.fabricmc.fabric-api")
+    implementation(forgeDependencies("org.apache.httpcomponents:httpmime:4.5.10"))
+    shadow("org.apache.httpcomponents:httpmime:4.5.10")
+
+    modImplementation("maven.modrinth:oculus:${project.oculus_version}") {
+        //  exclude(group: "net.fabricmc.fabric-api")//??
     }
-
-    modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}") {
-        exclude(group: "net.fabricmc.fabric-api")
-    }
-
-
-    include group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.10'
-    implementation group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.10'
 }
 
 processResources {
     inputs.property "version", project.version
 
-    filesMatching("fabric.mod.json") {
+    filesMatching("META-INF/mods.toml") {
         expand "version": project.version
     }
 }
 
 shadowJar {
+    exclude "fabric.mod.json"
     exclude "architectury.common.json"
 
     configurations = [project.configurations.shadowCommon]
@@ -59,7 +65,6 @@ shadowJar {
 }
 
 remapJar {
-    injectAccessWidener = true
     input.set shadowJar.archiveFile
     dependsOn shadowJar
     classifier null
@@ -83,7 +88,7 @@ components.java {
 
 publishing {
     publications {
-        mavenFabric(MavenPublication) {
+        mavenForge(MavenPublication) {
             artifactId = rootProject.archives_base_name + "-" + project.name
             from components.java
         }

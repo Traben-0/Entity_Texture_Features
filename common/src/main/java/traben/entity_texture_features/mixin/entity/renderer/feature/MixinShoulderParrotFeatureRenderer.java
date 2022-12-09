@@ -44,7 +44,8 @@ public abstract class MixinShoulderParrotFeatureRenderer<T extends PlayerEntity>
         super(context);
     }
 
-    @Inject(method ="method_17958",
+
+    @Inject(method ="method_17958(Lnet/minecraft/client/util/math/MatrixStack;ZLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/nbt/NbtCompound;Lnet/minecraft/client/render/VertexConsumerProvider;IFFFFLnet/minecraft/entity/EntityType;)V",
             at = @At(value = "HEAD"))
     private <M extends Entity> void etf$getNBT(MatrixStack matrixStack, boolean bl, PlayerEntity playerEntity, NbtCompound nbtCompound, VertexConsumerProvider vertexConsumerProvider, int i, float f, float g, float h, float j, EntityType type, CallbackInfo ci) {
         parrotNBT = nbtCompound;
@@ -52,7 +53,7 @@ public abstract class MixinShoulderParrotFeatureRenderer<T extends PlayerEntity>
 
     }
 
-    @ModifyArg(method = "method_17958",
+    @ModifyArg(method = "method_17958(Lnet/minecraft/client/util/math/MatrixStack;ZLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/nbt/NbtCompound;Lnet/minecraft/client/render/VertexConsumerProvider;IFFFFLnet/minecraft/entity/EntityType;)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/VertexConsumerProvider;getBuffer(Lnet/minecraft/client/render/RenderLayer;)Lnet/minecraft/client/render/VertexConsumer;"))
     private RenderLayer etf$alterTexture(RenderLayer layer) {
         if (parrotNBT != null) {
@@ -81,7 +82,7 @@ public abstract class MixinShoulderParrotFeatureRenderer<T extends PlayerEntity>
         }
     }
 
-    @Inject(method = "method_17958",
+    @Inject(method = "method_17958(Lnet/minecraft/client/util/math/MatrixStack;ZLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/nbt/NbtCompound;Lnet/minecraft/client/render/VertexConsumerProvider;IFFFFLnet/minecraft/entity/EntityType;)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/ParrotEntityModel;poseOnShoulder(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFFI)V",
                     shift = At.Shift.AFTER))
     private <M extends Entity> void etf$applyEmissive(MatrixStack matrixStack, boolean bl, PlayerEntity playerEntity, NbtCompound nbtCompound, VertexConsumerProvider vertexConsumerProvider, int i, float f, float g, float h, float j, EntityType type, CallbackInfo ci) {
