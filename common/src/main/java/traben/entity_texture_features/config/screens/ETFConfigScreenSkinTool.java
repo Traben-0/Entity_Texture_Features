@@ -85,7 +85,7 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
             ETFManager.getInstance().ENTITY_BLINK_TIME.put(MinecraftClient.getInstance().player.getUuid(), 0L);
         }
         thisETFPlayerTexture = null;
-        currentEditorSkin = null;
+
     }
 
     @Override
@@ -111,7 +111,7 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
             thisETFPlayerTexture = ETFManager.getInstance().PLAYER_TEXTURE_MAP.get(MinecraftClient.getInstance().player.getUuid());
             if (thisETFPlayerTexture == null) {
                 ETFPlayerTexture etfPlayerTexture = new ETFPlayerTexture();
-                ETFManager.getInstance().PLAYER_TEXTURE_MAP.put(MinecraftClient.getInstance().player.getUuid(), etfPlayerTexture);
+                ETFManager.getInstance().PLAYER_TEXTURE_MAP.put(MinecraftClient.getInstance().player.getUuid(),etfPlayerTexture);
                 thisETFPlayerTexture = etfPlayerTexture;
             }
         }
@@ -146,7 +146,7 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
                         result = printPlayerSkinCopy();
                     }
                     onExit();
-                    Objects.requireNonNull(client).setScreen(new ETFConfigScreenSkinToolOutcome(parent, result));
+                    Objects.requireNonNull(client).setScreen(new ETFConfigScreenSkinToolOutcome(parent, result,currentEditorSkin));
                 });
         this.addDrawableChild(printSkinFileButton);
 

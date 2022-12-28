@@ -1,5 +1,6 @@
 package traben.entity_texture_features.mixin.entity.renderer;
 
+import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderer;
@@ -12,8 +13,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -23,7 +22,6 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFPlayerTexture;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
@@ -58,15 +56,15 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
 
             if (ETFConfigData.skinFeaturesEnabled && thisETFPlayerTexture != null) {
                 //check disguise heads mod workaround
-                if(disguiseHeadsWorkaround == null){
-                    disguiseHeadsWorkaround = ETFVersionDifferenceHandler.isThisModLoaded("disguiseheads");
-                }
-                if(disguiseHeadsWorkaround) {
-                    ItemStack armour = ((PlayerEntity)livingEntity).getInventory().getArmorStack(3);
-                    if(armour.isOf(Items.PLAYER_HEAD)){
-                        return;
-                    }
-                }
+//                if(disguiseHeadsWorkaround == null){
+//                    disguiseHeadsWorkaround = false;//ETFVersionDifferenceHandler.isThisModLoaded("disguiseheads");
+//                }
+//                if(disguiseHeadsWorkaround) {
+//                    ItemStack armour = ((PlayerEntity)livingEntity).getInventory().getArmorStack(3);
+//                    if(armour.isOf(Items.PLAYER_HEAD)){
+//                        return;
+//                    }
+//                }
 
                 // noinspection unchecked
                 thisETFPlayerTexture.renderFeatures(matrixStack, vertexConsumerProvider, i, (PlayerEntityModel<PlayerEntity>) this.getModel());
@@ -93,17 +91,17 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
         @SuppressWarnings("unchecked") T entity = (T) inentity;
         if (entity instanceof PlayerEntity player) {
             if (ETFConfigData.skinFeaturesEnabled) {
-                if (disguiseHeadsWorkaround == null) {
-                    disguiseHeadsWorkaround = ETFVersionDifferenceHandler.isThisModLoaded("disguiseheads");
-                }
-                if (disguiseHeadsWorkaround) {
-                    ItemStack armour = player.getInventory().getArmorStack(3);
-                    if (armour.isOf(Items.PLAYER_HEAD)) {
-                        return getTexture(entity);
-                    }
-                }
+//                if (disguiseHeadsWorkaround == null) {
+//                    disguiseHeadsWorkaround = false;// ETFVersionDifferenceHandler.isThisModLoaded("disguiseheads");
+//                }
+//                if (disguiseHeadsWorkaround) {
+//                    ItemStack armour = player.getInventory().getArmorStack(3);
+//                    if (armour.isOf(Items.PLAYER_HEAD)) {
+//                        return getTexture(entity);
+//                    }
+//                }
 
-                thisETFPlayerTexture = ETFManager.getInstance().getPlayerTexture(player);
+                thisETFPlayerTexture = ETFManager.getInstance().getPlayerTexture(player,((AbstractClientPlayerEntity)player).getSkinTexture());
                 if (thisETFPlayerTexture != null) {
 
                     Identifier etfTexture = thisETFPlayerTexture.getBaseTextureIdentifierOrNullForVanilla(player);

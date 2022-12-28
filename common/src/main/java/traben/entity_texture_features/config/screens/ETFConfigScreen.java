@@ -8,8 +8,14 @@ import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import traben.entity_texture_features.ETFVersionDifferenceHandler;
+import traben.entity_texture_features.mixin.accessor.TooltipAccessor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 
@@ -109,10 +115,32 @@ public abstract class ETFConfigScreen extends Screen {
 //        }
 
         if(tooltipIsEmpty){
+            //button with no tooltip
             return ButtonWidget.builder(buttonText,onPress).dimensions(x+nudgeLeftEdge, y, width, height).build();
         }else{
+            //return ButtonWidget.builder(buttonText,onPress).dimensions(x+nudgeLeftEdge, y, width, height).tooltip(Tooltip.of(toolTipText)).build();
+            //1.19.3 required only
+            ///////////////////////////////////////
 
-            return ButtonWidget.builder(buttonText,onPress).dimensions(x+nudgeLeftEdge, y, width, height).tooltip(Tooltip.of(toolTipText)).build();
+            Tooltip bob = Tooltip.of(toolTipText);
+            if(!ETFVersionDifferenceHandler.isThisModLoaded("adaptive-tooltips")) {
+                //split tooltip by our rules
+                String[] strings = toolTipText.getString().split("\n");
+                List<OrderedText> texts = new ArrayList<>();
+                for (String str :
+                        strings) {
+                    texts.add(Text.of(str).asOrderedText());
+                }
+
+                //apply to tooltip object
+
+                ((TooltipAccessor) bob).setLines(texts);
+            }
+            ////////////////////////////////////////
+            //create button
+            return ButtonWidget.builder(buttonText,onPress).dimensions(x+nudgeLeftEdge, y, width, height).tooltip(bob).build();
+
+
         }
 
 
@@ -126,4 +154,6 @@ public abstract class ETFConfigScreen extends Screen {
 //                }
               //  );
     }
+
+
 }

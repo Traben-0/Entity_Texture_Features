@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.ETFConfig;
+import traben.entity_texture_features.config.screens.ETFConfigScreenSkinTool;
 import traben.entity_texture_features.utils.ETFCacheKey;
 import traben.entity_texture_features.utils.ETFLruCache;
 import traben.entity_texture_features.utils.ETFUtils2;
@@ -32,6 +33,7 @@ import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 //this class will ideally be where everything in vanilla interacts to get ETF stuff done
 public class ETFManager{
 
+    //public final ObjectOpenHashSet<String> EXCUSED_ILLEGAL_PATHS = new ObjectOpenHashSet<>();
     public static final UUID ETF_GENERIC_UUID = UUID.nameUUIDFromBytes(("GENERIC").getBytes());
     private static final ETFTexture ETF_ERROR_TEXTURE = getErrorETFTexture();
     private static ETFManager manager;
@@ -69,6 +71,9 @@ public class ETFManager{
     private final Object2ReferenceOpenHashMap<Identifier, @Nullable List<ETFTexturePropertyCase>> OPTIFINE_PROPERTY_CACHE = new Object2ReferenceOpenHashMap<>();
     private final Object2BooleanOpenHashMap<UUID> ENTITY_IS_UPDATABLE = new Object2BooleanOpenHashMap<>();
     private final ObjectOpenHashSet<UUID> ENTITY_UPDATE_QUEUE = new ObjectOpenHashSet<>();
+
+    private final Object2ObjectOpenHashMap<UUID,ObjectOpenHashSet<ETFCacheKey>> ENTITY_KNOWN_FEATURES_LIST = new Object2ObjectOpenHashMap<>();
+
     private final ObjectOpenHashSet<UUID> ENTITY_DEBUG_QUEUE = new ObjectOpenHashSet<>();
 
     public final Object2IntOpenHashMap<EntityType<?>> ENTITY_TYPE_VANILLA_BRIGHTNESS_OVERRIDE_VALUE = new Object2IntOpenHashMap<>();
@@ -90,6 +95,7 @@ public class ETFManager{
     public static boolean zombiePiglinRightEarEnabled = false;
 
     private ETFManager() {
+
 
         for (ResourcePack pack:
         MinecraftClient.getInstance().getResourceManager().streamResourcePacks().toList()) {
@@ -244,9 +250,18 @@ public class ETFManager{
 
                         ENTITY_DEBUG_QUEUE.remove(id);
                     }
-                    if (ENTITY_UPDATE_QUEUE.contains(id)) {
+                    if (ENTITY_UPDATE_QUEUE.contains(id)) {//&& source != TextureSource.ENTITY_FEATURE) {
                         Identifier newVariantIdentifier = returnNewAlreadyConfirmedOptifineTexture(entity, vanillaIdentifier, true);
                         ENTITY_TEXTURE_MAP.put(cacheKey, Objects.requireNonNullElse(getOrCreateETFTexture(vanillaIdentifier, Objects.requireNonNullElse(newVariantIdentifier, vanillaIdentifier), canBePatched), getETFDefaultTexture(vanillaIdentifier, canBePatched)));
+
+                        //iterate over list of all known features and update them
+                        ObjectOpenHashSet<ETFCacheKey> featureSet = ENTITY_KNOWN_FEATURES_LIST.getOrDefault(id,new ObjectOpenHashSet<>());
+                        //possible concurrent editing of hashmap issues but simplest way to perform this
+                        featureSet.forEach((forKey)->{
+                            Identifier forVariantIdentifier = returnNewAlreadyConfirmedOptifineTexture(entity, forKey.identifier(), true);
+                            ENTITY_TEXTURE_MAP.put(forKey, Objects.requireNonNullElse(getOrCreateETFTexture(forKey.identifier(), Objects.requireNonNullElse(forVariantIdentifier, forKey.identifier()), canBePatched), getETFDefaultTexture(forKey.identifier(), canBePatched)));
+
+                        });
 
                         ENTITY_UPDATE_QUEUE.remove(id);
                     } else {
@@ -274,6 +289,11 @@ public class ETFManager{
             foundTexture = Objects.requireNonNullElse(getOrCreateETFTexture(vanillaIdentifier, possibleIdentifier == null ? vanillaIdentifier : possibleIdentifier, canBePatched), getETFDefaultTexture(vanillaIdentifier, canBePatched));
             //if(!(source == TextureSource.ENTITY_FEATURE && possibleIdentifier == null))
             ENTITY_TEXTURE_MAP.put(cacheKey, foundTexture);
+            if(source == TextureSource.ENTITY_FEATURE){
+                ObjectOpenHashSet<ETFCacheKey> knownFeatures = ENTITY_KNOWN_FEATURES_LIST.getOrDefault(entity.getUuid(),new ObjectOpenHashSet<ETFCacheKey>());
+                knownFeatures.add(cacheKey);
+                ENTITY_KNOWN_FEATURES_LIST.put(entity.getUuid(),knownFeatures);
+            }
             return foundTexture;
 
         } catch (Exception e) {
@@ -284,6 +304,8 @@ public class ETFManager{
 
     @Nullable //when vanilla
     private <T extends Entity> Identifier getPossibleVariantIdentifierRedirectForFeatures(T entity, Identifier vanillaIdentifier, TextureSource source) {
+
+
         Identifier regularReturnIdentifier = getPossibleVariantIdentifier(entity, vanillaIdentifier, source);
         //if the feature does not have a .properties file and returns the vanilla file or null check if we can copy the base texture's variant
         if (OPTIFINE_PROPERTY_CACHE.get(vanillaIdentifier) == null &&
@@ -1116,35 +1138,44 @@ public class ETFManager{
     }
 
     @Nullable
-    public ETFPlayerTexture getPlayerTexture(PlayerEntity player) {
+    public ETFPlayerTexture getPlayerTexture(PlayerEntity player, Identifier rendererGivenSkin) {
         try {
             UUID id = player.getUuid();
             if (PLAYER_TEXTURE_MAP.containsKey(id)) {
-                return PLAYER_TEXTURE_MAP.get(id);
-            } else {
-                if (LAST_PLAYER_CHECK_TIME.containsKey(id)) {
-                    int attemptCount = PLAYER_CHECK_COUNT.getInt(id);
-                    if (attemptCount > 6) {
-                        //no more checking always return null now
-                        //player ahs no features it seems
-                        LAST_PLAYER_CHECK_TIME.removeLong(id);
-                        PLAYER_CHECK_COUNT.removeInt(id);
-                        PLAYER_TEXTURE_MAP.put(id, null);
-                        return null;
-                    }
-
-                    if (LAST_PLAYER_CHECK_TIME.getLong(id) + 3000 > System.currentTimeMillis()) {
-                        //not time to check again
-                        return null;
-                    }
-                    PLAYER_CHECK_COUNT.put(id, attemptCount + 1);
-                    //allowed to continue if time has passed and not exceeded attempt limit
+                ETFPlayerTexture possibleSkin = PLAYER_TEXTURE_MAP.get(id);
+                if(possibleSkin == null ||
+                        (possibleSkin.player == null && possibleSkin.isCorrectObjectForThisSkin(rendererGivenSkin)) ){
+                    return null;
+                }else if(possibleSkin.isCorrectObjectForThisSkin(rendererGivenSkin)
+                        || MinecraftClient.getInstance().currentScreen instanceof ETFConfigScreenSkinTool){
+                    return possibleSkin;
                 }
-                LAST_PLAYER_CHECK_TIME.put(id, System.currentTimeMillis());
-                ETFPlayerTexture etfPlayerTexture = new ETFPlayerTexture(player);
-                PLAYER_TEXTURE_MAP.put(id, etfPlayerTexture);
-                return etfPlayerTexture;
-            }
+
+            }// else {
+//                if (LAST_PLAYER_CHECK_TIME.containsKey(id)) {
+//                    int attemptCount = PLAYER_CHECK_COUNT.getInt(id);
+//                    if (attemptCount > 6) {
+//                        //no more checking always return null now
+//                        //player ahs no features it seems
+//                        LAST_PLAYER_CHECK_TIME.removeLong(id);
+//                        PLAYER_CHECK_COUNT.removeInt(id);
+//                        PLAYER_TEXTURE_MAP.put(id, null);
+//                        return null;
+//                    }
+//
+//                    if (LAST_PLAYER_CHECK_TIME.getLong(id) + 3000 > System.currentTimeMillis()) {
+//                        //not time to check again
+//                        return null;
+//                    }
+//                    PLAYER_CHECK_COUNT.put(id, attemptCount + 1);
+//                    //allowed to continue if time has passed and not exceeded attempt limit
+//                }
+//                LAST_PLAYER_CHECK_TIME.put(id, System.currentTimeMillis());
+            PLAYER_TEXTURE_MAP.put(id, null);
+            ETFPlayerTexture etfPlayerTexture = new ETFPlayerTexture(player,rendererGivenSkin);
+            PLAYER_TEXTURE_MAP.put(id, etfPlayerTexture);
+            return etfPlayerTexture;
+            //}
         } catch (Exception e) {
             return null;
         }

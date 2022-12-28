@@ -267,6 +267,29 @@ public class ETFTexture {
         NativeImage newBlink2Texture = ETFUtils2.getNativeImageElseNull(blink2Identifier);
 
         boolean didPatch = false;
+        ResourceManager files = MinecraftClient.getInstance().getResourceManager();
+        //should this process cancel itself due to presence of PBR textures
+        if(ETFConfigData.dontPatchPBRTextures &&
+                (ETFVersionDifferenceHandler.isThisModLoaded("iris") || ETFVersionDifferenceHandler.isThisModLoaded("oculus")) &&
+                //do pbr files exist?
+                (files.getResource(ETFUtils2.replaceIdentifier(thisIdentifier,".png", "_s.png")).isPresent() ||
+                 files.getResource(ETFUtils2.replaceIdentifier(thisIdentifier,".png", "_n.png")).isPresent())
+        ){
+            //here the setting to cancel is enabled, iris is present, and pbr files exist, so cancel patching
+            return;
+        }
+        //should patching cancel due to presence of animation mods and animated textures
+        if(ETFConfigData.dontPatchAnimatedTextures &&
+                (ETFVersionDifferenceHandler.isThisModLoaded("moremcmeta") &&
+                        (files.getResource(ETFUtils2.replaceIdentifier(thisIdentifier,".png", ".png.mcmeta")).isPresent() ||
+                        files.getResource(ETFUtils2.replaceIdentifier(thisIdentifier,".png", ".png.moremcmeta")).isPresent())
+                )
+                // todo || ETFVersionDifferenceHandler.isThisModLoaded("animatica")) && check it's animated???
+        ){
+            //here the setting to cancel is enabled, animation mod is present, and mcmeta files exist, so cancel patching
+            return;
+        }
+
 
         //we need to move iris pbr textures, these are texture_n.png   and texture_s.png
         //todo this does not currently work with iris pbr as currently textureManager registered textures are not valid for pbr

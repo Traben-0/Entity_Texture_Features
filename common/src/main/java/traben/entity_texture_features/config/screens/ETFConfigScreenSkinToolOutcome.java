@@ -3,7 +3,10 @@ package traben.entity_texture_features.config.screens;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
+import net.minecraft.client.texture.NativeImage;
+import net.minecraft.client.texture.PlayerSkinTexture;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
@@ -16,9 +19,13 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.HttpClientBuilder;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
+import traben.entity_texture_features.mixin.accessor.PlayerSkinProviderAccessor;
+import traben.entity_texture_features.mixin.accessor.PlayerSkinTextureAccessor;
+import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -30,10 +37,13 @@ import static traben.entity_texture_features.ETFClientCommon.CONFIG_DIR;
 //inspired by puzzles custom gui code
 public class ETFConfigScreenSkinToolOutcome extends ETFConfigScreen {
     private final boolean didSucceed;
+    private final NativeImage skin;
 
-    protected ETFConfigScreenSkinToolOutcome(Screen parent, boolean success) {
+    protected ETFConfigScreenSkinToolOutcome(Screen parent, boolean success, NativeImage skin) {
         super(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.print_skin.result"), parent);
         didSucceed = success;
+        this.skin = skin;
+        //this.skin = new PlayerSkinTexture(skin);
     }
 
     //upload code sourced from by https://github.com/cobrasrock/Skin-Swapper/blob/1.18-fabric/src/main/java/net/cobrasrock/skinswapper/changeskin/SkinChange.java
@@ -105,11 +115,24 @@ public class ETFConfigScreenSkinToolOutcome extends ETFConfigScreen {
                             }
                         }
                         boolean changeSuccess = uploadSkin(skinType);
-                        button.setMessage(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.upload_skin." +
+                        button.setMessage(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.upload_skin_v2." +
                                 (changeSuccess ? "success" : "fail")));
                         if(changeSuccess){
-                            ETFUtils2.logWarn(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.upload_skin.success" ).getString()
-                                    ,true);
+                            //ETFUtils2.logMessage(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.upload_skin.success" ).getString(),true);
+                            //change internally cached skin
+                            PlayerSkinTexture skinfile = (PlayerSkinTexture) ((PlayerSkinProviderAccessor) MinecraftClient.getInstance().getSkinProvider()).getTextureManager().getOrDefault(((AbstractClientPlayerEntity)MinecraftClient.getInstance().player).getSkinTexture(), null);
+                            try {
+                                //System.out.println("file was ="+((PlayerSkinTextureAccessor)skinfile).getCacheFile().toString());
+                                skin.writeTo(((PlayerSkinTextureAccessor)skinfile).getCacheFile());
+                            } catch (IOException e) {
+                                ETFUtils2.logError(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.upload_skin.success_local_fail" ).getString(),true);
+                                //System.out.println("failed to change internal skin");
+                            }
+                            //clear etf data of skin
+                            if (MinecraftClient.getInstance().player != null) {
+                                ETFManager.getInstance().PLAYER_TEXTURE_MAP.removeEntryOnly(MinecraftClient.getInstance().player.getUuid());
+                                ETFManager.getInstance().ENTITY_BLINK_TIME.put(MinecraftClient.getInstance().player.getUuid(), 0L);
+                            }
                         }
                         button.active = false;
                     }));

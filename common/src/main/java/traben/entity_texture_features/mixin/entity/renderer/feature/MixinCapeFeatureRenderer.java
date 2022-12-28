@@ -35,7 +35,7 @@ public abstract class MixinCapeFeatureRenderer extends FeatureRenderer<AbstractC
     private void etf$injected(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, AbstractClientPlayerEntity abstractClientPlayerEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
         //custom rendering required as ETF uses a different render layer to allow transparent capes
         // the return of getCapeTexture() from abstract client is ignored here, but it was required for enabling capes to render for those players and also for elytras
-        ETFPlayerTexture playerTexture = ETFManager.getInstance().getPlayerTexture(abstractClientPlayerEntity);
+        ETFPlayerTexture playerTexture = ETFManager.getInstance().getPlayerTexture(abstractClientPlayerEntity,abstractClientPlayerEntity.getSkinTexture());
         boolean cancelVanillaRender = false;
         if (playerTexture != null) {
             cancelVanillaRender = playerTexture.hasCustomCape();

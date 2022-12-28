@@ -56,6 +56,16 @@ public class ETFConfigScreenMain extends ETFConfigScreen {
     }
 
     @Override
+    public void close() {
+//        if (MinecraftClient.getInstance().player != null) {
+//            ETFManager.getInstance().PLAYER_TEXTURE_MAP.removeEntryOnly(MinecraftClient.getInstance().player.getUuid());
+//            ETFManager.getInstance().ENTITY_BLINK_TIME.put(MinecraftClient.getInstance().player.getUuid(), 0L);
+//        }
+        ETFManager.resetInstance();
+        super.close();
+    }
+
+    @Override
     protected void init() {
         super.init();
 
