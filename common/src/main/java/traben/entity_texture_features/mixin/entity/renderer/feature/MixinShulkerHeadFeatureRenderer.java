@@ -25,6 +25,7 @@ public abstract class MixinShulkerHeadFeatureRenderer extends FeatureRenderer<Sh
     ShulkerEntity etf$shulker = null;
     private ETFTexture thisETFTexture = null;
 
+    @SuppressWarnings("unused")
     public MixinShulkerHeadFeatureRenderer(FeatureRendererContext<ShulkerEntity, ShulkerEntityModel<ShulkerEntity>> context) {
         super(context);
     }

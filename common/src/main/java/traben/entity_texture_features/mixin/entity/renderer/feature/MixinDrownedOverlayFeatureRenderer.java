@@ -31,6 +31,7 @@ public abstract class MixinDrownedOverlayFeatureRenderer<T extends DrownedEntity
     @Shadow
     private DrownedEntityModel<T> model;
 
+    @SuppressWarnings("unused")
     public MixinDrownedOverlayFeatureRenderer(FeatureRendererContext<T, DrownedEntityModel<T>> context) {
         super(context);
     }

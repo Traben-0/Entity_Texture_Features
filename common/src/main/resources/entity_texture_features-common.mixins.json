@@ -49,13 +49,11 @@
     "entity.renderer.feature.MixinVillagerClothingFeatureRenderer",
     "entity.renderer.feature.MixinWardenFeatureRenderer",
     "reloading.MixinMinecraftClient",
-    "reloading.MixinSimpleResourceReload"
-  ],
-  "mixins": [
+    "reloading.MixinSimpleResourceReload",
     "accessor.PlayerSkinProviderAccessor",
-    "accessor.PlayerSkinTextureAccessor",
-    "accessor.TextureManagerAccessor"
+    "accessor.PlayerSkinTextureAccessor"
   ],
+  "mixins": [],
   "injectors": {
     "defaultRequire": 1
   }

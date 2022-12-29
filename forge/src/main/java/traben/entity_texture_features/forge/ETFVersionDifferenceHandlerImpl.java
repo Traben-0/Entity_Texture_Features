@@ -57,8 +57,8 @@ public class ETFVersionDifferenceHandlerImpl {
 
     @NotNull
     public static EntityType<ETFPlaceholderEntity> getPlaceHolderEntityType() {
-       // return (EntityType<ETFPlaceholderEntity>) ETFClientForge.ETF_PLACEHOLDER_ENTITY_ENTITY_TYPE;
+        // return (EntityType<ETFPlaceholderEntity>) ETFClientForge.ETF_PLACEHOLDER_ENTITY_ENTITY_TYPE;
         return ETF_PLACEHOLDER_ENTITY_ENTITY_REGISTRY.get();
-       // return (EntityType<ETFPlaceholderEntity>) ForgeRegistries.ENTITY_TYPES.getValue(new Identifier(ETFClientCommon.MOD_ID + ":etf_placeholder_entity"));
+        // return (EntityType<ETFPlaceholderEntity>) ForgeRegistries.ENTITY_TYPES.getValue(new Identifier(ETFClientCommon.MOD_ID + ":etf_placeholder_entity"));
     }
 }

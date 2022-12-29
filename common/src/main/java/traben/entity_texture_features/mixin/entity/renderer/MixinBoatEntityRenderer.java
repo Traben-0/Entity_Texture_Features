@@ -9,6 +9,7 @@ import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.model.CompositeEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.vehicle.BoatEntity;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Final;
@@ -27,7 +28,7 @@ import java.util.Map;
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
 @Mixin(BoatEntityRenderer.class)
-public abstract class MixinBoatEntityRenderer extends EntityRenderer<BoatEntity>{
+public abstract class MixinBoatEntityRenderer extends EntityRenderer<BoatEntity> {
 
 
     private BoatEntity etf$entity = null;
@@ -38,6 +39,7 @@ public abstract class MixinBoatEntityRenderer extends EntityRenderer<BoatEntity>
     private Map<BoatEntity.Type, Pair<Identifier, CompositeEntityModel<BoatEntity>>> texturesAndModels;
 
 
+    @SuppressWarnings("unused")
     protected MixinBoatEntityRenderer(EntityRendererFactory.Context ctx) {
         super(ctx);
     }
@@ -57,7 +59,7 @@ public abstract class MixinBoatEntityRenderer extends EntityRenderer<BoatEntity>
         if (ETFConfigData.enableCustomTextures && !renderLayer.equals(RenderLayer.getWaterMask())) {
             try {
 
-                Pair<Identifier,?> pair = this.texturesAndModels.get(etf$entity.getVariant());
+                Pair<Identifier, ?> pair = this.texturesAndModels.get(etf$entity.getVariant());
                 etf$identifier = pair.getFirst();
                 Identifier alteredTexture = ETFManager.getInstance().getETFTexture(etf$identifier, etf$entity, ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs).getTextureIdentifier(etf$entity);
                 RenderLayer layerToReturn;
@@ -66,14 +68,24 @@ public abstract class MixinBoatEntityRenderer extends EntityRenderer<BoatEntity>
                     //Identifier identifier = this.getTexture(entity);
                     int choice = ETFManager.getInstance().ENTITY_TYPE_RENDER_LAYER.getInt(etf$entity.getType());
                     //noinspection EnhancedSwitchMigration
-                    switch (choice){
-                        case 1: layerToReturn = (RenderLayer.getEntityTranslucent(alteredTexture));break;
-                        case 2: layerToReturn = (RenderLayer.getEntityTranslucentCull(alteredTexture));break;
-                        case 3: layerToReturn = (RenderLayer.getEndGateway());break;
-                        case 4: layerToReturn = (RenderLayer.getOutline(alteredTexture));break;
-                        default: layerToReturn = (null);break;
+                    switch (choice) {
+                        case 1:
+                            layerToReturn = (RenderLayer.getEntityTranslucent(alteredTexture));
+                            break;
+                        case 2:
+                            layerToReturn = (RenderLayer.getEntityTranslucentCull(alteredTexture));
+                            break;
+                        case 3:
+                            layerToReturn = (RenderLayer.getEndGateway());
+                            break;
+                        case 4:
+                            layerToReturn = (RenderLayer.getOutline(alteredTexture));
+                            break;
+                        default:
+                            layerToReturn = (null);
+                            break;
                     }
-                }else{
+                } else {
                     layerToReturn = RenderLayer.getEntityCutoutNoCull(alteredTexture);
                 }
 
@@ -90,7 +102,7 @@ public abstract class MixinBoatEntityRenderer extends EntityRenderer<BoatEntity>
     @Inject(method = "render(Lnet/minecraft/entity/vehicle/BoatEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/CompositeEntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V",
                     shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILSOFT)
-    private void etf$applyEmissive(BoatEntity boatEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci, float h, float j, float k, Pair pair, Identifier identifier, CompositeEntityModel compositeEntityModel, VertexConsumer vertexConsumer) {
+    private void etf$applyEmissive(BoatEntity boatEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci, float h, float j, float k, Pair<?, ?> pair, Identifier identifier, CompositeEntityModel<? extends Entity> compositeEntityModel, VertexConsumer vertexConsumer) {
         //UUID id = livingEntity.getUuid();
         ETFManager.getInstance().getETFTexture(etf$identifier, etf$entity, ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs).renderEmissive(matrixStack, vertexConsumerProvider, compositeEntityModel);
 

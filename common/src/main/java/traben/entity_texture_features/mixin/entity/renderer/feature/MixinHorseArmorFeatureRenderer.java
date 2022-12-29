@@ -33,6 +33,7 @@ public abstract class MixinHorseArmorFeatureRenderer extends FeatureRenderer<Hor
     @Shadow
     private HorseEntityModel<HorseEntity> model;
 
+    @SuppressWarnings("unused")
     public MixinHorseArmorFeatureRenderer(FeatureRendererContext<HorseEntity, HorseEntityModel<HorseEntity>> context) {
         super(context);
     }

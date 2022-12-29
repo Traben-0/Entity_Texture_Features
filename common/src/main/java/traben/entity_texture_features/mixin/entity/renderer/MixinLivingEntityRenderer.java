@@ -32,10 +32,11 @@ import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 @Mixin(LivingEntityRenderer.class)
 public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extends EntityModel<T>> extends EntityRenderer<T> implements FeatureRendererContext<T, M> {
 
+    //private static Boolean disguiseHeadsWorkaround = null;
     private ETFTexture thisETFTexture = null;
     private ETFPlayerTexture thisETFPlayerTexture = null;
 
-
+    @SuppressWarnings("unused")
     protected MixinLivingEntityRenderer(EntityRendererFactory.Context ctx) {
         super(ctx);
 
@@ -43,9 +44,6 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
 
     @Shadow
     public abstract M getModel();
-
-    private static Boolean disguiseHeadsWorkaround = null;
-
 
     @Inject(method = "render(Lnet/minecraft/entity/LivingEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/EntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V", shift = At.Shift.AFTER)
@@ -85,10 +83,9 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
     @Redirect(
             method = "getRenderLayer",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/LivingEntityRenderer;getTexture(Lnet/minecraft/entity/Entity;)Lnet/minecraft/util/Identifier;"))
-    private Identifier etf$alterTexture(LivingEntityRenderer<T, M> instance, Entity inentity) {
-
-
-        @SuppressWarnings("unchecked") T entity = (T) inentity;
+    private Identifier etf$alterTexture(LivingEntityRenderer<T, M> instance, Entity inEntity) {
+        @SuppressWarnings("unchecked")// is always safe as it's always a living entity but IntelliJ won't believe it
+        T entity = (T) inEntity;
         if (entity instanceof PlayerEntity player) {
             if (ETFConfigData.skinFeaturesEnabled) {
 //                if (disguiseHeadsWorkaround == null) {
@@ -101,7 +98,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
 //                    }
 //                }
 
-                thisETFPlayerTexture = ETFManager.getInstance().getPlayerTexture(player,((AbstractClientPlayerEntity)player).getSkinTexture());
+                thisETFPlayerTexture = ETFManager.getInstance().getPlayerTexture(player, ((AbstractClientPlayerEntity) player).getSkinTexture());
                 if (thisETFPlayerTexture != null) {
 
                     Identifier etfTexture = thisETFPlayerTexture.getBaseTextureIdentifierOrNullForVanilla(player);
@@ -109,8 +106,15 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
                 }
 
             }
-            //ensure disguised head mod check is preserved if more logic is added here for offline skins
-            return getTexture(entity);
+
+            Identifier vanillaTexture = getTexture(entity);
+            //only return vanilla if it isn't steve or alex etc
+            if (!("minecraft:texture/entity/steve.png".equals(vanillaTexture.toString())
+                    || "minecraft:texture/entity/alex.png".equals(vanillaTexture.toString())
+                    || vanillaTexture.toString().contains("minecraft:texture/entity/player/"))) {
+                return vanillaTexture;
+            }
+            //otherwise uses regular optifine properties in offline mode as with any other mob
         }
         thisETFTexture = ETFManager.getInstance().getETFTexture(getTexture(entity), entity, ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs);
 
@@ -183,14 +187,24 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
             //Identifier identifier = this.getTexture(entity);
             int choice = ETFManager.getInstance().ENTITY_TYPE_RENDER_LAYER.getInt(entity.getType());
             //noinspection EnhancedSwitchMigration
-            switch (choice){
-                case 1: cir.setReturnValue(RenderLayer.getEntityTranslucent(identifier));break;
-                case 2: cir.setReturnValue(RenderLayer.getEntityTranslucentCull(identifier));break;
-                case 3: cir.setReturnValue(RenderLayer.getEndGateway());break;
-                case 4: cir.setReturnValue(RenderLayer.getOutline(identifier));break;
-                default: cir.setReturnValue(cir.getReturnValue());break;
+            switch (choice) {
+                case 1:
+                    cir.setReturnValue(RenderLayer.getEntityTranslucent(identifier));
+                    break;
+                case 2:
+                    cir.setReturnValue(RenderLayer.getEntityTranslucentCull(identifier));
+                    break;
+                case 3:
+                    cir.setReturnValue(RenderLayer.getEndGateway());
+                    break;
+                case 4:
+                    cir.setReturnValue(RenderLayer.getOutline(identifier));
+                    break;
+                default:
+                    cir.setReturnValue(cir.getReturnValue());
+                    break;
             }
-        }else{
+        } else {
             cir.setReturnValue(cir.getReturnValue());
         }
 

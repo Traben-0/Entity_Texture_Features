@@ -17,11 +17,12 @@ import java.util.UUID;
 // this entity exists as a placeholder for Block Entities when they are processed by ETF
 public class ETFPlaceholderEntity extends Entity {
 
-   // private BlockEntity HiddenBlockEntity;
+    // private BlockEntity HiddenBlockEntity;
 
-    public ETFPlaceholderEntity( EntityType<? extends Entity> type, World world) {
-        super(type , world);
+    public ETFPlaceholderEntity(EntityType<? extends Entity> type, World world) {
+        super(type, world);
     }
+
     public ETFPlaceholderEntity(World world) {
         super(getEntityType(), world);
     }
@@ -29,7 +30,8 @@ public class ETFPlaceholderEntity extends Entity {
     public static EntityType<ETFPlaceholderEntity> getEntityType() {
         return ETFVersionDifferenceHandler.getPlaceHolderEntityType();
     }
-    public void prepare(BlockEntity block, UUID uuid){
+
+    public void prepare(BlockEntity block, UUID uuid) {
         //HiddenBlockEntity = block;
         setPos(block.getPos().getX(), block.getPos().getY(), block.getPos().getZ());
         setUuid(uuid);
@@ -40,10 +42,9 @@ public class ETFPlaceholderEntity extends Entity {
     }
 
 
-
     @Override
     public String toString() {
-        return getBlockPos().toString()+getUuidAsString();
+        return getBlockPos().toString() + getUuidAsString();
     }
 
     @Override
@@ -61,7 +62,6 @@ public class ETFPlaceholderEntity extends Entity {
     public Packet<ClientPlayPacketListener> createSpawnPacket() {
         return null;
     }
-
 
 
     @Override

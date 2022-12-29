@@ -21,8 +21,8 @@ public abstract class MixinIdentifier {
                 if (!cir.getReturnValue() && path != null) {
 
                     //noinspection EnhancedSwitchMigration
-                    switch(ETFConfigData.illegalPathSupportMode) {
-                        case Entity : {
+                    switch (ETFConfigData.illegalPathSupportMode) {
+                        case Entity: {
                             if ((path.contains("/entity/") || path.contains("/optifine/") || path.contains("/etf/"))
                                     && (path.endsWith(".png") || path.endsWith(".properties") || path.endsWith(".mcmeta"))) {
                                 ETFUtils2.logWarn(ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.illegal_path_warn").getString()
@@ -34,13 +34,16 @@ public abstract class MixinIdentifier {
 
                                 cir.setReturnValue(true);
                             }
-                        }break;
+                        }
+                        break;
                         case All:
                             ETFUtils2.logWarn(ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.illegal_path_warn").getString()
                                     + " [" + path + "]");
                             cir.setReturnValue(true);
                             break;
-                        default: ETFUtils2.logWarn("this message should not appear #65164"); break;
+                        default:
+                            ETFUtils2.logWarn("this message should not appear #65164");
+                            break;
                     }
                 }
             }

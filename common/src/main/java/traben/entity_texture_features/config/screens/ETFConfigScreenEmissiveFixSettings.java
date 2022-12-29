@@ -47,7 +47,7 @@ public class ETFConfigScreenEmissiveFixSettings extends ETFConfigScreen {
                     button.setMessage(Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
                             "config." + ETFClientCommon.MOD_ID + ".pbr_compatibility"
                     ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.dontPatchPBRTextures ? ScreenTexts.ON : ScreenTexts.OFF).getString()));
-                },ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".pbr_compatibility.tooltip")
+                }, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".pbr_compatibility.tooltip")
         ));
         this.addDrawableChild(getETFButton((int) (this.width * 0.025), (int) (this.height * 0.26), (int) (this.width * 0.4), 20,
                 Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
@@ -58,7 +58,7 @@ public class ETFConfigScreenEmissiveFixSettings extends ETFConfigScreen {
                     button.setMessage(Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
                             "config." + ETFClientCommon.MOD_ID + ".animation_compatibility"
                     ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.dontPatchAnimatedTextures ? ScreenTexts.ON : ScreenTexts.OFF).getString()));
-                },ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".animation_compatibility.tooltip")
+                }, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".animation_compatibility.tooltip")
         ));
         this.addDrawableChild(getETFButton((int) (this.width * 0.025), (int) (this.height * 0.36), (int) (this.width * 0.4), 20,
                 Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(

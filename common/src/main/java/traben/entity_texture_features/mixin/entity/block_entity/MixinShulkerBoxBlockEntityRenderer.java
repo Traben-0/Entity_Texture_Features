@@ -80,7 +80,7 @@ public abstract class MixinShulkerBoxBlockEntityRenderer implements BlockEntityR
                 etf$textureOfThis = new Identifier(spriteIdentifier.getTextureId().getNamespace(), path);
 
             }
-        }catch (Exception ignored){
+        } catch (Exception ignored) {
 
         }
     }
@@ -94,9 +94,9 @@ public abstract class MixinShulkerBoxBlockEntityRenderer implements BlockEntityR
                 return vertices;
 
             thisETFTexture = ETFManager.getInstance().getETFTexture(etf$textureOfThis, etf$shulkerBoxStandInDummy, ETFManager.TextureSource.BLOCK_ENTITY, ETFConfigData.removePixelsUnderEmissiveBlockEntity);
-            VertexConsumer alteredReturn = thisETFTexture == null ? null : etf$vertexConsumerProviderOfThis.getBuffer(RenderLayer.getEntityCutoutNoCull(thisETFTexture.getTextureIdentifier(etf$shulkerBoxStandInDummy)));
+            @SuppressWarnings("ConstantConditions") VertexConsumer alteredReturn = thisETFTexture == null ? null : etf$vertexConsumerProviderOfThis.getBuffer(RenderLayer.getEntityCutoutNoCull(thisETFTexture.getTextureIdentifier(etf$shulkerBoxStandInDummy)));
             return alteredReturn == null ? vertices : alteredReturn;
-        }catch (Exception e){
+        } catch (Exception e) {
             return vertices;
         }
 
@@ -110,7 +110,7 @@ public abstract class MixinShulkerBoxBlockEntityRenderer implements BlockEntityR
             if (!isAnimatedTexture && ETFConfigData.enableEmissiveBlockEntities && (thisETFTexture != null)) {
                 thisETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, this.model, ETFManager.EmissiveRenderModes.blockEntityMode());
             }
-        }catch (Exception ignored){
+        } catch (Exception ignored) {
 
         }
     }

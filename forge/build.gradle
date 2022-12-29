@@ -41,7 +41,7 @@ dependencies {
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 
     implementation(forgeDependencies("org.apache.httpcomponents:httpmime:4.5.10"))
-    shadow("org.apache.httpcomponents:httpmime:4.5.10")
+    shadow('org.apache.httpcomponents:httpmime:4.5.14')
 
     modImplementation("maven.modrinth:oculus:${project.oculus_version}") {
         //  exclude(group: "net.fabricmc.fabric-api")//??
@@ -98,4 +98,8 @@ publishing {
     repositories {
         // Add repositories to publish to here.
     }
+}
+
+repositories {
+    mavenCentral()
 }

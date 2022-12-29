@@ -37,12 +37,12 @@ public abstract class ETFUtils2 {
     public static Identifier replaceIdentifier(Identifier id, String regex, String replace) {
         if (id == null) return null;
         Identifier forReturn;
-        try{
+        try {
             forReturn = new Identifier(id.getNamespace(), id.getPath().replaceFirst(regex, replace));
-        }catch(InvalidIdentifierException idFail){
-            ETFUtils2.logError(ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.illegal_path_recommendation").getString()+"\n"+idFail);
+        } catch (InvalidIdentifierException idFail) {
+            ETFUtils2.logError(ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.illegal_path_recommendation").getString() + "\n" + idFail);
             forReturn = null;
-        }catch (Exception e){
+        } catch (Exception e) {
             forReturn = null;
         }
         return forReturn;

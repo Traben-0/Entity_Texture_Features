@@ -8,15 +8,13 @@ import traben.entity_texture_features.texture_handlers.ETFManager;
 
 
 @Mixin(PiglinEntityRenderer.class)
-public abstract class MixinPiglinEntityRenderer{
-
-
+public abstract class MixinPiglinEntityRenderer {
 
 
     @ModifyVariable(method = "getPiglinModel", at = @At("HEAD"), index = 2, argsOnly = true)
     private static boolean injected(boolean zombie) {
         //if it is a zombie pigling and we want to override the vanilla behaviour of hiding zombie piglin's right ear
-        if(zombie && ETFManager.zombiePiglinRightEarEnabled){
+        if (zombie && ETFManager.getInstance().zombiePiglinRightEarEnabled) {
             return false;
         }
         return zombie;

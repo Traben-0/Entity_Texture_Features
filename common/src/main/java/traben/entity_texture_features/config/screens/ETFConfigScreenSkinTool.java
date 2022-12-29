@@ -111,7 +111,7 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
             thisETFPlayerTexture = ETFManager.getInstance().PLAYER_TEXTURE_MAP.get(MinecraftClient.getInstance().player.getUuid());
             if (thisETFPlayerTexture == null) {
                 ETFPlayerTexture etfPlayerTexture = new ETFPlayerTexture();
-                ETFManager.getInstance().PLAYER_TEXTURE_MAP.put(MinecraftClient.getInstance().player.getUuid(),etfPlayerTexture);
+                ETFManager.getInstance().PLAYER_TEXTURE_MAP.put(MinecraftClient.getInstance().player.getUuid(), etfPlayerTexture);
                 thisETFPlayerTexture = etfPlayerTexture;
             }
         }
@@ -146,7 +146,7 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
                         result = printPlayerSkinCopy();
                     }
                     onExit();
-                    Objects.requireNonNull(client).setScreen(new ETFConfigScreenSkinToolOutcome(parent, result,currentEditorSkin));
+                    Objects.requireNonNull(client).setScreen(new ETFConfigScreenSkinToolOutcome(parent, result, currentEditorSkin));
                 });
         this.addDrawableChild(printSkinFileButton);
 
@@ -498,11 +498,13 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
         entityRenderDispatcher.setRenderShadows(false);
 
         VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
+        //noinspection deprecation
         RenderSystem.runAsFancy(() -> entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, matrixStack2, immediate, 15728880));
         immediate.draw();
 
         //second render required for iris
         VertexConsumerProvider.Immediate immediate2 = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
+        //noinspection deprecation
         RenderSystem.runAsFancy(() -> {
             //entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, matrixStack2, immediate2, 15728880);
             if (thisETFPlayerTexture != null && thisETFPlayerTexture.etfTextureOfFinalBaseSkin != null && entity instanceof AbstractClientPlayerEntity) {

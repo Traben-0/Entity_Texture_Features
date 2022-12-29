@@ -54,7 +54,7 @@ public abstract class MixinChestBlockEntityRenderer<T extends BlockEntity & LidO
 
             VertexConsumer alteredReturn = etf$vertexConsumerProviderOfThis.getBuffer(RenderLayer.getEntityCutout(thisETFTexture.getTextureIdentifier(etf$chestStandInDummy)));
             return alteredReturn == null ? vertices : alteredReturn;
-        }catch (Exception e){
+        } catch (Exception e) {
             return vertices;
         }
     }
@@ -87,7 +87,7 @@ public abstract class MixinChestBlockEntityRenderer<T extends BlockEntity & LidO
 
                 }
             }
-        }catch (Exception ignored){
+        } catch (Exception ignored) {
 
         }
     }
@@ -104,7 +104,7 @@ public abstract class MixinChestBlockEntityRenderer<T extends BlockEntity & LidO
                 etf$textureOfThis = null;
                 etf$vertexConsumerProviderOfThis = null;
             }
-        }catch (Exception ignored){
+        } catch (Exception ignored) {
 
         }
     }

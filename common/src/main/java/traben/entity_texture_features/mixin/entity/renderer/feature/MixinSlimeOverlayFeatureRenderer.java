@@ -25,6 +25,7 @@ public abstract class MixinSlimeOverlayFeatureRenderer<T extends LivingEntity> e
     T etf$slime = null;
     private ETFTexture thisETFTexture = null;
 
+    @SuppressWarnings("unused")
     public MixinSlimeOverlayFeatureRenderer(FeatureRendererContext<T, SlimeEntityModel<T>> context) {
         super(context);
     }

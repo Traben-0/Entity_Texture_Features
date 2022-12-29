@@ -12,7 +12,7 @@ import traben.entity_texture_features.utils.ETFPlaceholderEntity;
 
 import java.io.File;
 
-@SuppressWarnings("SameReturnValue")
+@SuppressWarnings({"SameReturnValue", "unused"})
 public class ETFVersionDifferenceHandler {
 
     @ExpectPlatform

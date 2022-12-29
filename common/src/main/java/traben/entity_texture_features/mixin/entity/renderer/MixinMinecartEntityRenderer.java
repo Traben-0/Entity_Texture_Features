@@ -26,7 +26,7 @@ import traben.entity_texture_features.utils.ETFUtils2;
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
 @Mixin(MinecartEntityRenderer.class)
-public abstract class MixinMinecartEntityRenderer<T extends AbstractMinecartEntity> extends EntityRenderer<T>{
+public abstract class MixinMinecartEntityRenderer<T extends AbstractMinecartEntity> extends EntityRenderer<T> {
 
     @Final
     @Shadow
@@ -35,8 +35,9 @@ public abstract class MixinMinecartEntityRenderer<T extends AbstractMinecartEnti
     private T etf$entity = null;
     @Final
     @Shadow
-    private EntityModel<T> model;
+    protected EntityModel<T> model;
 
+    @SuppressWarnings("unused")
     protected MixinMinecartEntityRenderer(EntityRendererFactory.Context ctx) {
         super(ctx);
     }
@@ -63,14 +64,24 @@ public abstract class MixinMinecartEntityRenderer<T extends AbstractMinecartEnti
                     //Identifier identifier = this.getTexture(entity);
                     int choice = ETFManager.getInstance().ENTITY_TYPE_RENDER_LAYER.getInt(etf$entity.getType());
                     //noinspection EnhancedSwitchMigration
-                    switch (choice){
-                        case 1: layerToReturn = (RenderLayer.getEntityTranslucent(alteredTexture));break;
-                        case 2: layerToReturn = (RenderLayer.getEntityTranslucentCull(alteredTexture));break;
-                        case 3: layerToReturn = (RenderLayer.getEndGateway());break;
-                        case 4: layerToReturn = (RenderLayer.getOutline(alteredTexture));break;
-                        default: layerToReturn = (null);break;
+                    switch (choice) {
+                        case 1:
+                            layerToReturn = (RenderLayer.getEntityTranslucent(alteredTexture));
+                            break;
+                        case 2:
+                            layerToReturn = (RenderLayer.getEntityTranslucentCull(alteredTexture));
+                            break;
+                        case 3:
+                            layerToReturn = (RenderLayer.getEndGateway());
+                            break;
+                        case 4:
+                            layerToReturn = (RenderLayer.getOutline(alteredTexture));
+                            break;
+                        default:
+                            layerToReturn = (null);
+                            break;
                     }
-                }else{
+                } else {
                     layerToReturn = RenderLayer.getEntityCutoutNoCull(alteredTexture);
                 }
 

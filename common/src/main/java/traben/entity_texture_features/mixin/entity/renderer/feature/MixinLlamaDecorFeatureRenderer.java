@@ -24,15 +24,16 @@ import traben.entity_texture_features.texture_handlers.ETFTexture;
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
 @Mixin(LlamaDecorFeatureRenderer.class)
-public abstract class MixinLlamaDecorFeatureRenderer extends FeatureRenderer<LlamaEntity, LlamaEntityModel<LlamaEntity>>  {
+public abstract class MixinLlamaDecorFeatureRenderer extends FeatureRenderer<LlamaEntity, LlamaEntityModel<LlamaEntity>> {
 
 
     LlamaEntity etf$entity = null;
     private ETFTexture thisETFTexture = null;
     @Final
     @Shadow
-    private LlamaEntityModel<LlamaEntity>  model;
+    private LlamaEntityModel<LlamaEntity> model;
 
+    @SuppressWarnings("unused")
     public MixinLlamaDecorFeatureRenderer(FeatureRendererContext<LlamaEntity, LlamaEntityModel<LlamaEntity>> context) {
         super(context);
     }

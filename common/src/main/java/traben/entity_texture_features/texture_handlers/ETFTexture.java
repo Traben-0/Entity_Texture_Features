@@ -39,6 +39,7 @@ public class ETFTexture {
     //private final Identifier vanillaIdentifier;
 
     private final static String PATCH_NAMESPACE_PREFIX = "etf_patched_";
+    private static final Random randomBlink = new Random();
     //this variants id , might be vanilla
     public final Identifier thisIdentifier;
     private final Object2ReferenceOpenHashMap<Identifier, Identifier> FEATURE_TEXTURE_MAP = new Object2ReferenceOpenHashMap<>();
@@ -57,9 +58,8 @@ public class ETFTexture {
     private Integer blinkLength = ETFConfigData.blinkLength;
     private Integer blinkFrequency = ETFConfigData.blinkFrequency;
 
-    private boolean canPatch = true;
-
     // private final TextureSource source;
+    private boolean canPatch = true;
 
     public ETFTexture(/*@NotNull Identifier vanillaIdentifier,*/ @NotNull Identifier variantIdentifier, boolean allowedToPatch) {//,TextureSource source) {
         //this.vanillaIdentifier = vanillaIdentifier;
@@ -269,23 +269,23 @@ public class ETFTexture {
         boolean didPatch = false;
         ResourceManager files = MinecraftClient.getInstance().getResourceManager();
         //should this process cancel itself due to presence of PBR textures
-        if(ETFConfigData.dontPatchPBRTextures &&
+        if (ETFConfigData.dontPatchPBRTextures &&
                 (ETFVersionDifferenceHandler.isThisModLoaded("iris") || ETFVersionDifferenceHandler.isThisModLoaded("oculus")) &&
                 //do pbr files exist?
-                (files.getResource(ETFUtils2.replaceIdentifier(thisIdentifier,".png", "_s.png")).isPresent() ||
-                 files.getResource(ETFUtils2.replaceIdentifier(thisIdentifier,".png", "_n.png")).isPresent())
-        ){
+                (files.getResource(ETFUtils2.replaceIdentifier(thisIdentifier, ".png", "_s.png")).isPresent() ||
+                        files.getResource(ETFUtils2.replaceIdentifier(thisIdentifier, ".png", "_n.png")).isPresent())
+        ) {
             //here the setting to cancel is enabled, iris is present, and pbr files exist, so cancel patching
             return;
         }
         //should patching cancel due to presence of animation mods and animated textures
-        if(ETFConfigData.dontPatchAnimatedTextures &&
+        if (ETFConfigData.dontPatchAnimatedTextures &&
                 (ETFVersionDifferenceHandler.isThisModLoaded("moremcmeta") &&
-                        (files.getResource(ETFUtils2.replaceIdentifier(thisIdentifier,".png", ".png.mcmeta")).isPresent() ||
-                        files.getResource(ETFUtils2.replaceIdentifier(thisIdentifier,".png", ".png.moremcmeta")).isPresent())
+                        (files.getResource(ETFUtils2.replaceIdentifier(thisIdentifier, ".png", ".png.mcmeta")).isPresent() ||
+                                files.getResource(ETFUtils2.replaceIdentifier(thisIdentifier, ".png", ".png.moremcmeta")).isPresent())
                 )
-                // todo || ETFVersionDifferenceHandler.isThisModLoaded("animatica")) && check it's animated???
-        ){
+            // todo || ETFVersionDifferenceHandler.isThisModLoaded("animatica")) && check it's animated???
+        ) {
             //here the setting to cancel is enabled, animation mod is present, and mcmeta files exist, so cancel patching
             return;
         }
@@ -494,8 +494,6 @@ public class ETFTexture {
         }
         return identifierOfCurrentState();
     }
-
-    private static final Random randomBlink = new Random();
 
     public boolean isEmissive() {
         return this.emissiveIdentifier != null;

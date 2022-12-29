@@ -29,19 +29,19 @@ public class ETFClientForge {
     //public static final EntityType<ETFPlaceholderEntity> ETF_PLACEHOLDER_ENTITY_ENTITY_TYPE = EntityType.Builder.<ETFPlaceholderEntity>create(ETFPlaceholderEntity::new, SpawnGroup.MISC).disableSummon().disableSaving()
     //        .build(new Identifier(ETFClientCommon.MOD_ID + ":etf_placeholder_entity").toString());
 
-   // public static EntityType<ETFPlaceholderEntity> ETF_PLACEHOLDER_ENTITY_ENTITY_TYPE= new EntityType<>( (EntityType.EntityFactory<ETFPlaceholderEntity>) ETFPlaceholderEntity::new, SpawnGroup.MISC, false, false, true, false, ImmutableSet.<Block>builder().build() , EntityDimensions.fixed(0.75f, 0.75f), 0, 0, FeatureFlags.DEFAULT_ENABLED_FEATURES);
+    // public static EntityType<ETFPlaceholderEntity> ETF_PLACEHOLDER_ENTITY_ENTITY_TYPE= new EntityType<>( (EntityType.EntityFactory<ETFPlaceholderEntity>) ETFPlaceholderEntity::new, SpawnGroup.MISC, false, false, true, false, ImmutableSet.<Block>builder().build() , EntityDimensions.fixed(0.75f, 0.75f), 0, 0, FeatureFlags.DEFAULT_ENABLED_FEATURES);
 
 
+    @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
     public static final RegistryObject<EntityType<ETFPlaceholderEntity>> ETF_PLACEHOLDER_ENTITY_ENTITY_REGISTRY = ENTITIES.register(
             "etf_placeholder_entity",
-            () ->  new EntityType<>( (EntityType.EntityFactory<ETFPlaceholderEntity>) ETFPlaceholderEntity::new, SpawnGroup.MISC, false, false, true, false, ImmutableSet.<Block>builder().build() , EntityDimensions.fixed(0.75f, 0.75f), 0, 0, FeatureFlags.DEFAULT_ENABLED_FEATURES));
+            () -> new EntityType<>(ETFPlaceholderEntity::new, SpawnGroup.MISC, false, false, true, false, ImmutableSet.<Block>builder().build(), EntityDimensions.fixed(0.75f, 0.75f), 0, 0, FeatureFlags.DEFAULT_ENABLED_FEATURES));
 
 
     //public static EntityType<?> ETF_PLACEHOLDER_ENTITY_ENTITY_TYPE = EntityType.Builder.create(ETFPlaceholderEntity::new, SpawnGroup.MISC).disableSaving().disableSummon().build(ETFClientCommon.MOD_ID + ":etf_placeholder_entity");
     public ETFClientForge() {
 
         ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
-
 
 
         // Submit our event bus to let architectury register our content on the right time
