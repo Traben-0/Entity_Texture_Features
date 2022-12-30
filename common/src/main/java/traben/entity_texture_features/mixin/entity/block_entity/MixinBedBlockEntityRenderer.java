@@ -72,7 +72,7 @@ public abstract class MixinBedBlockEntityRenderer implements BlockEntityRenderer
                     World worldCheck = bedBlockEntity.getWorld();
                     if (worldCheck == null) worldCheck = MinecraftClient.getInstance().world;
                     if (worldCheck != null) {
-                        etf$bedStandInDummy = ETFPlaceholderEntity.newFromJustWorld(bedBlockEntity.getWorld());
+                        etf$bedStandInDummy = ETFPlaceholderEntity.newFromJustWorld(worldCheck);
                         etf$bedStandInDummy.prepare(bedBlockEntity, UUID.nameUUIDFromBytes((bedBlockEntity.getPos().toString() + bedBlockEntity.getColor().toString()).getBytes()));
                     }
                     //System.out.println(etf$bedStandInDummy.toString());

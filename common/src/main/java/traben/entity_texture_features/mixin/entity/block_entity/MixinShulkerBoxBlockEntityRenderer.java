@@ -71,7 +71,7 @@ public abstract class MixinShulkerBoxBlockEntityRenderer implements BlockEntityR
                         World worldCheck = shulkerBoxBlockEntity.getWorld();
                         if (worldCheck == null) worldCheck = MinecraftClient.getInstance().world;
                         if (worldCheck != null) {
-                            etf$shulkerBoxStandInDummy = ETFPlaceholderEntity.newFromJustWorld(shulkerBoxBlockEntity.getWorld());
+                            etf$shulkerBoxStandInDummy = ETFPlaceholderEntity.newFromJustWorld(worldCheck);
                             etf$shulkerBoxStandInDummy.prepare(shulkerBoxBlockEntity, UUID.nameUUIDFromBytes(identifier.getBytes()));
                         }
 
