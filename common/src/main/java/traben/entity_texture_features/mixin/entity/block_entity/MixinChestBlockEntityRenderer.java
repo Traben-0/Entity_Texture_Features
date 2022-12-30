@@ -7,6 +7,7 @@ import net.minecraft.block.DoubleBlockProperties;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.LidOpenable;
 import net.minecraft.block.enums.ChestType;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
@@ -82,8 +83,12 @@ public abstract class MixinChestBlockEntityRenderer<T extends BlockEntity & LidO
                         }
                     }
                     //chests don't have uuid so set UUID from something repeatable this uses blockPos chestType & container name
-                    etf$chestStandInDummy = ETFPlaceholderEntity.newFromJustWorld(entity.getWorld());
-                    etf$chestStandInDummy.prepare(entity, UUID.nameUUIDFromBytes(identifier.getBytes()));
+                    World worldCheck = entity.getWorld();
+                    if (worldCheck == null) worldCheck = MinecraftClient.getInstance().world;
+                    if (worldCheck != null) {
+                        etf$chestStandInDummy = ETFPlaceholderEntity.newFromJustWorld(worldCheck);
+                        etf$chestStandInDummy.prepare(entity, UUID.nameUUIDFromBytes(identifier.getBytes()));
+                    }
 
                 }
             }
