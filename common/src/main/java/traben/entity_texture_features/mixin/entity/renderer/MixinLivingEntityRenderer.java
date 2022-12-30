@@ -1,10 +1,12 @@
 package traben.entity_texture_features.mixin.entity.renderer;
 
+import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
+import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
@@ -12,21 +14,22 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
+import traben.entity_texture_features.mod_compat.ETF3DSkinLayersUtil;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFPlayerTexture;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
+import traben.entity_texture_features.utils.ETFUtils2;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
@@ -34,10 +37,11 @@ import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 @Mixin(LivingEntityRenderer.class)
 public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extends EntityModel<T>> extends EntityRenderer<T> implements FeatureRendererContext<T, M> {
 
+    //private static Boolean disguiseHeadsWorkaround = null;
     private ETFTexture thisETFTexture = null;
     private ETFPlayerTexture thisETFPlayerTexture = null;
 
-
+    @SuppressWarnings("unused")
     protected MixinLivingEntityRenderer(EntityRendererFactory.Context ctx) {
         super(ctx);
 
@@ -45,9 +49,6 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
 
     @Shadow
     public abstract M getModel();
-
-    private static Boolean disguiseHeadsWorkaround = null;
-
 
     @Inject(method = "render(Lnet/minecraft/entity/LivingEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/EntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V", shift = At.Shift.AFTER)
@@ -57,16 +58,6 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
         if (livingEntity instanceof PlayerEntity) {
 
             if (ETFConfigData.skinFeaturesEnabled && thisETFPlayerTexture != null) {
-                //check disguise heads mod workaround
-                if(disguiseHeadsWorkaround == null){
-                    disguiseHeadsWorkaround = ETFVersionDifferenceHandler.isThisModLoaded("disguiseheads");
-                }
-                if(disguiseHeadsWorkaround) {
-                    ItemStack armour = ((PlayerEntity)livingEntity).getInventory().getArmorStack(3);
-                    if(armour.isOf(Items.PLAYER_HEAD)){
-                        return;
-                    }
-                }
 
                 // noinspection unchecked
                 thisETFPlayerTexture.renderFeatures(matrixStack, vertexConsumerProvider, i, (PlayerEntityModel<PlayerEntity>) this.getModel());
@@ -87,23 +78,22 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
     @Redirect(
             method = "getRenderLayer",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/LivingEntityRenderer;getTexture(Lnet/minecraft/entity/Entity;)Lnet/minecraft/util/Identifier;"))
-    private Identifier etf$alterTexture(LivingEntityRenderer<T, M> instance, Entity inentity) {
-
-
-        @SuppressWarnings("unchecked") T entity = (T) inentity;
+    private Identifier etf$alterTexture(LivingEntityRenderer<T, M> instance, Entity inEntity) {
+        @SuppressWarnings("unchecked")// is always safe as it's always a living entity but IntelliJ won't believe it
+        T entity = (T) inEntity;
         if (entity instanceof PlayerEntity player) {
             if (ETFConfigData.skinFeaturesEnabled) {
-                if (disguiseHeadsWorkaround == null) {
-                    disguiseHeadsWorkaround = ETFVersionDifferenceHandler.isThisModLoaded("disguiseheads");
-                }
-                if (disguiseHeadsWorkaround) {
-                    ItemStack armour = player.getInventory().getArmorStack(3);
-                    if (armour.isOf(Items.PLAYER_HEAD)) {
-                        return getTexture(entity);
-                    }
-                }
+//                if (disguiseHeadsWorkaround == null) {
+//                    disguiseHeadsWorkaround = false;// ETFVersionDifferenceHandler.isThisModLoaded("disguiseheads");
+//                }
+//                if (disguiseHeadsWorkaround) {
+//                    ItemStack armour = player.getInventory().getArmorStack(3);
+//                    if (armour.isOf(Items.PLAYER_HEAD)) {
+//                        return getTexture(entity);
+//                    }
+//                }
 
-                thisETFPlayerTexture = ETFManager.getInstance().getPlayerTexture(player);
+                thisETFPlayerTexture = ETFManager.getInstance().getPlayerTexture(player, ((AbstractClientPlayerEntity) player).getSkinTexture());
                 if (thisETFPlayerTexture != null) {
 
                     Identifier etfTexture = thisETFPlayerTexture.getBaseTextureIdentifierOrNullForVanilla(player);
@@ -111,8 +101,15 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
                 }
 
             }
-            //ensure disguised head mod check is preserved if more logic is added here for offline skins
-            return getTexture(entity);
+
+            Identifier vanillaTexture = getTexture(entity);
+            //only return vanilla if it isn't steve or alex etc
+            if (!("minecraft:texture/entity/steve.png".equals(vanillaTexture.toString())
+                    || "minecraft:texture/entity/alex.png".equals(vanillaTexture.toString())
+                    || vanillaTexture.toString().contains("minecraft:texture/entity/player/"))) {
+                return vanillaTexture;
+            }
+            //otherwise uses regular optifine properties in offline mode as with any other mob
         }
         thisETFTexture = ETFManager.getInstance().getETFTexture(getTexture(entity), entity, ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs);
 
@@ -185,19 +182,76 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
             //Identifier identifier = this.getTexture(entity);
             int choice = ETFManager.getInstance().ENTITY_TYPE_RENDER_LAYER.getInt(entity.getType());
             //noinspection EnhancedSwitchMigration
-            switch (choice){
-                case 1: cir.setReturnValue(RenderLayer.getEntityTranslucent(identifier));break;
-                case 2: cir.setReturnValue(RenderLayer.getEntityTranslucentCull(identifier));break;
-                case 3: cir.setReturnValue(RenderLayer.getEndGateway());break;
-                case 4: cir.setReturnValue(RenderLayer.getOutline(identifier));break;
-                default: cir.setReturnValue(cir.getReturnValue());break;
+            switch (choice) {
+                case 1:
+                    cir.setReturnValue(RenderLayer.getEntityTranslucent(identifier));
+                    break;
+                case 2:
+                    cir.setReturnValue(RenderLayer.getEntityTranslucentCull(identifier));
+                    break;
+                case 3:
+                    cir.setReturnValue(RenderLayer.getEndGateway());
+                    break;
+                case 4:
+                    cir.setReturnValue(RenderLayer.getOutline(identifier));
+                    break;
+                default:
+                    cir.setReturnValue(cir.getReturnValue());
+                    break;
             }
-        }else{
+        } else {
             cir.setReturnValue(cir.getReturnValue());
         }
 
     }
 
+    @ModifyArg(
+            method = "addFeature",
+            at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z"),
+            index = 0
+    )
+    private Object etf$3dSkinLayerCompat(Object featureRenderer) {
+        // replace 3d skin layers mod feature renderers with ETF's child versions
+        if (ETFVersionDifferenceHandler.isThisModLoaded("skinlayers") || ETFVersionDifferenceHandler.isThisModLoaded("skinlayers3d")) {
+            try {
+                // handler class is only ever accessed if the mod is present
+                // prevents NoClassDefFoundError
+                if (ETF3DSkinLayersUtil.canReplace((FeatureRenderer<?, ?>) featureRenderer)) {
+                    return ETF3DSkinLayersUtil.getReplacement((FeatureRenderer<?, ?>) featureRenderer, this);
+                }
+            } catch (Exception e) {
+                ETFUtils2.logWarn("Exception with ETF's 3D skin layers mod compatibility: " + e);
+            } catch (NoClassDefFoundError error) {
+                // Should never be thrown
+                // unless a significant change if skin layers mod
+                ETFUtils2.logError("Error with ETF's 3D skin layers mod compatibility: " + error);
+            }
+        }
+        return featureRenderer;
+    }
+
+// initial skin layers compat testing
+//    @Inject(
+//            method = "render(Lnet/minecraft/entity/LivingEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
+//            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/feature/FeatureRenderer;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/Entity;FFFFFF)V"
+//                    , shift = At.Shift.AFTER)
+//            , locals = LocalCapture.CAPTURE_FAILSOFT)
+//    private void etf$3dSkinLayerCompat(T livingEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci, float h, float j, float k, float m, float l, float n, float o, MinecraftClient minecraftClient, boolean bl, boolean bl2, boolean bl3, RenderLayer renderLayer, Iterator var19, FeatureRenderer featureRenderer) {
+//        // this appears to be the simplest method of *injecting* into the 3d skin layers mod's rendering
+//        // as long as the rendering method names & parameters in the featureRenderers of that mod don't change this will always work with it,
+//        // including any future changes internally to those classes
+//        if (livingEntity instanceof AbstractClientPlayerEntity && ETFVersionDifferenceHandler.isThisModLoaded("skinlayers")) {
+//            try {
+//                //separate handler class so no skinlayers class is ever accidentally loaded if it's not present
+//                //noinspection unchecked
+//                ETF3DSkinLayersUtil.tryRenderWithETFFeatures((FeatureRendererContext<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>>) this, featureRenderer, (AbstractClientPlayerEntity) livingEntity, g, matrixStack, vertexConsumerProvider, i, k, m, l, n, o);
+//            } catch (Exception e) {
+//                ETFUtils2.logWarn("Exception with ETF's 3D skin layers mod compatibility: " + e);
+//            } catch (NoClassDefFoundError error) {
+//                ETFUtils2.logError("Error with ETF's 3D skin layers mod compatibility: " + error);
+//            }
+//        }
+//    }
 }
 
 

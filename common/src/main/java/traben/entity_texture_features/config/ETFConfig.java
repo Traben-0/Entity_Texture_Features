@@ -2,6 +2,7 @@ package traben.entity_texture_features.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import net.minecraft.client.gui.screen.ScreenTexts;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.screens.ETFConfigScreenWarnings;
 import traben.entity_texture_features.texture_handlers.ETFManager;
@@ -14,8 +15,10 @@ import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 @SuppressWarnings("CanBeFinal")
 public class ETFConfig {
 
-
+    @Deprecated //see illegalPathSupportMode
     public boolean allowIllegalTexturePaths = false;
+    public IllegalPathMode illegalPathSupportMode = IllegalPathMode.None;
+
     public boolean enableCustomTextures = true;
     public boolean enableCustomBlockEntities = true;
     public UpdateFrequency textureUpdateFrequency_V2 = UpdateFrequency.Fast;
@@ -29,8 +32,8 @@ public class ETFConfig {
     public boolean enableEmissiveTextures = true;
     public boolean enableEmissiveBlockEntities = true;
 
-    @Deprecated
-    public boolean fullBrightEmissives = false;
+    //@Deprecated
+    //public boolean fullBrightEmissives = false;
     public ETFManager.EmissiveRenderModes emissiveRenderMode = ETFManager.EmissiveRenderModes.DULL;
 
     public boolean specialEmissiveShield = true;
@@ -39,7 +42,7 @@ public class ETFConfig {
     public boolean skinFeaturesEnabled = true;
     public boolean skinFeaturesEnableTransparency = true;
     public boolean skinFeaturesEnableFullTransparency = false;
-    public boolean skinFeaturesPrintETFReadySkin = false;
+    //public boolean skinFeaturesPrintETFReadySkin = false;
     public boolean enableEnemyTeamPlayersSkinFeatures = true;
     public boolean enableBlinking = true;
     public int blinkFrequency = 150;
@@ -59,6 +62,8 @@ public class ETFConfig {
     public boolean removePixelsUnderEmissiveMobs = true;
     public boolean removePixelsUnderEmissiveBlockEntity = true;
 
+    public boolean dontPatchPBRTextures = true;
+    public boolean dontPatchAnimatedTextures = true;
 
 
     public Set<ETFConfigScreenWarnings.ConfigWarning> ignoredConfigs = new HashSet<>();
@@ -164,4 +169,34 @@ public class ETFConfig {
         }
     }
 
+    @SuppressWarnings({"unused", "EnhancedSwitchMigration"})
+    public enum IllegalPathMode {
+        None(ScreenTexts.OFF.getString()),
+        Entity("config." + MOD_ID + ".illegal_path_mode.entity"),
+        All("config." + MOD_ID + ".illegal_path_mode.all");
+
+        private final String key;
+
+        IllegalPathMode(String key) {
+            this.key = key;
+        }
+
+        @Override
+        public String toString() {
+
+            return ETFVersionDifferenceHandler.getTextFromTranslation(key).getString();
+        }
+
+        public IllegalPathMode next() {
+            //not enhanced for 1.16 version compat
+            switch (this) {
+                case None:
+                    return Entity;
+                case Entity:
+                    return All;
+                default:
+                    return None;
+            }
+        }
+    }
 }

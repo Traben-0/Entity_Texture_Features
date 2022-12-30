@@ -19,15 +19,23 @@ public enum ETFDirectory {
     OPTIFINE(new String[]{"textures", "optifine/random"}),
     VANILLA(null);
 
-    private static Object2ReferenceOpenHashMap<@NotNull Identifier, @NotNull ETFDirectory> ETF_DIRECTORY_CACHE = new Object2ReferenceOpenHashMap<>();
+    @SuppressWarnings("StaticCollection")
+    private static Object2ReferenceOpenHashMap<@NotNull Identifier, @NotNull ETFDirectory> ETF_DIRECTORY_CACHE = null;// = new Object2ReferenceOpenHashMap<>();
     private final String[] replaceStrings;
 
     ETFDirectory(String[] replaceStrings) {
         this.replaceStrings = replaceStrings;
     }
 
-    public static void clear() {
+    public static void resetCache() {
         ETF_DIRECTORY_CACHE = new Object2ReferenceOpenHashMap<>();
+    }
+
+    public static Object2ReferenceOpenHashMap<@NotNull Identifier, @NotNull ETFDirectory> getCache() {
+        if (ETF_DIRECTORY_CACHE == null) {
+            ETF_DIRECTORY_CACHE = new Object2ReferenceOpenHashMap<>();
+        }
+        return ETF_DIRECTORY_CACHE;
     }
 
     @Nullable
@@ -43,10 +51,11 @@ public enum ETFDirectory {
 
     @NotNull
     public static ETFDirectory getDirectoryOf(Identifier vanillaIdentifier) {
-        if (!ETF_DIRECTORY_CACHE.containsKey(vanillaIdentifier)) {
-            ETF_DIRECTORY_CACHE.put(vanillaIdentifier, findDirectoryOf(vanillaIdentifier));
+        Object2ReferenceOpenHashMap<@NotNull Identifier, @NotNull ETFDirectory> cache = getCache();
+        if (!cache.containsKey(vanillaIdentifier)) {
+            cache.put(vanillaIdentifier, findDirectoryOf(vanillaIdentifier));
         }
-        return ETF_DIRECTORY_CACHE.get(vanillaIdentifier);
+        return cache.get(vanillaIdentifier);
     }
 
     @NotNull
@@ -84,7 +93,7 @@ public enum ETFDirectory {
             foundDirectories.add(ETF);
 
         //these are here as these will be 90%+ cases and will be faster
-        if (foundDirectories.size() == 0) {
+        if (foundDirectories.isEmpty()) {
             return DOES_NOT_EXIST;
         } else if (foundDirectories.size() == 1) {
             return foundDirectories.get(0);

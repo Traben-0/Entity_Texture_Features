@@ -42,9 +42,8 @@
     "minecraft": "=1.18.2 "
   },
   "suggests": {
-    "fabric": ">=0.55",
-    "modmenu": ">=3",
-    "clothconfig": ">=6.0"
+    "fabric": "*",
+    "modmenu": "*"
   },
   "conflicts": {
     "optifabric": "*"

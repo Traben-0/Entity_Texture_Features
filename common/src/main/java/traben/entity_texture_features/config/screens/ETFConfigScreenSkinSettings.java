@@ -93,9 +93,9 @@ public class ETFConfigScreenSkinSettings extends ETFConfigScreen {
                 && MinecraftClient.getInstance().player != null && ETFPlayerTexture.clientPlayerOriginalSkinImageForTool != null;
 
         ButtonWidget skinTool = getETFButton((int) (this.width * 0.525), (int) (this.height * 0.5), (int) (this.width * 0.45), 20,
-                ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.button."+(
+                ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.button." + (
                         canLaunchTool ? "enabled" : "disabled"
-                        )),
+                )),
                 (button) -> Objects.requireNonNull(client).setScreen(playerSkinEditorScreen),
                 canLaunchTool ? Text.of("") : ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.fail_tooltip")
         );
