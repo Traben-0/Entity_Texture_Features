@@ -1,6 +1,7 @@
 package traben.entity_texture_features.mixin.entity.block_entity;
 
 import net.minecraft.block.entity.BedBlockEntity;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
@@ -11,6 +12,7 @@ import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
+import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -67,9 +69,12 @@ public abstract class MixinBedBlockEntityRenderer implements BlockEntityRenderer
                 etf$textureOfThis = new Identifier(nameSpace, texturePath);
                 etf$vertexConsumerProviderOfThis = vertexConsumerProvider;
                 if (ETFConfigData.enableCustomTextures && ETFConfigData.enableCustomBlockEntities) {
-                    etf$bedStandInDummy = new ETFPlaceholderEntity(bedBlockEntity.getWorld());
-                    etf$bedStandInDummy.prepare(bedBlockEntity, UUID.nameUUIDFromBytes((bedBlockEntity.getPos().toString() + bedBlockEntity.getColor().toString()).getBytes()));
-
+                    World worldCheck = bedBlockEntity.getWorld();
+                    if (worldCheck == null) worldCheck = MinecraftClient.getInstance().world;
+                    if (worldCheck != null) {
+                        etf$bedStandInDummy = new ETFPlaceholderEntity(worldCheck);
+                        etf$bedStandInDummy.prepare(bedBlockEntity, UUID.nameUUIDFromBytes((bedBlockEntity.getPos().toString() + bedBlockEntity.getColor().toString()).getBytes()));
+                    }
                     //System.out.println(etf$bedStandInDummy.toString());
                     //etf$bedStandInDummy.setPos(bedBlockEntity.getPos().getX(), bedBlockEntity.getPos().getY(), bedBlockEntity.getPos().getZ());
                     //chests don't have uuid so set UUID from something repeatable I chose from block pos

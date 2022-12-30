@@ -1,6 +1,7 @@
 package traben.entity_texture_features.mixin.entity.block_entity;
 
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -11,6 +12,7 @@ import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
+import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -66,9 +68,12 @@ public abstract class MixinShulkerBoxBlockEntityRenderer implements BlockEntityR
                         //etf$chestStandInDummy.setPos(entity.getPos().getX(), entity.getPos().getY(), entity.getPos().getZ());
 
                         //chests don't have uuid so set UUID from something repeatable this uses blockPos chestType & container name
-                        etf$shulkerBoxStandInDummy = new ETFPlaceholderEntity(shulkerBoxBlockEntity.getWorld());
-                        etf$shulkerBoxStandInDummy.prepare(shulkerBoxBlockEntity, UUID.nameUUIDFromBytes(identifier.getBytes()));
-
+                        World worldCheck = shulkerBoxBlockEntity.getWorld();
+                        if (worldCheck == null) worldCheck = MinecraftClient.getInstance().world;
+                        if (worldCheck != null) {
+                            etf$shulkerBoxStandInDummy = new ETFPlaceholderEntity(worldCheck);
+                            etf$shulkerBoxStandInDummy.prepare(shulkerBoxBlockEntity, UUID.nameUUIDFromBytes(identifier.getBytes()));
+                        }
 
                     } catch (Exception e) {
                         //ETFUtils2.logError("shulker box custom rendering failed during setup, " + e);
