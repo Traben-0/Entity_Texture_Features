@@ -7,7 +7,6 @@ import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
-import traben.entity_texture_features.config.ETFConfig;
 
 import java.util.Objects;
 
@@ -39,7 +38,6 @@ public class ETFConfigScreenRandomRestrictSettings extends ETFConfigScreen {
                     this.clearAndInit();
                     //Objects.requireNonNull(client).setScreen(parent);
                 }));
-
 
 
         ButtonWidget restrictBiome = getETFButton((int) (this.width * 0.275), (int) (this.height * 0.4), (int) (this.width * 0.2), 20,

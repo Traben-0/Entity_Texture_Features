@@ -86,7 +86,7 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
             ETFManager.getInstance().ENTITY_BLINK_TIME.put(MinecraftClient.getInstance().player.getUuid(), 0L);
         }
         thisETFPlayerTexture = null;
-        currentEditorSkin = null;
+
     }
 
     @Override
@@ -147,7 +147,7 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
                         result = printPlayerSkinCopy();
                     }
                     onExit();
-                    Objects.requireNonNull(client).setScreen(new ETFConfigScreenSkinToolOutcome(parent, result));
+                    Objects.requireNonNull(client).setScreen(new ETFConfigScreenSkinToolOutcome(parent, result, currentEditorSkin));
                 });
         this.addDrawableChild(printSkinFileButton);
 
@@ -499,11 +499,13 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
         entityRenderDispatcher.setRenderShadows(false);
 
         VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
+        //noinspection deprecation
         RenderSystem.runAsFancy(() -> entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, matrixStack2, immediate, 15728880));
         immediate.draw();
 
         //second render required for iris
         VertexConsumerProvider.Immediate immediate2 = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
+        //noinspection deprecation
         RenderSystem.runAsFancy(() -> {
             //entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, matrixStack2, immediate2, 15728880);
             if (thisETFPlayerTexture != null && thisETFPlayerTexture.etfTextureOfFinalBaseSkin != null && entity instanceof AbstractClientPlayerEntity) {

@@ -7,6 +7,8 @@
     "MixinPackScreen",
     "accessor.ElytraEntityModelAccessor",
     "accessor.MooshroomEntityAccessor",
+    "accessor.PlayerSkinProviderAccessor",
+    "accessor.PlayerSkinTextureAccessor",
     "accessor.SpriteAccessor",
     "entity.block_entity.MixinBedBlockEntityRenderer",
     "entity.block_entity.MixinBellBlockEntityRenderer",
@@ -19,11 +21,15 @@
     "entity.misc.MixinBlazeEntity",
     "entity.misc.MixinBuiltinModelItemRenderer",
     "entity.misc.MixinElytraEntityModel",
+    "entity.misc.MixinGlowSquidEntity",
     "entity.misc.MixinPlayerEntity",
     "entity.misc.MixinTridentEntity",
+    "entity.renderer.MixinBoatEntityRenderer",
     "entity.renderer.MixinEnderDragonEntityRenderer",
     "entity.renderer.MixinEntityRenderer",
+    "entity.renderer.MixinEvokerFangEntityRenderer",
     "entity.renderer.MixinLivingEntityRenderer",
+    "entity.renderer.MixinMinecartEntityRenderer",
     "entity.renderer.MixinPiglinEntityRenderer",
     "entity.renderer.MixinPlayerEntityRenderer",
     "entity.renderer.MixinTridentEntityRenderer",
@@ -34,6 +40,7 @@
     "entity.renderer.feature.MixinHorseArmorFeatureRenderer",
     "entity.renderer.feature.MixinHorsemarkingFeatureRenderer",
     "entity.renderer.feature.MixinIronGolemCrackFeatureRenderer",
+    "entity.renderer.feature.MixinLlamaDecorFeatureRenderer",
     "entity.renderer.feature.MixinMooshroomMushroomFeatureRenderer",
     "entity.renderer.feature.MixinSaddleFeatureRenderer",
     "entity.renderer.feature.MixinSheepWoolFeatureRenderer",
@@ -43,12 +50,9 @@
     "entity.renderer.feature.MixinVillagerClothingFeatureRenderer",
     "entity.renderer.feature.MixinWardenFeatureRenderer",
     "reloading.MixinMinecraftClient",
-    "reloading.MixinSimpleResourceReload",
-    "entity.misc.MixinGlowSquidEntity"
+    "reloading.MixinSimpleResourceReload"
   ],
-  "mixins": [
-
-  ],
+  "mixins": [],
   "injectors": {
     "defaultRequire": 1
   }

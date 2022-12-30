@@ -27,6 +27,7 @@ public abstract class MixinWardenFeatureRenderer<T extends WardenEntity, M exten
     WardenEntity etf$entity = null;
     private ETFTexture thisETFTexture = null;
 
+    @SuppressWarnings("unused")
     public MixinWardenFeatureRenderer(FeatureRendererContext<T, M> context) {
         super(context);
     }

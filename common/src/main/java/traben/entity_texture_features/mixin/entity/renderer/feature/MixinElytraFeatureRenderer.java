@@ -45,6 +45,7 @@ public abstract class MixinElytraFeatureRenderer<T extends LivingEntity, M exten
     private ModelPart etf$rightWing = null;
     private ModelPart etf$leftWing = null;
 
+    @SuppressWarnings("unused")
     public MixinElytraFeatureRenderer(FeatureRendererContext<T, M> context) {
         super(context);
     }
