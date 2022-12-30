@@ -350,10 +350,10 @@ public abstract class ETFTexturePropertiesUtils {
     }
 
     private static WeatherType getWeather(Properties props, int num) {
-        //if (props.containsKey("weather." + num)) {
-        return WeatherType.getType(props.getProperty("weather." + num).trim());
-        //}
-        //return null;
+        if (props.containsKey("weather." + num)) {
+            return WeatherType.getType(props.getProperty("weather." + num).trim());
+        }
+        return null;
     }
 
     @Nullable

@@ -212,6 +212,7 @@ public class ETFPlayerTexture {
         return cape;
     }
 
+
     private static int[] getSkinPixelBounds(String choiceKey) {
         return switch (choiceKey) {
             case "marker1" -> new int[]{56, 16, 63, 23};
@@ -408,6 +409,23 @@ public class ETFPlayerTexture {
     public Identifier getBaseTextureEmissiveIdentifierOrNullForNone() {
         if (hasEmissives && canUseFeaturesForThisPlayer() && etfTextureOfFinalBaseSkin != null) {
             return etfTextureOfFinalBaseSkin.getEmissiveIdentifierOfCurrentState();
+        }
+        return null;
+    }
+
+    @Nullable
+    public Identifier getBaseTextureEnchantIdentifierOrNullForNone() {
+        if (hasEnchant && canUseFeaturesForThisPlayer() && etfTextureOfFinalBaseSkin != null) {
+            switch (etfTextureOfFinalBaseSkin.currentTextureState) {
+                case NORMAL, NORMAL_PATCHED:
+                    return baseEnchantIdentifier;
+                case BLINK, BLINK_PATCHED:
+                    return baseEnchantBlinkIdentifier;
+                case BLINK2, BLINK2_PATCHED:
+                    return baseEnchantBlink2Identifier;
+                default:
+                    return null;
+            }
         }
         return null;
     }
@@ -1092,6 +1110,7 @@ public class ETFPlayerTexture {
                     int[] boxChosenBounds = getSkinPixelBounds("marker" + (markerChoices.indexOf(1) + 1));
                     emissiveCapeBounds = boxChosenBounds;
                     emissiveImage = returnMatchPixels(modifiedSkin, boxChosenBounds);
+
                     if (emissiveImage != null) {
                         emissiveIdentifier = new Identifier(SKIN_NAMESPACE, id + "_e.png");
                         ETFUtils2.registerNativeImageToIdentifier(emissiveImage, emissiveIdentifier);

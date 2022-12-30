@@ -49,7 +49,7 @@ public abstract class MixinChestBlockEntityRenderer<T extends BlockEntity & LidO
         try {
             if (isAnimatedTexture || !ETFConfigData.enableCustomTextures || !ETFConfigData.enableCustomBlockEntities)
                 return vertices;
-            thisETFTexture = ETFManager.getInstance().getETFTexture(etf$textureOfThis, etf$chestStandInDummy, ETFManager.TextureSource.BLOCK_ENTITY, ETFConfigData.removePixelsUnderEmissiveBlockEntity);
+            thisETFTexture = ETFManager.getInstance().getETFTexture(etf$textureOfThis, etf$chestStandInDummy, ETFManager.TextureSource.BLOCK_ENTITY, false);
             //etf$textureOfThis = ETFUtils.generalProcessAndReturnAlteredTexture(etf$textureOfThis, etf$chestStandInDummy);
 
             VertexConsumer alteredReturn = etf$vertexConsumerProviderOfThis.getBuffer(RenderLayer.getEntityCutout(thisETFTexture.getTextureIdentifier(etf$chestStandInDummy)));

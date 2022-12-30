@@ -304,10 +304,10 @@ public abstract class ETFUtils2 {
             ETFConfigData.skinFeaturesEnabled = false;
             ETFUtils2.saveConfig();
         }
-        if (ETFVersionDifferenceHandler.isThisModLoaded("impersonate") && !ETFConfigData.ignoredConfigs.contains(ETFConfigScreenWarnings.ConfigWarning.IMPERSONATE)) {
-            ETFConfigData.skinFeaturesEnabled = false;
-            ETFUtils2.saveConfig();
-        }
+//        if (ETFVersionDifferenceHandler.isThisModLoaded("impersonate") && !ETFConfigData.ignoredConfigs.contains(ETFConfigScreenWarnings.ConfigWarning.IMPERSONATE)) {
+//            ETFConfigData.skinFeaturesEnabled = false;
+//            ETFUtils2.saveConfig();
+//        }
     }
 
 }

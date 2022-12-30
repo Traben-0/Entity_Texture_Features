@@ -2,10 +2,7 @@ package traben.entity_texture_features.mixin.entity.renderer;
 
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.render.LightmapTextureManager;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.*;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
@@ -17,8 +14,11 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import traben.entity_texture_features.ETFVersionDifferenceHandler;
+import traben.entity_texture_features.mod_compat.ETF3DSkinLayersUtil;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFPlayerTexture;
+import traben.entity_texture_features.utils.ETFUtils2;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
@@ -46,16 +46,62 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
                 if (thisETFPlayerTexture != null) {
                     Identifier etfTexture = thisETFPlayerTexture.getBaseTextureIdentifierOrNullForVanilla(player);
                     if (etfTexture != null) {
-                        arm.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(etfTexture)), light, OverlayTexture.DEFAULT_UV);
-                        sleeve.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(etfTexture)), light, OverlayTexture.DEFAULT_UV);
+                        VertexConsumer vc1 = vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(etfTexture));
+                        arm.render(matrices, vc1, light, OverlayTexture.DEFAULT_UV);
+                        sleeve.render(matrices, vc1, light, OverlayTexture.DEFAULT_UV);
+                        if (ETFVersionDifferenceHandler.isThisModLoaded("skinlayers") || ETFVersionDifferenceHandler.isThisModLoaded("skinlayers3d")) {
+                            try {
+                                // handler class is only ever accessed if the mod is present
+                                // prevents NoClassDefFoundError
+                                //noinspection ConstantConditions
+                                ETF3DSkinLayersUtil.renderHand((PlayerEntityRenderer) ((Object) this), matrices, vc1, light, player, arm, sleeve);
+                            } catch (Exception e) {
+                                ETFUtils2.logWarn("Exception with ETF's 3D skin layers mod compatibility: " + e);
+                            } catch (NoClassDefFoundError error) {
+                                // Should never be thrown
+                                // unless a significant change if skin layers mod
+                                ETFUtils2.logError("Error with ETF's 3D skin layers mod compatibility: " + error);
+                            }
+                        }
+
                         Identifier emissive = thisETFPlayerTexture.getBaseTextureEmissiveIdentifierOrNullForNone();
                         if (emissive != null) {
-                            arm.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(emissive)), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV);
-                            sleeve.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(emissive)), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV);
+                            VertexConsumer vc2 = vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(emissive));
+                            arm.render(matrices, vc2, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV);
+                            sleeve.render(matrices, vc2, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV);
+                            if (ETFVersionDifferenceHandler.isThisModLoaded("skinlayers") || ETFVersionDifferenceHandler.isThisModLoaded("skinlayers3d")) {
+                                try {
+                                    // handler class is only ever accessed if the mod is present
+                                    // prevents NoClassDefFoundError
+                                    //noinspection ConstantConditions
+                                    ETF3DSkinLayersUtil.renderHand((PlayerEntityRenderer) ((Object) this), matrices, vc2, light, player, arm, sleeve);
+                                } catch (Exception e) {
+                                    ETFUtils2.logWarn("Exception with ETF's 3D skin layers mod compatibility: " + e);
+                                } catch (NoClassDefFoundError error) {
+                                    // Should never be thrown
+                                    // unless a significant change if skin layers mod
+                                    ETFUtils2.logError("Error with ETF's 3D skin layers mod compatibility: " + error);
+                                }
+                            }
                         }
                         if (thisETFPlayerTexture.baseEnchantIdentifier != null) {
-                            arm.render(matrices, ItemRenderer.getArmorGlintConsumer(vertexConsumers, RenderLayer.getArmorCutoutNoCull(thisETFPlayerTexture.baseEnchantIdentifier), false, true), 15728640, OverlayTexture.DEFAULT_UV);
-                            sleeve.render(matrices, ItemRenderer.getArmorGlintConsumer(vertexConsumers, RenderLayer.getArmorCutoutNoCull(thisETFPlayerTexture.baseEnchantIdentifier), false, true), 15728640, OverlayTexture.DEFAULT_UV);
+                            VertexConsumer vc3 = ItemRenderer.getArmorGlintConsumer(vertexConsumers, RenderLayer.getArmorCutoutNoCull(thisETFPlayerTexture.baseEnchantIdentifier), false, true);
+                            arm.render(matrices, vc3, light, OverlayTexture.DEFAULT_UV);
+                            sleeve.render(matrices, vc3, light, OverlayTexture.DEFAULT_UV);
+                            if (ETFVersionDifferenceHandler.isThisModLoaded("skinlayers") || ETFVersionDifferenceHandler.isThisModLoaded("skinlayers3d")) {
+                                try {
+                                    // handler class is only ever accessed if the mod is present
+                                    // prevents NoClassDefFoundError
+                                    //noinspection ConstantConditions
+                                    ETF3DSkinLayersUtil.renderHand((PlayerEntityRenderer) ((Object) this), matrices, vc3, light, player, arm, sleeve);
+                                } catch (Exception e) {
+                                    ETFUtils2.logWarn("Exception with ETF's 3D skin layers mod compatibility: " + e);
+                                } catch (NoClassDefFoundError error) {
+                                    // Should never be thrown
+                                    // unless a significant change if skin layers mod
+                                    ETFUtils2.logError("Error with ETF's 3D skin layers mod compatibility: " + error);
+                                }
+                            }
                         }
                         //don't further render vanilla arms
                         ci.cancel();

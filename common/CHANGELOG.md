@@ -1,5 +1,11 @@
 [**ETF Changelog:**]
 
+[V4.2.1.dev.4]
+
+- fixed compatibility with 3D skin layers mod and ETF skin features
+- fixed an issue with chest emissive textures
+- made a few large source code refactors, no functionality change
+
 [V4.2.1.dev.3]
 
 - skin features rework:
