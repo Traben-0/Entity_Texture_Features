@@ -1,37 +1,46 @@
 [**ETF Changelog:**]
 
-[V4.2.1.dev.4]
+[V4.3.0]
 
-- fixed compatibility with 3D skin layers mod and ETF skin features
-- fixed an issue with chest emissive textures
-- made a few large source code refactors, no functionality change
+*Update summary*
 
-[V4.2.1.dev.3]
+ETF 4.3 brings with it many fixes and stability issues as well as compatibility features and some long time missing
+features.
+Most notably ETF's skin features now have full compatibility with the `3D Skin Layers mod` and any `skin changing mod`
+as well as fixing a notorious `Tinkers construct` crash on forge.
 
-- skin features rework:
-    1. should now be compatible with most skin changer mods *e.g. diguise-heads or /impersonate*
-    2. much faster implementation
-    3. updates the clients skin in game after uploading, so you don't need to restart *(doesn't update other players,
-       still requires a re-auth)*
-
-[V4.2.1.dev.2]
-
-- added an option 'enabled by default' to set ETF to not tamper with any textures that have PBR textures attached, to
-  preserve PBR functionality
-- added an option 'enabled by default' to set ETF to not tamper with any textures that has moremcmeta mod animations, to
-  preserve animation functionality
-- changed the [Allow broken texture paths] setting, it can now be set to off|entities only|or all resources, *all
-  resources is not recommended*
-
-[V4.2.1.dev.1]
+Added:
 
 - added Minecart, Boat, Evoker Fang, and Llama carpet texture support
-- updatable properties for additional mob textures, like sheep_fur.png and villager types, should now actually update
-  even if the base texture doesn't
-- improved handling of block entity features, should clear up several related issues
+- added an option 'enabled by default' to set ETF to not tamper with any textures that have PBR textures attached, to
+  preserve PBR functionality, only if shader mods are present
+- added an option 'enabled by default' to set ETF to not tamper with any textures that has `moremcmeta mod` animations,
+  to preserve animation functionality, only if `moremcmeta` is present
+
+Changed:
+
+- changed handling of block entity features, should clear up several issues and be very stable compared to before
+- skin features rework:
+  1. should now be compatible with most skin changer mods *e.g. `diguise-heads`, `impersonate`, or `fabric tailor`*
+  2. much faster implementation
+  3. updates the clients skin in game after uploading, so you don't need to restart *(doesn't update other players,
+     that still requires a restart)*
+- changed the `[Allow broken texture paths]` setting, it can now be set to `off`|`entities only`|`all resources`, *all
+  resources is not recommended*
+- made a few large source code refactors, no functionality change
+
+Fixed:
+
+- fixed `Tinkers construct` crash
+- fixed `3D skin layers mod` compatibility with ETF skin features
+- fixed skin changing mod compatibility *(e.g. `disguise-heads`, `impersonate`, `fabric tailor`)*
+- fixed updatable properties for additional mob textures, like sheep_fur.png and villager types, not updating if the
+  base texture doesn't
 - fixed tooltip lines ignoring line breaks in 1.19.3
-- fixed an issue with the [Allow broken texture paths] setting preventing resource packs with broken paths from loading
+- fixed an issue with the `[Allow broken texture paths]` setting preventing resource packs with broken paths from loading
   correctly in 1.19.3
+- fixed an issue with chest emissive textures
+
 
 [V4.2.0]
 
