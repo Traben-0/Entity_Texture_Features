@@ -23,7 +23,7 @@ import traben.entity_texture_features.texture_handlers.ETFTexture;
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
 @Mixin(SaddleFeatureRenderer.class)
-public abstract class MixinSaddleFeatureRenderer  <T extends Entity & Saddleable, M extends EntityModel<T>> {
+public abstract class MixinSaddleFeatureRenderer<T extends Entity & Saddleable, M extends EntityModel<T>> {
 
 
     LivingEntity etf$entity = null;
@@ -33,12 +33,11 @@ public abstract class MixinSaddleFeatureRenderer  <T extends Entity & Saddleable
     private M model;
 
 
-
     @Inject(
             method = "Lnet/minecraft/client/render/entity/feature/SaddleFeatureRenderer;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/Entity;FFFFFF)V",
             at = @At(value = "HEAD"))
     private void etf$getEntity(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, T entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch, CallbackInfo ci) {
-        etf$entity = (LivingEntity)entity;
+        etf$entity = (LivingEntity) entity;
 
     }
 

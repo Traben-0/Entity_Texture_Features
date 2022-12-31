@@ -45,6 +45,7 @@ public abstract class MixinEnderDragonEntityRenderer extends EntityRenderer<Ende
     @Shadow
     private EnderDragonEntityRenderer.DragonEntityModel model;
 
+    @SuppressWarnings("unused")
     protected MixinEnderDragonEntityRenderer(EntityRendererFactory.Context ctx) {
         super(ctx);
     }

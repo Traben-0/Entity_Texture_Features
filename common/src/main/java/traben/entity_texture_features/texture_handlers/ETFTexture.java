@@ -20,7 +20,6 @@ import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.screens.ETFConfigScreen;
 import traben.entity_texture_features.utils.ETFUtils2;
 
-import java.util.Optional;
 import java.util.Properties;
 import java.util.Random;
 import java.util.UUID;
@@ -39,6 +38,7 @@ public class ETFTexture {
     //private final Identifier vanillaIdentifier;
 
     private final static String PATCH_NAMESPACE_PREFIX = "etf_patched_";
+    private static final Random randomBlink = new Random();
     //this variants id , might be vanilla
     public final Identifier thisIdentifier;
     private final Object2ReferenceOpenHashMap<Identifier, Identifier> FEATURE_TEXTURE_MAP = new Object2ReferenceOpenHashMap<>();
@@ -57,9 +57,8 @@ public class ETFTexture {
     private Integer blinkLength = ETFConfigData.blinkLength;
     private Integer blinkFrequency = ETFConfigData.blinkFrequency;
 
-    private boolean canPatch = true;
-
     // private final TextureSource source;
+    private boolean canPatch = true;
 
     public ETFTexture(/*@NotNull Identifier vanillaIdentifier,*/ @NotNull Identifier variantIdentifier, boolean allowedToPatch) {//,TextureSource source) {
         //this.vanillaIdentifier = vanillaIdentifier;
@@ -269,6 +268,29 @@ public class ETFTexture {
         NativeImage newBlink2Texture = ETFUtils2.getNativeImageElseNull(blink2Identifier);
 
         boolean didPatch = false;
+        //ResourceManager files = MinecraftClient.getInstance().getResourceManager();
+        //should this process cancel itself due to presence of PBR textures
+        if (ETFConfigData.dontPatchPBRTextures &&
+                (ETFVersionDifferenceHandler.isThisModLoaded("iris") || ETFVersionDifferenceHandler.isThisModLoaded("oculus")) &&
+                //do pbr files exist?
+                (ETFUtils2.isExistingResource(ETFUtils2.replaceIdentifier(thisIdentifier, ".png", "_s.png")) ||
+                        ETFUtils2.isExistingResource(ETFUtils2.replaceIdentifier(thisIdentifier, ".png", "_n.png")))
+        ) {
+            //here the setting to cancel is enabled, iris is present, and pbr files exist, so cancel patching
+            return;
+        }
+        //should patching cancel due to presence of animation mods and animated textures
+        if (ETFConfigData.dontPatchAnimatedTextures &&
+                (ETFVersionDifferenceHandler.isThisModLoaded("moremcmeta") &&
+                        (ETFUtils2.isExistingResource(ETFUtils2.replaceIdentifier(thisIdentifier, ".png", ".png.mcmeta")) ||
+                                ETFUtils2.isExistingResource(ETFUtils2.replaceIdentifier(thisIdentifier, ".png", ".png.moremcmeta")))
+                )
+            // todo || ETFVersionDifferenceHandler.isThisModLoaded("animatica")) && check it's animated???
+        ) {
+            //here the setting to cancel is enabled, animation mod is present, and mcmeta files exist, so cancel patching
+            return;
+        }
+
 
         //we need to move iris pbr textures, these are texture_n.png   and texture_s.png
         //todo this does not currently work with iris pbr as currently textureManager registered textures are not valid for pbr
@@ -473,8 +495,6 @@ public class ETFTexture {
         }
         return identifierOfCurrentState();
     }
-
-    private static final Random randomBlink = new Random();
 
     public boolean isEmissive() {
         return this.emissiveIdentifier != null;

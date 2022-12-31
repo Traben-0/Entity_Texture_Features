@@ -1,58 +1,117 @@
 [**ETF Changelog:**]
 
+[V4.3.0]
+
+*Update summary*
+
+ETF 4.3 brings with it many fixes and stability issues as well as compatibility features and some long time missing
+features.
+Most notably ETF's skin features now have full compatibility with the `3D Skin Layers mod` and any `skin changing mod`
+as well as fixing a notorious `Tinkers construct` crash on forge.
+
+Added:
+
+- added Minecart, Boat, Evoker Fang, and Llama carpet texture support
+- added an option 'enabled by default' to set ETF to not tamper with any textures that have PBR textures attached, to
+  preserve PBR functionality, only if shader mods are present
+- added an option 'enabled by default' to set ETF to not tamper with any textures that has `moremcmeta mod` animations,
+  to preserve animation functionality, only if `moremcmeta` is present
+
+Changed:
+
+- changed handling of block entity features, should clear up several issues and be very stable compared to before
+- skin features rework:
+  1. should now be compatible with most skin changer mods *e.g. `diguise-heads`, `impersonate`, or `fabric tailor`*
+  2. much faster implementation
+  3. updates the clients skin in game after uploading, so you don't need to restart *(doesn't update other players,
+     that still requires a restart)*
+- changed the `[Allow broken texture paths]` setting, it can now be set to `off`|`entities only`|`all resources`, *all
+  resources is not recommended*
+- made a few large source code refactors, no functionality change
+
+Fixed:
+
+- fixed `Tinkers construct` crash
+- fixed `3D skin layers mod` compatibility with ETF skin features
+- fixed skin changing mod compatibility *(e.g. `disguise-heads`, `impersonate`, `fabric tailor`)*
+- fixed updatable properties for additional mob textures, like sheep_fur.png and villager types, not updating if the
+  base texture doesn't
+- fixed tooltip lines ignoring line breaks in 1.19.3
+- fixed an issue with the `[Allow broken texture paths]` setting preventing resource packs with broken paths from loading
+  correctly in 1.19.3
+- fixed an issue with chest emissive textures
+
+
 [V4.2.0]
 
 *Update summary:*
 
-
-ETF v4.2 has added many additional non OptiFine texture properties to further vary textures with, as well as adding properties
-that can vary the way the entity itself is rendered, such as brightness level, ambient particles and translucent rendering.
+ETF v4.2 has added many additional non OptiFine texture properties to further vary textures with, as well as adding
+properties
+that can vary the way the entity itself is rendered, such as brightness level, ambient particles and translucent
+rendering.
 
 4.2 also includes many bug fixes and suggestions that have popped up since I left on holidays.
 I hope you enjoy :), and thank you for over 2 million downloads!!!
 
 Added:
 
-- added texture property `angry`, used like other OptiFine properties, can be `true|false`. works only for Endermen, Blazes, Guardians, Vindicators and Evokers. Triggers when these mobs display their client side 'angered or attacking state' *(open mouth for endermen & blazes igniting)*
-- added texture property `moving`, used like other OptiFine properties, can be `true|false` to vary texture based on whether a mob is moving or not.
+- added texture property `angry`, used like other OptiFine properties, can be `true|false`. works only for Endermen,
+  Blazes, Guardians, Vindicators and Evokers. Triggers when these mobs display their client side 'angered or attacking
+  state' *(open mouth for endermen & blazes igniting)*
+- added texture property `moving`, used like other OptiFine properties, can be `true|false` to vary texture based on
+  whether a mob is moving or not.
 - added texture property `items`, used like other OptiFine properties, can be either:
-  1. `none`*(true if mob is holding or wearing no items)*
-  2. `any`*(true if mob is holding or wearing any items)*
-  3. `holding`*(true if mob is holding any items)*
-  4. `wearing`*(true if mob is wearing any items)*
-  5. a list of item names like `minecraft:book` or `cool_mod:sunglasses`, separated by spaces.
-- added a new property type "Entity Property" to tweak entity rendering within the .properties file, they are not numbered like the other OptiFine properties e.g `skins.1`
-- added entity property `vanillaBrightnessOverride`: can be set as a number from `0-15`, this overrides the brightness of the mob, it can be used to reduce the brightness of mobs like Blazes and Allays, or increase the brightness of others.
-- added entity property `suppressParticles`: if set to `true` will remove ambient particles from mobs *(currently only Blazes and Glow Squids)*
-- added entity property `showHiddenModelParts`: if set to `true` will enable the rendering of model parts normally hidden in vanilla *(currently only zombie piglin right ears)*
-- added entity property `entityRenderLayerOverride`, shader compatibility will vary, the possible values for this property are:
-  1. `translucent` *(allows partial transparency in entity rendering)*
-  2. `translucent_cull` *(allows partial transparency in entity rendering & culls model faces)*
-  3. `end_portal` *(looks like the end portal effect, added for fun cause it works)*
-  4. `outline` *(renders the entities outline through walls)*
-- extended shader support code to include the Iris forge port `Oculus`, this should improve z-fighting and support the new compatible emissive render mode.
-- added `Compatible` emissive rendering mode. This mode uses the `Bright` emissive rendering mode normally and automatically changes to, the more shader compatible, `Default / Dull` emissive rendering mode when shaders are enabled. To have the best of both worlds.
+    1. `none`*(true if mob is holding or wearing no items)*
+    2. `any`*(true if mob is holding or wearing any items)*
+    3. `holding`*(true if mob is holding any items)*
+    4. `wearing`*(true if mob is wearing any items)*
+    5. a list of item names like `minecraft:book` or `cool_mod:sunglasses`, separated by spaces.
+- added a new property type "Entity Property" to tweak entity rendering within the .properties file, they are not
+  numbered like the other OptiFine properties e.g `skins.1`
+- added entity property `vanillaBrightnessOverride`: can be set as a number from `0-15`, this overrides the brightness
+  of the mob, it can be used to reduce the brightness of mobs like Blazes and Allays, or increase the brightness of
+  others.
+- added entity property `suppressParticles`: if set to `true` will remove ambient particles from mobs *(currently only
+  Blazes and Glow Squids)*
+- added entity property `showHiddenModelParts`: if set to `true` will enable the rendering of model parts normally
+  hidden in vanilla *(currently only zombie piglin right ears)*
+- added entity property `entityRenderLayerOverride`, shader compatibility will vary, the possible values for this
+  property are:
+    1. `translucent` *(allows partial transparency in entity rendering)*
+    2. `translucent_cull` *(allows partial transparency in entity rendering & culls model faces)*
+    3. `end_portal` *(looks like the end portal effect, added for fun cause it works)*
+    4. `outline` *(renders the entities outline through walls)*
+- extended shader support code to include the Iris forge port `Oculus`, this should improve z-fighting and support the
+  new compatible emissive render mode.
+- added `Compatible` emissive rendering mode. This mode uses the `Bright` emissive rendering mode normally and
+  automatically changes to, the more shader compatible, `Default / Dull` emissive rendering mode when shaders are
+  enabled. To have the best of both worlds.
 - added compatibility warning to disable skin features with the `impersonate` mod present
 - added emissive and random texture support to saddles *(supports pigs, horse-mobs and striders)*
-- added further support for some older OptiFine format biome names using `PascalCase` to be auto converted to the modern `snake_case` biome names *(e.g. `MushroomFields` becomes the correct `mushroom_fields` automatically)*
+- added further support for some older OptiFine format biome names using `PascalCase` to be auto converted to the
+  modern `snake_case` biome names *(e.g. `MushroomFields` becomes the correct `mushroom_fields` automatically)*
 
 changed:
+
 - updates russian translations thanks to @Felix14-v2
-- improved block entity code, this should improve compat with armor stand affecting mods (like quark) as armor stands are no longer used as a substitute entity
+- improved block entity code, this should improve compat with armor stand affecting mods (like quark) as armor stands
+  are no longer used as a substitute entity
 - tweaked button scaling to center themselves in larger gui scales
 - tweaked some gui button positions
 - removed compatibility warning that disabled block entity features with the `quark` mod present, issue has been fixed.
 
-
 fixed:
 several additions listed above fix several issues however some more minor fixes include:
+
 - fixed quark incompatibility with ETF block entity features
 - fixed ETF settings button appearing on data pack selection screen
-- fixed additional textures *(e.g. sheep fur or villager types)* having their variant overridden by the mobs base texture even if they have their own .properties file
-- fixed compatibility with the disguised heads mod and skins with etf features not changing *(skin features will not display on disguised players :/)*
+- fixed additional textures *(e.g. sheep fur or villager types)* having their variant overridden by the mobs base
+  texture even if they have their own .properties file
+- fixed compatibility with the disguised heads mod and skins with etf features not changing *(skin features will not
+  display on disguised players :/)*
 - fixed player skin enchanted visuals being brighter than vanilla
 - fixed keyboard navigation in the ETF settings gui *(currently just `ESC` key to go back)*
-
 
 [V4.1.1]
 
@@ -74,27 +133,30 @@ new texture properties to further customize your mob textures beyond what OptiFi
 
 And of course many fixes, enjoy :)
 
-
-- redesigned the settings GUI, cloth config is no longer required on Forge *(Openable from modmenu or a new button in the resource-pack screen)*
-- added a GUI for selecting player features and saving or uploading a player feature ready skin with all your choices *(openable when in-game from the new settings GUI)*
+- redesigned the settings GUI, cloth config is no longer required on Forge *(Openable from modmenu or a new button in
+  the resource-pack screen)*
+- added a GUI for selecting player features and saving or uploading a player feature ready skin with all your choices *(
+  openable when in-game from the new settings GUI)*
 - added new mob texture properties: *([Documentation Here.](readMeAssets/random_entities.properties))*
-  1. "speed" texture property to vary textures by their top speed *(useful for horses, and all mobs)*
-  2. "jumpStrength" texture property to vary textures by their jump strength *(useful for horses)*
-  3. "maxHealth" texture property to vary textures by their max health *(useful for horses, and all mobs)*
-  4. "llamaInventory" texture property to vary llama textures by their carry capacity 
-  5. "hiddenGene" texture property to vary panda textures by their hidden gene
-  6. "playerCreated" texture property to vary iron golem textures by whether they were created by a player
-  7. "screamingGoat" texture property to vary goat textures by whether they are the screaming variant
-  8. "distanceFromPlayer" texture property to vary mob textures by their distance from the player
-  9. "creeperCharged" texture property to vary creeper textures by whether the creeper has been charged by lightning
-  10. "statusEffect" texture property to vary textures by status effect or Brown MooShroom suspicious stew variants 
+    1. "speed" texture property to vary textures by their top speed *(useful for horses, and all mobs)*
+    2. "jumpStrength" texture property to vary textures by their jump strength *(useful for horses)*
+    3. "maxHealth" texture property to vary textures by their max health *(useful for horses, and all mobs)*
+    4. "llamaInventory" texture property to vary llama textures by their carry capacity
+    5. "hiddenGene" texture property to vary panda textures by their hidden gene
+    6. "playerCreated" texture property to vary iron golem textures by whether they were created by a player
+    7. "screamingGoat" texture property to vary goat textures by whether they are the screaming variant
+    8. "distanceFromPlayer" texture property to vary mob textures by their distance from the player
+    9. "creeperCharged" texture property to vary creeper textures by whether the creeper has been charged by lightning
+    10. "statusEffect" texture property to vary textures by status effect or Brown MooShroom suspicious stew variants
 - added more crash prevention, most features should simply not work, and log an error, instead of immediately crashing
 - added a new skin feature option "nose" available from the new skin tool GUI
 - added an extra skin feature cape option (ETF) available from the new skin tool GUI
-- added config option "hideConfigButton" to disable ETF config button in the resource-pack screen *(only available in the config.json file)*
+- added config option "hideConfigButton" to disable ETF config button in the resource-pack screen *(only available in
+  the config.json file)*
 
 
-- changed the iris pbr fix setting into the emissive fix settings screen with several options to reflect the more general fix
+- changed the iris pbr fix setting into the emissive fix settings screen with several options to reflect the more
+  general fix
   possibilities *(fixes for animation mods, iris PBR and a few others)*
 - updated russian translation thanks to @Felix14-v2
 - tweaked the debug printout
@@ -112,7 +174,6 @@ And of course many fixes, enjoy :)
 
 
 - and many more minor tweaks and fixes :)
-
 
 [V4.0.2]
 

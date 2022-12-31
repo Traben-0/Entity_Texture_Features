@@ -6,8 +6,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -20,10 +20,13 @@ import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 @Mixin(AbstractClientPlayerEntity.class)
 public abstract class MixinAbstractClientPlayerEntity extends PlayerEntity {
 
-
+    @SuppressWarnings("unused")
     public MixinAbstractClientPlayerEntity(World world, BlockPos pos, float yaw, GameProfile profile) {
         super(world, pos, yaw, profile);
     }
+
+    @Shadow
+    public abstract Identifier getSkinTexture();
 
     @Inject(method = "getCapeTexture",
             at = @At("RETURN"), cancellable = true)
@@ -37,7 +40,7 @@ public abstract class MixinAbstractClientPlayerEntity extends PlayerEntity {
                 return;
             }
         }
-        ETFPlayerTexture textureData = ETFManager.getInstance().getPlayerTexture(this);
+        ETFPlayerTexture textureData = ETFManager.getInstance().getPlayerTexture(this, getSkinTexture());
         if (textureData != null && textureData.hasCustomCape()) {
             cir.setReturnValue(textureData.etfCapeIdentifier);
         }
@@ -54,7 +57,7 @@ public abstract class MixinAbstractClientPlayerEntity extends PlayerEntity {
             cancellable = true)
     private void changeCapeReturnsBoolean(CallbackInfoReturnable<Boolean> cir) {
         //returns null if skin features disabled check is inbuilt
-        ETFPlayerTexture textureData = ETFManager.getInstance().getPlayerTexture(this);
+        ETFPlayerTexture textureData = ETFManager.getInstance().getPlayerTexture(this, getSkinTexture());
         if ((textureData != null && textureData.hasCustomCape())
                 || getUuid().equals(ETFPlayerTexture.Dev)
                 || getUuid().equals(ETFPlayerTexture.Wife)) {

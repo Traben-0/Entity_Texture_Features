@@ -30,7 +30,7 @@ public class ETFConfigScreenGeneralSettings extends ETFConfigScreen {
                     //temporaryETFConfig = new ETFConfig();
                     ETFConfigScreenMain.temporaryETFConfig.elytraThicknessFix = true;
                     ETFConfigScreenMain.temporaryETFConfig.debugLoggingMode = ETFConfig.DebugLogMode.None;
-                    ETFConfigScreenMain.temporaryETFConfig.allowIllegalTexturePaths = false;
+                    ETFConfigScreenMain.temporaryETFConfig.illegalPathSupportMode = ETFConfig.IllegalPathMode.None;
                     ETFConfigScreenMain.temporaryETFConfig.hideConfigButton = false;
                     //ETFConfigScreenMain.temporaryETFConfig.zombiePiglinRightEarEnabled = false;
                     //ETFConfigScreenMain.temporaryETFConfig.temporary_fixIrisPBR = false;
@@ -65,12 +65,12 @@ public class ETFConfigScreenGeneralSettings extends ETFConfigScreen {
         this.addDrawableChild(getETFButton((int) (this.width * 0.2), (int) (this.height * 0.4), (int) (this.width * 0.6), 20,
                 Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
                         "config." + ETFClientCommon.MOD_ID + ".allow_illegal_texture_paths.title"
-                ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.allowIllegalTexturePaths ? ScreenTexts.ON : ScreenTexts.OFF).getString()),
+                ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.illegalPathSupportMode)),
                 (button) -> {
-                    ETFConfigScreenMain.temporaryETFConfig.allowIllegalTexturePaths = !ETFConfigScreenMain.temporaryETFConfig.allowIllegalTexturePaths;
+                    ETFConfigScreenMain.temporaryETFConfig.illegalPathSupportMode = ETFConfigScreenMain.temporaryETFConfig.illegalPathSupportMode.next();
                     button.setMessage(Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
                             "config." + ETFClientCommon.MOD_ID + ".allow_illegal_texture_paths.title"
-                    ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.allowIllegalTexturePaths ? ScreenTexts.ON : ScreenTexts.OFF).getString()));
+                    ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.illegalPathSupportMode)));
                 },
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".allow_illegal_texture_paths.tooltip")
         ));

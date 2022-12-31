@@ -21,21 +21,12 @@ public abstract class ETFConfigScreen extends Screen {
     final Screen parent;
 
 
-
     public ETFConfigScreen(Text text, Screen parent) {
         super(text);
         this.parent = parent;
     }
-    @Override
-    public boolean shouldCloseOnEsc() {
-        return true;
-    }
 
-    @Override
-    public void onClose() {
-        assert this.client != null;
-        this.client.setScreen(parent);
-    }
+
     public static void renderGUITexture(Identifier texture, double x1, double y1, double x2, double y2) {
 
         Tessellator tessellator = Tessellator.getInstance();
@@ -71,6 +62,16 @@ public abstract class ETFConfigScreen extends Screen {
         tessellator.draw();
     }
 
+    @Override
+    public boolean shouldCloseOnEsc() {
+        return true;
+    }
+
+    @Override
+    public void onClose() {
+        assert this.client != null;
+        this.client.setScreen(parent);
+    }
 
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
@@ -93,9 +94,9 @@ public abstract class ETFConfigScreen extends Screen {
     ButtonWidget getETFButton(int x, int y, int width, int height, Text buttonText, ButtonWidget.PressAction onPress, Text toolTipText) {
         int nudgeLeftEdge;
         if (width > 384) {
-            nudgeLeftEdge = (width-384)/2;
+            nudgeLeftEdge = (width - 384) / 2;
             width = 384;
-        }else{
+        } else {
             nudgeLeftEdge = 0;
         }
 //        if (width > 800)
@@ -110,7 +111,7 @@ public abstract class ETFConfigScreen extends Screen {
             lines.add(Text.of(str.strip()));
         }
 
-        return new ButtonWidget(x+nudgeLeftEdge, y, width, height,
+        return new ButtonWidget(x + nudgeLeftEdge, y, width, height,
                 buttonText,
                 onPress,
                 (buttonWidget, matrices, mouseX, mouseY) -> {
