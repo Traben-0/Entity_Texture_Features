@@ -5,6 +5,7 @@ import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 //an api that will remain unchanged for external mod access (primarily puzzle at this time)
+@SuppressWarnings("unused")
 public class ETFApi {
 
     final public static int ETFApiVersion = 2;

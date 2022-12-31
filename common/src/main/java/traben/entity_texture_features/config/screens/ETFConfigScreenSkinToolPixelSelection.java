@@ -75,7 +75,7 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFConfigScreen {
 
         int pixelSize = (int) (this.height * 0.7 / 64);
 
-        //todo could save on using 4096 buttons by extrapolating mouse position from the render method, but meh
+        //simple method to create 4096 buttons instead of extrapolating mouse position
         for (int x = 0; x < 64; x++) {
             for (int y = 0; y < 64; y++) {
                 int finalX = x;
@@ -96,7 +96,7 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFConfigScreen {
                             if (ETFUtils2.registerNativeImageToIdentifier(etfParent.currentEditorSkin, randomID2)) {
                                 currentSkinToRender = randomID2;
                             }
-                        },null) {
+                        }, null) {
                     @Override
                     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
                         //invisible lol
@@ -185,11 +185,13 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFConfigScreen {
         entityRenderDispatcher.setRotation(quaternionf2);
         entityRenderDispatcher.setRenderShadows(false);
         VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
+        //noinspection deprecation
         RenderSystem.runAsFancy(() -> entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, matrixStack2, immediate, 0x800080 /*15728880*/));
         immediate.draw();
 
         //second render required for iris
         VertexConsumerProvider.Immediate immediate2 = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
+        //noinspection deprecation
         RenderSystem.runAsFancy(() -> {
             //entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, matrixStack2, immediate2, 15728880);
             if (etfParent.thisETFPlayerTexture != null && etfParent.thisETFPlayerTexture.etfTextureOfFinalBaseSkin != null && entity instanceof AbstractClientPlayerEntity) {

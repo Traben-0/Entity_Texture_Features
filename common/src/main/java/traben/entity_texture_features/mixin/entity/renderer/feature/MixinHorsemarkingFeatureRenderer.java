@@ -27,6 +27,7 @@ public abstract class MixinHorsemarkingFeatureRenderer extends FeatureRenderer<H
     HorseEntity etf$entity = null;
     private ETFTexture thisETFTexture = null;
 
+    @SuppressWarnings("unused")
     public MixinHorsemarkingFeatureRenderer(FeatureRendererContext<HorseEntity, HorseEntityModel<HorseEntity>> context) {
         super(context);
     }
@@ -54,6 +55,7 @@ public abstract class MixinHorsemarkingFeatureRenderer extends FeatureRenderer<H
     private Identifier etf$returnAlteredTexture(Identifier texture) {
 
         thisETFTexture = ETFManager.getInstance().getETFTexture(texture, etf$entity, ETFManager.TextureSource.ENTITY_FEATURE, ETFConfigData.removePixelsUnderEmissiveMobs);
+        //noinspection ConstantConditions
         return thisETFTexture == null ? texture : thisETFTexture.getTextureIdentifier(etf$entity);
     }
 }

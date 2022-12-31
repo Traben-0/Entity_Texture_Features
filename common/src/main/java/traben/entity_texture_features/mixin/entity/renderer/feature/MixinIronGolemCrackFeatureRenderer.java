@@ -26,6 +26,7 @@ public abstract class MixinIronGolemCrackFeatureRenderer extends FeatureRenderer
     IronGolemEntity etf$entity = null;
     private ETFTexture thisETFTexture = null;
 
+    @SuppressWarnings("unused")
     public MixinIronGolemCrackFeatureRenderer(FeatureRendererContext<IronGolemEntity, IronGolemEntityModel<IronGolemEntity>> context) {
         super(context);
     }

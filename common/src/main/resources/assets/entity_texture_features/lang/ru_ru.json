@@ -171,7 +171,6 @@
   "config.entity_texture_features.warnings_main": "Уведомления: ",
   "config.entity_texture_features.ignore_all": "Игнорировать",
   "config.entity_texture_features.ignore_description": "Настройки ETF не будут затронуты, если проигнорировать это предупреждение.",
-
   "modmenu.summaryTranslation.entity_texture_features": "Новые возможности в улучшении текстур сущностей при помощи наборов ресурсов.",
   "modmenu.descriptionTranslation.entity_texture_features": "Этот мод расширяет возможности улучшения текстур сущностей при помощи наборов ресурсов.\nПоддерживаются старые функции Optifine:\n • Случайные и особые текстуры\n • Светящиеся текстуры\n...а также совершенно новые, такие как:\n • Мерцающие текстуры\n • Персонализация скинов"
 }

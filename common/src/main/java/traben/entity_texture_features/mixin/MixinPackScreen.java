@@ -24,8 +24,11 @@ import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 public abstract class MixinPackScreen extends Screen {
 
 
-    @Shadow @Final private Path file;
+    @Shadow
+    @Final
+    private Path file;
 
+    @SuppressWarnings("unused")
     protected MixinPackScreen(Text title) {
         super(title);
     }

@@ -29,7 +29,7 @@ public class ETFConfigScreenEmissiveSettings extends ETFConfigScreen {
                 (button) -> {
                     //temporaryETFConfig = new ETFConfig();
                     ETFConfigScreenMain.temporaryETFConfig.enableEmissiveTextures = true;
-                   // ETFConfigScreenMain.temporaryETFConfig.fullBrightEmissives = false;
+                    // ETFConfigScreenMain.temporaryETFConfig.fullBrightEmissives = false;
                     ETFConfigScreenMain.temporaryETFConfig.emissiveRenderMode = ETFManager.EmissiveRenderModes.DULL;
                     ETFConfigScreenMain.temporaryETFConfig.alwaysCheckVanillaEmissiveSuffix = true;
                     ETFConfigScreenMain.temporaryETFConfig.enableElytra = true;

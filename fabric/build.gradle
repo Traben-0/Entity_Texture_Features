@@ -34,6 +34,10 @@ dependencies {
         exclude(group: "net.fabricmc.fabric-api")
     }
 
+    modImplementation("maven.modrinth:3dskinlayers:${project.skinlayers_version}-fabric") {
+        exclude(group: "net.fabricmc.fabric-api")
+    }
+
     modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}") {
         exclude(group: "net.fabricmc.fabric-api")
     }

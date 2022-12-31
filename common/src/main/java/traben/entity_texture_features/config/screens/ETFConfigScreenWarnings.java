@@ -40,29 +40,29 @@ public class ETFConfigScreenWarnings extends ETFConfigScreen {
         double offset = 0.0;
 
         //render config error first
-        if(ETFClientCommon.configHadLoadError){
+        if (ETFClientCommon.configHadLoadError) {
             offset = 0.1;
         }
 
         for (ConfigWarning warning :
                 warningsFound) {
-            if(warning.showDisableButton){
+            if (warning.showDisableButton) {
                 ButtonWidget butt = getETFButton((int) (this.width * 0.75), (int) (this.height * (0.25 + offset)), (int) (this.width * 0.17), 20,
                         Text.of(ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.warn.ignore").getString() +
                                 (ETFConfigScreenMain.temporaryETFConfig.ignoredConfigs.contains(warning) ? ScreenTexts.YES : ScreenTexts.NO).getString()),
                         (button) -> {
                             //button.active = false;
-                            if(ETFConfigScreenMain.temporaryETFConfig.ignoredConfigs.contains(warning)){
+                            if (ETFConfigScreenMain.temporaryETFConfig.ignoredConfigs.contains(warning)) {
                                 ETFConfigScreenMain.temporaryETFConfig.ignoredConfigs.remove(warning);
-                            }else {
+                            } else {
                                 ETFConfigScreenMain.temporaryETFConfig.ignoredConfigs.add(warning);
                             }
                             button.setMessage(Text.of(ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.warn.ignore").getString() +
                                     (ETFConfigScreenMain.temporaryETFConfig.ignoredConfigs.contains(warning) ? ScreenTexts.YES : ScreenTexts.NO).getString()));
                         },
-                        ETFVersionDifferenceHandler.getTextFromTranslation( "config.entity_texture_features.ignore_description")
+                        ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.ignore_description")
                 );
-               // butt.active = !ETFConfigScreenMain.temporaryETFConfig.ignoredConfigs.contains(warning);
+                // butt.active = !ETFConfigScreenMain.temporaryETFConfig.ignoredConfigs.contains(warning);
                 this.addDrawableChild(butt);
             }
 
@@ -82,7 +82,7 @@ public class ETFConfigScreenWarnings extends ETFConfigScreen {
         //drawCenteredText(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".warn_instruction2"), (int) (width * 0.5), (int) (height * 0.23), 0xFFFFFF);
         double offset = 0.0;
 
-        if(ETFClientCommon.configHadLoadError){
+        if (ETFClientCommon.configHadLoadError) {
             drawCenteredText(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".warn_config_load"), (int) (width * 0.5), (int) (height * 0.28), 11546150);
             offset = 0.1;
         }
@@ -92,7 +92,7 @@ public class ETFConfigScreenWarnings extends ETFConfigScreen {
 
             drawTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation(warning.text_translation_key), (int) (this.width * 0.05), (int) (this.height * (0.25 + offset)), 0xFFFFFF);
 //            if(warning.hasAction){
-                drawTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation(warning.text2_translation_key), (int) (this.width * 0.05), (int) (this.height * (0.29 + offset)), 0x888888);
+            drawTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation(warning.text2_translation_key), (int) (this.width * 0.05), (int) (this.height * (0.29 + offset)), 0x888888);
 
             //}
             offset += 0.1;
@@ -101,19 +101,18 @@ public class ETFConfigScreenWarnings extends ETFConfigScreen {
     }
 
     public enum ConfigWarning {
-        FIGURA(true,"figura", "config." + ETFClientCommon.MOD_ID + ".warn.figura.text.1", "config." + ETFClientCommon.MOD_ID + ".warn.figura.text.2"),
-        SKINLAYERS(false,"skinlayers", "config." + ETFClientCommon.MOD_ID + ".warn.skinlayers.text.1", "config." + ETFClientCommon.MOD_ID + ".warn.skinlayers.text.2"),
-        ENHANCED_BLOCK_ENTITIES(false,"enhancedblockentities", "config." + ETFClientCommon.MOD_ID + ".warn.ebe.text.1", "config." + ETFClientCommon.MOD_ID + ".warn.ebe.text.2"),
+        FIGURA(true, "figura", "config." + ETFClientCommon.MOD_ID + ".warn.figura.text.1", "config." + ETFClientCommon.MOD_ID + ".warn.figura.text.2"),
+        //SKINLAYERS(false, "skinlayers", "config." + ETFClientCommon.MOD_ID + ".warn.skinlayers.text.1", "config." + ETFClientCommon.MOD_ID + ".warn.skinlayers.text.2"),
+        ENHANCED_BLOCK_ENTITIES(false, "enhancedblockentities", "config." + ETFClientCommon.MOD_ID + ".warn.ebe.text.1", "config." + ETFClientCommon.MOD_ID + ".warn.ebe.text.2"),
         //QUARK(true,"quark","config." + ETFClientCommon.MOD_ID + ".warn.quark.text.1", "config." + ETFClientCommon.MOD_ID + ".warn.quark.text.2"),
-        IRIS(false,"iris", "config." + ETFClientCommon.MOD_ID + ".warn.iris.text.1", "config." + ETFClientCommon.MOD_ID + ".warn.iris.text.2"),
-        IMPERSONATE(true,"impersonate", "config." + ETFClientCommon.MOD_ID + ".warn.impersonate.text.1", "config." + ETFClientCommon.MOD_ID + ".warn.impersonate.text.2");
+        IRIS(false, "iris", "config." + ETFClientCommon.MOD_ID + ".warn.iris.text.1", "config." + ETFClientCommon.MOD_ID + ".warn.iris.text.2");
+        //IMPERSONATE(true, "impersonate", "config." + ETFClientCommon.MOD_ID + ".warn.impersonate.text.1", "config." + ETFClientCommon.MOD_ID + ".warn.impersonate.text.2");
 
 
+        final public boolean showDisableButton;
         final private String mod_id;
         final private String text_translation_key;
         final private String text2_translation_key;
-
-        final public boolean showDisableButton;
 
         ConfigWarning(boolean showDisableButton, String mod_id, String text_translation_key, String text2_translation_key) {
 

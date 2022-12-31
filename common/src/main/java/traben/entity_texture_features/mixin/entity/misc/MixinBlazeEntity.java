@@ -13,6 +13,7 @@ import traben.entity_texture_features.texture_handlers.ETFManager;
 @Mixin(BlazeEntity.class)
 public abstract class MixinBlazeEntity extends HostileEntity {
 
+    @SuppressWarnings("unused")
     protected MixinBlazeEntity(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);
     }
@@ -23,9 +24,9 @@ public abstract class MixinBlazeEntity extends HostileEntity {
             index = 2
     )
     private double mixin(double x) {
-        if(ETFClientCommon.ETFConfigData.enableCustomTextures
-                && ETFManager.getInstance().ENTITY_TYPE_IGNORE_PARTICLES.contains(this.getType())){
-                return -500;
+        if (ETFClientCommon.ETFConfigData.enableCustomTextures
+                && ETFManager.getInstance().ENTITY_TYPE_IGNORE_PARTICLES.contains(this.getType())) {
+            return -500;
         }
         return x;
     }

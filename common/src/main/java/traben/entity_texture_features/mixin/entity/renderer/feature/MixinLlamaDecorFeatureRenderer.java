@@ -1,14 +1,14 @@
 package traben.entity_texture_features.mixin.entity.renderer.feature;
 
+import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
-import net.minecraft.client.render.entity.feature.HorseArmorFeatureRenderer;
-import net.minecraft.client.render.entity.model.HorseEntityModel;
+import net.minecraft.client.render.entity.feature.LlamaDecorFeatureRenderer;
+import net.minecraft.client.render.entity.model.LlamaEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.passive.HorseEntity;
-import net.minecraft.item.HorseArmorItem;
-import net.minecraft.item.ItemStack;
+import net.minecraft.entity.passive.LlamaEntity;
+import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -23,31 +23,32 @@ import traben.entity_texture_features.texture_handlers.ETFTexture;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
-@Mixin(HorseArmorFeatureRenderer.class)
-public abstract class MixinHorseArmorFeatureRenderer extends FeatureRenderer<HorseEntity, HorseEntityModel<HorseEntity>> {
+@Mixin(LlamaDecorFeatureRenderer.class)
+public abstract class MixinLlamaDecorFeatureRenderer extends FeatureRenderer<LlamaEntity, LlamaEntityModel<LlamaEntity>> {
 
 
-    HorseEntity etf$entity = null;
+    LlamaEntity etf$entity = null;
     private ETFTexture thisETFTexture = null;
     @Final
     @Shadow
-    private HorseEntityModel<HorseEntity> model;
+    private LlamaEntityModel<LlamaEntity> model;
 
     @SuppressWarnings("unused")
-    public MixinHorseArmorFeatureRenderer(FeatureRendererContext<HorseEntity, HorseEntityModel<HorseEntity>> context) {
+    public MixinLlamaDecorFeatureRenderer(FeatureRendererContext<LlamaEntity, LlamaEntityModel<LlamaEntity>> context) {
         super(context);
     }
 
+
     @Inject(
-            method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/passive/HorseEntity;FFFFFF)V",
+            method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/passive/LlamaEntity;FFFFFF)V",
             at = @At(value = "HEAD"))
-    private void etf$getEntity(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, HorseEntity horseEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
-        etf$entity = horseEntity;
+    private void etf$getEntity(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, LlamaEntity llamaEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
+        etf$entity = llamaEntity;
 
     }
 
     @ModifyArg(
-            method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/passive/HorseEntity;FFFFFF)V",
+            method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/passive/LlamaEntity;FFFFFF)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/RenderLayer;getEntityCutoutNoCull(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;"))
     private Identifier etf$returnAlteredTexture(Identifier texture) {
 
@@ -57,11 +58,11 @@ public abstract class MixinHorseArmorFeatureRenderer extends FeatureRenderer<Hor
 
     }
 
-    @Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/passive/HorseEntity;FFFFFF)V",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/HorseEntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V",
+    @Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/passive/LlamaEntity;FFFFFF)V",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/LlamaEntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V",
                     shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILSOFT)
 
-    private void etf$applyEmissive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, HorseEntity horseEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci, ItemStack itemStack, HorseArmorItem horseArmorItem) {
+    private void etf$applyEmissive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, LlamaEntity llamaEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci, DyeColor dyeColor, Identifier identifier, VertexConsumer vertexConsumer) {
         //UUID id = livingEntity.getUuid();
 
 //        matrixStack.push();
