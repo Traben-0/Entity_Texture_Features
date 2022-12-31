@@ -1,17 +1,16 @@
 package traben.entity_texture_features.texture_handlers;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.network.PlayerListEntry;
-import net.minecraft.client.render.*;
+import net.minecraft.client.render.OverlayTexture;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.PlayerModelPart;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.texture.NativeImage;
+import net.minecraft.client.texture.PlayerSkinTexture;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -21,19 +20,20 @@ import net.minecraft.util.Util;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFClientCommon;
-import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.screens.ETFConfigScreenSkinTool;
+import traben.entity_texture_features.mixin.accessor.PlayerSkinProviderAccessor;
+import traben.entity_texture_features.mixin.accessor.PlayerSkinTextureAccessor;
 import traben.entity_texture_features.utils.ETFUtils2;
 
-import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-import static traben.entity_texture_features.ETFClientCommon.*;
+import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
+import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 
 
 //this is effectively a pre-processor for a child ETFTexture
@@ -62,7 +62,7 @@ public class ETFPlayerTexture {
     public int coatLength = 1;
     public int blinkType = 0;
     public int blinkHeight = 1;
-    public boolean THIS_SKIN_IS_IN_EDITOR = false;
+    //public boolean THIS_SKIN_IS_IN_EDITOR = false;
     public boolean hasEmissives = false;
     public boolean hasEnchant = false;
     //provides emissive patching and blinking functionality
@@ -73,7 +73,7 @@ public class ETFPlayerTexture {
     PlayerEntity player;
     private ETFCustomPlayerFeatureModel<PlayerEntity> customPlayerModel;
     private boolean isTextureReady = false;
-    private boolean hasVanillaCape = false;
+    //private boolean hasVanillaCape = false;
     private NativeImage originalSkin;
     private NativeImage originalCape;
     private boolean allowThisETFBaseSkin = true;
@@ -84,16 +84,29 @@ public class ETFPlayerTexture {
     private int[] emissiveCapeBounds = null;
     private Identifier etfCapeEmissiveIdentifier = null;
     private Identifier etfCapeEnchantedIdentifier = null;
+
+    private Identifier normalVanillaSkinIdentifier = null;
+
+
     private boolean hasFatCoat = false;
 
-    ETFPlayerTexture(PlayerEntity player) {
+    ETFPlayerTexture(PlayerEntity player, Identifier rendererGivenSkin) {
         //initiate texture download as we need unprocessed texture from the skin server
         this.player = player;
-        triggerSkinDownload();
+        this.normalVanillaSkinIdentifier = rendererGivenSkin;
+        //triggerSkinDownload();
+        checkTexture(false);
+    }
+
+    //THIS REPRESENTS A NON FEATURED SKIN
+    // must still create an object as the identifier is important to detect skin changes from other mods
+    private ETFPlayerTexture(Identifier rendererGivenSkin) {
+        this.player = null;
+        this.normalVanillaSkinIdentifier = rendererGivenSkin;
     }
 
     public ETFPlayerTexture() {
-        THIS_SKIN_IS_IN_EDITOR = true;
+        //THIS_SKIN_IS_IN_EDITOR = true;
         //exists only for tool
         this.player = MinecraftClient.getInstance().player;
         if (player != null) {
@@ -128,7 +141,7 @@ public class ETFPlayerTexture {
                 }
             }
         }
-        if (matchColors.size() == 0) {
+        if (matchColors.isEmpty()) {
             return null;
         } else {
             NativeImage texture;
@@ -199,6 +212,7 @@ public class ETFPlayerTexture {
 
         return cape;
     }
+
 
     private static int[] getSkinPixelBounds(String choiceKey) {
         switch (choiceKey) {
@@ -348,31 +362,29 @@ public class ETFPlayerTexture {
         }
     }
 
-    public static void printPlayerSkinCopyWithFeatureOverlay(NativeImage skinImage) {
-        if ((ETFVersionDifferenceHandler.isFabric() == ETFVersionDifferenceHandler.isThisModLoaded("fabric")) && CONFIG_DIR != null) {
-            File outputDirectory = new File(CONFIG_DIR.toString(), "ETF_player_skin_printout.png");
-            //NativeImage skinImage = ETFUtils.getNativeImageFromID(new Identifier(SKIN_NAMESPACE + playerID + ".png"));
-            NativeImage skinFeatureImage = ETFUtils2.getNativeImageElseNull(new Identifier(MOD_ID, "textures/skin_feature_printout.png"));
-            try {
-                for (int x = 0; x < skinImage.getWidth(); x++) {
-                    for (int y = 0; y < skinImage.getHeight(); y++) {
-                        //noinspection ConstantConditions
-                        if (skinFeatureImage.getPixelColor(x, y) != 0) {
-                            skinImage.setPixelColor(x, y, skinFeatureImage.getPixelColor(x, y));
-                        }
-                    }
-                }
-                skinImage.writeFile(outputDirectory);
-                ETFUtils2.logMessage("Skin feature layout successfully applied to a copy of your skin and has been saved to the config folder.", true);
-            } catch (Exception e) {
-                ETFUtils2.logMessage("Skin feature layout could not be applied to a copy of your skin and has not been saved. Error written to log.", true);
-                ETFUtils2.logError(e.toString(), false);
-            }
+//    public static void printPlayerSkinCopyWithFeatureOverlay(NativeImage skinImage) {
+//        if ((ETFVersionDifferenceHandler.isFabric() == ETFVersionDifferenceHandler.isThisModLoaded("fabric")) && CONFIG_DIR != null) {
+//            File outputDirectory = new File(CONFIG_DIR.toString(), "ETF_player_skin_printout.png");
+//            //NativeImage skinImage = ETFUtils.getNativeImageFromID(new Identifier(SKIN_NAMESPACE + playerID + ".png"));
+//            NativeImage skinFeatureImage = ETFUtils2.getNativeImageElseNull(new Identifier(MOD_ID, "textures/skin_feature_printout.png"));
+//            try {
+//                for (int x = 0; x < skinImage.getWidth(); x++) {
+//                    for (int y = 0; y < skinImage.getHeight(); y++) {
+//                        //noinspection ConstantConditions
+//                        if (skinFeatureImage.getPixelColor(x, y) != 0) {
+//                            skinImage.setPixelColor(x, y, skinFeatureImage.getPixelColor(x, y));
+//                        }
+//                    }
+//                }
+//                skinImage.writeFile(outputDirectory);
+//                ETFUtils2.logMessage("Skin feature layout successfully applied to a copy of your skin and has been saved to the config folder.", true);
+//            } catch (Exception e) {
+//                ETFUtils2.logMessage("Skin feature layout could not be applied to a copy of your skin and has not been saved. Error written to log.", true);
+//                ETFUtils2.logError(e.toString(), false);
+//            }
 
-        } else {
-            //requires fab api to read from mod resources
-            ETFUtils2.logError("Fabric API required for example skin printout, cancelling.", true);
-        }
+    public boolean isCorrectObjectForThisSkin(Identifier check) {
+        return check.equals(normalVanillaSkinIdentifier);
     }
 
     public boolean hasCustomCape() {
@@ -392,6 +404,29 @@ public class ETFPlayerTexture {
     public Identifier getBaseTextureEmissiveIdentifierOrNullForNone() {
         if (hasEmissives && canUseFeaturesForThisPlayer() && etfTextureOfFinalBaseSkin != null) {
             return etfTextureOfFinalBaseSkin.getEmissiveIdentifierOfCurrentState();
+        }
+        return null;
+    }
+
+    @Nullable
+    public Identifier getBaseTextureEnchantIdentifierOrNullForNone() {
+        if (hasEnchant && canUseFeaturesForThisPlayer() && etfTextureOfFinalBaseSkin != null) {
+            switch (etfTextureOfFinalBaseSkin.currentTextureState) {
+                case NORMAL:
+                    return baseEnchantIdentifier;
+                case NORMAL_PATCHED:
+                    return baseEnchantIdentifier;
+                case BLINK:
+                    return baseEnchantBlinkIdentifier;
+                case BLINK_PATCHED:
+                    return baseEnchantBlinkIdentifier;
+                case BLINK2:
+                    return baseEnchantBlink2Identifier;
+                case BLINK2_PATCHED:
+                    return baseEnchantBlink2Identifier;
+                default:
+                    return null;
+            }
         }
         return null;
     }
@@ -521,7 +556,7 @@ public class ETFPlayerTexture {
 
             }
             //perform texture features
-            if (hasEnchant && baseEnchantIdentifier != null  && etfTextureOfFinalBaseSkin != null) {
+            if (hasEnchant && baseEnchantIdentifier != null && etfTextureOfFinalBaseSkin != null) {
                 Identifier identifierFromSwitch;
                 switch (etfTextureOfFinalBaseSkin.currentTextureState) {
                     case BLINK:
@@ -540,101 +575,101 @@ public class ETFPlayerTexture {
         }
     }
 
-    private void triggerSkinDownload() {
-        UUID id = player.getUuid();
-        try {
-            @SuppressWarnings("ConstantConditions") //in a try for a reason
-            PlayerListEntry playerListEntry = MinecraftClient.getInstance().getNetworkHandler().getPlayerListEntry(id);
-            @SuppressWarnings("ConstantConditions") //in a try for a reason
-            GameProfile gameProfile = playerListEntry.getProfile();
-            Collection<Property> textureData = gameProfile.getProperties().get("textures");
-
-            String skinUrl = "";
-            String capeUrl = null;
-
-            for (Property p :
-                    textureData) {
-                JsonParser parser = new JsonParser();
-                JsonObject props = parser.parse(new String(Base64.getDecoder().decode((p.getValue())))).getAsJsonObject();
-                //JsonObject props = JsonParser.parseString(new String(Base64.getDecoder().decode((p.getValue())))).getAsJsonObject();
-                skinUrl = ((JsonObject) ((JsonObject) props.get("textures")).get("SKIN")).get("url").getAsString();
-                try {
-                    capeUrl = ((JsonObject) ((JsonObject) props.get("textures")).get("CAPE")).get("url").getAsString();
-                    hasVanillaCape = true;
-                } catch (Exception e) {
-                    //
-                }
-                break;
-            }
-
-            String finalSkinUrl = skinUrl;
-            CompletableFuture.runAsync(() -> {
-                HttpURLConnection httpURLConnection;
-                try {
-                    httpURLConnection = (HttpURLConnection) (new URL(finalSkinUrl)).openConnection(MinecraftClient.getInstance().getNetworkProxy());
-                    httpURLConnection.setDoInput(true);
-                    httpURLConnection.setDoOutput(false);
-                    httpURLConnection.connect();
-                    if (httpURLConnection.getResponseCode() / 100 == 2) {
-                        InputStream inputStream = httpURLConnection.getInputStream();
-
-                        MinecraftClient.getInstance().execute(() -> {
-                            try {
-                                NativeImage one = NativeImage.read(inputStream);
-                                this.receiveSkin(one);
-                            } catch (Exception e) {
-                                ETFUtils2.logError("triggerSkinDownload()2 failed for player: " + player.getName().getString() + " retrying again later, reason was: " + e);
-                                this.skinFailed(false);
-                            }
-
-
-                        });
-                    }
-                } catch (Exception var6) {
-                    ETFUtils2.logError("triggerSkinDownload()3 failed for player:" + player.getName().getString() + "retrying again later");
-                    this.skinFailed(false);
-                }
-
-            }, Util.getMainWorkerExecutor());
-
-            if (this.hasVanillaCape && capeUrl != null) {
-                String finalCapeUrl = capeUrl;
-                CompletableFuture.runAsync(() -> {
-                    HttpURLConnection httpURLConnection;
-                    try {
-                        httpURLConnection = (HttpURLConnection) (new URL(finalCapeUrl)).openConnection(MinecraftClient.getInstance().getNetworkProxy());
-                        httpURLConnection.setDoInput(true);
-                        httpURLConnection.setDoOutput(false);
-                        httpURLConnection.connect();
-                        if (httpURLConnection.getResponseCode() / 100 == 2) {
-                            InputStream inputStream = httpURLConnection.getInputStream();
-
-                            MinecraftClient.getInstance().execute(() -> {
-                                try {
-                                    NativeImage one = NativeImage.read(inputStream);
-                                    this.receiveCape(one);
-                                } catch (Exception e) {
-                                    ETFUtils2.logError("triggerSkinDownload()4 failed for player:" + player.getName().getString() + "retrying again later");
-                                    this.skinFailed(false);
-                                }
-
-
-                            });
-                        }
-                    } catch (Exception var6) {
-                        ETFUtils2.logError("triggerSkinDownload()5 failed for player:" + player.getName().getString() + "retrying again later");
-                        this.skinFailed(false);
-                    }
-
-                }, Util.getMainWorkerExecutor());
-
-            }
-
-        } catch (Exception e) {
-            ETFUtils2.logError("triggerSkinDownload() failed for player:" + player.getName().getString() + "retrying again later");
-            skinFailed(false);
-        }
-    }
+//    private void triggerSkinDownload() {
+//        UUID id = player.getUuid();
+//        try {
+//            @SuppressWarnings("ConstantConditions") //in a try for a reason
+//            PlayerListEntry playerListEntry = MinecraftClient.getInstance().getNetworkHandler().getPlayerListEntry(id);
+//            @SuppressWarnings("ConstantConditions") //in a try for a reason
+//            GameProfile gameProfile = playerListEntry.getProfile();
+//            Collection<Property> textureData = gameProfile.getProperties().get("textures");
+//
+//            String skinUrl = "";
+//            String capeUrl = null;
+//
+//            for (Property p :
+//                    textureData) {
+//                JsonParser parser = new JsonParser();
+//                JsonObject props = parser.parse(new String(Base64.getDecoder().decode((p.getValue())))).getAsJsonObject();
+//                //JsonObject props = JsonParser.parseString(new String(Base64.getDecoder().decode((p.getValue())))).getAsJsonObject();
+//                skinUrl = ((JsonObject) ((JsonObject) props.get("textures")).get("SKIN")).get("url").getAsString();
+//                try {
+//                    capeUrl = ((JsonObject) ((JsonObject) props.get("textures")).get("CAPE")).get("url").getAsString();
+//                    hasVanillaCape = true;
+//                } catch (Exception e) {
+//                    //
+//                }
+//                break;
+//            }
+//
+//            String finalSkinUrl = skinUrl;
+//            CompletableFuture.runAsync(() -> {
+//                HttpURLConnection httpURLConnection;
+//                try {
+//                    httpURLConnection = (HttpURLConnection) (new URL(finalSkinUrl)).openConnection(MinecraftClient.getInstance().getNetworkProxy());
+//                    httpURLConnection.setDoInput(true);
+//                    httpURLConnection.setDoOutput(false);
+//                    httpURLConnection.connect();
+//                    if (httpURLConnection.getResponseCode() / 100 == 2) {
+//                        InputStream inputStream = httpURLConnection.getInputStream();
+//
+//                        MinecraftClient.getInstance().execute(() -> {
+//                            try {
+//                                NativeImage one = NativeImage.read(inputStream);
+//                                this.receiveSkin(one);
+//                            } catch (Exception e) {
+//                                ETFUtils2.logError("triggerSkinDownload()2 failed for player: " + player.getName().getString() + " retrying again later, reason was: " + e);
+//                                this.skinFailed(false);
+//                            }
+//
+//
+//                        });
+//                    }
+//                } catch (Exception var6) {
+//                    ETFUtils2.logError("triggerSkinDownload()3 failed for player:" + player.getName().getString() + "retrying again later");
+//                    this.skinFailed(false);
+//                }
+//
+//            }, Util.getMainWorkerExecutor());
+//
+//            if (this.hasVanillaCape && capeUrl != null) {
+//                String finalCapeUrl = capeUrl;
+//                CompletableFuture.runAsync(() -> {
+//                    HttpURLConnection httpURLConnection;
+//                    try {
+//                        httpURLConnection = (HttpURLConnection) (new URL(finalCapeUrl)).openConnection(MinecraftClient.getInstance().getNetworkProxy());
+//                        httpURLConnection.setDoInput(true);
+//                        httpURLConnection.setDoOutput(false);
+//                        httpURLConnection.connect();
+//                        if (httpURLConnection.getResponseCode() / 100 == 2) {
+//                            InputStream inputStream = httpURLConnection.getInputStream();
+//
+//                            MinecraftClient.getInstance().execute(() -> {
+//                                try {
+//                                    NativeImage one = NativeImage.read(inputStream);
+//                                    this.receiveCape(one);
+//                                } catch (Exception e) {
+//                                    ETFUtils2.logError("triggerSkinDownload()4 failed for player:" + player.getName().getString() + "retrying again later");
+//                                    this.skinFailed(false);
+//                                }
+//
+//
+//                            });
+//                        }
+//                    } catch (Exception var6) {
+//                        ETFUtils2.logError("triggerSkinDownload()5 failed for player:" + player.getName().getString() + "retrying again later");
+//                        this.skinFailed(false);
+//                    }
+//
+//                }, Util.getMainWorkerExecutor());
+//
+//            }
+//
+//        } catch (Exception e) {
+//            ETFUtils2.logError("triggerSkinDownload() failed for player:" + player.getName().getString() + "retrying again later");
+//            skinFailed(false);
+//        }
+//    }
 
     private void initiateThirdPartyCapeDownload(String capeUrl) {
         CompletableFuture.runAsync(() -> {
@@ -723,39 +758,83 @@ public class ETFPlayerTexture {
         etfCapeIdentifier = newCapeId;
     }
 
-    private void skinFailed(boolean preventFurtherChecks) {
-        if (!THIS_SKIN_IS_IN_EDITOR) {
-            if (preventFurtherChecks) {
-                ETFManager.getInstance().PLAYER_TEXTURE_MAP.put(player.getUuid(), null);
-            } else {
-                ETFManager.getInstance().PLAYER_TEXTURE_MAP.removeEntryOnly(player.getUuid());
-            }
+    private void skinFailed() {
+        if (!(MinecraftClient.getInstance().currentScreen instanceof ETFConfigScreenSkinTool)) {
+            //if (true) {
+            ETFManager.getInstance().PLAYER_TEXTURE_MAP.put(player.getUuid(), new ETFPlayerTexture(normalVanillaSkinIdentifier));
+//            } else {
+            //try again later
+//                ETFManager.getInstance().PLAYER_TEXTURE_MAP.removeEntryOnly(player.getUuid());
+//            }
         } else {
             ETFUtils2.logError("something went wrong applying skin in tool, or skin features are not added");
         }
         //this object is now unreachable
     }
 
-    public void receiveSkin(@NotNull NativeImage skinImage) {
-        this.originalSkin = skinImage;
-        if (MinecraftClient.getInstance().player != null && player.getUuid().equals(MinecraftClient.getInstance().player.getUuid())) {
-            clientPlayerOriginalSkinImageForTool = skinImage;
+//    @Deprecated
+//    public void receiveSkin(@NotNull NativeImage skinImage) {
+//        this.originalSkin = skinImage;
+//        if (MinecraftClient.getInstance().player != null && player.getUuid().equals(MinecraftClient.getInstance().player.getUuid())) {
+//            clientPlayerOriginalSkinImageForTool = skinImage;
+//        }
+//        if (!this.hasVanillaCape || this.originalCape != null) {
+//            checkTexture(false);
+//        }
+//
+//
+//    }
+
+//    @Deprecated
+//    public void receiveCape(@NotNull NativeImage capeImage) {
+//        this.originalCape = capeImage;
+//        if (this.originalSkin != null) {
+//            checkTexture(false);
+//        }
+//    }
+
+
+    public void checkTexture(boolean skipSkinLoad) {
+
+
+        if (!skipSkinLoad) {
+            try {
+                PlayerSkinTexture skin = (PlayerSkinTexture) ((PlayerSkinProviderAccessor) MinecraftClient.getInstance().getSkinProvider()).getTextureManager().getTexture(normalVanillaSkinIdentifier);
+
+                FileInputStream fileInputStream = new FileInputStream(((PlayerSkinTextureAccessor) skin).getCacheFile());
+                NativeImage vanilla = NativeImage.read(fileInputStream);
+                //System.out.println((vanilla != null) +" skin");
+                fileInputStream.close();
+                originalSkin = ETFUtils2.emptyNativeImage(64, 64);
+                originalSkin.copyFrom(vanilla);
+                if (MinecraftClient.getInstance().player != null && player.getUuid().equals(MinecraftClient.getInstance().player.getUuid())) {
+                    clientPlayerOriginalSkinImageForTool = originalSkin;
+                }
+                vanilla.close();
+                //try cape
+                try {
+                    Identifier capeId = ((AbstractClientPlayerEntity) player).getCapeTexture();
+                    PlayerSkinTexture cape = (PlayerSkinTexture) ((PlayerSkinProviderAccessor) MinecraftClient.getInstance().getSkinProvider()).getTextureManager().getTexture(capeId);
+                    if (cape != null) {
+                        FileInputStream fileInputStreamCape = new FileInputStream(((PlayerSkinTextureAccessor) cape).getCacheFile());
+                        NativeImage vanillaCape = NativeImage.read(fileInputStreamCape);
+                        //System.out.println((vanilla != null) +" skin");
+                        fileInputStreamCape.close();
+                        originalCape = ETFUtils2.emptyNativeImage(64, 32);
+                        originalCape.copyFrom(vanillaCape);
+                        vanillaCape.close();
+                    }
+                } catch (Exception e) {
+                    // System.out.println("cape failed no textures loaded");
+                }
+            } catch (Exception e) {
+                skinFailed();
+                // System.out.println("skin failed no textures loaded");
+                return;
+            }
         }
-        if (!this.hasVanillaCape || this.originalCape != null) {
-            onTexturesDownloaded();
-        }
+        // System.out.println("endskin");
 
-
-    }
-
-    public void receiveCape(@NotNull NativeImage capeImage) {
-        this.originalCape = capeImage;
-        if (this.originalSkin != null) {
-            onTexturesDownloaded();
-        }
-    }
-
-    public void onTexturesDownloaded() {
         UUID id = player.getUuid();
         NativeImage modifiedCape;
         if (originalCape != null) {
@@ -767,12 +846,12 @@ public class ETFPlayerTexture {
         NativeImage modifiedSkin = ETFUtils2.emptyNativeImage(originalSkin.getWidth(), originalSkin.getHeight());
         modifiedSkin.copyFrom(originalSkin);
 
-        if (ETFConfigData.skinFeaturesPrintETFReadySkin && MinecraftClient.getInstance().player != null && id.equals(MinecraftClient.getInstance().player.getUuid())) {
-            ETFUtils2.logMessage("Skin feature layout is being applied to a copy of your skin please wait...", true);
-            printPlayerSkinCopyWithFeatureOverlay(originalSkin);
-            ETFConfigData.skinFeaturesPrintETFReadySkin = false;
-            ETFUtils2.saveConfig();
-        }
+//        if (ETFConfigData.skinFeaturesPrintETFReadySkin && MinecraftClient.getInstance().player != null && id.equals(MinecraftClient.getInstance().player.getUuid())) {
+//            ETFUtils2.logMessage("Skin feature layout is being applied to a copy of your skin please wait...", true);
+//            printPlayerSkinCopyWithFeatureOverlay(originalSkin);
+//            ETFConfigData.skinFeaturesPrintETFReadySkin = false;
+//            ETFUtils2.saveConfig();
+//        }
         if (originalSkin != null) {
             if (originalSkin.getPixelColor(1, 16) == -16776961 &&
                     originalSkin.getPixelColor(0, 16) == -16777089 &&
@@ -1041,6 +1120,7 @@ public class ETFPlayerTexture {
                     int[] boxChosenBounds = getSkinPixelBounds("marker" + (markerChoices.indexOf(1) + 1));
                     emissiveCapeBounds = boxChosenBounds;
                     emissiveImage = returnMatchPixels(modifiedSkin, boxChosenBounds);
+
                     if (emissiveImage != null) {
                         emissiveIdentifier = new Identifier(SKIN_NAMESPACE, id + "_e.png");
                         ETFUtils2.registerNativeImageToIdentifier(emissiveImage, emissiveIdentifier);
@@ -1179,10 +1259,10 @@ public class ETFPlayerTexture {
 
                 //if vanilla cape and there is no enchant or emissive
                 //then just clear it from etf to defer to cape mods
-                if(capeType == ETFConfigScreenSkinTool.CapeType.NONE
+                if (capeType == ETFConfigScreenSkinTool.CapeType.NONE
                         && etfCapeIdentifier != null
                         && etfCapeEnchantedIdentifier == null
-                        && etfCapeEmissiveIdentifier == null){
+                        && etfCapeEmissiveIdentifier == null) {
                     etfCapeIdentifier = null;
                 }
 
@@ -1192,10 +1272,12 @@ public class ETFPlayerTexture {
                 }
                 modifiedSkin.close();
             } else {
-                skinFailed(true);
+                // System.out.println("asdasd");
+                skinFailed();
             }
         } else {
-            skinFailed(true);
+            //System.out.println("asdasdffsdfsdsd");
+            skinFailed();
         }
         isTextureReady = true;
     }
@@ -1217,7 +1299,7 @@ public class ETFPlayerTexture {
         this.hasFatCoat = false;
         this.hasFeatures = false;
         this.hasVillagerNose = false;
-        this.hasVanillaCape = false;
+        // this.hasVanillaCape = false;
         this.isTextureReady = false;
 
         this.coatStyle = 0;
@@ -1230,9 +1312,9 @@ public class ETFPlayerTexture {
         this.texturedNoseIdentifierEnchanted = null;
         this.noseType = ETFConfigScreenSkinTool.NoseType.NONE;
 
-        THIS_SKIN_IS_IN_EDITOR = true;
+        //this.THIS_SKIN_IS_IN_EDITOR = true;
         this.originalSkin = image;
-        onTexturesDownloaded();
+        checkTexture(true);
     }
 
 }

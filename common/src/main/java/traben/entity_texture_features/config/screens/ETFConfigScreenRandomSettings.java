@@ -115,7 +115,7 @@ public class ETFConfigScreenRandomSettings extends ETFConfigScreen {
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         super.render(matrices, mouseX, mouseY, delta);
 
-       // drawCenteredText(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".restriction_settings.title"), (int) (width * 0.75), (int) (height * 0.35), 0xFFFFFF);
+        // drawCenteredText(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".restriction_settings.title"), (int) (width * 0.75), (int) (height * 0.35), 0xFFFFFF);
 
     }
 

@@ -23,7 +23,7 @@ public class ETFConfigScreenMain extends ETFConfigScreen {
 
     static ETFConfig temporaryETFConfig = null;
     final ObjectOpenHashSet<ETFConfigScreenWarnings.ConfigWarning> warningsFound = new ObjectOpenHashSet<>();
-    //todo translatable text for menus
+
      ETFConfigScreenWarnings warningsScreen;
     final ETFConfigScreenSkinSettings playerSkinSettingsScreen = new ETFConfigScreenSkinSettings(this);
     final ETFConfigScreenRandomSettings randomSettingsScreen = new ETFConfigScreenRandomSettings(this);
@@ -46,13 +46,13 @@ public class ETFConfigScreenMain extends ETFConfigScreen {
     }
     private void findWarnings(){
 
-        if(ETFClientCommon.configHadLoadError){
+        if (ETFClientCommon.configHadLoadError) {
             shownWarning = true;
             warningCount++;
         }
 
-        for (ETFConfigScreenWarnings.ConfigWarning warning:
-        ETFConfigScreenWarnings.ConfigWarning.values()) {
+        for (ETFConfigScreenWarnings.ConfigWarning warning :
+                ETFConfigScreenWarnings.ConfigWarning.values()) {
             if (ETFVersionDifferenceHandler.isThisModLoaded(warning.getMod_id())) {
                 shownWarning = true;
                 warningCount++;
@@ -61,6 +61,16 @@ public class ETFConfigScreenMain extends ETFConfigScreen {
         }
         //warningsFound.addAll(Arrays.asList(ETFConfigScreenWarnings.ConfigWarning.values()));
         warningsScreen = new ETFConfigScreenWarnings(this, warningsFound);
+    }
+
+    @Override
+    public void onClose() {
+//        if (MinecraftClient.getInstance().player != null) {
+//            ETFManager.getInstance().PLAYER_TEXTURE_MAP.removeEntryOnly(MinecraftClient.getInstance().player.getUuid());
+//            ETFManager.getInstance().ENTITY_BLINK_TIME.put(MinecraftClient.getInstance().player.getUuid(), 0L);
+//        }
+        ETFManager.resetInstance();
+        super.onClose();
     }
 
     @Override
@@ -81,7 +91,7 @@ public class ETFConfigScreenMain extends ETFConfigScreen {
                     ETFUtils2.saveConfig();
                     ETFUtils2.checkModCompatibility();
                     ETFManager.resetInstance();
-                    ETFClientCommon.configHadLoadError=false;
+                    ETFClientCommon.configHadLoadError = false;
                     Objects.requireNonNull(client).openScreen(parent);
                 }));
         this.addButton(new ButtonWidget((int) (this.width * 0.4), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,

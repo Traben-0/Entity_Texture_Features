@@ -41,7 +41,6 @@ public class ETFConfigScreenRandomRestrictSettings extends ETFConfigScreen {
                 }));
 
 
-
         ButtonWidget restrictBiome = getETFButton((int) (this.width * 0.275), (int) (this.height * 0.4), (int) (this.width * 0.2), 20,
                 Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
                         "config." + ETFClientCommon.MOD_ID + ".restrict_biome.title"

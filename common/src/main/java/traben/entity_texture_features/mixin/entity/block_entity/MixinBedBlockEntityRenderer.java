@@ -11,10 +11,9 @@ import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
+import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -52,36 +51,48 @@ public abstract class MixinBedBlockEntityRenderer extends BlockEntityRenderer<Be
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/ModelPart;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;II)V"),
             index = 1)
     private VertexConsumer etf$alterTexture(VertexConsumer vertices) {
+        try {
+            if (isAnimatedTexture || !ETFConfigData.enableCustomTextures || !ETFConfigData.enableCustomBlockEntities)
+                return vertices;
+            thisETFTexture = ETFManager.getInstance().getETFTexture(etf$textureOfThis, etf$bedStandInDummy, ETFManager.TextureSource.BLOCK_ENTITY, ETFConfigData.removePixelsUnderEmissiveBlockEntity);
 
-        if (isAnimatedTexture || !ETFConfigData.enableCustomTextures || !ETFConfigData.enableCustomBlockEntities)
+            //System.out.println(thisETFTexture.toString()+thisETFTexture.thisIdentifier.toString());
+            //return thisETFTexture.getTextureIdentifier();
+
+            @SuppressWarnings("ConstantConditions") VertexConsumer alteredReturn = thisETFTexture == null ? null : etf$vertexConsumerProviderOfThis.getBuffer(RenderLayer.getEntityCutout(thisETFTexture.getTextureIdentifier(etf$bedStandInDummy)));
+            return alteredReturn == null ? vertices : alteredReturn;
+        } catch (Exception e) {
             return vertices;
-        thisETFTexture = ETFManager.getInstance().getETFTexture(etf$textureOfThis, etf$bedStandInDummy, ETFManager.TextureSource.BLOCK_ENTITY, ETFConfigData.removePixelsUnderEmissiveBlockEntity);
-
-        //System.out.println(thisETFTexture.toString()+thisETFTexture.thisIdentifier.toString());
-        //return thisETFTexture.getTextureIdentifier();
-
-        VertexConsumer alteredReturn = thisETFTexture == null ? null : etf$vertexConsumerProviderOfThis.getBuffer(RenderLayer.getEntityCutout(thisETFTexture.getTextureIdentifier(etf$bedStandInDummy)));
-        return alteredReturn == null ? vertices : alteredReturn;
+        }
     }
 
     @Inject(method = "render(Lnet/minecraft/block/entity/BedBlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/block/entity/BedBlockEntity;getWorld()Lnet/minecraft/world/World;",
                     shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILSOFT)
     private void etf$getChestTexture(BedBlockEntity bedBlockEntity, float f, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j, CallbackInfo ci, SpriteIdentifier spriteIdentifier) {
-        isAnimatedTexture = ((SpriteAccessor) spriteIdentifier.getSprite()).callGetFrameCount() != 1;
-        if (!isAnimatedTexture) {
-            //hopefully works in modded scenarios, assumes the mod dev uses the actual vanilla code process and texture pathing rules
-            String nameSpace = spriteIdentifier.getTextureId().getNamespace();
-            String texturePath = "textures/" + spriteIdentifier.getTextureId().getPath() + ".png";
-            etf$textureOfThis = new Identifier(nameSpace, texturePath);
-            etf$vertexConsumerProviderOfThis = vertexConsumerProvider;
-            if (ETFConfigData.enableCustomTextures && ETFConfigData.enableCustomBlockEntities) {
-                etf$bedStandInDummy = new ETFPlaceholderEntity(bedBlockEntity,UUID.nameUUIDFromBytes((bedBlockEntity.getPos().toString() + bedBlockEntity.getColor().toString()).getBytes()));
-                //System.out.println(etf$bedStandInDummy.toString());
-                //etf$bedStandInDummy.setPos(bedBlockEntity.getPos().getX(), bedBlockEntity.getPos().getY(), bedBlockEntity.getPos().getZ());
-                //chests don't have uuid so set UUID from something repeatable I chose from block pos
-                //etf$bedStandInDummy.setUuid();
+        try {
+            isAnimatedTexture = ((SpriteAccessor) spriteIdentifier.getSprite()).callGetFrameCount() != 1;
+            if (!isAnimatedTexture) {
+                //hopefully works in modded scenarios, assumes the mod dev uses the actual vanilla code process and texture pathing rules
+                String nameSpace = spriteIdentifier.getTextureId().getNamespace();
+                String texturePath = "textures/" + spriteIdentifier.getTextureId().getPath() + ".png";
+                etf$textureOfThis = new Identifier(nameSpace, texturePath);
+                etf$vertexConsumerProviderOfThis = vertexConsumerProvider;
+                if (ETFConfigData.enableCustomTextures && ETFConfigData.enableCustomBlockEntities) {
+                    World worldCheck = bedBlockEntity.getWorld();
+                    if (worldCheck == null) worldCheck = MinecraftClient.getInstance().world;
+                    if (worldCheck != null) {
+                        etf$bedStandInDummy = ETFPlaceholderEntity.newFromJustWorld(worldCheck);
+                        etf$bedStandInDummy.prepare(bedBlockEntity, UUID.nameUUIDFromBytes((bedBlockEntity.getPos().toString() + bedBlockEntity.getColor().toString()).getBytes()));
+                    }
+                    //System.out.println(etf$bedStandInDummy.toString());
+                    //etf$bedStandInDummy.setPos(bedBlockEntity.getPos().getX(), bedBlockEntity.getPos().getY(), bedBlockEntity.getPos().getZ());
+                    //chests don't have uuid so set UUID from something repeatable I chose from block pos
+                    //etf$bedStandInDummy.setUuid();
+                }
             }
+        } catch (Exception ignored) {
+
         }
     }
 
@@ -90,13 +101,17 @@ public abstract class MixinBedBlockEntityRenderer extends BlockEntityRenderer<Be
                     shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILSOFT)
     private void etf$applyEmissiveBed(MatrixStack matrix, VertexConsumerProvider vertexConsumerProvider, boolean bl, Direction direction, SpriteIdentifier spriteIdentifier, int light, int overlay, boolean bl2, CallbackInfo ci, VertexConsumer vertexConsumer) {
         //hopefully works in modded scenarios, assumes the mod dev uses the actual vanilla code process and texture pathing rules
-        if (!isAnimatedTexture && ETFConfigData.enableEmissiveBlockEntities && (thisETFTexture != null)) {
-            thisETFTexture.renderEmissive(matrix, vertexConsumerProvider, this.field_20813, ETFManager.EmissiveRenderModes.blockEntityMode());
-            thisETFTexture.renderEmissive(matrix, vertexConsumerProvider, this.field_20814, ETFManager.EmissiveRenderModes.blockEntityMode());
-            thisETFTexture.renderEmissive(matrix, vertexConsumerProvider, this.legs[0], ETFManager.EmissiveRenderModes.blockEntityMode());
-            thisETFTexture.renderEmissive(matrix, vertexConsumerProvider, this.legs[1], ETFManager.EmissiveRenderModes.blockEntityMode());
-            thisETFTexture.renderEmissive(matrix, vertexConsumerProvider, this.legs[2], ETFManager.EmissiveRenderModes.blockEntityMode());
-            thisETFTexture.renderEmissive(matrix, vertexConsumerProvider, this.legs[3], ETFManager.EmissiveRenderModes.blockEntityMode());
+        try {
+            if (!isAnimatedTexture && ETFConfigData.enableEmissiveBlockEntities && (thisETFTexture != null)) {
+                thisETFTexture.renderEmissive(matrix, vertexConsumerProvider, this.field_20813, ETFManager.EmissiveRenderModes.blockEntityMode());
+                thisETFTexture.renderEmissive(matrix, vertexConsumerProvider, this.field_20814, ETFManager.EmissiveRenderModes.blockEntityMode());
+                thisETFTexture.renderEmissive(matrix, vertexConsumerProvider, this.legs[0], ETFManager.EmissiveRenderModes.blockEntityMode());
+                thisETFTexture.renderEmissive(matrix, vertexConsumerProvider, this.legs[1], ETFManager.EmissiveRenderModes.blockEntityMode());
+                thisETFTexture.renderEmissive(matrix, vertexConsumerProvider, this.legs[2], ETFManager.EmissiveRenderModes.blockEntityMode());
+                thisETFTexture.renderEmissive(matrix, vertexConsumerProvider, this.legs[3], ETFManager.EmissiveRenderModes.blockEntityMode());
+            }
+        } catch (Exception ignored) {
+
         }
     }
 

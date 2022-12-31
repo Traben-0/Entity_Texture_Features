@@ -2,9 +2,9 @@ package traben.entity_texture_features.mixin.entity.renderer;
 
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
@@ -43,12 +43,14 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
             timerBeforeTrySkin--;
         } else {
             if (ETFConfigData.skinFeaturesEnabled) {
-                ETFPlayerTexture thisETFPlayerTexture = ETFManager.getInstance().getPlayerTexture(player);
+                ETFPlayerTexture thisETFPlayerTexture = ETFManager.getInstance().getPlayerTexture(player, player.getSkinTexture());
                 if (thisETFPlayerTexture != null) {
                     Identifier etfTexture = thisETFPlayerTexture.getBaseTextureIdentifierOrNullForVanilla(player);
                     if (etfTexture != null) {
-                        arm.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(etfTexture)), light, OverlayTexture.DEFAULT_UV);
-                        sleeve.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(etfTexture)), light, OverlayTexture.DEFAULT_UV);
+                        VertexConsumer vc1 = vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(etfTexture));
+                        arm.render(matrices, vc1, light, OverlayTexture.DEFAULT_UV);
+                        sleeve.render(matrices, vc1, light, OverlayTexture.DEFAULT_UV);
+
                         Identifier emissive = thisETFPlayerTexture.getBaseTextureEmissiveIdentifierOrNullForNone();
                         if (emissive != null) {
                             arm.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(emissive)), ETFClientCommon.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV);

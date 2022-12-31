@@ -1,5 +1,6 @@
 package traben.entity_texture_features.forge;
 
+import net.minecraft.entity.EntityType;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.BlockPos;
@@ -9,9 +10,13 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+import traben.entity_texture_features.utils.ETFPlaceholderEntity;
 
 import java.io.File;
 import java.util.Objects;
+
+import static traben.entity_texture_features.forge.ETFClientForge.ETF_PLACEHOLDER_ENTITY_ENTITY_REGISTRY;
 
 @SuppressWarnings("SameReturnValue")
 public class ETFVersionDifferenceHandlerImpl {
@@ -50,5 +55,13 @@ public class ETFVersionDifferenceHandlerImpl {
     public static String getBiomeString(World world, BlockPos pos) {
         //1.17 and before version
         return Objects.requireNonNull(world.getRegistryManager().get(Registry.BIOME_KEY).getId(world.getBiome(pos))).toString();
+    }
+
+
+    @NotNull
+    public static EntityType<ETFPlaceholderEntity> getPlaceHolderEntityType() {
+        // return (EntityType<ETFPlaceholderEntity>) ETFClientForge.ETF_PLACEHOLDER_ENTITY_ENTITY_TYPE;
+        return ETF_PLACEHOLDER_ENTITY_ENTITY_REGISTRY.get();
+        // return (EntityType<ETFPlaceholderEntity>) ForgeRegistries.ENTITY_TYPES.getValue(new Identifier(ETFClientCommon.MOD_ID + ":etf_placeholder_entity"));
     }
 }

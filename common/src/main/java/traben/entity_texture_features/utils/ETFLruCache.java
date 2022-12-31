@@ -10,14 +10,14 @@ public class ETFLruCache<X, Y> {
 
     //cache with lru functionality
     final Object2ObjectLinkedOpenHashMap<X, Y> cache;
-    int capacity = 2048;
+    final int capacity = 2048;
 
-    public ETFLruCache(int upperCapacity) {
-        capacity = upperCapacity;
-        this.cache = new Object2ObjectLinkedOpenHashMap<>();//( 64 +(int)(capacity * (ETFConfigData.advanced_IncreaseCacheSizeModifier > 1 ? ETFConfigData.advanced_IncreaseCacheSizeModifier : 1))));
-
-        //this.capacity = capacity - 1;
-    }
+//    public ETFLruCache(int upperCapacity) {
+//        capacity = upperCapacity;
+//        this.cache = new Object2ObjectLinkedOpenHashMap<>();//( 64 +(int)(capacity * (ETFConfigData.advanced_IncreaseCacheSizeModifier > 1 ? ETFConfigData.advanced_IncreaseCacheSizeModifier : 1))));
+//
+//        //this.capacity = capacity - 1;
+//    }
 
     public ETFLruCache() {
         this.cache = new Object2ObjectLinkedOpenHashMap<>();//( 64 +(int)(capacity * (ETFConfigData.advanced_IncreaseCacheSizeModifier > 1 ? ETFConfigData.advanced_IncreaseCacheSizeModifier : 1))));
@@ -49,9 +49,9 @@ public class ETFLruCache<X, Y> {
         cache.putAndMoveToFirst(key, value);
     }
 
-    public void clearCache() {
-        cache.clear();
-    }
+//    public void clearCache() {
+//        cache.clear();
+//    }
 
 
     public int size() {

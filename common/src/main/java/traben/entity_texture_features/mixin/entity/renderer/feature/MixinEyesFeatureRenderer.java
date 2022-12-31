@@ -10,7 +10,6 @@ import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.entity.mob.PhantomEntity;
 import net.minecraft.entity.mob.SpiderEntity;
@@ -27,6 +26,7 @@ import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 public abstract class MixinEyesFeatureRenderer<T extends Entity, M extends EntityModel<T>> extends FeatureRenderer<T, M> {
 
 
+    @SuppressWarnings("unused")
     public MixinEyesFeatureRenderer(FeatureRendererContext<T, M> context) {
         super(context);
     }
@@ -51,7 +51,7 @@ public abstract class MixinEyesFeatureRenderer<T extends Entity, M extends Entit
             }
 
             if (check != null) {
-                Identifier altered = ETFManager.getInstance().getETFTexture(new Identifier(check), entity, ETFManager.TextureSource.ENTITY_FEATURE, ETFConfigData.removePixelsUnderEmissiveMobs).getTextureIdentifier((LivingEntity) entity);
+                Identifier altered = ETFManager.getInstance().getETFTexture(new Identifier(check), entity, ETFManager.TextureSource.ENTITY_FEATURE, ETFConfigData.removePixelsUnderEmissiveMobs).getTextureIdentifier(entity);
                 //if the feature has changed to a variant perform the custom render and cancel the vanilla render
                 if (!altered.toString().equals(check)) {
                     VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEyes(altered));

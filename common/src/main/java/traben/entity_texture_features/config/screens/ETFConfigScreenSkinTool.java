@@ -3,18 +3,14 @@ package traben.entity_texture_features.config.screens;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.InventoryScreen;
+import net.minecraft.client.gui.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.render.*;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
-import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.client.gui.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Quaternion;
@@ -26,7 +22,6 @@ import traben.entity_texture_features.texture_handlers.ETFPlayerTexture;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.util.Objects;
 
 import static traben.entity_texture_features.ETFClientCommon.*;
@@ -88,7 +83,7 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
             ETFManager.getInstance().ENTITY_BLINK_TIME.put(MinecraftClient.getInstance().player.getUuid(), 0L);
         }
         thisETFPlayerTexture = null;
-        currentEditorSkin = null;
+
     }
 
     @Override
@@ -149,7 +144,7 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
                         result = printPlayerSkinCopy();
                     }
                     onExit();
-                    Objects.requireNonNull(client).openScreen(new ETFConfigScreenSkinToolOutcome(parent, result));
+                    Objects.requireNonNull(client).openScreen(new ETFConfigScreenSkinToolOutcome(parent, result,currentEditorSkin));
                 });
         this.addButton(printSkinFileButton);
 

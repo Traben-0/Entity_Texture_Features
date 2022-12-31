@@ -8,7 +8,6 @@ import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.EnchantingTableBlockEntityRenderer;
 import net.minecraft.client.render.entity.model.BookModel;
-import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Final;
@@ -23,9 +22,6 @@ import traben.entity_texture_features.texture_handlers.ETFManager;
 @Mixin(EnchantingTableBlockEntityRenderer.class)
 public abstract class MixinEnchantingTableBlockEntityRenderer extends BlockEntityRenderer<EnchantingTableBlockEntity> {
 
-    @Shadow
-    @Final
-    public static SpriteIdentifier BOOK_TEXTURE;
     @Shadow
     @Final
     private BookModel book;
