@@ -1,8 +1,8 @@
 package traben.entity_texture_features.config.screens;
 
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.gui.screen.ScreenTexts;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
@@ -34,6 +34,8 @@ public class ETFConfigScreenEmissiveFixSettings extends ETFConfigScreen {
                     ETFConfigScreenMain.temporaryETFConfig.removePixelsUnderEmissivePlayers = true;
                     ETFConfigScreenMain.temporaryETFConfig.removePixelsUnderEmissiveMobs = true;
                     ETFConfigScreenMain.temporaryETFConfig.removePixelsUnderEmissiveBlockEntity = true;
+                    ETFConfigScreenMain.temporaryETFConfig.dontPatchPBRTextures = true;
+                    ETFConfigScreenMain.temporaryETFConfig.dontPatchAnimatedTextures = true;
 
                     Objects.requireNonNull(client).setScreen(new ETFConfigScreenEmissiveFixSettings(parent));
                     this.close();

@@ -251,14 +251,17 @@ public class ETFManager {
                         Identifier newVariantIdentifier = returnNewAlreadyConfirmedOptifineTexture(entity, vanillaIdentifier, true);
                         ENTITY_TEXTURE_MAP.put(cacheKey, Objects.requireNonNullElse(getOrCreateETFTexture(vanillaIdentifier, Objects.requireNonNullElse(newVariantIdentifier, vanillaIdentifier), canBePatched), getETFDefaultTexture(vanillaIdentifier, canBePatched)));
 
-                        //iterate over list of all known features and update them
-                        ObjectOpenHashSet<ETFCacheKey> featureSet = ENTITY_KNOWN_FEATURES_LIST.getOrDefault(id, new ObjectOpenHashSet<>());
-                        //possible concurrent editing of hashmap issues but simplest way to perform this
-                        featureSet.forEach((forKey) -> {
-                            Identifier forVariantIdentifier = returnNewAlreadyConfirmedOptifineTexture(entity, forKey.identifier(), true);
-                            ENTITY_TEXTURE_MAP.put(forKey, Objects.requireNonNullElse(getOrCreateETFTexture(forKey.identifier(), Objects.requireNonNullElse(forVariantIdentifier, forKey.identifier()), canBePatched), getETFDefaultTexture(forKey.identifier(), canBePatched)));
+                        //only if changed
+                        if (!quickReturn.thisIdentifier.equals(newVariantIdentifier)) {
+                            //iterate over list of all known features and update them
+                            ObjectOpenHashSet<ETFCacheKey> featureSet = ENTITY_KNOWN_FEATURES_LIST.getOrDefault(id, new ObjectOpenHashSet<>());
+                            //possible concurrent editing of hashmap issues but simplest way to perform this
+                            featureSet.forEach((forKey) -> {
+                                Identifier forVariantIdentifier = getPossibleVariantIdentifierRedirectForFeatures(entity, forKey.identifier(), TextureSource.ENTITY_FEATURE); //  returnNewAlreadyConfirmedOptifineTexture(entity, forKey.identifier(), true);
+                                ENTITY_TEXTURE_MAP.put(forKey, Objects.requireNonNullElse(getOrCreateETFTexture(forKey.identifier(), Objects.requireNonNullElse(forVariantIdentifier, forKey.identifier()), canBePatched), getETFDefaultTexture(forKey.identifier(), canBePatched)));
 
-                        });
+                            });
+                        }
 
                         ENTITY_UPDATE_QUEUE.remove(id);
                     } else {

@@ -161,6 +161,8 @@
   "config.entity_texture_features.warn.ebe.text.2": "Block entity features don't apply to EBE block entities.",
   "config.entity_texture_features.warn.figura.text.1": "Figura",
   "config.entity_texture_features.warn.figura.text.2": "ETF skin features are disabled for compatibility.",
+  "config.entity_texture_features.warn.quark.text.3": "Quark",
+  "config.entity_texture_features.warn.quark.text.4": "Quark's [Variant Animal Textures] must be disabled for ETF random textures to work.",
   "config.entity_texture_features.warn.ignore": "Ignored: ",
   "config.entity_texture_features.warn.iris.text.1": "Iris PBR",
   "config.entity_texture_features.warn.iris.text.2": "See 'emissive fix options' if iris PBR does not work on mobs.",
