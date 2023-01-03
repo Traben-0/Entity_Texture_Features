@@ -105,7 +105,7 @@ public class ETFConfigScreenWarnings extends ETFConfigScreen {
         FIGURA(true, "figura", "config." + ETFClientCommon.MOD_ID + ".warn.figura.text.1", "config." + ETFClientCommon.MOD_ID + ".warn.figura.text.2"),
         //SKINLAYERS(false, "skinlayers", "config." + ETFClientCommon.MOD_ID + ".warn.skinlayers.text.1", "config." + ETFClientCommon.MOD_ID + ".warn.skinlayers.text.2"),
         ENHANCED_BLOCK_ENTITIES(false, "enhancedblockentities", "config." + ETFClientCommon.MOD_ID + ".warn.ebe.text.1", "config." + ETFClientCommon.MOD_ID + ".warn.ebe.text.2"),
-        //QUARK(true,"quark","config." + ETFClientCommon.MOD_ID + ".warn.quark.text.1", "config." + ETFClientCommon.MOD_ID + ".warn.quark.text.2"),
+        QUARK(false, "quark", "config." + ETFClientCommon.MOD_ID + ".warn.quark.text.3", "config." + ETFClientCommon.MOD_ID + ".warn.quark.text.4"),
         IRIS(false, "iris", "config." + ETFClientCommon.MOD_ID + ".warn.iris.text.1", "config." + ETFClientCommon.MOD_ID + ".warn.iris.text.2");
         //IMPERSONATE(true, "impersonate", "config." + ETFClientCommon.MOD_ID + ".warn.impersonate.text.1", "config." + ETFClientCommon.MOD_ID + ".warn.impersonate.text.2");
 
