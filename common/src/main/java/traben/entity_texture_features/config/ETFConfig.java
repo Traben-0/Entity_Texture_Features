@@ -2,7 +2,6 @@ package traben.entity_texture_features.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import net.minecraft.screen.ScreenTexts;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.screens.ETFConfigScreenWarnings;
 import traben.entity_texture_features.texture_handlers.ETFManager;
@@ -171,7 +170,7 @@ public class ETFConfig {
 
     @SuppressWarnings({"unused", "EnhancedSwitchMigration"})
     public enum IllegalPathMode {
-        None(ScreenTexts.OFF.getString()),
+        None("options.off"),
         Entity("config." + MOD_ID + ".illegal_path_mode.entity"),
         All("config." + MOD_ID + ".illegal_path_mode.all");
 
@@ -183,7 +182,6 @@ public class ETFConfig {
 
         @Override
         public String toString() {
-
             return ETFVersionDifferenceHandler.getTextFromTranslation(key).getString();
         }
 

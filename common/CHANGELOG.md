@@ -1,5 +1,14 @@
 [**ETF Changelog:**]
 
+[V4.3.1]
+
+- updated russian translation to 4.3 thanks to @Felix14-v2
+- fixed a button translation
+- added compatibility warning message for Quark as it's [Variant Animal Textures] setting must be disabled for ETF's to work
+- resolved an issue with additional textures like enderman_eyes.png or sheep_fur.png resetting after a short time if the
+  base texture had .properties but the additional texture didn't
+- added shulker bullet texture support
+
 [V4.3.0]
 
 *Update summary*
