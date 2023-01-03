@@ -261,15 +261,17 @@ public class ETFManager {
                     if (ENTITY_UPDATE_QUEUE.contains(id)) {//&& source != TextureSource.ENTITY_FEATURE) {
                         Identifier newVariantIdentifier = returnNewAlreadyConfirmedOptifineTexture(entity, vanillaIdentifier, true);
                         ENTITY_TEXTURE_MAP.put(cacheKey, ETFUtils2.requireNonNullElse(getOrCreateETFTexture(vanillaIdentifier, ETFUtils2.requireNonNullElse(newVariantIdentifier, vanillaIdentifier), canBePatched), getETFDefaultTexture(vanillaIdentifier, canBePatched)));
+                        //only if changed
+                        if (!quickReturn.thisIdentifier.equals(newVariantIdentifier)) {
+                            //iterate over list of all known features and update them
+                            ObjectOpenHashSet<ETFCacheKey> featureSet = ENTITY_KNOWN_FEATURES_LIST.getOrDefault(id, new ObjectOpenHashSet<>());
+                            //possible concurrent editing of hashmap issues but simplest way to perform this
+                            featureSet.forEach((forKey) -> {
+                                Identifier forVariantIdentifier = getPossibleVariantIdentifierRedirectForFeatures(entity, forKey.identifier, TextureSource.ENTITY_FEATURE); //  returnNewAlreadyConfirmedOptifineTexture(entity, forKey.identifier(), true);
+                                ENTITY_TEXTURE_MAP.put(forKey, ETFUtils2.requireNonNullElse(getOrCreateETFTexture(forKey.identifier, ETFUtils2.requireNonNullElse(forVariantIdentifier, forKey.identifier), canBePatched), getETFDefaultTexture(forKey.identifier, canBePatched)));
 
-                        //iterate over list of all known features and update them
-                        ObjectOpenHashSet<ETFCacheKey> featureSet = ENTITY_KNOWN_FEATURES_LIST.getOrDefault(id, new ObjectOpenHashSet<>());
-                        //possible concurrent editing of hashmap issues but simplest way to perform this
-                        featureSet.forEach((forKey) -> {
-                            Identifier forVariantIdentifier = returnNewAlreadyConfirmedOptifineTexture(entity, forKey.identifier, true);
-                            ENTITY_TEXTURE_MAP.put(forKey, ETFUtils2.requireNonNullElse(getOrCreateETFTexture(forKey.identifier, ETFUtils2.requireNonNullElse(forVariantIdentifier, forKey.identifier), canBePatched), getETFDefaultTexture(forKey.identifier, canBePatched)));
-
-                        });
+                            });
+                        }
 
                         ENTITY_UPDATE_QUEUE.remove(id);
                     } else {

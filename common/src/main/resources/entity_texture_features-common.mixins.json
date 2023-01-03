@@ -32,6 +32,7 @@
     "entity.renderer.MixinMinecartEntityRenderer",
     "entity.renderer.MixinPiglinEntityRenderer",
     "entity.renderer.MixinPlayerEntityRenderer",
+    "entity.renderer.MixinShulkerBulletEntityRenderer",
     "entity.renderer.MixinTridentEntityRenderer",
     "entity.renderer.feature.MixinCapeFeatureRenderer",
     "entity.renderer.feature.MixinDrownedOverlayFeatureRenderer",
