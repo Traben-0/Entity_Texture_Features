@@ -179,4 +179,4 @@
     "config.entity_texture_features.animation_compatibility.tooltip": "quando ativado, o ETF não adulterará nenhuma\ntextura que tenha uma animação\natualmente apenas se o mod MoreMcmeta estiver presente.\n\nObservação: isso pode introduzir z-fighting, dependendo do seu shader",
     "config.entity_texture_features.illegal_path_mode.entity": "Somente entidades",
     "config.entity_texture_features.illegal_path_mode.all": "Todos os recursos"
-  }
+}
