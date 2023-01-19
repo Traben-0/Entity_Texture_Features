@@ -1,7 +1,7 @@
 {
-    "config.entity_texture_features.Debug_log_mode.chat": "Chat",
+    "config.entity_texture_features.Debug_log_mode.chat": "Bate-papo",
     "config.entity_texture_features.Debug_log_mode.log": "Log",
-    "config.entity_texture_features.Debug_log_mode.none": "None",
+    "config.entity_texture_features.Debug_log_mode.none": "Nenhum",
     "config.entity_texture_features.allow_illegal_texture_paths.title": "Permitir caminhos de textura quebrados",
     "config.entity_texture_features.allow_illegal_texture_paths.tooltip": "Esta configuração permite que você sobrescreva o comportamento\nVanilla de proibir todos os caracteres\nnão [a-z0-9/._-] em caminhos de textura.\nIsso significa que texturas com espaços ou maiúsculas\npodem ser usadas.\nDesativado por padrão já que esses problemas devem ser corrigidos pelo criador do pacote de recursos",
     "config.entity_texture_features.always_check_vanilla_emissive_suffix.title": "Sempre verifique se há arquivos emissivo '_e'",
@@ -121,7 +121,7 @@
     "config.entity_texture_features.player_skin_settings.title": "Config. de skin do jogador",
     "config.entity_texture_features.player_skin_transparent_sub.title": "Config. de skin transparente",
     "config.entity_texture_features.player_skin_transparent_sub.tooltip": "",
-    "config.entity_texture_features.random_settings.title": "Config. aleatórias/personalizadas de mobs",
+    "config.entity_texture_features.random_settings.title": "Config. personalizadas de mobs",
     "config.entity_texture_features.remove_pixels.info": "O ETF remove os pixels abaixo\n das texturas emissivas para evitar combate Z\ncom shaders.\n \nDesativar essas configurações pode:\n\n- Causar emissivos Z-fighting com\nalguns shaders.\n\n- Corrigir texturas Iris PBR não funcionando\npara mobs com texturas emissivas.\n\n- Corrija texturas animadas com\npixels ausentes com mods de animação.\n\n- Quebre os emissivos legging de armadura quando\n um peitoral estiver equipado.",
     "config.entity_texture_features.restrict_biome.title": "Bioma",
     "config.entity_texture_features.restrict_biome.tooltip": "Restringir atualizações de propriedade do bioma\nDeve habilitar 'Restringir algumas atualizações de propriedade' primeiro",
