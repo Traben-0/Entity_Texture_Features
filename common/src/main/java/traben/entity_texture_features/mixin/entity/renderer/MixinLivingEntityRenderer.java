@@ -9,7 +9,6 @@ import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.EntityModel;
-import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -59,8 +58,8 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
 
             if (ETFConfigData.skinFeaturesEnabled && thisETFPlayerTexture != null) {
 
-                // noinspection unchecked
-                thisETFPlayerTexture.renderFeatures(matrixStack, vertexConsumerProvider, i, (PlayerEntityModel<PlayerEntity>) this.getModel());
+
+                thisETFPlayerTexture.renderFeatures(matrixStack, vertexConsumerProvider, i, this.getModel());
 
             }
             //just a little harmless particle effect on the dev

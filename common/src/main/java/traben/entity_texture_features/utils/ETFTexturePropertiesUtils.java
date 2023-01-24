@@ -9,6 +9,8 @@ import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.mob.*;
 import net.minecraft.entity.passive.*;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -24,6 +26,7 @@ import java.util.regex.Pattern;
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
 public abstract class ETFTexturePropertiesUtils {
+
 
     public static void processNewOptifinePropertiesFile(Entity entity, Identifier vanillaIdentifier, Identifier properties) {
         ETFManager manager = ETFManager.getInstance();
@@ -71,75 +74,9 @@ public abstract class ETFTexturePropertiesUtils {
                             manager.ENTITY_TYPE_RENDER_LAYER.put(entity.getType(), 4);
                             break;
                     }
-
-
                 }
+                List<ETFTexturePropertyCase> allCasesForTexture = getAllValidPropertyObjects(props, "skins", vanillaIdentifier);
 
-                Set<String> propIds = props.stringPropertyNames();
-                //set so only 1 of each
-                Set<Integer> numbers = new HashSet<>();
-
-                //get the numbers we are working with
-                for (String str :
-                        propIds) {
-                    str = str.replaceAll("\\D", "");
-                    if (!str.isEmpty()) {
-                        try {
-                            numbers.add(Integer.parseInt(str));
-                        } catch (NumberFormatException e) {
-                            ETFUtils2.logWarn("properties file number error in start count");
-                        }
-                    }
-                }
-                //sort from lowest to largest
-                List<Integer> numbersList = new ArrayList<>(numbers);
-                Collections.sort(numbersList);
-                List<ETFTexturePropertyCase> allCasesForTexture = new ArrayList<>();
-                for (Integer num :
-                        numbersList) {
-                    //System.out.println("constructed as "+num);
-                    //loops through each known number in properties
-                    //all case.1 ect should be processed here
-                    Integer[] suffixes = getSuffixes(props, num);
-
-
-                    //list easier to build
-                    if (suffixes != null && suffixes.length != 0) {
-                        allCasesForTexture.add(new ETFTexturePropertyCase(
-                                suffixes,
-                                getWeights(props, num),
-                                getBiomes(props, num),
-                                getHeights(props, num),
-                                getNames(props, num),
-                                getProfessions(props, num),
-                                getColors(props, num),
-                                getBaby(props, num),
-                                getWeather(props, num), //0,1,2,3 - no clear rain thunder
-                                getHealth(props, num),
-                                getMoon(props, num),
-                                getDayTime(props, num),
-                                getBlocks(props, num),
-                                getTeams(props, num),
-                                getSizes(props, num),
-                                getSpeed(props, num),
-                                getJump(props, num),
-                                getMaxHealth(props, num),
-                                getLlamaInv(props, num),
-                                getAngry(props, num),
-                                getHiddenGene(props, num),
-                                getPlayerCreated(props, num),
-                                getScreamingGoat(props, num),
-                                getDistanceFromPlayer(props, num),
-                                getCreeperCharge(props, num),
-                                getStatusEffect(props, num),
-                                getItems(props, num),
-                                getMoving(props, num)
-                        ));
-
-                    } else {
-                        ETFUtils2.logWarn("property number \"" + num + ". in file \"" + vanillaIdentifier + ". failed to read.");
-                    }
-                }
                 if (!allCasesForTexture.isEmpty()) {
                     //it all worked now just get the first texture called and everything is set for the next time the texture is called for fast processing
                     manager.OPTIFINE_PROPERTY_CACHE.put(vanillaIdentifier, allCasesForTexture);
@@ -158,34 +95,85 @@ public abstract class ETFTexturePropertiesUtils {
         }
     }
 
+    public static List<ETFTexturePropertyCase> getAllValidPropertyObjects(Properties props, String suffixToTest, Identifier vanillaIdentifier){
+        Set<String> propIds = props.stringPropertyNames();
+        //set so only 1 of each
+        Set<Integer> numbers = new HashSet<>();
+
+        //get the numbers we are working with
+        for (String str :
+                propIds) {
+            str = str.replaceAll("\\D", "");
+            if (!str.isEmpty()) {
+                try {
+                    numbers.add(Integer.parseInt(str));
+                } catch (NumberFormatException e) {
+                    ETFUtils2.logWarn("properties file number error in start count");
+                }
+            }
+        }
+        //sort from lowest to largest
+        List<Integer> numbersList = new ArrayList<>(numbers);
+        Collections.sort(numbersList);
+        List<ETFTexturePropertyCase> allCasesForTexture = new ArrayList<>();
+        for (Integer num :
+                numbersList) {
+            //System.out.println("constructed as "+num);
+            //loops through each known number in properties
+            //all case.1 ect should be processed here
+            Integer[] suffixes = getSuffixes(props, num, suffixToTest);
+
+
+            //list easier to build
+            if (suffixes != null && suffixes.length != 0) {
+                allCasesForTexture.add(new ETFTexturePropertyCase(
+                        suffixes,
+                        getWeights(props, num),
+                        getBiomes(props, num),
+                        getHeights(props, num),
+                        getNames(props, num),
+                        getProfessions(props, num),
+                        getColors(props, num),
+                        getBaby(props, num),
+                        getWeather(props, num), //0,1,2,3 - no clear rain thunder
+                        getHealth(props, num),
+                        getMoon(props, num),
+                        getDayTime(props, num),
+                        getBlocks(props, num),
+                        getTeams(props, num),
+                        getSizes(props, num),
+                        getSpeed(props, num),
+                        getJump(props, num),
+                        getMaxHealth(props, num),
+                        getLlamaInv(props, num),
+                        getAngry(props, num),
+                        getHiddenGene(props, num),
+                        getPlayerCreated(props, num),
+                        getScreamingGoat(props, num),
+                        getDistanceFromPlayer(props, num),
+                        getCreeperCharge(props, num),
+                        getStatusEffect(props, num),
+                        getItems(props, num),
+                        getMoving(props, num),
+                        getNBT(props, num)
+                ));
+
+            } else {
+                ETFUtils2.logWarn("property number \"" + num + ". in file \"" + vanillaIdentifier + ". failed to read.");
+            }
+        }
+        return allCasesForTexture;
+    }
+
+
     @Nullable
-    private static Integer[] getSuffixes(Properties props, int num) {
-        Integer[] ints = getGenericIntegerSplitWithRanges(props, num, "skins");
-        return ints == null ? getGenericIntegerSplitWithRanges(props, num, "textures") : ints;
-        //        if (props.containsKey("." + num) || props.containsKey("textures." + num)) {
-        //            String dataFromProps = props.containsKey("skins." + num) ? props.getProperty("skins." + num).strip() : props.getProperty("textures." + num).strip();
-        //            String[] skinData = dataFromProps.split("\s+");
-        //            ArrayList<Integer> suffixNumbers = new ArrayList<>();
-        //            for (String data :
-        //                    skinData) {
-        //                //check if range
-        //                data = data.strip();
-        //                if (!data.replaceAll("\\D", "").isEmpty()) {
-        //                    if (data.contains("-")) {
-        //                        suffixNumbers.addAll(Arrays.asList(ETFUtils2.getIntRange(data)));
-        //                    } else {
-        //                        try {
-        //                            int tryNumber = Integer.parseInt(data.replaceAll("\\D", ""));
-        //                            suffixNumbers.add(tryNumber);
-        //                        } catch (NumberFormatException e) {
-        //                            ETFUtils2.logWarn("properties files number error in skins / textures category");
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //            return suffixNumbers.toArray(new Integer[0]);
-        //        }
-        //        return null;
+    private static Integer[] getSuffixes(Properties props, int num, String suffixToTest) {
+
+        if("skins".equals(suffixToTest)) {
+            Integer[] ints = getGenericIntegerSplitWithRanges(props, num, "skins");
+            return ints == null ? getGenericIntegerSplitWithRanges(props, num, "textures") : ints;
+        }
+        return getGenericIntegerSplitWithRanges(props, num, suffixToTest);
     }
 
     @Nullable
@@ -598,6 +586,20 @@ public abstract class ETFTexturePropertiesUtils {
         return null;
     }
 
+    @Nullable
+    private static Map<String, String[]> getNBT(Properties props, int num) {
+        String keyPrefix = "nbt." + num + '.';
+        Map<String, String[]> map = new HashMap<>();
+        props.forEach((key, value) -> {
+            if (key != null && ((String) key).startsWith(keyPrefix)) {
+                String nbtName = ((String) key).replaceFirst(keyPrefix, "");
+                map.put(nbtName, ((String) value).trim().split("\s+"));
+            }
+        });
+        if (!map.isEmpty()) return map;
+        return null;
+    }
+
     //    @Nullable
     //    private static Integer[] get(Properties props, int num) {
     //
@@ -640,6 +642,7 @@ public abstract class ETFTexturePropertiesUtils {
         private final @Nullable String[] ITEMS;
 
         private final @Nullable Boolean MOVING;
+        private final @Nullable Map<String, String[]> NBT_MAP;
 
         //whether case should be ignored by updates
 
@@ -671,10 +674,12 @@ public abstract class ETFTexturePropertiesUtils {
                                       @Nullable Boolean creeperCharged,
                                       @Nullable StatusEffect[] statusEffect,
                                       @Nullable String[] items,
-                                      @Nullable Boolean moving
+                                      @Nullable Boolean moving,
+                                      @Nullable Map<String, String[]> nbtMap
 
 
         ) {
+            NBT_MAP = nbtMap;
 
             MOVING = moving;
             ITEMS = items;
@@ -783,6 +788,7 @@ public abstract class ETFTexturePropertiesUtils {
                     && STATUS_EFFECT == null
                     && ITEMS == null
                     && MOVING == null
+                    && NBT_MAP == null
             ) {
                 return true;
             }
@@ -840,6 +846,45 @@ public abstract class ETFTexturePropertiesUtils {
                 }
 
                 doesEntityMeetThisCaseTest = check;
+            }
+            if (doesEntityMeetThisCaseTest && NBT_MAP != null) {
+                wasEntityTestedByAnUpdatableProperty = true;
+
+                NbtCompound entityNBT = entity.writeNbt(new NbtCompound());
+                if (!entityNBT.isEmpty()) {
+                    for (Map.Entry<String, String[]> entry : NBT_MAP.entrySet()) {
+
+                        String nbtName = entry.getKey();
+                        String[] values = entry.getValue();
+                        if (values.length == 1 && values[0].contains("exists:")) {
+                            boolean shouldExist = values[0].contains("exists:true");
+                            doesEntityMeetThisCaseTest = shouldExist == (entityNBT.contains(nbtName) && entityNBT.get(nbtName) != null);
+                        } else if (entityNBT.contains(nbtName)) {
+                            NbtElement element = entityNBT.get(nbtName);
+                            if (element != null) {
+                                String eleStr = element.asString();
+                                boolean found = false;
+                                for (String value :
+                                        values) {
+                                    if (eleStr.equals(value)) {
+                                        found = true;
+                                        break;
+                                    }
+                                }
+                                doesEntityMeetThisCaseTest = found;
+                            } else {
+                                doesEntityMeetThisCaseTest = false;
+                                break;
+                            }
+                        } else {
+                            doesEntityMeetThisCaseTest = false;
+                            break;
+                        }
+                    }
+                } else {
+                    ETFUtils2.logError("NBT test failed");
+                    doesEntityMeetThisCaseTest = false;
+                }
             }
             if (doesEntityMeetThisCaseTest && NAME_STRINGS != null) {
                 // System.out.println("start name"+doesEntityMeetThisCaseTest);

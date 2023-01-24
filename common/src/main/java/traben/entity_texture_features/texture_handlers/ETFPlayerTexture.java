@@ -4,11 +4,13 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.entity.PlayerModelPart;
+import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.PlayerSkinTexture;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -458,8 +460,8 @@ public class ETFPlayerTexture {
                         || player.getScoreboardTeam() == null));
     }
 
-    public void renderFeatures(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light, PlayerEntityModel<PlayerEntity> model) {
-        if (canUseFeaturesForThisPlayer()) {
+    public <T extends LivingEntity, M extends EntityModel<T>> void renderFeatures(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light, M model0) {
+        if (canUseFeaturesForThisPlayer() && model0 instanceof PlayerEntityModel<?> model) {
             //nose
             if (hasVillagerNose) {
                 customPlayerModel.villagerNose.copyTransform(model.head);
