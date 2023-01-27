@@ -69,6 +69,8 @@ public class ETFConfig {
 
     public boolean hideConfigButton = false;
 
+    public boolean disableVanillaDirectoryVariantTextures = false;
+
     //string name stuff more in-depth than other enum for backwards compatibility
 
     public static ETFConfig copyFrom(ETFConfig source) {

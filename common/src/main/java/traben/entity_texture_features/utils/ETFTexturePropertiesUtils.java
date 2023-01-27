@@ -856,30 +856,78 @@ public abstract class ETFTexturePropertiesUtils {
 
                         String nbtName = entry.getKey();
                         String[] values = entry.getValue();
-                        if (values.length == 1 && values[0].contains("exists:")) {
-                            boolean shouldExist = values[0].contains("exists:true");
-                            doesEntityMeetThisCaseTest = shouldExist == (entityNBT.contains(nbtName) && entityNBT.get(nbtName) != null);
-                        } else if (entityNBT.contains(nbtName)) {
-                            NbtElement element = entityNBT.get(nbtName);
-                            if (element != null) {
-                                String eleStr = element.asString();
-                                boolean found = false;
-                                for (String value :
-                                        values) {
-                                    if (eleStr.equals(value)) {
-                                        found = true;
-                                        break;
+
+
+                        boolean shouldPrint = "print".equals(values[0]);
+                        boolean isExistTypeCheck = values[0].contains("exists:");
+                        boolean shouldExist = values[0].contains("exists:true");
+                        boolean hasMatched = false;
+                        boolean hasBeenFound = false;
+
+                        Iterator<String> nbtNamePath = Arrays.stream(nbtName.split("\\.")).iterator();
+                        NbtCompound compound = entityNBT;
+                        while (nbtNamePath.hasNext()) {
+                            String thisNbtName = nbtNamePath.next();
+                            if (nbtNamePath.hasNext()) {
+                                //then this is a parent variable and must grab next element
+                                compound = compound.getCompound(thisNbtName);
+                            } else {
+                                //bottom level nbt variable must be checked against
+                                NbtElement finalElement = compound.get(thisNbtName);
+                                if (finalElement != null) {
+                                    hasBeenFound = true;
+                                    if (!isExistTypeCheck) {
+                                        String value = finalElement.asString().replaceAll("\\s", "");
+                                        if (shouldPrint) {
+                                            ETFUtils2.logMessage("NBT Value of [" + nbtName + "] was [" + value + "].", true);
+                                            break;
+                                        }
+                                        for (String str : values) {
+                                            str = str.replaceAll("\\s", "");
+                                            if (str.equals(value)) {
+                                                hasMatched = true;
+                                                break;
+                                            }
+                                        }
                                     }
                                 }
-                                doesEntityMeetThisCaseTest = found;
-                            } else {
-                                doesEntityMeetThisCaseTest = false;
                                 break;
                             }
-                        } else {
-                            doesEntityMeetThisCaseTest = false;
-                            break;
                         }
+                        if (shouldPrint) {
+                            ETFUtils2.logMessage("NBT Value of [" + nbtName + "] was " + (hasBeenFound ? "found." : "not found."), true);
+                        }
+                        if (isExistTypeCheck) {
+                            doesEntityMeetThisCaseTest = shouldExist == hasBeenFound;
+                        } else {
+                            doesEntityMeetThisCaseTest = hasMatched;
+                        }
+
+//
+//                        if (values.length == 1 && values[0].contains("exists:")) {
+//                            boolean shouldExist = values[0].contains("exists:true");
+//                            doesEntityMeetThisCaseTest = shouldExist == (entityNBT.contains(nbtName) && entityNBT.get(nbtName) != null);
+//                        } else if (entityNBT.contains(nbtName)) {
+//                            NbtElement element = entityNBT.get(nbtName);
+//                            if (element != null) {
+//                                String eleStr = element.asString();
+//                                boolean found = false;
+//                                for (String value :
+//                                        values) {
+//                                    if (eleStr.equals(value)) {
+//                                        found = true;
+//                                        break;
+//                                    }
+//                                }
+//                                doesEntityMeetThisCaseTest = found;
+//                            } else {
+//                                doesEntityMeetThisCaseTest = false;
+//                                break;
+//                            }
+//                        } else {
+//                            doesEntityMeetThisCaseTest = false;
+//                            break;
+//                        }
                     }
                 } else {
                     ETFUtils2.logError("NBT test failed");

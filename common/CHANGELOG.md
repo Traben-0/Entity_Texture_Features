@@ -1,5 +1,15 @@
 [**ETF Changelog:**]
 
+[V4.3.2.dev]
+
+- added `NBT` texture property
+- added support for `EMF` to use ETF's property reading code for random models
+- fixed a crash caused by modded entities with large numbers as texture file name making etf think it is a variant .png
+- added config setting to disabled using variants in the vanilla directories *(making only optifine and etf folders
+  work)* this is specifically added for certain mods that have their mob textures named like "mob2.png" that are detected
+  as random mobs by etf
+- `Illegal path override = All` config setting will no longer allow empty paths
+
 [V4.3.1]
 
 - updated russian translation to 4.3 thanks to @Felix14-v2

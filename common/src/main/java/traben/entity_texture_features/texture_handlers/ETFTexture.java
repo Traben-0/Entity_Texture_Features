@@ -67,11 +67,15 @@ public class ETFTexture {
         this.thisIdentifier = variantIdentifier;
         Pattern pattern = Pattern.compile("\\d+(?=\\.png)");
         Matcher matcher = pattern.matcher(variantIdentifier.getPath());
-        if (matcher.find()) {
-            this.variantNumber = Integer.parseInt(matcher.group());
-        } else {
-            this.variantNumber = 0;
+        int intFound = 0;
+        try {
+            if (matcher.find()) {
+                intFound = Integer.parseInt(matcher.group());
+            }
+        } catch (NumberFormatException ignored) {
+           // this.variantNumber = 0;
         }
+        this.variantNumber = intFound;
         canPatch = allowedToPatch;
         setupBlinking();
         setupEmissives();

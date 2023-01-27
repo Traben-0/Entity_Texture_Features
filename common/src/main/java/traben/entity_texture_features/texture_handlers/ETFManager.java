@@ -291,6 +291,13 @@ public class ETFManager {
             ETFTexture foundTexture;
             foundTexture = Objects.requireNonNullElse(getOrCreateETFTexture(vanillaIdentifier, possibleIdentifier == null ? vanillaIdentifier : possibleIdentifier, canBePatched), getETFDefaultTexture(vanillaIdentifier, canBePatched));
             //if(!(source == TextureSource.ENTITY_FEATURE && possibleIdentifier == null))
+
+            // replace with vanilla non-variant texture if it is a variant and the path is vanilla and this has been disabled in config
+            if (ETFConfigData.disableVanillaDirectoryVariantTextures
+                    && !foundTexture.thisIdentifier.equals(vanillaIdentifier)
+                    && ETFDirectory.getDirectoryOf(foundTexture.thisIdentifier) == ETFDirectory.VANILLA) {
+                foundTexture = getETFDefaultTexture(vanillaIdentifier, canBePatched);
+            }
             ENTITY_TEXTURE_MAP.put(cacheKey, foundTexture);
             if (source == TextureSource.ENTITY_FEATURE) {
                 ObjectOpenHashSet<ETFCacheKey> knownFeatures = ENTITY_KNOWN_FEATURES_LIST.getOrDefault(entity.getUuid(), new ObjectOpenHashSet<>());
