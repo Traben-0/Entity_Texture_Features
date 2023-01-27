@@ -9,6 +9,8 @@
   work)* this is specifically added for certain mods that have their mob textures named like "mob2.png" that are detected
   as random mobs by etf
 - `Illegal path override = All` config setting will no longer allow empty paths
+- added brazilian portuguese translations
+- updated chinese translations
 
 [V4.3.1]
 
