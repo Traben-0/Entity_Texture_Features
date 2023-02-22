@@ -19,6 +19,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import traben.entity_texture_features.texture_handlers.ETFManager;
+import traben.entity_texture_features.utils.ETFEntityWrapper;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
@@ -30,7 +31,7 @@ public abstract class MixinEvokerFangEntityRenderer extends EntityRenderer<Evoke
     @Shadow
     private static Identifier TEXTURE;
 
-    private EvokerFangsEntity etf$entity = null;
+    private ETFEntityWrapper etf$entity = null;
     @Final
     @Shadow
     private EvokerFangsEntityModel<EvokerFangsEntity> model;
@@ -44,7 +45,7 @@ public abstract class MixinEvokerFangEntityRenderer extends EntityRenderer<Evoke
             method = "render(Lnet/minecraft/entity/mob/EvokerFangsEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
             at = @At(value = "HEAD"))
     private void etf$getEntity(EvokerFangsEntity evokerFangsEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
-        etf$entity = evokerFangsEntity;
+        etf$entity = new ETFEntityWrapper( evokerFangsEntity);
     }
 
     @ModifyArg(
@@ -55,7 +56,7 @@ public abstract class MixinEvokerFangEntityRenderer extends EntityRenderer<Evoke
         if (ETFConfigData.enableCustomTextures) {
             try {
 
-                Identifier alteredTexture = ETFManager.getInstance().getETFTexture(TEXTURE, etf$entity, ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs).getTextureIdentifier(etf$entity);
+                Identifier alteredTexture = ETFManager.getInstance().getETFTexture(TEXTURE, (etf$entity), ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs).getTextureIdentifier(etf$entity);
                 RenderLayer layerToReturn;
 
                 if (ETFManager.getInstance().ENTITY_TYPE_RENDER_LAYER.containsKey(etf$entity.getType())) {
@@ -98,7 +99,7 @@ public abstract class MixinEvokerFangEntityRenderer extends EntityRenderer<Evoke
                     shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILSOFT)
     private void etf$applyEmissive(EvokerFangsEntity evokerFangsEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci, float h, float j, float k, VertexConsumer vertexConsumer) {
         //UUID id = livingEntity.getUuid();
-        ETFManager.getInstance().getETFTexture(TEXTURE, etf$entity, ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs).renderEmissive(matrixStack, vertexConsumerProvider, model);
+        ETFManager.getInstance().getETFTexture(TEXTURE, (etf$entity), ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs).renderEmissive(matrixStack, vertexConsumerProvider, model);
 
     }
 

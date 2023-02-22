@@ -1,5 +1,13 @@
 [**ETF Changelog:**]
 
+[V4.3.2.dev.2]
+
+- API finalized for other mods to utilise ETFs random texture .properties file loading *(will be used in EMF)*
+- added an option to enable transparent skins for all players, even ones not using ETF skin features.
+- added checks to catch some nullPointer crashes
+- fixed an issue requiring other clients to have ETF installed when joining an Essentials mod hosted game
+- reworked the handling of all entities internally by ETF, The ETFPlaceHolderEntity EntityType has been removed.
+
 [V4.3.2.dev]
 
 - added `NBT` texture property

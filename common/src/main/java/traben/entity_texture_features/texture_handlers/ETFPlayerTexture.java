@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.config.screens.ETFConfigScreenSkinTool;
 import traben.entity_texture_features.mixin.accessor.PlayerSkinProviderAccessor;
 import traben.entity_texture_features.mixin.accessor.PlayerSkinTextureAccessor;
+import traben.entity_texture_features.utils.ETFEntityWrapper;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.io.FileInputStream;
@@ -402,7 +403,7 @@ public class ETFPlayerTexture {
     public Identifier getBaseTextureIdentifierOrNullForVanilla(PlayerEntity player) {
         this.player = player;//refresh player data
         if (allowThisETFBaseSkin && canUseFeaturesForThisPlayer() && etfTextureOfFinalBaseSkin != null) {
-            return etfTextureOfFinalBaseSkin.getTextureIdentifier(player);
+            return etfTextureOfFinalBaseSkin.getTextureIdentifier(new ETFEntityWrapper(player));
         }
         return null;
     }
@@ -1264,8 +1265,19 @@ public class ETFPlayerTexture {
                 }
                 modifiedSkin.close();
             } else {
+
+                //check if they want to try load transparent skin anyway
+                if (ETFConfigData.tryETFTransparencyForAllSkins) {
+                    Identifier skinIdentifier = new Identifier(SKIN_NAMESPACE, id + ".png");
+                    ETFUtils2.registerNativeImageToIdentifier(originalSkin, skinIdentifier);
+                    etfTextureOfFinalBaseSkin = new ETFTexture(skinIdentifier, null, null, null, null, null, null, null, null);
+
+                } else {
+                    skinFailed();
+                }
+
                 // System.out.println("asdasd");
-                skinFailed();
+
             }
         } else {
             //System.out.println("asdasdffsdfsdsd");

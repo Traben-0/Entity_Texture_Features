@@ -17,6 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
+import traben.entity_texture_features.utils.ETFEntityWrapper;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
@@ -24,7 +25,7 @@ import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 public abstract class MixinWardenFeatureRenderer<T extends WardenEntity, M extends WardenEntityModel<T>> extends FeatureRenderer<T, M> {
 
 
-    WardenEntity etf$entity = null;
+    ETFEntityWrapper etf$entity = null;
     private ETFTexture thisETFTexture = null;
 
     @SuppressWarnings("unused")
@@ -46,7 +47,7 @@ public abstract class MixinWardenFeatureRenderer<T extends WardenEntity, M exten
             method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/mob/WardenEntity;FFFFFF)V",
             at = @At(value = "HEAD"))
     private void etf$getEntity(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T wardenEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
-        etf$entity = wardenEntity;
+        etf$entity = new ETFEntityWrapper(wardenEntity);
     }
 
     @ModifyArg(

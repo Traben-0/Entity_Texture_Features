@@ -2,6 +2,7 @@ package traben.entity_texture_features.utils;
 
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectImmutableList;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -28,7 +29,7 @@ import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 public abstract class ETFTexturePropertiesUtils {
 
 
-    public static void processNewOptifinePropertiesFile(Entity entity, Identifier vanillaIdentifier, Identifier properties) {
+    public static void processNewOptifinePropertiesFile(ETFEntity entity, Identifier vanillaIdentifier, Identifier properties) {
         ETFManager manager = ETFManager.getInstance();
         try {
             Properties props = ETFUtils2.readAndReturnPropertiesElseNull(properties);
@@ -47,7 +48,7 @@ public abstract class ETFTexturePropertiesUtils {
                     if (tryNumber < 0) tryNumber = 0;
                     manager.ENTITY_TYPE_VANILLA_BRIGHTNESS_OVERRIDE_VALUE.put(entity.getType(), tryNumber);
                 }
-                if (entity instanceof ZombifiedPiglinEntity
+                if (entity.isZombiePiglin()
                         && props.containsKey("showHiddenModelParts")
                         && "true".equals(props.getProperty("showHiddenModelParts"))) {
                     manager.zombiePiglinRightEarEnabled = true;
@@ -95,7 +96,7 @@ public abstract class ETFTexturePropertiesUtils {
         }
     }
 
-    public static List<ETFTexturePropertyCase> getAllValidPropertyObjects(Properties props, String suffixToTest, Identifier vanillaIdentifier){
+    public static List<ETFTexturePropertyCase> getAllValidPropertyObjects(Properties props, String suffixToTest, Identifier vanillaIdentifier) {
         Set<String> propIds = props.stringPropertyNames();
         //set so only 1 of each
         Set<Integer> numbers = new HashSet<>();
@@ -169,7 +170,7 @@ public abstract class ETFTexturePropertiesUtils {
     @Nullable
     private static Integer[] getSuffixes(Properties props, int num, String suffixToTest) {
 
-        if("skins".equals(suffixToTest)) {
+        if ("skins".equals(suffixToTest)) {
             Integer[] ints = getGenericIntegerSplitWithRanges(props, num, "skins");
             return ints == null ? getGenericIntegerSplitWithRanges(props, num, "textures") : ints;
         }
@@ -757,6 +758,18 @@ public abstract class ETFTexturePropertiesUtils {
 
 
         public boolean doesEntityMeetConditionsOfThisCase(Entity entity, boolean isUpdate, Object2BooleanOpenHashMap<UUID> UUID_CaseHasUpdateablesCustom) {
+            return doesEntityMeetConditionsOfThisCase(new ETFEntityWrapper(entity), isUpdate, UUID_CaseHasUpdateablesCustom);
+        }
+
+//        public boolean doesEntityMeetConditionsOfThisCase(BlockEntity entity, boolean isUpdate, Object2BooleanOpenHashMap<UUID> UUID_CaseHasUpdateablesCustom) {
+//            return doesEntityMeetConditionsOfThisCase(new ETFBlockEntityWrapper(entity, UUID.nameUUIDFromBytes("ABCDEFG".getBytes())), isUpdate, UUID_CaseHasUpdateablesCustom);
+//        }
+
+        public boolean doesEntityMeetConditionsOfThisCase(BlockEntity entity, UUID uuid, boolean isUpdate, Object2BooleanOpenHashMap<UUID> UUID_CaseHasUpdateablesCustom) {
+            return doesEntityMeetConditionsOfThisCase(new ETFBlockEntityWrapper(entity, uuid), isUpdate, UUID_CaseHasUpdateablesCustom);
+        }
+
+        public boolean doesEntityMeetConditionsOfThisCase(ETFEntity etfEntity, boolean isUpdate, Object2BooleanOpenHashMap<UUID> UUID_CaseHasUpdateablesCustom) {
 
 
             //System.out.println("checking property number "+propertyNumber);
@@ -796,14 +809,17 @@ public abstract class ETFTexturePropertiesUtils {
             if (!ETFConfigData.restrictUpdateProperties) {
                 isUpdate = false;
             }
-            UUID id = entity.getUuid();
+            UUID id = etfEntity.getUuid();
+
+            //null for block entity, anything using entity instead of etfEntity is not block entity compatible and must null check
+            @Nullable Entity entity = etfEntity.entity();
 
             ObjectImmutableList<String> spawnConditions;
             if (ETFConfigData.restrictUpdateProperties) {
                 if (ETFManager.getInstance().ENTITY_SPAWN_CONDITIONS_CACHE.containsKey(id)) {
                     spawnConditions = (ETFManager.getInstance().ENTITY_SPAWN_CONDITIONS_CACHE.get(id));
                 } else {
-                    spawnConditions = readAllSpawnConditionsForCache(entity);
+                    spawnConditions = readAllSpawnConditionsForCache(etfEntity);
                     ETFManager.getInstance().ENTITY_SPAWN_CONDITIONS_CACHE.put(id, spawnConditions);
                 }
             } else {
@@ -825,7 +841,7 @@ public abstract class ETFTexturePropertiesUtils {
                 if (isUpdate && ETFConfigData.restrictBiome && ETFConfigData.restrictUpdateProperties && spawnConditions != null && spawnConditions.size() > 1) {
                     entityBiome = spawnConditions.get(0).trim();
                 } else {
-                    entityBiome = ETFVersionDifferenceHandler.getBiomeString(entity.world, entity.getBlockPos());
+                    entityBiome = ETFVersionDifferenceHandler.getBiomeString(etfEntity.getWorld(), etfEntity.getBlockPos());
                 }
                 //            } else if (MinecraftVersion.CURRENT.getName().equals("1.18") || MinecraftVersion.CURRENT.getName().equals("1.18.1")) {
                 //                entityBiome = ETF_1_18_1_versionPatch.getBiome(entity.world, entity.getBlockPos());
@@ -850,7 +866,7 @@ public abstract class ETFTexturePropertiesUtils {
             if (doesEntityMeetThisCaseTest && NBT_MAP != null) {
                 wasEntityTestedByAnUpdatableProperty = true;
 
-                NbtCompound entityNBT = entity.writeNbt(new NbtCompound());
+                NbtCompound entityNBT = etfEntity.writeNbt(new NbtCompound());
                 if (!entityNBT.isEmpty()) {
                     for (Map.Entry<String, String[]> entry : NBT_MAP.entrySet()) {
 
@@ -937,8 +953,8 @@ public abstract class ETFTexturePropertiesUtils {
             if (doesEntityMeetThisCaseTest && NAME_STRINGS != null) {
                 // System.out.println("start name"+doesEntityMeetThisCaseTest);
                 wasEntityTestedByAnUpdatableProperty = true;
-                if (entity.hasCustomName()) {
-                    String entityName = Objects.requireNonNull(entity.getCustomName()).getString();
+                if (etfEntity.hasCustomName()) {
+                    String entityName = Objects.requireNonNull(etfEntity.getCustomName()).getString();
 
                     boolean check = false;
                     boolean invert = false;
@@ -1005,7 +1021,7 @@ public abstract class ETFTexturePropertiesUtils {
                 if (isUpdate && ETFConfigData.restrictHeight && ETFConfigData.restrictUpdateProperties && spawnConditions != null && spawnConditions.size() > 2) {
                     entityHeight = Integer.parseInt(spawnConditions.get(1).trim());
                 } else {
-                    entityHeight = entity.getBlockY();
+                    entityHeight = etfEntity.getBlockY();
                 }
                 boolean check = false;
                 for (int i :
@@ -1132,8 +1148,8 @@ public abstract class ETFTexturePropertiesUtils {
                     raining = "1".equals(data[0].trim());
                     thundering = "1".equals(data[1].trim());
                 } else {
-                    raining = entity.world.isRaining();
-                    thundering = entity.world.isThundering();
+                    raining = etfEntity.getWorld().isRaining();
+                    thundering = etfEntity.getWorld().isThundering();
                 }
                 boolean check = false;
                 if (WEATHER_TYPE == WeatherType.clear && !(raining || thundering)) {
@@ -1178,7 +1194,7 @@ public abstract class ETFTexturePropertiesUtils {
                 if (isUpdate && ETFConfigData.restrictMoonPhase && ETFConfigData.restrictUpdateProperties && spawnConditions != null && spawnConditions.size() > 5) {
                     moonPhase = Integer.parseInt(spawnConditions.get(5).trim());
                 } else {
-                    moonPhase = entity.world.getMoonPhase();
+                    moonPhase = etfEntity.getWorld().getMoonPhase();
                 }
                 boolean check = false;
                 for (int i :
@@ -1197,7 +1213,7 @@ public abstract class ETFTexturePropertiesUtils {
                 if (isUpdate && ETFConfigData.restrictDayTime && ETFConfigData.restrictUpdateProperties && spawnConditions != null && spawnConditions.size() > 4) {
                     time = Long.parseLong(spawnConditions.get(4).trim());
                 } else {
-                    time = entity.world.getTimeOfDay();
+                    time = etfEntity.getWorld().getTimeOfDay();
                 }
                 for (String rangeOfTime :
                         TIME_RANGE_STRINGS) {
@@ -1228,12 +1244,12 @@ public abstract class ETFTexturePropertiesUtils {
                 if (isUpdate && ETFConfigData.restrictBlock && ETFConfigData.restrictUpdateProperties && spawnConditions != null && spawnConditions.size() > 6) {
                     entityOnBlocks = new String[]{spawnConditions.get(2).trim(), spawnConditions.get(6).trim()};
                 } else {
-                    String entityOnBlock1 = entity.world.getBlockState(entity.getBlockPos().down()).toString()
+                    String entityOnBlock1 = etfEntity.getWorld().getBlockState(etfEntity.getBlockPos().down()).toString()
                             .replaceFirst("minecraft:", "")
                             .replaceFirst("Block\\{", "")
                             //will print with
                             .replaceFirst("}.*", "").toLowerCase();
-                    String entityOnBlock2 = entity.world.getBlockState(entity.getBlockPos()).toString()
+                    String entityOnBlock2 = etfEntity.getWorld().getBlockState(etfEntity.getBlockPos()).toString()
                             .replaceFirst("minecraft:", "")
                             .replaceFirst("Block\\{", "")
                             //will print with
@@ -1292,8 +1308,8 @@ public abstract class ETFTexturePropertiesUtils {
             }
             if (doesEntityMeetThisCaseTest && TEAM_VALUES != null) {
                 wasEntityTestedByAnUpdatableProperty = true;
-                if (entity.getScoreboardTeam() != null) {
-                    String teamName = entity.getScoreboardTeam().getName();
+                if (etfEntity.getScoreboardTeam() != null) {
+                    String teamName = etfEntity.getScoreboardTeam().getName();
 
                     boolean check = false;
                     boolean invert = false;
@@ -1460,7 +1476,7 @@ public abstract class ETFTexturePropertiesUtils {
                 wasEntityTestedByAnUpdatableProperty = true;
                 boolean check = false;
                 //always check percentage
-                float checkValue = entity.distanceTo(MinecraftClient.getInstance().player);
+                float checkValue = etfEntity.distanceTo(MinecraftClient.getInstance().player);
                 for (String distances :
                         DISTANCE_TO_PLAYER) {
                     if (distances != null) {
@@ -1514,14 +1530,14 @@ public abstract class ETFTexturePropertiesUtils {
             //System.out.println(Arrays.toString(ITEMS) +" - " +entity.getItemsEquipped().toString());
             if (doesEntityMeetThisCaseTest && ITEMS != null) {
                 wasEntityTestedByAnUpdatableProperty = true;
-                System.out.println(Arrays.toString(ITEMS) + " - " + entity.getItemsEquipped().toString());
+                System.out.println(Arrays.toString(ITEMS) + " - " + etfEntity.getItemsEquipped().toString());
                 if (ITEMS.length == 1
                         && ("none".equals(ITEMS[0])
                         || "any".equals(ITEMS[0])
                         || "holding".equals(ITEMS[0])
                         || "wearing".equals(ITEMS[0]))) {
                     if ("none".equals(ITEMS[0])) {
-                        Iterable<ItemStack> equipped = entity.getItemsEquipped();
+                        Iterable<ItemStack> equipped = etfEntity.getItemsEquipped();
                         for (ItemStack item :
                                 equipped) {
                             if (item != null && !item.isEmpty()) {
@@ -1533,11 +1549,11 @@ public abstract class ETFTexturePropertiesUtils {
                     } else {
                         Iterable<ItemStack> items;
                         if ("any".equals(ITEMS[0])) {//any
-                            items = entity.getItemsEquipped();
+                            items = etfEntity.getItemsEquipped();
                         } else if ("holding".equals(ITEMS[0])) {
-                            items = entity.getHandItems();
+                            items = etfEntity.getHandItems();
                         } else {//wearing
-                            items = entity.getArmorItems();
+                            items = etfEntity.getArmorItems();
                         }
                         boolean found = false;
                         for (ItemStack item :
@@ -1554,7 +1570,7 @@ public abstract class ETFTexturePropertiesUtils {
                     //specifically named item
 
                     //both armour and hand held
-                    Iterable<ItemStack> equipped = entity.getItemsEquipped();
+                    Iterable<ItemStack> equipped = etfEntity.getItemsEquipped();
                     boolean found = false;
                     upper:
                     for (String itemToFind :
@@ -1586,13 +1602,13 @@ public abstract class ETFTexturePropertiesUtils {
                 doesEntityMeetThisCaseTest = (
                         //must be horizontal as vertical velocity has a bleed in from presumably gravity physics
                         //99% of mob motion is horizontal anyway
-                        entity.getVelocity().horizontalLength() == 0.0
+                        etfEntity.getVelocity().horizontalLength() == 0.0
                 ) != MOVING;
             }
 
 
-            if (wasEntityTestedByAnUpdatableProperty) {
-                UUID_CaseHasUpdateablesCustom.put(entity.getUuid(), true);
+            if (wasEntityTestedByAnUpdatableProperty && UUID_CaseHasUpdateablesCustom != null) {
+                UUID_CaseHasUpdateablesCustom.put(etfEntity.getUuid(), true);
             }
             //System.out.println("passed "+ doesEntityMeetThisCaseTest+", "+ Arrays.toString(NAME_STRINGS));
             return doesEntityMeetThisCaseTest;
@@ -1611,7 +1627,7 @@ public abstract class ETFTexturePropertiesUtils {
         }
 
         @NotNull
-        private ObjectImmutableList<String> readAllSpawnConditionsForCache(@NotNull Entity entity) {
+        private ObjectImmutableList<String> readAllSpawnConditionsForCache(@NotNull ETFEntity entity) {
             //check to speed up processing time
 
             //must be 6 length
@@ -1623,22 +1639,22 @@ public abstract class ETFTexturePropertiesUtils {
             // 5 moon-phase
             // 6 block2
             //checks to speed up runtime as values potentially won't be used but can't be null
-            @NotNull String biome = !ETFConfigData.restrictBiome ? "" : ETFVersionDifferenceHandler.getBiomeString(entity.world, entity.getBlockPos());
+            @NotNull String biome = !ETFConfigData.restrictBiome ? "" : ETFVersionDifferenceHandler.getBiomeString(entity.getWorld(), entity.getBlockPos());
             @NotNull String height = !ETFConfigData.restrictHeight ? "" : "" + entity.getBlockY();
-            @NotNull String block = !ETFConfigData.restrictBlock ? "" : entity.world.getBlockState(entity.getBlockPos().down()).toString()
+            @NotNull String block = !ETFConfigData.restrictBlock ? "" : entity.getWorld().getBlockState(entity.getBlockPos().down()).toString()
                     .replaceFirst("minecraft:", "")
                     .replaceFirst("Block\\{", "")
                     .replaceFirst("}.*", "").toLowerCase();
             //check the block the mob is inside also
             // this solves issues with soul sand and mud being undetected
-            @NotNull String block2 = !ETFConfigData.restrictBlock ? "" : entity.world.getBlockState(entity.getBlockPos()).toString()
+            @NotNull String block2 = !ETFConfigData.restrictBlock ? "" : entity.getWorld().getBlockState(entity.getBlockPos()).toString()
                     .replaceFirst("minecraft:", "")
                     .replaceFirst("Block\\{", "")
                     .replaceFirst("}.*", "").toLowerCase();
 
-            @NotNull String weather = !ETFConfigData.restrictWeather ? "" : (entity.world.isRaining() ? "1" : "0") + "-" + (entity.world.isThundering() ? "1" : "0");
-            @NotNull String time = !ETFConfigData.restrictDayTime ? "" : "" + entity.world.getTimeOfDay();
-            @NotNull String moon = !ETFConfigData.restrictMoonPhase ? "" : "" + entity.world.getMoonPhase();
+            @NotNull String weather = !ETFConfigData.restrictWeather ? "" : (entity.getWorld().isRaining() ? "1" : "0") + "-" + (entity.getWorld().isThundering() ? "1" : "0");
+            @NotNull String time = !ETFConfigData.restrictDayTime ? "" : "" + entity.getWorld().getTimeOfDay();
+            @NotNull String moon = !ETFConfigData.restrictMoonPhase ? "" : "" + entity.getWorld().getMoonPhase();
             return ObjectImmutableList.of(biome, height, block, weather, time, moon, block2);
         }
 

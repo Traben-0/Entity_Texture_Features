@@ -18,6 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
+import traben.entity_texture_features.utils.ETFEntityWrapper;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
@@ -26,7 +27,7 @@ public abstract class MixinDrownedOverlayFeatureRenderer<T extends DrownedEntity
 
 
     private ETFTexture thisETFTexture = null;
-    private DrownedEntity etf$entity = null;
+    private ETFEntityWrapper etf$entity = null;
     @Final
     @Shadow
     private DrownedEntityModel<T> model;
@@ -40,7 +41,7 @@ public abstract class MixinDrownedOverlayFeatureRenderer<T extends DrownedEntity
             method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/mob/DrownedEntity;FFFFFF)V",
             at = @At(value = "HEAD"))
     private void etf$getEntity(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T drownedEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
-        etf$entity = drownedEntity;
+        etf$entity = new ETFEntityWrapper(drownedEntity) ;
     }
 
     @ModifyArg(

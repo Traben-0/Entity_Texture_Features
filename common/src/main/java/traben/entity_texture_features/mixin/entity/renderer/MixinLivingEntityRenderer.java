@@ -28,6 +28,7 @@ import traben.entity_texture_features.mod_compat.ETF3DSkinLayersUtil;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFPlayerTexture;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
+import traben.entity_texture_features.utils.ETFEntityWrapper;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
@@ -110,9 +111,9 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
             }
             //otherwise uses regular optifine properties in offline mode as with any other mob
         }
-        thisETFTexture = ETFManager.getInstance().getETFTexture(getTexture(entity), entity, ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs);
+        thisETFTexture = ETFManager.getInstance().getETFTexture(getTexture(entity), new ETFEntityWrapper(entity), ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs);
 
-        return thisETFTexture.getTextureIdentifier(entity);
+        return thisETFTexture.getTextureIdentifier(new ETFEntityWrapper( entity));
 
 
 //

@@ -181,5 +181,7 @@
   "config.entity_texture_features.animation_compatibility.tooltip": "when enabled ETF will not tamper with any\ntexture that has an animation\ncurrently only if MoreMcmeta mod is present.\n\nNote: this may introduce z-fighting depending on your shader",
   "config.entity_texture_features.illegal_path_mode.entity": "Entities only",
   "config.entity_texture_features.disable_default_directory.title": "Disable using default directory",
-  "config.entity_texture_features.disable_default_directory.tooltip": "By default you can use the vanilla directory for random textures\nThis will allow you to disable that and enforce the optifine and etf folders usage\nthis is intended to support mods that have entity textures named 'mob2.png' for some reason"
+  "config.entity_texture_features.disable_default_directory.tooltip": "By default you can use the vanilla directory for random textures\nThis will allow you to disable that and enforce the optifine and etf folders usage\nthis is intended to support mods that have entity textures named 'mob2.png' for some reason",
+  "config.entity_texture_features.skin_features_try_transparency_for_all.title": "Enable transparency in ALL skins: ",
+  "config.entity_texture_features.skin_features_try_transparency_for_all.tooltip": "this will attempt to enabled transparent skin rendering\n for ALL skins not just ETF enabled skins\n WARNING this bypasses the 100% transparency check"
 }

@@ -41,6 +41,8 @@ public class ETFConfig {
     public boolean skinFeaturesEnabled = true;
     public boolean skinFeaturesEnableTransparency = true;
     public boolean skinFeaturesEnableFullTransparency = false;
+
+    public boolean tryETFTransparencyForAllSkins = false;
     //public boolean skinFeaturesPrintETFReadySkin = false;
     public boolean enableEnemyTeamPlayersSkinFeatures = true;
     public boolean enableBlinking = true;
