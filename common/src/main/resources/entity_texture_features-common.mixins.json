@@ -7,6 +7,8 @@
     "MixinPackScreen",
     "accessor.ElytraEntityModelAccessor",
     "accessor.MooshroomEntityAccessor",
+    "accessor.PlayerSkinProviderAccessor",
+    "accessor.PlayerSkinTextureAccessor",
     "accessor.SpriteContentsAccessor",
     "accessor.TooltipAccessor",
     "entity.block_entity.MixinBedBlockEntityRenderer",
@@ -31,6 +33,7 @@
     "entity.renderer.MixinMinecartEntityRenderer",
     "entity.renderer.MixinPiglinEntityRenderer",
     "entity.renderer.MixinPlayerEntityRenderer",
+    "entity.renderer.MixinShulkerBulletEntityRenderer",
     "entity.renderer.MixinTridentEntityRenderer",
     "entity.renderer.feature.MixinCapeFeatureRenderer",
     "entity.renderer.feature.MixinDrownedOverlayFeatureRenderer",
@@ -48,10 +51,9 @@
     "entity.renderer.feature.MixinSlimeOverlayFeatureRenderer",
     "entity.renderer.feature.MixinVillagerClothingFeatureRenderer",
     "entity.renderer.feature.MixinWardenFeatureRenderer",
+    "entity.renderer.feature.MixinWolfCollarFeatureRenderer",
     "reloading.MixinMinecraftClient",
-    "reloading.MixinSimpleResourceReload",
-    "accessor.PlayerSkinProviderAccessor",
-    "accessor.PlayerSkinTextureAccessor"
+    "reloading.MixinSimpleResourceReload"
   ],
   "mixins": [],
   "injectors": {

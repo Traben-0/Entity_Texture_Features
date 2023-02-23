@@ -162,6 +162,8 @@
   "config.entity_texture_features.warn.ebe.text.2": "Block entity features don't apply to EBE block entities.",
   "config.entity_texture_features.warn.figura.text.1": "Figura",
   "config.entity_texture_features.warn.figura.text.2": "ETF skin features are disabled for compatibility.",
+  "config.entity_texture_features.warn.quark.text.3": "Quark",
+  "config.entity_texture_features.warn.quark.text.4": "Quark's [Variant Animal Textures] must be disabled for ETF random textures to work.",
   "config.entity_texture_features.warn.ignore": "Ignored: ",
   "config.entity_texture_features.warn.iris.text.1": "Iris PBR",
   "config.entity_texture_features.warn.iris.text.2": "See 'Emissive fix options' if Iris PBR does not work on mobs.",
@@ -178,5 +180,8 @@
   "config.entity_texture_features.animation_compatibility": "Automatic animation compat",
   "config.entity_texture_features.animation_compatibility.tooltip": "when enabled ETF will not tamper with any\ntexture that has an animation\ncurrently only if MoreMcmeta mod is present.\n\nNote: this may introduce z-fighting depending on your shader",
   "config.entity_texture_features.illegal_path_mode.entity": "Entities only",
-  "config.entity_texture_features.illegal_path_mode.all": "All resources"
+  "config.entity_texture_features.disable_default_directory.title": "Disable using default directory",
+  "config.entity_texture_features.disable_default_directory.tooltip": "By default you can use the vanilla directory for random textures\nThis will allow you to disable that and enforce the optifine and etf folders usage\nthis is intended to support mods that have entity textures named 'mob2.png' for some reason",
+  "config.entity_texture_features.skin_features_try_transparency_for_all.title": "Enable transparency in ALL skins: ",
+  "config.entity_texture_features.skin_features_try_transparency_for_all.tooltip": "this will attempt to enabled transparent skin rendering\n for ALL skins not just ETF enabled skins\n WARNING this bypasses the 100% transparency check"
 }

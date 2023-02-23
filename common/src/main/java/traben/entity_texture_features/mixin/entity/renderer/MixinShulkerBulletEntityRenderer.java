@@ -1,17 +1,15 @@
 package traben.entity_texture_features.mixin.entity.renderer;
 
-import net.minecraft.block.BlockState;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.client.render.entity.MinecartEntityRenderer;
-import net.minecraft.client.render.entity.model.EntityModel;
+import net.minecraft.client.render.entity.ShulkerBulletEntityRenderer;
+import net.minecraft.client.render.entity.model.ShulkerBulletEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.vehicle.AbstractMinecartEntity;
+import net.minecraft.entity.projectile.ShulkerBulletEntity;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -26,32 +24,36 @@ import traben.entity_texture_features.utils.ETFUtils2;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
-@Mixin(MinecartEntityRenderer.class)
-public abstract class MixinMinecartEntityRenderer<T extends AbstractMinecartEntity> extends EntityRenderer<T> {
+@Mixin(ShulkerBulletEntityRenderer.class)
+public abstract class MixinShulkerBulletEntityRenderer extends EntityRenderer<ShulkerBulletEntity> {
 
     @Final
     @Shadow
     private static Identifier TEXTURE;
 
     private ETFEntityWrapper etf$entity = null;
-    @Final
-    @Shadow
-    protected EntityModel<T> model;
 
-    @SuppressWarnings("unused")
-    protected MixinMinecartEntityRenderer(EntityRendererFactory.Context ctx) {
+
+    protected MixinShulkerBulletEntityRenderer(EntityRendererFactory.Context ctx) {
         super(ctx);
     }
 
+    @Shadow
+    @Final
+    private static RenderLayer LAYER;
+
+
+    @Shadow @Final private ShulkerBulletEntityModel<ShulkerBulletEntity> model;
+
     @Inject(
-            method = "render(Lnet/minecraft/entity/vehicle/AbstractMinecartEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
+            method = "render(Lnet/minecraft/entity/projectile/ShulkerBulletEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
             at = @At(value = "HEAD"))
-    private void etf$getEntity(T abstractMinecartEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
-        etf$entity = new ETFEntityWrapper(abstractMinecartEntity) ;
+    private void etf$getEntity(ShulkerBulletEntity shulkerBulletEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
+        etf$entity = new ETFEntityWrapper(shulkerBulletEntity) ;
     }
 
     @ModifyArg(
-            method = "render(Lnet/minecraft/entity/vehicle/AbstractMinecartEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
+            method = "render(Lnet/minecraft/entity/projectile/ShulkerBulletEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/VertexConsumerProvider;getBuffer(Lnet/minecraft/client/render/RenderLayer;)Lnet/minecraft/client/render/VertexConsumer;"))
     private RenderLayer etf$returnAlteredTexture(RenderLayer renderLayer) {
 
@@ -83,7 +85,11 @@ public abstract class MixinMinecartEntityRenderer<T extends AbstractMinecartEnti
                             break;
                     }
                 } else {
-                    layerToReturn = RenderLayer.getEntityCutoutNoCull(alteredTexture);
+                    if (renderLayer.equals(LAYER)) {
+                        layerToReturn = RenderLayer.getEntityTranslucent(alteredTexture);
+                    } else {
+                        layerToReturn = this.model.getLayer(alteredTexture);
+                    }
                 }
 
                 if (layerToReturn != null) return layerToReturn;
@@ -96,12 +102,12 @@ public abstract class MixinMinecartEntityRenderer<T extends AbstractMinecartEnti
         return renderLayer;
     }
 
-    @Inject(method = "render(Lnet/minecraft/entity/vehicle/AbstractMinecartEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/EntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V",
+    @Inject(method = "render(Lnet/minecraft/entity/projectile/ShulkerBulletEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/ShulkerBulletEntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V",
                     shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILSOFT)
-    private void etf$applyEmissive(T abstractMinecartEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci, long l, float h, float j, float k, double d, double e, double m, double n, Vec3d vec3d, float o, float p, float q, int r, BlockState blockState, VertexConsumer vertexConsumer) {
+    private void etf$applyEmissive(ShulkerBulletEntity shulkerBulletEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci, float h, float j, float k, VertexConsumer vertexConsumer) {
         //UUID id = livingEntity.getUuid();
-        ETFManager.getInstance().getETFTexture(TEXTURE, etf$entity, ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs).renderEmissive(matrixStack, vertexConsumerProvider, model);
+        ETFManager.getInstance().getETFTexture(TEXTURE, new ETFEntityWrapper(shulkerBulletEntity), ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs).renderEmissive(matrixStack, vertexConsumerProvider, model);
 
     }
 

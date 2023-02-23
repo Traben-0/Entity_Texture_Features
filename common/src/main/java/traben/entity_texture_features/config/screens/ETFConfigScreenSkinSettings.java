@@ -35,6 +35,7 @@ public class ETFConfigScreenSkinSettings extends ETFConfigScreen {
                     ETFConfigScreenMain.temporaryETFConfig.skinFeaturesEnableFullTransparency = false;
                     ETFConfigScreenMain.temporaryETFConfig.skinFeaturesEnableTransparency = true;
                     ETFConfigScreenMain.temporaryETFConfig.enableEnemyTeamPlayersSkinFeatures = true;
+                    ETFConfigScreenMain.temporaryETFConfig.tryETFTransparencyForAllSkins = false;
                     this.clearAndInit();
                     //Objects.requireNonNull(client).setScreen(parent);
                 }));
@@ -86,6 +87,18 @@ public class ETFConfigScreenSkinSettings extends ETFConfigScreen {
                     ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.skinFeaturesEnableFullTransparency ? ScreenTexts.ON : ScreenTexts.OFF).getString()));
                 },
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".skin_features_enable_full_transparency.tooltip")
+        ));
+        this.addDrawableChild(getETFButton((int) (this.width * 0.025), (int) (this.height * 0.6), (int) (this.width * 0.45), 20,
+                Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
+                        "config." + ETFClientCommon.MOD_ID + ".skin_features_try_transparency_for_all.title"
+                ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.tryETFTransparencyForAllSkins ? ScreenTexts.ON : ScreenTexts.OFF).getString()),
+                (button) -> {
+                    ETFConfigScreenMain.temporaryETFConfig.tryETFTransparencyForAllSkins = !ETFConfigScreenMain.temporaryETFConfig.tryETFTransparencyForAllSkins;
+                    button.setMessage(Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
+                            "config." + ETFClientCommon.MOD_ID + ".skin_features_try_transparency_for_all.title"
+                    ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.tryETFTransparencyForAllSkins ? ScreenTexts.ON : ScreenTexts.OFF).getString()));
+                },
+                ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".skin_features_try_transparency_for_all.tooltip")
         ));
 
         boolean canLaunchTool = (

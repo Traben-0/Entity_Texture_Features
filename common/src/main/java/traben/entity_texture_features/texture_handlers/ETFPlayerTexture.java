@@ -4,11 +4,13 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.entity.PlayerModelPart;
+import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.PlayerSkinTexture;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -19,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.config.screens.ETFConfigScreenSkinTool;
 import traben.entity_texture_features.mixin.accessor.PlayerSkinProviderAccessor;
 import traben.entity_texture_features.mixin.accessor.PlayerSkinTextureAccessor;
+import traben.entity_texture_features.utils.ETFEntityWrapper;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.io.FileInputStream;
@@ -400,7 +403,7 @@ public class ETFPlayerTexture {
     public Identifier getBaseTextureIdentifierOrNullForVanilla(PlayerEntity player) {
         this.player = player;//refresh player data
         if (allowThisETFBaseSkin && canUseFeaturesForThisPlayer() && etfTextureOfFinalBaseSkin != null) {
-            return etfTextureOfFinalBaseSkin.getTextureIdentifier(player);
+            return etfTextureOfFinalBaseSkin.getTextureIdentifier(new ETFEntityWrapper(player));
         }
         return null;
     }
@@ -458,8 +461,8 @@ public class ETFPlayerTexture {
                         || player.getScoreboardTeam() == null));
     }
 
-    public void renderFeatures(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light, PlayerEntityModel<PlayerEntity> model) {
-        if (canUseFeaturesForThisPlayer()) {
+    public <T extends LivingEntity, M extends EntityModel<T>> void renderFeatures(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light, M model0) {
+        if (canUseFeaturesForThisPlayer() && model0 instanceof PlayerEntityModel<?> model) {
             //nose
             if (hasVillagerNose) {
                 customPlayerModel.villagerNose.copyTransform(model.head);
@@ -1262,8 +1265,19 @@ public class ETFPlayerTexture {
                 }
                 modifiedSkin.close();
             } else {
+
+                //check if they want to try load transparent skin anyway
+                if (ETFConfigData.tryETFTransparencyForAllSkins) {
+                    Identifier skinIdentifier = new Identifier(SKIN_NAMESPACE, id + ".png");
+                    ETFUtils2.registerNativeImageToIdentifier(originalSkin, skinIdentifier);
+                    etfTextureOfFinalBaseSkin = new ETFTexture(skinIdentifier, null, null, null, null, null, null, null, null);
+
+                } else {
+                    skinFailed();
+                }
+
                 // System.out.println("asdasd");
-                skinFailed();
+
             }
         } else {
             //System.out.println("asdasdffsdfsdsd");
