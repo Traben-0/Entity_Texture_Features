@@ -46,6 +46,9 @@ dependencies {
     modImplementation("maven.modrinth:oculus:${project.oculus_version}") {
       //  exclude(group: "net.fabricmc.fabric-api")//??
     }
+
+    include group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.10'
+    implementation group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.10'
 }
 
 processResources {

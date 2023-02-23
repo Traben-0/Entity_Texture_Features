@@ -24,7 +24,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import traben.entity_texture_features.mixin.accessor.SpriteAccessor;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
-import traben.entity_texture_features.utils.ETFPlaceholderEntity;
+import traben.entity_texture_features.utils.ETFBlockEntityWrapper;
 
 import java.util.UUID;
 
@@ -37,7 +37,7 @@ public abstract class MixinShulkerBoxBlockEntityRenderer implements BlockEntityR
     @Shadow
     private ShulkerEntityModel<?> model;
 
-    private ETFPlaceholderEntity etf$shulkerBoxStandInDummy = null;
+    private ETFBlockEntityWrapper etf$shulkerBoxStandInDummy = null;
     private VertexConsumerProvider etf$vertexConsumerProviderOfThis = null;
     private Identifier etf$textureOfThis = null;
 
@@ -71,8 +71,10 @@ public abstract class MixinShulkerBoxBlockEntityRenderer implements BlockEntityR
                         World worldCheck = shulkerBoxBlockEntity.getWorld();
                         if (worldCheck == null) worldCheck = MinecraftClient.getInstance().world;
                         if (worldCheck != null) {
-                            etf$shulkerBoxStandInDummy = ETFPlaceholderEntity.newFromJustWorld(worldCheck);
-                            etf$shulkerBoxStandInDummy.prepare(shulkerBoxBlockEntity, UUID.nameUUIDFromBytes(identifier.getBytes()));
+                            //etf$shulkerBoxStandInDummy = ETFPlaceholderEntity.newFromJustWorld(worldCheck);
+                            //etf$shulkerBoxStandInDummy.prepare(shulkerBoxBlockEntity, UUID.nameUUIDFromBytes(identifier.getBytes()));
+                            etf$shulkerBoxStandInDummy = new ETFBlockEntityWrapper(shulkerBoxBlockEntity, UUID.nameUUIDFromBytes(identifier.getBytes()));
+
                         }
 
 

@@ -1,14 +1,12 @@
 package traben.entity_texture_features.fabric;
 
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.entity.EntityType;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import traben.entity_texture_features.utils.ETFPlaceholderEntity;
 
 import java.io.File;
 
@@ -52,8 +50,5 @@ public class ETFVersionDifferenceHandlerImpl {
         return world.getBiome(pos).getKey().toString().split("\s/\s")[1].replaceAll("[^\\da-zA-Z_:-]", "");
     }
 
-    @NotNull
-    public static EntityType<ETFPlaceholderEntity> getPlaceHolderEntityType() {
-        return ETFClientFabric.ETF_PLACEHOLDER_ENTITY_ENTITY_TYPE;
-    }
+
 }

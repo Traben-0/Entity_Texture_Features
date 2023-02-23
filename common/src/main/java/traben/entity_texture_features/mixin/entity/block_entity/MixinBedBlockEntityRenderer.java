@@ -22,7 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import traben.entity_texture_features.mixin.accessor.SpriteAccessor;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
-import traben.entity_texture_features.utils.ETFPlaceholderEntity;
+import traben.entity_texture_features.utils.ETFBlockEntityWrapper;
 
 import java.util.UUID;
 
@@ -33,7 +33,7 @@ public abstract class MixinBedBlockEntityRenderer implements BlockEntityRenderer
 
     private boolean isAnimatedTexture = false;
     private ETFTexture thisETFTexture = null;
-    private ETFPlaceholderEntity etf$bedStandInDummy = null;
+    private ETFBlockEntityWrapper etf$bedStandInDummy = null;
     private Identifier etf$textureOfThis = null;
     private VertexConsumerProvider etf$vertexConsumerProviderOfThis = null;
 
@@ -72,8 +72,10 @@ public abstract class MixinBedBlockEntityRenderer implements BlockEntityRenderer
                     World worldCheck = bedBlockEntity.getWorld();
                     if (worldCheck == null) worldCheck = MinecraftClient.getInstance().world;
                     if (worldCheck != null) {
-                        etf$bedStandInDummy = ETFPlaceholderEntity.newFromJustWorld(worldCheck);
-                        etf$bedStandInDummy.prepare(bedBlockEntity, UUID.nameUUIDFromBytes((bedBlockEntity.getPos().toString() + bedBlockEntity.getColor().toString()).getBytes()));
+                        etf$bedStandInDummy = new ETFBlockEntityWrapper(bedBlockEntity, UUID.nameUUIDFromBytes((bedBlockEntity.getPos().toString() + bedBlockEntity.getColor().toString()).getBytes()));
+
+                        //etf$bedStandInDummy = ETFPlaceholderEntity.newFromJustWorld(worldCheck);
+                        //etf$bedStandInDummy.prepare(bedBlockEntity, UUID.nameUUIDFromBytes((bedBlockEntity.getPos().toString() + bedBlockEntity.getColor().toString()).getBytes()));
                     }
                     //System.out.println(etf$bedStandInDummy.toString());
                     //etf$bedStandInDummy.setPos(bedBlockEntity.getPos().getX(), bedBlockEntity.getPos().getY(), bedBlockEntity.getPos().getZ());

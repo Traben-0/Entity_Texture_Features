@@ -41,6 +41,8 @@ public class ETFConfig {
     public boolean skinFeaturesEnabled = true;
     public boolean skinFeaturesEnableTransparency = true;
     public boolean skinFeaturesEnableFullTransparency = false;
+
+    public boolean tryETFTransparencyForAllSkins = false;
     //public boolean skinFeaturesPrintETFReadySkin = false;
     public boolean enableEnemyTeamPlayersSkinFeatures = true;
     public boolean enableBlinking = true;
@@ -68,6 +70,8 @@ public class ETFConfig {
     public Set<ETFConfigScreenWarnings.ConfigWarning> ignoredConfigs = new HashSet<>();
 
     public boolean hideConfigButton = false;
+
+    public boolean disableVanillaDirectoryVariantTextures = false;
 
     //string name stuff more in-depth than other enum for backwards compatibility
 

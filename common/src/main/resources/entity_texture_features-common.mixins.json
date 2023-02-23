@@ -50,6 +50,7 @@
     "entity.renderer.feature.MixinSlimeOverlayFeatureRenderer",
     "entity.renderer.feature.MixinVillagerClothingFeatureRenderer",
     "entity.renderer.feature.MixinWardenFeatureRenderer",
+    "entity.renderer.feature.MixinWolfCollarFeatureRenderer",
     "reloading.MixinMinecraftClient",
     "reloading.MixinSimpleResourceReload"
   ],

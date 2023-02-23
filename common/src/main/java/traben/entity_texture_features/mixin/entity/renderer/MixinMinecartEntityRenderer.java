@@ -21,6 +21,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import traben.entity_texture_features.texture_handlers.ETFManager;
+import traben.entity_texture_features.utils.ETFEntityWrapper;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
@@ -32,7 +33,7 @@ public abstract class MixinMinecartEntityRenderer<T extends AbstractMinecartEnti
     @Shadow
     private static Identifier TEXTURE;
 
-    private T etf$entity = null;
+    private ETFEntityWrapper etf$entity = null;
     @Final
     @Shadow
     protected EntityModel<T> model;
@@ -46,7 +47,7 @@ public abstract class MixinMinecartEntityRenderer<T extends AbstractMinecartEnti
             method = "render(Lnet/minecraft/entity/vehicle/AbstractMinecartEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
             at = @At(value = "HEAD"))
     private void etf$getEntity(T abstractMinecartEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
-        etf$entity = abstractMinecartEntity;
+        etf$entity = new ETFEntityWrapper(abstractMinecartEntity) ;
     }
 
     @ModifyArg(

@@ -1,7 +1,9 @@
 package traben.entity_texture_features.mixin;
 
 import net.minecraft.util.Identifier;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -13,6 +15,10 @@ import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
 @Mixin(Identifier.class)
 public abstract class MixinIdentifier {
+
+    @Shadow
+    @Final
+    protected String path;
 
     @Inject(method = "isPathValid(Ljava/lang/String;)Z", cancellable = true, at = @At("RETURN"))
     private static void etf$illegalPathOverride(String path, CallbackInfoReturnable<Boolean> cir) {
@@ -39,7 +45,8 @@ public abstract class MixinIdentifier {
                         case All:
                             ETFUtils2.logWarn(ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.illegal_path_warn").getString()
                                     + " [" + path + "]");
-                            cir.setReturnValue(true);
+                            if (!path.isBlank())
+                                cir.setReturnValue(true);
                             break;
                         default:
                             ETFUtils2.logWarn("this message should not appear #65164");
