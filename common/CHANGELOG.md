@@ -1,17 +1,14 @@
 [**ETF Changelog:**]
 
-[V4.3.2.dev.2]
+[V4.3.2]
 
-- API finalized for other mods to utilise ETFs random texture .properties file loading *(will be used in EMF)*
+- added the `NBT` OptiFine texture property, which can read any NBT value of an entity that is available to the client
+- added wolf collar support
+- API updated for other mods to utilise ETFs random texture .properties file loading *(will be used in EMF)*
 - added an option to enable transparent skins for all players, even ones not using ETF skin features.
 - added checks to catch some nullPointer crashes
 - fixed an issue requiring other clients to have ETF installed when joining an Essentials mod hosted game
 - reworked the handling of all entities internally by ETF, The ETFPlaceHolderEntity EntityType has been removed.
-
-[V4.3.2.dev]
-
-- added `NBT` texture property
-- added support for `EMF` to use ETF's property reading code for random models
 - fixed a crash caused by modded entities with large numbers as texture file name making etf think it is a variant .png
 - added config setting to disabled using variants in the vanilla directories *(making only optifine and etf folders
   work)* this is specifically added for certain mods that have their mob textures named like "mob2.png" that are detected
