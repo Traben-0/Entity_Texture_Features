@@ -16,6 +16,7 @@
 - `Illegal path override = All` config setting will no longer allow empty paths
 - added brazilian portuguese translations
 - updated chinese translations
+- fixed a crash when uploading skin changes on the forge version
 
 [V4.3.1]
 
