@@ -32,7 +32,7 @@ public abstract class MixinEntityRenderer<T extends Entity> {
 
     //copy of vanilla behaviour with option to override with a minimum light level for the mob
     public final int etf$getLight(T entity, float tickDelta, int overrideLight) {
-        BlockPos blockPos = new BlockPos(entity.getClientCameraPosVec(tickDelta));
+        BlockPos blockPos = BlockPos.method_49638(entity.getClientCameraPosVec(tickDelta));
         return LightmapTextureManager.pack(Math.max(etf$getBlockLight(entity, blockPos), overrideLight), etf$getSkyLight(entity, blockPos));
     }
 
