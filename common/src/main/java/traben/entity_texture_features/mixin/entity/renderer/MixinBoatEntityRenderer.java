@@ -65,36 +65,37 @@ public abstract class MixinBoatEntityRenderer extends EntityRenderer<BoatEntity>
 
                 Pair<Identifier, ?> pair = this.texturesAndModels.get(etf$type);
                 etf$identifier = pair.getFirst();
-                Identifier alteredTexture = ETFManager.getInstance().getETFTexture(etf$identifier, (etf$entity), ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs).getTextureIdentifier(etf$entity);
-                RenderLayer layerToReturn;
+                if (etf$identifier != null) {
+                    Identifier alteredTexture = ETFManager.getInstance().getETFTexture(etf$identifier, (etf$entity), ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs).getTextureIdentifier(etf$entity);
+                    RenderLayer layerToReturn;
 
-                if (ETFManager.getInstance().ENTITY_TYPE_RENDER_LAYER.containsKey(etf$entity.getType())) {
-                    //Identifier identifier = this.getTexture(entity);
-                    int choice = ETFManager.getInstance().ENTITY_TYPE_RENDER_LAYER.getInt(etf$entity.getType());
-                    //noinspection EnhancedSwitchMigration
-                    switch (choice) {
-                        case 1:
-                            layerToReturn = (RenderLayer.getEntityTranslucent(alteredTexture));
-                            break;
-                        case 2:
-                            layerToReturn = (RenderLayer.getEntityTranslucentCull(alteredTexture));
-                            break;
-                        case 3:
-                            layerToReturn = (RenderLayer.getEndGateway());
-                            break;
-                        case 4:
-                            layerToReturn = (RenderLayer.getOutline(alteredTexture));
-                            break;
-                        default:
-                            layerToReturn = (null);
-                            break;
+                    if (ETFManager.getInstance().ENTITY_TYPE_RENDER_LAYER.containsKey(etf$entity.getType())) {
+                        //Identifier identifier = this.getTexture(entity);
+                        int choice = ETFManager.getInstance().ENTITY_TYPE_RENDER_LAYER.getInt(etf$entity.getType());
+                        //noinspection EnhancedSwitchMigration
+                        switch (choice) {
+                            case 1:
+                                layerToReturn = (RenderLayer.getEntityTranslucent(alteredTexture));
+                                break;
+                            case 2:
+                                layerToReturn = (RenderLayer.getEntityTranslucentCull(alteredTexture));
+                                break;
+                            case 3:
+                                layerToReturn = (RenderLayer.getEndGateway());
+                                break;
+                            case 4:
+                                layerToReturn = (RenderLayer.getOutline(alteredTexture));
+                                break;
+                            default:
+                                layerToReturn = (null);
+                                break;
+                        }
+                    } else {
+                        layerToReturn = RenderLayer.getEntityCutoutNoCull(alteredTexture);
                     }
-                } else {
-                    layerToReturn = RenderLayer.getEntityCutoutNoCull(alteredTexture);
+
+                    if (layerToReturn != null) return layerToReturn;
                 }
-
-                if (layerToReturn != null) return layerToReturn;
-
             } catch (Exception e) {
                 ETFUtils2.logError(e.toString(), false);
             }

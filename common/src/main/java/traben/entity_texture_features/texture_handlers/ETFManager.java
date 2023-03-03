@@ -145,7 +145,7 @@ public class ETFManager {
 
     private static ETFTexture getErrorETFTexture() {
         ETFUtils2.registerNativeImageToIdentifier(ETFUtils2.emptyNativeImage(), new Identifier("etf:error.png"));
-        ETFUtils2.logWarn("getErrorETFTexture() was called, investigate this if called too much");
+        ETFUtils2.logWarn("getErrorETFTexture() was called, investigate this if called more than once");
         return new ETFTexture(new Identifier("etf:error.png"), false);//, ETFTexture.TextureSource.GENERIC_DEBUG);
     }
 
@@ -309,7 +309,7 @@ public class ETFManager {
     }
 
     @Nullable //when vanilla
-    private  Identifier getPossibleVariantIdentifierRedirectForFeatures(ETFEntity entity, Identifier vanillaIdentifier, TextureSource source) {
+    private Identifier getPossibleVariantIdentifierRedirectForFeatures(ETFEntity entity, Identifier vanillaIdentifier, TextureSource source) {
 
 
         Identifier regularReturnIdentifier = getPossibleVariantIdentifier(entity, vanillaIdentifier, source);
@@ -516,12 +516,16 @@ public class ETFManager {
                 }
             }
         } else {
+            if(vanillaIdentifier == null){
+                ETFUtils2.logError("getOrCreateETFTexture identifier was null and should not have been");
+                return ETF_ERROR_TEXTURE;
+            }
             //create new ETFTexture and cache it
             ETFTexture foundTexture = new ETFTexture(variantIdentifier, canBePatched);
             ETF_TEXTURE_CACHE.put(variantIdentifier, foundTexture);
             return foundTexture;
         }
-        ETFUtils2.logError("getOrCreateETFTexture and should not have");
+        ETFUtils2.logError("getOrCreateETFTexture reached the end and should not have");
         return ETF_ERROR_TEXTURE;
     }
 

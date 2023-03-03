@@ -86,7 +86,7 @@ public record ETFEntityWrapper(Entity entity) implements ETFEntity {
 
     @Override
     public float distanceTo(Entity entity) {
-        return entity.distanceTo(entity);
+        return this.entity.distanceTo(entity);
     }
 
     @Override
