@@ -6,6 +6,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.LightType;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -15,6 +16,8 @@ import traben.entity_texture_features.texture_handlers.ETFManager;
 @Mixin(EntityRenderer.class)
 public abstract class MixinEntityRenderer<T extends Entity> {
 
+
+    @Shadow public abstract int getLight(T entity, float tickDelta);
 
     @Inject(method = "getLight", at = @At(value = "RETURN"), cancellable = true)
     private void etf$vanillaLightOverrideCancel(T entity, float tickDelta, CallbackInfoReturnable<Integer> cir) {
@@ -32,7 +35,7 @@ public abstract class MixinEntityRenderer<T extends Entity> {
 
     //copy of vanilla behaviour with option to override with a minimum light level for the mob
     public final int etf$getLight(T entity, float tickDelta, int overrideLight) {
-        BlockPos blockPos = BlockPos.method_49638(entity.getClientCameraPosVec(tickDelta));
+        BlockPos blockPos = BlockPos.ofFloored(entity.getClientCameraPosVec(tickDelta));
         return LightmapTextureManager.pack(Math.max(etf$getBlockLight(entity, blockPos), overrideLight), etf$getSkyLight(entity, blockPos));
     }
 

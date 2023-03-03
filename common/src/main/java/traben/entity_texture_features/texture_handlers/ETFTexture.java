@@ -61,9 +61,15 @@ public class ETFTexture {
     // private final TextureSource source;
     private boolean canPatch = true;
 
-    public ETFTexture(Identifier variantIdentifier, boolean allowedToPatch) throws IllegalArgumentException {
+    public ETFTexture(Identifier variantIdentifier, boolean allowedToPatch) {
 
-        if (variantIdentifier == null) throw new IllegalArgumentException("ETFTexture had null identifier");
+        if (variantIdentifier == null) {
+            ETFUtils2.logError("ETFTexture had a null identifier this MUST never happen");
+            //throw new IllegalArgumentException("ETFTexture had null identifier");
+            thisIdentifier = null;
+            variantNumber = 0;
+            return;
+        }
 
         this.thisIdentifier = variantIdentifier;
         Pattern pattern = Pattern.compile("\\d+(?=\\.png)");

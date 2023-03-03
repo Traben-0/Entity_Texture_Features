@@ -18,7 +18,7 @@ import java.util.UUID;
 @SuppressWarnings("unused")
 public class ETFApi {
 
-    final public static int ETFApiVersion = 3;
+    final public static int ETFApiVersion = 4;
     //provides access to the ETF config object to read AND modify its values
     //please be sure to run the save config method below after any changes
     public static ETFConfig getETFConfigObject() {
@@ -50,10 +50,9 @@ public class ETFApi {
     // see the comments below within the object itself for further info.
     //
     //suffixKeyName would be "skins" for regular OptiFine random textures and "models" for OptiFine random entity models
-    public ETFRandomTexturePropertyInstance readRandomPropertiesFileAndReturnTestingObject(Identifier propertiesFileIdentifier, String suffixKeyName) {
+    public static ETFRandomTexturePropertyInstance readRandomPropertiesFileAndReturnTestingObject2(Identifier propertiesFileIdentifier, String suffixKeyName) {
         return ETFRandomTexturePropertyInstance.getInstance(propertiesFileIdentifier, suffixKeyName);
     }
-
 
     public static class ETFRandomTexturePropertyInstance {
         @Nullable
@@ -92,7 +91,7 @@ public class ETFApi {
         // note an output of 0 ALWAYS means you need to use the vanilla variant, usually due to finding no match
         // an output of 1, can be handled in 2 ways, usually it is used to refer to the vanilla suffix, but you might
         // also choose to check for a #1 suffix, I would recommend using 1 to mean the vanilla/default variant.
-        int getSuffixForEntity(Entity entityToBeTested, boolean isThisTheFirstTestForEntity, Object2BooleanOpenHashMap<UUID> cacheToMarkEntitiesWhoseVariantCanChangeAgain) {
+        public int getSuffixForEntity(Entity entityToBeTested, boolean isThisTheFirstTestForEntity, Object2BooleanOpenHashMap<UUID> cacheToMarkEntitiesWhoseVariantCanChangeAgain) {
             boolean isAnUpdate = !isThisTheFirstTestForEntity;
             for (ETFTexturePropertiesUtils.ETFTexturePropertyCase testCase : propertyCases) {
                 if (testCase.doesEntityMeetConditionsOfThisCase(entityToBeTested, isThisTheFirstTestForEntity, cacheToMarkEntitiesWhoseVariantCanChangeAgain)){
@@ -104,7 +103,7 @@ public class ETFApi {
 
         // same as above but valid for Block Entities, you must supply a UUID,
         // you can always generate a UUID from a string with UUID.nameUUIDFromBytes("STRING".getBytes())
-        int getSuffixForBlockEntity(BlockEntity entityToBeTested, UUID uuidForBlockEntity, boolean isThisTheFirstTestForEntity, Object2BooleanOpenHashMap<UUID> cacheToMarkEntitiesWhoseVariantCanChangeAgain) {
+        public int getSuffixForBlockEntity(BlockEntity entityToBeTested, UUID uuidForBlockEntity, boolean isThisTheFirstTestForEntity, Object2BooleanOpenHashMap<UUID> cacheToMarkEntitiesWhoseVariantCanChangeAgain) {
             boolean isAnUpdate = !isThisTheFirstTestForEntity;
             for (ETFTexturePropertiesUtils.ETFTexturePropertyCase testCase : propertyCases) {
                 if (testCase.doesEntityMeetConditionsOfThisCase(entityToBeTested, uuidForBlockEntity, isThisTheFirstTestForEntity, cacheToMarkEntitiesWhoseVariantCanChangeAgain)){

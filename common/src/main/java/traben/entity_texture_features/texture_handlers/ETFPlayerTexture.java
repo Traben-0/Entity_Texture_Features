@@ -402,8 +402,12 @@ public class ETFPlayerTexture {
     @Nullable
     public Identifier getBaseTextureIdentifierOrNullForVanilla(PlayerEntity player) {
         this.player = player;//refresh player data
-        if (allowThisETFBaseSkin && canUseFeaturesForThisPlayer() && etfTextureOfFinalBaseSkin != null) {
-            return etfTextureOfFinalBaseSkin.getTextureIdentifier(new ETFEntityWrapper(player));
+        if (etfTextureOfFinalBaseSkin != null) {
+            if (allowThisETFBaseSkin && canUseFeaturesForThisPlayer()) {
+                return etfTextureOfFinalBaseSkin.getTextureIdentifier(new ETFEntityWrapper(player));
+            } else if (ETFConfigData.tryETFTransparencyForAllSkins) {
+                return etfTextureOfFinalBaseSkin.getTextureIdentifier(new ETFEntityWrapper(player));
+            }
         }
         return null;
     }
