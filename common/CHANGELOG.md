@@ -1,5 +1,12 @@
 [**ETF Changelog:**]
 
+[V4.3.3]
+
+- further api tweaks for EMF
+- fixed distanceTo property not working in 4.3.2
+- fixed a boat texture crash
+- fixed transparency setting for non-ETF skins not working in 4.3.2
+
 [V4.3.2]
 
 - added the `NBT` OptiFine texture property, which can read any NBT value of an entity that is available to the client
