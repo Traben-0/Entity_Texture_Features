@@ -2,10 +2,9 @@
 
 [V4.3.3]
 
-- further api tweaks for EMF
+- api tweaks
 - fixed distanceTo property not working in 4.3.2
 - fixed a boat texture crash
-- fixed transparency setting for non-ETF skins not working in 4.3.2
 
 [V4.3.2]
 

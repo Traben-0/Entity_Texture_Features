@@ -489,7 +489,7 @@ public class ETFPlayerTexture {
                 if (texturedNoseIdentifierEnchanted != null) {
                     customPlayerModel.textureNose.copyTransform(model.head);
                     VertexConsumer noseVertex_ench = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(texturedNoseIdentifierEnchanted), false, true);
-                    customPlayerModel.textureNose.render(matrixStack, noseVertex_ench, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                    customPlayerModel.textureNose.render(matrixStack, noseVertex_ench, light, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
                 }
             }
 
@@ -523,9 +523,9 @@ public class ETFPlayerTexture {
                 if (coatEnchantedIdentifier != null) {
                     VertexConsumer enchantVert = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(coatEnchantedIdentifier), false, true);
                     if (hasFatCoat) {
-                        customPlayerModel.fatJacket.render(matrixStack, enchantVert, light, OverlayTexture.DEFAULT_UV, 1, 1, 1, 0.16f);
+                        customPlayerModel.fatJacket.render(matrixStack, enchantVert, light, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1f);
                     } else {
-                        customPlayerModel.jacket.render(matrixStack, enchantVert, light, OverlayTexture.DEFAULT_UV, 1, 1, 1, 0.16f);
+                        customPlayerModel.jacket.render(matrixStack, enchantVert, light, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1f);
                     }
                 }
 
@@ -569,7 +569,7 @@ public class ETFPlayerTexture {
                             case BLINK2, BLINK2_PATCHED, APPLY_BLINK2 -> baseEnchantBlink2Identifier;
                             default -> baseEnchantIdentifier;
                         }), false, true);
-                model.render(matrixStack, enchantVert, light, OverlayTexture.DEFAULT_UV, 1, 1, 1, 0.16f);
+                model.render(matrixStack, enchantVert, light, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1f);
             }
 
         }

@@ -134,7 +134,7 @@ public class ETFConfigScreenMain extends ETFConfigScreen {
 
         renderGUITexture(new Identifier(MOD_ID + ":textures/gui/icon.png"), (this.width * 0.3) - 64, (this.height * 0.5) - 64, (this.width * 0.3) + 64, (this.height * 0.5) + 64);
         if (shownWarning) {
-            drawCenteredText(matrices, textRenderer,
+            drawCenteredTextWithShadow(matrices, textRenderer,
                     Text.of(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".warnings_main").getString() + warningCount),
                     (int) (width * 0.2), (int) (height * 0.1) - 9, 11546150);
         }

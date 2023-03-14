@@ -24,7 +24,7 @@ public class ETFApi {
     public static ETFConfig getETFConfigObject() {
         return ETFClientCommon.ETFConfigData;
     }
-    //static getter that simply provided an object pointer, doesn't work with config resseting
+    //static getter that simply provided an object pointer, doesn't work with newer config resetting
     @Deprecated
     public static ETFConfig getETFConfigObject = ETFClientCommon.ETFConfigData;
 
@@ -62,6 +62,7 @@ public class ETFApi {
             List<ETFTexturePropertiesUtils.ETFTexturePropertyCase> etfs = ETFTexturePropertiesUtils.getAllValidPropertyObjects(props, suffixKeyName, propertiesFileIdentifier);
             if (etfs.isEmpty()) return null;
             return new ETFRandomTexturePropertyInstance(etfs);
+
         }
 
         private ETFRandomTexturePropertyInstance(List<ETFTexturePropertiesUtils.ETFTexturePropertyCase> etfs) {
