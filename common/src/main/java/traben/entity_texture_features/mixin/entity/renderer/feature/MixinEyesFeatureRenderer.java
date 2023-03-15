@@ -19,6 +19,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.texture_handlers.ETFManager;
+import traben.entity_texture_features.utils.ETFEntityWrapper;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
@@ -51,7 +52,7 @@ public abstract class MixinEyesFeatureRenderer<T extends Entity, M extends Entit
             }
 
             if (check != null) {
-                Identifier altered = ETFManager.getInstance().getETFTexture(new Identifier(check), entity, ETFManager.TextureSource.ENTITY_FEATURE, ETFConfigData.removePixelsUnderEmissiveMobs).getTextureIdentifier(entity);
+                Identifier altered = ETFManager.getInstance().getETFTexture(new Identifier(check), new ETFEntityWrapper(entity), ETFManager.TextureSource.ENTITY_FEATURE, ETFConfigData.removePixelsUnderEmissiveMobs).getTextureIdentifier(new ETFEntityWrapper(entity));
                 //if the feature has changed to a variant perform the custom render and cancel the vanilla render
                 if (!altered.toString().equals(check)) {
                     VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEyes(altered));

@@ -9,7 +9,7 @@ import net.minecraft.client.render.entity.model.ShieldEntityModel;
 import net.minecraft.client.render.entity.model.TridentEntityModel;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.client.render.model.json.ModelTransformation;
+import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -46,7 +46,7 @@ public abstract class MixinBuiltinModelItemRenderer implements SynchronousResour
     }
 
     @Inject(method = "render", at = @At(value = "TAIL"))
-    private void etf$changeTexture(ItemStack stack, ModelTransformation.Mode mode, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, CallbackInfo ci) {
+    private void etf$changeTexture(ItemStack stack, ModelTransformationMode mode, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, CallbackInfo ci) {
         //at this point trident has already rendered we just have to render alterations over it :/
 
         if (stack.isOf(Items.TRIDENT)) {

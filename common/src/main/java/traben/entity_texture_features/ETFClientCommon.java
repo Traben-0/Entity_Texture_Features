@@ -25,7 +25,7 @@ public class ETFClientCommon {
 
 
     public static void start() {
-        LOGGER.info("Loading Entity Texture Features, Thank you for 3 Million downloads :)");
+        LOGGER.info("Loading Entity Texture Features, Thank you for 4 Million downloads :)");
         etf$loadConfig();
         ETFUtils2.checkModCompatibility();
     }

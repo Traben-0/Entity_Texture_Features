@@ -34,6 +34,8 @@ public class ETFConfigScreenEmissiveFixSettings extends ETFConfigScreen {
                     ETFConfigScreenMain.temporaryETFConfig.removePixelsUnderEmissivePlayers = true;
                     ETFConfigScreenMain.temporaryETFConfig.removePixelsUnderEmissiveMobs = true;
                     ETFConfigScreenMain.temporaryETFConfig.removePixelsUnderEmissiveBlockEntity = true;
+                    ETFConfigScreenMain.temporaryETFConfig.dontPatchPBRTextures = true;
+                    ETFConfigScreenMain.temporaryETFConfig.dontPatchAnimatedTextures = true;
 
                     this.clearAndInit();
                     //Objects.requireNonNull(client).setScreen(parent);

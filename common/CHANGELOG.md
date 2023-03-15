@@ -1,5 +1,38 @@
 [**ETF Changelog:**]
 
+[V4.3.3]
+
+- api tweaks
+- fixed distanceTo property not working in 4.3.2
+- fixed a boat texture crash
+
+[V4.3.2]
+
+- added the `NBT` OptiFine texture property, which can read any NBT value of an entity that is available to the client
+- added wolf collar support
+- API updated for other mods to utilise ETFs random texture .properties file loading *(will be used in EMF)*
+- added an option to enable transparent skins for all players, even ones not using ETF skin features.
+- added checks to catch some nullPointer crashes
+- fixed an issue requiring other clients to have ETF installed when joining an Essentials mod hosted game
+- reworked the handling of all entities internally by ETF, The ETFPlaceHolderEntity EntityType has been removed.
+- fixed a crash caused by modded entities with large numbers as texture file name making etf think it is a variant .png
+- added config setting to disabled using variants in the vanilla directories *(making only optifine and etf folders
+  work)* this is specifically added for certain mods that have their mob textures named like "mob2.png" that are detected
+  as random mobs by etf
+- `Illegal path override = All` config setting will no longer allow empty paths
+- added brazilian portuguese translations
+- updated chinese translations
+- fixed a crash when uploading skin changes on the forge version
+
+[V4.3.1]
+
+- updated russian translation to 4.3 thanks to @Felix14-v2
+- fixed a button translation
+- added compatibility warning message for Quark as it's [Variant Animal Textures] setting must be disabled for ETF's to work
+- resolved an issue with additional textures like enderman_eyes.png or sheep_fur.png resetting after a short time if the
+  base texture had .properties but the additional texture didn't
+- added shulker bullet texture support
+
 [V4.3.0]
 
 *Update summary*

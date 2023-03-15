@@ -78,12 +78,12 @@ public class ETFConfigScreenWarnings extends ETFConfigScreen {
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         super.render(matrices, mouseX, mouseY, delta);
 
-        drawCenteredText(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".warn_instruction"), (int) (width * 0.5), (int) (height * 0.18), 0xFFFFFF);
+        drawCenteredTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".warn_instruction"), (int) (width * 0.5), (int) (height * 0.18), 0xFFFFFF);
         //drawCenteredText(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".warn_instruction2"), (int) (width * 0.5), (int) (height * 0.23), 0xFFFFFF);
         double offset = 0.0;
 
         if (ETFClientCommon.configHadLoadError) {
-            drawCenteredText(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".warn_config_load"), (int) (width * 0.5), (int) (height * 0.28), 11546150);
+            drawCenteredTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".warn_config_load"), (int) (width * 0.5), (int) (height * 0.28), 11546150);
             offset = 0.1;
         }
 
@@ -104,7 +104,7 @@ public class ETFConfigScreenWarnings extends ETFConfigScreen {
         FIGURA(true, "figura", "config." + ETFClientCommon.MOD_ID + ".warn.figura.text.1", "config." + ETFClientCommon.MOD_ID + ".warn.figura.text.2"),
         //SKINLAYERS(false, "skinlayers", "config." + ETFClientCommon.MOD_ID + ".warn.skinlayers.text.1", "config." + ETFClientCommon.MOD_ID + ".warn.skinlayers.text.2"),
         ENHANCED_BLOCK_ENTITIES(false, "enhancedblockentities", "config." + ETFClientCommon.MOD_ID + ".warn.ebe.text.1", "config." + ETFClientCommon.MOD_ID + ".warn.ebe.text.2"),
-        //QUARK(true,"quark","config." + ETFClientCommon.MOD_ID + ".warn.quark.text.1", "config." + ETFClientCommon.MOD_ID + ".warn.quark.text.2"),
+        QUARK(false, "quark", "config." + ETFClientCommon.MOD_ID + ".warn.quark.text.3", "config." + ETFClientCommon.MOD_ID + ".warn.quark.text.4"),
         IRIS(false, "iris", "config." + ETFClientCommon.MOD_ID + ".warn.iris.text.1", "config." + ETFClientCommon.MOD_ID + ".warn.iris.text.2");
         //IMPERSONATE(true, "impersonate", "config." + ETFClientCommon.MOD_ID + ".warn.impersonate.text.1", "config." + ETFClientCommon.MOD_ID + ".warn.impersonate.text.2");
 

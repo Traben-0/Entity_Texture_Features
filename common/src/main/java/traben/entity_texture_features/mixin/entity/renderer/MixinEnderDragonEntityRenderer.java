@@ -18,6 +18,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import traben.entity_texture_features.texture_handlers.ETFManager;
+import traben.entity_texture_features.utils.ETFEntityWrapper;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
@@ -40,7 +41,7 @@ public abstract class MixinEnderDragonEntityRenderer extends EntityRenderer<Ende
     @Final
     @Shadow
     private static RenderLayer DRAGON_EYES;     //= RenderLayer.getEyes(EYE_TEXTURE);
-    private EnderDragonEntity etf$entity = null;
+    private ETFEntityWrapper etf$entity = null;
     @Final
     @Shadow
     private EnderDragonEntityRenderer.DragonEntityModel model;
@@ -54,7 +55,7 @@ public abstract class MixinEnderDragonEntityRenderer extends EntityRenderer<Ende
             method = "render(Lnet/minecraft/entity/boss/dragon/EnderDragonEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
             at = @At(value = "HEAD"))
     private void etf$getEntity(EnderDragonEntity enderDragonEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
-        etf$entity = enderDragonEntity;
+        etf$entity = new ETFEntityWrapper( enderDragonEntity);
     }
 
     @ModifyArg(
@@ -67,13 +68,13 @@ public abstract class MixinEnderDragonEntityRenderer extends EntityRenderer<Ende
                 Identifier alteredTexture;
                 RenderLayer layerToReturn = null;
                 if (texturedRenderLayer.equals(DRAGON_DECAL)) {
-                    alteredTexture = ETFManager.getInstance().getETFTexture(TEXTURE, etf$entity, ETFManager.TextureSource.ENTITY_FEATURE, ETFConfigData.removePixelsUnderEmissiveMobs).getTextureIdentifier(etf$entity);
+                    alteredTexture = ETFManager.getInstance().getETFTexture(TEXTURE, (etf$entity), ETFManager.TextureSource.ENTITY_FEATURE, ETFConfigData.removePixelsUnderEmissiveMobs).getTextureIdentifier(etf$entity);
                     layerToReturn = RenderLayer.getEntityDecal(alteredTexture);
                 } else if (texturedRenderLayer.equals(DRAGON_CUTOUT)) {
-                    alteredTexture = ETFManager.getInstance().getETFTexture(TEXTURE, etf$entity, ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs).getTextureIdentifier(etf$entity);
+                    alteredTexture = ETFManager.getInstance().getETFTexture(TEXTURE, (etf$entity), ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs).getTextureIdentifier(etf$entity);
                     layerToReturn = RenderLayer.getEntityCutoutNoCull(alteredTexture);
                 } else if (texturedRenderLayer.equals(DRAGON_EYES)) {
-                    layerToReturn = RenderLayer.getEyes(ETFManager.getInstance().getETFTexture(EYE_TEXTURE, etf$entity, ETFManager.TextureSource.ENTITY_FEATURE, ETFConfigData.removePixelsUnderEmissiveMobs).getTextureIdentifier(etf$entity));
+                    layerToReturn = RenderLayer.getEyes(ETFManager.getInstance().getETFTexture(EYE_TEXTURE, (etf$entity), ETFManager.TextureSource.ENTITY_FEATURE, ETFConfigData.removePixelsUnderEmissiveMobs).getTextureIdentifier(etf$entity));
                 }
                 if (layerToReturn != null) return layerToReturn;
 
@@ -90,7 +91,7 @@ public abstract class MixinEnderDragonEntityRenderer extends EntityRenderer<Ende
                     shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILSOFT)
     private void etf$applyEmissive(EnderDragonEntity enderDragonEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci, float h, float j, boolean bl, VertexConsumer vertexConsumer3) {
         //UUID id = livingEntity.getUuid();
-        ETFManager.getInstance().getETFTexture(TEXTURE, etf$entity, ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs).renderEmissive(matrixStack, vertexConsumerProvider, model);
+        ETFManager.getInstance().getETFTexture(TEXTURE, (etf$entity), ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs).renderEmissive(matrixStack, vertexConsumerProvider, model);
 
     }
 

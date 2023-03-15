@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
+import traben.entity_texture_features.utils.ETFEntityWrapper;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
@@ -22,7 +23,7 @@ import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 public abstract class MixinShulkerHeadFeatureRenderer extends FeatureRenderer<ShulkerEntity, ShulkerEntityModel<ShulkerEntity>> {
 
 
-    ShulkerEntity etf$shulker = null;
+    ETFEntityWrapper etf$shulker = null;
     private ETFTexture thisETFTexture = null;
 
     @SuppressWarnings("unused")
@@ -43,7 +44,7 @@ public abstract class MixinShulkerHeadFeatureRenderer extends FeatureRenderer<Sh
             method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/mob/ShulkerEntity;FFFFFF)V",
             at = @At(value = "HEAD"))
     private void getEntity(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, ShulkerEntity shulkerEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
-        etf$shulker = shulkerEntity;
+        etf$shulker = new ETFEntityWrapper(shulkerEntity);
     }
 
     @ModifyArg(

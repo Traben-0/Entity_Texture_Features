@@ -35,6 +35,7 @@ public class ETFConfigScreenSkinSettings extends ETFConfigScreen {
                     ETFConfigScreenMain.temporaryETFConfig.skinFeaturesEnableFullTransparency = false;
                     ETFConfigScreenMain.temporaryETFConfig.skinFeaturesEnableTransparency = true;
                     ETFConfigScreenMain.temporaryETFConfig.enableEnemyTeamPlayersSkinFeatures = true;
+                    ETFConfigScreenMain.temporaryETFConfig.tryETFTransparencyForAllSkins = false;
                     this.clearAndInit();
                     //Objects.requireNonNull(client).setScreen(parent);
                 }));
@@ -87,6 +88,18 @@ public class ETFConfigScreenSkinSettings extends ETFConfigScreen {
                 },
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".skin_features_enable_full_transparency.tooltip")
         ));
+        this.addDrawableChild(getETFButton((int) (this.width * 0.025), (int) (this.height * 0.6), (int) (this.width * 0.45), 20,
+                Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
+                        "config." + ETFClientCommon.MOD_ID + ".skin_features_try_transparency_for_all.title"
+                ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.tryETFTransparencyForAllSkins ? ScreenTexts.ON : ScreenTexts.OFF).getString()),
+                (button) -> {
+                    ETFConfigScreenMain.temporaryETFConfig.tryETFTransparencyForAllSkins = !ETFConfigScreenMain.temporaryETFConfig.tryETFTransparencyForAllSkins;
+                    button.setMessage(Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
+                            "config." + ETFClientCommon.MOD_ID + ".skin_features_try_transparency_for_all.title"
+                    ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.tryETFTransparencyForAllSkins ? ScreenTexts.ON : ScreenTexts.OFF).getString()));
+                },
+                ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".skin_features_try_transparency_for_all.tooltip")
+        ));
 
         boolean canLaunchTool = (
                 ETFClientCommon.ETFConfigData.skinFeaturesEnabled && ETFVersionDifferenceHandler.isFabric() == ETFVersionDifferenceHandler.isThisModLoaded("fabric"))
@@ -111,9 +124,9 @@ public class ETFConfigScreenSkinSettings extends ETFConfigScreen {
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         super.render(matrices, mouseX, mouseY, delta);
 
-        drawCenteredText(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.title"), (int) (width * 0.75), (int) (height * 0.35), 0xFFFFFF);
-        drawCenteredText(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.button_desc.1"), (int) (width * 0.75), (int) (height * 0.4), 0xCCCCCC);
-        drawCenteredText(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.button_desc.2"), (int) (width * 0.75), (int) (height * 0.45), 0xCCCCCC);
+        drawCenteredTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.title"), (int) (width * 0.75), (int) (height * 0.35), 0xFFFFFF);
+        drawCenteredTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.button_desc.1"), (int) (width * 0.75), (int) (height * 0.4), 0xCCCCCC);
+        drawCenteredTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.button_desc.2"), (int) (width * 0.75), (int) (height * 0.45), 0xCCCCCC);
     }
 
 }
