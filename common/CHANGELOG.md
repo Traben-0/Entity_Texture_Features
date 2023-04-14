@@ -1,5 +1,14 @@
 [**ETF Changelog:**]
 
+
+[V4.4]
+- full `NBT` property parity with OptiFine, ETF now parses the examples in this link correctly *(https://optifine.readthedocs.io/syntax.html#nbt)*
+- added ETF only `NBT` "raw:" syntax variant "print_raw:" which will act just like "raw:" but will also print what that raw value is for testing purposes
+- the `Blocks` property now utilizes the full OptiFine blocks syntax `[namespace:]name[:property1=value1,...:property2=value1,...]`
+allowing matches such as `"blocks=oak_stairs:facing=east,west:half=bottom"`
+- made `Name`, `Names`, `Biomes` and `Teams` properties more robust and all 3 can now utilise Regex and Pattern not just `Names`
+- resolved injection warning on mod load
+
 [V4.3.5]
 
 - forge version updated to 1.19.4

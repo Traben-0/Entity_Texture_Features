@@ -37,7 +37,7 @@ import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 @Mixin(LivingEntityRenderer.class)
 public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extends EntityModel<T>> extends EntityRenderer<T> implements FeatureRendererContext<T, M> {
 
-    //private static Boolean disguiseHeadsWorkaround = null;
+
     private ETFTexture thisETFTexture = null;
     private ETFPlayerTexture thisETFPlayerTexture = null;
 
@@ -75,23 +75,25 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
         }
     }
 
+
+
     @Redirect(
             method = "getRenderLayer",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/LivingEntityRenderer;getTexture(Lnet/minecraft/entity/Entity;)Lnet/minecraft/util/Identifier;"))
-    private Identifier etf$alterTexture(LivingEntityRenderer<T, M> instance, Entity inEntity) {
+    private Identifier etf$getTextureRedirect(LivingEntityRenderer<?,?> instance, Entity entity){
+            etf$thisIdentifier = etf$getTexture(entity);
+            return etf$thisIdentifier;
+    }
+
+    private Identifier etf$thisIdentifier = null;
+
+
+
+    private Identifier etf$getTexture(Entity inEntity) {
         @SuppressWarnings("unchecked")// is always safe as it's always a living entity but IntelliJ won't believe it
         T entity = (T) inEntity;
         if (entity instanceof PlayerEntity player) {
             if (ETFConfigData.skinFeaturesEnabled) {
-//                if (disguiseHeadsWorkaround == null) {
-//                    disguiseHeadsWorkaround = false;// ETFVersionDifferenceHandler.isThisModLoaded("disguiseheads");
-//                }
-//                if (disguiseHeadsWorkaround) {
-//                    ItemStack armour = player.getInventory().getArmorStack(3);
-//                    if (armour.isOf(Items.PLAYER_HEAD)) {
-//                        return getTexture(entity);
-//                    }
-//                }
 
                 thisETFPlayerTexture = ETFManager.getInstance().getPlayerTexture(player, ((AbstractClientPlayerEntity) player).getSkinTexture());
                 if (thisETFPlayerTexture != null) {
@@ -175,25 +177,26 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
     }
 */
 
-    @Inject(method = "Lnet/minecraft/client/render/entity/LivingEntityRenderer;getRenderLayer(Lnet/minecraft/entity/LivingEntity;ZZZ)Lnet/minecraft/client/render/RenderLayer;", at = @At("RETURN"), locals = LocalCapture.CAPTURE_FAILSOFT, cancellable = true)
-    private void etf$renderLayerAlter(T entity, boolean showBody, boolean translucent, boolean showOutline, CallbackInfoReturnable<RenderLayer> cir, Identifier identifier) {
-
+    @Inject(method = "Lnet/minecraft/client/render/entity/LivingEntityRenderer;getRenderLayer(Lnet/minecraft/entity/LivingEntity;ZZZ)Lnet/minecraft/client/render/RenderLayer;",
+            at = @At("RETURN"), locals = LocalCapture.CAPTURE_FAILSOFT, cancellable = true)
+    private void etf$renderLayerModify(T entity, boolean showBody, boolean translucent, boolean showOutline, CallbackInfoReturnable<RenderLayer> cir) {
+        //Identifier identifier = etf$getTexture(entity);
         if (!translucent && showBody && ETFManager.getInstance().ENTITY_TYPE_RENDER_LAYER.containsKey(entity.getType())) {
             //Identifier identifier = this.getTexture(entity);
             int choice = ETFManager.getInstance().ENTITY_TYPE_RENDER_LAYER.getInt(entity.getType());
             //noinspection EnhancedSwitchMigration
             switch (choice) {
                 case 1:
-                    cir.setReturnValue(RenderLayer.getEntityTranslucent(identifier));
+                    cir.setReturnValue(RenderLayer.getEntityTranslucent(etf$thisIdentifier));
                     break;
                 case 2:
-                    cir.setReturnValue(RenderLayer.getEntityTranslucentCull(identifier));
+                    cir.setReturnValue(RenderLayer.getEntityTranslucentCull(etf$thisIdentifier));
                     break;
                 case 3:
                     cir.setReturnValue(RenderLayer.getEndGateway());
                     break;
                 case 4:
-                    cir.setReturnValue(RenderLayer.getOutline(identifier));
+                    cir.setReturnValue(RenderLayer.getOutline(etf$thisIdentifier));
                     break;
                 default:
                     cir.setReturnValue(cir.getReturnValue());
@@ -202,8 +205,9 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
         } else {
             cir.setReturnValue(cir.getReturnValue());
         }
-
     }
+
+
 
     @ModifyArg(
             method = "addFeature",
