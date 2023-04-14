@@ -1,5 +1,12 @@
 [**ETF Changelog:**]
 
+[V4.3.5]
+
+- forge version updated to 1.19.4
+- fixed crash in skin tool when selecting pixels
+- fixed armor stands with nbt "Marker:1b" not working
+- improved compat with modded custom boat type textures
+
 [V4.3.3]
 
 - api tweaks
@@ -17,7 +24,8 @@
 - reworked the handling of all entities internally by ETF, The ETFPlaceHolderEntity EntityType has been removed.
 - fixed a crash caused by modded entities with large numbers as texture file name making etf think it is a variant .png
 - added config setting to disabled using variants in the vanilla directories *(making only optifine and etf folders
-  work)* this is specifically added for certain mods that have their mob textures named like "mob2.png" that are detected
+  work)* this is specifically added for certain mods that have their mob textures named like "mob2.png" that are
+  detected
   as random mobs by etf
 - `Illegal path override = All` config setting will no longer allow empty paths
 - added brazilian portuguese translations
@@ -28,7 +36,8 @@
 
 - updated russian translation to 4.3 thanks to @Felix14-v2
 - fixed a button translation
-- added compatibility warning message for Quark as it's [Variant Animal Textures] setting must be disabled for ETF's to work
+- added compatibility warning message for Quark as it's [Variant Animal Textures] setting must be disabled for ETF's to
+  work
 - resolved an issue with additional textures like enderman_eyes.png or sheep_fur.png resetting after a short time if the
   base texture had .properties but the additional texture didn't
 - added shulker bullet texture support
@@ -47,7 +56,7 @@ Added:
 - added Minecart, Boat, Evoker Fang, and Llama carpet texture support
 - added an option 'enabled by default' to set ETF to not tamper with any textures that have PBR textures attached, to
   preserve PBR functionality, only if shader mods are present
-- added an option 'enabled by default' to set ETF to not tamper with any textures that has `moremcmeta mod` animations, 
+- added an option 'enabled by default' to set ETF to not tamper with any textures that has `moremcmeta mod` animations,
   to preserve animation functionality, only if `moremcmeta` is present
 
 Changed:
@@ -70,7 +79,8 @@ Fixed:
 - fixed updatable properties for additional mob textures, like sheep_fur.png and villager types, not updating if the
   base texture doesn't
 - fixed tooltip lines ignoring line breaks in 1.19.3
-- fixed an issue with the `[Allow broken texture paths]` setting preventing resource packs with broken paths from loading
+- fixed an issue with the `[Allow broken texture paths]` setting preventing resource packs with broken paths from
+  loading
   correctly in 1.19.3
 - fixed an issue with chest emissive textures
 

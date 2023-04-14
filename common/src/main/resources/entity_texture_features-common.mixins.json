@@ -25,6 +25,7 @@
     "entity.misc.MixinGlowSquidEntity",
     "entity.misc.MixinPlayerEntity",
     "entity.misc.MixinTridentEntity",
+    "entity.renderer.MixinArmorStandEntityRenderer",
     "entity.renderer.MixinBoatEntityRenderer",
     "entity.renderer.MixinEnderDragonEntityRenderer",
     "entity.renderer.MixinEntityRenderer",

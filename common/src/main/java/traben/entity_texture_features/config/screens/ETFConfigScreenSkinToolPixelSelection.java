@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
@@ -80,6 +81,7 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFConfigScreen {
             for (int y = 0; y < 64; y++) {
                 int finalX = x;
                 int finalY = y;
+
                 ButtonWidget butt = new ButtonWidget((int) ((this.width * 0.35) + (x * pixelSize)), (int) ((this.height * 0.2) + (y * pixelSize)), pixelSize, pixelSize,
                         Text.of(""),
                         (button) -> {
@@ -96,7 +98,7 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFConfigScreen {
                             if (ETFUtils2.registerNativeImageToIdentifier(etfParent.currentEditorSkin, randomID2)) {
                                 currentSkinToRender = randomID2;
                             }
-                        }, null) {
+                        }, Supplier::get) {
                     @Override
                     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
                         //invisible lol

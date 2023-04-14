@@ -46,7 +46,7 @@ dependencies {
     modImplementation("maven.modrinth:oculus:${project.oculus_version}") {
         //  exclude(group: "net.fabricmc.fabric-api")//??
     }
-    modImplementation("maven.modrinth:3dskinlayers:${project.skinlayers_version}-forge") {
+    modImplementation("maven.modrinth:3dskinlayers:${project.skinlayers_version}") {
         //exclude(group: "net.fabricmc.fabric-api")
     }
 
