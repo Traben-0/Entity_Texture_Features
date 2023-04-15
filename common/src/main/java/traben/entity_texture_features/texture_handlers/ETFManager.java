@@ -528,7 +528,13 @@ public class ETFManager {
         ETFUtils2.logError("getOrCreateETFTexture reached the end and should not have");
         return ETF_ERROR_TEXTURE;
     }
-
+    @Nullable
+    public ETFPlayerTexture getPlayerHeadTexture(ETFEntity playerHead) {
+        if (PLAYER_TEXTURE_MAP.containsKey(playerHead.getUuid())) {
+            return PLAYER_TEXTURE_MAP.get(playerHead.getUuid());
+        }
+        return null;
+    }
     @Nullable
     public ETFPlayerTexture getPlayerTexture(PlayerEntity player, Identifier rendererGivenSkin) {
         try {

@@ -18,6 +18,7 @@
     "entity.block_entity.MixinLecternBlockEntityRenderer",
     "entity.block_entity.MixinMobSpawnerBlockEntityRenderer",
     "entity.block_entity.MixinShulkerBoxBlockEntityRenderer",
+    "entity.block_entity.MixinSkullBlockEntityRenderer",
     "entity.misc.MixinAbstractClientPlayerEntity",
     "entity.misc.MixinBlazeEntity",
     "entity.misc.MixinBuiltinModelItemRenderer",

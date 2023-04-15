@@ -1,10 +1,11 @@
 package traben.entity_texture_features.texture_handlers;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.model.Model;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.*;
+import net.minecraft.client.render.block.entity.SkullBlockEntityModel;
 import net.minecraft.client.render.entity.PlayerModelPart;
-import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.texture.NativeImage;
@@ -413,6 +414,18 @@ public class ETFPlayerTexture {
     }
 
     @Nullable
+    public Identifier getBaseHeadTextureIdentifierOrNullForVanilla() {
+        if (etfTextureOfFinalBaseSkin != null) {
+            if (allowThisETFBaseSkin && canUseFeaturesForThisPlayer()) {
+                return etfTextureOfFinalBaseSkin.getTextureIdentifier(null);
+            } else if (ETFConfigData.tryETFTransparencyForAllSkins) {
+                return etfTextureOfFinalBaseSkin.getTextureIdentifier(null);
+            }
+        }
+        return null;
+    }
+
+    @Nullable
     public Identifier getBaseTextureEmissiveIdentifierOrNullForNone() {
         if (hasEmissives && canUseFeaturesForThisPlayer() && etfTextureOfFinalBaseSkin != null) {
             return etfTextureOfFinalBaseSkin.getEmissiveIdentifierOfCurrentState();
@@ -465,7 +478,7 @@ public class ETFPlayerTexture {
                         || player.getScoreboardTeam() == null));
     }
 
-    public <T extends LivingEntity, M extends EntityModel<T>> void renderFeatures(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light, M model0) {
+    public <T extends LivingEntity, M extends Model> void renderFeatures(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light, M model0) {
         if (canUseFeaturesForThisPlayer() && model0 instanceof PlayerEntityModel<?> model) {
             //nose
             if (hasVillagerNose) {
@@ -572,6 +585,21 @@ public class ETFPlayerTexture {
                 model.render(matrixStack, enchantVert, light, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1f);
             }
 
+        }else if (model0 instanceof SkullBlockEntityModel skullModel){
+            //todo nose maybe
+            if (hasEmissives && etfTextureOfFinalBaseSkin != null) {
+                etfTextureOfFinalBaseSkin.renderEmissive(matrixStack, vertexConsumerProvider, skullModel, ETFManager.EmissiveRenderModes.blockEntityMode());
+            }
+            //perform texture features
+            if (hasEnchant && baseEnchantIdentifier != null && etfTextureOfFinalBaseSkin != null) {
+                VertexConsumer enchantVert = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(
+                        switch (etfTextureOfFinalBaseSkin.currentTextureState) {
+                            case BLINK, BLINK_PATCHED, APPLY_BLINK -> baseEnchantBlinkIdentifier;
+                            case BLINK2, BLINK2_PATCHED, APPLY_BLINK2 -> baseEnchantBlink2Identifier;
+                            default -> baseEnchantIdentifier;
+                        }), false, true);
+                skullModel.render(matrixStack, enchantVert, light, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1f);
+            }
         }
     }
 
