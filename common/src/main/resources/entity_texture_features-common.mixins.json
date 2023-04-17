@@ -55,7 +55,7 @@
     "entity.renderer.feature.MixinWardenFeatureRenderer",
     "entity.renderer.feature.MixinWolfCollarFeatureRenderer",
     "reloading.MixinMinecraftClient",
-    "reloading.MixinSimpleResourceReload"
+    "reloading.MixinResourceReload"
   ],
   "mixins": [],
   "injectors": {

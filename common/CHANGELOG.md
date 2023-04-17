@@ -1,6 +1,8 @@
 [**ETF Changelog:**]
 
 
+improved resource reloading
+
 [V4.4.0-dev.1]
 - full `NBT` property parity with OptiFine, ETF now parses the examples in this link correctly *(https://optifine.readthedocs.io/syntax.html#nbt)*
 - added ETF only `NBT` "raw:" syntax variant "print_raw:" which will act just like "raw:" but will also print what that raw value is for testing purposes
