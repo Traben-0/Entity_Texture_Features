@@ -1,7 +1,10 @@
 [**ETF Changelog:**]
 
-
-improved resource reloading
+[V4.4.0-dev.2]
+- improved resource reloading mixin
+- fixed `SelectedItem` NBT tag not functioning in the NBT property
+- added ETF only `NBT` property syntax which will print the entire entities NBT data to the log, not just the specific compound, if the `NBT` property text starts with "print:", this will not affect the function of text after the "print:"
+- vanilla texture variants like `wolf_tame.png` will fall back to `wolf.properties` if `wolf_tame.properties` doesn't exist *(this is true for wolf, bee, ghast & strider texture variants)* *(only for vanilla textures)*
 
 [V4.4.0-dev.1]
 - full `NBT` property parity with OptiFine, ETF now parses the examples in this link correctly *(https://optifine.readthedocs.io/syntax.html#nbt)*

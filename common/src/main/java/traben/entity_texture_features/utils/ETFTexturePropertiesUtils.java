@@ -15,6 +15,7 @@ import net.minecraft.nbt.AbstractNbtList;
 import net.minecraft.nbt.AbstractNbtNumber;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.predicate.NbtPredicate;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
@@ -1003,7 +1004,18 @@ public abstract class ETFTexturePropertiesUtils {
             if (doesEntityMeetThisCaseTest && NBT_MAP != null) {
                 wasEntityTestedByAnUpdatableProperty = true;
 
-                NbtCompound entityNBT = etfEntity.writeNbt(new NbtCompound());
+
+                //NbtCompound entityNBT = etfEntity.writeNbt(new NbtCompound());
+
+                NbtCompound entityNBT;
+                Entity internal = etfEntity.entity();
+                if(internal != null){
+                    entityNBT = NbtPredicate.entityToNbt(internal);
+                }else{
+                    entityNBT = etfEntity.writeNbt(new NbtCompound());
+                }
+
+
                 if (!entityNBT.isEmpty()) {
                     for (Map.Entry<String, String> nbtPropertyEntry : NBT_MAP.entrySet()) {
 
@@ -1012,6 +1024,12 @@ public abstract class ETFTexturePropertiesUtils {
 
                         boolean invertFinalResult = nbtTestInstruction.startsWith("!");
                         nbtTestInstruction = nbtTestInstruction.replaceFirst("!","");
+
+                        if (nbtTestInstruction.startsWith("print:")){
+                            ETFUtils2.logMessage("NBT entity data print: ");
+                            System.out.println(entityNBT.asString());
+                            nbtTestInstruction = nbtTestInstruction.replaceFirst("print:","");
+                        }
 
                         //first find the required nbt data
                         NbtElement finalNBTElementOrNullIfFailed = null;

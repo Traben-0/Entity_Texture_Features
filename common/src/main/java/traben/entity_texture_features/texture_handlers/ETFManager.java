@@ -365,7 +365,11 @@ public class ETFManager {
             //if not null the below two represent the highest version of said files
             Identifier possibleProperty = ETFDirectory.getDirectoryVersionOf(ETFUtils2.replaceIdentifier(vanillaIdentifier, ".png", ".properties"));
             Identifier possible2PNG = ETFDirectory.getDirectoryVersionOf(ETFUtils2.replaceIdentifier(vanillaIdentifier, ".png", "2.png"));
-
+            //try fallback properties
+            if(possibleProperty == null && "minecraft".equals(vanillaIdentifier.getNamespace()) && vanillaIdentifier.getPath().contains("_")){
+                String vanId =vanillaIdentifier.getPath().replaceAll("(_tame|_angry|_nectar|_shooting|_cold)","");
+                possibleProperty = ETFDirectory.getDirectoryVersionOf(new Identifier(vanId.replace( ".png", ".properties")));
+            }
 
             //if both null vanilla fallback as no randoms
             if (possible2PNG == null && possibleProperty == null) {
