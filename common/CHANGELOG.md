@@ -1,5 +1,27 @@
 [**ETF Changelog:**]
 
+[V4.4.0]
+- full `NBT` property parity with OptiFine, ETF now parses the examples in this link correctly *(https://optifine.readthedocs.io/syntax.html#nbt)*
+- added ETF only `NBT` "raw:" syntax variant "print_raw:" which will act just like "raw:" but will also print what that raw value is for testing purposes
+- added ETF only `NBT` property syntax which will print the entire entities NBT data to the log, not just the specific compound, if the `NBT` property text starts with "print:", this will not affect the function of text after the "print:"
+- vanilla texture variants like `wolf_tame.png` will fall back to `wolf.properties` if `wolf_tame.properties` doesn't exist *(this is true for wolf, bee, ghast & strider texture variants)* *(only for vanilla textures)*
+- the `Blocks` property now utilizes the full OptiFine blocks syntax `[namespace:]name[:property1=value1,...:property2=value1,...]`
+  allowing matches such as `"blocks=oak_stairs:facing=east,west:half=bottom"`
+- made `Name`, `Names`, `Biomes` and `Teams` properties more robust and all 3 can now utilise Regex and Pattern not just `Names`
+- added support for emissive textures on mob head blocks
+- added support for emissive and enchanted skin features on player head blocks *(will only work for a player online that you have seen at least once that session, I may expand this in future)*
+- resolved injection warning on mod load
+- improved resource reloading mixin
+- altered the livingEntityMixin structure to accommodate plans for `EMF`
+- some API additions for `EMF`
+
+[V4.3.5]
+
+- forge version updated to 1.19.4
+- fixed crash in skin tool when selecting pixels
+- fixed armor stands with nbt "Marker:1b" not working
+- improved compat with modded custom boat type textures
+
 [V4.3.3]
 
 - further api tweaks for EMF
@@ -18,7 +40,8 @@
 - reworked the handling of all entities internally by ETF, The ETFPlaceHolderEntity EntityType has been removed.
 - fixed a crash caused by modded entities with large numbers as texture file name making etf think it is a variant .png
 - added config setting to disabled using variants in the vanilla directories *(making only optifine and etf folders
-  work)* this is specifically added for certain mods that have their mob textures named like "mob2.png" that are detected
+  work)* this is specifically added for certain mods that have their mob textures named like "mob2.png" that are
+  detected
   as random mobs by etf
 - `Illegal path override = All` config setting will no longer allow empty paths
 - added brazilian portuguese translations
@@ -29,7 +52,8 @@
 
 - updated russian translation to 4.3 thanks to @Felix14-v2
 - fixed a button translation
-- added compatibility warning message for Quark as it's [Variant Animal Textures] setting must be disabled for ETF's to work
+- added compatibility warning message for Quark as it's [Variant Animal Textures] setting must be disabled for ETF's to
+  work
 - resolved an issue with additional textures like enderman_eyes.png or sheep_fur.png resetting after a short time if the
   base texture had .properties but the additional texture didn't
 - added shulker bullet texture support
@@ -48,7 +72,7 @@ Added:
 - added Minecart, Boat, Evoker Fang, and Llama carpet texture support
 - added an option 'enabled by default' to set ETF to not tamper with any textures that have PBR textures attached, to
   preserve PBR functionality, only if shader mods are present
-- added an option 'enabled by default' to set ETF to not tamper with any textures that has `moremcmeta mod` animations, 
+- added an option 'enabled by default' to set ETF to not tamper with any textures that has `moremcmeta mod` animations,
   to preserve animation functionality, only if `moremcmeta` is present
 
 Changed:
@@ -71,7 +95,8 @@ Fixed:
 - fixed updatable properties for additional mob textures, like sheep_fur.png and villager types, not updating if the
   base texture doesn't
 - fixed tooltip lines ignoring line breaks in 1.19.3
-- fixed an issue with the `[Allow broken texture paths]` setting preventing resource packs with broken paths from loading
+- fixed an issue with the `[Allow broken texture paths]` setting preventing resource packs with broken paths from
+  loading
   correctly in 1.19.3
 - fixed an issue with chest emissive textures
 
