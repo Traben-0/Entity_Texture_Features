@@ -1,20 +1,19 @@
 [**ETF Changelog:**]
 
-[V4.4.0-dev.2]
-- improved resource reloading mixin
-- fixed `SelectedItem` NBT tag not functioning in the NBT property
-- added ETF only `NBT` property syntax which will print the entire entities NBT data to the log, not just the specific compound, if the `NBT` property text starts with "print:", this will not affect the function of text after the "print:"
-- vanilla texture variants like `wolf_tame.png` will fall back to `wolf.properties` if `wolf_tame.properties` doesn't exist *(this is true for wolf, bee, ghast & strider texture variants)* *(only for vanilla textures)*
-
-[V4.4.0-dev.1]
+[V4.4.0]
 - full `NBT` property parity with OptiFine, ETF now parses the examples in this link correctly *(https://optifine.readthedocs.io/syntax.html#nbt)*
 - added ETF only `NBT` "raw:" syntax variant "print_raw:" which will act just like "raw:" but will also print what that raw value is for testing purposes
+- added ETF only `NBT` property syntax which will print the entire entities NBT data to the log, not just the specific compound, if the `NBT` property text starts with "print:", this will not affect the function of text after the "print:"
+- vanilla texture variants like `wolf_tame.png` will fall back to `wolf.properties` if `wolf_tame.properties` doesn't exist *(this is true for wolf, bee, ghast & strider texture variants)* *(only for vanilla textures)*
 - the `Blocks` property now utilizes the full OptiFine blocks syntax `[namespace:]name[:property1=value1,...:property2=value1,...]`
-allowing matches such as `"blocks=oak_stairs:facing=east,west:half=bottom"`
+  allowing matches such as `"blocks=oak_stairs:facing=east,west:half=bottom"`
 - made `Name`, `Names`, `Biomes` and `Teams` properties more robust and all 3 can now utilise Regex and Pattern not just `Names`
 - added support for emissive textures on mob head blocks
 - added support for emissive and enchanted skin features on player head blocks *(will only work for a player online that you have seen at least once that session, I may expand this in future)*
 - resolved injection warning on mod load
+- improved resource reloading mixin
+- altered the livingEntityMixin structure to accommodate plans for `EMF`
+- some API additions for `EMF`
 
 [V4.3.5]
 
