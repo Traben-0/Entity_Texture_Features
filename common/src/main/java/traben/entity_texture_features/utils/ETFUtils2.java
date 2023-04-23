@@ -240,46 +240,6 @@ public abstract class ETFUtils2 {
         return empty;
     }
 
-    public static Integer[] getIntRange(String rawRange) {
-        //assume rawRange =  "20-56"  but can be "-64-56"  or "-14"
-        rawRange = rawRange.trim();
-        //sort negatives before split
-        if (rawRange.startsWith("-")) {
-            rawRange = rawRange.replaceFirst("-", "N");
-        }
-        rawRange = rawRange.replaceAll("--", "-N");
-        String[] split = rawRange.split("-");
-        if (split.length > 1) {//sort out range
-            int[] minMax = {Integer.parseInt(split[0].replaceAll("\\D", "")), Integer.parseInt(split[1].replaceAll("\\D", ""))};
-            if (split[0].contains("N")) {
-                minMax[0] = -minMax[0];
-            }
-            if (split[1].contains("N")) {
-                minMax[1] = -minMax[1];
-            }
-            ArrayList<Integer> builder = new ArrayList<>();
-            if (minMax[0] > minMax[1]) {
-                //0 must be smaller
-                minMax = new int[]{minMax[1], minMax[0]};
-            }
-            if (minMax[0] < minMax[1]) {
-                for (int i = minMax[0]; i <= minMax[1]; i++) {
-                    builder.add(i);
-                }
-            } else {
-                logMessage("Optifine properties failed to load: Texture heights range has a problem in properties file. this has occurred for value \"" + rawRange.replace("N", "-") + "\"", false);
-            }
-            return builder.toArray(new Integer[0]);
-        } else {//only 1 number but method ran because of "-" present
-            if (split[0].contains("N")) {
-                return new Integer[]{-Integer.parseInt(split[0].replaceAll("\\D", ""))};
-            } else {
-                return new Integer[]{Integer.parseInt(split[0].replaceAll("\\D", ""))};
-            }
-
-        }
-    }
-
     public static boolean registerNativeImageToIdentifier(NativeImage img, Identifier identifier) {
         if (img != null && identifier != null) {
             NativeImageBackedTexture bob = new NativeImageBackedTexture(img);

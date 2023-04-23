@@ -162,6 +162,8 @@
     "config.entity_texture_features.warn.ebe.text.2": "Os recursos de entidade de bloco não se aplicam a entidades de bloco EBE.",
     "config.entity_texture_features.warn.figura.text.1": "Figura",
     "config.entity_texture_features.warn.figura.text.2": "Os recursos de capa ETF estão desativados para compatibilidade.",
+    "config.entity_texture_features.warn.quark.text.3": "Quark",
+    "config.entity_texture_features.warn.quark.text.4": "Quark's [Texturas variantes de animais] deve ser desativado para que as texturas aleatórias do ETF funcionem.",
     "config.entity_texture_features.warn.ignore": "Ignorado: ",
     "config.entity_texture_features.warn.iris.text.1": "Iris PBR",
     "config.entity_texture_features.warn.iris.text.2": "Consulte 'Opções de correção emissiva' se o Iris PBR não funcionar em mobs.",
@@ -178,5 +180,8 @@
     "config.entity_texture_features.animation_compatibility": "Compatibilidade de animação automática",
     "config.entity_texture_features.animation_compatibility.tooltip": "quando ativado, o ETF não adulterará nenhuma\ntextura que tenha uma animação\natualmente apenas se o mod MoreMcmeta estiver presente.\n\nObservação: isso pode introduzir z-fighting, dependendo do seu shader",
     "config.entity_texture_features.illegal_path_mode.entity": "Somente entidades",
-    "config.entity_texture_features.illegal_path_mode.all": "Todos os recursos"
-}
+    "config.entity_texture_features.disable_default_directory.title": "Desativar usando o diretório padrão",
+    "config.entity_texture_features.disable_default_directory.tooltip": "Por padrão, você pode usar o diretório vanilla para texturas aleatórias\nIsso permitirá que você desative isso e imponha o uso das pastas optifine e etf\ndestina-se a oferecer suporte a mods que possuem texturas de entidade chamadas 'mob2.png' por algum motivo",
+    "config.entity_texture_features.skin_features_try_transparency_for_all.title": "Habilitar transparência em TODAS as capas: ",
+    "config.entity_texture_features.skin_features_try_transparency_for_all.tooltip": "isso tentará ativar a renderização transparente da pele\n para TODAS as skins, não apenas skins habilitadas para ETF\n AVISO isso ignora a verificação de 100% de transparência"
+}  

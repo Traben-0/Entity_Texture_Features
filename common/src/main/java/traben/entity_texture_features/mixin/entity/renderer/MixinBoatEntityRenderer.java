@@ -35,12 +35,14 @@ public abstract class MixinBoatEntityRenderer extends EntityRenderer<BoatEntity>
     private ETFEntityWrapper etf$entity = null;
     private Identifier etf$identifier = null;
 
-    private BoatEntity.Type etf$type = null;
+   // private BoatEntity.Type etf$type = null;
 
     @Final
     @Shadow
     private Map<BoatEntity.Type, Pair<Identifier, CompositeEntityModel<BoatEntity>>> texturesAndModels;
 
+
+    @Shadow public abstract Identifier getTexture(BoatEntity boatEntity);
 
     @SuppressWarnings("unused")
     protected MixinBoatEntityRenderer(EntityRendererFactory.Context ctx) {
@@ -52,7 +54,8 @@ public abstract class MixinBoatEntityRenderer extends EntityRenderer<BoatEntity>
             at = @At(value = "HEAD"))
     private void etf$getEntity(BoatEntity boatEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
         etf$entity = new ETFEntityWrapper( boatEntity);
-        etf$type = boatEntity.getBoatType();
+        //etf$type = boatEntity.getBoatType();
+        etf$identifier = getTexture(boatEntity);
     }
 
     @ModifyArg(
@@ -62,9 +65,10 @@ public abstract class MixinBoatEntityRenderer extends EntityRenderer<BoatEntity>
 
         if (ETFConfigData.enableCustomTextures && !renderLayer.equals(RenderLayer.getWaterMask())) {
             try {
+                //Pair<Identifier, ?> pair = this.texturesAndModels.get(etf$type);
+                //etf$identifier = pair.getFirst();
 
-                Pair<Identifier, ?> pair = this.texturesAndModels.get(etf$type);
-                etf$identifier = pair.getFirst();
+
                 if (etf$identifier != null) {
                     Identifier alteredTexture = ETFManager.getInstance().getETFTexture(etf$identifier, (etf$entity), ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs).getTextureIdentifier(etf$entity);
                     RenderLayer layerToReturn;

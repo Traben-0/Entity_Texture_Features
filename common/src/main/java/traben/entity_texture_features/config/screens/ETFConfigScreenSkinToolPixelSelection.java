@@ -81,6 +81,7 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFConfigScreen {
             for (int y = 0; y < 64; y++) {
                 int finalX = x;
                 int finalY = y;
+
                 ButtonWidget butt = new ButtonWidget((int) ((this.width * 0.35) + (x * pixelSize)), (int) ((this.height * 0.2) + (y * pixelSize)), pixelSize, pixelSize,
                         Text.of(""),
                         (button) -> {
