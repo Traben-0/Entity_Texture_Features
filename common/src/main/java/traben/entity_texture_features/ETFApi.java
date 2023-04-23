@@ -4,9 +4,12 @@ import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.texture_handlers.ETFManager;
+import traben.entity_texture_features.texture_handlers.ETFTexture;
+import traben.entity_texture_features.utils.ETFEntityWrapper;
 import traben.entity_texture_features.utils.ETFTexturePropertiesUtils;
 import traben.entity_texture_features.utils.ETFUtils2;
 
@@ -14,11 +17,13 @@ import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 
-//an api that will remain unchanged for external mod access (primarily puzzle at this time)
+import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
+
+//an api that will remain unchanged for external mod access (primarily puzzle and EMF at this time)
 @SuppressWarnings("unused")
 public class ETFApi {
 
-    final public static int ETFApiVersion = 4;
+    final public static int ETFApiVersion = 5;
     //provides access to the ETF config object to read AND modify its values
     //please be sure to run the save config method below after any changes
     public static ETFConfig getETFConfigObject() {
@@ -40,6 +45,28 @@ public class ETFApi {
     }
 
 
+    //pass in an entity, and its default texture and receive the current variant of that texture or the default if no variant exists
+    @NotNull
+    public static Identifier getCurrentETFVariantTextureOfEntity(@NotNull Entity entity, @NotNull Identifier defaultTexture){
+        ETFTexture etfTexture = ETFManager.getInstance().getETFTexture(defaultTexture, new ETFEntityWrapper(entity), ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs);
+        if(etfTexture != null) {// just in case
+            Identifier etfIdentifier = etfTexture.getTextureIdentifier(new ETFEntityWrapper(entity));
+            if(etfIdentifier != null){// just in case
+                return etfIdentifier;
+            }
+        }
+        return defaultTexture;
+    }
+
+    // pass in an entity, and it's default texture and receive it's current emissive texture if it exists else returns null
+    @Nullable
+    public static Identifier getCurrentETFEmissiveTextureOfEntityOrNull(@NotNull Entity entity, @NotNull Identifier defaultTexture){
+        ETFTexture etfTexture = ETFManager.getInstance().getETFTexture(defaultTexture, new ETFEntityWrapper(entity), ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs);
+        if(etfTexture != null) {// just in case
+            return etfTexture.getEmissiveIdentifierOfCurrentState();
+        }
+        return null;
+    }
 
 
     // returns the object below that provides functionality to input an entity and output a suffix integer as defined in

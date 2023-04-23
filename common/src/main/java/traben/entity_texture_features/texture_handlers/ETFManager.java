@@ -365,7 +365,11 @@ public class ETFManager {
             //if not null the below two represent the highest version of said files
             Identifier possibleProperty = ETFDirectory.getDirectoryVersionOf(ETFUtils2.replaceIdentifier(vanillaIdentifier, ".png", ".properties"));
             Identifier possible2PNG = ETFDirectory.getDirectoryVersionOf(ETFUtils2.replaceIdentifier(vanillaIdentifier, ".png", "2.png"));
-
+            //try fallback properties
+            if(possibleProperty == null && "minecraft".equals(vanillaIdentifier.getNamespace()) && vanillaIdentifier.getPath().contains("_")){
+                String vanId =vanillaIdentifier.getPath().replaceAll("(_tame|_angry|_nectar|_shooting|_cold)","");
+                possibleProperty = ETFDirectory.getDirectoryVersionOf(new Identifier(vanId.replace( ".png", ".properties")));
+            }
 
             //if both null vanilla fallback as no randoms
             if (possible2PNG == null && possibleProperty == null) {
@@ -528,7 +532,13 @@ public class ETFManager {
         ETFUtils2.logError("getOrCreateETFTexture reached the end and should not have");
         return ETF_ERROR_TEXTURE;
     }
-
+    @Nullable
+    public ETFPlayerTexture getPlayerHeadTexture(ETFEntity playerHead) {
+        if (PLAYER_TEXTURE_MAP.containsKey(playerHead.getUuid())) {
+            return PLAYER_TEXTURE_MAP.get(playerHead.getUuid());
+        }
+        return null;
+    }
     @Nullable
     public ETFPlayerTexture getPlayerTexture(PlayerEntity player, Identifier rendererGivenSkin) {
         try {
