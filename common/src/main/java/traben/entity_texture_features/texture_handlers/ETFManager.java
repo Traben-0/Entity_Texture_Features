@@ -80,8 +80,12 @@ public class ETFManager {
     public ETFTexture redMooshroomAlt = null;
     public ETFTexture brownMooshroomAlt = null;
 
+
+    public boolean skinLayersModPresent;
     private ETFManager() {
 
+        //check only once
+        skinLayersModPresent = (ETFVersionDifferenceHandler.isThisModLoaded("skinlayers") || ETFVersionDifferenceHandler.isThisModLoaded("skinlayers3d"));
 
         for (ResourcePack pack :
                 MinecraftClient.getInstance().getResourceManager().streamResourcePacks().toList()) {

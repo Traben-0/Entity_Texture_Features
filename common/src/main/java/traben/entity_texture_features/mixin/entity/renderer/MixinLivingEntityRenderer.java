@@ -21,7 +21,6 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.mod_compat.ETF3DSkinLayersUtil;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFPlayerTexture;
@@ -188,7 +187,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
     )
     private Object etf$3dSkinLayerCompat(Object featureRenderer) {
         // replace 3d skin layers mod feature renderers with ETF's child versions
-        if (ETFVersionDifferenceHandler.isThisModLoaded("skinlayers") || ETFVersionDifferenceHandler.isThisModLoaded("skinlayers3d")) {
+        if (ETFManager.getInstance().skinLayersModPresent && ETFConfigData.use3DSkinLayerPatch){
             try {
                 // handler class is only ever accessed if the mod is present
                 // prevents NoClassDefFoundError
@@ -199,7 +198,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
                 ETFUtils2.logWarn("Exception with ETF's 3D skin layers mod compatibility: " + e);
             } catch (NoClassDefFoundError error) {
                 // Should never be thrown
-                // unless a significant change if skin layers mod
+                // unless a significant change in 3d skin layers mod
                 ETFUtils2.logError("Error with ETF's 3D skin layers mod compatibility: " + error);
             }
         }

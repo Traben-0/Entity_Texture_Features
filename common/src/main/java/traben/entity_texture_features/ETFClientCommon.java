@@ -9,6 +9,7 @@ import traben.entity_texture_features.utils.ETFUtils2;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Random;
 
 
 public class ETFClientCommon {
@@ -25,10 +26,38 @@ public class ETFClientCommon {
 
 
     public static void start() {
-        LOGGER.info("Loading Entity Texture Features, Thank you for 4 Million downloads :)");
+        LOGGER.info("Loading Entity Texture Features ${version}, "+ randomQuip());
         etf$loadConfig();
         ETFUtils2.checkModCompatibility();
     }
+
+    private static String randomQuip(){
+        int rand = new Random().nextInt(quips.length);
+        return quips[rand];
+    }
+
+    private static final String[] quips = {
+            "special thanks to Cody!",
+            "also try EMF!",
+            "your third cousin's, dog's, previous owner's, uncle's, old boss's, fourth favourite mod!",
+            "Thanks for 5 Million plus downloads!!",
+            "why does no one download Solid Mobs :(",
+            "breaking your resource packs since 17 Jan 2022.",
+            "not fit for consumption in the US.",
+            "one of the mods ever made!",
+            ",serutaeF erutxeT ytitnE gnidoaL",
+            "hello there!",
+            "looking for you crash log, eh? It's down lower \\/",
+            "go drink some water.",
+            "you just lost the game.",
+            "did you know if you turn off the lights and whisper 'OptiFine' 3 times you will lose 20fps.",
+            "now compatible with Minecraft!",
+            "now available for Terraria!",
+            "OptiFine's weirder younger half-brother that runs around making train noises.",
+            ":)",
+            "did you know this mod was made because I missed the glowing drowned textures in the Fresh animations addons.",
+            "0% Opti, 100% Fine."
+    };
 
 
     // config code based on bedrockify & actually unbreaking fabric config code
