@@ -22,6 +22,9 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
+import traben.entity_texture_features.entity_handlers.ETFBlockEntityWrapper;
+import traben.entity_texture_features.entity_handlers.ETFEntity;
+import traben.entity_texture_features.entity_handlers.ETFEntityWrapper;
 import traben.entity_texture_features.mixin.accessor.MooshroomEntityAccessor;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 

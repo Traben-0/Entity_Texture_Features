@@ -111,7 +111,7 @@
   "config.entity_texture_features.player_skin_editor.remove_features": "Remove ETF features from skin.",
   "config.entity_texture_features.player_skin_editor.title": "Player skin feature tool",
   "config.entity_texture_features.player_skin_editor.button_desc.1": "An interactive tool to select and add",
-  "config.entity_texture_features.player_skin_editor.button_desc.fail": "Tool only works once in-game!",
+  "config.entity_texture_features.player_skin_editor.button_desc.fail": "Tool only works when in-game!",
   "config.entity_texture_features.player_skin_editor.button_desc.2": "player skin features to your skin",
   "config.entity_texture_features.player_skin_editor.upload_skin": "Upload skin changes to Minecraft profile",
   "config.entity_texture_features.player_skin_editor.upload_skin.fail": "Skin upload failed!",

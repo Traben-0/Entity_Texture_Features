@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
-import traben.entity_texture_features.utils.ETFEntityWrapper;
+import traben.entity_texture_features.entity_handlers.ETFEntityWrapper;
 import traben.entity_texture_features.utils.ETFTexturePropertiesUtils;
 import traben.entity_texture_features.utils.ETFUtils2;
 

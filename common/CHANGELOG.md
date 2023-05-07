@@ -1,7 +1,8 @@
 [**ETF Changelog:**]
 
 
-[dev 4.4.99]
+[dev 4.4.1]
+- players skulls now correctly reflect the texture they are meant to display, instead of the players current skin if online
 - Fixed crash caused by unexpected values in property ranges 
 - Tweaks to player skin settings screen
 - Tweaks to classes used by EMF
