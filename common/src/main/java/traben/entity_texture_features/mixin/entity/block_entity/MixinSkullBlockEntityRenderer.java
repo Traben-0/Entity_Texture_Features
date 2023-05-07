@@ -102,7 +102,7 @@ public abstract class MixinSkullBlockEntityRenderer implements BlockEntityRender
             //vanilla end
 
             if (thisETFTexture != null) {
-                thisETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, skullBlockEntityModel, ETFManager.EmissiveRenderModes.blockEntityMode());
+                thisETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, skullBlockEntityModel, ETFManager.EmissiveRenderModes.DULL);
             } else if (thisETFPlayerTexture != null) {
                 thisETFPlayerTexture.renderFeatures(matrixStack, vertexConsumerProvider, i, skullBlockEntityModel);
             }

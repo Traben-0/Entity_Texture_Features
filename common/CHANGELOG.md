@@ -1,6 +1,8 @@
 [**ETF Changelog:**]
 
 
+- fixed emissive non player skulls
+
 [dev 4.4.1]
 - players skulls now correctly reflect the texture they are meant to display, instead of the players current skin if online
 - Fixed crash caused by unexpected values in property ranges 
