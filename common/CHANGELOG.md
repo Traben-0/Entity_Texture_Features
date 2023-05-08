@@ -1,7 +1,9 @@
 [**ETF Changelog:**]
 
-
+[dev 4.4.2]
 - fixed emissive non player skulls
+- added support for creeper energy swirl texture variation and emissives, why emissive texture support you ask? because it lets you set a static texture for the overlay that doesn't spin but still glows
+- api additions
 
 [dev 4.4.1]
 - players skulls now correctly reflect the texture they are meant to display, instead of the players current skin if online
