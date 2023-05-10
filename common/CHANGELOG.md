@@ -1,5 +1,15 @@
 [**ETF Changelog:**]
 
+[4.4.3]
+
+- added support for creeper energy swirl texture variation and emissives, why emissive texture support you ask? because it lets you set a static texture for the overlay that doesn't spin but still glows
+- Added an option to disable the compatibility patch applied to the `3d skin layers` to enable skin features to work *(this only ever needs to be disabled if it conflicts with some other mods version of a `3d skin layers` compatibility patch, or if a future `3d skin layers` mod update breaks this)*
+- players skulls now correctly reflect the texture they are meant to display, instead of the players current skin if online
+- Fixed crash caused by unexpected values in property ranges 
+- Tweaks to player skin settings screen
+- Tweaks to classes used by EMF
+- api additions
+
 [V4.4.0]
 - full `NBT` property parity with OptiFine, ETF now parses the examples in this link correctly *(https://optifine.readthedocs.io/syntax.html#nbt)*
 - added ETF only `NBT` "raw:" syntax variant "print_raw:" which will act just like "raw:" but will also print what that raw value is for testing purposes

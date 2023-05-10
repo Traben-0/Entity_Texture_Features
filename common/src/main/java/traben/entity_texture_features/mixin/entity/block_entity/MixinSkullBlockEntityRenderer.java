@@ -27,10 +27,13 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+import traben.entity_texture_features.entity_handlers.ETFBlockEntityWrapper;
+import traben.entity_texture_features.entity_handlers.ETFEntity;
+import traben.entity_texture_features.entity_handlers.ETFPlayerEntity;
+import traben.entity_texture_features.entity_handlers.ETFPlayerHeadWrapper;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFPlayerTexture;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
-import traben.entity_texture_features.utils.ETFBlockEntityWrapper;
 
 import java.util.Map;
 import java.util.UUID;
@@ -45,7 +48,7 @@ public abstract class MixinSkullBlockEntityRenderer implements BlockEntityRender
     private static Map<SkullBlock.SkullType, Identifier> TEXTURES;
     private ETFTexture thisETFTexture = null;
     private ETFPlayerTexture thisETFPlayerTexture = null;
-    private ETFBlockEntityWrapper etf$entity = null;
+    private ETFEntity etf$entity = null;
 
     @Inject(method = "render(Lnet/minecraft/block/entity/SkullBlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/block/entity/SkullBlockEntityRenderer;getRenderLayer(Lnet/minecraft/block/SkullBlock$SkullType;Lcom/mojang/authlib/GameProfile;)Lnet/minecraft/client/render/RenderLayer;"),
@@ -54,20 +57,28 @@ public abstract class MixinSkullBlockEntityRenderer implements BlockEntityRender
         thisETFTexture = null;
         thisETFPlayerTexture = null;
         etf$entity = null;
-        if (ETFConfigData.enableCustomTextures && ETFConfigData.enableCustomBlockEntities) {
+        if (ETFConfigData.enableCustomTextures && ETFConfigData.enableCustomBlockEntities && ETFConfigData.skinFeaturesEnabled) {
             World worldCheck = skullBlockEntity.getWorld();
             if (worldCheck == null) worldCheck = MinecraftClient.getInstance().world;
             if (worldCheck != null) {
 
-                boolean player = skullBlockEntity.getOwner() != null;
-                UUID uuid = player ? skullBlockEntity.getOwner().getId() :  UUID.nameUUIDFromBytes((skullBlockEntity.getPos().toString() + skullBlockEntity.getType().toString()).getBytes());
+                //make uuid for block based on set data
+                String uuidBytes = "skull" + skullBlockEntity.getPos().toString() + (direction == null ? "*" : direction.toString()) + bl + skullType.toString();
 
-                etf$entity = new ETFBlockEntityWrapper(skullBlockEntity, uuid);
                 Identifier identifier = etf$getIdentifier(skullType,skullBlockEntity.getOwner());
-
+                boolean player = skullBlockEntity.getOwner() != null;
                 if(player){
-                    thisETFPlayerTexture = ETFManager.getInstance().getPlayerHeadTexture(etf$entity);
+
+                    //add player to uuid
+                    uuidBytes +=skullBlockEntity.getOwner().getId() ;
+                    UUID uuid = UUID.nameUUIDFromBytes(uuidBytes.getBytes());
+
+                    ETFPlayerEntity etfPlayer = new ETFPlayerHeadWrapper(skullBlockEntity, uuid);
+                    etf$entity = etfPlayer;
+                    thisETFPlayerTexture = ETFManager.getInstance().getPlayerTexture(etfPlayer,identifier);
                 }else{
+                    UUID uuid = UUID.nameUUIDFromBytes(uuidBytes.getBytes());
+                    etf$entity = new ETFBlockEntityWrapper(skullBlockEntity,uuid);
                     thisETFTexture = ETFManager.getInstance().getETFTexture(identifier, etf$entity, ETFManager.TextureSource.BLOCK_ENTITY,true);
                 }
             }
@@ -77,8 +88,8 @@ public abstract class MixinSkullBlockEntityRenderer implements BlockEntityRender
     @Inject(method = "render(Lnet/minecraft/block/entity/SkullBlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II)V",
             at = @At(value = "TAIL"),
             locals = LocalCapture.CAPTURE_FAILHARD)
-    private void etf$alterTexture(SkullBlockEntity skullBlockEntity, float f, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j, CallbackInfo ci, float g, BlockState blockState, boolean bl, Direction direction, int k, float h, SkullBlock.SkullType skullType, SkullBlockEntityModel skullBlockEntityModel, RenderLayer renderLayer) {
-        if (ETFConfigData.enableEmissiveBlockEntities) {
+    private void etf$renderFeatures(SkullBlockEntity skullBlockEntity, float f, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j, CallbackInfo ci, float g, BlockState blockState, boolean bl, Direction direction, int k, float h, SkullBlock.SkullType skullType, SkullBlockEntityModel skullBlockEntityModel, RenderLayer renderLayer) {
+        if (ETFConfigData.enableEmissiveBlockEntities && ETFConfigData.skinFeaturesEnabled) {
             //vanilla positional code copy
             matrixStack.push();
             if (direction == null) {
@@ -91,7 +102,7 @@ public abstract class MixinSkullBlockEntityRenderer implements BlockEntityRender
             //vanilla end
 
             if (thisETFTexture != null) {
-                thisETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, skullBlockEntityModel, ETFManager.EmissiveRenderModes.blockEntityMode());
+                thisETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, skullBlockEntityModel, ETFManager.EmissiveRenderModes.DULL);
             } else if (thisETFPlayerTexture != null) {
                 thisETFPlayerTexture.renderFeatures(matrixStack, vertexConsumerProvider, i, skullBlockEntityModel);
             }

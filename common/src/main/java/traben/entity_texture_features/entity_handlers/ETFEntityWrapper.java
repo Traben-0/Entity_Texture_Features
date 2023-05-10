@@ -1,9 +1,9 @@
-package traben.entity_texture_features.utils;
+package traben.entity_texture_features.entity_handlers;
 
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.mob.ZombifiedPiglinEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.scoreboard.AbstractTeam;
@@ -14,103 +14,90 @@ import net.minecraft.world.World;
 
 import java.util.UUID;
 
-public class ETFBlockEntityWrapper implements ETFEntity {
+public record ETFEntityWrapper(Entity entity) implements ETFEntity {
 
-    private final BlockEntity blockEntity;
-    private final UUID id;
 
-    public ETFBlockEntityWrapper(BlockEntity entity,UUID id) {
-        this.blockEntity = entity;
-        this.id = id;
-    }
-
-    @Override
-    public Entity entity() {
-        return null;
-    }
-
-    @Override
     public boolean isZombiePiglin() {
-        return false;
+        return entity instanceof ZombifiedPiglinEntity;
     }
 
-    @Override
     public EntityType<?> getType() {
-        return EntityType.MARKER;
+        return entity.getType();
     }
 
-    @Override
     public UUID getUuid() {
-        return id;
+        return entity.getUuid();
     }
 
     @Override
     public World getWorld() {
-        return blockEntity.getWorld();
+        return entity.getWorld();
     }
 
     @Override
     public BlockPos getBlockPos() {
-        return blockEntity.getPos();
+        return entity.getBlockPos();
     }
 
     @Override
     public int getBlockY() {
-        return blockEntity.getPos().getY();
+        return entity.getBlockY();
     }
 
     @Override
     public NbtCompound writeNbt(NbtCompound compound) {
-        return blockEntity.createNbt();
+        return entity.writeNbt(compound);
     }
 
     @Override
     public boolean hasCustomName() {
-        return false;
+        return entity.hasCustomName();
     }
 
     @Override
     public Text getCustomName() {
-        return Text.of("null");
+        return entity.getCustomName();
     }
 
     @Override
     public AbstractTeam getScoreboardTeam() {
-        return null;
+        return entity.getScoreboardTeam();
     }
 
     //@Override
     //public boolean isOnFire() {
-    //    return false;
+    //    return entity.isOnFire();
     //}
 
     @Override
     public Iterable<ItemStack> getItemsEquipped() {
-        return null;
+        return entity.getItemsEquipped();
     }
 
     @Override
     public Iterable<ItemStack> getHandItems() {
-        return null;
+        return entity.getHandItems();
     }
 
     @Override
     public Iterable<ItemStack> getArmorItems() {
-        return null;
+        return entity.getArmorItems();
     }
 
     @Override
     public float distanceTo(Entity entity) {
-        return 0;
+        return this.entity.distanceTo(entity);
     }
 
     @Override
     public Vec3d getVelocity() {
-        return Vec3d.ZERO;
+        return entity.getVelocity();
     }
 
     @Override
     public EntityPose getPose() {
-        return EntityPose.STANDING;
+        return entity.getPose();
     }
+
+
 }

@@ -20,9 +20,10 @@ import net.minecraft.util.Util;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.config.screens.ETFConfigScreenSkinTool;
+import traben.entity_texture_features.entity_handlers.ETFPlayerEntity;
+import traben.entity_texture_features.entity_handlers.ETFPlayerEntityWrapper;
 import traben.entity_texture_features.mixin.accessor.PlayerSkinProviderAccessor;
 import traben.entity_texture_features.mixin.accessor.PlayerSkinTextureAccessor;
-import traben.entity_texture_features.utils.ETFEntityWrapper;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.io.FileInputStream;
@@ -73,7 +74,7 @@ public class ETFPlayerTexture {
     public ETFTexture etfTextureOfFinalBaseSkin;
     public ETFConfigScreenSkinTool.CapeType capeType = ETFConfigScreenSkinTool.CapeType.NONE;
     public ETFConfigScreenSkinTool.NoseType noseType = ETFConfigScreenSkinTool.NoseType.NONE;
-    PlayerEntity player;
+    ETFPlayerEntity player;
     private ETFCustomPlayerFeatureModel<PlayerEntity> customPlayerModel;
     private boolean isTextureReady = false;
     //private boolean hasVanillaCape = false;
@@ -93,13 +94,38 @@ public class ETFPlayerTexture {
 
     private boolean hasFatCoat = false;
 
-    ETFPlayerTexture(PlayerEntity player, Identifier rendererGivenSkin) {
+    ETFPlayerTexture(ETFPlayerEntity player, Identifier rendererGivenSkin) {
         //initiate texture download as we need unprocessed texture from the skin server
         this.player = player;
         this.normalVanillaSkinIdentifier = rendererGivenSkin;
         //triggerSkinDownload();
-        checkTexture(false);
+        if(player instanceof ETFPlayerEntityWrapper) {
+            //normal player entity
+            checkTexture(false);
+        }else{
+            //create a player texture for a player head block
+            //this can have a historic skin and thus should not be driven by the actual players uuid
+            //use the historic skin resource and ensure we do not bother to load a current skin for the player
+            try {
+
+                PlayerSkinTexture skin = (PlayerSkinTexture) ((PlayerSkinProviderAccessor) MinecraftClient.getInstance().getSkinProvider()).getTextureManager().getOrDefault(rendererGivenSkin, null);
+                FileInputStream fileInputStream = new FileInputStream(((PlayerSkinTextureAccessor) skin).getCacheFile());
+                NativeImage vanilla = NativeImage.read(fileInputStream);
+                //System.out.println((vanilla != null) +" skin");
+                fileInputStream.close();
+                originalSkin = ETFUtils2.emptyNativeImage(64, 64);
+                originalSkin.copyFrom(vanilla);
+                vanilla.close();
+
+                //originalSkin = ETFUtils2.getNativeImageElseNull(rendererGivenSkin);
+                checkTexture(true);
+            }catch (Exception e){
+                e.printStackTrace();
+                skinFailed();
+            }
+        }
     }
+
 
     //THIS REPRESENTS A NON FEATURED SKIN
     // must still create an object as the identifier is important to detect skin changes from other mods
@@ -111,8 +137,9 @@ public class ETFPlayerTexture {
     public ETFPlayerTexture() {
         //THIS_SKIN_IS_IN_EDITOR = true;
         //exists only for tool
-        this.player = MinecraftClient.getInstance().player;
-        if (player != null) {
+        this.player = new ETFPlayerEntityWrapper(MinecraftClient.getInstance().player);
+        if (player.entity() != null) {
+            assert MinecraftClient.getInstance().player != null;
             NativeImage skin = ETFUtils2.getNativeImageElseNull(MinecraftClient.getInstance().player.getSkinTexture());
             if (skin != null) {
                 clientPlayerOriginalSkinImageForTool = skin;
@@ -402,12 +429,16 @@ public class ETFPlayerTexture {
 
     @Nullable
     public Identifier getBaseTextureIdentifierOrNullForVanilla(PlayerEntity player) {
+        return getBaseTextureIdentifierOrNullForVanilla(new ETFPlayerEntityWrapper(player));
+    }
+    @Nullable
+    public Identifier getBaseTextureIdentifierOrNullForVanilla(ETFPlayerEntity player) {
         this.player = player;//refresh player data
         if (etfTextureOfFinalBaseSkin != null) {
             if (allowThisETFBaseSkin && canUseFeaturesForThisPlayer()) {
-                return etfTextureOfFinalBaseSkin.getTextureIdentifier(new ETFEntityWrapper(player));
+                return etfTextureOfFinalBaseSkin.getTextureIdentifier(player);
             } else if (ETFConfigData.tryETFTransparencyForAllSkins) {
-                return etfTextureOfFinalBaseSkin.getTextureIdentifier(new ETFEntityWrapper(player));
+                return etfTextureOfFinalBaseSkin.getTextureIdentifier(player);
             }
         }
         return null;
@@ -588,7 +619,7 @@ public class ETFPlayerTexture {
         }else if (model0 instanceof SkullBlockEntityModel skullModel){
             //todo nose maybe
             if (hasEmissives && etfTextureOfFinalBaseSkin != null) {
-                etfTextureOfFinalBaseSkin.renderEmissive(matrixStack, vertexConsumerProvider, skullModel, ETFManager.EmissiveRenderModes.blockEntityMode());
+                etfTextureOfFinalBaseSkin.renderEmissive(matrixStack, vertexConsumerProvider, skullModel, ETFManager.EmissiveRenderModes.DULL);
             }
             //perform texture features
             if (hasEnchant && baseEnchantIdentifier != null && etfTextureOfFinalBaseSkin != null) {
@@ -1254,8 +1285,6 @@ public class ETFPlayerTexture {
                 }
 
 
-                Identifier modifiedSkinIdentifier = new Identifier(SKIN_NAMESPACE, id + ".png");
-                ETFUtils2.registerNativeImageToIdentifier(modifiedSkin, modifiedSkinIdentifier);
 
                 Identifier modifiedSkinBlinkPatchedIdentifier = null;
                 Identifier modifiedSkinPatchedIdentifier = null;
@@ -1278,9 +1307,21 @@ public class ETFPlayerTexture {
                     }
                 }
 
+                Identifier modifiedSkinIdentifier = new Identifier(SKIN_NAMESPACE, id + ".png");
+                ETFUtils2.registerNativeImageToIdentifier(modifiedSkin, modifiedSkinIdentifier);
 
                 //create etf texture with player initiator
-                etfTextureOfFinalBaseSkin = new ETFTexture(modifiedSkinIdentifier, blinkIdentifier, blink2Identifier, emissiveIdentifier, blinkEmissiveIdentifier, blink2EmissiveIdentifier, modifiedSkinPatchedIdentifier, modifiedSkinBlinkPatchedIdentifier, modifiedSkinBlink2PatchedIdentifier);
+                etfTextureOfFinalBaseSkin = new ETFTexture(modifiedSkinIdentifier,
+                        blinkIdentifier,
+                        blink2Identifier,
+                        emissiveIdentifier,
+                        blinkEmissiveIdentifier,
+                        blink2EmissiveIdentifier,
+                        modifiedSkinPatchedIdentifier,
+                        modifiedSkinBlinkPatchedIdentifier,
+                        modifiedSkinBlink2PatchedIdentifier);
+
+
 
                 //if vanilla cape and there is no enchant or emissive
                 //then just clear it from etf to defer to cape mods

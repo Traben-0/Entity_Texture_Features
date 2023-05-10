@@ -22,6 +22,9 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
+import traben.entity_texture_features.entity_handlers.ETFBlockEntityWrapper;
+import traben.entity_texture_features.entity_handlers.ETFEntity;
+import traben.entity_texture_features.entity_handlers.ETFEntityWrapper;
 import traben.entity_texture_features.mixin.accessor.MooshroomEntityAccessor;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 
@@ -246,8 +249,8 @@ public abstract class ETFTexturePropertiesUtils {
                     }
                 }
                 StringBuilder builder = new StringBuilder();
-                for (String str:
-                     biomeList) {
+                for (String str :
+                        biomeList) {
                     builder.append(str).append(" ");
                 }
                 return builder.toString().trim();
@@ -330,7 +333,7 @@ public abstract class ETFTexturePropertiesUtils {
             return null;
         }
         StringBuilder builder = new StringBuilder();
-        for (String str:
+        for (String str :
                 names) {
             builder.append(str).append(" ");
         }
@@ -550,7 +553,7 @@ public abstract class ETFTexturePropertiesUtils {
     @Nullable
     private static Integer[] getGenericIntegerSplitWithRanges(Properties props, int num, String propertyName) {
         if (props.containsKey(propertyName + "." + num)) {
-            String dataFromProps = props.getProperty(propertyName + "." + num).strip();
+            String dataFromProps = props.getProperty(propertyName + "." + num).strip().replaceAll("[)(]","");
             String[] skinData = dataFromProps.split("\\s+");
             ArrayList<Integer> suffixNumbers = new ArrayList<>();
             for (String data :
@@ -558,15 +561,15 @@ public abstract class ETFTexturePropertiesUtils {
                 //check if range
                 data = data.strip();
                 if (!data.replaceAll("\\D", "").isEmpty()) {
-                    if (data.contains("-")) {
-                        suffixNumbers.addAll(Arrays.asList(getIntRange(data).getAllWithinRangeAsList()));
-                    } else {
-                        try {
+                    try {
+                        if (data.contains("-")) {
+                            suffixNumbers.addAll(Arrays.asList(getIntRange(data).getAllWithinRangeAsList()));
+                        } else {
                             int tryNumber = Integer.parseInt(data.replaceAll("\\D", ""));
                             suffixNumbers.add(tryNumber);
-                        } catch (NumberFormatException e) {
-                            ETFUtils2.logWarn("properties files number error in " + propertyName + " category");
                         }
+                    } catch (NumberFormatException e) {
+                        ETFUtils2.logWarn("properties files number error in " + propertyName + " category");
                     }
                 }
             }
@@ -624,11 +627,15 @@ public abstract class ETFTexturePropertiesUtils {
     }
 
 
-    private record IntRange(int lower, int higher){
-        public boolean isWithinRange(int value){
+    private record IntRange(int lower, int higher) {
+        public boolean isWithinRange(int value) {
             return value >= lower && value <= higher;
         }
-        public Integer[] getAllWithinRangeAsList(){
+
+        public Integer[] getAllWithinRangeAsList() {
+            if(lower == higher){
+                return new Integer[]{lower};
+            }
             ArrayList<Integer> builder = new ArrayList<>();
             for (int i = lower; i <= higher; i++) {
                 builder.add(i);
@@ -638,7 +645,7 @@ public abstract class ETFTexturePropertiesUtils {
     }
 
     public static IntRange getIntRange(String rawRange) {
-        //assume rawRange =  "20-56"  but can be "-64-56"  or "-14"
+        //assume rawRange =  "20-56"  but can be "-64-56", "-30--10"  or "-14"
         rawRange = rawRange.trim();
         //sort negatives before split
         if (rawRange.startsWith("-")) {
@@ -646,7 +653,7 @@ public abstract class ETFTexturePropertiesUtils {
         }
         rawRange = rawRange.replaceAll("--", "-N");
         String[] split = rawRange.split("-");
-        if (split.length > 1) {//sort out range
+        if (split.length == 2 && !split[0].isEmpty() && !split[1].isEmpty()) {//sort out range
             int[] minMax = {Integer.parseInt(split[0].replaceAll("\\D", "")), Integer.parseInt(split[1].replaceAll("\\D", ""))};
             if (split[0].contains("N")) {
                 minMax[0] = -minMax[0];
@@ -657,19 +664,19 @@ public abstract class ETFTexturePropertiesUtils {
             if (minMax[0] > minMax[1]) {
                 //0 must be smaller
                 return new IntRange(minMax[1], minMax[0]);
-            }else{
-                return new IntRange(minMax[0] , minMax[1]);
+            } else {
+                return new IntRange(minMax[0], minMax[1]);
             }
         } else {//only 1 number but method ran because of "-" present
-            int number = Integer.parseInt(split[0].replaceAll("\\D", ""));
-            if (split[0].contains("N")) {
+            int number = Integer.parseInt(rawRange.replaceAll("\\D", ""));
+            if (rawRange.contains("N")) {
                 number = -number;
             }
-            return new IntRange(number,number);
+            return new IntRange(number, number);
         }
     }
 
-    private interface StringPropertyMatcher{
+    private interface StringPropertyMatcher {
         boolean testPropertyString(String currentEntityValue);
     }
 
@@ -846,8 +853,9 @@ public abstract class ETFTexturePropertiesUtils {
         }
 
         @Nullable
-        private static StringPropertyMatcher getStringMatcher_Regex_Pattern_List_Single(@Nullable String propertyLineToBeMatchedPossiblyRegex){
-            if(propertyLineToBeMatchedPossiblyRegex == null || propertyLineToBeMatchedPossiblyRegex.isBlank()) return null;
+        private static StringPropertyMatcher getStringMatcher_Regex_Pattern_List_Single(@Nullable String propertyLineToBeMatchedPossiblyRegex) {
+            if (propertyLineToBeMatchedPossiblyRegex == null || propertyLineToBeMatchedPossiblyRegex.isBlank())
+                return null;
             String stringToMatch = propertyLineToBeMatchedPossiblyRegex.trim();
             boolean invert;
             //boolean check = false;
@@ -861,24 +869,24 @@ public abstract class ETFTexturePropertiesUtils {
 
             if (stringToMatch.contains("regex:")) {
                 if (stringToMatch.contains("iregex:")) {
-                    stringToMatch = stringToMatch.replaceFirst("iregex:","");
+                    stringToMatch = stringToMatch.replaceFirst("iregex:", "");
                     String finalStringToMatch = stringToMatch;
-                    return (string)-> invert != string.matches("(?i)" + finalStringToMatch);
+                    return (string) -> invert != string.matches("(?i)" + finalStringToMatch);
                 } else {
-                    stringToMatch = stringToMatch.replaceFirst("regex:","");
+                    stringToMatch = stringToMatch.replaceFirst("regex:", "");
                     String finalStringToMatch = stringToMatch;
-                    return (string)-> invert != string.matches(finalStringToMatch);
+                    return (string) -> invert != string.matches(finalStringToMatch);
                 }
             } else if (stringToMatch.contains("pattern:")) {
                 stringToMatch = stringToMatch.replace("?", ".?").replace("*", ".*");
                 if (stringToMatch.contains("ipattern:")) {
                     stringToMatch = stringToMatch.replace("ipattern:", "");
                     String finalStringToMatch = stringToMatch;
-                    return (string)-> invert != string.matches("(?i)" + finalStringToMatch);
+                    return (string) -> invert != string.matches("(?i)" + finalStringToMatch);
                 } else {
                     stringToMatch = stringToMatch.replace("pattern:", "");
                     String finalStringToMatch = stringToMatch;
-                    return (string)-> invert != string.matches(finalStringToMatch);
+                    return (string) -> invert != string.matches(finalStringToMatch);
                 }
             } else {//direct comparison
                 String finalStringToMatch1 = stringToMatch;
@@ -922,12 +930,12 @@ public abstract class ETFTexturePropertiesUtils {
                     '}';
         }
 
-        private static boolean isStringValidInt(String string){
+        private static boolean isStringValidInt(String string) {
             try {
                 Integer.parseInt(string);
                 return true;
             } catch (NumberFormatException e) {
-               // e.printStackTrace();
+                // e.printStackTrace();
                 return false;
             }
         }
@@ -1009,9 +1017,9 @@ public abstract class ETFTexturePropertiesUtils {
 
                 NbtCompound entityNBT;
                 Entity internal = etfEntity.entity();
-                if(internal != null){
+                if (internal != null) {
                     entityNBT = NbtPredicate.entityToNbt(internal);
-                }else{
+                } else {
                     entityNBT = etfEntity.writeNbt(new NbtCompound());
                 }
 
@@ -1023,12 +1031,12 @@ public abstract class ETFTexturePropertiesUtils {
                         String nbtTestInstruction = nbtPropertyEntry.getValue();
 
                         boolean invertFinalResult = nbtTestInstruction.startsWith("!");
-                        nbtTestInstruction = nbtTestInstruction.replaceFirst("!","");
+                        nbtTestInstruction = nbtTestInstruction.replaceFirst("!", "");
 
-                        if (nbtTestInstruction.startsWith("print:")){
+                        if (nbtTestInstruction.startsWith("print:")) {
                             ETFUtils2.logMessage("NBT entity data print: ");
                             System.out.println(entityNBT.asString());
-                            nbtTestInstruction = nbtTestInstruction.replaceFirst("print:","");
+                            nbtTestInstruction = nbtTestInstruction.replaceFirst("print:", "");
                         }
 
                         //first find the required nbt data
@@ -1036,8 +1044,8 @@ public abstract class ETFTexturePropertiesUtils {
                         boolean listIndexInstructionWasWildCard = false;
                         NbtElement lastIterationNBTElement = entityNBT;
                         Iterator<String> nbtPathInstructionIterator = Arrays.stream(nbtIdentifier.split("\\.")).iterator();
-                        while (nbtPathInstructionIterator.hasNext()){
-                            if(lastIterationNBTElement == null) {
+                        while (nbtPathInstructionIterator.hasNext()) {
+                            if (lastIterationNBTElement == null) {
                                 System.out.println("null nbt in ETF");
                                 break;
                             }
@@ -1045,37 +1053,37 @@ public abstract class ETFTexturePropertiesUtils {
 
                             //find out how to handle this instruction based on what element we have
                             if (lastIterationNBTElement instanceof NbtCompound nbtCompound) {
-                                if(nbtCompound.contains(nextPathInstruction)){
+                                if (nbtCompound.contains(nextPathInstruction)) {
                                     lastIterationNBTElement = nbtCompound.get(nextPathInstruction);
-                                }else{
+                                } else {
                                     //not found so break
                                     break;
                                 }
-                            }else if(lastIterationNBTElement instanceof AbstractNbtList<?> nbtList) {
-                                if ("*".equals(nextPathInstruction)){
+                            } else if (lastIterationNBTElement instanceof AbstractNbtList<?> nbtList) {
+                                if ("*".equals(nextPathInstruction)) {
                                     listIndexInstructionWasWildCard = true;
-                                }else if (isStringValidInt(nextPathInstruction)){
-                                        //possibly further nested elements to read from
-                                        try{
-                                            int index = Integer.parseInt(nextPathInstruction);
-                                            lastIterationNBTElement = nbtList.get(index);
-                                        }catch (IndexOutOfBoundsException e){
-                                            break;
-                                        }
+                                } else if (isStringValidInt(nextPathInstruction)) {
+                                    //possibly further nested elements to read from
+                                    try {
+                                        int index = Integer.parseInt(nextPathInstruction);
+                                        lastIterationNBTElement = nbtList.get(index);
+                                    } catch (IndexOutOfBoundsException e) {
+                                        break;
+                                    }
 
-                                }else{
-                                    ETFUtils2.logWarn("cannot parse list index of ["+nextPathInstruction+"] in nbt property: "+nbtIdentifier);
+                                } else {
+                                    ETFUtils2.logWarn("cannot parse list index of [" + nextPathInstruction + "] in nbt property: " + nbtIdentifier);
                                     break;
                                 }
-                            }else{
+                            } else {
                                 //here this means we have an nbt element without children yet have received an additional instruction???
                                 //throw a fit if there are further instructions
-                                ETFUtils2.logError("cannot parse next nbt instruction of ["+nextPathInstruction+"] in nbt property: "+nbtIdentifier+", as this nbt is not a list or compound and cannot have further instructions");
+                                ETFUtils2.logError("cannot parse next nbt instruction of [" + nextPathInstruction + "] in nbt property: " + nbtIdentifier + ", as this nbt is not a list or compound and cannot have further instructions");
                                 break;
 
                             }
                             //here if there are no further instructions then send the final result
-                            if(!nbtPathInstructionIterator.hasNext()){
+                            if (!nbtPathInstructionIterator.hasNext()) {
                                 finalNBTElementOrNullIfFailed = lastIterationNBTElement;
                             }
                         }
@@ -1083,68 +1091,68 @@ public abstract class ETFTexturePropertiesUtils {
                         boolean doesTestPass = false;
 
                         //test if was found
-                        if(finalNBTElementOrNullIfFailed != null) {
-                            if (nbtTestInstruction.startsWith("print_raw:")){
+                        if (finalNBTElementOrNullIfFailed != null) {
+                            if (nbtTestInstruction.startsWith("print_raw:")) {
                                 String rawStringFromNBT = finalNBTElementOrNullIfFailed.asString();
-                                String rawMatchString = nbtTestInstruction.replaceFirst("print_raw:","");
-                                ETFUtils2.logMessage("NBT RAW data of: "+nbtIdentifier+"="+rawStringFromNBT);
-                                StringPropertyMatcher matcher =getStringMatcher_Regex_Pattern_List_Single(rawMatchString);
+                                String rawMatchString = nbtTestInstruction.replaceFirst("print_raw:", "");
+                                ETFUtils2.logMessage("NBT RAW data of: " + nbtIdentifier + "=" + rawStringFromNBT);
+                                StringPropertyMatcher matcher = getStringMatcher_Regex_Pattern_List_Single(rawMatchString);
                                 doesTestPass = matcher != null && matcher.testPropertyString(rawStringFromNBT);
                                 //doesTestPass = rawMatchString.equals(rawStringFromNBT);
-                            }else if (nbtTestInstruction.startsWith("raw:")){
+                            } else if (nbtTestInstruction.startsWith("raw:")) {
                                 String rawStringFromNBT = finalNBTElementOrNullIfFailed.asString();
-                                String rawMatchString = nbtTestInstruction.replaceFirst("raw:","");
-                                StringPropertyMatcher matcher =getStringMatcher_Regex_Pattern_List_Single(rawMatchString);
+                                String rawMatchString = nbtTestInstruction.replaceFirst("raw:", "");
+                                StringPropertyMatcher matcher = getStringMatcher_Regex_Pattern_List_Single(rawMatchString);
                                 doesTestPass = matcher != null && matcher.testPropertyString(rawStringFromNBT);
                                 //doesTestPass = rawMatchString.equals(rawStringFromNBT);
-                            }else if (nbtTestInstruction.startsWith("exists:")){
+                            } else if (nbtTestInstruction.startsWith("exists:")) {
                                 doesTestPass = nbtTestInstruction.contains("exists:true");
-                            }else if (nbtTestInstruction.startsWith("range:")){
-                                if(finalNBTElementOrNullIfFailed instanceof AbstractNbtNumber nbtNumber) {
+                            } else if (nbtTestInstruction.startsWith("range:")) {
+                                if (finalNBTElementOrNullIfFailed instanceof AbstractNbtNumber nbtNumber) {
                                     String rawRangeString = nbtTestInstruction.replaceFirst("range:", "");
                                     IntRange range = getIntRange(rawRangeString);
                                     doesTestPass = range.isWithinRange(nbtNumber.numberValue().intValue());
-                                }else{
-                                    ETFUtils2.logWarn("NBT range is not valid for non number nbt types: "+nbtIdentifier+"="+nbtTestInstruction);
+                                } else {
+                                    ETFUtils2.logWarn("NBT range is not valid for non number nbt types: " + nbtIdentifier + "=" + nbtTestInstruction);
                                 }
-                           // }else  if (finalNBTElementOrNullIfFailed instanceof NbtCompound nbtCompound) {
-                            }else if(finalNBTElementOrNullIfFailed instanceof AbstractNbtList<?> nbtList) {
-                                if(listIndexInstructionWasWildCard){
-                                    for (NbtElement element:
-                                         nbtList) {
-                                        StringPropertyMatcher matcher =getStringMatcher_Regex_Pattern_List_Single(nbtTestInstruction);
+                                // }else  if (finalNBTElementOrNullIfFailed instanceof NbtCompound nbtCompound) {
+                            } else if (finalNBTElementOrNullIfFailed instanceof AbstractNbtList<?> nbtList) {
+                                if (listIndexInstructionWasWildCard) {
+                                    for (NbtElement element :
+                                            nbtList) {
+                                        StringPropertyMatcher matcher = getStringMatcher_Regex_Pattern_List_Single(nbtTestInstruction);
                                         doesTestPass = matcher != null && matcher.testPropertyString(element.asString());
-                                        if(doesTestPass) break;
+                                        if (doesTestPass) break;
                                     }
-                                }else{
-                                    ETFUtils2.logWarn("NBT list error with: "+nbtIdentifier+"="+nbtTestInstruction);
+                                } else {
+                                    ETFUtils2.logWarn("NBT list error with: " + nbtIdentifier + "=" + nbtTestInstruction);
                                 }
 //                            }else if(finalNBTElementOrNullIfFailed instanceof AbstractNbtNumber nbtNumber) {
 //                                doesTestPass = doesStringMatch(nbtTestInstruction,nbtNumber.asString());
 //                            }else if(finalNBTElementOrNullIfFailed instanceof NbtString nbtString) {
 //                                doesTestPass = doesStringMatch(nbtTestInstruction,nbtString.asString());
-                            }else{
-                                StringPropertyMatcher matcher =getStringMatcher_Regex_Pattern_List_Single(nbtTestInstruction);
+                            } else {
+                                StringPropertyMatcher matcher = getStringMatcher_Regex_Pattern_List_Single(nbtTestInstruction);
                                 doesTestPass = matcher != null && matcher.testPropertyString(finalNBTElementOrNullIfFailed.asString());
                             }
-                        }else{
+                        } else {
                             //did not find
-                            if (nbtTestInstruction.startsWith("print_raw:")){
+                            if (nbtTestInstruction.startsWith("print_raw:")) {
                                 String rawStringFromNBT = "";
-                                String rawMatchString = nbtTestInstruction.replaceFirst("print_raw:","");
-                                ETFUtils2.logMessage("NBT RAW data of: "+nbtIdentifier+"="+rawStringFromNBT);
+                                String rawMatchString = nbtTestInstruction.replaceFirst("print_raw:", "");
+                                ETFUtils2.logMessage("NBT RAW data of: " + nbtIdentifier + "=" + rawStringFromNBT);
                                 doesTestPass = rawMatchString.equals(rawStringFromNBT);
-                            }else if (nbtTestInstruction.startsWith("raw:")){
+                            } else if (nbtTestInstruction.startsWith("raw:")) {
                                 String rawStringFromNBT = "";
-                                String rawMatchString = nbtTestInstruction.replaceFirst("raw:","");
+                                String rawMatchString = nbtTestInstruction.replaceFirst("raw:", "");
                                 doesTestPass = rawMatchString.equals(rawStringFromNBT);
-                            }else if (nbtTestInstruction.startsWith("exists:")){
+                            } else if (nbtTestInstruction.startsWith("exists:")) {
                                 doesTestPass = nbtTestInstruction.contains("exists:false");
                             }
                         }
                         //simplified from invertFinalResult? !doesTestPass : doesTestPass;
                         doesEntityMeetThisCaseTest = invertFinalResult != doesTestPass;
-                        if(!doesEntityMeetThisCaseTest) break;
+                        if (!doesEntityMeetThisCaseTest) break;
                     }
                 } else {
                     ETFUtils2.logError("NBT test failed, as could not read entity NBT");
@@ -1158,7 +1166,7 @@ public abstract class ETFTexturePropertiesUtils {
                     String entityName = Objects.requireNonNull(etfEntity.getCustomName()).getString();
 
                     doesEntityMeetThisCaseTest = NAME_MATCHERS.testPropertyString(entityName);
-                }else{
+                } else {
                     doesEntityMeetThisCaseTest = false;
                 }
             }
@@ -1394,17 +1402,17 @@ public abstract class ETFTexturePropertiesUtils {
                     entityOnBlockStates = new String[]{spawnConditions.get(7).trim(), spawnConditions.get(8).trim()};
                 } else {
                     BlockState blockState1 = etfEntity.getWorld().getBlockState(etfEntity.getBlockPos().down());
-                    String entityOnBlock1 =  Registries.BLOCK.getId(blockState1.getBlock()).toString().replaceFirst("minecraft:", "");
+                    String entityOnBlock1 = Registries.BLOCK.getId(blockState1.getBlock()).toString().replaceFirst("minecraft:", "");
 
                     BlockState blockState2 = etfEntity.getWorld().getBlockState(etfEntity.getBlockPos());
-                    String entityOnBlock2 =  Registries.BLOCK.getId(blockState2.getBlock()).toString().replaceFirst("minecraft:", "");
+                    String entityOnBlock2 = Registries.BLOCK.getId(blockState2.getBlock()).toString().replaceFirst("minecraft:", "");
 //                    String entityOnBlock2 = blockState2.toString()
 //                            .replaceFirst("minecraft:", "")
 //                            .replaceFirst("Block\\{", "")
 //                            //will print with
 //                            .replaceFirst("}.*", "").toLowerCase();
                     entityOnBlocks = new String[]{entityOnBlock1, entityOnBlock2};
-                    entityOnBlockStates = new String[]{blockState1.getEntries().toString(),blockState2.getEntries().toString()};
+                    entityOnBlockStates = new String[]{blockState1.getEntries().toString(), blockState2.getEntries().toString()};
                 }
                 Pattern patterOfEntries = Pattern.compile("(?<=:)([^:]+=[^:| ]+)(?=(:|$| ))");
                 boolean check2 = false;
@@ -1414,7 +1422,7 @@ public abstract class ETFTexturePropertiesUtils {
                     if (block != null) {
                         List<String> entries = new ArrayList<>();
                         //strip out entries if existing
-                        if(block.contains("=")) {
+                        if (block.contains("=")) {
                             Matcher m = patterOfEntries.matcher(block);
                             while (m.find()) {
                                 entries.add(m.group(1).replace("\"", "").trim());
@@ -1427,25 +1435,25 @@ public abstract class ETFTexturePropertiesUtils {
                             block = block.replaceFirst("!", "");
                             if (!block.replace("minecraft:", "").equalsIgnoreCase(entityOnBlocks[0])) {
                                 //can continue to check cases
-                                check1 = doBlockEntriesMatch(entries,entityOnBlockStates[0]);
+                                check1 = doBlockEntriesMatch(entries, entityOnBlockStates[0]);
                             } else {
                                 //will prevent future checking
                                 doesEntityMeetThisCaseTest = false;
 
                             }
                         } else if (block.replace("minecraft:", "").equalsIgnoreCase(entityOnBlocks[0])) {
-                            check1 = doBlockEntriesMatch(entries,entityOnBlockStates[0]);
-                            if(check1) break;
+                            check1 = doBlockEntriesMatch(entries, entityOnBlockStates[0]);
+                            if (check1) break;
                         }
                     }
                 }
-                if(!check1){
+                if (!check1) {
                     for (String block :
                             BLOCK_VALUES) {
                         if (block != null) {
                             List<String> entries = new ArrayList<>();
                             //strip out entries if existing
-                            if(block.contains("=")) {
+                            if (block.contains("=")) {
                                 Matcher m = patterOfEntries.matcher(block);
                                 while (m.find()) {
                                     entries.add(m.group(1).replace("\"", "").trim());
@@ -1458,15 +1466,15 @@ public abstract class ETFTexturePropertiesUtils {
                                 block = block.replaceFirst("!", "");
                                 if (!block.replace("minecraft:", "").equalsIgnoreCase(entityOnBlocks[1])) {
                                     //can continue to check cases
-                                    check2 = doBlockEntriesMatch(entries,entityOnBlockStates[1]);
+                                    check2 = doBlockEntriesMatch(entries, entityOnBlockStates[1]);
                                 } else {
                                     //will prevent future checking
                                     doesEntityMeetThisCaseTest = false;
 
                                 }
                             } else if (block.replace("minecraft:", "").equalsIgnoreCase(entityOnBlocks[1])) {
-                                check2 = doBlockEntriesMatch(entries,entityOnBlockStates[1]);
-                                if(check2) break;
+                                check2 = doBlockEntriesMatch(entries, entityOnBlockStates[1]);
+                                if (check2) break;
                             }
                         }
                     }
@@ -1796,7 +1804,7 @@ public abstract class ETFTexturePropertiesUtils {
             @NotNull String biome = !ETFConfigData.restrictBiome ? "" : ETFVersionDifferenceHandler.getBiomeString(entity.getWorld(), entity.getBlockPos())
                     .replace("minecraft:", "");
             @NotNull String height = !ETFConfigData.restrictHeight ? "" : "" + entity.getBlockY();
-            @NotNull String block = !ETFConfigData.restrictBlock ? "" :Registries.BLOCK.getId(entity.getWorld().getBlockState(entity.getBlockPos().down()).getBlock()).toString().replaceFirst("minecraft:", "");
+            @NotNull String block = !ETFConfigData.restrictBlock ? "" : Registries.BLOCK.getId(entity.getWorld().getBlockState(entity.getBlockPos().down()).getBlock()).toString().replaceFirst("minecraft:", "");
 
             //check the block the mob is inside also
             // this solves issues with soul sand and mud being undetected
@@ -1807,38 +1815,38 @@ public abstract class ETFTexturePropertiesUtils {
             @NotNull String moon = !ETFConfigData.restrictMoonPhase ? "" : "" + entity.getWorld().getMoonPhase();
             @NotNull String blockState1 = !ETFConfigData.restrictBlock ? "" : entity.getWorld().getBlockState(entity.getBlockPos().down()).getEntries().toString();
             @NotNull String blockState2 = !ETFConfigData.restrictBlock ? "" : entity.getWorld().getBlockState(entity.getBlockPos()).getEntries().toString();
-            return ObjectImmutableList.of(biome, height, block, weather, time, moon, block2,blockState1,blockState2);
+            return ObjectImmutableList.of(biome, height, block, weather, time, moon, block2, blockState1, blockState2);
         }
 
-        private static boolean doBlockEntriesMatch(List<String> propertyEntries, String blockStateEntries){
-            if(propertyEntries.isEmpty()) return true;
+        private static boolean doBlockEntriesMatch(List<String> propertyEntries, String blockStateEntries) {
+            if (propertyEntries.isEmpty()) return true;
 
-            String[] fixedStateEntries = blockStateEntries.replaceFirst("\\{","").replaceFirst("}$","").split(", ");
+            String[] fixedStateEntries = blockStateEntries.replaceFirst("\\{", "").replaceFirst("}$", "").split(", ");
 
-            HashMap<String,String> stateMap = new HashMap<>();
-            for (String entry:
+            HashMap<String, String> stateMap = new HashMap<>();
+            for (String entry :
                     fixedStateEntries) {
-                if(entry.contains("=")) {
+                if (entry.contains("=")) {
                     String[] set = entry.split("=");
                     stateMap.put(set[0], set[1]);
-                }else{
+                } else {
                     ETFUtils2.logWarn("block state failed in property check");
                     return false;
                 }
             }
 
-            if (stateMap.isEmpty())return false;
+            if (stateMap.isEmpty()) return false;
 
-            for (String property:
+            for (String property :
                     propertyEntries) {
                 String[] set = property.split("=");
                 String key = set[0];
-                if(stateMap.containsKey(key)){
+                if (stateMap.containsKey(key)) {
                     String stateValue = stateMap.get(key);
                     List<String> properties = List.of(set[1].split(","));
-                    if (!properties.contains(stateValue))return false;
+                    if (!properties.contains(stateValue)) return false;
 
-                }else{
+                } else {
                     return false;
                 }
             }
@@ -1846,8 +1854,6 @@ public abstract class ETFTexturePropertiesUtils {
         }
 
     }
-
-
 
 
     private enum WeatherType {
