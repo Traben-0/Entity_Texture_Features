@@ -1,9 +1,12 @@
-package traben.entity_texture_features.utils;
+package traben.entity_texture_features.entity_handlers;
 
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.client.render.entity.PlayerModelPart;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.scoreboard.AbstractTeam;
@@ -14,12 +17,12 @@ import net.minecraft.world.World;
 
 import java.util.UUID;
 
-public class ETFBlockEntityWrapper implements ETFEntity {
+public class ETFPlayerHeadWrapper implements  ETFPlayerEntity {
 
     private final BlockEntity blockEntity;
     private final UUID id;
 
-    public ETFBlockEntityWrapper(BlockEntity entity,UUID id) {
+    public ETFPlayerHeadWrapper(BlockEntity entity, UUID id) {
         this.blockEntity = entity;
         this.id = id;
     }
@@ -112,5 +115,30 @@ public class ETFBlockEntityWrapper implements ETFEntity {
     @Override
     public EntityPose getPose() {
         return EntityPose.STANDING;
+    }
+
+    @Override
+    public boolean isTeammate(PlayerEntity player) {
+        return false;
+    }
+
+    @Override
+    public PlayerInventory getInventory() {
+        return null;
+    }
+
+    @Override
+    public boolean isPartVisible(PlayerModelPart part) {
+        return false;
+    }
+
+    @Override
+    public Text getName() {
+        return Text.of("player_skull # "+getUuidAsString());
+    }
+
+    @Override
+    public String getUuidAsString() {
+        return id.toString();
     }
 }

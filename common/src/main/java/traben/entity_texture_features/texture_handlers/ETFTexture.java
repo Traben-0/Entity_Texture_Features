@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.screens.ETFConfigScreen;
-import traben.entity_texture_features.utils.ETFEntity;
+import traben.entity_texture_features.entity_handlers.ETFEntity;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.Optional;
@@ -269,7 +269,7 @@ public class ETFTexture {
     }
 
     private void createPatchedTextures() {
-        if (this.canPatch && ETFVersionDifferenceHandler.isFabric()/* && !ETFConfigData.removePixelsUnderEmissive*/) {
+        if (this.canPatch/* && ETFVersionDifferenceHandler.isFabric() && !ETFConfigData.removePixelsUnderEmissive*/) {
             return;
         }
         //here we will 'patch' the base texture to prevent z-fighting with various shaders
@@ -387,7 +387,6 @@ public class ETFTexture {
                 //
             }
 
-
             //save successful patches after any iris or other future patching reasons
             if (didPatch) {
                 thisIdentifier_Patched = new Identifier(PATCH_NAMESPACE_PREFIX + thisIdentifier.getNamespace(), thisIdentifier.getPath());
@@ -403,6 +402,7 @@ public class ETFTexture {
             }
         }
     }
+
 
     @NotNull
     Identifier getFeatureTexture(Identifier vanillaFeatureTexture) {
