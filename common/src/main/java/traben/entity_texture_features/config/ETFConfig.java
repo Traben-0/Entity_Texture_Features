@@ -14,8 +14,6 @@ import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 @SuppressWarnings("CanBeFinal")
 public class ETFConfig {
 
-    @Deprecated //see illegalPathSupportMode
-    public boolean allowIllegalTexturePaths = false;
     public IllegalPathMode illegalPathSupportMode = IllegalPathMode.None;
 
     public boolean enableCustomTextures = true;
@@ -31,8 +29,6 @@ public class ETFConfig {
     public boolean enableEmissiveTextures = true;
     public boolean enableEmissiveBlockEntities = true;
 
-    //@Deprecated
-    //public boolean fullBrightEmissives = false;
     public ETFManager.EmissiveRenderModes emissiveRenderMode = ETFManager.EmissiveRenderModes.DULL;
 
     public boolean specialEmissiveShield = true;
@@ -72,6 +68,8 @@ public class ETFConfig {
     public boolean hideConfigButton = false;
 
     public boolean disableVanillaDirectoryVariantTextures = false;
+
+    public boolean use3DSkinLayerPatch = true;
 
     //string name stuff more in-depth than other enum for backwards compatibility
 
