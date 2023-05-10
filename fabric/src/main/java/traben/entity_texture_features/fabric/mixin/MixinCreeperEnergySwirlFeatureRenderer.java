@@ -1,6 +1,5 @@
-package traben.entity_texture_features.mixin.entity.renderer.feature;
+package traben.entity_texture_features.fabric.mixin;
 
-import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.EnergySwirlOverlayFeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
@@ -11,11 +10,11 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import traben.entity_texture_features.entity_handlers.ETFEntityWrapper;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
@@ -23,6 +22,8 @@ import traben.entity_texture_features.texture_handlers.ETFTexture;
 @Mixin(EnergySwirlOverlayFeatureRenderer.class)
 public abstract class MixinCreeperEnergySwirlFeatureRenderer<T extends Entity & SkinOverlayOwner, M extends EntityModel<T>> extends FeatureRenderer<T, M> {
 
+
+    @Shadow protected abstract EntityModel<T> getEnergySwirlModel();
 
     public MixinCreeperEnergySwirlFeatureRenderer(FeatureRendererContext<T, M> context) {
         super(context);
@@ -32,13 +33,11 @@ public abstract class MixinCreeperEnergySwirlFeatureRenderer<T extends Entity & 
     private ETFTexture thisETFTexture = null;
 
     @Inject(method = "render",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/EntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V",
-                    shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILSOFT)
-
-    private void etf$applyEmissive(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, T entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch, CallbackInfo ci, float f, EntityModel<?> entityModel, VertexConsumer vertexConsumer) {
+            at = @At(value = "TAIL"))
+    private void etf$applyEmissive(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, T entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch, CallbackInfo ci) {
         //emissives specifically do not use the energy swirl layer and don't rotate, this gives them a use here
-        if (thisETFTexture != null)
-            thisETFTexture.renderEmissive(matrices, vertexConsumers, entityModel);
+        if (thisETFTexture != null && entity.shouldRenderOverlay())
+            thisETFTexture.renderEmissive(matrices, vertexConsumers, getEnergySwirlModel());
     }
 
     @Inject(

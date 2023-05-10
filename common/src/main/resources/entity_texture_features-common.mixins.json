@@ -37,7 +37,6 @@
     "entity.renderer.MixinShulkerBulletEntityRenderer",
     "entity.renderer.MixinTridentEntityRenderer",
     "entity.renderer.feature.MixinCapeFeatureRenderer",
-    "entity.renderer.feature.MixinCreeperEnergySwirlFeatureRenderer",
     "entity.renderer.feature.MixinDrownedOverlayFeatureRenderer",
     "entity.renderer.feature.MixinElytraFeatureRenderer",
     "entity.renderer.feature.MixinEyesFeatureRenderer",
