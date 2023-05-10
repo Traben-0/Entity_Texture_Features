@@ -186,5 +186,5 @@
   "config.entity_texture_features.skin_features_try_transparency_for_all.title": "Enable transparency in ALL skins",
   "config.entity_texture_features.skin_features_try_transparency_for_all.tooltip": "this will attempt to enabled transparent skin rendering\n for ALL skins not just ETF enabled skins\n WARNING this bypasses the 100% transparency check",
   "config.entity_texture_features.skin_layers_patch.title": "3D skin layers mod patch",
-  "config.entity_texture_features.skin_layers_patch.tooltip": "You are seeing this as the 3D skin layers mod is detected.\nETF contains a patch to allow skin features to\nrender correctly with the excellent 3d Skin Layers mod\nfuture changes to that mod might break this so the patch is optional"
+  "config.entity_texture_features.skin_layers_patch.tooltip": "You are seeing this as the 3D skin layers mod is detected.\nETF contains a patch to allow skin features to\nrender correctly with the excellent 3d Skin Layers mod\nfuture changes to that mod might break this so the patch is optional\n\nRESTART REQUIRED after changing this"
 }
