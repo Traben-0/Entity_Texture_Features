@@ -32,7 +32,7 @@ public abstract class MixinCreeperEnergySwirlFeatureRenderer<T extends Entity & 
     ETFEntityWrapper etf$entity = null;
     private ETFTexture thisETFTexture = null;
 
-    @Inject(method = "render",
+    @Inject(method = "Lnet/minecraft/client/render/entity/feature/EnergySwirlOverlayFeatureRenderer;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/Entity;FFFFFF)V",
             at = @At(value = "TAIL"))
     private void etf$applyEmissive(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, T entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch, CallbackInfo ci) {
         //emissives specifically do not use the energy swirl layer and don't rotate, this gives them a use here
@@ -41,14 +41,14 @@ public abstract class MixinCreeperEnergySwirlFeatureRenderer<T extends Entity & 
     }
 
     @Inject(
-            method = "render",
+            method = "Lnet/minecraft/client/render/entity/feature/EnergySwirlOverlayFeatureRenderer;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/Entity;FFFFFF)V",
             at = @At(value = "HEAD"))
     private void etf$getEntity(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, T entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch, CallbackInfo ci) {
         etf$entity = new ETFEntityWrapper(entity);
     }
 
     @ModifyArg(
-            method = "render",
+            method = "Lnet/minecraft/client/render/entity/feature/EnergySwirlOverlayFeatureRenderer;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/Entity;FFFFFF)V",
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/client/render/RenderLayer;getEnergySwirl(Lnet/minecraft/util/Identifier;FF)Lnet/minecraft/client/render/RenderLayer;")
             , index = 0)
