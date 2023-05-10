@@ -1,5 +1,8 @@
 [**ETF Changelog:**]
 
+[4.4.4]
+- forge crash fix
+
 [4.4.3]
 
 - added support for creeper energy swirl texture variation and emissives, why emissive texture support you ask? because it lets you set a static texture for the overlay that doesn't spin but still glows
