@@ -1,9 +1,9 @@
 package traben.entity_texture_features.config.screens;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import traben.entity_texture_features.ETFClientCommon;
@@ -136,15 +136,15 @@ public class ETFConfigScreenSkinSettings extends ETFConfigScreen {
 
     private boolean canLaunchTool=false;
 
-    @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        super.render(matrices, mouseX, mouseY, delta);
 
-        drawCenteredTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.title"), (int) (width * 0.75), (int) (height * 0.35), 0xFFFFFF);
-        drawCenteredTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.button_desc.1"), (int) (width * 0.75), (int) (height * 0.4), 0xCCCCCC);
-        drawCenteredTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.button_desc.2"), (int) (width * 0.75), (int) (height * 0.45), 0xCCCCCC);
+    @Override
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        super.render(context, mouseX, mouseY, delta);
+        context.drawCenteredTextWithShadow( textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.title"), (int) (width * 0.75), (int) (height * 0.35), 0xFFFFFF);
+        context.drawCenteredTextWithShadow( textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.button_desc.1"), (int) (width * 0.75), (int) (height * 0.4), 0xCCCCCC);
+        context.drawCenteredTextWithShadow( textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.button_desc.2"), (int) (width * 0.75), (int) (height * 0.45), 0xCCCCCC);
         if(!canLaunchTool)
-            drawCenteredTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.button_desc.fail"), (int) (width * 0.75), (int) (height * 0.6), 0xCC5555);
+            context.drawCenteredTextWithShadow( textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.button_desc.fail"), (int) (width * 0.75), (int) (height * 0.6), 0xCC5555);
     }
 
 }

@@ -1,7 +1,7 @@
 package traben.entity_texture_features.config.screens;
 
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import traben.entity_texture_features.ETFClientCommon;
@@ -133,10 +133,9 @@ public class ETFConfigScreenEmissiveFixSettings extends ETFConfigScreen {
 
     }
 
-
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        super.render(matrices, mouseX, mouseY, delta);
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        super.render(context, mouseX, mouseY, delta);
 
         String[] strings = ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".remove_pixels.info").getString().split("\n");
         List<Text> lines = new ArrayList<>();
@@ -148,7 +147,7 @@ public class ETFConfigScreenEmissiveFixSettings extends ETFConfigScreen {
         int i = 0;
         for (Text txt :
                 lines) {
-            drawTextWithShadow(matrices, textRenderer, txt, (int) (width * 0.45), (int) (height * 0.18) + i, 0xFFFFFF);
+            context.drawTextWithShadow( textRenderer, txt, (int) (width * 0.45), (int) (height * 0.18) + i, 0xFFFFFF);
             i += txt.getString().isBlank() ? 7 : 10;
         }
     }

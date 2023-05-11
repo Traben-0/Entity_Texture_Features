@@ -2,6 +2,7 @@ package traben.entity_texture_features.config.screens;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -394,10 +395,8 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-
-
-        super.render(matrices, mouseX, mouseY, delta);
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        super.render(context, mouseX, mouseY, delta);
 
 
         if (MinecraftClient.getInstance() != null) {
@@ -405,20 +404,20 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
             if (player != null) {
 
                 int blinkModifierBySystemTimeInTicks = (int) ((System.currentTimeMillis() / 50) % (30 + (ETFConfigData.blinkLength * 2)));
-                ETFManager.getInstance().ENTITY_BLINK_TIME.put(player.getUuid(), player.world.getTime() + blinkModifierBySystemTimeInTicks - (15 + ETFConfigData.blinkLength));
+                ETFManager.getInstance().ENTITY_BLINK_TIME.put(player.getUuid(), player.getWorld().getTime() + blinkModifierBySystemTimeInTicks - (15 + ETFConfigData.blinkLength));
 
 
                 int height = (int) (this.height * 0.75);
                 int playerX = (int) (this.width * 0.14);
                 drawEntity(playerX, height, (int) (this.height * 0.3), (float) (-mouseX + playerX), (float) (-mouseY + (this.height * 0.3)), player);
             } else {
-                drawTextWithShadow(matrices, textRenderer, Text.of("Player model only visible while in game!"), width / 7, (int) (this.height * 0.4), 0xFFFFFF);
-                drawTextWithShadow(matrices, textRenderer, Text.of("load a single-player world and then open this menu."), width / 7, (int) (this.height * 0.45), 0xFFFFFF);
+                context.drawTextWithShadow( textRenderer, Text.of("Player model only visible while in game!"), width / 7, (int) (this.height * 0.4), 0xFFFFFF);
+                context.drawTextWithShadow( textRenderer, Text.of("load a single-player world and then open this menu."), width / 7, (int) (this.height * 0.45), 0xFFFFFF);
             }
         }
 
-        drawTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.crouch_message"), width / 40, (int) (this.height * 0.8), 0x555555);
-        drawTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.blink_message"), width / 40, (int) (this.height * 0.1), 0x555555);
+        context.drawTextWithShadow( textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.crouch_message"), width / 40, (int) (this.height * 0.8), 0x555555);
+        context.drawTextWithShadow( textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.blink_message"), width / 40, (int) (this.height * 0.1), 0x555555);
 //        if(ETFVersionDifferenceHandler.isThisModLoaded("iris"))
 //            drawTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.iris_message"), width / 8, (int) (this.height * 0.15), 0xFF5555);
     }

@@ -2,11 +2,11 @@ package traben.entity_texture_features.config.screens;
 
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.PlayerSkinTexture;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
@@ -137,10 +137,9 @@ public class ETFConfigScreenSkinToolOutcome extends ETFConfigScreen {
         }
     }
 
-
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        super.render(matrices, mouseX, mouseY, delta);
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        super.render(context, mouseX, mouseY, delta);
 
         String[] strings =
                 ETFVersionDifferenceHandler.getTextFromTranslation(
@@ -155,7 +154,7 @@ public class ETFConfigScreenSkinToolOutcome extends ETFConfigScreen {
         int i = 0;
         for (Text txt :
                 lines) {
-            drawCenteredTextWithShadow(matrices, textRenderer, txt.asOrderedText(), (int) (width * 0.5), (int) (height * 0.3) + i, 0xFFFFFF);
+            context.drawCenteredTextWithShadow( textRenderer, txt.asOrderedText(), (int) (width * 0.5), (int) (height * 0.3) + i, 0xFFFFFF);
             i += txt.getString().isBlank() ? 5 : 10;
         }
 

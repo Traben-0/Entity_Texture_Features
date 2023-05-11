@@ -1,7 +1,6 @@
 package traben.entity_texture_features.config.screens;
 
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import traben.entity_texture_features.ETFClientCommon;
@@ -101,11 +100,6 @@ public class ETFConfigScreenGeneralSettings extends ETFConfigScreen {
     }
 
 
-    @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        super.render(matrices, mouseX, mouseY, delta);
 
-
-    }
 
 }

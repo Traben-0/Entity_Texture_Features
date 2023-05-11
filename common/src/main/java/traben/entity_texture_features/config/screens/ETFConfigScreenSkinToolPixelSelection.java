@@ -2,6 +2,7 @@ package traben.entity_texture_features.config.screens;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -100,7 +101,7 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFConfigScreen {
                             }
                         }, Supplier::get) {
                     @Override
-                    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+                    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
                         //invisible lol
                     }
                 };
@@ -127,26 +128,27 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFConfigScreen {
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        super.render(matrices, mouseX, mouseY, delta);
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        super.render(context, mouseX, mouseY, delta);
+
         int pixelSize = (int) (this.height * 0.7 / 64);
         renderGUITexture(currentSkinToRender, (int) ((this.width * 0.35)), (int) ((this.height * 0.2)), (int) ((this.width * 0.35) + (64 * pixelSize)), (int) ((this.height * 0.2) + (64 * pixelSize)));
-        drawTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".skin_select" + (selectedPixels.size() > 64 ? ".warn" : ".hint")), width / 7, (int) (this.height * 0.8), selectedPixels.size() > 64 ? 0xff1515 : 0xFFFFFF);
+        context.drawTextWithShadow( textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".skin_select" + (selectedPixels.size() > 64 ? ".warn" : ".hint")), width / 7, (int) (this.height * 0.8), selectedPixels.size() > 64 ? 0xff1515 : 0xFFFFFF);
 
         if (MinecraftClient.getInstance() != null) {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             if (player != null) {
 
                 int blinkModifierBySystemTimeInTicks = (int) ((System.currentTimeMillis() / 50) % (30 + (ETFConfigData.blinkLength * 2)));
-                ETFManager.getInstance().ENTITY_BLINK_TIME.put(player.getUuid(), player.world.getTime() + blinkModifierBySystemTimeInTicks - (15 + ETFConfigData.blinkLength));
+                ETFManager.getInstance().ENTITY_BLINK_TIME.put(player.getUuid(), player.getWorld().getTime() + blinkModifierBySystemTimeInTicks - (15 + ETFConfigData.blinkLength));
 
 
                 int height = (int) (this.height * 0.75);
                 int playerX = (int) (this.width * 0.14);
                 drawEntity(playerX, height, (int) (this.height * 0.3), (float) (-mouseX + playerX), (float) (-mouseY + (this.height * 0.3)), player);
             } else {
-                drawTextWithShadow(matrices, textRenderer, Text.of("Player model only visible while in game!"), width / 7, (int) (this.height * 0.4), 0xFFFFFF);
-                drawTextWithShadow(matrices, textRenderer, Text.of("load a single-player world and then open this menu."), width / 7, (int) (this.height * 0.45), 0xFFFFFF);
+                context.drawTextWithShadow( textRenderer, Text.of("Player model only visible while in game!"), width / 7, (int) (this.height * 0.4), 0xFFFFFF);
+                context.drawTextWithShadow( textRenderer, Text.of("load a single-player world and then open this menu."), width / 7, (int) (this.height * 0.45), 0xFFFFFF);
             }
         }
 
