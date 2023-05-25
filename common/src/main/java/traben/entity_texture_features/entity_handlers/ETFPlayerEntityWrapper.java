@@ -1,9 +1,11 @@
-package traben.entity_texture_features.utils;
+package traben.entity_texture_features.entity_handlers;
 
+import net.minecraft.client.render.entity.PlayerModelPart;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.mob.ZombifiedPiglinEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.scoreboard.AbstractTeam;
@@ -14,11 +16,11 @@ import net.minecraft.world.World;
 
 import java.util.UUID;
 
-public record ETFEntityWrapper(Entity entity) implements ETFEntity {
+public record ETFPlayerEntityWrapper(PlayerEntity entity) implements ETFPlayerEntity {
 
 
     public boolean isZombiePiglin() {
-        return entity instanceof ZombifiedPiglinEntity;
+        return false;
     }
 
     public EntityType<?> getType() {
@@ -100,4 +102,28 @@ public record ETFEntityWrapper(Entity entity) implements ETFEntity {
     }
 
 
+    @Override
+    public boolean isTeammate(PlayerEntity player) {
+        return this.entity.isTeammate(player);
+    }
+
+    @Override
+    public PlayerInventory getInventory() {
+        return entity.getInventory();
+    }
+
+    @Override
+    public boolean isPartVisible(PlayerModelPart part) {
+        return entity.isPartVisible(part);
+    }
+
+    @Override
+    public Text getName() {
+        return entity.getName();
+    }
+
+    @Override
+    public String getUuidAsString() {
+        return entity.getUuidAsString();
+    }
 }

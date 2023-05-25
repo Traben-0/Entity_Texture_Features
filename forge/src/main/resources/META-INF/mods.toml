@@ -1,5 +1,5 @@
 modLoader = "javafml"
-loaderVersion = "[44,)"
+loaderVersion = "[45,)"
 issueTrackerURL = "https://github.com/Traben-0/EmissiveMod/issues"
 license = "LGPL-3.0"
 showAsResourcePack = false
@@ -23,14 +23,14 @@ logoFile = "icon.png"
 [[dependencies.entity_texture_features]]
 modId = "forge"
 mandatory = true
-versionRange = "[44,)"
+versionRange = "[45,)"
 ordering = "NONE"
 side = "CLIENT"
 
 [[dependencies.entity_texture_features]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.19.3,)"
+versionRange = "[1.19.4,)"
 ordering = "NONE"
 side = "CLIENT"
 

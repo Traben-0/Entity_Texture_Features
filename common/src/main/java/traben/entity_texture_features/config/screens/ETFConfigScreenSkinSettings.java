@@ -8,6 +8,7 @@ import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
+import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFPlayerTexture;
 
 import java.util.Objects;
@@ -100,9 +101,23 @@ public class ETFConfigScreenSkinSettings extends ETFConfigScreen {
                 },
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".skin_features_try_transparency_for_all.tooltip")
         ));
+        if(ETFManager.getInstance().skinLayersModPresent) {
+            this.addDrawableChild(getETFButton((int) (this.width * 0.025), (int) (this.height * 0.7), (int) (this.width * 0.45), 20,
+                    Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
+                            "config." + ETFClientCommon.MOD_ID + ".skin_layers_patch.title"
+                    ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.use3DSkinLayerPatch ? ScreenTexts.ON : ScreenTexts.OFF).getString()),
+                    (button) -> {
+                        ETFConfigScreenMain.temporaryETFConfig.use3DSkinLayerPatch = !ETFConfigScreenMain.temporaryETFConfig.use3DSkinLayerPatch;
+                        button.setMessage(Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
+                                "config." + ETFClientCommon.MOD_ID + ".skin_layers_patch.title"
+                        ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.use3DSkinLayerPatch ? ScreenTexts.ON : ScreenTexts.OFF).getString()));
+                    },
+                    ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".skin_layers_patch.tooltip")
+            ));
+        }
 
-        boolean canLaunchTool = (
-                ETFClientCommon.ETFConfigData.skinFeaturesEnabled && ETFVersionDifferenceHandler.isFabric() == ETFVersionDifferenceHandler.isThisModLoaded("fabric"))
+
+        canLaunchTool = (ETFClientCommon.ETFConfigData.skinFeaturesEnabled && ETFVersionDifferenceHandler.isFabric() == ETFVersionDifferenceHandler.isThisModLoaded("fabric"))
                 && MinecraftClient.getInstance().player != null && ETFPlayerTexture.clientPlayerOriginalSkinImageForTool != null;
 
         ButtonWidget skinTool = getETFButton((int) (this.width * 0.525), (int) (this.height * 0.5), (int) (this.width * 0.45), 20,
@@ -119,6 +134,7 @@ public class ETFConfigScreenSkinSettings extends ETFConfigScreen {
 
     }
 
+    private boolean canLaunchTool=false;
 
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
@@ -127,6 +143,8 @@ public class ETFConfigScreenSkinSettings extends ETFConfigScreen {
         drawCenteredTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.title"), (int) (width * 0.75), (int) (height * 0.35), 0xFFFFFF);
         drawCenteredTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.button_desc.1"), (int) (width * 0.75), (int) (height * 0.4), 0xCCCCCC);
         drawCenteredTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.button_desc.2"), (int) (width * 0.75), (int) (height * 0.45), 0xCCCCCC);
+        if(!canLaunchTool)
+            drawCenteredTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.button_desc.fail"), (int) (width * 0.75), (int) (height * 0.6), 0xCC5555);
     }
 
 }

@@ -15,6 +15,9 @@ import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.config.screens.ETFConfigScreenSkinTool;
+import traben.entity_texture_features.entity_handlers.ETFEntity;
+import traben.entity_texture_features.entity_handlers.ETFPlayerEntity;
+import traben.entity_texture_features.entity_handlers.ETFPlayerEntityWrapper;
 import traben.entity_texture_features.utils.*;
 
 import java.util.*;
@@ -80,8 +83,12 @@ public class ETFManager {
     public ETFTexture redMooshroomAlt = null;
     public ETFTexture brownMooshroomAlt = null;
 
+
+    public boolean skinLayersModPresent;
     private ETFManager() {
 
+        //check only once
+        skinLayersModPresent = (ETFVersionDifferenceHandler.isThisModLoaded("skinlayers") || ETFVersionDifferenceHandler.isThisModLoaded("skinlayers3d"));
 
         for (ResourcePack pack :
                 MinecraftClient.getInstance().getResourceManager().streamResourcePacks().toList()) {
@@ -143,9 +150,10 @@ public class ETFManager {
         manager = new ETFManager();
     }
 
+
+
     private static ETFTexture getErrorETFTexture() {
         ETFUtils2.registerNativeImageToIdentifier(ETFUtils2.emptyNativeImage(), new Identifier("etf:error.png"));
-        ETFUtils2.logWarn("getErrorETFTexture() was called, investigate this if called more than once");
         return new ETFTexture(new Identifier("etf:error.png"), false);//, ETFTexture.TextureSource.GENERIC_DEBUG);
     }
 
@@ -365,7 +373,11 @@ public class ETFManager {
             //if not null the below two represent the highest version of said files
             Identifier possibleProperty = ETFDirectory.getDirectoryVersionOf(ETFUtils2.replaceIdentifier(vanillaIdentifier, ".png", ".properties"));
             Identifier possible2PNG = ETFDirectory.getDirectoryVersionOf(ETFUtils2.replaceIdentifier(vanillaIdentifier, ".png", "2.png"));
-
+            //try fallback properties
+            if(possibleProperty == null && "minecraft".equals(vanillaIdentifier.getNamespace()) && vanillaIdentifier.getPath().contains("_")){
+                String vanId =vanillaIdentifier.getPath().replaceAll("(_tame|_angry|_nectar|_shooting|_cold)","");
+                possibleProperty = ETFDirectory.getDirectoryVersionOf(new Identifier(vanId.replace( ".png", ".properties")));
+            }
 
             //if both null vanilla fallback as no randoms
             if (possible2PNG == null && possibleProperty == null) {
@@ -528,9 +540,20 @@ public class ETFManager {
         ETFUtils2.logError("getOrCreateETFTexture reached the end and should not have");
         return ETF_ERROR_TEXTURE;
     }
+//    @Nullable
+//    public ETFPlayerTexture getPlayerHeadTexture(ETFEntity playerHead) {
+//        if (PLAYER_TEXTURE_MAP.containsKey(playerHead.getUuid())) {
+//            return PLAYER_TEXTURE_MAP.get(playerHead.getUuid());
+//        }
+//        return null;
+//    }
 
     @Nullable
     public ETFPlayerTexture getPlayerTexture(PlayerEntity player, Identifier rendererGivenSkin) {
+        return getPlayerTexture(new ETFPlayerEntityWrapper(player),rendererGivenSkin);
+    }
+    @Nullable
+    public ETFPlayerTexture getPlayerTexture(ETFPlayerEntity player, Identifier rendererGivenSkin) {
         try {
             UUID id = player.getUuid();
             if (PLAYER_TEXTURE_MAP.containsKey(id)) {
@@ -543,35 +566,15 @@ public class ETFManager {
                     return possibleSkin;
                 }
 
-            }// else {
-//                if (LAST_PLAYER_CHECK_TIME.containsKey(id)) {
-//                    int attemptCount = PLAYER_CHECK_COUNT.getInt(id);
-//                    if (attemptCount > 6) {
-//                        //no more checking always return null now
-//                        //player ahs no features it seems
-//                        LAST_PLAYER_CHECK_TIME.removeLong(id);
-//                        PLAYER_CHECK_COUNT.removeInt(id);
-//                        PLAYER_TEXTURE_MAP.put(id, null);
-//                        return null;
-//                    }
-//
-//                    if (LAST_PLAYER_CHECK_TIME.getLong(id) + 3000 > System.currentTimeMillis()) {
-//                        //not time to check again
-//                        return null;
-//                    }
-//                    PLAYER_CHECK_COUNT.put(id, attemptCount + 1);
-//                    //allowed to continue if time has passed and not exceeded attempt limit
-//                }
-//                LAST_PLAYER_CHECK_TIME.put(id, System.currentTimeMillis());
+            }
             PLAYER_TEXTURE_MAP.put(id, null);
             ETFPlayerTexture etfPlayerTexture = new ETFPlayerTexture(player, rendererGivenSkin);
             PLAYER_TEXTURE_MAP.put(id, etfPlayerTexture);
             return etfPlayerTexture;
-            //}
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
-
     }
 
 

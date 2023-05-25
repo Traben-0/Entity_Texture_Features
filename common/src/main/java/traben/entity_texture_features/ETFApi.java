@@ -2,11 +2,19 @@ package traben.entity_texture_features;
 
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.client.model.Model;
+import net.minecraft.client.model.ModelPart;
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.config.ETFConfig;
+import traben.entity_texture_features.entity_handlers.ETFBlockEntityWrapper;
+import traben.entity_texture_features.entity_handlers.ETFEntityWrapper;
 import traben.entity_texture_features.texture_handlers.ETFManager;
+import traben.entity_texture_features.texture_handlers.ETFTexture;
 import traben.entity_texture_features.utils.ETFTexturePropertiesUtils;
 import traben.entity_texture_features.utils.ETFUtils2;
 
@@ -14,19 +22,39 @@ import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 
-//an api that will remain unchanged for external mod access (primarily puzzle at this time)
+import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
+
+// an api that will remain unchanged for external mod access (primarily puzzle and EMF at this time)
 @SuppressWarnings("unused")
 public class ETFApi {
 
-    final public static int ETFApiVersion = 4;
-    //provides access to the ETF config object to read AND modify its values
+    final public static int ETFApiVersion = 6;
+    //provides access to the live ETF config object to read AND modify its values
     //please be sure to run the save config method below after any changes
+
     public static ETFConfig getETFConfigObject() {
         return ETFClientCommon.ETFConfigData;
     }
-    //static getter that simply provided an object pointer, doesn't work with newer config resetting
+
+    //returns a copy of the ETF config object that can be freely modified without affecting ETF
+    public static ETFConfig getCopyOfETFConfigObject() {
+        return ETFConfig.copyFrom( ETFClientCommon.ETFConfigData);
+    }
+
+    //returns a new ETF config object with default settings
+    public static ETFConfig getDefaultETFConfigObject() {
+        return new ETFConfig();
+    }
+
+    //sets the current config object used by etf, this will also save the config and reset etf
+    public static void setETFConfigObject(ETFConfig newETFConfig) {
+        ETFClientCommon.ETFConfigData = newETFConfig;
+        saveETFConfigChangesAndResetETF();
+    }
+
+    //static getter that simply provided an object pointer, doesn't work with newer config resetting method
     @Deprecated
-    public static ETFConfig getETFConfigObject = ETFClientCommon.ETFConfigData;
+    public static ETFConfig getETFConfigObject = new ETFConfig();
 
     //saves any config changes to file and resets ETF to function with the new settings
     public static void saveETFConfigChangesAndResetETF() {
@@ -40,6 +68,75 @@ public class ETFApi {
     }
 
 
+    // pass in an entity, and its default texture and receive the current variant of that texture or the default if no variant exists
+    @NotNull
+    public static Identifier getCurrentETFVariantTextureOfEntity(@NotNull Entity entity, @NotNull Identifier defaultTexture){
+        ETFEntityWrapper etfEntity = new ETFEntityWrapper(entity);
+        ETFTexture etfTexture = ETFManager.getInstance().getETFTexture(defaultTexture, etfEntity, ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs);
+        if(etfTexture != null) {// just in case
+            Identifier etfIdentifier = etfTexture.getTextureIdentifier(etfEntity);
+            if(etfIdentifier != null){// just in case
+                return etfIdentifier;
+            }
+        }
+        return defaultTexture;
+    }
+
+    // pass in a BlockEntity, and its default texture and receive the current variant of that texture or the default if no variant exists
+    // block entities require a UUID to be handled correctly you can always generate a UUID from a string with
+    // UUID.nameUUIDFromBytes("STRING".getBytes())
+    // I recommend adding the BlockPos and facing direction values to the uuid STRING as well as any other identifiable data unique to that BlockEntity
+    @NotNull
+    public static Identifier getCurrentETFVariantTextureOfEntity(@NotNull BlockEntity entity, @NotNull Identifier defaultTexture, UUID uuidForBlockEntity){
+        ETFBlockEntityWrapper etfEntity =new ETFBlockEntityWrapper(entity,uuidForBlockEntity);
+        ETFTexture etfTexture = ETFManager.getInstance().getETFTexture(defaultTexture, etfEntity, ETFManager.TextureSource.BLOCK_ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs);
+        if(etfTexture != null) {// just in case
+            Identifier etfIdentifier = etfTexture.getTextureIdentifier(etfEntity);
+            if(etfIdentifier != null){// just in case
+                return etfIdentifier;
+            }
+        }
+        return defaultTexture;
+    }
+
+    // pass in an entity, and it's default texture and receive it's current emissive texture if it exists else returns null
+    @Nullable
+    public static Identifier getCurrentETFEmissiveTextureOfEntityOrNull(@NotNull Entity entity, @NotNull Identifier defaultTexture){
+        ETFTexture etfTexture = ETFManager.getInstance().getETFTexture(defaultTexture, new ETFEntityWrapper(entity), ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs);
+        if(etfTexture != null) {// just in case
+            return etfTexture.getEmissiveIdentifierOfCurrentState();
+        }
+        return null;
+    }
+
+    // alternatively to render your entity using its emissive textures you can simply call this method sometime after
+    // your entity is rendered, but before you pop or modify the matrix stack, NOTE: defaultTexture must be the default non variant texture
+    public static void renderETFEmissiveModel(
+            @NotNull Entity entity,
+            @NotNull Identifier defaultTextureOfEntity,
+            @NotNull MatrixStack matrixStack,
+            @NotNull VertexConsumerProvider vertexConsumerProvider,
+            @NotNull Model model
+    ){
+        ETFTexture etfTexture = ETFManager.getInstance().getETFTexture(defaultTextureOfEntity, new ETFEntityWrapper(entity), ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs);
+        if(etfTexture != null) {// just in case
+            etfTexture.renderEmissive(matrixStack,vertexConsumerProvider,model);
+        }
+    }
+
+    //same methods as above but for an individual ModelPart
+    public static void renderETFEmissiveModelPart(
+            @NotNull Entity entity,
+            @NotNull Identifier defaultTextureOfEntity,
+            @NotNull MatrixStack matrixStack,
+            @NotNull VertexConsumerProvider vertexConsumerProvider,
+            @NotNull ModelPart modelPart
+    ){
+        ETFTexture etfTexture = ETFManager.getInstance().getETFTexture(defaultTextureOfEntity, new ETFEntityWrapper(entity), ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs);
+        if(etfTexture != null) {// just in case
+            etfTexture.renderEmissive(matrixStack,vertexConsumerProvider,modelPart);
+        }
+    }
 
 
     // returns the object below that provides functionality to input an entity and output a suffix integer as defined in

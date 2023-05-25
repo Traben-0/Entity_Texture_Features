@@ -1,4 +1,4 @@
-package traben.entity_texture_features.utils;
+package traben.entity_texture_features.entity_handlers;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;

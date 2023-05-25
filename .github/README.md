@@ -15,7 +15,7 @@
 
 ## 🤔 What does this mod do?
 
-ETF is a Fabric *(Quilt compatible)* & Forge mod that adds many new _Entity Texture Features_ :trollface:, including entity and player skin features!  
+ETF is a Fabric *(Quilt compatible)* & Forge mod that adds many new _Entity Texture Features_, including entity and player skin features!  
 This way, ETF achieves more OptiFine parity on the Fabric mod loader. If you want more OptiFine features on Fabric, you can either check [this list](https://lambdaurora.dev/optifine_alternatives), made by LambdaAurora, **or** you can use the [Fabulously Optimized modpack](https://modrinth.com/modpack/fabulously-optimized), which includes **all** the OptiFine parity mods!
 
 ## Featuring:
@@ -28,7 +28,7 @@ This way, ETF achieves more OptiFine parity on the Fabric mod loader. If you wan
 ## Compatibility
 
 - OptiFine's random/custom or emissive entity resource packs - <img src="https://emojipedia-us.s3.amazonaws.com/source/skype/289/check-mark-button_2705.png" alt="✅" width="15"> **Fully compatable**
-- [Custom Entity Models mod](https://modrinth.com/mod/cem) - <img src="https://emojipedia-us.s3.amazonaws.com/source/skype/289/check-mark-button_2705.png" alt="✅" width="15"> **Fully compatible**
+- [Entity Model Features](https://modrinth.com/mod/entity-model-features) - <img src="https://emojipedia-us.s3.amazonaws.com/source/skype/289/check-mark-button_2705.png" alt="✅" width="15"> **Fully compatible**
 - [Sodium](https://modrinth.com/mod/sodium) - <img src="https://emojipedia-us.s3.amazonaws.com/source/skype/289/check-mark-button_2705.png" alt="✅" width="15">  **Fully compatible**
 - [Iris Shaders](https://modrinth.com/mod/iris) - <img src="https://emojipedia-us.s3.amazonaws.com/source/skype/289/check-mark-button_2705.png" alt="✅" width="15"> **Fully compatible**<br />(Support varies depending on the shader)
 - Mod added entities - <img src="https://emojipedia-us.s3.amazonaws.com/source/skype/289/check-mark-button_2705.png" alt="✅" width="15"> **Compatible**<br />(Only if the mod creator used the vanilla rendering code to render their mobs)
@@ -153,7 +153,7 @@ This way, ETF achieves more OptiFine parity on the Fabric mod loader. If you wan
 
 > My entities are invisible/broken!
 
-- Custom Entity Models is not a feature provided by ETF. If your entities are invisible or look corrupted you'll need to instal the [CEM mod](https://modrinth.com/mod/cem) (this includes resource packs such as Fresh Animations). Keep in mind that the CEM mod is still in alpha development and may still occur issues.
+- Custom Entity Models is not a feature provided by ETF. If your entities are invisible or look corrupted you'll need to install my other mod [EMF](https://modrinth.com/mod/entity-model-features) (this includes resource packs such as Fresh Animations). Keep in mind that EMF is still in beta development and issues may still occur.
 
 > Blocks and items are not emissive!
 
@@ -176,9 +176,9 @@ This way, ETF achieves more OptiFine parity on the Fabric mod loader. If you wan
 
 - Feel free to check ETF's [Discord](https://discord.com/invite/rURmwrzUcz) to ask your questions or check the FAQ there :)
 
-## Change log
+## Changelog
 
- [[V4.1.1] & prior](../common/CHANGELOG.md).
+The changelog is available (for v4.1.1 & prior) on [CHANGELOG.md](../common/CHANGELOG.md).
 
 ## License
 
