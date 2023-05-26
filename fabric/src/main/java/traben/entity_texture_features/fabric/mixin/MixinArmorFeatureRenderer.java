@@ -31,7 +31,8 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
     }
 
     @ModifyArg(method = "renderArmorParts",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/RenderLayer;getArmorCutoutNoCull(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;"))
+            at = @At(value = "INVOKE",
+                    target = "Lnet/minecraft/client/render/RenderLayer;getArmorCutoutNoCull(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;"),index = 0)
     private Identifier etf$changeTexture(Identifier texture) {
         thisETFTexture = ETFManager.getInstance().getETFTexture(texture, null, ETFManager.TextureSource.ENTITY_FEATURE, ETFConfigData.removePixelsUnderEmissiveArmour);
         //noinspection ConstantConditions
@@ -43,7 +44,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
 
     @Inject(method = "renderArmorParts",
             at = @At(value = "TAIL"))
-    private void etf$applyEmissive(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ArmorItem item, boolean usesSecondLayer, A model, boolean legs, float red, float green, float blue, String overlay, CallbackInfo ci) {
+    private void etf$applyEmissive(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ArmorItem item, A model, boolean secondTextureLayer, float red, float green, float blue, String overlay, CallbackInfo ci) {
         //UUID id = livingEntity.getUuid();
         if (thisETFTexture != null && ETFConfigData.enableEmissiveTextures) {
             Identifier emissive = thisETFTexture.getEmissiveIdentifierOfCurrentState();
