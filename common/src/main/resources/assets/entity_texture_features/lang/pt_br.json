@@ -183,5 +183,7 @@
     "config.entity_texture_features.disable_default_directory.title": "Desativar usando o diretório padrão",
     "config.entity_texture_features.disable_default_directory.tooltip": "Por padrão, você pode usar o diretório vanilla para texturas aleatórias\nIsso permitirá que você desative isso e imponha o uso das pastas optifine e etf\ndestina-se a oferecer suporte a mods que possuem texturas de entidade chamadas 'mob2.png' por algum motivo",
     "config.entity_texture_features.skin_features_try_transparency_for_all.title": "Habilitar transparência em TODAS as capas: ",
-    "config.entity_texture_features.skin_features_try_transparency_for_all.tooltip": "isso tentará ativar a renderização transparente da pele\n para TODAS as skins, não apenas skins habilitadas para ETF\n AVISO isso ignora a verificação de 100% de transparência"
-}  
+    "config.entity_texture_features.skin_features_try_transparency_for_all.tooltip": "isso tentará ativar a renderização transparente da skin\n para TODAS as skins, não apenas skins habilitadas para ETF\n AVISO isso ignora a verificação de 100% de transparência",
+	"config.entity_texture_features.skin_layers_patch.title": "Patch de mod de camadas de skin 3D",
+	"config.entity_texture_features.skin_layers_patch.tooltip": "Você está vendo isso porque o mod de camadas de skin 3D foi detectado.\nETF contém um patch para permitir que os recursos de skin sejam\nrenderizados corretamente com o excelente mod de camadas de skin 3D\nmudanças futuras nesse mod podem quebrar isso, então o patch é opcional\n\nRESTART NECESSÁRIO depois de mudar isso"
+}
