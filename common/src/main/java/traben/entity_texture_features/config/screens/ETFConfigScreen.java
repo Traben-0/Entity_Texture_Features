@@ -18,7 +18,7 @@ import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 //inspired by puzzles custom gui code
 public abstract class ETFConfigScreen extends Screen {
     static final RotatingCubeMapRenderer backgroundCube = new RotatingCubeMapRenderer(new CubeMapRenderer(new Identifier(MOD_ID + ":textures/gui/background/panorama")));
-    final Screen parent;
+    public final Screen parent;
 
 
     public ETFConfigScreen(Text text, Screen parent) {
@@ -79,18 +79,18 @@ public abstract class ETFConfigScreen extends Screen {
 
         renderBackgroundTexture(0, new Identifier("textures/gui/options_background.png"), (int) (height * 0.15), width);
         renderBackgroundTexture(0, new Identifier("textures/gui/options_background.png"), height, width, (int) (height * 0.85));
-        this.fillGradient(matrices, 0, (int) (height * 0.15), width, (int) (height * 0.85), -1072689136, -804253680);
+        fillGradient(matrices, 0, (int) (height * 0.15), width, (int) (height * 0.85), -1072689136, -804253680);
 
-        drawCenteredText(matrices, textRenderer, title, width / 2, 15, 0xFFFFFF);
+        drawCenteredTextWithShadow(matrices, textRenderer, title.asOrderedText(), width / 2, 15, 0xFFFFFF);
 
         super.render(matrices, mouseX, mouseY, delta);
     }
 
-    ButtonWidget getETFButton(int x, int y, int width, @SuppressWarnings("SameParameterValue") int height, Text buttonText, ButtonWidget.PressAction onPress) {
+    public ButtonWidget getETFButton(int x, int y, int width, @SuppressWarnings("SameParameterValue") int height, Text buttonText, ButtonWidget.PressAction onPress) {
         return getETFButton(x, y, width, height, buttonText, onPress, Text.of(""));
     }
 
-    ButtonWidget getETFButton(int x, int y, int width, int height, Text buttonText, ButtonWidget.PressAction onPress, Text toolTipText) {
+    public ButtonWidget getETFButton(int x, int y, int width, int height, Text buttonText, ButtonWidget.PressAction onPress, Text toolTipText) {
         int nudgeLeftEdge;
         if (width > 384) {
             nudgeLeftEdge = (width - 384) / 2;

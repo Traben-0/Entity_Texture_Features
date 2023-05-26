@@ -19,6 +19,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import traben.entity_texture_features.texture_handlers.ETFManager;
+import traben.entity_texture_features.entity_handlers.ETFEntityWrapper;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
@@ -30,7 +31,7 @@ public abstract class MixinShulkerBulletEntityRenderer extends EntityRenderer<Sh
     @Shadow
     private static Identifier TEXTURE;
 
-    private ShulkerBulletEntity etf$entity = null;
+    private ETFEntityWrapper etf$entity = null;
 
 
     protected MixinShulkerBulletEntityRenderer(EntityRendererFactory.Context ctx) {
@@ -48,7 +49,7 @@ public abstract class MixinShulkerBulletEntityRenderer extends EntityRenderer<Sh
             method = "render(Lnet/minecraft/entity/projectile/ShulkerBulletEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
             at = @At(value = "HEAD"))
     private void etf$getEntity(ShulkerBulletEntity shulkerBulletEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
-        etf$entity = shulkerBulletEntity;
+        etf$entity = new ETFEntityWrapper(shulkerBulletEntity) ;
     }
 
     @ModifyArg(
@@ -106,7 +107,7 @@ public abstract class MixinShulkerBulletEntityRenderer extends EntityRenderer<Sh
                     shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILSOFT)
     private void etf$applyEmissive(ShulkerBulletEntity shulkerBulletEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci, float h, float j, float k, VertexConsumer vertexConsumer) {
         //UUID id = livingEntity.getUuid();
-        ETFManager.getInstance().getETFTexture(TEXTURE, shulkerBulletEntity, ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs).renderEmissive(matrixStack, vertexConsumerProvider, model);
+        ETFManager.getInstance().getETFTexture(TEXTURE, new ETFEntityWrapper(shulkerBulletEntity), ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs).renderEmissive(matrixStack, vertexConsumerProvider, model);
 
     }
 

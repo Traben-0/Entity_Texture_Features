@@ -1,6 +1,5 @@
 package traben.entity_texture_features.mixin.entity.misc;
 
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;

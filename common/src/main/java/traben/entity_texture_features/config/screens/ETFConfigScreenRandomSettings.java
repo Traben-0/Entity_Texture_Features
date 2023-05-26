@@ -39,6 +39,8 @@ public class ETFConfigScreenRandomSettings extends ETFConfigScreen {
                     ETFConfigScreenMain.temporaryETFConfig.restrictBiome = true;
                     ETFConfigScreenMain.temporaryETFConfig.restrictBlock = true;
                     ETFConfigScreenMain.temporaryETFConfig.restrictHeight = true;
+                    ETFConfigScreenMain.temporaryETFConfig.disableVanillaDirectoryVariantTextures = false;
+
                     Objects.requireNonNull(client).setScreen(new ETFConfigScreenRandomSettings(parent));
                     this.close();
                 }));
@@ -96,6 +98,19 @@ public class ETFConfigScreenRandomSettings extends ETFConfigScreen {
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".restrict_update_properties"),
                 (button) -> Objects.requireNonNull(client).setScreen(new ETFConfigScreenRandomRestrictSettings(this)),
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".restrict_update_properties.tooltip")
+        ));
+
+        this.addDrawableChild(getETFButton((int) (this.width * 0.2), (int) (this.height * 0.7), (int) (this.width * 0.6), 20,
+                Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
+                        "config." + ETFClientCommon.MOD_ID + ".disable_default_directory.title"
+                ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.disableVanillaDirectoryVariantTextures ? ScreenTexts.ON : ScreenTexts.OFF).getString()),
+                (button) -> {
+                    ETFConfigScreenMain.temporaryETFConfig.disableVanillaDirectoryVariantTextures = !ETFConfigScreenMain.temporaryETFConfig.disableVanillaDirectoryVariantTextures;
+                    button.setMessage(Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
+                            "config." + ETFClientCommon.MOD_ID + ".disable_default_directory.title"
+                    ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.disableVanillaDirectoryVariantTextures ? ScreenTexts.ON : ScreenTexts.OFF).getString()));
+                },
+                ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".disable_default_directory.tooltip")
         ));
 
 

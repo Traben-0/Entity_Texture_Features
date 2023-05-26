@@ -22,6 +22,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import traben.entity_texture_features.entity_handlers.ETFEntityWrapper;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
 import traben.entity_texture_features.utils.ETFUtils2;
@@ -73,8 +74,8 @@ public abstract class MixinShoulderParrotFeatureRenderer<T extends PlayerEntity>
             //System.out.println(id);
             //parrot.setUuid(id);
 
-            thisETFTexture = ETFManager.getInstance().getETFTexture(ParrotEntityRenderer.TEXTURES[parrot.getVariant()], parrot, ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs);
-            return thisETFTexture.getTextureIdentifier(parrot,true);
+            thisETFTexture = ETFManager.getInstance().getETFTexture(ParrotEntityRenderer.TEXTURES[parrot.getVariant()], new ETFEntityWrapper(parrot), ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs);
+            return thisETFTexture.getTextureIdentifier(new ETFEntityWrapper(parrot),true);
         }else{
             ETFUtils2.logError("shoulder parrot error");
             return ParrotEntityRenderer.TEXTURES[parrotNBT.getInt("Variant")];

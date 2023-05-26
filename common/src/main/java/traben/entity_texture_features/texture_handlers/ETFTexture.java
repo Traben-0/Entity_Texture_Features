@@ -7,7 +7,6 @@ import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.*;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffects;
@@ -18,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.screens.ETFConfigScreen;
+import traben.entity_texture_features.entity_handlers.ETFEntity;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.Properties;
@@ -60,20 +60,33 @@ public class ETFTexture {
     // private final TextureSource source;
     private boolean canPatch = true;
 
-    public ETFTexture(/*@NotNull Identifier vanillaIdentifier,*/ @NotNull Identifier variantIdentifier, boolean allowedToPatch) {//,TextureSource source) {
-        //this.vanillaIdentifier = vanillaIdentifier;
-        //this.source = source;
+    public ETFTexture(Identifier variantIdentifier, boolean allowedToPatch) {
+
+        if (variantIdentifier == null) {
+            ETFUtils2.logError("ETFTexture had a null identifier this MUST never happen");
+            //throw new IllegalArgumentException("ETFTexture had null identifier");
+            thisIdentifier = null;
+            variantNumber = 0;
+            return;
+        }
+
         this.thisIdentifier = variantIdentifier;
         Pattern pattern = Pattern.compile("\\d+(?=\\.png)");
         Matcher matcher = pattern.matcher(variantIdentifier.getPath());
-        if (matcher.find()) {
-            this.variantNumber = Integer.parseInt(matcher.group());
-        } else {
-            this.variantNumber = 0;
+        int intFound = 0;
+        try {
+            if (matcher.find()) {
+                intFound = Integer.parseInt(matcher.group());
+
+            }
+        } catch (NumberFormatException ignored) {
+            // this.variantNumber = 0;
         }
+        this.variantNumber = intFound;
         canPatch = allowedToPatch;
         setupBlinking();
         setupEmissives();
+
 
     }
 
@@ -257,7 +270,7 @@ public class ETFTexture {
     }
 
     private void createPatchedTextures() {
-        if (this.canPatch && ETFVersionDifferenceHandler.isFabric()/* && !ETFConfigData.removePixelsUnderEmissive*/) {
+        if (this.canPatch/* && ETFVersionDifferenceHandler.isFabric() && !ETFConfigData.removePixelsUnderEmissive*/) {
             return;
         }
         //here we will 'patch' the base texture to prevent z-fighting with various shaders
@@ -375,7 +388,6 @@ public class ETFTexture {
                 //
             }
 
-
             //save successful patches after any iris or other future patching reasons
             if (didPatch) {
                 thisIdentifier_Patched = new Identifier(PATCH_NAMESPACE_PREFIX + thisIdentifier.getNamespace(), thisIdentifier.getPath());
@@ -391,6 +403,7 @@ public class ETFTexture {
             }
         }
     }
+
 
     @NotNull
     Identifier getFeatureTexture(Identifier vanillaFeatureTexture) {
@@ -432,12 +445,12 @@ public class ETFTexture {
     }
 
     @NotNull
-    public Identifier getTextureIdentifier(Entity entity) {
+    public Identifier getTextureIdentifier(ETFEntity entity) {
         return getTextureIdentifier(entity, false);
     }
 
     @NotNull
-    public Identifier getTextureIdentifier(@Nullable Entity entity, boolean forcePatchedTexture) {
+    public Identifier getTextureIdentifier(@Nullable ETFEntity entity, boolean forcePatchedTexture) {
 
         if (isPatched() && (forcePatchedTexture || (ETFConfigData.enableEmissiveTextures && ETFVersionDifferenceHandler.areShadersInUse()) || MinecraftClient.getInstance().currentScreen instanceof ETFConfigScreen)) {
             //patched required
@@ -450,7 +463,7 @@ public class ETFTexture {
     }
 
     @NotNull
-    private Identifier getBlinkingIdentifier(@Nullable Entity entity) {
+    private Identifier getBlinkingIdentifier(@Nullable ETFEntity entity) {
         if (!doesBlink() || entity == null || !ETFConfigData.enableBlinking) {
             return identifierOfCurrentState();
         }
@@ -461,19 +474,19 @@ public class ETFTexture {
             return identifierOfCurrentState();
         }
         //force eyes closed if blinded
-        else if (entity instanceof LivingEntity alive && alive.hasStatusEffect(StatusEffects.BLINDNESS)) {
+        else if (entity.entity() instanceof LivingEntity alive && alive.hasStatusEffect(StatusEffects.BLINDNESS)) {
             modifyTextureState(doesBlink2() ? TextureReturnState.APPLY_BLINK2 : TextureReturnState.APPLY_BLINK);
             return identifierOfCurrentState();
         } else {
             //do regular blinking
-            if (entity.world != null) {
+            if (entity.getWorld() != null) {
                 UUID id = entity.getUuid();
                 if (!ETFManager.getInstance().ENTITY_BLINK_TIME.containsKey(id)) {
-                    ETFManager.getInstance().ENTITY_BLINK_TIME.put(id, entity.world.getTime() + blinkLength + 1);
+                    ETFManager.getInstance().ENTITY_BLINK_TIME.put(id, entity.getWorld().getTime() + blinkLength + 1);
                     return identifierOfCurrentState();
                 }
                 long nextBlink = ETFManager.getInstance().ENTITY_BLINK_TIME.getLong(id);
-                long currentTime = entity.world.getTime();
+                long currentTime = entity.getWorld().getTime();
 
                 if (currentTime >= nextBlink - blinkLength && currentTime <= nextBlink + blinkLength) {
                     if (doesBlink2()) {

@@ -2,6 +2,7 @@ package traben.entity_texture_features.config.screens;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -11,7 +12,6 @@ import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.client.gui.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Quaternion;
@@ -81,6 +81,7 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFConfigScreen {
             for (int y = 0; y < 64; y++) {
                 int finalX = x;
                 int finalY = y;
+
                 ButtonWidget butt = new ButtonWidget((int) ((this.width * 0.35) + (x * pixelSize)), (int) ((this.height * 0.2) + (y * pixelSize)), pixelSize, pixelSize,
                         Text.of(""),
                         (button) -> {
@@ -97,7 +98,7 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFConfigScreen {
                             if (ETFUtils2.registerNativeImageToIdentifier(etfParent.currentEditorSkin, randomID2)) {
                                 currentSkinToRender = randomID2;
                             }
-                        }, null) {
+                        }) {
                     @Override
                     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
                         //invisible lol

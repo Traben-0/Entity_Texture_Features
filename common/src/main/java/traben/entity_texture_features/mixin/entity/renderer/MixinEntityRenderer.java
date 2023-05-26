@@ -16,6 +16,8 @@ import traben.entity_texture_features.texture_handlers.ETFManager;
 public abstract class MixinEntityRenderer<T extends Entity> {
 
 
+
+
     @Inject(method = "getLight", at = @At(value = "RETURN"), cancellable = true)
     private void etf$vanillaLightOverrideCancel(T entity, float tickDelta, CallbackInfoReturnable<Integer> cir) {
         //if need to override vanilla brightness behaviour

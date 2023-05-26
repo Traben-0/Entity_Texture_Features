@@ -20,6 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
+import traben.entity_texture_features.entity_handlers.ETFEntityWrapper;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
@@ -29,7 +30,7 @@ public abstract class MixinSheepWoolFeatureRenderer extends FeatureRenderer<Shee
     @Shadow
     @Final
     private static Identifier SKIN;
-    SheepEntity etf$entity = null;
+    ETFEntityWrapper etf$entity = null;
     private ETFTexture thisETFTexture = null;
 
     @SuppressWarnings("unused")
@@ -50,7 +51,7 @@ public abstract class MixinSheepWoolFeatureRenderer extends FeatureRenderer<Shee
             method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/passive/SheepEntity;FFFFFF)V",
             at = @At(value = "HEAD"))
     private void etf$getEntity(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, SheepEntity sheepEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
-        etf$entity = sheepEntity;
+        etf$entity = new ETFEntityWrapper(sheepEntity);
     }
 
     @ModifyArg(

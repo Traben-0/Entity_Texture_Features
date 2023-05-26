@@ -21,6 +21,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import traben.entity_texture_features.texture_handlers.ETFManager;
+import traben.entity_texture_features.entity_handlers.ETFEntityWrapper;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.Map;
@@ -31,13 +32,17 @@ import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 public abstract class MixinBoatEntityRenderer extends EntityRenderer<BoatEntity> {
 
 
-    private BoatEntity etf$entity = null;
+    private ETFEntityWrapper etf$entity = null;
     private Identifier etf$identifier = null;
+
+   // private BoatEntity.Type etf$type = null;
 
     @Final
     @Shadow
     private Map<BoatEntity.Type, Pair<Identifier, CompositeEntityModel<BoatEntity>>> texturesAndModels;
 
+
+    @Shadow public abstract Identifier getTexture(BoatEntity boatEntity);
 
     @SuppressWarnings("unused")
     protected MixinBoatEntityRenderer(EntityRendererFactory.Context ctx) {
@@ -48,7 +53,12 @@ public abstract class MixinBoatEntityRenderer extends EntityRenderer<BoatEntity>
             method = "render(Lnet/minecraft/entity/vehicle/BoatEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
             at = @At(value = "HEAD"))
     private void etf$getEntity(BoatEntity boatEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
-        etf$entity = boatEntity;
+        etf$entity = new ETFEntityWrapper( boatEntity);
+       // etf$type = boatEntity.getVariant();
+        //etf$identifier = getTexture(etf$type,)
+        etf$identifier = getTexture(boatEntity);
+
+
     }
 
     @ModifyArg(
@@ -58,39 +68,41 @@ public abstract class MixinBoatEntityRenderer extends EntityRenderer<BoatEntity>
 
         if (ETFConfigData.enableCustomTextures && !renderLayer.equals(RenderLayer.getWaterMask())) {
             try {
+                //Pair<Identifier, ?> pair = this.texturesAndModels.get(etf$type);
+                //etf$identifier = pair.getFirst();
 
-                Pair<Identifier, ?> pair = this.texturesAndModels.get(etf$entity.getBoatType());
-                etf$identifier = pair.getFirst();
+
+                if (etf$identifier != null) {
                 Identifier alteredTexture = ETFManager.getInstance().getETFTexture(etf$identifier, etf$entity, ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs).getTextureIdentifier(etf$entity);
                 RenderLayer layerToReturn;
 
-                if (ETFManager.getInstance().ENTITY_TYPE_RENDER_LAYER.containsKey(etf$entity.getType())) {
-                    //Identifier identifier = this.getTexture(entity);
-                    int choice = ETFManager.getInstance().ENTITY_TYPE_RENDER_LAYER.getInt(etf$entity.getType());
-                    //noinspection EnhancedSwitchMigration
-                    switch (choice) {
-                        case 1:
-                            layerToReturn = (RenderLayer.getEntityTranslucent(alteredTexture));
-                            break;
-                        case 2:
-                            layerToReturn = (RenderLayer.getEntityTranslucentCull(alteredTexture));
-                            break;
-                        case 3:
-                            layerToReturn = (RenderLayer.getEndGateway());
-                            break;
-                        case 4:
-                            layerToReturn = (RenderLayer.getOutline(alteredTexture));
-                            break;
-                        default:
-                            layerToReturn = (null);
-                            break;
+                    if (ETFManager.getInstance().ENTITY_TYPE_RENDER_LAYER.containsKey(etf$entity.getType())) {
+                        //Identifier identifier = this.getTexture(entity);
+                        int choice = ETFManager.getInstance().ENTITY_TYPE_RENDER_LAYER.getInt(etf$entity.getType());
+                        //noinspection EnhancedSwitchMigration
+                        switch (choice) {
+                            case 1:
+                                layerToReturn = (RenderLayer.getEntityTranslucent(alteredTexture));
+                                break;
+                            case 2:
+                                layerToReturn = (RenderLayer.getEntityTranslucentCull(alteredTexture));
+                                break;
+                            case 3:
+                                layerToReturn = (RenderLayer.getEndGateway());
+                                break;
+                            case 4:
+                                layerToReturn = (RenderLayer.getOutline(alteredTexture));
+                                break;
+                            default:
+                                layerToReturn = (null);
+                                break;
+                        }
+                    } else {
+                        layerToReturn = RenderLayer.getEntityCutoutNoCull(alteredTexture);
                     }
-                } else {
-                    layerToReturn = RenderLayer.getEntityCutoutNoCull(alteredTexture);
+
+                    if (layerToReturn != null) return layerToReturn;
                 }
-
-                if (layerToReturn != null) return layerToReturn;
-
             } catch (Exception e) {
                 ETFUtils2.logError(e.toString(), false);
             }

@@ -179,5 +179,11 @@
   "config.entity_texture_features.animation_compatibility": "Automatic animation compat",
   "config.entity_texture_features.animation_compatibility.tooltip": "when enabled ETF will not tamper with any\ntexture that has an animation\ncurrently only if MoreMcmeta mod is present.\n\nNote: this may introduce z-fighting depending on your shader",
   "config.entity_texture_features.illegal_path_mode.entity": "Entities only",
-  "config.entity_texture_features.illegal_path_mode.all": "All resources"
+  "config.entity_texture_features.disable_default_directory.title": "Disable using default directory",
+  "config.entity_texture_features.disable_default_directory.tooltip": "By default you can use the vanilla directory for random textures\nThis will allow you to disable that and enforce the optifine and etf folders usage\nthis is intended to support mods that have entity textures named 'mob2.png' for some reason",
+  "config.entity_texture_features.skin_features_try_transparency_for_all.title": "Enable transparency in ALL skins",
+  "config.entity_texture_features.skin_features_try_transparency_for_all.tooltip": "this will attempt to enabled transparent skin rendering\n for ALL skins not just ETF enabled skins\n WARNING this bypasses the 100% transparency check",
+  "config.entity_texture_features.skin_layers_patch.title": "3D skin layers mod patch",
+  "config.entity_texture_features.skin_layers_patch.tooltip": "You are seeing this as the 3D skin layers mod is detected.\nETF contains a patch to allow skin features to\nrender correctly with the excellent 3d Skin Layers mod\nfuture changes to that mod might break this so the patch is optional\n\nRESTART REQUIRED after changing this",
+  "config.entity_texture_features.player_skin_editor.button_desc.fail": "Tool only works when in-game!"
 }

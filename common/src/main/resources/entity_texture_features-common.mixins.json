@@ -17,6 +17,7 @@
     "entity.block_entity.MixinLecternBlockEntityRenderer",
     "entity.block_entity.MixinMobSpawnerBlockEntityRenderer",
     "entity.block_entity.MixinShulkerBoxBlockEntityRenderer",
+    "entity.block_entity.MixinSkullBlockEntityRenderer",
     "entity.misc.MixinAbstractClientPlayerEntity",
     "entity.misc.MixinBlazeEntity",
     "entity.misc.MixinBuiltinModelItemRenderer",
@@ -25,6 +26,7 @@
     "entity.misc.MixinPlayerEntity",
     "entity.misc.MixinModelPart",
     "entity.misc.MixinTridentEntity",
+    "entity.renderer.MixinArmorStandEntityRenderer",
     "entity.renderer.MixinBoatEntityRenderer",
     "entity.renderer.MixinEnderDragonEntityRenderer",
     "entity.renderer.MixinEntityRenderer",
@@ -47,11 +49,12 @@
     "entity.renderer.feature.MixinSaddleFeatureRenderer",
     "entity.renderer.feature.MixinSheepWoolFeatureRenderer",
     "entity.renderer.feature.MixinShoulderParrotFeatureRenderer",
+    "entity.renderer.feature.MixinWolfCollarFeatureRenderer",
     "entity.renderer.feature.MixinShulkerHeadFeatureRenderer",
     "entity.renderer.feature.MixinSlimeOverlayFeatureRenderer",
     "entity.renderer.feature.MixinVillagerClothingFeatureRenderer",
     "reloading.MixinMinecraftClient",
-    "reloading.MixinSimpleResourceReload"
+    "reloading.MixinResourceReload"
   ],
   "mixins": [],
   "injectors": {

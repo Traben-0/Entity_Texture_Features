@@ -28,7 +28,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import traben.entity_texture_features.mixin.accessor.SpriteAccessor;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
-import traben.entity_texture_features.utils.ETFPlaceholderEntity;
+import traben.entity_texture_features.entity_handlers.ETFBlockEntityWrapper;
 
 import java.util.UUID;
 
@@ -39,7 +39,7 @@ public abstract class MixinChestBlockEntityRenderer<T extends BlockEntity & Ches
 
     private ETFTexture thisETFTexture = null;
     private boolean isAnimatedTexture = false;
-    private ETFPlaceholderEntity etf$chestStandInDummy = null;
+    private ETFBlockEntityWrapper etf$chestStandInDummy = null;
     private Identifier etf$textureOfThis = null;
     private VertexConsumerProvider etf$vertexConsumerProviderOfThis = null;
 
@@ -86,8 +86,9 @@ public abstract class MixinChestBlockEntityRenderer<T extends BlockEntity & Ches
                     World worldCheck = entity.getWorld();
                     if (worldCheck == null) worldCheck = MinecraftClient.getInstance().world;
                     if (worldCheck != null) {
-                        etf$chestStandInDummy = ETFPlaceholderEntity.newFromJustWorld(worldCheck);
-                        etf$chestStandInDummy.prepare(entity, UUID.nameUUIDFromBytes(identifier.getBytes()));
+//                        etf$chestStandInDummy = ETFPlaceholderEntity.newFromJustWorld(worldCheck);
+//                        etf$chestStandInDummy.prepare(entity, UUID.nameUUIDFromBytes(identifier.getBytes()));
+                        etf$chestStandInDummy = new ETFBlockEntityWrapper(entity, UUID.nameUUIDFromBytes(identifier.getBytes()));
                     }
 
                 }

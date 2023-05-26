@@ -6,7 +6,6 @@ import net.minecraft.client.render.entity.feature.SaddleFeatureRenderer;
 import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Saddleable;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Final;
@@ -19,6 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
+import traben.entity_texture_features.entity_handlers.ETFEntityWrapper;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
@@ -26,7 +26,7 @@ import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 public abstract class MixinSaddleFeatureRenderer<T extends Entity & Saddleable, M extends EntityModel<T>> {
 
 
-    LivingEntity etf$entity = null;
+    ETFEntityWrapper etf$entity = null;
     private ETFTexture thisETFTexture = null;
     @Final
     @Shadow
@@ -37,7 +37,7 @@ public abstract class MixinSaddleFeatureRenderer<T extends Entity & Saddleable, 
             method = "Lnet/minecraft/client/render/entity/feature/SaddleFeatureRenderer;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/Entity;FFFFFF)V",
             at = @At(value = "HEAD"))
     private void etf$getEntity(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, T entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch, CallbackInfo ci) {
-        etf$entity = (LivingEntity) entity;
+        etf$entity = new ETFEntityWrapper(entity);
 
     }
 

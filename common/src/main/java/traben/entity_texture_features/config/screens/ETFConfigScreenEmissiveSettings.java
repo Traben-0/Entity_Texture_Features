@@ -128,7 +128,7 @@ public class ETFConfigScreenEmissiveSettings extends ETFConfigScreen {
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         super.render(matrices, mouseX, mouseY, delta);
 
-        drawCenteredText(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".special_emissive_settings.title"), (int) (width * 0.75), (int) (height * 0.25), 0xFFFFFF);
+        drawCenteredTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".special_emissive_settings.title").asOrderedText(), (int) (width * 0.75), (int) (height * 0.25), 0xFFFFFF);
 
     }
 
