@@ -2,7 +2,7 @@ plugins {
     id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
-archivesBaseName = rootProject.archives_base_name + "_fabric_1.19.4"
+archivesBaseName = rootProject.archives_base_name + "_fabric_1.20"
 
 architectury {
     platformSetupLoomIde()
@@ -38,7 +38,7 @@ dependencies {
         exclude(group: "net.fabricmc.fabric-api")
     }
 
-    modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}") {
+    modImplementation("maven.modrinth:modmenu:${project.modmenu_version}") {
         exclude(group: "net.fabricmc.fabric-api")
     }
 

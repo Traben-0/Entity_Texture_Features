@@ -1,9 +1,9 @@
 package traben.entity_texture_features.config.screens;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import traben.entity_texture_features.ETFClientCommon;
@@ -73,26 +73,26 @@ public class ETFConfigScreenWarnings extends ETFConfigScreen {
 
     }
 
-
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        super.render(matrices, mouseX, mouseY, delta);
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        super.render(context, mouseX, mouseY, delta);
 
-        drawCenteredTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".warn_instruction"), (int) (width * 0.5), (int) (height * 0.18), 0xFFFFFF);
+
+        context.drawCenteredTextWithShadow( textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".warn_instruction"), (int) (width * 0.5), (int) (height * 0.18), 0xFFFFFF);
         //drawCenteredText(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".warn_instruction2"), (int) (width * 0.5), (int) (height * 0.23), 0xFFFFFF);
         double offset = 0.0;
 
         if (ETFClientCommon.configHadLoadError) {
-            drawCenteredTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".warn_config_load"), (int) (width * 0.5), (int) (height * 0.28), 11546150);
+            context.drawCenteredTextWithShadow( textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".warn_config_load"), (int) (width * 0.5), (int) (height * 0.28), 11546150);
             offset = 0.1;
         }
 
         for (ConfigWarning warning :
                 warningsFound) {
 
-            drawTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation(warning.text_translation_key), (int) (this.width * 0.05), (int) (this.height * (0.25 + offset)), 0xFFFFFF);
+            context.drawTextWithShadow( textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation(warning.text_translation_key), (int) (this.width * 0.05), (int) (this.height * (0.25 + offset)), 0xFFFFFF);
 //            if(warning.hasAction){
-            drawTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation(warning.text2_translation_key), (int) (this.width * 0.05), (int) (this.height * (0.29 + offset)), 0x888888);
+            context.drawTextWithShadow( textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation(warning.text2_translation_key), (int) (this.width * 0.05), (int) (this.height * (0.29 + offset)), 0x888888);
 
             //}
             offset += 0.1;

@@ -1,8 +1,8 @@
 package traben.entity_texture_features.config.screens;
 
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.SliderWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import traben.entity_texture_features.ETFClientCommon;
@@ -99,10 +99,9 @@ public class ETFConfigScreenBlinkSettings extends ETFConfigScreen {
 
     }
 
-
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        super.render(matrices, mouseX, mouseY, delta);
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        super.render(context, mouseX, mouseY, delta);
 
         String[] strings = ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".blink_frequency.tooltip").getString().split("\n");
         List<Text> lines = new ArrayList<>();
@@ -115,7 +114,7 @@ public class ETFConfigScreenBlinkSettings extends ETFConfigScreen {
         int i = 0;
         for (Text txt :
                 lines) {
-            drawTextWithShadow(matrices, textRenderer, txt, (int) (width * 0.5), (int) (height * 0.18) + i, 0xFFFFFF);
+            context.drawTextWithShadow( textRenderer, txt, (int) (width * 0.5), (int) (height * 0.18) + i, 0xFFFFFF);
             i += txt.getString().isBlank() ? 5 : 10;
         }
 
@@ -130,7 +129,7 @@ public class ETFConfigScreenBlinkSettings extends ETFConfigScreen {
         int i2 = 0;
         for (Text txt :
                 lines2) {
-            drawTextWithShadow(matrices, textRenderer, txt, (int) (width * 0.5), (int) (height * 0.58) + i2, 0xFFFFFF);
+            context.drawTextWithShadow( textRenderer, txt, (int) (width * 0.5), (int) (height * 0.58) + i2, 0xFFFFFF);
             i2 += txt.getString().isBlank() ? 5 : 10;
         }
     }

@@ -66,8 +66,8 @@ public abstract class MixinShoulderParrotFeatureRenderer<T extends PlayerEntity>
     }
 
     private Identifier etf$returnAlteredIdentifier() {
-        EntityType.getEntityFromNbt(parrotNBT, player.world);
-        Optional<Entity> optionalEntity = EntityType.getEntityFromNbt(parrotNBT, player.world);
+        EntityType.getEntityFromNbt(parrotNBT, player.getWorld());
+        Optional<Entity> optionalEntity = EntityType.getEntityFromNbt(parrotNBT, player.getWorld());
         if (optionalEntity.isPresent() && optionalEntity.get() instanceof ParrotEntity) {
             @SuppressWarnings("PatternVariableCanBeUsed") ParrotEntity parrot = (ParrotEntity) optionalEntity.get(); //  new ParrotEntity(EntityType.PARROT, player.world);
             //parrot.readCustomDataFromNbt(parrotNBT);

@@ -22,7 +22,7 @@ public abstract class MixinPlayerEntity {
     @Inject(method = "interact", at = @At("HEAD"))
     private void etf$injected(Entity entity, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
         //noinspection ConstantConditions
-        if (((LivingEntity) (Object) this).world.isClient()) {
+        if (((LivingEntity) (Object) this).getWorld().isClient()) {
             if (ETFConfigData.debugLoggingMode != ETFConfig.DebugLogMode.None)
 //                UUID_DEBUG_EXPLANATION_MARKER.add(entity.getUuid());
 //            if (!UUID_ENTITY_AWAITING_DATA_CLEARING.containsKey(entity.getUuid())) {

@@ -2,7 +2,7 @@ plugins {
     id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
-archivesBaseName = rootProject.archives_base_name + "_forge_1.19.4"
+archivesBaseName = rootProject.archives_base_name + "_forge_1.20"
 
 architectury {
     platformSetupLoomIde()
@@ -46,7 +46,7 @@ dependencies {
     modImplementation("maven.modrinth:oculus:${project.oculus_version}") {
         //  exclude(group: "net.fabricmc.fabric-api")//??
     }
-    modImplementation("maven.modrinth:3dskinlayers:${project.skinlayers_version}") {
+    modImplementation("maven.modrinth:3dskinlayers:${project.skinlayers_version_forge}") {
         //exclude(group: "net.fabricmc.fabric-api")
     }
 

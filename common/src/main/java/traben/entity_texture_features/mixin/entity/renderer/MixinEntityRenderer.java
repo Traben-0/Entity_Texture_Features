@@ -41,11 +41,11 @@ public abstract class MixinEntityRenderer<T extends Entity> {
 
     //copy of vanilla behaviour
     protected int etf$getSkyLight(T entity, BlockPos pos) {
-        return entity.world.getLightLevel(LightType.SKY, pos);
+        return entity.getWorld().getLightLevel(LightType.SKY, pos);
     }
 
     //copy of vanilla behaviour that gets overridden by some mobs
     protected int etf$getBlockLight(T entity, BlockPos pos) {
-        return entity.isOnFire() ? 15 : entity.world.getLightLevel(LightType.BLOCK, pos);
+        return entity.isOnFire() ? 15 : entity.getWorld().getLightLevel(LightType.BLOCK, pos);
     }
 }
