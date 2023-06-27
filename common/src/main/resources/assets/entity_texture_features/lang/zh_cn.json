@@ -111,7 +111,7 @@
   "config.entity_texture_features.player_skin_editor.remove_features": "从皮肤中移除ETF特性。",
   "config.entity_texture_features.player_skin_editor.title": "玩家皮肤特性工具",
   "config.entity_texture_features.player_skin_editor.button_desc.1": "一个交互式的工具用于选择和添加",
-  "config.entity_texture_features.player_skin_editor.button_desc.fail": "Tool only works when in-game!",
+  "config.entity_texture_features.player_skin_editor.button_desc.fail": "该工具仅在游戏中有效！",
   "config.entity_texture_features.player_skin_editor.button_desc.2": "玩家皮肤特性至你的皮肤",
   "config.entity_texture_features.player_skin_editor.upload_skin": "上传皮肤变化到Minecraft配置文件",
   "config.entity_texture_features.player_skin_editor.upload_skin.fail": "皮肤上传失败！",
