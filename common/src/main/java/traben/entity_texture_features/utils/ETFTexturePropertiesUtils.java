@@ -1501,7 +1501,7 @@ public abstract class ETFTexturePropertiesUtils {
                 int size;
                 if (entity instanceof SlimeEntity slime) {
                     //magma cube too
-                    size = slime.getSize();
+                    size = slime.getSize()-1;
                 } else {
                     size = ((PhantomEntity) entity).getPhantomSize();
                 }
