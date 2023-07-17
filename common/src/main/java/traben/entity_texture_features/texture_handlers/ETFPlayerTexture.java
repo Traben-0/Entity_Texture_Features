@@ -1131,7 +1131,7 @@ public class ETFPlayerTexture {
                             modifiedCape = null;
                             // minecraft capes mod
                             //https://minecraftcapes.net/profile/fd22e573178c415a94fee476b328abfd/cape/
-                            initiateThirdPartyCapeDownload("https://minecraftcapes.net/profile/" + player.getUuidAsString().replace("-", "") + "/cape/");
+                            initiateThirdPartyCapeDownload("https://api.minecraftcapes.net/profile/" + player.getUuidAsString().replace("-", "") + "/cape/");
 
                         }
                         case 3 -> {
