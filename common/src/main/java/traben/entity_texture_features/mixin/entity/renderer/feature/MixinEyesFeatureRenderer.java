@@ -1,6 +1,7 @@
 package traben.entity_texture_features.mixin.entity.renderer.feature;
 
-import net.minecraft.client.render.*;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.EyesFeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
@@ -12,17 +13,18 @@ import net.minecraft.entity.mob.PhantomEntity;
 import net.minecraft.entity.mob.SpiderEntity;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.ETFClientCommon;
-import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.entity_handlers.ETFEntityWrapper;
+import traben.entity_texture_features.texture_handlers.ETFManager;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
 @Mixin(EyesFeatureRenderer.class)
 public abstract class MixinEyesFeatureRenderer<T extends Entity, M extends EntityModel<T>> extends FeatureRenderer<T, M> {
+
+
 
 
     @SuppressWarnings("unused")
@@ -31,8 +33,17 @@ public abstract class MixinEyesFeatureRenderer<T extends Entity, M extends Entit
     }
 
 
-    @Inject(method = "render", at = @At(value = "HEAD"), cancellable = true)
+    @ModifyConstant(method = "render", constant = @Constant(intValue = 15728640))
+    private int etf$markLightValueForEMF(int value) {
+        return ETFClientCommon.EYES_FEATURE_LIGHT_VALUE;
+        //todo move to EMF after replacing eye renderlayer redirection to children
+    }
+
+    private RenderLayer etf$eyesRenderLayer = null;
+
+    @Inject(method = "render", at = @At(value = "HEAD"))
     private void etf$mixin(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, T entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch, CallbackInfo ci) {
+        etf$eyesRenderLayer = null;
         if (ETFConfigData.enableCustomTextures) {
             //this variant on usage of the general method is due to the way this mixin injects and cancels
             String check;// = this.etf$getAlteredEyesTexture((LivingEntity) entity);
@@ -40,28 +51,32 @@ public abstract class MixinEyesFeatureRenderer<T extends Entity, M extends Entit
             //only 3 instances of this, if-else block should be fine, but can possibly be made faster for runtime
             //I'm almost tempted to remove the eyes feature and add "_eyes" as a default emissive suffix, but I will not remove the vanilla behaviour
             if (entity instanceof EndermanEntity) {
-                check = "textures/entity/enderman/enderman_eyes.png";
+                etf$setEyes("textures/entity/enderman/enderman_eyes.png",entity);
             } else if (entity instanceof SpiderEntity) {
-                check = "textures/entity/spider_eyes.png";
+                etf$setEyes("textures/entity/spider_eyes.png",entity);
             } else if (entity instanceof PhantomEntity) {
-                check = "textures/entity/phantom_eyes.png";
-            } else {
-                check = null;
-            }
-
-            if (check != null) {
-                Identifier altered = ETFManager.getInstance().getETFTexture(new Identifier(check), new ETFEntityWrapper(entity), ETFManager.TextureSource.ENTITY_FEATURE, ETFConfigData.removePixelsUnderEmissiveMobs).getTextureIdentifier(new ETFEntityWrapper(entity));
-                //if the feature has changed to a variant perform the custom render and cancel the vanilla render
-                if (!altered.toString().equals(check)) {
-                    VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEyes(altered));
-
-                    this.getContextModel().render(matrices, vertexConsumer,
-                            ETFClientCommon.EYES_FEATURE_LIGHT_VALUE //light value marked for detection in EMF
-                            , OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
-                    ci.cancel();//cancel prevents the vanilla eyes rendering
-                }
+                etf$setEyes("textures/entity/phantom_eyes.png",entity);
             }
         }
+    }
+
+    private void etf$setEyes(String texture, T entity){
+        Identifier textureId = new Identifier(texture);
+        Identifier altered = ETFManager.getInstance().getETFTexture(textureId, new ETFEntityWrapper(entity), ETFManager.TextureSource.ENTITY_FEATURE, ETFConfigData.removePixelsUnderEmissiveMobs).getTextureIdentifier(new ETFEntityWrapper(entity));
+        //if the feature has changed to a variant perform the custom render and cancel the vanilla render
+        if (!altered.equals(textureId)) {
+            etf$eyesRenderLayer = RenderLayer.getEyes(altered);
+        }
+    }
+
+    @ModifyArg(
+            method = "render",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/VertexConsumerProvider;getBuffer(Lnet/minecraft/client/render/RenderLayer;)Lnet/minecraft/client/render/VertexConsumer;"),
+            index = 0
+    )
+    private RenderLayer etf$modifyRenderLayer(RenderLayer layer) {
+        if(etf$eyesRenderLayer != null) return etf$eyesRenderLayer;
+        return layer;
     }
 
 }
