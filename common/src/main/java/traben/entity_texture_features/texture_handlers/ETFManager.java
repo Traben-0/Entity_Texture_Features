@@ -153,7 +153,7 @@ public class ETFManager {
 
 
     private static ETFTexture getErrorETFTexture() {
-        ETFUtils2.registerNativeImageToIdentifier(ETFUtils2.emptyNativeImage(), new Identifier("etf:error.png"));
+       // ETFUtils2.registerNativeImageToIdentifier(ETFUtils2.emptyNativeImage(), new Identifier("etf:error.png"));
         return new ETFTexture(new Identifier("etf:error.png"), false);//, ETFTexture.TextureSource.GENERIC_DEBUG);
     }
 

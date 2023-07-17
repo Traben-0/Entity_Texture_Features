@@ -485,11 +485,11 @@ public class ETFPlayerTexture {
         return null;
     }
 
-    public void renderCapeAndFeatures(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light, PlayerEntityModel<AbstractClientPlayerEntity> model) {
+    public void renderFeatures(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light, PlayerEntityModel<AbstractClientPlayerEntity> model) {
         if (canUseFeaturesForThisPlayer()) {
             if (etfCapeIdentifier != null) {
-                VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(etfCapeIdentifier));
-                model.renderCape(matrixStack, vertexConsumer, light, OverlayTexture.DEFAULT_UV);
+               // VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(etfCapeIdentifier));
+               // model.renderCape(matrixStack, vertexConsumer, light, OverlayTexture.DEFAULT_UV);
 
                 if (etfCapeEmissiveIdentifier != null) {
                     VertexConsumer emissiveVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(etfCapeEmissiveIdentifier));
