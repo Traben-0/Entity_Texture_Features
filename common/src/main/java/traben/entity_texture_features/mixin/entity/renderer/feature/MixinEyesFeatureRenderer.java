@@ -36,7 +36,7 @@ public abstract class MixinEyesFeatureRenderer<T extends Entity, M extends Entit
     @ModifyConstant(method = "render", constant = @Constant(intValue = 15728640))
     private int etf$markLightValueForEMF(int value) {
         return ETFClientCommon.EYES_FEATURE_LIGHT_VALUE;
-        //todo move to EMF after replacing eye renderlayer redirection to children
+        //todo move to EMF
     }
 
     private RenderLayer etf$eyesRenderLayer = null;
