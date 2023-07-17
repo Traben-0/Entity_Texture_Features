@@ -4,7 +4,10 @@ import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.render.*;
+import net.minecraft.client.render.OverlayTexture;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EntityPose;
@@ -15,6 +18,7 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.screens.ETFConfigScreen;
 import traben.entity_texture_features.entity_handlers.ETFEntity;
@@ -538,7 +542,7 @@ public class ETFTexture {
     public void renderEmissive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, ModelPart modelPart, ETFManager.EmissiveRenderModes modeToUsePossiblyManuallyChosen) {
         VertexConsumer vertexC = getEmissiveVertexConsumer(vertexConsumerProvider, null, modeToUsePossiblyManuallyChosen);
         if (vertexC != null) {
-            modelPart.render(matrixStack, vertexC, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV);
+            modelPart.render(matrixStack, vertexC, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV);
         }
     }
 
@@ -549,7 +553,7 @@ public class ETFTexture {
     public void renderEmissive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, Model model, ETFManager.EmissiveRenderModes modeToUsePossiblyManuallyChosen) {
         VertexConsumer vertexC = getEmissiveVertexConsumer(vertexConsumerProvider, model, modeToUsePossiblyManuallyChosen);
         if (vertexC != null) {
-            model.render(matrixStack, vertexC, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
+            model.render(matrixStack, vertexC, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
         }
     }
 

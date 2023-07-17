@@ -1,7 +1,10 @@
 package traben.entity_texture_features.mixin.entity.renderer.feature;
 
 import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.render.*;
+import net.minecraft.client.render.OverlayTexture;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.CapeFeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
@@ -12,6 +15,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.screens.ETFConfigScreenSkinTool;
 import traben.entity_texture_features.texture_handlers.ETFManager;
@@ -55,7 +59,7 @@ public abstract class MixinCapeFeatureRenderer extends FeatureRenderer<AbstractC
                 VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(dev_cape));
                 (this.getContextModel()).renderCape(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV);
                 VertexConsumer emissiveVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(dev_cape_e));
-                (this.getContextModel()).renderCape(matrixStack, emissiveVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV);
+                (this.getContextModel()).renderCape(matrixStack, emissiveVert, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV);
             } else if (abstractClientPlayerEntity.getUuid().equals(ETFPlayerTexture.Wife)) {
                 cancelVanillaRender = true;
                 VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(wife_cape));

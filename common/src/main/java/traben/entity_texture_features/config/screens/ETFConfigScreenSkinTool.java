@@ -517,7 +517,7 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
                         if (bob instanceof LivingEntityRenderer<?, ?>) {
                             //System.out.println("rendered");
                             //((LivingEntityRenderer<PlayerEntity, PlayerEntityModel<PlayerEntity>>) bob).render((PlayerEntity) entity, 0, 1, matrixStack2, immediate, 0xE000E0);
-                            ((LivingEntityRenderer<?, ?>) bob).getModel().render(matrixStack, vertexC, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
+                            ((LivingEntityRenderer<?, ?>) bob).getModel().render(matrixStack, vertexC, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
                         }
                     }
                 }

@@ -1,9 +1,6 @@
 package traben.entity_texture_features.mixin.entity.renderer.feature;
 
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.*;
 import net.minecraft.client.render.entity.feature.EyesFeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
@@ -18,6 +15,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.entity_handlers.ETFEntityWrapper;
 
@@ -57,7 +55,9 @@ public abstract class MixinEyesFeatureRenderer<T extends Entity, M extends Entit
                 if (!altered.toString().equals(check)) {
                     VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEyes(altered));
 
-                    this.getContextModel().render(matrices, vertexConsumer, 15728640/* light value to match vanilla not LightmapTextureManager.MAX_LIGHT_COORDINATE*/, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                    this.getContextModel().render(matrices, vertexConsumer,
+                            ETFClientCommon.EYES_FEATURE_LIGHT_VALUE //light value marked for detection in EMF
+                            , OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
                     ci.cancel();//cancel prevents the vanilla eyes rendering
                 }
             }

@@ -3,7 +3,10 @@ package traben.entity_texture_features.texture_handlers;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.render.*;
+import net.minecraft.client.render.OverlayTexture;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.SkullBlockEntityModel;
 import net.minecraft.client.render.entity.PlayerModelPart;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
@@ -19,6 +22,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.config.screens.ETFConfigScreenSkinTool;
 import traben.entity_texture_features.entity_handlers.ETFPlayerEntity;
 import traben.entity_texture_features.entity_handlers.ETFPlayerEntityWrapper;
@@ -489,7 +493,7 @@ public class ETFPlayerTexture {
 
                 if (etfCapeEmissiveIdentifier != null) {
                     VertexConsumer emissiveVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(etfCapeEmissiveIdentifier));
-                    model.renderCape(matrixStack, emissiveVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV);
+                    model.renderCape(matrixStack, emissiveVert, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV);
                 }
                 if (etfCapeEnchantedIdentifier != null) {
                     VertexConsumer enchantVert = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(etfCapeEnchantedIdentifier), false, true);
@@ -528,7 +532,7 @@ public class ETFPlayerTexture {
                     } else {
                         noseVertex_e = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucentCull(texturedNoseIdentifierEmissive));
                     }
-                    customPlayerModel.textureNose.render(matrixStack, noseVertex_e, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                    customPlayerModel.textureNose.render(matrixStack, noseVertex_e, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
                 }
                 if (texturedNoseIdentifierEnchanted != null) {
                     customPlayerModel.textureNose.copyTransform(model.head);
@@ -583,9 +587,9 @@ public class ETFPlayerTexture {
                     }
 
                     if (hasFatCoat) {
-                        customPlayerModel.fatJacket.render(matrixStack, emissiveVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                        customPlayerModel.fatJacket.render(matrixStack, emissiveVert, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
                     } else {
-                        customPlayerModel.jacket.render(matrixStack, emissiveVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                        customPlayerModel.jacket.render(matrixStack, emissiveVert, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
                     }
                 }
 
@@ -597,7 +601,7 @@ public class ETFPlayerTexture {
 //                    //try to render over the skin in ui when iris is installed, as it breaks it in the ui
 //                    VertexConsumer vertexC = vertexConsumerProvider.getBuffer(RenderLayer.getArmorCutoutNoCull(etfTextureOfFinalBaseSkin.getEmissiveIdentifierOfCurrentState()));//ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(emissiveToUse), false, false);
 //                    if (vertexC != null) {
-//                        model.render(matrixStack, vertexC, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
+//                        model.render(matrixStack, vertexC, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
 //                    }
 //                    //return vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent /*RenderLayer.getEntityTranslucent*/(emissiveToUse));
 //                }else {
