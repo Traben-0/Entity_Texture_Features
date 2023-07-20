@@ -24,9 +24,32 @@
   - Enhanced Block Entities (A mod which changes the block entity render to block render for performance optimizations)<br />breaks ETF's support for block entities 
 - Player skins support emissive textures, see the [`player skin features guide`](SKINS.md)
 
+
+---
+ ## Armor trims
+
+ Emmisive armor trim textures are defined just like in OptiFine, by adding one of the following material suffixes
+ 
+to the trim base name: amethyst, copper, diamond, diamond_darker, emerald, gold, gold_darker,
+iron, iron_darker, lapis, netherite, netherite_darker, quartz, redstone.
+ 
+For example:
+
+`textures/trims/models/armor/coast_amethyst_e.png`,
+`textures/trims/models/armor/host_iron_darker_e.png`,
+`textures/trims/models/armor/dune_leggings_netherite_e.png`
+
+You can also add a copy of the non emissive texture present in the same path to override that trim.
+
+For example:
+
+`textures/trims/models/armor/coast_amethyst.png`,
+`textures/trims/models/armor/host_iron_darker.png`,
+`textures/trims/models/armor/dune_leggings_netherite.png`
 ---
 
 Emissive textures can render in two different ways, set by the config. The two images below show the two rendering modes:
+
 
 ### Dull Emmisives [default]
 

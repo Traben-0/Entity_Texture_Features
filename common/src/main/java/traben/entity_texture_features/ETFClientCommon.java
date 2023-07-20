@@ -19,6 +19,7 @@ public class ETFClientCommon {
     public static final String MOD_ID = "entity_texture_features";
     //logging object
     public final static Logger LOGGER = ETFVersionDifferenceHandler.getLogger();
+    public static final boolean IRIS_DETECTED = ETFVersionDifferenceHandler.isThisModLoaded("iris") || ETFVersionDifferenceHandler.isThisModLoaded("oculus");
     //config object
     public static ETFConfig ETFConfigData = new ETFConfig();
 
