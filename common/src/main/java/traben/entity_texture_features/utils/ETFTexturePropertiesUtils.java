@@ -1,5 +1,6 @@
 package traben.entity_texture_features.utils;
 
+import com.google.common.base.CaseFormat;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectImmutableList;
 import net.minecraft.block.BlockState;
@@ -212,7 +213,7 @@ public abstract class ETFTexturePropertiesUtils {
     private static String getBiomes(Properties props, int num) {
         if (props.containsKey("biomes." + num)) {
             String dataFromProps = props.getProperty("biomes." + num).strip();
-            String[] biomeList = dataFromProps.toLowerCase().split("\\s+");
+            String[] biomeList = dataFromProps.split("\\s+");
 
             //strip out old format optifine biome names
             //I could be way more in-depth and make these line up to all variants but this is legacy code
@@ -220,39 +221,41 @@ public abstract class ETFTexturePropertiesUtils {
             if (biomeList.length > 0) {
                 for (int currentIndex = 0; currentIndex < biomeList.length; currentIndex++) {
                     String currentBiome = biomeList[currentIndex].strip();
-                    switch (currentBiome) {
-                        //case "Ocean" -> biomeList[i] = "ocean";
-                        //case "Plains" -> biomeList[i] = "plains";
-                        case "ExtremeHills" -> biomeList[currentIndex] = "stony_peaks";
-                        case "Forest", "ForestHills" -> biomeList[currentIndex] = "forest";
-                        case "Taiga", "TaigaHills" -> biomeList[currentIndex] = "taiga";
-                        case "Swampland" -> biomeList[currentIndex] = "swamp";
-                        case "River" -> biomeList[currentIndex] = "river";
-                        case "Hell" -> biomeList[currentIndex] = "nether_wastes";
-                        case "Sky" -> biomeList[currentIndex] = "the_end";
-                        //case "FrozenOcean" -> biomeList[i] = "frozen_ocean";
-                        //case "FrozenRiver" -> biomeList[i] = "frozen_river";
-                        case "IcePlains" -> biomeList[currentIndex] = "snowy_plains";
-                        case "IceMountains" -> biomeList[currentIndex] = "snowy_slopes";
-                        case "MushroomIsland", "MushroomIslandShore" -> biomeList[currentIndex] = "mushroom_fields";
-                        //case "Beach" -> biomeList[i] = "beach";
-                        case "DesertHills", "Desert" -> biomeList[currentIndex] = "desert";
-                        case "ExtremeHillsEdge" -> biomeList[currentIndex] = "meadow";
-                        case "Jungle", "JungleHills" -> biomeList[currentIndex] = "jungle";
-                        default -> {
-                            if (!currentBiome.contains("_") && currentBiome.matches("[A-Z]")) {
-                                //has capitals and no "_" it is probably the weird old format
-                                //convert to Almost_Snake_Case, will be made lower case later
-                                biomeList[currentIndex] = currentBiome.replaceAll("(\\B)([A-Z])", "_$2");
+//                    switch (currentBiome) {
+//                        //case "Ocean" -> biomeList[i] = "ocean";
+//                        //case "Plains" -> biomeList[i] = "plains";
+//                        case "ExtremeHills" -> biomeList[currentIndex] = "stony_peaks";
+//                        case "Forest", "ForestHills" -> biomeList[currentIndex] = "forest";
+//                        case "Taiga", "TaigaHills" -> biomeList[currentIndex] = "taiga";
+//                        case "Swampland" -> biomeList[currentIndex] = "swamp";
+//                        case "River" -> biomeList[currentIndex] = "river";
+//                        case "Hell" -> biomeList[currentIndex] = "nether_wastes";
+//                        case "Sky" -> biomeList[currentIndex] = "the_end";
+//                        //case "FrozenOcean" -> biomeList[i] = "frozen_ocean";
+//                        //case "FrozenRiver" -> biomeList[i] = "frozen_river";
+//                        case "IcePlains" -> biomeList[currentIndex] = "snowy_plains";
+//                        case "IceMountains" -> biomeList[currentIndex] = "snowy_slopes";
+//                        case "MushroomIsland", "MushroomIslandShore" -> biomeList[currentIndex] = "mushroom_fields";
+//                        //case "Beach" -> biomeList[i] = "beach";
+//                        case "DesertHills", "Desert" -> biomeList[currentIndex] = "desert";
+//                        case "ExtremeHillsEdge" -> biomeList[currentIndex] = "meadow";
+//                        case "Jungle", "JungleHills" -> biomeList[currentIndex] = "jungle";
+//                        default -> {
+                            if (!currentBiome.contains("_") && !currentBiome.equals(currentBiome.toLowerCase())) {
+                                //has capitals and no "_" it is probably the camel case format
+                                biomeList[currentIndex] = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE,currentBiome);
+                                System.out.println("actual="+biomeList[currentIndex]);
+                                //biomeList[currentIndex] = currentBiome.replaceAll("(\\B)([A-Z])", "_$2");
                             }
-                        }
-                    }
+//                        }
+//                    }
                 }
                 StringBuilder builder = new StringBuilder();
                 for (String str :
                         biomeList) {
                     builder.append(str).append(" ");
                 }
+                System.out.println("enderman test ="+builder.toString().trim().toLowerCase());
                 //lower case required
                 return builder.toString().trim().toLowerCase();
             }
