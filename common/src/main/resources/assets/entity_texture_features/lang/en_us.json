@@ -50,7 +50,7 @@
   "config.entity_texture_features.emissive_mode.bright": "Brighter",
   "config.entity_texture_features.emissive_mode.compatible": "Compatible",
   "config.entity_texture_features.emissive_mode.dull": "Default",
-  "config.entity_texture_features.general_settings.title": "General settings",
+  "config.entity_texture_features.general_settings.title": "Misc settings",
   "config.entity_texture_features.hide_button": "Hide ETF settings button",
   "config.entity_texture_features.hide_button.tooltip": "Hides the ETF settings button\nin the resource pack menu",
   "config.entity_texture_features.ignore_warnings.title": "Ignore / hide config warnings",
@@ -186,5 +186,7 @@
   "config.entity_texture_features.skin_features_try_transparency_for_all.title": "Enable transparency in ALL skins",
   "config.entity_texture_features.skin_features_try_transparency_for_all.tooltip": "this will attempt to enabled transparent skin rendering\n for ALL skins not just ETF enabled skins\n WARNING this bypasses the 100% transparency check",
   "config.entity_texture_features.skin_layers_patch.title": "3D skin layers mod patch",
-  "config.entity_texture_features.skin_layers_patch.tooltip": "You are seeing this as the 3D skin layers mod is detected.\nETF contains a patch to allow skin features to\nrender correctly with the excellent 3d Skin Layers mod\nfuture changes to that mod might break this so the patch is optional\n\nRESTART REQUIRED after changing this"
+  "config.entity_texture_features.skin_layers_patch.tooltip": "You are seeing this as the 3D skin layers mod is detected.\nETF contains a patch to allow skin features to\nrender correctly with the excellent 3d Skin Layers mod\nfuture changes to that mod might break this so the patch is optional\n\nRESTART REQUIRED after changing this",
+  "config.entity_texture_features.warden.title": "Allow warden glowing textures for full model",
+  "config.entity_texture_features.warden.tooltip": "The vanilla game only allows the wardens glowing textures like\n 'warden_heart.png'\nto render for the one body part it applies too\n enabling this setting will let that texture apply to the entire model"
 }
