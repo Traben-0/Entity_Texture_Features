@@ -29,6 +29,7 @@
     "entity.misc.MixinTridentEntity",
     "entity.renderer.MixinArmorStandEntityRenderer",
     "entity.renderer.MixinBoatEntityRenderer",
+    "entity.renderer.MixinEndCrystalEntityRenderer",
     "entity.renderer.MixinEnderDragonEntityRenderer",
     "entity.renderer.MixinEntityRenderer",
     "entity.renderer.MixinEvokerFangEntityRenderer",
