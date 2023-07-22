@@ -221,41 +221,39 @@ public abstract class ETFTexturePropertiesUtils {
             if (biomeList.length > 0) {
                 for (int currentIndex = 0; currentIndex < biomeList.length; currentIndex++) {
                     String currentBiome = biomeList[currentIndex].strip();
-//                    switch (currentBiome) {
-//                        //case "Ocean" -> biomeList[i] = "ocean";
-//                        //case "Plains" -> biomeList[i] = "plains";
-//                        case "ExtremeHills" -> biomeList[currentIndex] = "stony_peaks";
-//                        case "Forest", "ForestHills" -> biomeList[currentIndex] = "forest";
-//                        case "Taiga", "TaigaHills" -> biomeList[currentIndex] = "taiga";
-//                        case "Swampland" -> biomeList[currentIndex] = "swamp";
+                    switch (currentBiome) {
+                        //case "Ocean" -> biomeList[i] = "ocean";
+                        //case "Plains" -> biomeList[i] = "plains";
+                        case "ExtremeHills" -> biomeList[currentIndex] = "stony_peaks";
+                        case "Forest", "ForestHills" -> biomeList[currentIndex] = "forest";
+                        case "Taiga", "TaigaHills" -> biomeList[currentIndex] = "taiga";
+                        case "Swampland" -> biomeList[currentIndex] = "swamp";
 //                        case "River" -> biomeList[currentIndex] = "river";
-//                        case "Hell" -> biomeList[currentIndex] = "nether_wastes";
-//                        case "Sky" -> biomeList[currentIndex] = "the_end";
-//                        //case "FrozenOcean" -> biomeList[i] = "frozen_ocean";
-//                        //case "FrozenRiver" -> biomeList[i] = "frozen_river";
-//                        case "IcePlains" -> biomeList[currentIndex] = "snowy_plains";
-//                        case "IceMountains" -> biomeList[currentIndex] = "snowy_slopes";
-//                        case "MushroomIsland", "MushroomIslandShore" -> biomeList[currentIndex] = "mushroom_fields";
-//                        //case "Beach" -> biomeList[i] = "beach";
-//                        case "DesertHills", "Desert" -> biomeList[currentIndex] = "desert";
-//                        case "ExtremeHillsEdge" -> biomeList[currentIndex] = "meadow";
-//                        case "Jungle", "JungleHills" -> biomeList[currentIndex] = "jungle";
-//                        default -> {
+                        case "Hell" -> biomeList[currentIndex] = "nether_wastes";
+                        case "Sky" -> biomeList[currentIndex] = "the_end";
+                        //case "FrozenOcean" -> biomeList[i] = "frozen_ocean";
+                        //case "FrozenRiver" -> biomeList[i] = "frozen_river";
+                        case "IcePlains" -> biomeList[currentIndex] = "snowy_plains";
+                        case "IceMountains" -> biomeList[currentIndex] = "snowy_slopes";
+                        case "MushroomIsland", "MushroomIslandShore" -> biomeList[currentIndex] = "mushroom_fields";
+                        //case "Beach" -> biomeList[i] = "beach";
+                        case "DesertHills", "Desert" -> biomeList[currentIndex] = "desert";
+                        case "ExtremeHillsEdge" -> biomeList[currentIndex] = "meadow";
+                        case "Jungle", "JungleHills" -> biomeList[currentIndex] = "jungle";
+                        default -> {
                             if (!currentBiome.contains("_") && !currentBiome.equals(currentBiome.toLowerCase())) {
                                 //has capitals and no "_" it is probably the camel case format
                                 biomeList[currentIndex] = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE,currentBiome);
-                                System.out.println("actual="+biomeList[currentIndex]);
                                 //biomeList[currentIndex] = currentBiome.replaceAll("(\\B)([A-Z])", "_$2");
                             }
-//                        }
-//                    }
+                        }
+                    }
                 }
                 StringBuilder builder = new StringBuilder();
                 for (String str :
                         biomeList) {
                     builder.append(str).append(" ");
                 }
-                System.out.println("enderman test ="+builder.toString().trim().toLowerCase());
                 //lower case required
                 return builder.toString().trim().toLowerCase();
             }
