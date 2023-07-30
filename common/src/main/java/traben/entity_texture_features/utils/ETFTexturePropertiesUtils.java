@@ -1166,7 +1166,6 @@ public abstract class ETFTexturePropertiesUtils {
                 wasEntityTestedByAnUpdatableProperty = true;
                 if (etfEntity.hasCustomName()) {
                     String entityName = Objects.requireNonNull(etfEntity.getCustomName()).getString();
-
                     doesEntityMeetThisCaseTest = NAME_MATCHERS.testPropertyString(entityName);
                 } else {
                     doesEntityMeetThisCaseTest = false;
