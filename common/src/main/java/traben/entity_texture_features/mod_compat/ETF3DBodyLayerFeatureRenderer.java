@@ -32,7 +32,6 @@ public class ETF3DBodyLayerFeatureRenderer extends BodyLayerFeatureRenderer {
     // simply captures vertexConsumerProvider
     @Override
     public void render(MatrixStack poseStack, VertexConsumerProvider multiBufferSource, int i, AbstractClientPlayerEntity player, float f, float g, float h, float j, float k, float l) {
-        System.out.println("RENDER1");
         thisProvider = multiBufferSource;
         super.render(poseStack, multiBufferSource, i, player, f, g, h, j, k, l);
     }

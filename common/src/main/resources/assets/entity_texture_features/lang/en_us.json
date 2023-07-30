@@ -94,7 +94,6 @@
   "config.entity_texture_features.player_skin_editor.enchant_enable.button": "Enchanted pixels: ",
   "config.entity_texture_features.player_skin_editor.enchant_enable.tooltip": "Allows selecting pixels in your skin to be enchanted",
   "config.entity_texture_features.player_skin_editor.enchant_select.button": "Select pixels",
-  "config.entity_texture_features.player_skin_editor.fail_tooltip": "Tool is only usable while in-game!\nOpen a singleplayer world and then open this menu.\n\nYou must also give ETF a moment to download your skin.\n\nTool is not available in offline mode\n\nTool is not available with skin features disabled\n\nIf using Fabric, then  the Fabric API is also required.",
   "config.entity_texture_features.player_skin_editor.nose.button": "Nose: ",
   "config.entity_texture_features.player_skin_editor.nose.none": "none",
   "config.entity_texture_features.player_skin_editor.nose.textured.1": "Textured #1",
@@ -111,7 +110,7 @@
   "config.entity_texture_features.player_skin_editor.remove_features": "Remove ETF features from skin.",
   "config.entity_texture_features.player_skin_editor.title": "Player skin feature tool",
   "config.entity_texture_features.player_skin_editor.button_desc.1": "An interactive tool to select and add",
-  "config.entity_texture_features.player_skin_editor.button_desc.fail": "Tool only works when in-game!",
+  "config.entity_texture_features.player_skin_editor.button_desc.fail": "Tool only works when in a world!",
   "config.entity_texture_features.player_skin_editor.button_desc.2": "player skin features to your skin",
   "config.entity_texture_features.player_skin_editor.upload_skin": "Upload skin changes to Minecraft profile",
   "config.entity_texture_features.player_skin_editor.upload_skin.fail": "Skin upload failed!",
@@ -188,5 +187,14 @@
   "config.entity_texture_features.skin_layers_patch.title": "3D skin layers mod patch",
   "config.entity_texture_features.skin_layers_patch.tooltip": "You are seeing this as the 3D skin layers mod is detected.\nETF contains a patch to allow skin features to\nrender correctly with the excellent 3d Skin Layers mod\nfuture changes to that mod might break this so the patch is optional\n\nRESTART REQUIRED after changing this",
   "config.entity_texture_features.warden.title": "Allow warden glowing textures for full model",
-  "config.entity_texture_features.warden.tooltip": "The vanilla game only allows the wardens glowing textures like\n 'warden_heart.png'\nto render for the one body part it applies too\n enabling this setting will let that texture apply to the entire model"
+  "config.entity_texture_features.warden.tooltip": "The vanilla game only allows the wardens glowing textures like\n 'warden_heart.png'\nto render for the one body part it applies too\n enabling this setting will let that texture apply to the entire model",
+  "config.entity_texture_features.player_skin_editor.reason_0":"The skin tool could not be enabled because: \n",
+  "config.entity_texture_features.player_skin_editor.reason_1":"-ETF skin features are not enabled.\n You must enable them, then close and reopen the settings to apply it.\n",
+  "config.entity_texture_features.player_skin_editor.reason_2":"-Fabric API was not found.\n It is required for the skin tool to work on Fabric.\n",
+  "config.entity_texture_features.player_skin_editor.reason_3":"-The client player data was null.\n Make sure you have a world open and\n your skin has loaded before you try to use the tool.\n",
+  "config.entity_texture_features.player_skin_editor.reason_4":"-ETF has not yet had the chance to parse the client players skin,\n try open a world and open third person or your inventory\n to see yourself for a few seconds first."
+
+
+
+
 }
