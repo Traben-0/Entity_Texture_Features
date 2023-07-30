@@ -10,6 +10,7 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.texture.NativeImage;
+import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.LivingEntity;
@@ -51,6 +52,10 @@ public class ETFTexture {
     public final Identifier thisIdentifier;
     private final Object2ReferenceOpenHashMap<Identifier, Identifier> FEATURE_TEXTURE_MAP = new Object2ReferenceOpenHashMap<>();
     private final int variantNumber;
+
+    public int getVariantNumber(){
+        return variantNumber;
+    }
     public TextureReturnState currentTextureState = TextureReturnState.NORMAL;
     //a variation of thisIdentifier but with emissive texture pixels removed for z-fighting solution
     private Identifier thisIdentifier_Patched = null;
@@ -333,6 +338,7 @@ public class ETFTexture {
                                 }
                             }
                             //emissive found and is valid
+                            eSuffix = possibleEmissiveSuffix;
                             break;
                         }
                     }
@@ -342,6 +348,8 @@ public class ETFTexture {
                 createPatchedTextures();
         }
     }
+
+    public String eSuffix = null;
 
     private void createPatchedTextures() {
         if (this.canPatch/* && ETFVersionDifferenceHandler.isFabric() && !ETFConfigData.removePixelsUnderEmissive*/) {
@@ -595,6 +603,15 @@ public class ETFTexture {
         return this.blinkIdentifier != null;
     }
 
+    private ETFSprite atlasSprite = null;
+
+    @NotNull
+    public ETFSprite getSprite(@NotNull Sprite originalSprite,@NotNull ETFSprite.SpriteSource source){
+        if (atlasSprite == null){
+            atlasSprite = new ETFSprite(originalSprite, this,source);
+        }
+        return atlasSprite;
+    }
 
     public boolean doesBlink2() {
         return this.blink2Identifier != null;

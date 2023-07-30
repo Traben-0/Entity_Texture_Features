@@ -35,6 +35,7 @@
     "entity.renderer.MixinEvokerFangEntityRenderer",
     "entity.renderer.MixinLivingEntityRenderer",
     "entity.renderer.MixinMinecartEntityRenderer",
+    "entity.renderer.MixinPaintingEntityRenderer",
     "entity.renderer.MixinPiglinEntityRenderer",
     "entity.renderer.MixinPlayerEntityRenderer",
     "entity.renderer.MixinShulkerBulletEntityRenderer",
@@ -59,7 +60,9 @@
     "reloading.MixinMinecraftClient",
     "reloading.MixinResourceReload"
   ],
-  "mixins": [],
+  "mixins": [
+    "accessor.SpriteAtlasHolderAccessor"
+  ],
   "injectors": {
     "defaultRequire": 1
   }
