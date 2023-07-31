@@ -21,7 +21,7 @@ import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 
 //inspired by puzzles custom gui code
 public abstract class ETFConfigScreen extends Screen {
-    static final RotatingCubeMapRenderer backgroundCube = new RotatingCubeMapRenderer(new CubeMapRenderer(new Identifier(MOD_ID + ":textures/gui/background/panorama")));
+    static final RotatingCubeMapRenderer backgroundCube = new RotatingCubeMapRenderer(new CubeMapRenderer(new Identifier(MOD_ID , "textures/gui/background/panorama")));
     public final Screen parent;
 
 
@@ -80,13 +80,13 @@ public abstract class ETFConfigScreen extends Screen {
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
 
 
-        // ETFUtils2.renderBackgroundTexture(0,new Identifier("textures/block/deepslate_tiles.png"),this.height,this.width);
         backgroundCube.render((float) 0.5, 1);
 
         renderBackgroundTexture(0, new Identifier("textures/gui/options_background.png"), (int) (height * 0.15), width);
         renderBackgroundTexture(0, new Identifier("textures/gui/options_background.png"), height, width, (int) (height * 0.85));
         context.fillGradient( 0, (int) (height * 0.15), width, (int) (height * 0.85), -1072689136, -804253680);
 
+        //context.fill(RenderLayer.getEndGateway(),0, (int) (height * 0.15), width, (int) (height * 0.85), ColorHelper.Argb.getArgb(255,255,255,255));
         context.drawCenteredTextWithShadow(textRenderer, title, width / 2, 15, 0xFFFFFF);
 
         super.render(context, mouseX, mouseY, delta);

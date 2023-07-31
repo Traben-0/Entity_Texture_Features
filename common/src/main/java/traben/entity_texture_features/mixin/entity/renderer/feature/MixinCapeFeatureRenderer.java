@@ -12,6 +12,7 @@ import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
@@ -26,9 +27,10 @@ import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 
 @Mixin(CapeFeatureRenderer.class)
 public abstract class MixinCapeFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
-    private static final Identifier dev_cape = new Identifier(MOD_ID, "textures/capes/dev.png");
-    private static final Identifier dev_cape_e = new Identifier(MOD_ID, "textures/capes/dev_e.png");
-    private static final Identifier wife_cape = new Identifier(MOD_ID, "textures/capes/wife.png");
+    //private static final Identifier dev_cape = new Identifier(MOD_ID, "textures/capes/etf.png");
+    @Unique
+    private static final Identifier dev_cape_e = new Identifier(MOD_ID, "textures/capes/etf_e.png");
+    //private static final Identifier wife_cape = new Identifier(MOD_ID, "textures/capes/wife.png");
 
     @SuppressWarnings("unused")
     public MixinCapeFeatureRenderer(FeatureRendererContext<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> context) {
@@ -59,6 +61,7 @@ public abstract class MixinCapeFeatureRenderer extends FeatureRenderer<AbstractC
         etf$player = abstractClientPlayerEntity;
     }
 
+    @Unique
     AbstractClientPlayerEntity etf$player = null;
 
     @ModifyArg(

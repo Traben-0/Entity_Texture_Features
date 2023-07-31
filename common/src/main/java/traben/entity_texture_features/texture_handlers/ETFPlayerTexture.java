@@ -14,7 +14,6 @@ import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.PlayerSkinTexture;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -54,6 +53,7 @@ public class ETFPlayerTexture {
     public static final String SKIN_NAMESPACE = "etf_skin";
     public static final UUID Dev = UUID.fromString("fd22e573-178c-415a-94fe-e476b328abfd");
     //public static final UUID Dev2 = UUID.fromString("bc2d6979-ddde-4452-8c7d-caefa4aceb01");
+    @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
     public static final UUID Wife = UUID.fromString("cab7d2e2-519f-4b34-afbd-b65f4542b8a1");
     static private final Identifier villagerTexture = new Identifier("textures/entity/villager/villager.png");
     public static NativeImage clientPlayerOriginalSkinImageForTool = null;
@@ -513,7 +513,7 @@ public class ETFPlayerTexture {
                         || player.getScoreboardTeam() == null));
     }
 
-    public <T extends LivingEntity, M extends Model> void renderFeatures(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light, M model0) {
+    public < M extends Model> void renderFeatures(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light, M model0) {
         if (canUseFeaturesForThisPlayer() && model0 instanceof PlayerEntityModel<?> model) {
             //nose
             if (hasVillagerNose) {
@@ -1229,6 +1229,9 @@ public class ETFPlayerTexture {
                     } else {
                         hasEmissives = false;
                     }
+                }
+                if (capeType == ETFConfigScreenSkinTool.CapeType.ETF){
+                    etfCapeEmissiveIdentifier = new Identifier(MOD_ID, "textures/capes/etf_e.png");
                 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //enchant
