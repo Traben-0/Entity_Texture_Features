@@ -8,7 +8,6 @@ import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
-import traben.entity_texture_features.texture_handlers.ETFManager;
 
 import java.util.List;
 import java.util.Objects;
@@ -111,7 +110,7 @@ public class ETFConfigScreenWarnings extends ETFConfigScreen {
         QUARK(false, "quark", "config." + ETFClientCommon.MOD_ID + ".warn.quark.text.3", "config." + ETFClientCommon.MOD_ID + ".warn.quark.text.4"),
         IRIS(false, "iris", "config." + ETFClientCommon.MOD_ID + ".warn.iris.text.1", "config." + ETFClientCommon.MOD_ID + ".warn.iris.text.2"),
 
-        IRIS_AND_3D_SKIN_trim_warn(false,()-> ETFVersionDifferenceHandler.isThisModLoaded("iris") && ETFManager.getInstance().skinLayersModPresent,
+        IRIS_AND_3D_SKIN_trim_warn(false,()-> ETFVersionDifferenceHandler.isThisModLoaded("iris") && ETFClientCommon.SKIN_LAYERS_DETECTED,
                 "config." + ETFClientCommon.MOD_ID + ".warn.iris_3d.text.1", "config." + ETFClientCommon.MOD_ID + ".warn.iris_3d.text.2"),
         NO_CEM(false,()-> !ETFVersionDifferenceHandler.isThisModLoaded("entity_model_features") && !ETFVersionDifferenceHandler.isThisModLoaded("cem"),
                 "config." + ETFClientCommon.MOD_ID + ".warn.no_emf.text.1", "config." + ETFClientCommon.MOD_ID + ".warn.no_emf.text.2");

@@ -8,7 +8,6 @@ import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
-import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFPlayerTexture;
 import traben.entity_texture_features.utils.ETFUtils2;
 
@@ -102,7 +101,7 @@ public class ETFConfigScreenSkinSettings extends ETFConfigScreen {
                 },
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".skin_features_try_transparency_for_all.tooltip")
         ));
-        if(ETFManager.getInstance().skinLayersModPresent) {
+        if(ETFClientCommon.SKIN_LAYERS_DETECTED) {
             this.addDrawableChild(getETFButton((int) (this.width * 0.025), (int) (this.height * 0.7), (int) (this.width * 0.45), 20,
                     Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
                             "config." + ETFClientCommon.MOD_ID + ".skin_layers_patch.title"
