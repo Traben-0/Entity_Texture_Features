@@ -38,6 +38,7 @@ public enum ETFDirectory {
         return ETF_DIRECTORY_CACHE;
     }
 
+    @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
     @Nullable
     public static Identifier getDirectoryVersionOf(Identifier vanillaIdentifier) {
         ETFDirectory directory = getDirectoryOf(vanillaIdentifier);
@@ -45,7 +46,8 @@ public enum ETFDirectory {
             case DOES_NOT_EXIST -> null;
             case VANILLA -> vanillaIdentifier;
             default ->
-                    ETFUtils2.replaceIdentifier(vanillaIdentifier, directory.replaceStrings[0], directory.replaceStrings[1]);
+                    getIdentifierAsDirectory(vanillaIdentifier,directory);
+                    //ETFUtils2.replaceIdentifier(vanillaIdentifier, directory.replaceStrings[0], directory.replaceStrings[1]);
         };
     }
 

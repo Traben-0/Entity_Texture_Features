@@ -13,6 +13,7 @@ import net.minecraft.entity.mob.PhantomEntity;
 import net.minecraft.entity.mob.SpiderEntity;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.ETFClientCommon;
@@ -39,6 +40,7 @@ public abstract class MixinEyesFeatureRenderer<T extends Entity, M extends Entit
         //todo move to EMF
     }
 
+    @Unique
     private RenderLayer etf$eyesRenderLayer = null;
 
     @Inject(method = "render", at = @At(value = "HEAD"))
@@ -46,7 +48,7 @@ public abstract class MixinEyesFeatureRenderer<T extends Entity, M extends Entit
         etf$eyesRenderLayer = null;
         if (ETFConfigData.enableCustomTextures) {
             //this variant on usage of the general method is due to the way this mixin injects and cancels
-            String check;// = this.etf$getAlteredEyesTexture((LivingEntity) entity);
+            //String check;// = this.etf$getAlteredEyesTexture((LivingEntity) entity);
 
             //only 3 instances of this, if-else block should be fine, but can possibly be made faster for runtime
             //I'm almost tempted to remove the eyes feature and add "_eyes" as a default emissive suffix, but I will not remove the vanilla behaviour
@@ -60,6 +62,7 @@ public abstract class MixinEyesFeatureRenderer<T extends Entity, M extends Entit
         }
     }
 
+    @Unique
     private void etf$setEyes(String texture, T entity){
         Identifier textureId = new Identifier(texture);
         Identifier altered = ETFManager.getInstance().getETFTexture(textureId, new ETFEntityWrapper(entity), ETFManager.TextureSource.ENTITY_FEATURE, ETFConfigData.removePixelsUnderEmissiveMobs).getTextureIdentifier(new ETFEntityWrapper(entity));
