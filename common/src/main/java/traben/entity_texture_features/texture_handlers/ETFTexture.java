@@ -375,13 +375,15 @@ public class ETFTexture {
             return;
         }
         //should patching cancel due to presence of animation mods and animated textures
-        if (ETFConfigData.dontPatchAnimatedTextures &&
-                (ETFVersionDifferenceHandler.isThisModLoaded("moremcmeta") &&
+        if (ETFConfigData.dontPatchAnimatedTextures && (
+                (ETFVersionDifferenceHandler.isThisModLoaded("animatica")) && (
+                        doesAnimaticaVersionExist(thisIdentifier)
+                                || doesAnimaticaVersionExist(emissiveIdentifier)
+                ) || (ETFVersionDifferenceHandler.isThisModLoaded("moremcmeta") &&
                         (files.getResource(ETFUtils2.replaceIdentifier(thisIdentifier, ".png", ".png.mcmeta")).isPresent() ||
                                 files.getResource(ETFUtils2.replaceIdentifier(thisIdentifier, ".png", ".png.moremcmeta")).isPresent())
                 )
-            // todo || ETFVersionDifferenceHandler.isThisModLoaded("animatica")) && check it's animated???
-        ) {
+        )) {
             //here the setting to cancel is enabled, animation mod is present, and mcmeta files exist, so cancel patching
             return;
         }
@@ -486,6 +488,15 @@ public class ETFTexture {
         }
     }
 
+    //animatica registers the animated version of the texture as "texture.png-anim"
+    private static boolean doesAnimaticaVersionExist(Identifier identifier){
+        if(identifier == null) return false;
+        String idString = identifier.toString();
+        //check if its already an anim and animatica has already gotten to replacing it before etf sees it
+        if(idString.endsWith("-anim")) return true;
+        //check if animatica has registered its animated version of this texture
+        return MinecraftClient.getInstance().getTextureManager().getOrDefault(new Identifier(idString+"-anim"),null) != null;
+    }
 
     @NotNull
     Identifier getFeatureTexture(Identifier vanillaFeatureTexture) {
