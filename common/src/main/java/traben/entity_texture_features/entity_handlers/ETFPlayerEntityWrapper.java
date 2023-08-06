@@ -53,12 +53,12 @@ public record ETFPlayerEntityWrapper(PlayerEntity entity) implements ETFPlayerEn
 
     @Override
     public boolean hasCustomName() {
-        return entity.hasCustomName();
+        return true;
     }
 
     @Override
     public Text getCustomName() {
-        return entity.getCustomName();
+        return getName();
     }
 
     @Override

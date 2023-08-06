@@ -2,6 +2,7 @@
   "required": true,
   "package": "traben.entity_texture_features.mixin",
   "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.8",
   "client": [
     "MixinIdentifier",
     "MixinPackScreen",
@@ -28,11 +29,13 @@
     "entity.misc.MixinTridentEntity",
     "entity.renderer.MixinArmorStandEntityRenderer",
     "entity.renderer.MixinBoatEntityRenderer",
+    "entity.renderer.MixinEndCrystalEntityRenderer",
     "entity.renderer.MixinEnderDragonEntityRenderer",
     "entity.renderer.MixinEntityRenderer",
     "entity.renderer.MixinEvokerFangEntityRenderer",
     "entity.renderer.MixinLivingEntityRenderer",
     "entity.renderer.MixinMinecartEntityRenderer",
+    "entity.renderer.MixinPaintingEntityRenderer",
     "entity.renderer.MixinPiglinEntityRenderer",
     "entity.renderer.MixinPlayerEntityRenderer",
     "entity.renderer.MixinShulkerBulletEntityRenderer",
@@ -57,7 +60,9 @@
     "reloading.MixinMinecraftClient",
     "reloading.MixinResourceReload"
   ],
-  "mixins": [],
+  "mixins": [
+    "accessor.SpriteAtlasHolderAccessor"
+  ],
   "injectors": {
     "defaultRequire": 1
   }

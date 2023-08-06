@@ -71,6 +71,8 @@ public class ETFConfig {
 
     public boolean use3DSkinLayerPatch = true;
 
+    public boolean enableFullBodyWardenTextures = true;
+
     //string name stuff more in-depth than other enum for backwards compatibility
 
     public static ETFConfig copyFrom(ETFConfig source) {

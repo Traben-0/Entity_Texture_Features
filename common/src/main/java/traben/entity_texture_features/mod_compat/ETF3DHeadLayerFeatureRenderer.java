@@ -3,7 +3,6 @@ package traben.entity_texture_features.mod_compat;
 import dev.tr7zw.skinlayers.accessor.PlayerSettings;
 import dev.tr7zw.skinlayers.renderlayers.HeadLayerFeatureRenderer;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -12,6 +11,7 @@ import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
+import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFPlayerTexture;
 
@@ -49,7 +49,7 @@ public class ETF3DHeadLayerFeatureRenderer extends HeadLayerFeatureRenderer {
             Identifier emissiveSkin = thisETF.getBaseTextureEmissiveIdentifierOrNullForNone();
             if (emissiveSkin != null) {
                 vertices = thisProvider.getBuffer(RenderLayer.getEntityTranslucentCull(emissiveSkin));
-                super.renderCustomHelmet(settings, abstractClientPlayer, matrixStack, vertices, LightmapTextureManager.MAX_LIGHT_COORDINATE, overlay);
+                super.renderCustomHelmet(settings, abstractClientPlayer, matrixStack, vertices, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, overlay);
             }
             Identifier enchantSkin = thisETF.getBaseTextureEnchantIdentifierOrNullForNone();
             if (enchantSkin != null) {

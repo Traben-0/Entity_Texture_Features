@@ -84,11 +84,8 @@ public class ETFManager {
     public ETFTexture brownMooshroomAlt = null;
 
 
-    public boolean skinLayersModPresent;
     private ETFManager() {
 
-        //check only once
-        skinLayersModPresent = (ETFVersionDifferenceHandler.isThisModLoaded("skinlayers") || ETFVersionDifferenceHandler.isThisModLoaded("skinlayers3d"));
 
         for (ResourcePack pack :
                 MinecraftClient.getInstance().getResourceManager().streamResourcePacks().toList()) {
@@ -152,7 +149,7 @@ public class ETFManager {
 
 
 
-    private static ETFTexture getErrorETFTexture() {
+    public static ETFTexture getErrorETFTexture() {
         ETFUtils2.registerNativeImageToIdentifier(ETFUtils2.emptyNativeImage(), new Identifier("etf:error.png"));
         return new ETFTexture(new Identifier("etf:error.png"), false);//, ETFTexture.TextureSource.GENERIC_DEBUG);
     }
@@ -372,7 +369,7 @@ public class ETFManager {
 
             //if not null the below two represent the highest version of said files
             Identifier possibleProperty = ETFDirectory.getDirectoryVersionOf(ETFUtils2.replaceIdentifier(vanillaIdentifier, ".png", ".properties"));
-            Identifier possible2PNG = ETFDirectory.getDirectoryVersionOf(ETFUtils2.replaceIdentifier(vanillaIdentifier, ".png", "2.png"));
+            Identifier possible2PNG = ETFDirectory.getDirectoryVersionOf(ETFUtils2.addVariantNumberSuffix(vanillaIdentifier, 2));
             //try fallback properties
             if(possibleProperty == null && "minecraft".equals(vanillaIdentifier.getNamespace()) && vanillaIdentifier.getPath().contains("_")){
                 String vanId =vanillaIdentifier.getPath().replaceAll("(_tame|_angry|_nectar|_shooting|_cold)","");
@@ -509,7 +506,8 @@ public class ETFManager {
     private Identifier returnNewAlreadyNumberedRandomTexture(Identifier vanillaIdentifier, int variantNumber) {
         //1.png logic not required as expected optifine behaviour is already present
 
-        return ETFDirectory.getDirectoryVersionOf(ETFUtils2.replaceIdentifier(vanillaIdentifier, ".png", variantNumber + ".png"));
+        return ETFDirectory.getDirectoryVersionOf(ETFUtils2.addVariantNumberSuffix(vanillaIdentifier, variantNumber));
+        //return ETFDirectory.getDirectoryVersionOf(ETFUtils2.replaceIdentifier(vanillaIdentifier, ".png", variantNumber + ".png"));
     }
 
     @NotNull

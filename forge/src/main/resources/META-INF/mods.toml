@@ -18,7 +18,7 @@ With more features such as:
  - Blinking textures
  - Player Skin support",
  '''
-logoFile = "icon.png"
+logoFile = "assets/entity_texture_features/textures/gui/icon.png"
 
 [[dependencies.entity_texture_features]]
 modId = "forge"

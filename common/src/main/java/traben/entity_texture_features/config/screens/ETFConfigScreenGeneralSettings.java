@@ -85,18 +85,18 @@ public class ETFConfigScreenGeneralSettings extends ETFConfigScreen {
                 },
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".hide_button.tooltip")
         ));
-//        this.addDrawableChild(getETFButton((int) (this.width * 0.2), (int) (this.height * 0.6), (int) (this.width * 0.6), 20,
-//                Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
-//                        "config." + ETFClientCommon.MOD_ID + ".piglin_ear.button"
-//                ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.hideConfigButton ? ScreenTexts.ON : ScreenTexts.OFF).getString()),
-//                (button) -> {
-//                    ETFConfigScreenMain.temporaryETFConfig.zombiePiglinRightEarEnabled = !ETFConfigScreenMain.temporaryETFConfig.zombiePiglinRightEarEnabled;
-//                    button.setMessage(Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
-//                            "config." + ETFClientCommon.MOD_ID + ".piglin_ear.button"
-//                    ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.zombiePiglinRightEarEnabled ? ScreenTexts.ON : ScreenTexts.OFF).getString()));
-//                },
-//                ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".piglin_ear.tooltip")
-//        ));
+        this.addDrawableChild(getETFButton((int) (this.width * 0.2), (int) (this.height * 0.6), (int) (this.width * 0.6), 20,
+                Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
+                        "config." + ETFClientCommon.MOD_ID + ".warden.title"
+                ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.enableFullBodyWardenTextures ? ScreenTexts.ON : ScreenTexts.OFF).getString()),
+                (button) -> {
+                    ETFConfigScreenMain.temporaryETFConfig.enableFullBodyWardenTextures = !ETFConfigScreenMain.temporaryETFConfig.enableFullBodyWardenTextures;
+                    button.setMessage(Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
+                            "config." + ETFClientCommon.MOD_ID + ".warden.title"
+                    ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.enableFullBodyWardenTextures ? ScreenTexts.ON : ScreenTexts.OFF).getString()));
+                },
+                ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".warden.tooltip")
+        ));
     }
 
 

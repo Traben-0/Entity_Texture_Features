@@ -1,5 +1,6 @@
 package traben.entity_texture_features.utils;
 
+import com.google.common.base.CaseFormat;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectImmutableList;
 import net.minecraft.block.BlockState;
@@ -212,38 +213,38 @@ public abstract class ETFTexturePropertiesUtils {
     private static String getBiomes(Properties props, int num) {
         if (props.containsKey("biomes." + num)) {
             String dataFromProps = props.getProperty("biomes." + num).strip();
-            String[] biomeList = dataFromProps.toLowerCase().split("\\s+");
+            String[] biomeList = dataFromProps.split("\\s+");
 
             //strip out old format optifine biome names
             //I could be way more in-depth and make these line up to all variants but this is legacy code
             //only here for compat, pack makers need to fix these
             if (biomeList.length > 0) {
-                for (int i = 0; i < biomeList.length; i++) {
-                    String biome = biomeList[i].strip();
-                    switch (biome) {
+                for (int currentIndex = 0; currentIndex < biomeList.length; currentIndex++) {
+                    String currentBiome = biomeList[currentIndex].strip();
+                    switch (currentBiome) {
                         //case "Ocean" -> biomeList[i] = "ocean";
                         //case "Plains" -> biomeList[i] = "plains";
-                        case "ExtremeHills" -> biomeList[i] = "stony_peaks";
-                        case "Forest", "ForestHills" -> biomeList[i] = "forest";
-                        case "Taiga", "TaigaHills" -> biomeList[i] = "taiga";
-                        case "Swampland" -> biomeList[i] = "swamp";
-                        case "River" -> biomeList[i] = "river";
-                        case "Hell" -> biomeList[i] = "nether_wastes";
-                        case "Sky" -> biomeList[i] = "the_end";
+                        case "ExtremeHills" -> biomeList[currentIndex] = "stony_peaks";
+                        case "Forest", "ForestHills" -> biomeList[currentIndex] = "forest";
+                        case "Taiga", "TaigaHills" -> biomeList[currentIndex] = "taiga";
+                        case "Swampland" -> biomeList[currentIndex] = "swamp";
+//                        case "River" -> biomeList[currentIndex] = "river";
+                        case "Hell" -> biomeList[currentIndex] = "nether_wastes";
+                        case "Sky" -> biomeList[currentIndex] = "the_end";
                         //case "FrozenOcean" -> biomeList[i] = "frozen_ocean";
                         //case "FrozenRiver" -> biomeList[i] = "frozen_river";
-                        case "IcePlains" -> biomeList[i] = "snowy_plains";
-                        case "IceMountains" -> biomeList[i] = "snowy_slopes";
-                        case "MushroomIsland", "MushroomIslandShore" -> biomeList[i] = "mushroom_fields";
+                        case "IcePlains" -> biomeList[currentIndex] = "snowy_plains";
+                        case "IceMountains" -> biomeList[currentIndex] = "snowy_slopes";
+                        case "MushroomIsland", "MushroomIslandShore" -> biomeList[currentIndex] = "mushroom_fields";
                         //case "Beach" -> biomeList[i] = "beach";
-                        case "DesertHills", "Desert" -> biomeList[i] = "desert";
-                        case "ExtremeHillsEdge" -> biomeList[i] = "meadow";
-                        case "Jungle", "JungleHills" -> biomeList[i] = "jungle";
+                        case "DesertHills", "Desert" -> biomeList[currentIndex] = "desert";
+                        case "ExtremeHillsEdge" -> biomeList[currentIndex] = "meadow";
+                        case "Jungle", "JungleHills" -> biomeList[currentIndex] = "jungle";
                         default -> {
-                            if (!biome.contains("_") && biome.matches("[A-Z]")) {
-                                //has capitals and no "_" it is probably the weird old format
-                                String snake_case_version = biome.replaceAll("(\\B)([A-Z])", "_$2");
-                                biomeList[i] = snake_case_version.toLowerCase();
+                            if (!currentBiome.contains("_") && !currentBiome.equals(currentBiome.toLowerCase())) {
+                                //has capitals and no "_" it is probably the camel case format
+                                biomeList[currentIndex] = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE,currentBiome);
+                                //biomeList[currentIndex] = currentBiome.replaceAll("(\\B)([A-Z])", "_$2");
                             }
                         }
                     }
@@ -253,7 +254,8 @@ public abstract class ETFTexturePropertiesUtils {
                         biomeList) {
                     builder.append(str).append(" ");
                 }
-                return builder.toString().trim();
+                //lower case required
+                return builder.toString().trim().toLowerCase();
             }
 
         }
@@ -878,7 +880,7 @@ public abstract class ETFTexturePropertiesUtils {
                     return (string) -> invert != string.matches(finalStringToMatch);
                 }
             } else if (stringToMatch.contains("pattern:")) {
-                stringToMatch = stringToMatch.replace("?", ".?").replace("*", ".*");
+                stringToMatch = stringToMatch.replace("*", "\\E.+\\Q").replace("?", "\\E.*\\Q");
                 if (stringToMatch.contains("ipattern:")) {
                     stringToMatch = stringToMatch.replace("ipattern:", "");
                     String finalStringToMatch = stringToMatch;
@@ -1164,7 +1166,6 @@ public abstract class ETFTexturePropertiesUtils {
                 wasEntityTestedByAnUpdatableProperty = true;
                 if (etfEntity.hasCustomName()) {
                     String entityName = Objects.requireNonNull(etfEntity.getCustomName()).getString();
-
                     doesEntityMeetThisCaseTest = NAME_MATCHERS.testPropertyString(entityName);
                 } else {
                     doesEntityMeetThisCaseTest = false;
@@ -1500,7 +1501,7 @@ public abstract class ETFTexturePropertiesUtils {
                 int size;
                 if (entity instanceof SlimeEntity slime) {
                     //magma cube too
-                    size = slime.getSize();
+                    size = slime.getSize()-1;
                 } else {
                     size = ((PhantomEntity) entity).getPhantomSize();
                 }

@@ -1,20 +1,28 @@
 package traben.entity_texture_features.texture_handlers;
 
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.render.*;
+import net.minecraft.client.render.OverlayTexture;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.texture.NativeImage;
+import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.item.trim.ArmorTrim;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
+import net.minecraft.resource.ResourcePack;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.screens.ETFConfigScreen;
 import traben.entity_texture_features.entity_handlers.ETFEntity;
@@ -44,6 +52,10 @@ public class ETFTexture {
     public final Identifier thisIdentifier;
     private final Object2ReferenceOpenHashMap<Identifier, Identifier> FEATURE_TEXTURE_MAP = new Object2ReferenceOpenHashMap<>();
     private final int variantNumber;
+
+    public int getVariantNumber(){
+        return variantNumber;
+    }
     public TextureReturnState currentTextureState = TextureReturnState.NORMAL;
     //a variation of thisIdentifier but with emissive texture pixels removed for z-fighting solution
     private Identifier thisIdentifier_Patched = null;
@@ -212,6 +224,60 @@ public class ETFTexture {
         }
     }
 
+    public boolean exists(){
+        return isBuilt || MinecraftClient.getInstance().getResourceManager().getResource(thisIdentifier).isPresent();
+    }
+
+    private boolean isBuilt = false;
+
+    public void buildTrimTexture( ArmorTrim trim, boolean leggings){
+//        trim=minecraft:trims/models/armor/rib_gold
+//        trim2=minecraft:trims/models/armor/rib_leggings_gold
+        try {
+            String mat = trim.getMaterial().value().assetName();
+            String namespace = trim.getPattern().value().assetId().getNamespace();
+            String pattern = trim.getPattern().value().assetId().getPath() + (leggings ? "_leggings" : "");
+
+            NativeImage patternImg = ETFUtils2.getNativeImageElseNull(new Identifier(namespace, "textures/trims/models/armor/" + pattern + ".png"));
+
+            NativeImage matImg = ETFUtils2.getNativeImageElseNull(new Identifier(namespace, "textures/trims/color_palettes/" + mat + ".png"));
+            NativeImage palletteImg = ETFUtils2.getNativeImageElseNull(new Identifier(namespace, "textures/trims/color_palettes/trim_palette.png"));
+
+            if (matImg != null && palletteImg != null && patternImg != null) {
+                Int2IntOpenHashMap palletteMap = new Int2IntOpenHashMap();
+                for (int i = 0; i < palletteImg.getWidth(); i++) {
+                    for (int j = 0; j < palletteImg.getHeight(); j++) {
+                        palletteMap.put(palletteImg.getColor(i,j),matImg.getColor(i,j));
+                    }
+                }
+                try (NativeImage newImage = ETFUtils2.emptyNativeImage(patternImg.getWidth(),patternImg.getHeight())){
+                    for (int i = 0; i < patternImg.getWidth(); i++) {
+                        for (int j = 0; j < patternImg.getHeight(); j++) {
+                            int colour = patternImg.getColor(i,j);
+                            if(palletteMap.containsKey(colour)) {
+                                newImage.setColor(i, j, palletteMap.get(colour));
+                            }else{
+                                newImage.setColor(i, j, colour);
+                            }
+                        }
+                    }
+                    ETFUtils2.registerNativeImageToIdentifier(newImage,thisIdentifier);
+                }catch (Exception b){
+                    // make empty
+                    thisIdentifier_Patched = ETFManager.getErrorETFTexture().thisIdentifier;
+                }
+            }else{
+                // make empty
+                thisIdentifier_Patched = ETFManager.getErrorETFTexture().thisIdentifier;
+            }
+        }catch (Exception e){
+            // make empty
+            thisIdentifier_Patched = ETFManager.getErrorETFTexture().thisIdentifier;
+
+        }
+        isBuilt = true;
+    }
+
     private void setupEmissives() {
 
         if (ETFConfigData.enableEmissiveTextures) {
@@ -220,6 +286,20 @@ public class ETFTexture {
             for (String possibleEmissiveSuffix :
                     ETFManager.getInstance().EMISSIVE_SUFFIX_LIST) {
                 Optional<Resource> vanillaR1 = resourceManager.getResource(thisIdentifier);
+                if(vanillaR1.isEmpty() && thisIdentifier.getPath().contains("textures/trims/models/armor/")){
+                    //create this armor trim as an identifier because fuck Sprites, all my homies hate Sprites
+
+                    //try get an armor trims base texture just to match what texture pack level it is
+                    ResourcePack pack;
+                    vanillaR1 = resourceManager.getResource(new Identifier(thisIdentifier.getNamespace(),thisIdentifier.getPath().replaceAll("_(.*?)(?=\\.png)","")));
+                    if(vanillaR1.isPresent()){
+                        pack = vanillaR1.get().getPack();
+                    }else{
+                        pack = MinecraftClient.getInstance().getDefaultResourcePack();
+                    }
+                    //create resource object sufficient for following code
+                    vanillaR1 = Optional.of(new Resource(pack, null));
+                }
                 if (vanillaR1.isPresent()) {
                     Identifier possibleEmissiveIdentifier = ETFUtils2.replaceIdentifier(thisIdentifier, ".png", possibleEmissiveSuffix + ".png");
                     Optional<Resource> emissiveR1 = resourceManager.getResource(possibleEmissiveIdentifier);
@@ -258,6 +338,7 @@ public class ETFTexture {
                                 }
                             }
                             //emissive found and is valid
+                            eSuffix = possibleEmissiveSuffix;
                             break;
                         }
                     }
@@ -267,6 +348,8 @@ public class ETFTexture {
                 createPatchedTextures();
         }
     }
+
+    public String eSuffix = null;
 
     private void createPatchedTextures() {
         if (this.canPatch/* && ETFVersionDifferenceHandler.isFabric() && !ETFConfigData.removePixelsUnderEmissive*/) {
@@ -292,13 +375,15 @@ public class ETFTexture {
             return;
         }
         //should patching cancel due to presence of animation mods and animated textures
-        if (ETFConfigData.dontPatchAnimatedTextures &&
-                (ETFVersionDifferenceHandler.isThisModLoaded("moremcmeta") &&
+        if (ETFConfigData.dontPatchAnimatedTextures && (
+                (ETFVersionDifferenceHandler.isThisModLoaded("animatica")) && (
+                        doesAnimaticaVersionExist(thisIdentifier)
+                                || doesAnimaticaVersionExist(emissiveIdentifier)
+                ) || (ETFVersionDifferenceHandler.isThisModLoaded("moremcmeta") &&
                         (files.getResource(ETFUtils2.replaceIdentifier(thisIdentifier, ".png", ".png.mcmeta")).isPresent() ||
                                 files.getResource(ETFUtils2.replaceIdentifier(thisIdentifier, ".png", ".png.moremcmeta")).isPresent())
                 )
-            // todo || ETFVersionDifferenceHandler.isThisModLoaded("animatica")) && check it's animated???
-        ) {
+        )) {
             //here the setting to cancel is enabled, animation mod is present, and mcmeta files exist, so cancel patching
             return;
         }
@@ -403,6 +488,15 @@ public class ETFTexture {
         }
     }
 
+    //animatica registers the animated version of the texture as "texture.png-anim"
+    private static boolean doesAnimaticaVersionExist(Identifier identifier){
+        if(identifier == null) return false;
+        String idString = identifier.toString();
+        //check if its already an anim and animatica has already gotten to replacing it before etf sees it
+        if(idString.endsWith("-anim")) return true;
+        //check if animatica has registered its animated version of this texture
+        return MinecraftClient.getInstance().getTextureManager().getOrDefault(new Identifier(idString+"-anim"),null) != null;
+    }
 
     @NotNull
     Identifier getFeatureTexture(Identifier vanillaFeatureTexture) {
@@ -520,6 +614,15 @@ public class ETFTexture {
         return this.blinkIdentifier != null;
     }
 
+    private ETFSprite atlasSprite = null;
+
+    @NotNull
+    public ETFSprite getSprite(@NotNull Sprite originalSprite,@NotNull ETFSprite.SpriteSource source){
+        if (atlasSprite == null){
+            atlasSprite = new ETFSprite(originalSprite, this,source);
+        }
+        return atlasSprite;
+    }
 
     public boolean doesBlink2() {
         return this.blink2Identifier != null;
@@ -538,7 +641,7 @@ public class ETFTexture {
     public void renderEmissive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, ModelPart modelPart, ETFManager.EmissiveRenderModes modeToUsePossiblyManuallyChosen) {
         VertexConsumer vertexC = getEmissiveVertexConsumer(vertexConsumerProvider, null, modeToUsePossiblyManuallyChosen);
         if (vertexC != null) {
-            modelPart.render(matrixStack, vertexC, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV);
+            modelPart.render(matrixStack, vertexC, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV);
         }
     }
 
@@ -549,7 +652,7 @@ public class ETFTexture {
     public void renderEmissive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, Model model, ETFManager.EmissiveRenderModes modeToUsePossiblyManuallyChosen) {
         VertexConsumer vertexC = getEmissiveVertexConsumer(vertexConsumerProvider, model, modeToUsePossiblyManuallyChosen);
         if (vertexC != null) {
-            model.render(matrixStack, vertexC, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
+            model.render(matrixStack, vertexC, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
         }
     }
 
