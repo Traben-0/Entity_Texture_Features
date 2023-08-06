@@ -11,17 +11,20 @@
 - added an option to enable extra warden textures like the heart to apply to the entire model
 - textures ending with numbers now use the separator "." like OptiFine for variants *(e.g "mob4.png" now variates with "mob4.2.png")*
 - Animatica textures are now detected and prevent certain ETF actions that could break these textures *(MoreMcmeta was already supported)*
+- added new ETF skin feature to allow/prevent transparency for your skin specifically, plus general improvements to skin transparency handling.
+- added new ETF skin feature variant of the villager nose setting that can use a custom texture set in the skin, instead of the default villager.
 
 - updated the `minecraftcapes.net` api url when used in skin features
 - improved the handling of "_eyes" textures
 - tweaked the skin tool failure dialogue to be more informative and helpful
 - tweaked warning messages and added some
+- tweaked the resource-pack screen etf button
 
 - fixed `biome` property breaking when using "CamelCase" instead of "snake_case"
 - fixed `size` property being off by 1 when compared to OptiFine
-- fixed `name` property not working for players
+- fixed `name` property not working for players usernames
 - fixed custom ETF cape textures not working with `physics mod` capes
-- fixed 3D skin layers emissive body pixels with skin features
+- fixed `3D skin layers mod` emissive body pixels with skin features
 - tweaked some `en_us` translations
 - fixed 2 forge crashes
 - fixed `pattern` & `ipattern` to correctly match the OptiFine behaviour

@@ -19,6 +19,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
+import net.minecraft.util.math.ColorHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFClientCommon;
@@ -84,7 +85,7 @@ public class ETFPlayerTexture {
     //private boolean hasVanillaCape = false;
     private NativeImage originalSkin;
     private NativeImage originalCape;
-    private boolean allowThisETFBaseSkin = true;
+    //private boolean allowThisETFBaseSkin = true;
     private Identifier coatIdentifier = null;
     private Identifier coatEmissiveIdentifier = null;
     private Identifier coatEnchantedIdentifier = null;
@@ -313,10 +314,32 @@ public class ETFPlayerTexture {
         return counter;
     }
 
-    private static boolean isSkinNotTooTransparent(NativeImage skin) {
-        if (ETFConfigData.skinFeaturesEnableFullTransparency) {
-            return true;
-        } else {
+    private static void setNotTransparentInBox(NativeImage img, int x1, int y1, int x2, int y2) {
+        for (int x = x1; x <= x2; x++) {
+            for (int y = y1; y <= y2; y++) {
+                //ranges from  0 to 127  then wraps around negatively -127 to -1  totalling 0 to 255
+                if (img.getOpacity(x, y) != -1) {
+                    int col = img.getColor(x,y);
+                    //set colour to not be transparent
+                    img.setColor(x,y, ColorHelper.Argb.getArgb(
+                            -1,
+                            ColorHelper.Argb.getRed(col),
+                            ColorHelper.Argb.getGreen(col),
+                            ColorHelper.Argb.getBlue(col)
+                    ));
+                }
+            }
+        }
+    }
+
+    public boolean wasForcedSolid = false;
+
+    private static void parseSkinTransparency(NativeImage skin, boolean forceSolidSkin ){
+        if(forceSolidSkin || !ETFConfigData.skinFeaturesEnableTransparency){
+            forceSolidLowerSkin(skin);
+            return;
+        }
+        if (!ETFConfigData.skinFeaturesEnableFullTransparency) {
             int countTransparent = 0;
             //map of bottom skin layer
             countTransparent += countTransparentInBox(skin, 8, 0, 23, 15);
@@ -333,9 +356,51 @@ public class ETFPlayerTexture {
             //1648 is total pixels that are not allowed transparent by vanilla
             int average = (countTransparent / 1648); // should be 0 to 256
             //System.out.println("average ="+average);
-            return average >= 100;
+            boolean isSkinMoreThan40PercentOpaque = average >= 100;
+            if (!isSkinMoreThan40PercentOpaque){
+                forceSolidLowerSkin(skin);
+            }
         }
     }
+
+    private static void forceSolidLowerSkin(NativeImage skin) {
+        try {
+            setNotTransparentInBox(skin, 8, 0, 23, 15);
+            setNotTransparentInBox(skin, 0, 20, 55, 31);
+            setNotTransparentInBox(skin, 0, 8, 7, 15);
+            setNotTransparentInBox(skin, 24, 8, 31, 15);
+            setNotTransparentInBox(skin, 0, 16, 11, 19);
+            setNotTransparentInBox(skin, 20, 16, 35, 19);
+            setNotTransparentInBox(skin, 44, 16, 51, 19);
+            setNotTransparentInBox(skin, 20, 48, 27, 51);
+            setNotTransparentInBox(skin, 36, 48, 43, 51);
+            setNotTransparentInBox(skin, 16, 52, 47, 63);
+        }catch (Exception ignored){
+        }
+    }
+//    private static boolean isSkinNotTooTransparent(NativeImage skin) {
+//        if (ETFConfigData.skinFeaturesEnableFullTransparency) {
+//            return true;
+//        } else {
+//            int countTransparent = 0;
+//            //map of bottom skin layer
+//            countTransparent += countTransparentInBox(skin, 8, 0, 23, 15);
+//            countTransparent += countTransparentInBox(skin, 0, 20, 55, 31);
+//            countTransparent += countTransparentInBox(skin, 0, 8, 7, 15);
+//            countTransparent += countTransparentInBox(skin, 24, 8, 31, 15);
+//            countTransparent += countTransparentInBox(skin, 0, 16, 11, 19);
+//            countTransparent += countTransparentInBox(skin, 20, 16, 35, 19);
+//            countTransparent += countTransparentInBox(skin, 44, 16, 51, 19);
+//            countTransparent += countTransparentInBox(skin, 20, 48, 27, 51);
+//            countTransparent += countTransparentInBox(skin, 36, 48, 43, 51);
+//            countTransparent += countTransparentInBox(skin, 16, 52, 47, 63);
+//            //do not allow skins under 40% ish total opacity
+//            //1648 is total pixels that are not allowed transparent by vanilla
+//            int average = (countTransparent / 1648); // should be 0 to 256
+//            //System.out.println("average ="+average);
+//            return average >= 100;
+//        }
+//    }
 
     private static NativeImage getCoatTexture(NativeImage skin, int lengthOfCoat, boolean ignoreTopTexture) {
 
@@ -379,7 +444,7 @@ public class ETFPlayerTexture {
         }
     }
 
-    private static int getSkinPixelColourToNumber(int color) {
+    public static int getSkinPixelColourToNumber(int color) {
         //            pink   cyan     red       green      brown    blue     orange     yellow
         //colours = -65281, -256, -16776961, -16711936, -16760705, -65536, -16744449, -14483457
         return switch (color) {
@@ -439,7 +504,7 @@ public class ETFPlayerTexture {
     public Identifier getBaseTextureIdentifierOrNullForVanilla(ETFPlayerEntity player) {
         this.player = player;//refresh player data
         if (etfTextureOfFinalBaseSkin != null) {
-            if (allowThisETFBaseSkin && canUseFeaturesForThisPlayer()) {
+            if (/*allowThisETFBaseSkin &&*/ canUseFeaturesForThisPlayer()) {
                 return etfTextureOfFinalBaseSkin.getTextureIdentifier(player);
             } else if (ETFConfigData.tryETFTransparencyForAllSkins) {
                 return etfTextureOfFinalBaseSkin.getTextureIdentifier(player);
@@ -451,7 +516,7 @@ public class ETFPlayerTexture {
     @Nullable
     public Identifier getBaseHeadTextureIdentifierOrNullForVanilla() {
         if (etfTextureOfFinalBaseSkin != null) {
-            if (allowThisETFBaseSkin && canUseFeaturesForThisPlayer()) {
+            if (/*allowThisETFBaseSkin &&*/ canUseFeaturesForThisPlayer()) {
                 return etfTextureOfFinalBaseSkin.getTextureIdentifier(null);
             } else if (ETFConfigData.tryETFTransparencyForAllSkins) {
                 return etfTextureOfFinalBaseSkin.getTextureIdentifier(null);
@@ -518,8 +583,14 @@ public class ETFPlayerTexture {
             //nose
             if (hasVillagerNose) {
                 customPlayerModel.villagerNose.copyTransform(model.head);
-                VertexConsumer villagerVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(villagerTexture));
-                customPlayerModel.villagerNose.render(matrixStack, villagerVert, light, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                if(noseType == ETFConfigScreenSkinTool.NoseType.VILLAGER_TEXTURED){
+                    VertexConsumer villagerVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(etfTextureOfFinalBaseSkin.getTextureIdentifier(null)));
+                    customPlayerModel.villagerNose.render(matrixStack, villagerVert, light, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                    etfTextureOfFinalBaseSkin.renderEmissive(matrixStack,vertexConsumerProvider,customPlayerModel.villagerNose);
+                }else{
+                    VertexConsumer villagerVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(villagerTexture));
+                    customPlayerModel.villagerNose.render(matrixStack, villagerVert, light, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                }
             } else if (texturedNoseIdentifier != null) {
                 customPlayerModel.textureNose.copyTransform(model.head);
                 VertexConsumer noseVertex = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucentCull(texturedNoseIdentifier));
@@ -941,6 +1012,7 @@ public class ETFPlayerTexture {
                         getSkinPixelColourToNumber(originalSkin.getColor(52, 19)),//blink height
                         getSkinPixelColourToNumber(originalSkin.getColor(53, 16)),//cape choice
                         getSkinPixelColourToNumber(originalSkin.getColor(53, 17)),//nose choice
+                        getSkinPixelColourToNumber(originalSkin.getColor(53, 18)),//no transparency choice
 //                        getSkinPixelColourToNumber(originalSkin.getColor(53, 18)),
 //                        getSkinPixelColourToNumber(originalSkin.getColor(53, 19)),
 //                        getSkinPixelColourToNumber(originalSkin.getColor(54, 16)),
@@ -967,10 +1039,10 @@ public class ETFPlayerTexture {
                 //////////////////////////////////////////
                 NativeImage noseTexture = null;
                 int noseChoice = choiceBoxChoices[5];
-                if (noseChoice >= 1 && noseChoice <= 6) {
-                    if (noseChoice == 1) {
+                if (noseChoice >= 1 && noseChoice <= 7) {
+                    if (noseChoice == 1 || noseChoice == 7) {
                         hasVillagerNose = true;
-                        noseType = ETFConfigScreenSkinTool.NoseType.VILLAGER;
+                        noseType = noseChoice == 1 ? ETFConfigScreenSkinTool.NoseType.VILLAGER : ETFConfigScreenSkinTool.NoseType.VILLAGER_TEXTURED;
                     } else {
                         noseTexture = ETFUtils2.emptyNativeImage(8, 8);
                         int[] bounds;
@@ -1053,14 +1125,16 @@ public class ETFPlayerTexture {
                     coatIdentifier = null;
                 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                if (ETFConfigData.skinFeaturesEnableTransparency) {
-                    if (isSkinNotTooTransparent(originalSkin)) {
-                        allowThisETFBaseSkin = true;
-                    } else {
-                        ETFUtils2.logMessage("Skin was too transparent or had other problems", false);
-                        allowThisETFBaseSkin = false;
-                    }
-                }
+                wasForcedSolid = choiceBoxChoices[6] == 1;
+
+//                if (ETFConfigData.skinFeaturesEnableTransparency) {
+//                    if (isSkinNotTooTransparent(originalSkin)) {
+//                        allowThisETFBaseSkin = true;
+//                    } else {
+//                        ETFUtils2.logMessage("Skin was too transparent or had other problems", false);
+//                        allowThisETFBaseSkin = false;
+//                    }
+//                }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //create and register blink textures this will allow the ETFTexture to build these automatically
                 NativeImage blinkSkinFile = null;
@@ -1076,11 +1150,13 @@ public class ETFPlayerTexture {
                     if (blinkChoice <= 2) {
                         //blink 1 frame if either pink or blue optional
                         blinkSkinFile = returnOptimizedBlinkFace(modifiedSkin, getSkinPixelBounds("face1"), 1, getSkinPixelBounds("face3"));
+                        parseSkinTransparency(blinkSkinFile,wasForcedSolid);
                         ETFUtils2.registerNativeImageToIdentifier(blinkSkinFile, blinkIdentifier);
 
                         //blink is 2 frames with blue optional
                         if (blinkChoice == 2) {
                             blinkSkinFile2 = returnOptimizedBlinkFace(modifiedSkin, getSkinPixelBounds("face2"), 1, getSkinPixelBounds("face4"));
+                            parseSkinTransparency(blinkSkinFile2,wasForcedSolid);
                             ETFUtils2.registerNativeImageToIdentifier(blinkSkinFile2, blink2Identifier);
                         }
                     } else {//optimized blink
@@ -1092,19 +1168,22 @@ public class ETFPlayerTexture {
                         //optimized 1p high eyes
                         if (blinkChoice == 3) {
                             blinkSkinFile = returnOptimizedBlinkFace(modifiedSkin, getSkinPixelBounds("optimizedEyeSmall"), eyeHeightTopDown);
-
+                            parseSkinTransparency(blinkSkinFile,wasForcedSolid);
                             ETFUtils2.registerNativeImageToIdentifier(blinkSkinFile, blinkIdentifier);
 
                         } else if (blinkChoice == 4) {
                             blinkSkinFile = returnOptimizedBlinkFace(modifiedSkin, getSkinPixelBounds("optimizedEye2High"), eyeHeightTopDown);
                             blinkSkinFile2 = returnOptimizedBlinkFace(modifiedSkin, getSkinPixelBounds("optimizedEye2High_second"), eyeHeightTopDown);
-
+                            parseSkinTransparency(blinkSkinFile,wasForcedSolid);
+                            parseSkinTransparency(blinkSkinFile2,wasForcedSolid);
 
                             ETFUtils2.registerNativeImageToIdentifier(blinkSkinFile, blinkIdentifier);
                             ETFUtils2.registerNativeImageToIdentifier(blinkSkinFile2, blink2Identifier);
                         } else /*if( blinkChoice == 5)*/ {
                             blinkSkinFile = returnOptimizedBlinkFace(modifiedSkin, getSkinPixelBounds("optimizedEye4High"), eyeHeightTopDown);
                             blinkSkinFile2 = returnOptimizedBlinkFace(modifiedSkin, getSkinPixelBounds("optimizedEye4High_second"), eyeHeightTopDown);
+                            parseSkinTransparency(blinkSkinFile,wasForcedSolid);
+                            parseSkinTransparency(blinkSkinFile2,wasForcedSolid);
                             ETFUtils2.registerNativeImageToIdentifier(blinkSkinFile, blinkIdentifier);
                             ETFUtils2.registerNativeImageToIdentifier(blinkSkinFile2, blink2Identifier);
                         }
@@ -1291,7 +1370,7 @@ public class ETFPlayerTexture {
                     }
                 }
 
-
+                parseSkinTransparency(modifiedSkin,wasForcedSolid);
 
                 Identifier modifiedSkinBlinkPatchedIdentifier = null;
                 Identifier modifiedSkinPatchedIdentifier = null;
@@ -1300,6 +1379,7 @@ public class ETFPlayerTexture {
                     if (emissiveImage != null) {
                         modifiedSkinPatchedIdentifier = new Identifier(SKIN_NAMESPACE, id + "_e_patched.png");
                         ETFTexture.patchTextureToRemoveZFightingWithOtherTexture(modifiedSkin, emissiveImage);
+
                         ETFUtils2.registerNativeImageToIdentifier(modifiedSkin, modifiedSkinPatchedIdentifier);
                         if (blinkSkinFile != null) {
                             modifiedSkinBlinkPatchedIdentifier = new Identifier(SKIN_NAMESPACE, id + "_blink_e_patched.png");
@@ -1313,6 +1393,7 @@ public class ETFPlayerTexture {
                         }
                     }
                 }
+
 
                 Identifier modifiedSkinIdentifier = new Identifier(SKIN_NAMESPACE, id + ".png");
                 ETFUtils2.registerNativeImageToIdentifier(modifiedSkin, modifiedSkinIdentifier);
@@ -1348,6 +1429,7 @@ public class ETFPlayerTexture {
 
                 //check if they want to try load transparent skin anyway
                 if (ETFConfigData.tryETFTransparencyForAllSkins) {
+                    //parseSkinTransparency(originalSkin,wasForcedSolid);
                     Identifier skinIdentifier = new Identifier(SKIN_NAMESPACE, id + ".png");
                     ETFUtils2.registerNativeImageToIdentifier(originalSkin, skinIdentifier);
                     etfTextureOfFinalBaseSkin = new ETFTexture(skinIdentifier, null, null, null, null, null, null, null, null);

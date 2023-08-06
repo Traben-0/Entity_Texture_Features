@@ -8,6 +8,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.*;
+import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -28,6 +29,10 @@ public abstract class ETFConfigScreen extends Screen {
     public ETFConfigScreen(Text text, Screen parent) {
         super(text);
         this.parent = parent;
+    }
+
+    public static String booleanAsOnOff(boolean bool){
+        return ScreenTexts.onOrOff(bool).getString();
     }
 
     public static void renderGUITexture(Identifier texture, double x1, double y1, double x2, double y2) {

@@ -34,12 +34,14 @@ public abstract class MixinPackScreen extends Screen {
     }
 
     @Inject(method = "init", at = @At("TAIL"))
-    private void etf$illegalPathOverride(CallbackInfo ci) {
+    private void etf$etfButton(CallbackInfo ci) {
         if (!ETFConfigData.hideConfigButton
                 && this.client != null
+                //ensure this is the resource-pack screen and not the data-pack screen
                 && this.file.equals(this.client.getResourcePackDir())
+                //fabric api required for mod asset texture loading
                 && (ETFVersionDifferenceHandler.isFabric() == ETFVersionDifferenceHandler.isThisModLoaded("fabric"))) {
-            this.addDrawableChild(new TexturedButtonWidget((this.width - 48), (this.height - 48), 24, 20,
+            this.addDrawableChild(new TexturedButtonWidget((int) (this.width * 0.9), (int) (this.height * 0.8), 24, 20,
                     0, 0, 20, new Identifier(MOD_ID + ":textures/gui/settings.png"), 24, 40,
                     (button) -> Objects.requireNonNull(client).setScreen(new ETFConfigScreenMain(this))));
         }
