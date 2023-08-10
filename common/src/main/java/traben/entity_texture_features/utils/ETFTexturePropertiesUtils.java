@@ -880,7 +880,8 @@ public abstract class ETFTexturePropertiesUtils {
                     return (string) -> invert != string.matches(finalStringToMatch);
                 }
             } else if (stringToMatch.contains("pattern:")) {
-                stringToMatch = stringToMatch.replace("*", "\\E.+\\Q").replace("?", "\\E.*\\Q");
+                stringToMatch = "\\Q" + stringToMatch;
+                stringToMatch = stringToMatch.replace("*", "\\E.*\\Q").replace("?", "\\E.\\Q");
                 if (stringToMatch.contains("ipattern:")) {
                     stringToMatch = stringToMatch.replace("ipattern:", "");
                     String finalStringToMatch = stringToMatch;
