@@ -881,7 +881,7 @@ public abstract class ETFTexturePropertiesUtils {
                 }
             } else if (stringToMatch.contains("pattern:")) {
                 stringToMatch = "\\Q" + stringToMatch;
-                stringToMatch = stringToMatch.replace("*", "\\E.*\\Q").replace("?", "\\E.\\Q");
+                stringToMatch = stringToMatch.replace("*", "\\E.*\\Q").replace("?", "\\E.+\\Q");
                 if (stringToMatch.contains("ipattern:")) {
                     stringToMatch = stringToMatch.replace("ipattern:", "");
                     String finalStringToMatch = stringToMatch;
