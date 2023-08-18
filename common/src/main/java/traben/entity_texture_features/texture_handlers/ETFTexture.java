@@ -617,9 +617,9 @@ public class ETFTexture {
     private ETFSprite atlasSprite = null;
 
     @NotNull
-    public ETFSprite getSprite(@NotNull Sprite originalSprite,@NotNull ETFSprite.SpriteSource source){
+    public ETFSprite getSprite(@NotNull Sprite originalSprite){
         if (atlasSprite == null){
-            atlasSprite = new ETFSprite(originalSprite, this,source);
+            atlasSprite = new ETFSprite(originalSprite, this);
         }
         return atlasSprite;
     }
