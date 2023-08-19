@@ -51,12 +51,12 @@ public record ETFEntityWrapper(Entity entity) implements ETFEntity {
 
     @Override
     public boolean hasCustomName() {
-        return entity.hasCustomName();
+        return entity.hasCustomName() || entity.isPlayer();
     }
 
     @Override
     public Text getCustomName() {
-        return entity.getCustomName();
+        return entity.isPlayer() ? entity.getName() :entity.getCustomName();
     }
 
     @Override

@@ -111,6 +111,7 @@
   "config.entity_texture_features.player_skin_editor.remove_features": "从皮肤中移除ETF特性。",
   "config.entity_texture_features.player_skin_editor.title": "玩家皮肤特性工具",
   "config.entity_texture_features.player_skin_editor.button_desc.1": "一个交互式的工具用于选择和添加",
+  "config.entity_texture_features.player_skin_editor.button_desc.fail": "该工具仅在游戏中有效！",
   "config.entity_texture_features.player_skin_editor.button_desc.2": "玩家皮肤特性至你的皮肤",
   "config.entity_texture_features.player_skin_editor.upload_skin": "上传皮肤变化到Minecraft配置文件",
   "config.entity_texture_features.player_skin_editor.upload_skin.fail": "皮肤上传失败！",
@@ -158,10 +159,12 @@
   "config.entity_texture_features.update_frequency.instant": "即时",
   "config.entity_texture_features.update_frequency.never": "从不",
   "config.entity_texture_features.update_frequency.slow": "缓慢",
-  "config.entity_texture_features.warn.ebe.text.1": "Enhanced Block Entities",
+  "config.entity_texture_features.warn.ebe.text.1": "增强型方块实体",
   "config.entity_texture_features.warn.ebe.text.2": "方块实体特性不适用于EBE方块实体。",
   "config.entity_texture_features.warn.figura.text.1": "Figura",
   "config.entity_texture_features.warn.figura.text.2": "为了兼容，ETF皮肤特性被禁用。",
+  "config.entity_texture_features.warn.quark.text.3": "夸克",
+  "config.entity_texture_features.warn.quark.text.4": "必须禁用夸克的[变体动物纹理(Variant Animal Textures)]才能使ETF随机纹理发挥作用。",
   "config.entity_texture_features.warn.ignore": "忽略：",
   "config.entity_texture_features.warn.iris.text.1": "Iris PBR",
   "config.entity_texture_features.warn.iris.text.2": "如果Iris PBR在生物身上不起作用，请参见“发光修复选项”。",
@@ -178,5 +181,10 @@
   "config.entity_texture_features.animation_compatibility": "自动动画兼容",
   "config.entity_texture_features.animation_compatibility.tooltip": "当启用ETF时，只有在MoreMcmeta模组存在的情况下，才不会篡改任何有动画的纹理。\n\n注意：这可能会引入深度冲突，取决于你的着色器。",
   "config.entity_texture_features.illegal_path_mode.entity": "仅实体",
-  "config.entity_texture_features.illegal_path_mode.all": "全部资源"
+  "config.entity_texture_features.disable_default_directory.title": "禁止使用默认目录",
+  "config.entity_texture_features.disable_default_directory.tooltip": "默认情况下，您可以使用原版目录来存储随机纹理\n这将允许你禁用它并强制使用Optifine和ETF文件夹\n这是为了支持那些由于某种原因将实体纹理命名为‘mob2.png’的模组",
+  "config.entity_texture_features.skin_features_try_transparency_for_all.title": "在所有皮肤中启用透明度",
+  "config.entity_texture_features.skin_features_try_transparency_for_all.tooltip": "这将尝试启用透明皮肤渲染\n适用于所有皮肤，而不仅仅是支持ETF的皮肤\n警告：这将绕过100%的透明度检查。",
+  "config.entity_texture_features.skin_layers_patch.title": "3D皮肤层(3D skin layers)模组补丁",
+  "config.entity_texture_features.skin_layers_patch.tooltip": "当检测到3D皮肤层模组时，你会看到这一点。\nETF包含一个补丁，可以让皮肤特征\n用优秀的3D皮肤层模型正确渲染。\n该模组未来的更改可能会破坏此功能，因此该补丁是可选的\n\n更改后需要重新启动"
 }
