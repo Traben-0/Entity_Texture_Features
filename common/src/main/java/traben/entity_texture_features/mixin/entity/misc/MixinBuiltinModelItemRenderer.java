@@ -1,7 +1,6 @@
 package traben.entity_texture_features.mixin.entity.misc;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -23,6 +22,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
@@ -90,7 +90,7 @@ public abstract class MixinBuiltinModelItemRenderer implements SynchronousResour
                             ETFManager.getEmissiveMode() == ETFManager.EmissiveRenderModes.BRIGHT ?
                                     RenderLayer.getBeaconBeam(file, true) :
                                     RenderLayer.getEntityTranslucent(file));
-                    this.modelTrident.render(matrices, consumer, LightmapTextureManager.MAX_LIGHT_COORDINATE, overlay, 1, 1, 1, 1);
+                    this.modelTrident.render(matrices, consumer, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, overlay, 1, 1, 1, 1);
                     //ETFUtils.generalEmissiveRenderModel(matrices, vertexConsumers, fileString, this.modelTrident);
                     matrices.pop();
 
@@ -115,12 +115,12 @@ public abstract class MixinBuiltinModelItemRenderer implements SynchronousResour
                                     RenderLayer.getEntityTranslucent(file));
 
                     //ETFUtils.generalEmissiveRenderPart(matrices, vertexConsumers, fileString, modelShield.getHandle(), false);
-                    modelShield.getHandle().render(matrices, consumer, LightmapTextureManager.MAX_LIGHT_COORDINATE, overlay, 1, 1, 1, 1);
-                    modelShield.render(matrices, consumer, LightmapTextureManager.MAX_LIGHT_COORDINATE, overlay, 1, 1, 1, 1);
+                    modelShield.getHandle().render(matrices, consumer, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, overlay, 1, 1, 1, 1);
+                    modelShield.render(matrices, consumer, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, overlay, 1, 1, 1, 1);
 
                     //ETFUtils.generalEmissiveRenderPart(matrices, vertexConsumers, fileString, modelShield.getPlate(), false);
                     if (!bl)
-                        modelShield.getPlate().render(matrices, consumer, LightmapTextureManager.MAX_LIGHT_COORDINATE, overlay, 1, 1, 1, 1);
+                        modelShield.getPlate().render(matrices, consumer, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, overlay, 1, 1, 1, 1);
                     //todo banner patterns implementation
                     matrices.pop();
                 }

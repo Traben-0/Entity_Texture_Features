@@ -11,6 +11,7 @@ import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
+import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFPlayerTexture;
 
@@ -24,6 +25,9 @@ public class ETF3DBodyLayerFeatureRenderer extends BodyLayerFeatureRenderer {
     }
 
     private VertexConsumerProvider thisProvider = null;
+
+
+
 
     // simply captures vertexConsumerProvider
     @Override
@@ -39,7 +43,7 @@ public class ETF3DBodyLayerFeatureRenderer extends BodyLayerFeatureRenderer {
         if (thisETF != null) {
             Identifier skin = thisETF.getBaseTextureIdentifierOrNullForVanilla(abstractClientPlayer);
             if (skin != null) {
-                vertices = thisProvider.getBuffer(RenderLayer.getEntityTranslucentCull(skin));
+                vertices = thisProvider.getBuffer(RenderLayer.getEntityTranslucent(skin));
             }
             // mesh may be slightly incorrect if texture has changed significantly
             // only minor changes expected, typically to the face for blinking
@@ -48,8 +52,8 @@ public class ETF3DBodyLayerFeatureRenderer extends BodyLayerFeatureRenderer {
             // further meshes are correct as emissive and enchant are only overlays
             Identifier emissiveSkin = thisETF.getBaseTextureEmissiveIdentifierOrNullForNone();
             if (emissiveSkin != null) {
-                vertices = thisProvider.getBuffer(RenderLayer.getEntityTranslucentCull(emissiveSkin));
-                super.renderLayers(abstractClientPlayer, settings, matrixStack, vertices, light, overlay);
+                vertices = thisProvider.getBuffer(RenderLayer.getEntityTranslucent(emissiveSkin));
+                super.renderLayers(abstractClientPlayer, settings, matrixStack, vertices, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, overlay);
             }
             Identifier enchantSkin = thisETF.getBaseTextureEnchantIdentifierOrNullForNone();
             if (enchantSkin != null) {
