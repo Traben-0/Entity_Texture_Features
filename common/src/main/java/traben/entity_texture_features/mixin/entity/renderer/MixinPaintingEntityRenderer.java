@@ -91,41 +91,32 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
     private void etf$renderETFPainting(MatrixStack matrices, VertexConsumerProvider vertexConsumerProvider, PaintingEntity entity, int width, int height, ETFSprite ETFPaintingSprite, ETFSprite ETFBackSprite) {
 
         VertexConsumer vertexConsumerFront = vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(ETFPaintingSprite.getSpriteVariant().getAtlas().getId()));
+        etf$renderETFPaintingFront(matrices, vertexConsumerFront, entity, width, height, ETFPaintingSprite.getSpriteVariant(), false);
+
         VertexConsumer vertexConsumerBack = vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(ETFBackSprite.getSpriteVariant().getAtlas().getId()));
-        etf$renderETFPaintingSingle(matrices, vertexConsumerFront,vertexConsumerBack, entity, width, height, ETFPaintingSprite.getSpriteVariant(), ETFBackSprite.getSpriteVariant(),false);
-        if(ETFPaintingSprite.isEmissive() || ETFBackSprite.isEmissive()){
-            Sprite front = ETFPaintingSprite.isEmissive() ? ETFPaintingSprite.getEmissive() : ETFPaintingSprite.getSpriteVariant();
-            Sprite back = ETFBackSprite.isEmissive() ? ETFBackSprite.getEmissive() : ETFBackSprite.getSpriteVariant();
-            vertexConsumerFront = ETFPaintingSprite.isEmissive() ? vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucentCull(ETFPaintingSprite.getEmissive().getAtlas().getId())) : null;
-            vertexConsumerBack =  ETFBackSprite.isEmissive() ? vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucentCull(ETFBackSprite.getEmissive().getAtlas().getId())) : null;
-            etf$renderETFPaintingSingle(matrices, vertexConsumerFront,vertexConsumerBack, entity, width, height, front, back,true);
+        etf$renderETFPaintingBack(matrices, vertexConsumerBack, entity, width, height, ETFBackSprite.getSpriteVariant(), false);
+
+        if (ETFPaintingSprite.isEmissive()) {
+            vertexConsumerFront = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucentCull(ETFPaintingSprite.getEmissive().getAtlas().getId()));
+            etf$renderETFPaintingFront(matrices, vertexConsumerFront, entity, width, height, ETFPaintingSprite.getEmissive(), true);
+        }
+
+        if (ETFBackSprite.isEmissive()) {
+            vertexConsumerFront = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucentCull(ETFBackSprite.getEmissive().getAtlas().getId()));
+            etf$renderETFPaintingBack(matrices, vertexConsumerFront, entity, width, height, ETFBackSprite.getEmissive(), true);
         }
     }
+
     @SuppressWarnings("SuspiciousNameCombination")
     @Unique
-    private void etf$renderETFPaintingSingle(MatrixStack matrices, VertexConsumer vertexConsumerFront, VertexConsumer vertexConsumerBack, PaintingEntity entity, int width, int height, Sprite paintingSprite, Sprite backSprite, boolean emissive) {
+    private void etf$renderETFPaintingFront(MatrixStack matrices, VertexConsumer vertexConsumerFront, PaintingEntity entity, int width, int height, Sprite paintingSprite, boolean emissive) {
 
         MatrixStack.Entry entry = matrices.peek();
         Matrix4f matrix4f = entry.getPositionMatrix();
         Matrix3f matrix3f = entry.getNormalMatrix();
 
-
-
         float f = (float)(-width) / 2.0F;
         float g = (float)(-height) / 2.0F;
-        //float h = 0.5F;
-        float i = backSprite.getMinU();
-        float j = backSprite.getMaxU();
-        float k = backSprite.getMinV();
-        float l = backSprite.getMaxV();
-        float m = backSprite.getMinU();
-        float n = backSprite.getMaxU();
-        float o = backSprite.getMinV();
-        float p = backSprite.getFrameV(1.0);
-        float q = backSprite.getMinU();
-        float r = backSprite.getFrameU(1.0);
-        float s = backSprite.getMinV();
-        float t = backSprite.getMaxV();
         int u = width / 16;
         int v = height / 16;
         double d = 16.0 / (double)u;
@@ -164,7 +155,7 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
 
                     light = WorldRenderer.getLightmapCoordinates(entity.getWorld(), new BlockPos(ac, ad, ae));
                 }
-                if(vertexConsumerFront != null) {
+
                     float ag = paintingSprite.getFrameU(d * (double) (u - w));
                     float ah = paintingSprite.getFrameU(d * (double) (u - (w + 1)));
                     float ai = paintingSprite.getFrameV(e * (double) (v - x));
@@ -173,8 +164,74 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
                     this.vertex(matrix4f, matrix3f, vertexConsumerFront, z, ab, ag, ai, -0.5F, 0, 0, -1, light);
                     this.vertex(matrix4f, matrix3f, vertexConsumerFront, z, aa, ag, aj, -0.5F, 0, 0, -1, light);
                     this.vertex(matrix4f, matrix3f, vertexConsumerFront, y, aa, ah, aj, -0.5F, 0, 0, -1, light);
+
+            }
+        }
+
+    }
+
+    @SuppressWarnings("SuspiciousNameCombination")
+    @Unique
+    private void etf$renderETFPaintingBack(MatrixStack matrices, VertexConsumer vertexConsumerBack, PaintingEntity entity, int width, int height, Sprite backSprite, boolean emissive) {
+
+        MatrixStack.Entry entry = matrices.peek();
+        Matrix4f matrix4f = entry.getPositionMatrix();
+        Matrix3f matrix3f = entry.getNormalMatrix();
+
+
+
+        float f = (float)(-width) / 2.0F;
+        float g = (float)(-height) / 2.0F;
+        //float h = 0.5F;
+        float i = backSprite.getMinU();
+        float j = backSprite.getMaxU();
+        float k = backSprite.getMinV();
+        float l = backSprite.getMaxV();
+        float m = backSprite.getMinU();
+        float n = backSprite.getMaxU();
+        float o = backSprite.getMinV();
+        float p = backSprite.getFrameV(1.0);
+        float q = backSprite.getMinU();
+        float r = backSprite.getFrameU(1.0);
+        float s = backSprite.getMinV();
+        float t = backSprite.getMaxV();
+        int u = width / 16;
+        int v = height / 16;
+
+        for(int w = 0; w < u; ++w) {
+            for(int x = 0; x < v; ++x) {
+                float y = f + (float)((w + 1) * 16);
+                float z = f + (float)(w * 16);
+                float aa = g + (float)((x + 1) * 16);
+                float ab = g + (float)(x * 16);
+
+                int light;
+                if(emissive){
+                    light = ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE;
+                }else {
+                    int ac = entity.getBlockX();
+                    int ad = MathHelper.floor(entity.getY() + (double) ((aa + ab) / 2.0F / 16.0F));
+                    int ae = entity.getBlockZ();
+                    Direction direction = entity.getHorizontalFacing();
+                    if (direction == Direction.NORTH) {
+                        ac = MathHelper.floor(entity.getX() + (double) ((y + z) / 2.0F / 16.0F));
+                    }
+
+                    if (direction == Direction.WEST) {
+                        ae = MathHelper.floor(entity.getZ() - (double) ((y + z) / 2.0F / 16.0F));
+                    }
+
+                    if (direction == Direction.SOUTH) {
+                        ac = MathHelper.floor(entity.getX() - (double) ((y + z) / 2.0F / 16.0F));
+                    }
+
+                    if (direction == Direction.EAST) {
+                        ae = MathHelper.floor(entity.getZ() + (double) ((y + z) / 2.0F / 16.0F));
+                    }
+
+                    light = WorldRenderer.getLightmapCoordinates(entity.getWorld(), new BlockPos(ac, ad, ae));
                 }
-                if(vertexConsumerBack != null) {
+
                     this.vertex(matrix4f, matrix3f, vertexConsumerBack, y, aa, j, k, 0.5F, 0, 0, 1, light);
                     this.vertex(matrix4f, matrix3f, vertexConsumerBack, z, aa, i, k, 0.5F, 0, 0, 1, light);
                     this.vertex(matrix4f, matrix3f, vertexConsumerBack, z, ab, i, l, 0.5F, 0, 0, 1, light);
@@ -195,7 +252,7 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
                     this.vertex(matrix4f, matrix3f, vertexConsumerBack, z, ab, r, t, -0.5F, 1, 0, 0, light);
                     this.vertex(matrix4f, matrix3f, vertexConsumerBack, z, ab, q, t, 0.5F, 1, 0, 0, light);
                     this.vertex(matrix4f, matrix3f, vertexConsumerBack, z, aa, q, s, 0.5F, 1, 0, 0, light);
-                }
+
             }
         }
 
