@@ -33,7 +33,7 @@ public abstract class MixinEnchantingTableBlockEntityRenderer implements BlockEn
         String texture = "minecraft:textures/entity/enchanting_table_book.png";
         VertexConsumer etf$vertex = ETFManager.getInstance().getETFDefaultTexture(new Identifier(texture), ETFClientCommon.ETFConfigData.removePixelsUnderEmissiveBlockEntity).getEmissiveVertexConsumer(vertexConsumerProvider, null, ETFManager.EmissiveRenderModes.blockEntityMode());
         if (etf$vertex != null) {
-            this.book.renderBook(matrixStack, etf$vertex, LightmapTextureManager.MAX_LIGHT_COORDINATE, j, 1, 1, 1, 1);
+            this.book.renderBook(matrixStack, etf$vertex, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, j, 1, 1, 1, 1);
         }
     }
 }

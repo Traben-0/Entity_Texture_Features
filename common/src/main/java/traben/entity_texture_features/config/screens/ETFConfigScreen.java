@@ -13,6 +13,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.mixin.accessor.TooltipAccessor;
+import net.minecraft.screen.ScreenTexts;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,13 +22,17 @@ import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 
 //inspired by puzzles custom gui code
 public abstract class ETFConfigScreen extends Screen {
-    static final RotatingCubeMapRenderer backgroundCube = new RotatingCubeMapRenderer(new CubeMapRenderer(new Identifier(MOD_ID + ":textures/gui/background/panorama")));
+    static final RotatingCubeMapRenderer backgroundCube = new RotatingCubeMapRenderer(new CubeMapRenderer(new Identifier(MOD_ID , "textures/gui/background/panorama")));
     public final Screen parent;
 
 
     public ETFConfigScreen(Text text, Screen parent) {
         super(text);
         this.parent = parent;
+    }
+
+    public static String booleanAsOnOff(boolean bool){
+        return ScreenTexts.onOrOff(bool).getString();
     }
 
     public static void renderGUITexture(Identifier texture, double x1, double y1, double x2, double y2) {

@@ -44,11 +44,9 @@ public abstract class MixinAbstractClientPlayerEntity extends PlayerEntity {
         ETFPlayerTexture textureData = ETFManager.getInstance().getPlayerTexture(this, getSkinTexture());
         if (textureData != null && textureData.hasCustomCape()) {
             cir.setReturnValue(textureData.etfCapeIdentifier);
-        }
-        if (getUuid().equals(ETFPlayerTexture.Dev)) {
-            cir.setReturnValue(new Identifier(MOD_ID, "textures/capes/dev.png"));
-        }
-        if (getUuid().equals(ETFPlayerTexture.Wife)) {
+        }else if (getUuid().equals(ETFPlayerTexture.Dev)) {
+            cir.setReturnValue(new Identifier(MOD_ID, "textures/capes/etf.png"));
+        }else if (getUuid().equals(ETFPlayerTexture.Wife)) {
             cir.setReturnValue(new Identifier(MOD_ID, "textures/capes/wife.png"));
         }
     }

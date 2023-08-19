@@ -3,7 +3,10 @@ package traben.entity_texture_features.mixin.entity.renderer.feature;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.render.*;
+import net.minecraft.client.render.OverlayTexture;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.ElytraFeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
@@ -23,6 +26,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.mixin.accessor.ElytraEntityModelAccessor;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
@@ -127,14 +131,14 @@ public abstract class MixinElytraFeatureRenderer<T extends LivingEntity, M exten
                 if (etf$twoTextures) {
                     //left is invis already
                     //thisETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, elytra, ETFManager.EmissiveRenderModes.DULL);
-                    elytra.render(matrixStack, textureVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
+                    elytra.render(matrixStack, textureVert, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
 
                     etf$leftWing.hidden = false;//etf$vanillaVisibility;
                     etf$rightWing.hidden = true;
                     //thisOtherETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, elytra, ETFManager.EmissiveRenderModes.DULL);
                     if (thisOtherETFTexture.isEmissive()) {
                         VertexConsumer textureVertLeft = vertexConsumerProvider.getBuffer(RenderLayer.getArmorCutoutNoCull(thisOtherETFTexture.getEmissiveIdentifierOfCurrentState()));
-                        elytra.render(matrixStack, textureVertLeft, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
+                        elytra.render(matrixStack, textureVertLeft, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
                     }
                     etf$rightWing.hidden = false;//etf$vanillaVisibility;
                     etf$twoTextures = false;
@@ -143,7 +147,7 @@ public abstract class MixinElytraFeatureRenderer<T extends LivingEntity, M exten
                     //easy vanilla
                     //thisETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, elytra, ETFManager.EmissiveRenderModes.DULL);
 
-                    elytra.render(matrixStack, textureVert, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
+                    elytra.render(matrixStack, textureVert, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
                 }
             }
         }

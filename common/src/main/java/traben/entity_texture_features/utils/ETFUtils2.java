@@ -33,6 +33,21 @@ import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 public abstract class ETFUtils2 {
     public static ETFLruCache<Identifier, NativeImage> KNOWN_NATIVE_IMAGES = new ETFLruCache<>();
 
+
+    @NotNull
+    public static Identifier addVariantNumberSuffix(Identifier identifier, int variant){
+        return new Identifier(addVariantNumberSuffix(identifier.toString(),variant));
+    }
+
+    @NotNull
+    public static String addVariantNumberSuffix(String identifierString, int variant){
+        if(identifierString.matches("\\d\\.png")){
+            return identifierString.replace(".png","."+variant+".png");
+        }else{
+            return identifierString.replace(".png",variant+".png");
+        }
+    }
+
     @Nullable
     public static Identifier replaceIdentifier(Identifier id, String regex, String replace) {
         if (id == null) return null;
