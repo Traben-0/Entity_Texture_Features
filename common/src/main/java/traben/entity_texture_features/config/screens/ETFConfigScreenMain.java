@@ -53,7 +53,7 @@ public class ETFConfigScreenMain extends ETFConfigScreen {
 
         for (ETFConfigScreenWarnings.ConfigWarning warning :
                 ETFConfigScreenWarnings.ConfigWarning.values()) {
-            if (ETFVersionDifferenceHandler.isThisModLoaded(warning.getMod_id())) {
+            if (warning.isConditionMet()) {
                 shownWarning = true;
                 warningCount++;
                 warningsFound.add(warning);

@@ -11,6 +11,7 @@ import traben.entity_texture_features.ETFVersionDifferenceHandler;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 //inspired by puzzles custom gui code
 public class ETFConfigScreenWarnings extends ETFConfigScreen {
@@ -99,6 +100,8 @@ public class ETFConfigScreenWarnings extends ETFConfigScreen {
             offset += 0.1;
             //todo offset method only good for about 6 warnings, return here if adding more than 7 in future
         }
+
+
     }
 
     public enum ConfigWarning {
@@ -106,25 +109,33 @@ public class ETFConfigScreenWarnings extends ETFConfigScreen {
         //SKINLAYERS(false, "skinlayers", "config." + ETFClientCommon.MOD_ID + ".warn.skinlayers.text.1", "config." + ETFClientCommon.MOD_ID + ".warn.skinlayers.text.2"),
         ENHANCED_BLOCK_ENTITIES(false, "enhancedblockentities", "config." + ETFClientCommon.MOD_ID + ".warn.ebe.text.1", "config." + ETFClientCommon.MOD_ID + ".warn.ebe.text.2"),
         QUARK(false, "quark", "config." + ETFClientCommon.MOD_ID + ".warn.quark.text.3", "config." + ETFClientCommon.MOD_ID + ".warn.quark.text.4"),
-        IRIS(false, "iris", "config." + ETFClientCommon.MOD_ID + ".warn.iris.text.1", "config." + ETFClientCommon.MOD_ID + ".warn.iris.text.2");
-        //IMPERSONATE(true, "impersonate", "config." + ETFClientCommon.MOD_ID + ".warn.impersonate.text.1", "config." + ETFClientCommon.MOD_ID + ".warn.impersonate.text.2");
+        IRIS(false, "iris", "config." + ETFClientCommon.MOD_ID + ".warn.iris.text.1", "config." + ETFClientCommon.MOD_ID + ".warn.iris.text.2"),
 
+        IRIS_AND_3D_SKIN_trim_warn(false,()-> ETFVersionDifferenceHandler.isThisModLoaded("iris") && ETFClientCommon.SKIN_LAYERS_DETECTED,
+                "config." + ETFClientCommon.MOD_ID + ".warn.iris_3d.text.1", "config." + ETFClientCommon.MOD_ID + ".warn.iris_3d.text.2"),
+        NO_CEM(false,()-> !ETFVersionDifferenceHandler.isThisModLoaded("entity_model_features") && !ETFVersionDifferenceHandler.isThisModLoaded("cem"),
+                "config." + ETFClientCommon.MOD_ID + ".warn.no_emf.text.1", "config." + ETFClientCommon.MOD_ID + ".warn.no_emf.text.2");
 
         final public boolean showDisableButton;
-        final private String mod_id;
+        final private Supplier<Boolean> condition;
         final private String text_translation_key;
         final private String text2_translation_key;
 
-        ConfigWarning(boolean showDisableButton, String mod_id, String text_translation_key, String text2_translation_key) {
-
+        ConfigWarning(boolean showDisableButton, Supplier<Boolean> condition, String text_translation_key, String text2_translation_key) {
             this.showDisableButton = showDisableButton;
-            this.mod_id = mod_id;
+            this.condition = condition;
+            this.text_translation_key = text_translation_key;
+            this.text2_translation_key = text2_translation_key;
+        }
+        ConfigWarning(boolean showDisableButton, String modName, String text_translation_key, String text2_translation_key) {
+            this.showDisableButton = showDisableButton;
+            this.condition = ()-> ETFVersionDifferenceHandler.isThisModLoaded(modName);
             this.text_translation_key = text_translation_key;
             this.text2_translation_key = text2_translation_key;
         }
 
-        public String getMod_id() {
-            return mod_id;
+        public boolean isConditionMet() {
+            return condition.get();
         }
 
     }

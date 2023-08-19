@@ -15,17 +15,19 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+import traben.entity_texture_features.ETFClientCommon;
+import traben.entity_texture_features.entity_handlers.ETFEntityWrapper;
 import traben.entity_texture_features.mod_compat.ETF3DSkinLayersUtil;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFPlayerTexture;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
-import traben.entity_texture_features.entity_handlers.ETFEntityWrapper;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
@@ -35,8 +37,10 @@ import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extends EntityModel<T>> extends EntityRenderer<T> implements FeatureRendererContext<T, M> {
 
 
-    private ETFTexture thisETFTexture = null;
-    private ETFPlayerTexture thisETFPlayerTexture = null;
+    @Unique
+    private ETFTexture thisETF$Texture = null;
+    @Unique
+    private ETFPlayerTexture thisETF$PlayerTexture = null;
 
     @SuppressWarnings("unused")
     protected MixinLivingEntityRenderer(EntityRendererFactory.Context ctx) {
@@ -54,10 +58,10 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
         //UUID id = livingEntity.getUuid();
         if (livingEntity instanceof PlayerEntity) {
 
-            if (ETFConfigData.skinFeaturesEnabled && thisETFPlayerTexture != null) {
+            if (ETFConfigData.skinFeaturesEnabled && thisETF$PlayerTexture != null) {
 
 
-                thisETFPlayerTexture.renderFeatures(matrixStack, vertexConsumerProvider, i, this.getModel());
+                thisETF$PlayerTexture.renderFeatures(matrixStack, vertexConsumerProvider, i, this.getModel());
 
             }
             //just a little harmless particle effect on the dev
@@ -66,8 +70,8 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
 //            }
             //else nothing
         } else {
-            if (thisETFTexture != null) {
-                thisETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, this.getModel());
+            if (thisETF$Texture != null) {
+                thisETF$Texture.renderEmissive(matrixStack, vertexConsumerProvider, this.getModel());
             }
         }
     }
@@ -109,20 +113,23 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
         return etf$getAndSetTexture(etf$thisEntity, texture);
     }
 
+    @Unique
     private T etf$thisEntity = null;
+    @Unique
     private Identifier etf$thisIdentifier = null;
 
 
 
+    @Unique
     private Identifier etf$getAndSetTexture(T entity, Identifier vanillaTexture) {
 
         if (entity instanceof PlayerEntity player) {
             if (ETFConfigData.skinFeaturesEnabled) {
 
-                thisETFPlayerTexture = ETFManager.getInstance().getPlayerTexture(player, ((AbstractClientPlayerEntity) player).getSkinTexture());
-                if (thisETFPlayerTexture != null) {
+                thisETF$PlayerTexture = ETFManager.getInstance().getPlayerTexture(player, ((AbstractClientPlayerEntity) player).getSkinTexture());
+                if (thisETF$PlayerTexture != null) {
 
-                    Identifier etfTexture = thisETFPlayerTexture.getBaseTextureIdentifierOrNullForVanilla(player);
+                    Identifier etfTexture = thisETF$PlayerTexture.getBaseTextureIdentifierOrNullForVanilla(player);
                     etf$thisIdentifier = etfTexture == null ? vanillaTexture : etfTexture;
                     return etf$thisIdentifier;
                 }
@@ -139,8 +146,8 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
             }
             //otherwise uses regular optifine properties in offline mode as with any other mob
         }
-        thisETFTexture = ETFManager.getInstance().getETFTexture(vanillaTexture, new ETFEntityWrapper(entity), ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs);
-        etf$thisIdentifier = thisETFTexture.getTextureIdentifier(new ETFEntityWrapper( entity));
+        thisETF$Texture = ETFManager.getInstance().getETFTexture(vanillaTexture, new ETFEntityWrapper(entity), ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs);
+        etf$thisIdentifier = thisETF$Texture.getTextureIdentifier(new ETFEntityWrapper( entity));
         return etf$thisIdentifier;
 
 
@@ -187,21 +194,23 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
     )
     private Object etf$3dSkinLayerCompat(Object featureRenderer) {
         // replace 3d skin layers mod feature renderers with ETF's child versions
-        if (ETFManager.getInstance().skinLayersModPresent && ETFConfigData.use3DSkinLayerPatch){
-            try {
+
+        try {
                 // handler class is only ever accessed if the mod is present
                 // prevents NoClassDefFoundError
-                if (ETF3DSkinLayersUtil.canReplace((FeatureRenderer<?, ?>) featureRenderer)) {
+                if (ETFClientCommon.SKIN_LAYERS_DETECTED
+                        && ETFConfigData.use3DSkinLayerPatch
+                        && ETF3DSkinLayersUtil.canReplace((FeatureRenderer<?, ?>) featureRenderer)) {
                     return ETF3DSkinLayersUtil.getReplacement((FeatureRenderer<?, ?>) featureRenderer, this);
                 }
-            } catch (Exception e) {
+        } catch (Exception e) {
                 ETFUtils2.logWarn("Exception with ETF's 3D skin layers mod compatibility: " + e);
-            } catch (NoClassDefFoundError error) {
+        } catch (NoClassDefFoundError error) {
                 // Should never be thrown
                 // unless a significant change in 3d skin layers mod
                 ETFUtils2.logError("Error with ETF's 3D skin layers mod compatibility: " + error);
-            }
         }
+
         return featureRenderer;
     }
 

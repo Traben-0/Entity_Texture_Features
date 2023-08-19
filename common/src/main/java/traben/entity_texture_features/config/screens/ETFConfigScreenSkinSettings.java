@@ -8,8 +8,8 @@ import net.minecraft.client.gui.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
-import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFPlayerTexture;
+import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.Objects;
 
@@ -101,7 +101,7 @@ public class ETFConfigScreenSkinSettings extends ETFConfigScreen {
                 },
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".skin_features_try_transparency_for_all.tooltip")
         ));
-        if(ETFManager.getInstance().skinLayersModPresent) {
+        if(ETFClientCommon.SKIN_LAYERS_DETECTED) {
             this.addDrawableChild(getETFButton((int) (this.width * 0.025), (int) (this.height * 0.7), (int) (this.width * 0.45), 20,
                     Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
                             "config." + ETFClientCommon.MOD_ID + ".skin_layers_patch.title"
@@ -116,20 +116,46 @@ public class ETFConfigScreenSkinSettings extends ETFConfigScreen {
             ));
         }
 
+        //capture conditions separately to generate specific instructions for users to fix tool
+        boolean condition1 = ETFClientCommon.ETFConfigData.skinFeaturesEnabled;
+        boolean condition2 = !ETFVersionDifferenceHandler.isFabric() || ETFVersionDifferenceHandler.isThisModLoaded("fabric");
+        boolean condition3 = MinecraftClient.getInstance().player != null;
+        boolean condition4 = ETFPlayerTexture.clientPlayerOriginalSkinImageForTool != null;
 
-        canLaunchTool = (ETFClientCommon.ETFConfigData.skinFeaturesEnabled && ETFVersionDifferenceHandler.isFabric() == ETFVersionDifferenceHandler.isThisModLoaded("fabric"))
-                && MinecraftClient.getInstance().player != null && ETFPlayerTexture.clientPlayerOriginalSkinImageForTool != null;
+        canLaunchTool = condition1 && condition2 && condition3 && condition4;
+
+        StringBuilder reasonText = new StringBuilder();
+        if(!canLaunchTool){
+            //log reason
+            reasonText.append(ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.player_skin_editor.reason_0").getString());
+            if(!condition1){
+                reasonText.append(ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.player_skin_editor.reason_1").getString());
+            }
+            if(!condition2 ){
+                reasonText.append(ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.player_skin_editor.reason_2").getString());
+            }
+            if(!condition3){
+                reasonText.append(ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.player_skin_editor.reason_3").getString());
+            }
+            if(!condition4){
+                reasonText.append(ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.player_skin_editor.reason_4").getString());
+            }
+            ETFUtils2.logWarn(reasonText.toString());
+        }
+
 
         ButtonWidget skinTool = getETFButton((int) (this.width * 0.525), (int) (this.height * 0.5), (int) (this.width * 0.45), 20,
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.button." + (
                         canLaunchTool ? "enabled" : "disabled"
                 )),
                 (button) -> Objects.requireNonNull(client).setScreen(playerSkinEditorScreen),
-                canLaunchTool ? Text.of("") : ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.fail_tooltip")
+                Text.of(reasonText.toString())
         );
         skinTool.active = canLaunchTool;
 
         this.addDrawableChild(skinTool);
+
+
 
 
     }
@@ -144,7 +170,9 @@ public class ETFConfigScreenSkinSettings extends ETFConfigScreen {
         drawCenteredTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.button_desc.1").asOrderedText(), (int) (width * 0.75), (int) (height * 0.4), 0xCCCCCC);
         drawCenteredTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.button_desc.2").asOrderedText(), (int) (width * 0.75), (int) (height * 0.45), 0xCCCCCC);
         if(!canLaunchTool)
-            drawCenteredTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.button_desc.fail").asOrderedText(), (int) (width * 0.75), (int) (height * 0.6), 0xCC5555);
+            drawCenteredTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.button_desc.fail2").asOrderedText(), (int) (width * 0.75), (int) (height * 0.6), 0xCC5555);
+        drawCenteredTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.info").asOrderedText(), (int) (width * 0.5), (int) (height * 0.8), 0xCCCCCC);
+
     }
 
 }

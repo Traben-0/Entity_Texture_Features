@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.client.model.ModelPart;
+import net.minecraft.client.render.LightmapTextureManager;
 import org.slf4j.Logger;
 import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.utils.ETFUtils2;
@@ -20,6 +21,7 @@ public class ETFClientCommon {
     public static final String MOD_ID = "entity_texture_features";
     //logging object
     public final static Logger LOGGER = ETFVersionDifferenceHandler.getLogger();
+    public static boolean IRIS_DETECTED = false;
     //config object
     public static ETFConfig ETFConfigData = new ETFConfig();
 
@@ -29,8 +31,15 @@ public class ETFClientCommon {
     //sets whether to display config load warning in gui
     public static boolean configHadLoadError = false;
 
+    public static final int EYES_FEATURE_LIGHT_VALUE = LightmapTextureManager.MAX_LIGHT_COORDINATE+1;
+    public static final int EMISSIVE_FEATURE_LIGHT_VALUE = LightmapTextureManager.MAX_LIGHT_COORDINATE+2;
+    public static boolean SKIN_LAYERS_DETECTED = false;
 
     public static void start() {
+        //check only once
+        SKIN_LAYERS_DETECTED = (ETFVersionDifferenceHandler.isThisModLoaded("skinlayers") || ETFVersionDifferenceHandler.isThisModLoaded("skinlayers3d"));
+        IRIS_DETECTED  = ETFVersionDifferenceHandler.isThisModLoaded("iris") || ETFVersionDifferenceHandler.isThisModLoaded("oculus");
+
         LOGGER.info("Loading Entity Texture Features, "+ randomQuip());
         etf$loadConfig();
         ETFUtils2.checkModCompatibility();

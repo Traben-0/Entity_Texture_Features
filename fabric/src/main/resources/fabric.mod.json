@@ -16,7 +16,7 @@
   "contributors": [
   ],
   "license": "LGPL-3.0",
-  "icon": "icon.png",
+  "icon": "assets/entity_texture_features/textures/gui/icon.png",
   "contact": {
     "homepage": "https://www.curseforge.com/minecraft/mc-mods/entity-texture-features-fabric",
     "sources": "https://github.com/Traben-0/Entity_Texture_Features",

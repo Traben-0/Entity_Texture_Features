@@ -1,1 +1,4 @@
 accessWidener   v2  named
+
+
+accessible method net/minecraft/client/texture/Sprite <init> (Lnet/minecraft/client/texture/SpriteAtlasTexture;Lnet/minecraft/client/texture/Sprite$Info;IIIIILnet/minecraft/client/texture/NativeImage;)V
