@@ -1,7 +1,12 @@
 [**ETF Changelog:**]
 
 
-[4.4.99 - dev build]
+[4.5.1]
+- fixed painting variants only working in the vanilla directory and not the optifine/etf folders 
+- reverted some changes to `pattern` string comparisons as the OptiFine doc was incorrect compared to actual OptiFine behaviour
+- fixed a crash related to `pattern` string comparison handling changes in 4.5.0
+
+[4.5]
 - added more code to support EMF
 - added a new logo
 - added support for random & emissive painting textures
