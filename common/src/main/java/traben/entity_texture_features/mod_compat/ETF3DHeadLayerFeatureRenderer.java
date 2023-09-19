@@ -36,7 +36,7 @@ public class ETF3DHeadLayerFeatureRenderer extends HeadLayerFeatureRenderer {
     // simply defers the parent renderLayers method until ETF has had a chance to change the vertex consumer
     @Override
     public void renderCustomHelmet(PlayerSettings settings, AbstractClientPlayerEntity abstractClientPlayer, MatrixStack matrixStack, VertexConsumer vertices, int light, int overlay) {
-        ETFPlayerTexture thisETF = ETFManager.getInstance().getPlayerTexture(abstractClientPlayer, abstractClientPlayer.getSkinTexture());
+        ETFPlayerTexture thisETF = ETFManager.getInstance().getPlayerTexture(abstractClientPlayer, abstractClientPlayer.getSkinTextures().texture());
         if (thisETF != null) {
             Identifier skin = thisETF.getBaseTextureIdentifierOrNullForVanilla(abstractClientPlayer);
             if (skin != null) {

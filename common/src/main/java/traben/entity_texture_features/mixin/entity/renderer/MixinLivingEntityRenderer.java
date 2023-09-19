@@ -126,7 +126,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
         if (entity instanceof PlayerEntity player) {
             if (ETFConfigData.skinFeaturesEnabled) {
 
-                thisETF$PlayerTexture = ETFManager.getInstance().getPlayerTexture(player, ((AbstractClientPlayerEntity) player).getSkinTexture());
+                thisETF$PlayerTexture = ETFManager.getInstance().getPlayerTexture(player, ((AbstractClientPlayerEntity) player).getSkinTextures().texture());
                 if (thisETF$PlayerTexture != null) {
 
                     Identifier etfTexture = thisETF$PlayerTexture.getBaseTextureIdentifierOrNullForVanilla(player);

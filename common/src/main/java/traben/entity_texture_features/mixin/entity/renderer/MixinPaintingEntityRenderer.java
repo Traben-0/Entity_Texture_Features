@@ -126,8 +126,8 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
         float g = (float)(-height) / 2.0F;
         int u = width / 16;
         int v = height / 16;
-        double d = 16.0 / (double)u;
-        double e = 16.0 / (double)v;
+        double d = 1.0 / (double)u;
+        double e = 1.0 / (double)v;
 
         for(int w = 0; w < u; ++w) {
             for(int x = 0; x < v; ++x) {
@@ -163,10 +163,10 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
                     light = WorldRenderer.getLightmapCoordinates(entity.getWorld(), new BlockPos(ac, ad, ae));
                 }
 
-                    float ag = paintingSprite.getFrameU(d * (double) (u - w));
-                    float ah = paintingSprite.getFrameU(d * (double) (u - (w + 1)));
-                    float ai = paintingSprite.getFrameV(e * (double) (v - x));
-                    float aj = paintingSprite.getFrameV(e * (double) (v - (x + 1)));
+                    float ag = paintingSprite.getFrameU((float) (d * (double) (u - w)));
+                    float ah = paintingSprite.getFrameU((float) (d * (double) (u - (w + 1))));
+                    float ai = paintingSprite.getFrameV((float) (e * (double) (v - x)));
+                    float aj = paintingSprite.getFrameV((float) (e * (double) (v - (x + 1))));
                     this.vertex(matrix4f, matrix3f, vertexConsumerFront, y, ab, ah, ai, -0.5F, 0, 0, -1, light);
                     this.vertex(matrix4f, matrix3f, vertexConsumerFront, z, ab, ag, ai, -0.5F, 0, 0, -1, light);
                     this.vertex(matrix4f, matrix3f, vertexConsumerFront, z, aa, ag, aj, -0.5F, 0, 0, -1, light);
@@ -197,9 +197,9 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
         float m = backSprite.getMinU();
         float n = backSprite.getMaxU();
         float o = backSprite.getMinV();
-        float p = backSprite.getFrameV(1.0);
+        float p = backSprite.getFrameV(0.0625F);
         float q = backSprite.getMinU();
-        float r = backSprite.getFrameU(1.0);
+        float r = backSprite.getFrameU(0.0625F);
         float s = backSprite.getMinV();
         float t = backSprite.getMaxV();
         int u = width / 16;

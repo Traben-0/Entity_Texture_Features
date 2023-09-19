@@ -1,5 +1,6 @@
 package traben.entity_texture_features.mixin;
 
+import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.pack.PackScreen;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
@@ -42,7 +43,10 @@ public abstract class MixinPackScreen extends Screen {
                 //fabric api required for mod asset texture loading
                 && (ETFVersionDifferenceHandler.isFabric() == ETFVersionDifferenceHandler.isThisModLoaded("fabric"))) {
             this.addDrawableChild(new TexturedButtonWidget((int) (this.width * 0.9), (int) (this.height * 0.8), 24, 20,
-                    0, 0, 20, new Identifier(MOD_ID + ":textures/gui/settings.png"), 24, 40,
+                    new ButtonTextures(
+                            new Identifier(MOD_ID , "textures/gui/settings_unfocused.png"),
+                            new Identifier(MOD_ID , "textures/gui/settings_focused.png")
+                    ),
                     (button) -> Objects.requireNonNull(client).setScreen(new ETFConfigScreenMain(this))));
         }
     }

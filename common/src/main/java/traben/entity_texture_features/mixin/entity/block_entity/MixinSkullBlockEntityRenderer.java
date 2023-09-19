@@ -1,7 +1,6 @@
 package traben.entity_texture_features.mixin.entity.block_entity;
 
 import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SkullBlock;
 import net.minecraft.block.entity.BedBlockEntity;
@@ -12,10 +11,9 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.SkullBlockEntityModel;
 import net.minecraft.client.render.block.entity.SkullBlockEntityRenderer;
-import net.minecraft.client.util.DefaultSkinHelper;
+import net.minecraft.client.texture.PlayerSkinProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Uuids;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -130,9 +128,8 @@ public abstract class MixinSkullBlockEntityRenderer implements BlockEntityRender
     private static Identifier etf$getIdentifier(SkullBlock.SkullType type, @Nullable GameProfile profile) {
         Identifier identifier = TEXTURES.get(type);
         if (type == SkullBlock.Type.PLAYER && profile != null) {
-            MinecraftClient minecraftClient = MinecraftClient.getInstance();
-            Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> map = minecraftClient.getSkinProvider().getTextures(profile);
-            return map.containsKey(com.mojang.authlib.minecraft.MinecraftProfileTexture.Type.SKIN) ? minecraftClient.getSkinProvider().loadSkin((MinecraftProfileTexture)map.get(com.mojang.authlib.minecraft.MinecraftProfileTexture.Type.SKIN), com.mojang.authlib.minecraft.MinecraftProfileTexture.Type.SKIN) : DefaultSkinHelper.getTexture(Uuids.getUuidFromProfile(profile));
+            PlayerSkinProvider playerSkinProvider = MinecraftClient.getInstance().getSkinProvider();
+            return playerSkinProvider.getSkinTextures(profile).texture();
         } else {
             return identifier;
         }

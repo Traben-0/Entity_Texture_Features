@@ -7,7 +7,6 @@
     "MixinIdentifier",
     "MixinPackScreen",
     "accessor.ElytraEntityModelAccessor",
-    "accessor.MooshroomEntityAccessor",
     "accessor.PlayerSkinProviderAccessor",
     "accessor.PlayerSkinTextureAccessor",
     "accessor.SpriteContentsAccessor",
@@ -61,6 +60,7 @@
     "reloading.MixinResourceReload"
   ],
   "mixins": [
+    "accessor.FileCacheAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

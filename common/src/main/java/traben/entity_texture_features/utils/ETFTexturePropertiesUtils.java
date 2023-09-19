@@ -8,7 +8,6 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.mob.*;
 import net.minecraft.entity.passive.*;
 import net.minecraft.item.ItemStack;
@@ -26,7 +25,6 @@ import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.entity_handlers.ETFBlockEntityWrapper;
 import traben.entity_texture_features.entity_handlers.ETFEntity;
 import traben.entity_texture_features.entity_handlers.ETFEntityWrapper;
-import traben.entity_texture_features.mixin.accessor.MooshroomEntityAccessor;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 
 import java.util.*;
@@ -162,7 +160,7 @@ public abstract class ETFTexturePropertiesUtils {
                         getScreamingGoat(props, num),
                         getDistanceFromPlayer(props, num),
                         getCreeperCharge(props, num),
-                        getStatusEffect(props, num),
+//                        getStatusEffect(props, num),
                         getItems(props, num),
                         getMoving(props, num),
                         getNBT(props, num)
@@ -505,34 +503,34 @@ public abstract class ETFTexturePropertiesUtils {
         return getGenericBooleanThatCanNull(props, num, "creeperCharged");
     }
 
-    @Nullable
-    private static StatusEffect[] getStatusEffect(Properties props, int num) {
-        if (props.containsKey("statusEffect." + num)) {
-            String dataFromProps = props.getProperty("statusEffect." + num).trim();
-            String[] columnData = dataFromProps.split("\\s+");
-            ArrayList<StatusEffect> statuses = new ArrayList<>();
-            for (String data :
-                    columnData) {
-                data = data.replaceAll("\\(", "").replaceAll("\\)", "");
-                //check if range
-                data = data.trim();
-                if (!data.replaceAll("\\D", "").isEmpty()) {
-                    try {
-                        int tryNumber = Integer.parseInt(data.replaceAll("\\D", ""));
-                        StatusEffect attempt = StatusEffect.byRawId(tryNumber);
-                        if (attempt != null) {
-                            statuses.add(attempt);
-                        }
-                    } catch (NumberFormatException e) {
-                        ETFUtils2.logWarn("properties files number error in statusEffects category");
-                    }
-
-                }
-            }
-            return statuses.toArray(new StatusEffect[0]);
-        }
-        return null;
-    }
+//    @Nullable
+//    private static StatusEffect[] getStatusEffect(Properties props, int num) {
+//        if (props.containsKey("statusEffect." + num)) {
+//            String dataFromProps = props.getProperty("statusEffect." + num).trim();
+//            String[] columnData = dataFromProps.split("\\s+");
+//            ArrayList<StatusEffect> statuses = new ArrayList<>();
+//            for (String data :
+//                    columnData) {
+//                data = data.replaceAll("\\(", "").replaceAll("\\)", "");
+//                //check if range
+//                data = data.trim();
+//                if (!data.replaceAll("\\D", "").isEmpty()) {
+//                    try {
+//                        int tryNumber = Integer.parseInt(data.replaceAll("\\D", ""));
+//                        StatusEffect attempt = StatusEffect.byRawId(tryNumber);
+//                        if (attempt != null) {
+//                            statuses.add(attempt);
+//                        }
+//                    } catch (NumberFormatException e) {
+//                        ETFUtils2.logWarn("properties files number error in statusEffects category");
+//                    }
+//
+//                }
+//            }
+//            return statuses.toArray(new StatusEffect[0]);
+//        }
+//        return null;
+//    }
 
     @Nullable
     private static String[] getItems(Properties props, int num) {
@@ -715,7 +713,7 @@ public abstract class ETFTexturePropertiesUtils {
         private final @Nullable String[] DISTANCE_TO_PLAYER;
         private final @Nullable Boolean CREEPER_CHARGED;
 
-        private final @Nullable StatusEffect[] STATUS_EFFECT;
+//        private final @Nullable StatusEffect[] STATUS_EFFECT;
 
         private final @Nullable String[] ITEMS;
 
@@ -753,7 +751,7 @@ public abstract class ETFTexturePropertiesUtils {
                                       @Nullable Boolean isScreamingGoat,
                                       @Nullable String[] distanceToPlayer,
                                       @Nullable Boolean creeperCharged,
-                                      @Nullable StatusEffect[] statusEffect,
+//                                      @Nullable StatusEffect[] statusEffect,
                                       @Nullable String[] items,
                                       @Nullable Boolean moving,
                                       @Nullable Map<String, String> nbtMap
@@ -764,7 +762,7 @@ public abstract class ETFTexturePropertiesUtils {
 
             MOVING = moving;
             ITEMS = items;
-            STATUS_EFFECT = statusEffect;
+//            STATUS_EFFECT = statusEffect;
 
             CREEPER_CHARGED = creeperCharged;
             DISTANCE_TO_PLAYER = distanceToPlayer;
@@ -847,7 +845,7 @@ public abstract class ETFTexturePropertiesUtils {
                     && IS_SCREAMING_GOAT == null
                     && DISTANCE_TO_PLAYER == null
                     && CREEPER_CHARGED == null
-                    && STATUS_EFFECT == null
+//                    && STATUS_EFFECT == null
                     && ITEMS == null
                     && MOVING == null
                     && NBT_MAP == null
@@ -1667,30 +1665,31 @@ public abstract class ETFTexturePropertiesUtils {
                 wasEntityTestedByAnUpdatableProperty = true;
                 doesEntityMeetThisCaseTest = ((CreeperEntity) entity).shouldRenderOverlay() == CREEPER_CHARGED;
             }
-            if (doesEntityMeetThisCaseTest && entity instanceof LivingEntity && STATUS_EFFECT != null) {
-                wasEntityTestedByAnUpdatableProperty = true;
-                boolean found = false;
-                for (StatusEffect effect :
-                        STATUS_EFFECT) {
-                    if (((LivingEntity) entity).hasStatusEffect(effect)) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found && entity instanceof MooshroomEntity) {
-                    //noinspection PatternVariableCanBeUsed
-                    MooshroomEntity shroom = (MooshroomEntity) entity;
-                    for (StatusEffect effect :
-                            STATUS_EFFECT) {
-                        if (effect != null && effect.equals(((MooshroomEntityAccessor) shroom).getStewEffect())) {
-                            found = true;
-                            break;
-                        }
-                    }
-                }
-
-                doesEntityMeetThisCaseTest = found;
-            }
+//            if (doesEntityMeetThisCaseTest && entity instanceof LivingEntity && STATUS_EFFECT != null) {
+//                wasEntityTestedByAnUpdatableProperty = true;
+//                boolean found = false;
+//                for (StatusEffect effect :
+//                        STATUS_EFFECT) {
+//                    if (((LivingEntity) entity).hasStatusEffect(effect)) {
+//                        found = true;
+//                        break;
+//                    }
+//                }
+////                if (!found && entity instanceof MooshroomEntity) {
+////                    //noinspection PatternVariableCanBeUsed
+////                    MooshroomEntity shroom = (MooshroomEntity) entity;
+////                    for (@Nullable StatusEffect effect :
+////                            STATUS_EFFECT) {
+////                        SuspiciousStewIngredient.
+////                        if (effect != null && ((MooshroomEntityAccessor) shroom).getStewEffects().contains(effect)) {
+////                            found = true;
+////                            break;
+////                        }
+////                    }
+////                }
+//
+//                doesEntityMeetThisCaseTest = found;
+//            }
             //System.out.println(Arrays.toString(ITEMS) +" - " +entity.getItemsEquipped().toString());
             if (doesEntityMeetThisCaseTest && ITEMS != null) {
                 wasEntityTestedByAnUpdatableProperty = true;

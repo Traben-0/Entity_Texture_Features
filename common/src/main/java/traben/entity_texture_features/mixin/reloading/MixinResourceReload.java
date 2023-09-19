@@ -14,7 +14,7 @@ public abstract class MixinResourceReload {
 
 
 
-    @Inject(method = "reloadResources(Z)Ljava/util/concurrent/CompletableFuture;", at = @At("HEAD"))
+    @Inject(method = "reloadResources()Ljava/util/concurrent/CompletableFuture;", at = @At("HEAD"))
     private void etf$injected(CallbackInfoReturnable<Float> cir) {
         ETFUtils2.logMessage("reloading ETF data.");
         ETFManager.resetInstance();

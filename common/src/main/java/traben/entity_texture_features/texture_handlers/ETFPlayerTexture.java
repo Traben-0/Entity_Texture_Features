@@ -26,6 +26,7 @@ import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.config.screens.ETFConfigScreenSkinTool;
 import traben.entity_texture_features.entity_handlers.ETFPlayerEntity;
 import traben.entity_texture_features.entity_handlers.ETFPlayerEntityWrapper;
+import traben.entity_texture_features.mixin.accessor.FileCacheAccessor;
 import traben.entity_texture_features.mixin.accessor.PlayerSkinProviderAccessor;
 import traben.entity_texture_features.mixin.accessor.PlayerSkinTextureAccessor;
 import traben.entity_texture_features.utils.ETFUtils2;
@@ -113,7 +114,7 @@ public class ETFPlayerTexture {
             //use the historic skin resource and ensure we do not bother to load a current skin for the player
             try {
 
-                PlayerSkinTexture skin = (PlayerSkinTexture) ((PlayerSkinProviderAccessor) MinecraftClient.getInstance().getSkinProvider()).getTextureManager().getOrDefault(rendererGivenSkin, null);
+                PlayerSkinTexture skin = (PlayerSkinTexture) ((FileCacheAccessor)((PlayerSkinProviderAccessor) MinecraftClient.getInstance().getSkinProvider()).getSkinCache()).getTextureManager().getOrDefault(rendererGivenSkin, null);
                 FileInputStream fileInputStream = new FileInputStream(((PlayerSkinTextureAccessor) skin).getCacheFile());
                 NativeImage vanilla = NativeImage.read(fileInputStream);
                 //System.out.println((vanilla != null) +" skin");
@@ -145,7 +146,7 @@ public class ETFPlayerTexture {
         this.player = new ETFPlayerEntityWrapper(MinecraftClient.getInstance().player);
         if (player.entity() != null) {
             assert MinecraftClient.getInstance().player != null;
-            NativeImage skin = ETFUtils2.getNativeImageElseNull(MinecraftClient.getInstance().player.getSkinTexture());
+            NativeImage skin = ETFUtils2.getNativeImageElseNull(MinecraftClient.getInstance().player.getSkinTextures().texture());
             if (skin != null) {
                 clientPlayerOriginalSkinImageForTool = skin;
                 changeSkinToThisForTool(skin);
@@ -932,7 +933,7 @@ public class ETFPlayerTexture {
 
         if (!skipSkinLoad) {
             try {
-                PlayerSkinTexture skin = (PlayerSkinTexture) ((PlayerSkinProviderAccessor) MinecraftClient.getInstance().getSkinProvider()).getTextureManager().getOrDefault(normalVanillaSkinIdentifier, null);
+                PlayerSkinTexture skin = (PlayerSkinTexture) ((FileCacheAccessor)((PlayerSkinProviderAccessor) MinecraftClient.getInstance().getSkinProvider()).getSkinCache()).getTextureManager().getOrDefault(normalVanillaSkinIdentifier, null);
 
                 FileInputStream fileInputStream = new FileInputStream(((PlayerSkinTextureAccessor) skin).getCacheFile());
                 NativeImage vanilla = NativeImage.read(fileInputStream);
@@ -946,8 +947,8 @@ public class ETFPlayerTexture {
                 vanilla.close();
                 //try cape
                 try {
-                    Identifier capeId = ((AbstractClientPlayerEntity) player).getCapeTexture();
-                    PlayerSkinTexture cape = (PlayerSkinTexture) ((PlayerSkinProviderAccessor) MinecraftClient.getInstance().getSkinProvider()).getTextureManager().getOrDefault(capeId, null);
+                    Identifier capeId = ((AbstractClientPlayerEntity) player).getSkinTextures().capeTexture();
+                    PlayerSkinTexture cape = (PlayerSkinTexture) ((FileCacheAccessor)((PlayerSkinProviderAccessor) MinecraftClient.getInstance().getSkinProvider()).getCapeCache()).getTextureManager().getOrDefault(capeId, null);
                     if (cape != null) {
                         FileInputStream fileInputStreamCape = new FileInputStream(((PlayerSkinTextureAccessor) cape).getCacheFile());
                         NativeImage vanillaCape = NativeImage.read(fileInputStreamCape);

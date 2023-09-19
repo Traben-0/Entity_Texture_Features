@@ -39,7 +39,7 @@ public class ETF3DBodyLayerFeatureRenderer extends BodyLayerFeatureRenderer {
     // simply defers the parent renderLayers method until ETF has had a chance to change the vertex consumer
     @Override
     public void renderLayers(AbstractClientPlayerEntity abstractClientPlayer, PlayerSettings settings, MatrixStack matrixStack, VertexConsumer vertices, int light, int overlay) {
-        ETFPlayerTexture thisETF = ETFManager.getInstance().getPlayerTexture(abstractClientPlayer, abstractClientPlayer.getSkinTexture());
+        ETFPlayerTexture thisETF = ETFManager.getInstance().getPlayerTexture(abstractClientPlayer, abstractClientPlayer.getSkinTextures().texture());
         if (thisETF != null) {
             Identifier skin = thisETF.getBaseTextureIdentifierOrNullForVanilla(abstractClientPlayer);
             if (skin != null) {

@@ -1,12 +1,12 @@
 package traben.entity_texture_features.config.screens;
 
-import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.PlayerSkinTexture;
+import net.minecraft.client.util.SkinTextures;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
@@ -18,6 +18,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
+import traben.entity_texture_features.mixin.accessor.FileCacheAccessor;
 import traben.entity_texture_features.mixin.accessor.PlayerSkinProviderAccessor;
 import traben.entity_texture_features.mixin.accessor.PlayerSkinTextureAccessor;
 import traben.entity_texture_features.texture_handlers.ETFManager;
@@ -106,10 +107,7 @@ public class ETFConfigScreenSkinToolOutcome extends ETFConfigScreen {
                         if (MinecraftClient.getInstance().player != null && MinecraftClient.getInstance().getNetworkHandler() != null) {
                             PlayerListEntry playerListEntry = MinecraftClient.getInstance().getNetworkHandler().getPlayerListEntry(MinecraftClient.getInstance().player.getUuid());
                             if (playerListEntry != null) {
-                                String skinTypeData = MinecraftClient.getInstance().getSkinProvider().getTextures(playerListEntry.getProfile()).get(MinecraftProfileTexture.Type.SKIN).getMetadata("model");
-                                if (skinTypeData != null) {
-                                    skinType = !"slim".equals(skinTypeData);
-                                }
+                                skinType = MinecraftClient.getInstance().getSkinProvider().getSkinTextures(playerListEntry.getProfile()).model() == SkinTextures.Model.WIDE;
                             }
                         }
                         boolean changeSuccess = uploadSkin(skinType);
@@ -118,7 +116,7 @@ public class ETFConfigScreenSkinToolOutcome extends ETFConfigScreen {
                         if (changeSuccess) {
                             //ETFUtils2.logMessage(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.upload_skin.success" ).getString(),true);
                             //change internally cached skin
-                            PlayerSkinTexture skinfile = (PlayerSkinTexture) ((PlayerSkinProviderAccessor) MinecraftClient.getInstance().getSkinProvider()).getTextureManager().getOrDefault((MinecraftClient.getInstance().player).getSkinTexture(), null);
+                            PlayerSkinTexture skinfile = (PlayerSkinTexture) ((FileCacheAccessor)((PlayerSkinProviderAccessor) MinecraftClient.getInstance().getSkinProvider()).getSkinCache()).getTextureManager().getOrDefault((MinecraftClient.getInstance().player).getSkinTextures().texture(), null);
                             try {
                                 //System.out.println("file was ="+((PlayerSkinTextureAccessor)skinfile).getCacheFile().toString());
                                 skin.writeTo(((PlayerSkinTextureAccessor) skinfile).getCacheFile());
