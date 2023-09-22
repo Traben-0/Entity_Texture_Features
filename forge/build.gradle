@@ -2,7 +2,7 @@ plugins {
     id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
-archivesBaseName = rootProject.archives_base_name + "_forge_1.20"
+archivesBaseName = rootProject.archives_base_name + "_forge_1.20.2"
 
 architectury {
     platformSetupLoomIde()
