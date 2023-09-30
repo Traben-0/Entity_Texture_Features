@@ -13,9 +13,10 @@ import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.entity_handlers.ETFBlockEntityWrapper;
 import traben.entity_texture_features.entity_handlers.ETFEntityWrapper;
+import traben.entity_texture_features.property_reading.ETFTexturePropertyCase;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
-import traben.entity_texture_features.utils.ETFTexturePropertiesUtils;
+import traben.entity_texture_features.property_reading.ETFTexturePropertiesUtils;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.List;
@@ -156,17 +157,17 @@ public class ETFApi {
         private static ETFRandomTexturePropertyInstance getInstance(Identifier propertiesFileIdentifier, String suffixKeyName) {
             Properties props = ETFUtils2.readAndReturnPropertiesElseNull(propertiesFileIdentifier);
             if (props == null) return null;
-            List<ETFTexturePropertiesUtils.ETFTexturePropertyCase> etfs = ETFTexturePropertiesUtils.getAllValidPropertyObjects(props, suffixKeyName, propertiesFileIdentifier);
+            List<ETFTexturePropertyCase> etfs = ETFTexturePropertiesUtils.getAllValidPropertyObjects(props, suffixKeyName, propertiesFileIdentifier);
             if (etfs.isEmpty()) return null;
             return new ETFRandomTexturePropertyInstance(etfs);
 
         }
 
-        private ETFRandomTexturePropertyInstance(List<ETFTexturePropertiesUtils.ETFTexturePropertyCase> etfs) {
+        private ETFRandomTexturePropertyInstance(List<ETFTexturePropertyCase> etfs) {
             propertyCases = etfs;
         }
 
-        private final List<ETFTexturePropertiesUtils.ETFTexturePropertyCase> propertyCases;
+        private final List<ETFTexturePropertyCase> propertyCases;
 
         // this is the primary method of the object,
         // it will accept an entity and some additional args and will output a variant suffix integer that matches
@@ -191,7 +192,7 @@ public class ETFApi {
         // also choose to check for a #1 suffix, I would recommend using 1 to mean the vanilla/default variant.
         public int getSuffixForEntity(Entity entityToBeTested, boolean isThisTheFirstTestForEntity, Object2BooleanOpenHashMap<UUID> cacheToMarkEntitiesWhoseVariantCanChangeAgain) {
             boolean isAnUpdate = !isThisTheFirstTestForEntity;
-            for (ETFTexturePropertiesUtils.ETFTexturePropertyCase testCase : propertyCases) {
+            for (ETFTexturePropertyCase testCase : propertyCases) {
                 if (testCase.doesEntityMeetConditionsOfThisCase(entityToBeTested, isThisTheFirstTestForEntity, cacheToMarkEntitiesWhoseVariantCanChangeAgain)){
                     return testCase.getAnEntityVariantSuffixFromThisCase(entityToBeTested.getUuid());
                 }
@@ -203,7 +204,7 @@ public class ETFApi {
         // you can always generate a UUID from a string with UUID.nameUUIDFromBytes("STRING".getBytes())
         public int getSuffixForBlockEntity(BlockEntity entityToBeTested, UUID uuidForBlockEntity, boolean isThisTheFirstTestForEntity, Object2BooleanOpenHashMap<UUID> cacheToMarkEntitiesWhoseVariantCanChangeAgain) {
             boolean isAnUpdate = !isThisTheFirstTestForEntity;
-            for (ETFTexturePropertiesUtils.ETFTexturePropertyCase testCase : propertyCases) {
+            for (ETFTexturePropertyCase testCase : propertyCases) {
                 if (testCase.doesEntityMeetConditionsOfThisCase(entityToBeTested, uuidForBlockEntity, isThisTheFirstTestForEntity, cacheToMarkEntitiesWhoseVariantCanChangeAgain)){
                     return testCase.getAnEntityVariantSuffixFromThisCase(uuidForBlockEntity);
                 }

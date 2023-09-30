@@ -18,6 +18,8 @@ import traben.entity_texture_features.config.screens.ETFConfigScreenSkinTool;
 import traben.entity_texture_features.entity_handlers.ETFEntity;
 import traben.entity_texture_features.entity_handlers.ETFPlayerEntity;
 import traben.entity_texture_features.entity_handlers.ETFPlayerEntityWrapper;
+import traben.entity_texture_features.property_reading.ETFTexturePropertiesUtils;
+import traben.entity_texture_features.property_reading.ETFTexturePropertyCase;
 import traben.entity_texture_features.utils.*;
 
 import java.util.*;
@@ -67,7 +69,7 @@ public class ETFManager {
     //this is a cache of all known ETFTexture versions of any existing resource-pack texture, used to prevent remaking objects
     private final Object2ReferenceOpenHashMap<@NotNull Identifier, @Nullable ETFTexture> ETF_TEXTURE_CACHE = new Object2ReferenceOpenHashMap<>();
     //null means it is true random as in no properties
-    public final Object2ReferenceOpenHashMap<Identifier, @Nullable List<ETFTexturePropertiesUtils.ETFTexturePropertyCase>> OPTIFINE_PROPERTY_CACHE = new Object2ReferenceOpenHashMap<>();
+    public final Object2ReferenceOpenHashMap<Identifier, @Nullable List<ETFTexturePropertyCase>> OPTIFINE_PROPERTY_CACHE = new Object2ReferenceOpenHashMap<>();
     private final Object2BooleanOpenHashMap<UUID> ENTITY_IS_UPDATABLE = new Object2BooleanOpenHashMap<>();
     private final ObjectOpenHashSet<UUID> ENTITY_UPDATE_QUEUE = new ObjectOpenHashSet<>();
     private final Object2ObjectOpenHashMap<UUID, ObjectOpenHashSet<ETFCacheKey>> ENTITY_KNOWN_FEATURES_LIST = new Object2ObjectOpenHashMap<>();
@@ -348,7 +350,7 @@ public class ETFManager {
             if (TRUE_RANDOM_COUNT_CACHE.containsKey(vanillaIdentifier) || OPTIFINE_PROPERTY_CACHE.containsKey(vanillaIdentifier)) {
                 //has optifine checked before?
                 if (OPTIFINE_PROPERTY_CACHE.containsKey(vanillaIdentifier)) {
-                    List<ETFTexturePropertiesUtils.ETFTexturePropertyCase> optifineProperties = OPTIFINE_PROPERTY_CACHE.get(vanillaIdentifier);
+                    List<ETFTexturePropertyCase> optifineProperties = OPTIFINE_PROPERTY_CACHE.get(vanillaIdentifier);
                     if (optifineProperties != null) {
                         return returnNewAlreadyConfirmedOptifineTexture(entity, vanillaIdentifier, false, optifineProperties);
                     }
@@ -443,7 +445,7 @@ public class ETFManager {
     }
 
     @Nullable
-    private Identifier returnNewAlreadyConfirmedOptifineTexture(ETFEntity entity, Identifier vanillaIdentifier, boolean isThisAnUpdate, List<ETFTexturePropertiesUtils.ETFTexturePropertyCase> optifineProperties) {
+    private Identifier returnNewAlreadyConfirmedOptifineTexture(ETFEntity entity, Identifier vanillaIdentifier, boolean isThisAnUpdate, List<ETFTexturePropertyCase> optifineProperties) {
 
         int variantNumber = testAndGetVariantNumberFromOptiFineCases(entity, isThisAnUpdate, optifineProperties);
 
@@ -471,9 +473,9 @@ public class ETFManager {
         return null;
     }
 
-    private int testAndGetVariantNumberFromOptiFineCases(ETFEntity entity, boolean isThisAnUpdate, List<ETFTexturePropertiesUtils.ETFTexturePropertyCase> optifineProperties) {
+    private int testAndGetVariantNumberFromOptiFineCases(ETFEntity entity, boolean isThisAnUpdate, List<ETFTexturePropertyCase> optifineProperties) {
         try {
-            for (ETFTexturePropertiesUtils.ETFTexturePropertyCase property :
+            for (ETFTexturePropertyCase property :
                     optifineProperties) {
                 if (property.doesEntityMeetConditionsOfThisCase(entity, isThisAnUpdate, ENTITY_IS_UPDATABLE)) {
                     return property.getAnEntityVariantSuffixFromThisCase(entity.getUuid());

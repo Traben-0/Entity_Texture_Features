@@ -1,5 +1,6 @@
 package traben.entity_texture_features.entity_handlers;
 
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
@@ -11,6 +12,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -19,6 +21,11 @@ public record ETFEntityWrapper(Entity entity) implements ETFEntity {
 
     public boolean isZombiePiglin() {
         return entity instanceof ZombifiedPiglinEntity;
+    }
+
+    @Override
+    public @Nullable BlockEntity blockEntity() {
+        return null;
     }
 
     public EntityType<?> getType() {

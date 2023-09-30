@@ -14,6 +14,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -29,6 +30,11 @@ public class ETFPlayerHeadWrapper implements  ETFPlayerEntity {
 
     @Override
     public Entity entity() {
+        return null;
+    }
+
+    @Override
+    public @Nullable BlockEntity blockEntity() {
         return null;
     }
 

@@ -1,5 +1,6 @@
 package traben.entity_texture_features.entity_handlers;
 
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.render.entity.PlayerModelPart;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
@@ -13,6 +14,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -21,6 +23,11 @@ public record ETFPlayerEntityWrapper(PlayerEntity entity) implements ETFPlayerEn
 
     public boolean isZombiePiglin() {
         return false;
+    }
+
+    @Override
+    public @Nullable BlockEntity blockEntity() {
+        return null;
     }
 
     public EntityType<?> getType() {

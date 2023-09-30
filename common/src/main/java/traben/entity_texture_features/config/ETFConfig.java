@@ -19,7 +19,7 @@ public class ETFConfig {
     public boolean enableCustomTextures = true;
     public boolean enableCustomBlockEntities = true;
     public UpdateFrequency textureUpdateFrequency_V2 = UpdateFrequency.Fast;
-    public boolean restrictUpdateProperties = true;
+//    public boolean restrictUpdateProperties = true;
     public boolean restrictBiome = true;
     public boolean restrictHeight = true;
     public boolean restrictBlock = true;

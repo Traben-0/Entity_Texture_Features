@@ -1,5 +1,6 @@
 package traben.entity_texture_features.entity_handlers;
 
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
@@ -20,6 +21,7 @@ public interface ETFEntity {
     boolean isZombiePiglin();
 
     @Nullable Entity entity();
+    @Nullable BlockEntity blockEntity();
 
     EntityType<?> getType();
 
