@@ -7,21 +7,11 @@ import traben.entity_texture_features.entity_handlers.ETFEntity;
 import traben.entity_texture_features.property_reading.properties.RandomProperty;
 
 import java.util.regex.Matcher;
-
-import static traben.entity_texture_features.property_reading.ETFTexturePropertiesUtils.groupByQuotationPattern;
+import java.util.regex.Pattern;
 
 public abstract class StringArrayOrRegexProperty extends RandomProperty {
 
 
-//    protected GenericStringArrayOrRegexProperty(String[] array) throws RandomPropertyException {
-//
-//        if(array == null || array.length == 0) throw new RandomPropertyException(getPropertyId() + " property was broken");
-//        ARRAY = new ObjectOpenHashSet<String>();
-//        for (String str:
-//             array) {
-//            ARRAY.add(shouldForceLowerCaseCheck() ? str.toLowerCase() : str);
-//        }
-//    }
     protected StringArrayOrRegexProperty(String string) throws RandomPropertyException {
         if(string == null || string.isBlank())
             throw new RandomPropertyException(getPropertyId() + " property was broken");
@@ -35,7 +25,7 @@ public abstract class StringArrayOrRegexProperty extends RandomProperty {
             if (array.length == 0)
                 throw new RandomPropertyException(getPropertyId() + " property was broken");
 
-            ARRAY = new ObjectOpenHashSet<String>();
+            ARRAY = new ObjectOpenHashSet<>();
             for (String str :
                     array) {
                 ARRAY.add(shouldForceLowerCaseCheck() ? str.toLowerCase() : str);
@@ -52,9 +42,6 @@ public abstract class StringArrayOrRegexProperty extends RandomProperty {
 
         String entityString = getValueFromEntity(entity);
         if(entityString != null) {
-            if (!isPropertyUpdatable()) {
-                spawnConditions.put(getPropertyId(), MATCHER.testString(shouldForceLowerCaseCheck() ? entityString.toLowerCase() : entityString));
-            }
             return MATCHER.testString(shouldForceLowerCaseCheck() ? entityString.toLowerCase() : entityString);
         }
         return false;
@@ -68,12 +55,12 @@ public abstract class StringArrayOrRegexProperty extends RandomProperty {
     protected abstract String getValueFromEntity(ETFEntity entity);
 
 
-    private interface RegexAndPatternPropertyMatcher {
+    public interface RegexAndPatternPropertyMatcher {
         boolean testString(String currentEntityValue);
     }
 
     @Nullable
-    private static StringArrayOrRegexProperty.RegexAndPatternPropertyMatcher getStringMatcher_Regex_Pattern_List_Single(@Nullable String propertyLineToBeMatchedPossiblyRegex) {
+    public static StringArrayOrRegexProperty.RegexAndPatternPropertyMatcher getStringMatcher_Regex_Pattern_List_Single(@Nullable String propertyLineToBeMatchedPossiblyRegex) {
         if (propertyLineToBeMatchedPossiblyRegex == null || propertyLineToBeMatchedPossiblyRegex.isBlank())
             return null;
         String stringToMatch = propertyLineToBeMatchedPossiblyRegex.trim();
@@ -141,5 +128,5 @@ public abstract class StringArrayOrRegexProperty extends RandomProperty {
         }
     }
 
-
+    protected static Pattern groupByQuotationPattern = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
 }

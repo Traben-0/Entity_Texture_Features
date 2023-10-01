@@ -8,7 +8,6 @@ import traben.entity_texture_features.property_reading.properties.generic_proper
 
 import java.util.Properties;
 
-import static traben.entity_texture_features.property_reading.ETFTexturePropertiesUtils.getGenericBooleanThatCanNull;
 
 public class BabyProperty extends BooleanProperty {
 

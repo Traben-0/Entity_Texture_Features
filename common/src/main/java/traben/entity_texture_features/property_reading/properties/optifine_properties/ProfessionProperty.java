@@ -4,7 +4,7 @@ import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import net.minecraft.entity.passive.VillagerEntity;
 import org.jetbrains.annotations.NotNull;
 import traben.entity_texture_features.entity_handlers.ETFEntity;
-import traben.entity_texture_features.property_reading.ETFTexturePropertiesUtils;
+import traben.entity_texture_features.property_reading.properties.generic_properties.IntegerArrayProperty;
 import traben.entity_texture_features.property_reading.properties.generic_properties.StringArrayOrRegexProperty;
 
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ public class ProfessionProperty extends StringArrayOrRegexProperty {
                                 for (String lvls :
                                         levels) {
                                     if (lvls.contains("-")) {
-                                        levelData.addAll(Arrays.asList(ETFTexturePropertiesUtils.getIntRange(lvls).getAllWithinRangeAsList()));
+                                        levelData.addAll(Arrays.asList(IntegerArrayProperty.getIntRange(lvls).getAllWithinRangeAsList()));
                                     } else {
                                         levelData.add(Integer.parseInt(lvls.replaceAll("\\D", "")));
                                     }

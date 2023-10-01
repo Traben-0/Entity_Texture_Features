@@ -7,22 +7,20 @@ import traben.entity_texture_features.property_reading.properties.generic_proper
 import java.util.Properties;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
-import static traben.entity_texture_features.property_reading.ETFTexturePropertiesUtils.getGenericIntegerSplitWithRanges;
 
 public class HeightProperty extends IntegerArrayProperty {
 
 
     protected HeightProperty(Properties properties, int propertyNum) throws RandomPropertyException {
-        super(getGenericIntegerSplitWithRanges(properties, propertyNum, "heights"));
+        super(getGenericIntegerSplitWithRanges(properties, propertyNum, "heights","height"));
     }
 
 
 
     public static HeightProperty getPropertyOrNull(Properties properties, int propertyNum){
         try {
-            if (!properties.containsKey("heights." + propertyNum)
-                    && (properties.containsKey("minHeight." + propertyNum)
-                    || properties.containsKey("maxHeight." + propertyNum))) {
+            if (!(properties.containsKey("heights." + propertyNum) || properties.containsKey("height." + propertyNum))
+                    && (properties.containsKey("minHeight." + propertyNum) || properties.containsKey("maxHeight." + propertyNum))) {
                 String min = "-64";
                 String max = "319";
                 if (properties.containsKey("minHeight." + propertyNum)) {
@@ -46,7 +44,7 @@ public class HeightProperty extends IntegerArrayProperty {
 
     @Override
     public @NotNull String[] getPropertyIds() {
-        return new String[]{"heights"};
+        return new String[]{"heights","height"};
     }
 
     @Override

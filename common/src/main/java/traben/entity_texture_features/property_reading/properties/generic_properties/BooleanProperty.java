@@ -4,6 +4,9 @@ import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.entity_handlers.ETFEntity;
 import traben.entity_texture_features.property_reading.properties.RandomProperty;
+import traben.entity_texture_features.utils.ETFUtils2;
+
+import java.util.Properties;
 
 public abstract class BooleanProperty extends RandomProperty {
 
@@ -21,9 +24,7 @@ public abstract class BooleanProperty extends RandomProperty {
 
         Boolean entityBoolean = getValueFromEntity(entity);
         if(entityBoolean != null) {
-            if (!isPropertyUpdatable()) {
-                spawnConditions.put(getPropertyId(), BOOLEAN == entityBoolean);
-            }
+
             return BOOLEAN == entityBoolean;
         }
         return false;
@@ -32,5 +33,21 @@ public abstract class BooleanProperty extends RandomProperty {
     @Nullable
     protected abstract Boolean getValueFromEntity(ETFEntity entity);
 
+    @Nullable
+    public static Boolean getGenericBooleanThatCanNull(Properties props, int num, String... propertyNames) {
+        if(propertyNames.length==0) throw new IllegalArgumentException("BooleanProperty, empty property names given");
+        for (String propertyName:
+             propertyNames) {
+            if (props.containsKey(propertyName + "." + num)) {
+                String input = props.getProperty(propertyName + "." + num).trim();
+                if ("true".equals(input) || "false".equals(input)) {
+                    return "true".equals(input);
+                } else {
+                    ETFUtils2.logWarn("properties files number error in " + propertyName + " category");
+                }
+            }
+        }
 
+        return null;
+    }
 }

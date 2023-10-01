@@ -1,31 +1,39 @@
 package traben.entity_texture_features.property_reading.properties;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import traben.entity_texture_features.property_reading.properties.etf_properties.*;
 import traben.entity_texture_features.property_reading.properties.optifine_properties.*;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 public class RandomProperties {
-    private static final LinkedList<RandomPropertyFactory> REGISTERED_PROPERTIES = new LinkedList<>();
+    @SuppressWarnings("StaticCollection")
+    private static final Set<RandomPropertyFactory> REGISTERED_PROPERTIES = new ObjectOpenHashSet<>();
 
     /**
      * Register new {@link RandomProperty} objects to be tested against entities.
      *
      * @param properties the property to be registered for testing
      */
-    public static void registerRandomProperty(RandomPropertyFactory... properties){
+    public static void register(RandomPropertyFactory... properties){
         REGISTERED_PROPERTIES.addAll(List.of(properties));
     }
 
-    public static LinkedList<RandomProperty> getAllRegisteredRandomPropertiesOfIndex(Properties properties,int propertyNum){
-        LinkedList<RandomProperty> randomProperties = new LinkedList<>();
+    /**
+     * Get an array of all {@link RandomProperty} that are present for this property index.
+     *
+     * @param properties  the properties file
+     * @param propertyNum the property index
+     * @return the array of all {@link RandomProperty} that are present for this property index.
+     */
+    public static RandomProperty[] getAllRegisteredRandomPropertiesOfIndex(Properties properties,int propertyNum){
+        ArrayList<RandomProperty> randomProperties = new ArrayList<>();
         for (RandomPropertyFactory factory:
              REGISTERED_PROPERTIES) {
             RandomProperty property = factory.getPropertyOrNull(properties, propertyNum);
             if(property != null) randomProperties.add(property);
         }
-        return randomProperties;
+        return randomProperties.toArray(new RandomProperty[0]);
     }
 
     public interface RandomPropertyFactory{
@@ -33,17 +41,36 @@ public class RandomProperties {
     }
 
     static{
-        registerRandomProperty(//todo check all registered
-                NameProperty::getPropertyOrNull,
-                BiomeProperty::getPropertyOrNull,
-                HeightProperty::getPropertyOrNull,
-                ProfessionProperty::getPropertyOrNull,
-                ColorProperty::getPropertyOrNull,
+        register(
+                //ETF properties
+                AngryProperty::getPropertyOrNull,
+                ChargedCreeperProperty::getPropertyOrNull,
+                DistanceToPlayerProperty::getPropertyOrNull,
+                ItemProperty::getPropertyOrNull,
+                JumpProperty::getPropertyOrNull,
+                LlamaInventoryProperty::getPropertyOrNull,
+                MaxHealthProperty::getPropertyOrNull,
+                MovingProperty::getPropertyOrNull,
+                PandaGeneProperty::getPropertyOrNull,
+                PlayerCreatedProperty::getPropertyOrNull,
+                ScreamingGoatProperty::getPropertyOrNull,
+                SpeedProperty::getPropertyOrNull,
+
+                //OptiFine properties
                 BabyProperty::getPropertyOrNull,
-                WeatherProperty::getPropertyOrNull,
+                BiomeProperty::getPropertyOrNull,
+                BlocksProperty::getPropertyOrNull,
+                ColorProperty::getPropertyOrNull,
                 HealthProperty::getPropertyOrNull,
+                HeightProperty::getPropertyOrNull,
+                MoonPhaseProperty::getPropertyOrNull,
+                NameProperty::getPropertyOrNull,
+                NBTProperty::getPropertyOrNull,
+                ProfessionProperty::getPropertyOrNull,
+                SizeProperty::getPropertyOrNull,
+                TeamProperty::getPropertyOrNull,
                 TimeOfDayProperty::getPropertyOrNull,
-                MoonPhaseProperty::getPropertyOrNull
+                WeatherProperty::getPropertyOrNull
         );
     }
 

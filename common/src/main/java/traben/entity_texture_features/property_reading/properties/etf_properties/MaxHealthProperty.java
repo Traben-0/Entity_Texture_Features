@@ -1,4 +1,4 @@
-package traben.entity_texture_features.property_reading.properties.optifine_properties;
+package traben.entity_texture_features.property_reading.properties.etf_properties;
 
 import net.minecraft.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
@@ -8,38 +8,37 @@ import traben.entity_texture_features.property_reading.properties.generic_proper
 
 import java.util.Properties;
 
-public class HealthProperty extends FloatRangeFromStringArrayProperty {
+public class MaxHealthProperty extends FloatRangeFromStringArrayProperty {
 
 
-    protected HealthProperty(Properties properties, int propertyNum) throws RandomPropertyException {
-        super(readPropertiesOrThrow(properties, propertyNum, "health"));
+    protected MaxHealthProperty(Properties properties, int propertyNum) throws RandomPropertyException {
+        super(readPropertiesOrThrow(properties, propertyNum, "maxHealth","max_health"));
     }
 
-    public static HealthProperty getPropertyOrNull(Properties properties, int propertyNum){
+    public static MaxHealthProperty getPropertyOrNull(Properties properties, int propertyNum){
         try {
-            return new HealthProperty(properties, propertyNum);
+            return new MaxHealthProperty(properties, propertyNum);
         }catch(RandomPropertyException e){
             return null;
         }
     }
 
-
     @Nullable
     @Override
     protected Float getRangeValueFromEntity(ETFEntity entity) {
         if(entity.entity() instanceof LivingEntity alive)
-            return alive.getHealth() / alive.getMaxHealth() * 100;
+            return  alive.getMaxHealth();
         return null;
     }
 
     @Override
     public boolean isPropertyUpdatable(){
-        return true;
+        return false;
     }
 
     @Override
     public @NotNull String[] getPropertyIds() {
-        return new String[]{"health"};
+        return new String[]{"maxHealth","max_health"};
     }
 
 }

@@ -27,7 +27,7 @@ public abstract class RangeFromStringArrayProperty<N extends Number> extends Ran
         if(array.length == 0)
             throw new RandomPropertyException(getPropertyId() + " property was broken");
 
-        ARRAY = new ObjectOpenHashSet<String>();
+        ARRAY = new ObjectOpenHashSet<>();
         ARRAY.addAll(Arrays.asList(array));
     }
     protected final ObjectOpenHashSet<String> ARRAY;
@@ -48,9 +48,6 @@ public abstract class RangeFromStringArrayProperty<N extends Number> extends Ran
                             break;
                         }
                     }
-                }
-                if (!isPropertyUpdatable()) {
-                    spawnConditions.put(getPropertyId(), check);
                 }
                 return check;
             }

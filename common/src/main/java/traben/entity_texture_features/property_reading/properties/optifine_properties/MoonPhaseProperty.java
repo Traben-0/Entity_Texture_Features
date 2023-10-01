@@ -7,7 +7,6 @@ import traben.entity_texture_features.property_reading.properties.generic_proper
 import java.util.Properties;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
-import static traben.entity_texture_features.property_reading.ETFTexturePropertiesUtils.getGenericIntegerSplitWithRanges;
 
 public class MoonPhaseProperty extends IntegerArrayProperty {
 

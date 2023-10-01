@@ -8,7 +8,7 @@ import java.util.Properties;
 
 /**
  * Abstract class to hold each random property to test entities against
- * Must be registered with {@link RandomProperties#registerRandomProperty(RandomProperties.RandomPropertyFactory...)}
+ * Must be registered with {@link RandomProperties#register(RandomProperties.RandomPropertyFactory...)}
  */
 public abstract class RandomProperty {
 
@@ -31,7 +31,10 @@ public abstract class RandomProperty {
             }
             return false;
         }
-        return testEntityInternal(entity, isUpdate, spawnConditions);
+        boolean result = testEntityInternal(entity, isUpdate, spawnConditions);
+        if(!isPropertyUpdatable())
+            spawnConditions.put(getPropertyId(),result);
+        return result;
     }
 
     /**

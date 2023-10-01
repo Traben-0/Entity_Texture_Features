@@ -63,7 +63,7 @@ public class ETFManager {
     public final ObjectOpenHashSet<EntityType<?>> ENTITY_TYPE_IGNORE_PARTICLES = new ObjectOpenHashSet<>();
     public final Object2IntOpenHashMap<EntityType<?>> ENTITY_TYPE_RENDER_LAYER = new Object2IntOpenHashMap<>();
     public final Object2ObjectOpenHashMap<Identifier, ETFTexture> TEXTURE_MAP_TO_OPPOSITE_ELYTRA = new Object2ObjectOpenHashMap<>();
-    public final ETFLruCache<UUID, ObjectImmutableList<String>> ENTITY_SPAWN_CONDITIONS_CACHE = new ETFLruCache<>();
+    public final ETFLruCache<UUID, Object2BooleanOpenHashMap<String>> ENTITY_SPAWN_CONDITIONS_CACHE = new ETFLruCache<>();
     //if false variant 1 will need to use vanilla texture otherwise vanilla texture has an override in other directory
     //private static final Object2BooleanOpenHashMap<Identifier> OPTIFINE_1_HAS_REPLACEMENT = new Object2BooleanOpenHashMap<>();
     //this is a cache of all known ETFTexture versions of any existing resource-pack texture, used to prevent remaking objects
@@ -478,7 +478,7 @@ public class ETFManager {
             for (ETFTexturePropertyCase property :
                     optifineProperties) {
                 if (property.doesEntityMeetConditionsOfThisCase(entity, isThisAnUpdate, ENTITY_IS_UPDATABLE)) {
-                    return property.getAnEntityVariantSuffixFromThisCase(entity.getUuid());
+                    return property.getVariantSuffixFromThisCase(entity.getUuid());
                 }
             }
         } catch (Exception e) {

@@ -157,7 +157,7 @@ public class ETFApi {
         private static ETFRandomTexturePropertyInstance getInstance(Identifier propertiesFileIdentifier, String suffixKeyName) {
             Properties props = ETFUtils2.readAndReturnPropertiesElseNull(propertiesFileIdentifier);
             if (props == null) return null;
-            List<ETFTexturePropertyCase> etfs = ETFTexturePropertiesUtils.getAllValidPropertyObjects(props, suffixKeyName, propertiesFileIdentifier);
+            List<ETFTexturePropertyCase> etfs = ETFTexturePropertiesUtils.getAllValidPropertyObjects(props, propertiesFileIdentifier, suffixKeyName);
             if (etfs.isEmpty()) return null;
             return new ETFRandomTexturePropertyInstance(etfs);
 
@@ -194,7 +194,7 @@ public class ETFApi {
             boolean isAnUpdate = !isThisTheFirstTestForEntity;
             for (ETFTexturePropertyCase testCase : propertyCases) {
                 if (testCase.doesEntityMeetConditionsOfThisCase(entityToBeTested, isThisTheFirstTestForEntity, cacheToMarkEntitiesWhoseVariantCanChangeAgain)){
-                    return testCase.getAnEntityVariantSuffixFromThisCase(entityToBeTested.getUuid());
+                    return testCase.getVariantSuffixFromThisCase(entityToBeTested.getUuid());
                 }
             }
             return 0;
@@ -206,7 +206,7 @@ public class ETFApi {
             boolean isAnUpdate = !isThisTheFirstTestForEntity;
             for (ETFTexturePropertyCase testCase : propertyCases) {
                 if (testCase.doesEntityMeetConditionsOfThisCase(entityToBeTested, uuidForBlockEntity, isThisTheFirstTestForEntity, cacheToMarkEntitiesWhoseVariantCanChangeAgain)){
-                    return testCase.getAnEntityVariantSuffixFromThisCase(uuidForBlockEntity);
+                    return testCase.getVariantSuffixFromThisCase(uuidForBlockEntity);
                 }
             }
             return 0;
