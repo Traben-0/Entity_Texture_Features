@@ -4,7 +4,7 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.entity_handlers.ETFEntity;
 import traben.entity_texture_features.property_reading.properties.RandomProperties;
-import traben.entity_texture_features.property_reading.properties.generic_properties.IntegerArrayProperty;
+import traben.entity_texture_features.property_reading.properties.generic_properties.SimpleIntegerArrayProperty;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.utils.ETFUtils2;
 
@@ -131,12 +131,12 @@ public abstract class RandomPropertiesFileHandler {
 
     @Nullable
     private static Integer[] getSuffixes(Properties props, int num, String... suffixToTest) {
-        return IntegerArrayProperty.getGenericIntegerSplitWithRanges(props, num, suffixToTest);
+        return SimpleIntegerArrayProperty.getGenericIntegerSplitWithRanges(props, num, suffixToTest);
     }
 
     @Nullable
     private static Integer[] getWeights(Properties props, int num) {
-        return IntegerArrayProperty.getGenericIntegerSplitWithRanges(props, num, "weights");
+        return SimpleIntegerArrayProperty.getGenericIntegerSplitWithRanges(props, num, "weights");
     }
 
 

@@ -3,11 +3,11 @@ package traben.entity_texture_features.property_reading.properties.etf_propertie
 import net.minecraft.entity.passive.LlamaEntity;
 import org.jetbrains.annotations.NotNull;
 import traben.entity_texture_features.entity_handlers.ETFEntity;
-import traben.entity_texture_features.property_reading.properties.generic_properties.IntegerArrayProperty;
+import traben.entity_texture_features.property_reading.properties.generic_properties.SimpleIntegerArrayProperty;
 
 import java.util.Properties;
 
-public class LlamaInventoryProperty extends IntegerArrayProperty {
+public class LlamaInventoryProperty extends SimpleIntegerArrayProperty {
 
 
     protected LlamaInventoryProperty(Properties properties, int propertyNum) throws RandomPropertyException {

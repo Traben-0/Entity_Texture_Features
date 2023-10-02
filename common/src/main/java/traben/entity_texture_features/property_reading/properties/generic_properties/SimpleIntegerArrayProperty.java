@@ -12,10 +12,19 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
-public abstract class IntegerArrayProperty extends RandomProperty {
+
+/**
+ * A simpler implementation of {@link RangeFromStringArrayProperty} utilizing an Integer set containing all valid
+ * integers for property.<p>
+ *     I.E. a property of  "1-4 8-10" would have an internal set here of {1,2,3,4,8,9,10}
+ *     instead of parsing the ranges each time
+ *<p>
+ *     also holding some static methods used by {@link traben.entity_texture_features.property_reading.RandomPropertiesFileHandler}
+ */
+public abstract class SimpleIntegerArrayProperty extends RandomProperty {
 
 
-    protected IntegerArrayProperty(Integer[] array) throws RandomPropertyException {
+    protected SimpleIntegerArrayProperty(Integer[] array) throws RandomPropertyException {
 
         if(array == null || array.length == 0) throw new RandomPropertyException(getPropertyId() + " property was broken");
         ARRAY = new IntOpenHashSet(List.of(array));
@@ -56,47 +65,30 @@ public abstract class IntegerArrayProperty extends RandomProperty {
 
     public static IntRange getIntRange(String rawRange) {
         //assume rawRange =  "20-56"  but can be "-64-56", "-30--10"  or "-14"
-        rawRange = rawRange.trim();
-        //sort negatives before split
-        if (rawRange.startsWith("-")) {
-            rawRange = rawRange.replaceFirst("-", "N");
-        }
-        rawRange = rawRange.replaceAll("--", "-N");
-        String[] split = rawRange.split("-");
-        if (split.length == 2 && !split[0].isEmpty() && !split[1].isEmpty()) {//sort out range
-            int[] minMax = {Integer.parseInt(split[0].replaceAll("\\D", "")), Integer.parseInt(split[1].replaceAll("\\D", ""))};
-            if (split[0].contains("N")) {
-                minMax[0] = -minMax[0];
-            }
-            if (split[1].contains("N")) {
-                minMax[1] = -minMax[1];
-            }
-            if (minMax[0] > minMax[1]) {
-                //0 must be smaller
-                return new IntRange(minMax[1], minMax[0]);
+        String numberOnlyString = rawRange.trim().replaceAll("[^0-9-]", "");
+        try {
+            if (numberOnlyString.matches("\\d-(\\d|-\\d)")) {
+                String[] str = numberOnlyString.split("(?<!^|-)-");
+                int small = Integer.parseInt(str[0]);
+                int large = Integer.parseInt(str[1]);
+                return new IntRange(small, large);
             } else {
-                return new IntRange(minMax[0], minMax[1]);
+                int single = Integer.parseInt(numberOnlyString);
+                return new IntRange(single,single);
             }
-        } else {//only 1 number but method ran because of "-" present
-            int number = Integer.parseInt(rawRange.replaceAll("\\D", ""));
-            if (rawRange.contains("N")) {
-                number = -number;
-            }
-            return new IntRange(number, number);
+        }catch (Exception e){
+            return new IntRange(0, 0);
         }
     }
 
 
     @Override
     public boolean testEntityInternal(ETFEntity entity, boolean isUpdate, Object2BooleanOpenHashMap<String> spawnConditions){
-
         int entityInteger = getValueFromEntity(entity);
-
         return ARRAY.contains(entityInteger);
     }
 
     protected abstract int getValueFromEntity(ETFEntity entity);
-
 
     public record IntRange(int lower, int higher) {
         public boolean isWithinRange(int value) {
@@ -107,8 +99,9 @@ public abstract class IntegerArrayProperty extends RandomProperty {
             if(lower == higher){
                 return new Integer[]{lower};
             }
+
             ArrayList<Integer> builder = new ArrayList<>();
-            for (int i = lower; i <= higher; i++) {
+            for (int i = Math.min(lower,higher); i <= Math.max(lower,higher); i++) {
                 builder.add(i);
             }
             return builder.toArray(new Integer[0]);

@@ -1,23 +1,16 @@
 package traben.entity_texture_features.property_reading.properties.generic_properties;
 
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.entity_handlers.ETFEntity;
 import traben.entity_texture_features.property_reading.properties.RandomProperty;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 
 public abstract class RangeFromStringArrayProperty<N extends Number> extends RandomProperty {
 
 
-//    protected GenericRangeFromStringArrayProperty(String[] array) throws RandomPropertyException {
-//
-//        if(array == null || array.length == 0) throw new RandomPropertyException(getPropertyId() + " property was broken");
-//        ARRAY = new ObjectOpenHashSet<String>();
-//        ARRAY.addAll(Arrays.asList(array));
-//    }
     protected RangeFromStringArrayProperty(String string) throws RandomPropertyException {
         if(string == null)
             throw new RandomPropertyException(getPropertyId() + " property was broken");
@@ -27,10 +20,13 @@ public abstract class RangeFromStringArrayProperty<N extends Number> extends Ran
         if(array.length == 0)
             throw new RandomPropertyException(getPropertyId() + " property was broken");
 
-        ARRAY = new ObjectOpenHashSet<>();
-        ARRAY.addAll(Arrays.asList(array));
+        for (String str:
+             array) {
+            RangeTester<N> tester = getRangeTesterFromString(str);
+            if(tester!= null) ARRAY.add(tester);
+        }
     }
-    protected final ObjectOpenHashSet<String> ARRAY;
+    protected final ArrayList<RangeTester<N>> ARRAY= new ArrayList<>();
 
 
     @Override
@@ -40,10 +36,10 @@ public abstract class RangeFromStringArrayProperty<N extends Number> extends Ran
             //always check percentage
             N checkValue = getRangeValueFromEntity(entity);
             if(checkValue != null) {
-                for (String range :
+                for (RangeTester<N> range :
                         ARRAY) {
                     if (range != null) {
-                        if (isValueWithinRangeOrEqual(checkValue, range)) {
+                        if (range.isValueWithinRangeOrEqual(checkValue)) {
                             check = true;
                             break;
                         }
@@ -58,7 +54,8 @@ public abstract class RangeFromStringArrayProperty<N extends Number> extends Ran
     @Nullable
     protected abstract N getRangeValueFromEntity(ETFEntity entity);
 
-    protected abstract boolean isValueWithinRangeOrEqual(N value, String rangeToParse);
+    @Nullable
+    protected abstract RangeTester<N> getRangeTesterFromString(String possibleRange);
 
     @Override
     public boolean isPropertyUpdatable(){
@@ -68,6 +65,10 @@ public abstract class RangeFromStringArrayProperty<N extends Number> extends Ran
     @Override
     public @NotNull String[] getPropertyIds() {
         return new String[]{"health"};
+    }
+
+    public interface RangeTester<N>{
+        boolean isValueWithinRangeOrEqual(N value);
     }
 
 }

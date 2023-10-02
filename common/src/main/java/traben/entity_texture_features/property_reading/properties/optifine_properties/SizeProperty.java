@@ -4,11 +4,11 @@ import net.minecraft.entity.mob.PhantomEntity;
 import net.minecraft.entity.mob.SlimeEntity;
 import org.jetbrains.annotations.NotNull;
 import traben.entity_texture_features.entity_handlers.ETFEntity;
-import traben.entity_texture_features.property_reading.properties.generic_properties.IntegerArrayProperty;
+import traben.entity_texture_features.property_reading.properties.generic_properties.SimpleIntegerArrayProperty;
 
 import java.util.Properties;
 
-public class SizeProperty extends IntegerArrayProperty {
+public class SizeProperty extends SimpleIntegerArrayProperty {
 
 
     protected SizeProperty(Properties properties, int propertyNum) throws RandomPropertyException {

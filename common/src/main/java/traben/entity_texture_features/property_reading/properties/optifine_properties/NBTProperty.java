@@ -11,7 +11,7 @@ import net.minecraft.predicate.NbtPredicate;
 import org.jetbrains.annotations.NotNull;
 import traben.entity_texture_features.entity_handlers.ETFEntity;
 import traben.entity_texture_features.property_reading.properties.RandomProperty;
-import traben.entity_texture_features.property_reading.properties.generic_properties.IntegerArrayProperty;
+import traben.entity_texture_features.property_reading.properties.generic_properties.SimpleIntegerArrayProperty;
 import traben.entity_texture_features.property_reading.properties.generic_properties.StringArrayOrRegexProperty;
 import traben.entity_texture_features.utils.ETFUtils2;
 
@@ -145,7 +145,7 @@ public class NBTProperty extends RandomProperty {
                     } else if (nbtTestInstruction.startsWith("range:")) {
                         if (finalNBTElementOrNullIfFailed instanceof AbstractNbtNumber nbtNumber) {
                             String rawRangeString = nbtTestInstruction.replaceFirst("range:", "");
-                            IntegerArrayProperty.IntRange range = IntegerArrayProperty.getIntRange(rawRangeString);
+                            SimpleIntegerArrayProperty.IntRange range = SimpleIntegerArrayProperty.getIntRange(rawRangeString);
                             doesTestPass = range.isWithinRange(nbtNumber.numberValue().intValue());
                         } else {
                             ETFUtils2.logWarn("NBT range is not valid for non number nbt types: " + nbtIdentifier + "=" + nbtTestInstruction);

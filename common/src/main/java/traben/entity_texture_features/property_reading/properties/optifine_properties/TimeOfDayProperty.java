@@ -34,15 +34,22 @@ public class TimeOfDayProperty extends RangeFromStringArrayProperty<Long> {
     }
 
     @Override
-    protected boolean isValueWithinRangeOrEqual(Long value, String rangeToParse) {
-        if (rangeToParse.contains("-")) {
-            String[] str = rangeToParse.split("-");
-            return value >= Long.parseLong(str[0].replaceAll("\\D", ""))
-                    && value <= Long.parseLong(str[1].replaceAll("\\D", ""));
-        } else {
-            return value == Long.parseLong(rangeToParse.replaceAll("\\D", ""));
-        }
+    protected @Nullable RangeTester<Long> getRangeTesterFromString(String possibleRange) {
+        try {
+            if (possibleRange.matches("\\d-(\\d|-\\d)")) {
+                String[] str = possibleRange.split("(?<!^|-)-");
+                long small = Long.parseLong(str[0].replaceAll("[^0-9-]", ""));
+                long big = Long.parseLong(str[1].replaceAll("[^0-9-]", ""));
+                return (value)-> value >= small && value <= big;
+            } else {
+                long single = Long.parseLong(possibleRange.replaceAll("[^0-9-]", ""));
+                return (value)-> value == single;
+            }
+        }catch (Exception ignored){}
+        return null;
     }
+
+
 
     @Override
     public boolean isPropertyUpdatable(){
