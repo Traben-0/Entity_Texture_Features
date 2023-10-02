@@ -20,27 +20,31 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Nameable;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+import traben.entity_texture_features.entity_handlers.ETFBlockEntityWrapper;
 import traben.entity_texture_features.mixin.accessor.SpriteContentsAccessor;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
-import traben.entity_texture_features.entity_handlers.ETFBlockEntityWrapper;
-
-import java.util.UUID;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
 @Mixin(ChestBlockEntityRenderer.class)
 public abstract class MixinChestBlockEntityRenderer<T extends BlockEntity & LidOpenable> implements BlockEntityRenderer<T> {
 
+    @Unique
     private ETFTexture thisETFTexture = null;
+    @Unique
     private boolean isAnimatedTexture = false;
+    @Unique
     private ETFBlockEntityWrapper etf$chestStandInDummy = null;
+    @Unique
     private Identifier etf$textureOfThis = null;
+    @Unique
     private VertexConsumerProvider etf$vertexConsumerProviderOfThis = null;
 
     @ModifyArg(method = "render(Lnet/minecraft/block/entity/BlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II)V",
@@ -74,19 +78,18 @@ public abstract class MixinChestBlockEntityRenderer<T extends BlockEntity & LidO
                 etf$vertexConsumerProviderOfThis = vertexConsumers;
                 if (ETFConfigData.enableCustomTextures && ETFConfigData.enableCustomBlockEntities) {
 
-                    //etf$chestStandInDummy.setPos(entity.getPos().getX(), entity.getPos().getY(), entity.getPos().getZ());
-                    String identifier = "chest" + entity.getPos().toString() + chestType.asString();
+                    int hash = chestType.hashCode();
                     if (entity instanceof Nameable nameable) {
                         if (nameable.hasCustomName()) {
                             //noinspection ConstantConditions
-                            identifier += nameable.getCustomName().getString();
+                            hash += nameable.getCustomName().getString().hashCode();
                         }
                     }
                     //chests don't have uuid so set UUID from something repeatable this uses blockPos chestType & container name
                     World worldCheck = entity.getWorld();
                     if (worldCheck == null) worldCheck = MinecraftClient.getInstance().world;
                     if (worldCheck != null) {
-                        etf$chestStandInDummy = new ETFBlockEntityWrapper(entity, UUID.nameUUIDFromBytes(identifier.getBytes()));
+                        etf$chestStandInDummy = new ETFBlockEntityWrapper(entity, hash);
                     }
                 }
             }

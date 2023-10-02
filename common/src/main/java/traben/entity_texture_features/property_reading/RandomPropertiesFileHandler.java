@@ -10,10 +10,10 @@ import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.*;
 
-public abstract class ETFTexturePropertiesUtils {
+public abstract class RandomPropertiesFileHandler {
 
 
-    public static void processNewOptifinePropertiesFile(ETFEntity entity, Identifier vanillaIdentifier, Identifier properties) {
+    public static void processNewOptiFinePropertiesFile(ETFEntity entity, Identifier vanillaIdentifier, Identifier properties) {
         ETFManager manager = ETFManager.getInstance();
         try {
             Properties props = ETFUtils2.readAndReturnPropertiesElseNull(properties);
@@ -60,7 +60,7 @@ public abstract class ETFTexturePropertiesUtils {
                             break;
                     }
                 }
-                List<ETFTexturePropertyCase> allCasesForTexture = getAllValidPropertyObjects(props, vanillaIdentifier, "skins","textures");
+                List<RandomPropertyRule> allCasesForTexture = getAllValidPropertyObjects(props, vanillaIdentifier, "skins","textures");
 
                 if (!allCasesForTexture.isEmpty()) {
                     //it all worked now just get the first texture called and everything is set for the next time the texture is called for fast processing
@@ -80,49 +80,52 @@ public abstract class ETFTexturePropertiesUtils {
         }
     }
 
-    public static List<ETFTexturePropertyCase> getAllValidPropertyObjects(Properties props, Identifier vanillaIdentifier, String... suffixToTest) {
-        Set<String> propIds = props.stringPropertyNames();
+    public static List<RandomPropertyRule> getAllValidPropertyObjects(Properties properties, Identifier propertiesFilePath, String... suffixToTest) {
+        Set<String> propIds = properties.stringPropertyNames();
         //set so only 1 of each
-        Set<Integer> numbers = new HashSet<>();
+        Set<Integer> foundRuleNumbers = new HashSet<>();
 
-        //get the numbers we are working with
+        //get the foundRuleNumbers we are working with
         for (String str :
                 propIds) {
-            str = str.replaceAll("\\D", "");
-            if (!str.isEmpty()) {
-                try {
-                    numbers.add(Integer.parseInt(str));
-                } catch (NumberFormatException e) {
-                    ETFUtils2.logWarn("properties file number error in start count");
+            String[] split = str.split("\\.");
+            if(split.length >= 2 && !split[1].isBlank()) {
+                String possibleRuleNumber = split[1].replaceAll("\\D", "");
+                if (!possibleRuleNumber.isBlank()) {
+                    try {
+                        foundRuleNumbers.add(Integer.parseInt(possibleRuleNumber));
+                    } catch (NumberFormatException e) {
+                        //ETFUtils2.logWarn("properties file number error in start count");
+                    }
                 }
             }
         }
         //sort from lowest to largest
-        List<Integer> numbersList = new ArrayList<>(numbers);
+        List<Integer> numbersList = new ArrayList<>(foundRuleNumbers);
         Collections.sort(numbersList);
-        List<ETFTexturePropertyCase> allCasesForTexture = new ArrayList<>();
-        for (Integer num :
+        List<RandomPropertyRule> allRulesOfProperty = new ArrayList<>();
+        for (Integer ruleNumber :
                 numbersList) {
-            //System.out.println("constructed as "+num);
+            //System.out.println("constructed as "+ruleNumber);
             //loops through each known number in properties
-            //all case.1 ect should be processed here
-            Integer[] suffixes = getSuffixes(props, num, suffixToTest);
+            //all rule.1 ect should be processed here
+            Integer[] suffixesOfRule = getSuffixes(properties, ruleNumber, suffixToTest);
 
 
             //list easier to build
-            if (suffixes != null && suffixes.length != 0) {
-                allCasesForTexture.add(new ETFTexturePropertyCase(
-                        vanillaIdentifier.toString(),
-                        num,
-                        suffixes,
-                        getWeights(props, num),
-                        RandomProperties.getAllRegisteredRandomPropertiesOfIndex(props,num)
+            if (suffixesOfRule != null && suffixesOfRule.length != 0) {
+                allRulesOfProperty.add(new RandomPropertyRule(
+                        propertiesFilePath.toString(),
+                        ruleNumber,
+                        suffixesOfRule,
+                        getWeights(properties, ruleNumber),
+                        RandomProperties.getAllRegisteredRandomPropertiesOfIndex(properties,ruleNumber)
                 ));
             } else {
-                ETFUtils2.logWarn("property number \"" + num + ". in file \"" + vanillaIdentifier + ". failed to read.");
+                ETFUtils2.logWarn("property number \"" + ruleNumber + ". in file \"" + propertiesFilePath + ". failed to read.");
             }
         }
-        return allCasesForTexture;
+        return allRulesOfProperty;
     }
 
 
@@ -133,10 +136,7 @@ public abstract class ETFTexturePropertiesUtils {
 
     @Nullable
     private static Integer[] getWeights(Properties props, int num) {
-        if (props.containsKey("weights." + num)) {
-            return IntegerArrayProperty.getGenericIntegerSplitWithRanges(props, num, "weights");
-        }
-        return null;
+        return IntegerArrayProperty.getGenericIntegerSplitWithRanges(props, num, "weights");
     }
 
 

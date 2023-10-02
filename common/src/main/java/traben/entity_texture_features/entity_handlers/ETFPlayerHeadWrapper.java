@@ -21,11 +21,12 @@ import java.util.UUID;
 public class ETFPlayerHeadWrapper implements  ETFPlayerEntity {
 
     private final BlockEntity blockEntity;
-    private final UUID id;
+    private UUID id = null;
+    private final @Nullable Integer hashToAddToUUID;
 
-    public ETFPlayerHeadWrapper(BlockEntity entity, UUID id) {
+    public ETFPlayerHeadWrapper(BlockEntity entity, @Nullable Integer hashToAddToUUID) {
         this.blockEntity = entity;
-        this.id = id;
+        this.hashToAddToUUID = hashToAddToUUID;
     }
 
     @Override
@@ -50,6 +51,7 @@ public class ETFPlayerHeadWrapper implements  ETFPlayerEntity {
 
     @Override
     public UUID getUuid() {
+        if(id == null) id = ETFBlockEntityWrapper.getUUIDForBlockEntity(blockEntity,hashToAddToUUID);
         return id;
     }
 

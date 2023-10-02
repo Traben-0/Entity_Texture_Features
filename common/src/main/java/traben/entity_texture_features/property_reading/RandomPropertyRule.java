@@ -1,84 +1,66 @@
 package traben.entity_texture_features.property_reading;
 
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.Entity;
-import org.jetbrains.annotations.Nullable;
-import traben.entity_texture_features.entity_handlers.ETFBlockEntityWrapper;
 import traben.entity_texture_features.entity_handlers.ETFEntity;
-import traben.entity_texture_features.entity_handlers.ETFEntityWrapper;
 import traben.entity_texture_features.property_reading.properties.RandomProperty;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.utils.ETFUtils2;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 
-public class ETFTexturePropertyCase {
-    public final int PROPERTY_NUMBER;
+public class RandomPropertyRule {
+    public final int RULE_NUMBER;
     public final String PROPERTY_FILE;
     private final Integer[] SUFFIX_NUMBERS_WEIGHTED;
-
-    private final RandomProperty[] PROPERTIES;
-    private final boolean NO_PROPERTIES;
-
-    public ETFTexturePropertyCase(
+    private final RandomProperty[] PROPERTIES_TO_TEST;
+    private final boolean RULE_ALWAYS_APPROVED;
+    public RandomPropertyRule(
             String propertiesFile,
-            int caseNumber,
+            int ruleNumber,
             Integer[] suffixes,
-            @Nullable Integer[] weights,
+            Integer[] weights,
             RandomProperty... properties
 
     ) {
         PROPERTY_FILE = propertiesFile;
-        PROPERTY_NUMBER = caseNumber;
-        PROPERTIES = properties;
+        RULE_NUMBER = ruleNumber;
+        PROPERTIES_TO_TEST = properties;
+        RULE_ALWAYS_APPROVED = properties.length == 0;
 
         if (weights == null || weights.length == 0) {
             SUFFIX_NUMBERS_WEIGHTED = suffixes;
         } else {
             if (weights.length == suffixes.length) {
-                ArrayList<Integer> buildWeighted = new ArrayList<>();
-                int index = 0;
-                for (int suffix :
-                        suffixes) {
-                    Integer weightValue = weights[index];
-                    if (weightValue != null) {
+                LinkedList<Integer> weightedSuffixArray = new LinkedList<>();
+                try {
+                    for (int index = 0; index < suffixes.length; index++) {
+                        int suffixValue = suffixes[index];
+                        int weightValue = weights[index];
                         for (int i = 0; i < weightValue; i++) {
                             //adds the suffix as many times as it is weighted
-                            buildWeighted.add(suffix);
+                            weightedSuffixArray.add(suffixValue);
                         }
                     }
-                    index++;
+                }catch (Exception e){
+                    weightedSuffixArray.clear();
+                    weightedSuffixArray.addAll(List.of(suffixes));
                 }
-                SUFFIX_NUMBERS_WEIGHTED = buildWeighted.toArray(new Integer[0]);
-
+                SUFFIX_NUMBERS_WEIGHTED = weightedSuffixArray.toArray(new Integer[0]);
             } else {
                 ETFUtils2.logWarn("random texture weights don't match for [" +
-                                            PROPERTY_FILE+"] case # ["+PROPERTY_NUMBER+"] :\n suffixes: " + Arrays.toString(suffixes) + "\n weights: " + Arrays.toString(weights), false);
+                                            PROPERTY_FILE+"] rule # ["+ RULE_NUMBER +"] :\n suffixes: " + Arrays.toString(suffixes) + "\n weights: " + Arrays.toString(weights), false);
                 SUFFIX_NUMBERS_WEIGHTED = suffixes;
             }
         }
-        NO_PROPERTIES = properties.length == 0;
     }
 
-    public boolean doesEntityMeetConditionsOfThisCase(Entity entity, boolean isUpdate, Object2BooleanOpenHashMap<UUID> UUID_CaseHasUpdateablesCustom) {
-        if(NO_PROPERTIES) return true;
-        if(entity == null) return false;
-        return doesEntityMeetConditionsOfThisCase(new ETFEntityWrapper(entity), isUpdate, UUID_CaseHasUpdateablesCustom);
-    }
-
-    public boolean doesEntityMeetConditionsOfThisCase(BlockEntity entity, UUID uuid, boolean isUpdate, Object2BooleanOpenHashMap<UUID> UUID_CaseHasUpdateablesCustom) {
-        if(NO_PROPERTIES) return true;
-        if(entity == null) return false;
-        return doesEntityMeetConditionsOfThisCase(new ETFBlockEntityWrapper(entity, uuid), isUpdate, UUID_CaseHasUpdateablesCustom);
-    }
 
     public boolean doesEntityMeetConditionsOfThisCase(ETFEntity etfEntity, boolean isUpdate, Object2BooleanOpenHashMap<UUID> UUID_CaseHasUpdateablesCustom) {
-        if (NO_PROPERTIES || etfEntity == null) {
-            return true;
-        }
+        if(RULE_ALWAYS_APPROVED) return true;
+        if(etfEntity == null) return false;
 
         UUID id = etfEntity.getUuid();
 
@@ -94,7 +76,7 @@ public class ETFTexturePropertyCase {
         boolean entityMetRequirements = true;
         try {
             for (RandomProperty property :
-                    PROPERTIES) {
+                    PROPERTIES_TO_TEST) {
                 if (!entityMetRequirements) break;
                 if (property.isPropertyUpdatable())
                     wasEntityTestedByAnUpdatableProperty = true;
@@ -102,7 +84,7 @@ public class ETFTexturePropertyCase {
             }
         }catch (Exception e){
             ETFUtils2.logWarn("Random Property file ["+
-                    PROPERTY_FILE+"] case # ["+PROPERTY_NUMBER+"] failed with Exception:\n"+e.getMessage());
+                    PROPERTY_FILE+"] rule # ["+ RULE_NUMBER +"] failed with Exception:\n"+e.getMessage());
             //fail this test
             entityMetRequirements = false;
             wasEntityTestedByAnUpdatableProperty = false;
@@ -111,6 +93,9 @@ public class ETFTexturePropertyCase {
         if (wasEntityTestedByAnUpdatableProperty && UUID_CaseHasUpdateablesCustom != null) {
             UUID_CaseHasUpdateablesCustom.put(etfEntity.getUuid(), true);
         }
+
+        ETFManager.getInstance().LAST_MET_RULE_INDEX.put(id, entityMetRequirements ? RULE_NUMBER : 0);
+
         return entityMetRequirements;
     }
 

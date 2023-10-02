@@ -14,27 +14,31 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+import traben.entity_texture_features.entity_handlers.ETFBlockEntityWrapper;
 import traben.entity_texture_features.mixin.accessor.SpriteContentsAccessor;
 import traben.entity_texture_features.texture_handlers.ETFManager;
 import traben.entity_texture_features.texture_handlers.ETFTexture;
-import traben.entity_texture_features.entity_handlers.ETFBlockEntityWrapper;
-
-import java.util.UUID;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
 @Mixin(BedBlockEntityRenderer.class)
 public abstract class MixinBedBlockEntityRenderer implements BlockEntityRenderer<BedBlockEntity> {
 
+    @Unique
     private boolean isAnimatedTexture = false;
+    @Unique
     private ETFTexture thisETFTexture = null;
+    @Unique
     private ETFBlockEntityWrapper etf$bedStandInDummy = null;
+    @Unique
     private Identifier etf$textureOfThis = null;
+    @Unique
     private VertexConsumerProvider etf$vertexConsumerProviderOfThis = null;
 
     @ModifyArg(method = "renderPart",
@@ -72,7 +76,7 @@ public abstract class MixinBedBlockEntityRenderer implements BlockEntityRenderer
                     World worldCheck = bedBlockEntity.getWorld();
                     if (worldCheck == null) worldCheck = MinecraftClient.getInstance().world;
                     if (worldCheck != null) {
-                        etf$bedStandInDummy = new ETFBlockEntityWrapper(bedBlockEntity, UUID.nameUUIDFromBytes((bedBlockEntity.getPos().toString() + bedBlockEntity.getColor().toString()).getBytes()));
+                        etf$bedStandInDummy = new ETFBlockEntityWrapper(bedBlockEntity, bedBlockEntity.getColor().hashCode());
                     }
                     //System.out.println(etf$bedStandInDummy.toString());
                     //etf$bedStandInDummy.setPos(bedBlockEntity.getPos().getX(), bedBlockEntity.getPos().getY(), bedBlockEntity.getPos().getZ());

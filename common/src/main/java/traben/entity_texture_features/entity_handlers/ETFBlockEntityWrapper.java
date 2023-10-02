@@ -18,11 +18,20 @@ import java.util.UUID;
 public class ETFBlockEntityWrapper implements ETFEntity {
 
     private final BlockEntity blockEntity;
-    private final UUID id;
+    private UUID id = null;
+    private final @Nullable Integer hashToAddToUUID;
 
-    public ETFBlockEntityWrapper(BlockEntity entity,UUID id) {
+    public ETFBlockEntityWrapper(BlockEntity entity, @Nullable Integer hashToAddToUUID) {
         this.blockEntity = entity;
-        this.id = id;
+        this.hashToAddToUUID = hashToAddToUUID;
+    }
+
+
+    public static UUID getUUIDForBlockEntity(BlockEntity blockEntity,@Nullable Integer hashToAddToUUID){
+        //Random random = new Random(blockEntity.getClass().hashCode());
+        long most = /*random.nextLong() +*/ blockEntity.getType().hashCode()+ (hashToAddToUUID == null ? 0 : hashToAddToUUID);
+        long least = /*random.nextLong() +*/ blockEntity.getPos().hashCode() + blockEntity.getCachedState().hashCode();
+        return new UUID(most, least);
     }
 
     @Override
@@ -47,6 +56,7 @@ public class ETFBlockEntityWrapper implements ETFEntity {
 
     @Override
     public UUID getUuid() {
+        if(id==null) id = getUUIDForBlockEntity(blockEntity,hashToAddToUUID);
         return id;
     }
 

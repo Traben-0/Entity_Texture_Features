@@ -30,8 +30,10 @@ public class RandomProperties {
         ArrayList<RandomProperty> randomProperties = new ArrayList<>();
         for (RandomPropertyFactory factory:
              REGISTERED_PROPERTIES) {
-            RandomProperty property = factory.getPropertyOrNull(properties, propertyNum);
-            if(property != null) randomProperties.add(property);
+            if(factory != null) {
+                RandomProperty property = factory.getPropertyOrNull(properties, propertyNum);
+                if (property != null) randomProperties.add(property);
+            }
         }
         return randomProperties.toArray(new RandomProperty[0]);
     }
