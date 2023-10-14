@@ -21,8 +21,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.mod_compat.ETF3DSkinLayersUtil;
-import traben.entity_texture_features.texture_handlers.ETFManager;
-import traben.entity_texture_features.texture_handlers.ETFPlayerTexture;
+import traben.entity_texture_features.texture_features.ETFManager;
+import traben.entity_texture_features.texture_features.texture_handlers.ETFPlayerTexture;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
@@ -30,7 +30,7 @@ import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 @Mixin(PlayerEntityRenderer.class)
 public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
     @Unique
-    public int timerBeforeTrySkin = 200;
+    public int entity_texture_features$timerBeforeTrySkin = 200;
 
     @SuppressWarnings("unused")
     public MixinPlayerEntityRenderer(EntityRendererFactory.Context ctx, PlayerEntityModel<AbstractClientPlayerEntity> model, float shadowRadius) {
@@ -44,8 +44,8 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
         arm.pitch = 0.0F;
         sleeve.pitch = 0.0F;
         //I haven't nailed down exactly why, but it cannot attempt to grab the skin until a bit of time has passed
-        if (timerBeforeTrySkin > 0) {
-            timerBeforeTrySkin--;
+        if (entity_texture_features$timerBeforeTrySkin > 0) {
+            entity_texture_features$timerBeforeTrySkin--;
         } else {
             if (ETFConfigData.skinFeaturesEnabled) {
                 ETFPlayerTexture thisETFPlayerTexture = ETFManager.getInstance().getPlayerTexture(player, player.getSkinTextures().texture());
@@ -59,7 +59,7 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
                             try {
                                 // handler class is only ever accessed if the mod is present
                                 // prevents NoClassDefFoundError
-                                //noinspection ConstantConditions
+                                //noinspection DataFlowIssue
                                 ETF3DSkinLayersUtil.renderHand((PlayerEntityRenderer) ((Object) this), matrices, vc1, light, player, arm, sleeve);
                             } catch (Exception e) {
                                 ETFUtils2.logWarn("Exception with ETF's 3D skin layers mod compatibility: " + e);
@@ -79,7 +79,8 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
                                 try {
                                     // handler class is only ever accessed if the mod is present
                                     // prevents NoClassDefFoundError
-                                    //noinspection ConstantConditions
+
+                                    //noinspection DataFlowIssue
                                     ETF3DSkinLayersUtil.renderHand((PlayerEntityRenderer) ((Object) this), matrices, vc2, light, player, arm, sleeve);
                                 } catch (Exception e) {
                                     ETFUtils2.logWarn("Exception with ETF's 3D skin layers mod compatibility: " + e);
@@ -98,7 +99,7 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
                                 try {
                                     // handler class is only ever accessed if the mod is present
                                     // prevents NoClassDefFoundError
-                                    //noinspection ConstantConditions
+                                    //noinspection DataFlowIssue
                                     ETF3DSkinLayersUtil.renderHand((PlayerEntityRenderer) ((Object) this), matrices, vc3, light, player, arm, sleeve);
                                 } catch (Exception e) {
                                     ETFUtils2.logWarn("Exception with ETF's 3D skin layers mod compatibility: " + e);

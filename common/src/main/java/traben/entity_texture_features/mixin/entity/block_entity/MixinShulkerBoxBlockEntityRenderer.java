@@ -23,10 +23,12 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-import traben.entity_texture_features.entity_handlers.ETFBlockEntityWrapper;
 import traben.entity_texture_features.mixin.accessor.SpriteContentsAccessor;
-import traben.entity_texture_features.texture_handlers.ETFManager;
-import traben.entity_texture_features.texture_handlers.ETFTexture;
+import traben.entity_texture_features.texture_features.ETFManager;
+import traben.entity_texture_features.texture_features.texture_handlers.ETFTexture;
+import traben.entity_texture_features.utils.entity_wrappers.ETFBlockEntityWrapper;
+
+import java.util.Objects;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
@@ -45,25 +47,24 @@ public abstract class MixinShulkerBoxBlockEntityRenderer implements BlockEntityR
     private Identifier etf$textureOfThis = null;
 
     @Unique
-    private boolean isAnimatedTexture = false;
+    private boolean entity_texture_features$isAnimatedTexture = false;
     @Unique
-    private ETFTexture thisETFTexture = null;
+    private ETFTexture entity_texture_features$thisETFTexture = null;
 
     @Inject(method = "render(Lnet/minecraft/block/entity/ShulkerBoxBlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;push()V",
                     shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILSOFT)
     private void etf$injected(ShulkerBoxBlockEntity shulkerBoxBlockEntity, float f, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j, CallbackInfo ci, Direction direction, SpriteIdentifier spriteIdentifier) {
         try {
-            isAnimatedTexture = ((SpriteContentsAccessor) spriteIdentifier.getSprite().getContents()).callGetFrameCount() != 1;
-            if (!isAnimatedTexture) {
+            entity_texture_features$isAnimatedTexture = ((SpriteContentsAccessor) spriteIdentifier.getSprite().getContents()).callGetFrameCount() != 1;
+            if (!entity_texture_features$isAnimatedTexture) {
                 if (ETFConfigData.enableCustomTextures && ETFConfigData.enableCustomBlockEntities) {
                     etf$vertexConsumerProviderOfThis = vertexConsumerProvider;
                     try {
-                        DyeColor color =shulkerBoxBlockEntity.getColor();
-                       int hash = color == null? 1 : shulkerBoxBlockEntity.getColor().hashCode();
+                        DyeColor color = shulkerBoxBlockEntity.getColor();
+                        int hash = color == null ? 1 : shulkerBoxBlockEntity.getColor().hashCode();
                         if (shulkerBoxBlockEntity.hasCustomName()) {
-                            //noinspection ConstantConditions
-                            hash += shulkerBoxBlockEntity.getCustomName().getString().hashCode();
+                            hash += Objects.requireNonNull(shulkerBoxBlockEntity.getCustomName()).getString().hashCode();
                         }
 
                         World worldCheck = shulkerBoxBlockEntity.getWorld();
@@ -92,11 +93,11 @@ public abstract class MixinShulkerBoxBlockEntityRenderer implements BlockEntityR
             index = 1)
     private VertexConsumer etf$alterTexture(VertexConsumer vertices) {
         try {
-            if (isAnimatedTexture || !ETFConfigData.enableCustomTextures || !ETFConfigData.enableCustomBlockEntities || etf$textureOfThis == null || etf$shulkerBoxStandInDummy == null)
+            if (entity_texture_features$isAnimatedTexture || !ETFConfigData.enableCustomTextures || !ETFConfigData.enableCustomBlockEntities || etf$textureOfThis == null || etf$shulkerBoxStandInDummy == null)
                 return vertices;
 
-            thisETFTexture = ETFManager.getInstance().getETFTexture(etf$textureOfThis, etf$shulkerBoxStandInDummy, ETFManager.TextureSource.BLOCK_ENTITY, ETFConfigData.removePixelsUnderEmissiveBlockEntity);
-            @SuppressWarnings("ConstantConditions") VertexConsumer alteredReturn = thisETFTexture == null ? null : etf$vertexConsumerProviderOfThis.getBuffer(RenderLayer.getEntityCutoutNoCull(thisETFTexture.getTextureIdentifier(etf$shulkerBoxStandInDummy)));
+            entity_texture_features$thisETFTexture = ETFManager.getInstance().getETFTexture(etf$textureOfThis, etf$shulkerBoxStandInDummy, ETFManager.TextureSource.BLOCK_ENTITY, ETFConfigData.removePixelsUnderEmissiveBlockEntity);
+            @SuppressWarnings("ConstantConditions") VertexConsumer alteredReturn = entity_texture_features$thisETFTexture == null ? null : etf$vertexConsumerProviderOfThis.getBuffer(RenderLayer.getEntityCutoutNoCull(entity_texture_features$thisETFTexture.getTextureIdentifier(etf$shulkerBoxStandInDummy)));
             return alteredReturn == null ? vertices : alteredReturn;
         } catch (Exception e) {
             return vertices;
@@ -109,8 +110,8 @@ public abstract class MixinShulkerBoxBlockEntityRenderer implements BlockEntityR
                     shift = At.Shift.AFTER))
     private void etf$emissiveTime(ShulkerBoxBlockEntity shulkerBoxBlockEntity, float f, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j, CallbackInfo ci) {
         try {
-            if (!isAnimatedTexture && ETFConfigData.enableEmissiveBlockEntities && (thisETFTexture != null)) {
-                thisETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, this.model, ETFManager.EmissiveRenderModes.blockEntityMode());
+            if (!entity_texture_features$isAnimatedTexture && ETFConfigData.enableEmissiveBlockEntities && (entity_texture_features$thisETFTexture != null)) {
+                entity_texture_features$thisETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, this.model, ETFManager.EmissiveRenderModes.blockEntityMode());
             }
         } catch (Exception ignored) {
 

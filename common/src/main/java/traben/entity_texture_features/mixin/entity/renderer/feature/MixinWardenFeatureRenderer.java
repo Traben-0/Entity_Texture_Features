@@ -12,32 +12,37 @@ import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-import traben.entity_texture_features.texture_handlers.ETFManager;
-import traben.entity_texture_features.texture_handlers.ETFTexture;
-import traben.entity_texture_features.entity_handlers.ETFEntityWrapper;
+import traben.entity_texture_features.texture_features.ETFManager;
+import traben.entity_texture_features.texture_features.texture_handlers.ETFTexture;
+import traben.entity_texture_features.utils.entity_wrappers.ETFEntityWrapper;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
 @Mixin(WardenFeatureRenderer.class)
 public abstract class MixinWardenFeatureRenderer<T extends WardenEntity, M extends WardenEntityModel<T>> extends FeatureRenderer<T, M> {
 
-    @Shadow @Final private Identifier texture;
-
-    @Shadow protected abstract void unhideAllModelParts();
-
+    @Unique
     private static final Identifier VANILLA_TEXTURE = new Identifier("textures/entity/warden/warden.png");
+    @Unique
     ETFEntityWrapper etf$entity = null;
-    private ETFTexture thisETFTexture = null;
-
+    @Shadow
+    @Final
+    private Identifier texture;
+    @Unique
+    private ETFTexture entity_texture_features$thisETFTexture = null;
     @SuppressWarnings("unused")
     public MixinWardenFeatureRenderer(FeatureRendererContext<T, M> context) {
         super(context);
     }
+
+    @Shadow
+    protected abstract void unhideAllModelParts();
 
     @Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/mob/WardenEntity;FFFFFF)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/WardenEntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V",
@@ -45,8 +50,8 @@ public abstract class MixinWardenFeatureRenderer<T extends WardenEntity, M exten
 
     private void etf$applyEmissive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T wardenEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci, VertexConsumer vertexConsumer) {
         //UUID id = livingEntity.getUuid();
-        if (thisETFTexture != null)
-            thisETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, (this.getContextModel()));
+        if (entity_texture_features$thisETFTexture != null)
+            entity_texture_features$thisETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, (this.getContextModel()));
     }
 
     @Inject(
@@ -60,8 +65,8 @@ public abstract class MixinWardenFeatureRenderer<T extends WardenEntity, M exten
             method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/mob/WardenEntity;FFFFFF)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/RenderLayer;getEntityTranslucentEmissive(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;"))
     private Identifier etf$returnAlteredTexture(Identifier texture) {
-        thisETFTexture = ETFManager.getInstance().getETFTexture(texture, etf$entity, ETFManager.TextureSource.ENTITY_FEATURE, ETFConfigData.removePixelsUnderEmissiveMobs);
-        return thisETFTexture.getTextureIdentifier(etf$entity);
+        entity_texture_features$thisETFTexture = ETFManager.getInstance().getETFTexture(texture, etf$entity, ETFManager.TextureSource.ENTITY_FEATURE, ETFConfigData.removePixelsUnderEmissiveMobs);
+        return entity_texture_features$thisETFTexture.getTextureIdentifier(etf$entity);
     }
 
     @Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/mob/WardenEntity;FFFFFF)V",
@@ -69,7 +74,7 @@ public abstract class MixinWardenFeatureRenderer<T extends WardenEntity, M exten
                     shift = At.Shift.AFTER))
 
     private void etf$preventHiding(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T wardenEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
-        if(ETFConfigData.enableFullBodyWardenTextures && !texture.equals(VANILLA_TEXTURE)){
+        if (ETFConfigData.enableFullBodyWardenTextures && !texture.equals(VANILLA_TEXTURE)) {
             unhideAllModelParts();
         }
     }

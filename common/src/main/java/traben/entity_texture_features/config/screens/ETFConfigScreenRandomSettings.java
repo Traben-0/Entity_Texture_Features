@@ -115,6 +115,4 @@ public class ETFConfigScreenRandomSettings extends ETFConfigScreen {
     }
 
 
-
-
 }

@@ -26,10 +26,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-import traben.entity_texture_features.entity_handlers.ETFBlockEntityWrapper;
 import traben.entity_texture_features.mixin.accessor.SpriteContentsAccessor;
-import traben.entity_texture_features.texture_handlers.ETFManager;
-import traben.entity_texture_features.texture_handlers.ETFTexture;
+import traben.entity_texture_features.texture_features.ETFManager;
+import traben.entity_texture_features.texture_features.texture_handlers.ETFTexture;
+import traben.entity_texture_features.utils.entity_wrappers.ETFBlockEntityWrapper;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
@@ -37,9 +37,9 @@ import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 public abstract class MixinChestBlockEntityRenderer<T extends BlockEntity & LidOpenable> implements BlockEntityRenderer<T> {
 
     @Unique
-    private ETFTexture thisETFTexture = null;
+    private ETFTexture entity_texture_features$thisETFTexture = null;
     @Unique
-    private boolean isAnimatedTexture = false;
+    private boolean entity_texture_features$isAnimatedTexture = false;
     @Unique
     private ETFBlockEntityWrapper etf$chestStandInDummy = null;
     @Unique
@@ -52,12 +52,12 @@ public abstract class MixinChestBlockEntityRenderer<T extends BlockEntity & LidO
             index = 1)
     private VertexConsumer etf$alterTexture(VertexConsumer vertices) {
         try {
-            if (isAnimatedTexture || !ETFConfigData.enableCustomTextures || !ETFConfigData.enableCustomBlockEntities)
+            if (entity_texture_features$isAnimatedTexture || !ETFConfigData.enableCustomTextures || !ETFConfigData.enableCustomBlockEntities)
                 return vertices;
-            thisETFTexture = ETFManager.getInstance().getETFTexture(etf$textureOfThis, etf$chestStandInDummy, ETFManager.TextureSource.BLOCK_ENTITY, false);
+            entity_texture_features$thisETFTexture = ETFManager.getInstance().getETFTexture(etf$textureOfThis, etf$chestStandInDummy, ETFManager.TextureSource.BLOCK_ENTITY, false);
             //etf$textureOfThis = ETFUtils.generalProcessAndReturnAlteredTexture(etf$textureOfThis, etf$chestStandInDummy);
 
-            VertexConsumer alteredReturn = etf$vertexConsumerProviderOfThis.getBuffer(RenderLayer.getEntityCutout(thisETFTexture.getTextureIdentifier(etf$chestStandInDummy)));
+            VertexConsumer alteredReturn = etf$vertexConsumerProviderOfThis.getBuffer(RenderLayer.getEntityCutout(entity_texture_features$thisETFTexture.getTextureIdentifier(etf$chestStandInDummy)));
             return alteredReturn == null ? vertices : alteredReturn;
         } catch (Exception e) {
             return vertices;
@@ -69,8 +69,8 @@ public abstract class MixinChestBlockEntityRenderer<T extends BlockEntity & LidO
                     shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILSOFT)
     private void etf$getChestTexture(T entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, CallbackInfo ci, World world, boolean bl, BlockState blockState, ChestType chestType, Block block, AbstractChestBlock<?> abstractChestBlock, boolean bl2, float f, DoubleBlockProperties.PropertySource<?> propertySource, float g, int i, SpriteIdentifier spriteIdentifier) {
         try {
-            isAnimatedTexture = ((SpriteContentsAccessor) spriteIdentifier.getSprite().getContents()).callGetFrameCount() != 1;
-            if (!isAnimatedTexture) {
+            entity_texture_features$isAnimatedTexture = ((SpriteContentsAccessor) spriteIdentifier.getSprite().getContents()).callGetFrameCount() != 1;
+            if (!entity_texture_features$isAnimatedTexture) {
                 //hopefully works in modded scenarios, assumes the mod dev uses the actual vanilla code process and texture pathing rules
                 String nameSpace = spriteIdentifier.getTextureId().getNamespace();
                 String texturePath = "textures/" + spriteIdentifier.getTextureId().getPath() + ".png";
@@ -81,7 +81,7 @@ public abstract class MixinChestBlockEntityRenderer<T extends BlockEntity & LidO
                     int hash = chestType.hashCode();
                     if (entity instanceof Nameable nameable) {
                         if (nameable.hasCustomName()) {
-                            //noinspection ConstantConditions
+                            //noinspection DataFlowIssue
                             hash += nameable.getCustomName().getString().hashCode();
                         }
                     }
@@ -102,10 +102,10 @@ public abstract class MixinChestBlockEntityRenderer<T extends BlockEntity & LidO
             at = @At(value = "TAIL"))
     private void etf$renderEmissiveChest(MatrixStack matrices, VertexConsumer vertices, ModelPart lid, ModelPart latch, ModelPart base, float openFactor, int light, int overlay, CallbackInfo ci) {
         try {
-            if (!isAnimatedTexture && ETFConfigData.enableEmissiveBlockEntities && (thisETFTexture != null)) {
-                thisETFTexture.renderEmissive(matrices, etf$vertexConsumerProviderOfThis, lid, ETFManager.EmissiveRenderModes.blockEntityMode());
-                thisETFTexture.renderEmissive(matrices, etf$vertexConsumerProviderOfThis, latch, ETFManager.EmissiveRenderModes.blockEntityMode());
-                thisETFTexture.renderEmissive(matrices, etf$vertexConsumerProviderOfThis, base, ETFManager.EmissiveRenderModes.blockEntityMode());
+            if (!entity_texture_features$isAnimatedTexture && ETFConfigData.enableEmissiveBlockEntities && (entity_texture_features$thisETFTexture != null)) {
+                entity_texture_features$thisETFTexture.renderEmissive(matrices, etf$vertexConsumerProviderOfThis, lid, ETFManager.EmissiveRenderModes.blockEntityMode());
+                entity_texture_features$thisETFTexture.renderEmissive(matrices, etf$vertexConsumerProviderOfThis, latch, ETFManager.EmissiveRenderModes.blockEntityMode());
+                entity_texture_features$thisETFTexture.renderEmissive(matrices, etf$vertexConsumerProviderOfThis, base, ETFManager.EmissiveRenderModes.blockEntityMode());
 
                 etf$textureOfThis = null;
                 etf$vertexConsumerProviderOfThis = null;

@@ -127,7 +127,7 @@ public class ETFConfigScreenRandomRestrictSettings extends ETFConfigScreen {
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
 
-        context.drawCenteredTextWithShadow( textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".restriction_settings.title"), (int) (width * 0.5), (int) (height * 0.35), 0xFFFFFF);
+        context.drawCenteredTextWithShadow(textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".restriction_settings.title"), (int) (width * 0.5), (int) (height * 0.35), 0xFFFFFF);
 
     }
 

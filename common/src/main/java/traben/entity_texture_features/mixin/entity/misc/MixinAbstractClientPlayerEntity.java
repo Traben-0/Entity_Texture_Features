@@ -12,8 +12,8 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import traben.entity_texture_features.texture_handlers.ETFManager;
-import traben.entity_texture_features.texture_handlers.ETFPlayerTexture;
+import traben.entity_texture_features.texture_features.ETFManager;
+import traben.entity_texture_features.texture_features.texture_handlers.ETFPlayerTexture;
 
 import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 
@@ -22,12 +22,15 @@ import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 public abstract class MixinAbstractClientPlayerEntity extends PlayerEntity {
 
 
+    @Unique
+    private final static Identifier etf$etf = new Identifier(MOD_ID, "textures/capes/etf.png");
+    @Unique
+    private final static Identifier etf$wife = new Identifier(MOD_ID, "textures/capes/wife.png");
+
     @SuppressWarnings("unused")
     public MixinAbstractClientPlayerEntity(World world, BlockPos pos, float yaw, GameProfile gameProfile) {
         super(world, pos, yaw, gameProfile);
     }
-
-
 
     @Inject(method = "getSkinTextures",
             at = @At("RETURN"), cancellable = true)
@@ -46,14 +49,14 @@ public abstract class MixinAbstractClientPlayerEntity extends PlayerEntity {
         if (textureData != null && textureData.hasCustomCape()) {
             newCape = textureData.etfCapeIdentifier;
             //cir.setReturnValue(textureData.etfCapeIdentifier);
-        }else if (getUuid().equals(ETFPlayerTexture.Dev)) {
+        } else if (getUuid().equals(ETFPlayerTexture.Dev)) {
             newCape = etf$etf;
-        }else if (getUuid().equals(ETFPlayerTexture.Wife)) {
+        } else if (getUuid().equals(ETFPlayerTexture.Wife)) {
             newCape = etf$wife;
-        }else{
+        } else {
             newCape = null;
         }
-        if(newCape != null){
+        if (newCape != null) {
             SkinTextures old = cir.getReturnValue();
             cir.setReturnValue(new SkinTextures(
                     old.texture(),
@@ -65,11 +68,6 @@ public abstract class MixinAbstractClientPlayerEntity extends PlayerEntity {
             ));
         }
     }
-
-    @Unique
-    private final static Identifier etf$etf =new Identifier(MOD_ID, "textures/capes/etf.png");
-    @Unique
-    private final static Identifier etf$wife =new Identifier(MOD_ID, "textures/capes/wife.png");
 
 //    @Inject(method = "cape",
 //            at = @At("RETURN"),

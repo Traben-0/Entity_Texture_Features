@@ -1,7 +1,6 @@
 package traben.entity_texture_features.mixin.entity.block_entity;
 
 import net.minecraft.block.entity.EnchantingTableBlockEntity;
-import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
@@ -16,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.ETFClientCommon;
-import traben.entity_texture_features.texture_handlers.ETFManager;
+import traben.entity_texture_features.texture_features.ETFManager;
 
 @Mixin(EnchantingTableBlockEntityRenderer.class)
 public abstract class MixinEnchantingTableBlockEntityRenderer implements BlockEntityRenderer<EnchantingTableBlockEntity> {

@@ -45,15 +45,15 @@ public abstract class MixinPackScreen extends Screen {
                 && this.file.equals(this.client.getResourcePackDir())
                 //fabric api required for mod asset texture loading
                 && (ETFVersionDifferenceHandler.isFabric() == ETFVersionDifferenceHandler.isThisModLoaded("fabric"))
-                //check for 1.20.2
+            //check for 1.20.2
 //                && MinecraftClient.getInstance().getResourceManager().getResource(etf$focused).isPresent()
         ) {
 
             this.addDrawableChild(ButtonWidget.builder(Text.of("ETF"),
                             (button) -> Objects.requireNonNull(client).setScreen(new ETFConfigScreenMain(this)))
                     .dimensions((int) (this.width * 0.9), (int) (this.height * 0.8), 24, 20)
-                            .tooltip(Tooltip.of(ETFVersionDifferenceHandler.getTextFromTranslation(
-                                    "config.entity_texture_features.button_tooltip")))
+                    .tooltip(Tooltip.of(ETFVersionDifferenceHandler.getTextFromTranslation(
+                            "config.entity_texture_features.button_tooltip")))
                     .build()
             );
 

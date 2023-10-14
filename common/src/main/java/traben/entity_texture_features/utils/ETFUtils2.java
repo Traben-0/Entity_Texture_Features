@@ -16,8 +16,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
-import traben.entity_texture_features.config.screens.ETFConfigScreenWarnings;
-import traben.entity_texture_features.texture_handlers.ETFManager;
+import traben.entity_texture_features.config.screens.warnings.ETFConfigWarning;
+import traben.entity_texture_features.config.screens.warnings.ETFConfigWarnings;
+import traben.entity_texture_features.texture_features.ETFManager;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -35,16 +36,16 @@ public abstract class ETFUtils2 {
 
 
     @NotNull
-    public static Identifier addVariantNumberSuffix(Identifier identifier, int variant){
-        return new Identifier(addVariantNumberSuffix(identifier.toString(),variant));
+    public static Identifier addVariantNumberSuffix(Identifier identifier, int variant) {
+        return new Identifier(addVariantNumberSuffix(identifier.toString(), variant));
     }
 
     @NotNull
-    public static String addVariantNumberSuffix(String identifierString, int variant){
-        if(identifierString.matches("\\d\\.png")){
-            return identifierString.replace(".png","."+variant+".png");
-        }else{
-            return identifierString.replace(".png",variant+".png");
+    public static String addVariantNumberSuffix(String identifierString, int variant) {
+        if (identifierString.matches("\\d\\.png")) {
+            return identifierString.replace(".png", "." + variant + ".png");
+        } else {
+            return identifierString.replace(".png", variant + ".png");
         }
     }
 
@@ -181,6 +182,7 @@ public abstract class ETFUtils2 {
     }
 
     public static void logMessage(String obj, boolean inChat) {
+        if (!obj.endsWith(".")) obj = obj + ".";
         if (inChat) {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             if (player != null) {
@@ -199,6 +201,7 @@ public abstract class ETFUtils2 {
     }
 
     public static void logWarn(String obj, boolean inChat) {
+        if (!obj.endsWith(".")) obj = obj + ".";
         if (inChat) {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             if (player != null) {
@@ -217,6 +220,7 @@ public abstract class ETFUtils2 {
     }
 
     public static void logError(String obj, boolean inChat) {
+        if (!obj.endsWith(".")) obj = obj + ".";
         if (inChat) {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             if (player != null) {
@@ -270,15 +274,10 @@ public abstract class ETFUtils2 {
 
 
     public static void checkModCompatibility() {
-
-        if (ETFVersionDifferenceHandler.isThisModLoaded("figura") && !ETFConfigData.ignoredConfigs.contains(ETFConfigScreenWarnings.ConfigWarning.FIGURA)) {
-            ETFConfigData.skinFeaturesEnabled = false;
-            ETFUtils2.saveConfig();
+        for (ETFConfigWarning warning :
+                ETFConfigWarnings.getRegisteredWarnings()) {
+            warning.testWarningAndApplyFixIfEnabled();
         }
-//        if (ETFVersionDifferenceHandler.isThisModLoaded("impersonate") && !ETFConfigData.ignoredConfigs.contains(ETFConfigScreenWarnings.ConfigWarning.IMPERSONATE)) {
-//            ETFConfigData.skinFeaturesEnabled = false;
-//            ETFUtils2.saveConfig();
-//        }
     }
 
 }
