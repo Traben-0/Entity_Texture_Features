@@ -5,6 +5,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,10 +42,10 @@ public class ETFVersionDifferenceHandler {
 
     //the below act as handlers for minecraft version differences that have come up during development
     //for instance biome code changed in 1.18.2
-    @NotNull
+    @Nullable
     @ExpectPlatform
     public static String getBiomeString(World world, BlockPos pos) {
-        return "";
+        return null;
     }
 
     @NotNull
