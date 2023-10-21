@@ -27,15 +27,17 @@ public class NBTProperty extends RandomProperty {
 
     protected NBTProperty(Properties properties, int propertyNum) throws RandomPropertyException {
 
-        String keyPrefix = "nbt." + propertyNum + '.';
+        final String keyPrefix = "nbt." + propertyNum + '.';
         NBT_MAP = new Object2ObjectLinkedOpenHashMap<>();
         properties.forEach((key, value) -> {
             if (key != null && ((String) key).startsWith(keyPrefix)) {
                 String nbtName = ((String) key).replaceFirst(keyPrefix, "");
-                NBT_MAP.put(nbtName, ((String) value).trim());
+                String instruction =((String) value).trim();
+                if(!nbtName.isBlank() && !instruction.isBlank())
+                    NBT_MAP.put(nbtName, instruction);
             }
         });
-        if (!NBT_MAP.isEmpty()) throw new RandomPropertyException("NBT failed");
+        if (NBT_MAP.isEmpty()) throw new RandomPropertyException("NBT failed");
     }
 
     public static NBTProperty getPropertyOrNull(Properties properties, int propertyNum) {

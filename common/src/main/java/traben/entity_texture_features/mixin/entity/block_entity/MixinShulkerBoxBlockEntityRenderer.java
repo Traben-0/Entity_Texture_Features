@@ -1,7 +1,6 @@
 package traben.entity_texture_features.mixin.entity.block_entity;
 
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -13,7 +12,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -40,11 +38,9 @@ public abstract class MixinShulkerBoxBlockEntityRenderer implements BlockEntityR
     private ShulkerEntityModel<?> model;
 
     @Unique
-    private ETFBlockEntityWrapper etf$shulkerBoxStandInDummy = null;
+    private ETFBlockEntityWrapper etf$shulkerBoxWrapper = null;
     @Unique
     private VertexConsumerProvider etf$vertexConsumerProviderOfThis = null;
-    @Unique
-    private Identifier etf$textureOfThis = null;
 
     @Unique
     private boolean entity_texture_features$isAnimatedTexture = false;
@@ -58,46 +54,40 @@ public abstract class MixinShulkerBoxBlockEntityRenderer implements BlockEntityR
         try {
             entity_texture_features$isAnimatedTexture = ((SpriteContentsAccessor) spriteIdentifier.getSprite().getContents()).callGetFrameCount() != 1;
             if (!entity_texture_features$isAnimatedTexture) {
+                this.entity_texture_features$thisETFTexture = null;
                 if (ETFConfigData.enableCustomTextures && ETFConfigData.enableCustomBlockEntities) {
                     etf$vertexConsumerProviderOfThis = vertexConsumerProvider;
                     try {
                         DyeColor color = shulkerBoxBlockEntity.getColor();
-                        int hash = color == null ? 1 : shulkerBoxBlockEntity.getColor().hashCode();
+                        int hash;
                         if (shulkerBoxBlockEntity.hasCustomName()) {
-                            hash += Objects.requireNonNull(shulkerBoxBlockEntity.getCustomName()).getString().hashCode();
+                            hash = color == null ? 0 : color.hashCode()
+                                    + Objects.requireNonNull(shulkerBoxBlockEntity.getCustomName()).getString().hashCode();
+                        }else{
+                            hash = color == null ? 0 : color.hashCode();
                         }
+                        etf$shulkerBoxWrapper = new ETFBlockEntityWrapper(shulkerBoxBlockEntity, hash);
 
-                        World worldCheck = shulkerBoxBlockEntity.getWorld();
-                        if (worldCheck == null) worldCheck = MinecraftClient.getInstance().world;
-                        if (worldCheck != null) {
-                            etf$shulkerBoxStandInDummy = new ETFBlockEntityWrapper(shulkerBoxBlockEntity, hash);
-                        }
+                        String path = "textures/" + spriteIdentifier.getTextureId().getPath() + ".png";
+                        Identifier texture = new Identifier(spriteIdentifier.getTextureId().getNamespace(), path);
 
+                        entity_texture_features$thisETFTexture = ETFManager.getInstance().getETFTexture(texture, etf$shulkerBoxWrapper, ETFManager.TextureSource.BLOCK_ENTITY, ETFConfigData.removePixelsUnderEmissiveBlockEntity);
                     } catch (Exception e) {
                         //ETFUtils2.logError("shulker box custom rendering failed during setup, " + e);
                     }
                 }
-
-                String path = "textures/" + spriteIdentifier.getTextureId().getPath() + ".png";
-
-                etf$textureOfThis = new Identifier(spriteIdentifier.getTextureId().getNamespace(), path);
-
             }
-        } catch (Exception ignored) {
-
-        }
+        } catch (Exception ignored) {}
     }
 
     @ModifyArg(method = "render(Lnet/minecraft/block/entity/ShulkerBoxBlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/ShulkerEntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V"),
             index = 1)
     private VertexConsumer etf$alterTexture(VertexConsumer vertices) {
+        if (entity_texture_features$thisETFTexture == null || entity_texture_features$isAnimatedTexture || !ETFConfigData.enableCustomTextures || !ETFConfigData.enableCustomBlockEntities || etf$shulkerBoxWrapper == null)
+            return vertices;
         try {
-            if (entity_texture_features$isAnimatedTexture || !ETFConfigData.enableCustomTextures || !ETFConfigData.enableCustomBlockEntities || etf$textureOfThis == null || etf$shulkerBoxStandInDummy == null)
-                return vertices;
-
-            entity_texture_features$thisETFTexture = ETFManager.getInstance().getETFTexture(etf$textureOfThis, etf$shulkerBoxStandInDummy, ETFManager.TextureSource.BLOCK_ENTITY, ETFConfigData.removePixelsUnderEmissiveBlockEntity);
-            @SuppressWarnings("ConstantConditions") VertexConsumer alteredReturn = entity_texture_features$thisETFTexture == null ? null : etf$vertexConsumerProviderOfThis.getBuffer(RenderLayer.getEntityCutoutNoCull(entity_texture_features$thisETFTexture.getTextureIdentifier(etf$shulkerBoxStandInDummy)));
+            VertexConsumer alteredReturn = etf$vertexConsumerProviderOfThis.getBuffer(RenderLayer.getEntityCutoutNoCull(entity_texture_features$thisETFTexture.getTextureIdentifier(etf$shulkerBoxWrapper)));
             return alteredReturn == null ? vertices : alteredReturn;
         } catch (Exception e) {
             return vertices;
@@ -109,12 +99,10 @@ public abstract class MixinShulkerBoxBlockEntityRenderer implements BlockEntityR
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/ShulkerEntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V",
                     shift = At.Shift.AFTER))
     private void etf$emissiveTime(ShulkerBoxBlockEntity shulkerBoxBlockEntity, float f, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j, CallbackInfo ci) {
-        try {
-            if (!entity_texture_features$isAnimatedTexture && ETFConfigData.enableEmissiveBlockEntities && (entity_texture_features$thisETFTexture != null)) {
+        if (!entity_texture_features$isAnimatedTexture && ETFConfigData.enableEmissiveBlockEntities && entity_texture_features$thisETFTexture != null) {
+            try {
                 entity_texture_features$thisETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, this.model, ETFManager.EmissiveRenderModes.blockEntityMode());
-            }
-        } catch (Exception ignored) {
-
+            } catch (Exception ignored) {}
         }
     }
 

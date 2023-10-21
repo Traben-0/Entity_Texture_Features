@@ -1,10 +1,11 @@
 [**ETF Changelog:**]
 
-- rewrote the Random Property reading code to be more object-oriented and simplified.
+[dev]
+- rewrote the Random Property reading code to be more object-oriented, stable, and simplified.
 This also allows other mods to add new random properties for easy use in ETF & EMF.
-Random property code now only stores the entities initial conditions if they have been tested by that random property.
+Random property code now only stores the entities initial conditions if they have been tested by that random property already, reducing memory usage.
 - fixed the `name` property not respecting text formatting codes e.g. "name=\u00a74\u00a7oName"
-- fixed crashes during random entity property testing in ETF and EMF
+- fixed crashes during random entity property testing in ETF and EMF, all random property testing should be stable even with unexpected failures.
 - a lot of source code shuffling around and the inclusion of JavaDocs for API relevant classes.
 
 [4.5.1]
