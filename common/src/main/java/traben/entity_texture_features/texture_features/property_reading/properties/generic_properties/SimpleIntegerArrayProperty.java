@@ -39,7 +39,7 @@ public abstract class SimpleIntegerArrayProperty extends RandomProperty {
             throw new IllegalArgumentException("propertyNames is empty in IntegerArrayProperty");
         for (String propertyName :
                 propertyNames) {
-            if (props.containsKey(propertyName + "." + num)) {
+            if (propertyName != null && !propertyName.isBlank() && props.containsKey(propertyName + "." + num)) {
                 String dataFromProps = props.getProperty(propertyName + "." + num).strip().replaceAll("[)(]", "");
                 String[] skinData = dataFromProps.split("\\s+");
                 ArrayList<Integer> suffixNumbers = new ArrayList<>();

@@ -65,7 +65,7 @@ import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
  * {@link ETFApi#getLastMatchingRuleOfBlockEntity(BlockEntity, Integer)}
  * @optifine_property_reading This method allows an external mod to send in the path of an OptiFine random properties file and return an object<p>
  * that can test specific entities to discover their assigned random suffix<p>
- * {@link ETFApi#readRandomPropertiesFileAndReturnTestingObject2(Identifier, String...)} <p>
+ * {@link ETFApi#readRandomPropertiesFileAndReturnTestingObject3(Identifier, String...)} <p>
  * {@link ETFRandomTexturePropertyInstance}
  */
 @SuppressWarnings({"unused", "ConstantValue"})
@@ -330,8 +330,13 @@ public class ETFApi {
      * @param suffixKeys               the suffix keys to use. These would be {"skins","textures"} for regular OptiFine random textures and "models" for OptiFine random entity models.
      * @return a valid {@link ETFRandomTexturePropertyInstance} or null.
      */
-    public static ETFRandomTexturePropertyInstance readRandomPropertiesFileAndReturnTestingObject2(Identifier propertiesFileIdentifier, String... suffixKeys) {
+    public static ETFRandomTexturePropertyInstance readRandomPropertiesFileAndReturnTestingObject3(Identifier propertiesFileIdentifier, String... suffixKeys) {
         return ETFRandomTexturePropertyInstance.getInstance(propertiesFileIdentifier, suffixKeys);
+    }
+
+    @Deprecated //remove once EMF is updated
+    public static ETFRandomTexturePropertyInstance readRandomPropertiesFileAndReturnTestingObject2(Identifier propertiesFileIdentifier, String suffixKey) {
+        return readRandomPropertiesFileAndReturnTestingObject3(propertiesFileIdentifier, suffixKey);
     }
 
     /**
@@ -396,7 +401,7 @@ public class ETFApi {
      * provides functionality to input an entity and output a suffix integer as defined in
      * a valid OptiFine random entity properties file.
      * <p>
-     * Should only be built via {@link ETFApi#readRandomPropertiesFileAndReturnTestingObject2(Identifier, String...)}
+     * Should only be built via {@link ETFApi#readRandomPropertiesFileAndReturnTestingObject3(Identifier, String...)}
      */
     public static class ETFRandomTexturePropertyInstance {
         protected final List<RandomPropertyRule> propertyCases;
