@@ -13,14 +13,15 @@ import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-import traben.entity_texture_features.texture_handlers.ETFManager;
-import traben.entity_texture_features.entity_handlers.ETFEntityWrapper;
+import traben.entity_texture_features.texture_features.ETFManager;
 import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.utils.entity_wrappers.ETFEntityWrapper;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
@@ -31,6 +32,7 @@ public abstract class MixinEvokerFangEntityRenderer extends EntityRenderer<Evoke
     @Shadow
     private static Identifier TEXTURE;
 
+    @Unique
     private ETFEntityWrapper etf$entity = null;
     @Final
     @Shadow
@@ -45,7 +47,7 @@ public abstract class MixinEvokerFangEntityRenderer extends EntityRenderer<Evoke
             method = "render(Lnet/minecraft/entity/mob/EvokerFangsEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
             at = @At(value = "HEAD"))
     private void etf$getEntity(EvokerFangsEntity evokerFangsEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
-        etf$entity = new ETFEntityWrapper( evokerFangsEntity);
+        etf$entity = new ETFEntityWrapper(evokerFangsEntity);
     }
 
     @ModifyArg(

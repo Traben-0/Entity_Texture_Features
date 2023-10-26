@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
-import static traben.entity_texture_features.texture_handlers.ETFManager.ETF_GENERIC_UUID;
+import static traben.entity_texture_features.texture_features.ETFManager.ETF_GENERIC_UUID;
 
 @Mixin(MobSpawnerBlockEntityRenderer.class)
 public abstract class MixinMobSpawnerBlockEntityRenderer implements BlockEntityRenderer<BellBlockEntity> {

@@ -22,7 +22,7 @@ import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 
 //inspired by puzzles custom gui code
 public abstract class ETFConfigScreen extends Screen {
-    static final RotatingCubeMapRenderer backgroundCube = new RotatingCubeMapRenderer(new CubeMapRenderer(new Identifier(MOD_ID , "textures/gui/background/panorama")));
+    static final RotatingCubeMapRenderer backgroundCube = new RotatingCubeMapRenderer(new CubeMapRenderer(new Identifier(MOD_ID, "textures/gui/background/panorama")));
     public final Screen parent;
 
 
@@ -31,7 +31,7 @@ public abstract class ETFConfigScreen extends Screen {
         this.parent = parent;
     }
 
-    public static String booleanAsOnOff(boolean bool){
+    public static String booleanAsOnOff(boolean bool) {
         return ScreenTexts.onOrOff(bool).getString();
     }
 

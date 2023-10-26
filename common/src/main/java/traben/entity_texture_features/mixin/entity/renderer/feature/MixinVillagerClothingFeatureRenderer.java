@@ -11,21 +11,24 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.village.VillagerDataContainer;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import traben.entity_texture_features.texture_handlers.ETFManager;
-import traben.entity_texture_features.texture_handlers.ETFTexture;
-import traben.entity_texture_features.entity_handlers.ETFEntityWrapper;
+import traben.entity_texture_features.texture_features.ETFManager;
+import traben.entity_texture_features.texture_features.texture_handlers.ETFTexture;
+import traben.entity_texture_features.utils.entity_wrappers.ETFEntityWrapper;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
 @Mixin(VillagerClothingFeatureRenderer.class)
 public abstract class MixinVillagerClothingFeatureRenderer<T extends LivingEntity & VillagerDataContainer, M extends EntityModel<T> & ModelWithHat> extends FeatureRenderer<T, M> {
 
+    @Unique
     ETFEntityWrapper etf$villager = null;
-    private ETFTexture thisETFTexture = null;
+    @Unique
+    private ETFTexture entity_texture_features$thisETFTexture = null;
 
     @SuppressWarnings("unused")
     public MixinVillagerClothingFeatureRenderer(FeatureRendererContext<T, M> context) {
@@ -42,11 +45,11 @@ public abstract class MixinVillagerClothingFeatureRenderer<T extends LivingEntit
             at = @At(value = "RETURN"), cancellable = true)
     private void etf$returnAlteredTexture(String keyType, Identifier keyId, CallbackInfoReturnable<Identifier> cir) {
         if (etf$villager != null) {
-            thisETFTexture = ETFManager.getInstance().getETFTexture(cir.getReturnValue(), etf$villager, ETFManager.TextureSource.ENTITY_FEATURE, ETFConfigData.removePixelsUnderEmissiveMobs);
+            entity_texture_features$thisETFTexture = ETFManager.getInstance().getETFTexture(cir.getReturnValue(), etf$villager, ETFManager.TextureSource.ENTITY_FEATURE, ETFConfigData.removePixelsUnderEmissiveMobs);
             //just in case
             //noinspection ConstantConditions
-            if (thisETFTexture != null)
-                cir.setReturnValue(thisETFTexture.getTextureIdentifier(etf$villager));
+            if (entity_texture_features$thisETFTexture != null)
+                cir.setReturnValue(entity_texture_features$thisETFTexture.getTextureIdentifier(etf$villager));
         }
     }
 
@@ -55,8 +58,8 @@ public abstract class MixinVillagerClothingFeatureRenderer<T extends LivingEntit
                     shift = At.Shift.AFTER, ordinal = 0))
     private void etf$applyEmissive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
 
-        if (thisETFTexture != null)
-            thisETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, (this.getContextModel()));
+        if (entity_texture_features$thisETFTexture != null)
+            entity_texture_features$thisETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, (this.getContextModel()));
     }
 
     @Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
@@ -64,8 +67,8 @@ public abstract class MixinVillagerClothingFeatureRenderer<T extends LivingEntit
                     shift = At.Shift.AFTER, ordinal = 1))
     private void etf$applyEmissive2(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
 
-        if (thisETFTexture != null)
-            thisETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, (this.getContextModel()));
+        if (entity_texture_features$thisETFTexture != null)
+            entity_texture_features$thisETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, (this.getContextModel()));
     }
 
     @Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
@@ -73,8 +76,8 @@ public abstract class MixinVillagerClothingFeatureRenderer<T extends LivingEntit
                     shift = At.Shift.AFTER, ordinal = 2))
     private void etf$applyEmissive3(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
 
-        if (thisETFTexture != null)
-            thisETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, (this.getContextModel()));
+        if (entity_texture_features$thisETFTexture != null)
+            entity_texture_features$thisETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, (this.getContextModel()));
     }
 
 }

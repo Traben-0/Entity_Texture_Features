@@ -15,14 +15,15 @@ import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-import traben.entity_texture_features.texture_handlers.ETFManager;
-import traben.entity_texture_features.entity_handlers.ETFEntityWrapper;
+import traben.entity_texture_features.texture_features.ETFManager;
 import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.utils.entity_wrappers.ETFEntityWrapper;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
@@ -32,11 +33,11 @@ public abstract class MixinMinecartEntityRenderer<T extends AbstractMinecartEnti
     @Final
     @Shadow
     private static Identifier TEXTURE;
-
-    private ETFEntityWrapper etf$entity = null;
     @Final
     @Shadow
     protected EntityModel<T> model;
+    @Unique
+    private ETFEntityWrapper etf$entity = null;
 
     @SuppressWarnings("unused")
     protected MixinMinecartEntityRenderer(EntityRendererFactory.Context ctx) {
@@ -47,7 +48,7 @@ public abstract class MixinMinecartEntityRenderer<T extends AbstractMinecartEnti
             method = "render(Lnet/minecraft/entity/vehicle/AbstractMinecartEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
             at = @At(value = "HEAD"))
     private void etf$getEntity(T abstractMinecartEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
-        etf$entity = new ETFEntityWrapper(abstractMinecartEntity) ;
+        etf$entity = new ETFEntityWrapper(abstractMinecartEntity);
     }
 
     @ModifyArg(

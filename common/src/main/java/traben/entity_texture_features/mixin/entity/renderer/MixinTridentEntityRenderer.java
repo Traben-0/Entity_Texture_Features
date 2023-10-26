@@ -11,12 +11,13 @@ import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import traben.entity_texture_features.texture_handlers.ETFManager;
-import traben.entity_texture_features.texture_handlers.ETFTexture;
+import traben.entity_texture_features.texture_features.ETFManager;
+import traben.entity_texture_features.texture_features.texture_handlers.ETFTexture;
 import traben.entity_texture_features.utils.ETFCacheKey;
 import traben.entity_texture_features.utils.ETFUtils2;
 
@@ -29,14 +30,15 @@ public abstract class MixinTridentEntityRenderer implements SynchronousResourceR
     @Shadow
     @Final
     private TridentEntityModel model;
-    private ETFTexture thisETFTexture = null;
+    @Unique
+    private ETFTexture entity_texture_features$thisETFTexture = null;
 
     @Inject(method = "render(Lnet/minecraft/entity/projectile/TridentEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/TridentEntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V", shift = At.Shift.AFTER))
     private void etf$changeEmissiveTexture(TridentEntity tridentEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
         if (ETFConfigData.enableTridents) {
 
-            if (thisETFTexture != null)
-                thisETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, this.model, ETFManager.EmissiveRenderModes.BRIGHT);
+            if (entity_texture_features$thisETFTexture != null)
+                entity_texture_features$thisETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, this.model, ETFManager.EmissiveRenderModes.BRIGHT);
 
 
         }
@@ -49,9 +51,9 @@ public abstract class MixinTridentEntityRenderer implements SynchronousResourceR
             UUID id = tridentEntity.getUuid();
             ETFCacheKey key = new ETFCacheKey(id, null);
             if (ETFManager.getInstance().ENTITY_TEXTURE_MAP.containsKey(key)) {
-                thisETFTexture = ETFManager.getInstance().ENTITY_TEXTURE_MAP.get(key);
-                if (thisETFTexture != null) {
-                    return thisETFTexture.thisIdentifier;
+                entity_texture_features$thisETFTexture = ETFManager.getInstance().ENTITY_TEXTURE_MAP.get(key);
+                if (entity_texture_features$thisETFTexture != null) {
+                    return entity_texture_features$thisETFTexture.thisIdentifier;
                 }
             } else {
                 if (ETFManager.getInstance().UUID_TRIDENT_NAME.get(id) != null) {

@@ -6,7 +6,7 @@ import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
-import traben.entity_texture_features.texture_handlers.ETFManager;
+import traben.entity_texture_features.texture_features.ETFManager;
 
 import java.util.Objects;
 
@@ -127,7 +127,7 @@ public class ETFConfigScreenEmissiveSettings extends ETFConfigScreen {
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
 
-        context.drawCenteredTextWithShadow( textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".special_emissive_settings.title"), (int) (width * 0.75), (int) (height * 0.25), 0xFFFFFF);
+        context.drawCenteredTextWithShadow(textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".special_emissive_settings.title"), (int) (width * 0.75), (int) (height * 0.25), 0xFFFFFF);
 
     }
 

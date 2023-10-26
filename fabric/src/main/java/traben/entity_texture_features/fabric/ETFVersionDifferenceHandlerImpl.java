@@ -4,7 +4,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,8 +44,9 @@ public class ETFVersionDifferenceHandlerImpl {
         return Text.translatable(translationKey);
     }
 
-    @NotNull
+    @Nullable
     public static String getBiomeString(World world, BlockPos pos) {
+        if(world == null || pos == null) return null;
         //1.19 & 1.18.2 variation
         return world.getBiome(pos).getKey().toString().split("\s/\s")[1].replaceAll("[^\\da-zA-Z_:-]", "");
     }

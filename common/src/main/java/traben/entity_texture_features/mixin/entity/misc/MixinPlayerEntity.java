@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import traben.entity_texture_features.config.ETFConfig;
-import traben.entity_texture_features.texture_handlers.ETFManager;
+import traben.entity_texture_features.texture_features.ETFManager;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
@@ -21,7 +21,8 @@ public abstract class MixinPlayerEntity {
     //will force update entity texture at any player interaction useful for debugging
     @Inject(method = "interact", at = @At("HEAD"))
     private void etf$injected(Entity entity, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
-        //noinspection ConstantConditions
+
+        //noinspection DataFlowIssue
         if (((LivingEntity) (Object) this).getWorld().isClient()) {
             if (ETFConfigData.debugLoggingMode != ETFConfig.DebugLogMode.None)
 //                UUID_DEBUG_EXPLANATION_MARKER.add(entity.getUuid());

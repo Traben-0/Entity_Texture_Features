@@ -23,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.ETFClientCommon;
-import traben.entity_texture_features.texture_handlers.ETFManager;
+import traben.entity_texture_features.texture_features.ETFManager;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
@@ -54,7 +54,7 @@ public abstract class MixinBuiltinModelItemRenderer implements SynchronousResour
             if (ETFConfigData.enableTridents && ETFConfigData.enableCustomTextures) {
                 if (stack.hasCustomName()) {
                     String path = TridentEntityModel.TEXTURE.toString();
-                    String name = stack.getName().getString().replaceAll("\s", "_").toLowerCase().replaceAll("[^a-z\\d/_.-]", "");
+                    String name = stack.getName().getString().replaceAll(" ", "_").toLowerCase().replaceAll("[^a-z\\d/_.-]", "");
                     Identifier possibleId = new Identifier(path.replace(".png", "_" + name + ".png"));
                     if (!ETFManager.getInstance().DOES_IDENTIFIER_EXIST_CACHED_RESULT.containsKey(possibleId)) {
                         ETFManager.getInstance().DOES_IDENTIFIER_EXIST_CACHED_RESULT.put(possibleId, MinecraftClient.getInstance().getResourceManager().getResource(possibleId).isPresent());
@@ -78,7 +78,7 @@ public abstract class MixinBuiltinModelItemRenderer implements SynchronousResour
             }
             if (ETFConfigData.enableTridents && ETFConfigData.enableEmissiveTextures) {
                 String path = TridentEntityModel.TEXTURE.toString();
-                String name = stack.hasCustomName() ? "_" + stack.getName().getString().trim().replaceAll("\s", "_").toLowerCase().replaceAll("[^a-z\\d/_.-]", "") : "";
+                String name = stack.hasCustomName() ? "_" + stack.getName().getString().trim().replaceAll(" ", "_").toLowerCase().replaceAll("[^a-z\\d/_.-]", "") : "";
                 Identifier file = new Identifier(path.replace(".png", name + "_e.png"));
                 if (!ETFManager.getInstance().DOES_IDENTIFIER_EXIST_CACHED_RESULT.containsKey(file)) {
                     ETFManager.getInstance().DOES_IDENTIFIER_EXIST_CACHED_RESULT.put(file, MinecraftClient.getInstance().getResourceManager().getResource(file).isPresent());

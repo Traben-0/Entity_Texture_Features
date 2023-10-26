@@ -147,7 +147,7 @@ public class ETFConfigScreenEmissiveFixSettings extends ETFConfigScreen {
         int i = 0;
         for (Text txt :
                 lines) {
-            context.drawTextWithShadow( textRenderer, txt, (int) (width * 0.45), (int) (height * 0.18) + i, 0xFFFFFF);
+            context.drawTextWithShadow(textRenderer, txt, (int) (width * 0.45), (int) (height * 0.18) + i, 0xFFFFFF);
             i += txt.getString().isBlank() ? 7 : 10;
         }
     }
