@@ -180,7 +180,7 @@ public class ETFApi {
     @NotNull
     @Deprecated
     public static Identifier getCurrentETFVariantTextureOfEntity(@NotNull BlockEntity entity, @NotNull Identifier defaultTexture, UUID ignore) {
-        return defaultTexture;
+        return getCurrentETFVariantTextureOfBlockEntity(entity, defaultTexture, ignore.hashCode());
     }
 
     /**
@@ -474,5 +474,12 @@ public class ETFApi {
             }
             return 0;
         }
+
+        @Deprecated
+        public int getSuffixForBlockEntity(BlockEntity entityToBeTested, UUID uuidForBlockEntity, boolean isThisTheFirstTestForEntity, Object2BooleanOpenHashMap<UUID> cacheToMarkEntitiesWhoseVariantCanChangeAgain) {
+            return getSuffixForBlockEntity(entityToBeTested, uuidForBlockEntity.hashCode(), isThisTheFirstTestForEntity, cacheToMarkEntitiesWhoseVariantCanChangeAgain);
+        }
     }
+
+
 }
