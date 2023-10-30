@@ -1,6 +1,6 @@
 [**ETF Changelog:**]
 
-[dev]
+[4.6.0]
 - rewrote the Random Property reading code to be more object-oriented, stable, and simplified.
 This also allows other mods to add new random properties for easy use in ETF & EMF.
 Random property code now only stores the entities initial conditions if they have been tested by that random property already, reducing memory usage.
