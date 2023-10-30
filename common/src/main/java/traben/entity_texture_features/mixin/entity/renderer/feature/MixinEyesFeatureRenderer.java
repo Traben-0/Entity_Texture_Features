@@ -14,11 +14,12 @@ import net.minecraft.entity.mob.SpiderEntity;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.*;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import traben.entity_texture_features.ETFClientCommon;
-import traben.entity_texture_features.entity_handlers.ETFEntityWrapper;
-import traben.entity_texture_features.texture_handlers.ETFManager;
+import traben.entity_texture_features.texture_features.ETFManager;
+import traben.entity_texture_features.utils.entity_wrappers.ETFEntityWrapper;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
@@ -26,6 +27,8 @@ import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 public abstract class MixinEyesFeatureRenderer<T extends Entity, M extends EntityModel<T>> extends FeatureRenderer<T, M> {
 
 
+    @Unique
+    private RenderLayer etf$eyesRenderLayer = null;
 
 
     @SuppressWarnings("unused")
@@ -34,14 +37,6 @@ public abstract class MixinEyesFeatureRenderer<T extends Entity, M extends Entit
     }
 
 
-    @ModifyConstant(method = "render", constant = @Constant(intValue = 15728640))
-    private int etf$markLightValueForEMF(int value) {
-        return ETFClientCommon.EYES_FEATURE_LIGHT_VALUE;
-        //todo move to EMF
-    }
-
-    @Unique
-    private RenderLayer etf$eyesRenderLayer = null;
 
     @Inject(method = "render", at = @At(value = "HEAD"))
     private void etf$mixin(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, T entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch, CallbackInfo ci) {
@@ -53,17 +48,17 @@ public abstract class MixinEyesFeatureRenderer<T extends Entity, M extends Entit
             //only 3 instances of this, if-else block should be fine, but can possibly be made faster for runtime
             //I'm almost tempted to remove the eyes feature and add "_eyes" as a default emissive suffix, but I will not remove the vanilla behaviour
             if (entity instanceof EndermanEntity) {
-                etf$setEyes("textures/entity/enderman/enderman_eyes.png",entity);
+                etf$setEyes("textures/entity/enderman/enderman_eyes.png", entity);
             } else if (entity instanceof SpiderEntity) {
-                etf$setEyes("textures/entity/spider_eyes.png",entity);
+                etf$setEyes("textures/entity/spider_eyes.png", entity);
             } else if (entity instanceof PhantomEntity) {
-                etf$setEyes("textures/entity/phantom_eyes.png",entity);
+                etf$setEyes("textures/entity/phantom_eyes.png", entity);
             }
         }
     }
 
     @Unique
-    private void etf$setEyes(String texture, T entity){
+    private void etf$setEyes(String texture, T entity) {
         Identifier textureId = new Identifier(texture);
         Identifier altered = ETFManager.getInstance().getETFTexture(textureId, new ETFEntityWrapper(entity), ETFManager.TextureSource.ENTITY_FEATURE, ETFConfigData.removePixelsUnderEmissiveMobs).getTextureIdentifier(new ETFEntityWrapper(entity));
         //if the feature has changed to a variant perform the custom render and cancel the vanilla render
@@ -78,7 +73,7 @@ public abstract class MixinEyesFeatureRenderer<T extends Entity, M extends Entit
             index = 0
     )
     private RenderLayer etf$modifyRenderLayer(RenderLayer layer) {
-        if(etf$eyesRenderLayer != null) return etf$eyesRenderLayer;
+        if (etf$eyesRenderLayer != null) return etf$eyesRenderLayer;
         return layer;
     }
 

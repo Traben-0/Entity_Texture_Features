@@ -2,7 +2,7 @@ package traben.entity_texture_features.utils;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import org.jetbrains.annotations.Nullable;
-import traben.entity_texture_features.texture_handlers.ETFManager;
+import traben.entity_texture_features.texture_features.ETFManager;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
@@ -20,8 +20,7 @@ public class ETFLruCache<X, Y> {
 //    }
 
     public ETFLruCache() {
-        this.cache = new Object2ObjectLinkedOpenHashMap<>();//( 64 +(int)(capacity * (ETFConfigData.advanced_IncreaseCacheSizeModifier > 1 ? ETFConfigData.advanced_IncreaseCacheSizeModifier : 1))));
-        //this.capacity = capacity - 1;
+        this.cache = new InternalCache<>();
 
     }
 
@@ -64,5 +63,11 @@ public class ETFLruCache<X, Y> {
     @Override
     public String toString() {
         return cache.toString();
+    }
+
+    private static class InternalCache<X, Y> extends Object2ObjectLinkedOpenHashMap<X, Y> {
+        {
+            defRetValue = null;
+        }
     }
 }

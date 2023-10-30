@@ -11,13 +11,14 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import traben.entity_texture_features.entity_handlers.ETFEntityWrapper;
-import traben.entity_texture_features.texture_handlers.ETFManager;
-import traben.entity_texture_features.texture_handlers.ETFTexture;
+import traben.entity_texture_features.utils.entity_wrappers.ETFEntityWrapper;
+import traben.entity_texture_features.texture_features.ETFManager;
+import traben.entity_texture_features.texture_features.texture_handlers.ETFTexture;
 
 @Mixin(EnergySwirlOverlayFeatureRenderer.class)
 public abstract class MixinCreeperEnergySwirlFeatureRenderer<T extends Entity & SkinOverlayOwner, M extends EntityModel<T>> extends FeatureRenderer<T, M> {
@@ -29,7 +30,9 @@ public abstract class MixinCreeperEnergySwirlFeatureRenderer<T extends Entity & 
         super(context);
     }
 
+    @Unique
     ETFEntityWrapper etf$entity = null;
+    @Unique
     private ETFTexture thisETFTexture = null;
 
     @Inject(method = "Lnet/minecraft/client/render/entity/feature/EnergySwirlOverlayFeatureRenderer;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/Entity;FFFFFF)V",
