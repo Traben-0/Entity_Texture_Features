@@ -8,17 +8,23 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import traben.entity_texture_features.texture_handlers.ETFManager;
-import traben.entity_texture_features.texture_handlers.ETFPlayerTexture;
+import traben.entity_texture_features.texture_features.ETFManager;
+import traben.entity_texture_features.texture_features.texture_handlers.ETFPlayerTexture;
 
 import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 
 
 @Mixin(AbstractClientPlayerEntity.class)
 public abstract class MixinAbstractClientPlayerEntity extends PlayerEntity {
+
+    @Unique
+    private final static Identifier etf$etf = new Identifier(MOD_ID, "textures/capes/etf.png");
+    @Unique
+    private final static Identifier etf$wife = new Identifier(MOD_ID, "textures/capes/wife.png");
 
     @SuppressWarnings("unused")
     public MixinAbstractClientPlayerEntity(World world, BlockPos pos, float yaw, GameProfile profile) {
@@ -43,10 +49,10 @@ public abstract class MixinAbstractClientPlayerEntity extends PlayerEntity {
         ETFPlayerTexture textureData = ETFManager.getInstance().getPlayerTexture(this, getSkinTexture());
         if (textureData != null && textureData.hasCustomCape()) {
             cir.setReturnValue(textureData.etfCapeIdentifier);
-        }else if (getUuid().equals(ETFPlayerTexture.Dev)) {
-            cir.setReturnValue(new Identifier(MOD_ID, "textures/capes/etf.png"));
-        }else if (getUuid().equals(ETFPlayerTexture.Wife)) {
-            cir.setReturnValue(new Identifier(MOD_ID, "textures/capes/wife.png"));
+        } else if (getUuid().equals(ETFPlayerTexture.Dev)) {
+            cir.setReturnValue(etf$etf);
+        } else if (getUuid().equals(ETFPlayerTexture.Wife)) {
+            cir.setReturnValue(etf$wife);
         }
     }
 

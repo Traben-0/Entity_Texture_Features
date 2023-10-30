@@ -20,14 +20,14 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.ETFClientCommon;
-import traben.entity_texture_features.entity_handlers.ETFEntity;
-import traben.entity_texture_features.entity_handlers.ETFEntityWrapper;
-import traben.entity_texture_features.texture_handlers.ETFManager;
-import traben.entity_texture_features.texture_handlers.ETFSprite;
-import traben.entity_texture_features.texture_handlers.ETFTexture;
+import traben.entity_texture_features.texture_features.ETFManager;
+import traben.entity_texture_features.texture_features.texture_handlers.ETFSprite;
+import traben.entity_texture_features.texture_features.texture_handlers.ETFTexture;
+import traben.entity_texture_features.utils.entity_wrappers.ETFEntity;
+import traben.entity_texture_features.utils.entity_wrappers.ETFEntityWrapper;
 
 @Mixin(PaintingEntityRenderer.class)
-public abstract class MixinPaintingEntityRenderer extends EntityRenderer<PaintingEntity>  {
+public abstract class MixinPaintingEntityRenderer extends EntityRenderer<PaintingEntity> {
 
 
     @Shadow protected abstract void vertex(Matrix4f positionMatrix, Matrix3f normalMatrix, VertexConsumer vertexConsumer, float x, float y, float u, float v, float z, int normalX, int normalY, int normalZ, int light);
@@ -41,9 +41,10 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
         super(ctx);
     }
 
+
     @Inject(
             method = "render(Lnet/minecraft/entity/decoration/painting/PaintingEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
-            at = @At(value = "HEAD"),cancellable = true)
+            at = @At(value = "HEAD"), cancellable = true)
     private void etf$getSprites(PaintingEntity paintingEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
         try {
             Sprite paintingSprite = MinecraftClient.getInstance().getPaintingManager().getPaintingSprite(paintingEntity.motive);
@@ -52,14 +53,14 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
 
             ETFEntity etfEntity = new ETFEntityWrapper(paintingEntity);
 
-            ETFTexture frontTexture =ETFManager.getInstance().getETFTexture(paintingTexture, etfEntity, ETFManager.TextureSource.ENTITY, false);
+            ETFTexture frontTexture = ETFManager.getInstance().getETFTexture(paintingTexture, etfEntity, ETFManager.TextureSource.ENTITY, false);
             ETFSprite etf$Sprite = frontTexture.getSprite(paintingSprite);
 
 
-            ETFTexture backTexture =ETFManager.getInstance().getETFTexture(etf$BACK_SPRITE_ID, etfEntity, ETFManager.TextureSource.ENTITY, false);
+            ETFTexture backTexture = ETFManager.getInstance().getETFTexture(etf$BACK_SPRITE_ID, etfEntity, ETFManager.TextureSource.ENTITY, false);
             ETFSprite etf$BackSprite = backTexture.getSprite(MinecraftClient.getInstance().getPaintingManager().getBackSprite());
 
-            if(etf$Sprite.isETFAltered || etf$Sprite.isEmissive() || etf$BackSprite.isETFAltered || etf$BackSprite.isEmissive()){
+            if (etf$Sprite.isETFAltered || etf$Sprite.isEmissive() || etf$BackSprite.isETFAltered || etf$BackSprite.isEmissive()) {
                 matrixStack.push();
                 matrixStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(180.0F - f));
 
@@ -79,8 +80,7 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
             }
 
 
-
-        }catch (Exception e){
+        } catch (Exception e) {
             //ETFUtils2.logError("painting failed at "+paintingEntity.getBlockPos().toShortString());
         }
 
@@ -114,24 +114,24 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
         Matrix4f matrix4f = entry.getPositionMatrix();
         Matrix3f matrix3f = entry.getNormalMatrix();
 
-        float f = (float)(-width) / 2.0F;
-        float g = (float)(-height) / 2.0F;
+        float f = (float) (-width) / 2.0F;
+        float g = (float) (-height) / 2.0F;
         int u = width / 16;
         int v = height / 16;
         double d = 16.0 / (double)u;
         double e = 16.0 / (double)v;
 
-        for(int w = 0; w < u; ++w) {
-            for(int x = 0; x < v; ++x) {
-                float y = f + (float)((w + 1) * 16);
-                float z = f + (float)(w * 16);
-                float aa = g + (float)((x + 1) * 16);
-                float ab = g + (float)(x * 16);
+        for (int w = 0; w < u; ++w) {
+            for (int x = 0; x < v; ++x) {
+                float y = f + (float) ((w + 1) * 16);
+                float z = f + (float) (w * 16);
+                float aa = g + (float) ((x + 1) * 16);
+                float ab = g + (float) (x * 16);
 
                 int light;
-                if(emissive){
+                if (emissive) {
                     light = ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE;
-                }else {
+                } else {
                     int ac = entity.getBlockX();
                     int ad = MathHelper.floor(entity.getY() + (double) ((aa + ab) / 2.0F / 16.0F));
                     int ae = entity.getBlockZ();
@@ -178,9 +178,8 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
         Matrix3f matrix3f = entry.getNormalMatrix();
 
 
-
-        float f = (float)(-width) / 2.0F;
-        float g = (float)(-height) / 2.0F;
+        float f = (float) (-width) / 2.0F;
+        float g = (float) (-height) / 2.0F;
         //float h = 0.5F;
         float i = backSprite.getMinU();
         float j = backSprite.getMaxU();
@@ -197,17 +196,17 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
         int u = width / 16;
         int v = height / 16;
 
-        for(int w = 0; w < u; ++w) {
-            for(int x = 0; x < v; ++x) {
-                float y = f + (float)((w + 1) * 16);
-                float z = f + (float)(w * 16);
-                float aa = g + (float)((x + 1) * 16);
-                float ab = g + (float)(x * 16);
+        for (int w = 0; w < u; ++w) {
+            for (int x = 0; x < v; ++x) {
+                float y = f + (float) ((w + 1) * 16);
+                float z = f + (float) (w * 16);
+                float aa = g + (float) ((x + 1) * 16);
+                float ab = g + (float) (x * 16);
 
                 int light;
-                if(emissive){
+                if (emissive) {
                     light = ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE;
-                }else {
+                } else {
                     int ac = entity.getBlockX();
                     int ad = MathHelper.floor(entity.getY() + (double) ((aa + ab) / 2.0F / 16.0F));
                     int ae = entity.getBlockZ();
@@ -231,26 +230,26 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
                     light = WorldRenderer.getLightmapCoordinates(entity.getWorld(), new BlockPos(ac, ad, ae));
                 }
 
-                    this.vertex(matrix4f, matrix3f, vertexConsumerBack, y, aa, j, k, 0.5F, 0, 0, 1, light);
-                    this.vertex(matrix4f, matrix3f, vertexConsumerBack, z, aa, i, k, 0.5F, 0, 0, 1, light);
-                    this.vertex(matrix4f, matrix3f, vertexConsumerBack, z, ab, i, l, 0.5F, 0, 0, 1, light);
-                    this.vertex(matrix4f, matrix3f, vertexConsumerBack, y, ab, j, l, 0.5F, 0, 0, 1, light);
-                    this.vertex(matrix4f, matrix3f, vertexConsumerBack, y, aa, m, o, -0.5F, 0, 1, 0, light);
-                    this.vertex(matrix4f, matrix3f, vertexConsumerBack, z, aa, n, o, -0.5F, 0, 1, 0, light);
-                    this.vertex(matrix4f, matrix3f, vertexConsumerBack, z, aa, n, p, 0.5F, 0, 1, 0, light);
-                    this.vertex(matrix4f, matrix3f, vertexConsumerBack, y, aa, m, p, 0.5F, 0, 1, 0, light);
-                    this.vertex(matrix4f, matrix3f, vertexConsumerBack, y, ab, m, o, 0.5F, 0, -1, 0, light);
-                    this.vertex(matrix4f, matrix3f, vertexConsumerBack, z, ab, n, o, 0.5F, 0, -1, 0, light);
-                    this.vertex(matrix4f, matrix3f, vertexConsumerBack, z, ab, n, p, -0.5F, 0, -1, 0, light);
-                    this.vertex(matrix4f, matrix3f, vertexConsumerBack, y, ab, m, p, -0.5F, 0, -1, 0, light);
-                    this.vertex(matrix4f, matrix3f, vertexConsumerBack, y, aa, r, s, 0.5F, -1, 0, 0, light);
-                    this.vertex(matrix4f, matrix3f, vertexConsumerBack, y, ab, r, t, 0.5F, -1, 0, 0, light);
-                    this.vertex(matrix4f, matrix3f, vertexConsumerBack, y, ab, q, t, -0.5F, -1, 0, 0, light);
-                    this.vertex(matrix4f, matrix3f, vertexConsumerBack, y, aa, q, s, -0.5F, -1, 0, 0, light);
-                    this.vertex(matrix4f, matrix3f, vertexConsumerBack, z, aa, r, s, -0.5F, 1, 0, 0, light);
-                    this.vertex(matrix4f, matrix3f, vertexConsumerBack, z, ab, r, t, -0.5F, 1, 0, 0, light);
-                    this.vertex(matrix4f, matrix3f, vertexConsumerBack, z, ab, q, t, 0.5F, 1, 0, 0, light);
-                    this.vertex(matrix4f, matrix3f, vertexConsumerBack, z, aa, q, s, 0.5F, 1, 0, 0, light);
+                this.vertex(matrix4f, matrix3f, vertexConsumerBack, y, aa, j, k, 0.5F, 0, 0, 1, light);
+                this.vertex(matrix4f, matrix3f, vertexConsumerBack, z, aa, i, k, 0.5F, 0, 0, 1, light);
+                this.vertex(matrix4f, matrix3f, vertexConsumerBack, z, ab, i, l, 0.5F, 0, 0, 1, light);
+                this.vertex(matrix4f, matrix3f, vertexConsumerBack, y, ab, j, l, 0.5F, 0, 0, 1, light);
+                this.vertex(matrix4f, matrix3f, vertexConsumerBack, y, aa, m, o, -0.5F, 0, 1, 0, light);
+                this.vertex(matrix4f, matrix3f, vertexConsumerBack, z, aa, n, o, -0.5F, 0, 1, 0, light);
+                this.vertex(matrix4f, matrix3f, vertexConsumerBack, z, aa, n, p, 0.5F, 0, 1, 0, light);
+                this.vertex(matrix4f, matrix3f, vertexConsumerBack, y, aa, m, p, 0.5F, 0, 1, 0, light);
+                this.vertex(matrix4f, matrix3f, vertexConsumerBack, y, ab, m, o, 0.5F, 0, -1, 0, light);
+                this.vertex(matrix4f, matrix3f, vertexConsumerBack, z, ab, n, o, 0.5F, 0, -1, 0, light);
+                this.vertex(matrix4f, matrix3f, vertexConsumerBack, z, ab, n, p, -0.5F, 0, -1, 0, light);
+                this.vertex(matrix4f, matrix3f, vertexConsumerBack, y, ab, m, p, -0.5F, 0, -1, 0, light);
+                this.vertex(matrix4f, matrix3f, vertexConsumerBack, y, aa, r, s, 0.5F, -1, 0, 0, light);
+                this.vertex(matrix4f, matrix3f, vertexConsumerBack, y, ab, r, t, 0.5F, -1, 0, 0, light);
+                this.vertex(matrix4f, matrix3f, vertexConsumerBack, y, ab, q, t, -0.5F, -1, 0, 0, light);
+                this.vertex(matrix4f, matrix3f, vertexConsumerBack, y, aa, q, s, -0.5F, -1, 0, 0, light);
+                this.vertex(matrix4f, matrix3f, vertexConsumerBack, z, aa, r, s, -0.5F, 1, 0, 0, light);
+                this.vertex(matrix4f, matrix3f, vertexConsumerBack, z, ab, r, t, -0.5F, 1, 0, 0, light);
+                this.vertex(matrix4f, matrix3f, vertexConsumerBack, z, ab, q, t, 0.5F, 1, 0, 0, light);
+                this.vertex(matrix4f, matrix3f, vertexConsumerBack, z, aa, q, s, 0.5F, 1, 0, 0, light);
 
             }
         }

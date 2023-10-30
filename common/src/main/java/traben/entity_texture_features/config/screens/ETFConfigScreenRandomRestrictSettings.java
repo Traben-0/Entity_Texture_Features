@@ -28,7 +28,6 @@ public class ETFConfigScreenRandomRestrictSettings extends ETFConfigScreen {
                 ETFVersionDifferenceHandler.getTextFromTranslation("dataPack.validation.reset"),
                 (button) -> {
                     //temporaryETFConfig = new ETFConfig();
-                    ETFConfigScreenMain.temporaryETFConfig.restrictUpdateProperties = true;
                     ETFConfigScreenMain.temporaryETFConfig.restrictMoonPhase = true;
                     ETFConfigScreenMain.temporaryETFConfig.restrictDayTime = true;
                     ETFConfigScreenMain.temporaryETFConfig.restrictWeather = true;
@@ -114,32 +113,6 @@ public class ETFConfigScreenRandomRestrictSettings extends ETFConfigScreen {
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".restrict_moon_phase.tooltip")
         );
 
-        this.addDrawableChild(getETFButton((int) (this.width * 0.27), (int) (this.height * 0.2), (int) (this.width * 0.45), 20,
-                Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
-                        "config." + ETFClientCommon.MOD_ID + ".restrict_update_properties.title"
-                ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.restrictUpdateProperties ? ScreenTexts.ON : ScreenTexts.OFF).getString()),
-                (button) -> {
-                    ETFConfigScreenMain.temporaryETFConfig.restrictUpdateProperties = !ETFConfigScreenMain.temporaryETFConfig.restrictUpdateProperties;
-                    button.setMessage(Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
-                            "config." + ETFClientCommon.MOD_ID + ".restrict_update_properties.title"
-                    ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.restrictUpdateProperties ? ScreenTexts.ON : ScreenTexts.OFF).getString()));
-
-                    restrictBiome.active = ETFConfigScreenMain.temporaryETFConfig.restrictUpdateProperties;
-                    restrictBlock.active = ETFConfigScreenMain.temporaryETFConfig.restrictUpdateProperties;
-                    restrictHeight.active = ETFConfigScreenMain.temporaryETFConfig.restrictUpdateProperties;
-                    restrictWeather.active = ETFConfigScreenMain.temporaryETFConfig.restrictUpdateProperties;
-                    restrictTime.active = ETFConfigScreenMain.temporaryETFConfig.restrictUpdateProperties;
-                    restrictMoon.active = ETFConfigScreenMain.temporaryETFConfig.restrictUpdateProperties;
-                },
-                ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".restrict_update_properties.tooltip")
-        ));
-
-        restrictBiome.active = ETFConfigScreenMain.temporaryETFConfig.restrictUpdateProperties;
-        restrictBlock.active = ETFConfigScreenMain.temporaryETFConfig.restrictUpdateProperties;
-        restrictHeight.active = ETFConfigScreenMain.temporaryETFConfig.restrictUpdateProperties;
-        restrictWeather.active = ETFConfigScreenMain.temporaryETFConfig.restrictUpdateProperties;
-        restrictTime.active = ETFConfigScreenMain.temporaryETFConfig.restrictUpdateProperties;
-        restrictMoon.active = ETFConfigScreenMain.temporaryETFConfig.restrictUpdateProperties;
 
         this.addDrawableChild(restrictBiome);
         this.addDrawableChild(restrictBlock);

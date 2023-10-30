@@ -10,7 +10,11 @@ import net.minecraft.util.Identifier;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.ETFConfig;
-import traben.entity_texture_features.texture_handlers.ETFManager;
+import traben.entity_texture_features.config.screens.skin.ETFConfigScreenSkinSettings;
+import traben.entity_texture_features.config.screens.warnings.ETFConfigScreenWarnings;
+import traben.entity_texture_features.config.screens.warnings.ETFConfigWarning;
+import traben.entity_texture_features.config.screens.warnings.ETFConfigWarnings;
+import traben.entity_texture_features.texture_features.ETFManager;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.Objects;
@@ -21,8 +25,8 @@ import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 //inspired by puzzles custom gui code
 public class ETFConfigScreenMain extends ETFConfigScreen {
 
-    static ETFConfig temporaryETFConfig = null;
-    final ObjectOpenHashSet<ETFConfigScreenWarnings.ConfigWarning> warningsFound = new ObjectOpenHashSet<>();
+    public static ETFConfig temporaryETFConfig = null;
+    final ObjectOpenHashSet<ETFConfigWarning> warningsFound = new ObjectOpenHashSet<>();
 
      ETFConfigScreenWarnings warningsScreen;
     final ETFConfigScreenSkinSettings playerSkinSettingsScreen = new ETFConfigScreenSkinSettings(this);
@@ -51,8 +55,8 @@ public class ETFConfigScreenMain extends ETFConfigScreen {
             warningCount++;
         }
 
-        for (ETFConfigScreenWarnings.ConfigWarning warning :
-                ETFConfigScreenWarnings.ConfigWarning.values()) {
+        for (ETFConfigWarning warning :
+                ETFConfigWarnings.getRegisteredWarnings()) {
             if (warning.isConditionMet()) {
                 shownWarning = true;
                 warningCount++;
