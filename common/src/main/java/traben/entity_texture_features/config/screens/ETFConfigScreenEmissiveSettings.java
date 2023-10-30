@@ -6,7 +6,7 @@ import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
-import traben.entity_texture_features.texture_handlers.ETFManager;
+import traben.entity_texture_features.texture_features.ETFManager;
 
 import java.util.Objects;
 

@@ -9,14 +9,15 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-import traben.entity_texture_features.texture_handlers.ETFManager;
-import traben.entity_texture_features.texture_handlers.ETFTexture;
-import traben.entity_texture_features.entity_handlers.ETFEntityWrapper;
+import traben.entity_texture_features.texture_features.ETFManager;
+import traben.entity_texture_features.texture_features.texture_handlers.ETFTexture;
+import traben.entity_texture_features.utils.entity_wrappers.ETFEntityWrapper;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
@@ -24,8 +25,10 @@ import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 public abstract class MixinIronGolemCrackFeatureRenderer extends FeatureRenderer<IronGolemEntity, IronGolemEntityModel<IronGolemEntity>> {
 
 
+    @Unique
     ETFEntityWrapper etf$entity = null;
-    private ETFTexture thisETFTexture = null;
+    @Unique
+    private ETFTexture entity_texture_features$thisETFTexture = null;
 
     @SuppressWarnings("unused")
     public MixinIronGolemCrackFeatureRenderer(FeatureRendererContext<IronGolemEntity, IronGolemEntityModel<IronGolemEntity>> context) {
@@ -38,8 +41,8 @@ public abstract class MixinIronGolemCrackFeatureRenderer extends FeatureRenderer
 
     private void etf$applyEmissive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, IronGolemEntity ironGolemEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci, IronGolemEntity.Crack crack, Identifier identifier) {
         //UUID id = livingEntity.getUuid();
-        if (thisETFTexture != null)
-            thisETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, this.getContextModel());
+        if (entity_texture_features$thisETFTexture != null)
+            entity_texture_features$thisETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, this.getContextModel());
     }
 
     @Inject(
@@ -56,8 +59,8 @@ public abstract class MixinIronGolemCrackFeatureRenderer extends FeatureRenderer
             , index = 1)
     private Identifier etf$returnAlteredTexture(Identifier texture) {
 
-        thisETFTexture = ETFManager.getInstance().getETFTexture(texture, etf$entity, ETFManager.TextureSource.ENTITY_FEATURE, ETFConfigData.removePixelsUnderEmissiveMobs);
-        return thisETFTexture.getTextureIdentifier(etf$entity);
+        entity_texture_features$thisETFTexture = ETFManager.getInstance().getETFTexture(texture, etf$entity, ETFManager.TextureSource.ENTITY_FEATURE, ETFConfigData.removePixelsUnderEmissiveMobs);
+        return entity_texture_features$thisETFTexture.getTextureIdentifier(etf$entity);
     }
 }
 

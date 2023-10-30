@@ -14,11 +14,12 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import traben.entity_texture_features.texture_handlers.ETFManager;
-import traben.entity_texture_features.texture_handlers.ETFTexture;
+import traben.entity_texture_features.texture_features.ETFManager;
+import traben.entity_texture_features.texture_features.texture_handlers.ETFTexture;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
@@ -26,13 +27,19 @@ import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 @Mixin(MooshroomMushroomFeatureRenderer.class)
 public abstract class MixinMooshroomMushroomFeatureRenderer {
 
+    @Unique
     private static final Identifier RED_SHROOM = new Identifier("textures/entity/cow/red_mushroom.png");
+    @Unique
     private static final Identifier BROWN_SHROOM = new Identifier("textures/entity/cow/brown_mushroom.png");
-    private static final ModelPart[] shroomAsEntityModel = getModelData();
-    private static Identifier redEmissive = null;
-    private static Identifier brownEmissive = null;
+    @Unique
+    private static final ModelPart[] entity_texture_features$shroomAsEntityModel = entity_texture_features$getModelData();
+    @Unique
+    private static Identifier entity_texture_features$redEmissive = null;
+    @Unique
+    private static Identifier entity_texture_features$brownEmissive = null;
 
-    private static ModelPart[] getModelData() {
+    @Unique
+    private static ModelPart[] entity_texture_features$getModelData() {
         Dilation dilation = new Dilation(0);
         ModelData modelData = new ModelData();
         ModelPartData modelPartData = modelData.getRoot();
@@ -43,20 +50,23 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
         return new ModelPart[]{shroom1, shroom2};
     }
 
+    @Unique
     @Nullable
-    private static Boolean returnRedTrueBrownFalseVanillaNull(BlockState mushroomState) {
+    private static Boolean entity_texture_features$returnRedTrueBrownFalseVanillaNull(BlockState mushroomState) {
         //enable custom mooshroom mushrooms
         if (ETFConfigData.enableCustomTextures) {
             if (mushroomState.isOf(Blocks.RED_MUSHROOM)) {
                 switch (ETFManager.getInstance().mooshroomRedCustomShroom) {
-                    case 1:
+                    case 1 -> {
                         return null;
-                    case 2:
+                    }
+                    case 2 -> {
                         return true;
-                    default: {
+                    }
+                    default -> {
                         if (MinecraftClient.getInstance().getResourceManager().getResource(RED_SHROOM).isPresent()) {
                             ETFManager.getInstance().mooshroomRedCustomShroom = 2;
-                            return prepareMushroomTextures(true);
+                            return entity_texture_features$prepareMushroomTextures(true);
                         } else {
                             ETFManager.getInstance().mooshroomRedCustomShroom = 1;
                         }
@@ -64,15 +74,17 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
                 }
             } else if (mushroomState.isOf(Blocks.BROWN_MUSHROOM)) {
                 switch (ETFManager.getInstance().mooshroomBrownCustomShroom) {
-                    case 1:
+                    case 1 -> {
                         return null;
-                    case 2:
+                    }
+                    case 2 -> {
                         return false;
-                    default: {
+                    }
+                    default -> {
                         if (MinecraftClient.getInstance().getResourceManager().getResource(BROWN_SHROOM).isPresent()) {
 
                             ETFManager.getInstance().mooshroomBrownCustomShroom = 2;
-                            return prepareMushroomTextures(false);
+                            return entity_texture_features$prepareMushroomTextures(false);
                         } else {
                             ETFManager.getInstance().mooshroomBrownCustomShroom = 1;
                         }
@@ -85,11 +97,13 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
     }
 
     //return isRed if valid else return null
-    private static Boolean prepareMushroomTextures(boolean isRed) {
-        return prepareMushroomTextures(isRed, false);
+    @Unique
+    private static Boolean entity_texture_features$prepareMushroomTextures(boolean isRed) {
+        return entity_texture_features$prepareMushroomTextures(isRed, false);
     }
 
-    private static Boolean prepareMushroomTextures(boolean isRed, boolean doingEmissive) {
+    @Unique
+    private static Boolean entity_texture_features$prepareMushroomTextures(boolean isRed, boolean doingEmissive) {
         Identifier idOfOriginal = isRed ? RED_SHROOM : BROWN_SHROOM;
         String suffix = null;
         if (doingEmissive) {
@@ -139,9 +153,9 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
                     Identifier emissive = new Identifier(idOfNew.toString().replace(".png", suffix + ".png"));
                     ETFUtils2.registerNativeImageToIdentifier(newImage, emissive);
                     if (isRed) {
-                        redEmissive = emissive;
+                        entity_texture_features$redEmissive = emissive;
                     } else {
-                        brownEmissive = emissive;
+                        entity_texture_features$brownEmissive = emissive;
                     }
                 } else {
                     ETFUtils2.registerNativeImageToIdentifier(newImage, idOfNew);
@@ -151,11 +165,11 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
 
                 //do a pass for the emissive texture if present return ignored
                 if (!doingEmissive) {
-                    prepareMushroomTextures(isRed, true);
+                    entity_texture_features$prepareMushroomTextures(isRed, true);
                     if (isRed) {
-                        ETFManager.getInstance().redMooshroomAlt = new ETFTexture(idOfNew, redEmissive);
+                        ETFManager.getInstance().redMooshroomAlt = new ETFTexture(idOfNew, entity_texture_features$redEmissive);
                     } else {
-                        ETFManager.getInstance().brownMooshroomAlt = new ETFTexture(idOfNew, brownEmissive);
+                        ETFManager.getInstance().brownMooshroomAlt = new ETFTexture(idOfNew, entity_texture_features$brownEmissive);
                     }
                 }
                 return isRed;
@@ -171,12 +185,12 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
     @Inject(method = "renderMushroom", at = @At(value = "HEAD"), cancellable = true)
     private void etf$injected(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, boolean renderAsModel, BlockState mushroomState, int overlay, BakedModel mushroomModel, CallbackInfo ci) {
 
-        Boolean shroomType = returnRedTrueBrownFalseVanillaNull(mushroomState);
+        Boolean shroomType = entity_texture_features$returnRedTrueBrownFalseVanillaNull(mushroomState);
         if (shroomType != null) {
             ETFTexture thisTexture = shroomType ? ETFManager.getInstance().redMooshroomAlt : ETFManager.getInstance().brownMooshroomAlt;
             if (thisTexture != null) {
                 for (ModelPart model :
-                        shroomAsEntityModel) {
+                        entity_texture_features$shroomAsEntityModel) {
                     VertexConsumer texturedConsumer = vertexConsumers.getBuffer(RenderLayer.getEntityCutout(thisTexture.thisIdentifier));
                     model.render(matrices, texturedConsumer, light, overlay, 1, 1, 1, 1);
 

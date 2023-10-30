@@ -4,7 +4,7 @@ import net.minecraft.client.render.entity.PiglinEntityRenderer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import traben.entity_texture_features.texture_handlers.ETFManager;
+import traben.entity_texture_features.texture_features.ETFManager;
 
 
 @Mixin(PiglinEntityRenderer.class)
