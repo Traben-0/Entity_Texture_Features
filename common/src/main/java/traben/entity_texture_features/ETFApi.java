@@ -69,12 +69,12 @@ import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
  * {@link ETFRandomTexturePropertyInstance}
  */
 @SuppressWarnings({"unused", "ConstantValue"})
-public class ETFApi {
+public final class ETFApi {
 
     /**
      * The current ETF API version.
      */
-    final public static int ETFApiVersion = 7;
+    final public static int ETFApiVersion = 8;
     @Deprecated
     public static ETFConfig getETFConfigObject = null;
 
@@ -346,7 +346,7 @@ public class ETFApi {
      * @return Integer index of the most recent random property rule to be matched.<p>
      * default value = 0
      */
-    public int getLastMatchingRuleOfEntity(Entity entity) {
+    public static int getLastMatchingRuleOfEntity(Entity entity) {
         Integer ruleIndex = ETFManager.getInstance().LAST_MET_RULE_INDEX.get(entity.getUuid());
         return ruleIndex == null ? 0 : ruleIndex;
     }
@@ -359,7 +359,7 @@ public class ETFApi {
      * @return Integer index of the most recent random property rule to be matched.<p>
      * default value = 0
      */
-    private int getLastMatchingRuleOfBlockEntity(BlockEntity entity, @Nullable Integer hashToAddToUUID) {
+    private static int getLastMatchingRuleOfBlockEntity(BlockEntity entity, @Nullable Integer hashToAddToUUID) {
         Integer ruleIndex = ETFManager.getInstance().LAST_MET_RULE_INDEX.get(ETFBlockEntityWrapper.getUUIDForBlockEntity(entity, hashToAddToUUID));
         return ruleIndex == null ? 0 : ruleIndex;
     }
@@ -374,7 +374,7 @@ public class ETFApi {
      * @param factories the {@link RandomProperties.RandomPropertyFactory} of your custom {@link RandomProperty} object to be registered.
      * @usage_examples {@link RandomProperties}
      */
-    public void registerCustomRandomPropertyFactory(String yourModId, RandomProperties.RandomPropertyFactory... factories) {
+    public static void registerCustomRandomPropertyFactory(String yourModId, RandomProperties.RandomPropertyFactory... factories) {
         if (factories != null && factories.length != 0) {
             RandomProperties.register(factories);
             ETFUtils2.logMessage(factories.length + " new ETF Random Properties registered by " + yourModId);
@@ -387,7 +387,7 @@ public class ETFApi {
      * @param yourModId your Mod's ID
      * @param warnings  one or more instance of {@link ETFConfigWarning} to be listed on the ETF config warning screen
      */
-    public void registerCustomETFConfigWarning(String yourModId, ETFConfigWarning... warnings) {
+    public static void registerCustomETFConfigWarning(String yourModId, ETFConfigWarning... warnings) {
         if (warnings != null && warnings.length != 0) {
             ETFConfigWarnings.registerConfigWarning(warnings);
             ETFUtils2.logMessage(warnings.length + " new ETF Config Warnings registered by " + yourModId);
