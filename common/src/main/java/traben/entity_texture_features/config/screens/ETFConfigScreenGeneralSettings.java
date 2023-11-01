@@ -100,6 +100,4 @@ public class ETFConfigScreenGeneralSettings extends ETFConfigScreen {
     }
 
 
-
-
 }

@@ -3,8 +3,7 @@ package traben.entity_texture_features.config;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
-import traben.entity_texture_features.config.screens.ETFConfigScreenWarnings;
-import traben.entity_texture_features.texture_handlers.ETFManager;
+import traben.entity_texture_features.texture_features.ETFManager;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -19,7 +18,7 @@ public class ETFConfig {
     public boolean enableCustomTextures = true;
     public boolean enableCustomBlockEntities = true;
     public UpdateFrequency textureUpdateFrequency_V2 = UpdateFrequency.Fast;
-    public boolean restrictUpdateProperties = true;
+    //    public boolean restrictUpdateProperties = true;
     public boolean restrictBiome = true;
     public boolean restrictHeight = true;
     public boolean restrictBlock = true;
@@ -63,7 +62,7 @@ public class ETFConfig {
     public boolean dontPatchAnimatedTextures = true;
 
 
-    public Set<ETFConfigScreenWarnings.ConfigWarning> ignoredConfigs = new HashSet<>();
+    public Set<String> ignoredConfigs2 = new HashSet<>();
 
     public boolean hideConfigButton = false;
 
@@ -126,7 +125,7 @@ public class ETFConfig {
 
         public UpdateFrequency next() {
             //not enhanced for 1.16 version compat
-            //noinspection EnhancedSwitchMigration
+            //noinspection DuplicatedCode
             switch (this) {
                 case Never:
                     return Slow;

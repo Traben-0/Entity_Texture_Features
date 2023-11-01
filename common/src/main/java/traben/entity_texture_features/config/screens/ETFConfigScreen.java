@@ -22,7 +22,7 @@ import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 
 //inspired by puzzles custom gui code
 public abstract class ETFConfigScreen extends Screen {
-    static final RotatingCubeMapRenderer backgroundCube = new RotatingCubeMapRenderer(new CubeMapRenderer(new Identifier(MOD_ID , "textures/gui/background/panorama")));
+    static final RotatingCubeMapRenderer backgroundCube = new RotatingCubeMapRenderer(new CubeMapRenderer(new Identifier(MOD_ID, "textures/gui/background/panorama")));
     public final Screen parent;
 
 
@@ -31,7 +31,7 @@ public abstract class ETFConfigScreen extends Screen {
         this.parent = parent;
     }
 
-    public static String booleanAsOnOff(boolean bool){
+    public static String booleanAsOnOff(boolean bool) {
         return ScreenTexts.onOrOff(bool).getString();
     }
 
@@ -51,23 +51,30 @@ public abstract class ETFConfigScreen extends Screen {
         tessellator.draw();
     }
 
-    public static void renderBackgroundTexture(int vOffset, Identifier texture, int height, int width) {
-        renderBackgroundTexture(vOffset, texture, height, width, 0);
-    }
+//    public static void renderBackgroundTexture(int vOffset, Identifier texture, int height, int width) {
+//        renderBackgroundTexture(vOffset, texture, height, width, 0);
+//    }
+//
+//    public static void renderBackgroundTexture(int vOffset, Identifier texture, int height, int width, int minHeight) {
+//        Tessellator tessellator = Tessellator.getInstance();
+//        BufferBuilder bufferBuilder = tessellator.getBuffer();
+//        RenderSystem.setShader(GameRenderer::getPositionTexColorProgram);
+//        RenderSystem.setShaderTexture(0, texture);
+//        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+//
+//        bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
+//        bufferBuilder.vertex(0.0, height, 0.0).texture(0.0F, (float) height / 32.0F + (float) vOffset).color(64, 64, 64, 255).next();
+//        bufferBuilder.vertex(width, height, 0.0).texture((float) width / 32.0F, (float) height / 32.0F + (float) vOffset).color(64, 64, 64, 255).next();
+//        bufferBuilder.vertex(width, minHeight, 0.0).texture((float) width / 32.0F, (float) minHeight / 32.0F + (float) vOffset).color(64, 64, 64, 255).next();
+//        bufferBuilder.vertex(0.0, minHeight, 0.0).texture(0.0F, (float) minHeight / 32.0F + (float) vOffset).color(64, 64, 64, 255).next();
+//        tessellator.draw();
+//    }
 
-    public static void renderBackgroundTexture(int vOffset, Identifier texture, int height, int width, int minHeight) {
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder bufferBuilder = tessellator.getBuffer();
-        RenderSystem.setShader(GameRenderer::getPositionTexColorProgram);
-        RenderSystem.setShaderTexture(0, texture);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-
-        bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
-        bufferBuilder.vertex(0.0, height, 0.0).texture(0.0F, (float) height / 32.0F + (float) vOffset).color(64, 64, 64, 255).next();
-        bufferBuilder.vertex(width, height, 0.0).texture((float) width / 32.0F, (float) height / 32.0F + (float) vOffset).color(64, 64, 64, 255).next();
-        bufferBuilder.vertex(width, minHeight, 0.0).texture((float) width / 32.0F, (float) minHeight / 32.0F + (float) vOffset).color(64, 64, 64, 255).next();
-        bufferBuilder.vertex(0.0, minHeight, 0.0).texture(0.0F, (float) minHeight / 32.0F + (float) vOffset).color(64, 64, 64, 255).next();
-        tessellator.draw();
+    public void renderBackgroundTexture(DrawContext context) {
+        context.setShaderColor(0.25F, 0.25F, 0.25F, 1.0F);
+        context.drawTexture(OPTIONS_BACKGROUND_TEXTURE, 0, 0, 0, 0.0F, 0.0F, this.width, (int) (height * 0.15), 32, 32);
+        context.drawTexture(OPTIONS_BACKGROUND_TEXTURE, 0, (int) (height * 0.85), 0, 0.0F, 0.0F, this.width, (int) (height * 0.15), 32, 32);
+        context.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
     }
 
     @Override
@@ -86,10 +93,12 @@ public abstract class ETFConfigScreen extends Screen {
 
 
         backgroundCube.render((float) 0.5, 1);
+        renderInGameBackground(context);
+        renderBackgroundTexture(context);
+//        renderBackgroundTexture(0, new Identifier("textures/gui/options_background.png"), (int) (height * 0.15), width);
+//        renderBackgroundTexture(0, new Identifier("textures/gui/options_background.png"), height, width, (int) (height * 0.85));
+        //context.fillGradient( 0, (int) (height * 0.15), width, (int) (height * 0.85), -1072689136, -804253680);
 
-        renderBackgroundTexture(0, new Identifier("textures/gui/options_background.png"), (int) (height * 0.15), width);
-        renderBackgroundTexture(0, new Identifier("textures/gui/options_background.png"), height, width, (int) (height * 0.85));
-        context.fillGradient( 0, (int) (height * 0.15), width, (int) (height * 0.85), -1072689136, -804253680);
 
         //context.fill(RenderLayer.getEndGateway(),0, (int) (height * 0.15), width, (int) (height * 0.85), ColorHelper.Argb.getArgb(255,255,255,255));
         context.drawCenteredTextWithShadow(textRenderer, title, width / 2, 15, 0xFFFFFF);

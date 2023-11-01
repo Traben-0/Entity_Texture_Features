@@ -19,9 +19,9 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
-import traben.entity_texture_features.config.screens.ETFConfigScreenSkinTool;
-import traben.entity_texture_features.texture_handlers.ETFManager;
-import traben.entity_texture_features.texture_handlers.ETFPlayerTexture;
+import traben.entity_texture_features.config.screens.skin.ETFConfigScreenSkinTool;
+import traben.entity_texture_features.texture_features.ETFManager;
+import traben.entity_texture_features.texture_features.texture_handlers.ETFPlayerTexture;
 
 import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 
@@ -31,6 +31,8 @@ public abstract class MixinCapeFeatureRenderer extends FeatureRenderer<AbstractC
     @Unique
     private static final Identifier dev_cape_e = new Identifier(MOD_ID, "textures/capes/etf_e.png");
     //private static final Identifier wife_cape = new Identifier(MOD_ID, "textures/capes/wife.png");
+    @Unique
+    AbstractClientPlayerEntity etf$player = null;
 
     @SuppressWarnings("unused")
     public MixinCapeFeatureRenderer(FeatureRendererContext<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> context) {
@@ -43,9 +45,9 @@ public abstract class MixinCapeFeatureRenderer extends FeatureRenderer<AbstractC
     private void etf$injected(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, AbstractClientPlayerEntity abstractClientPlayerEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
         //custom rendering required as ETF uses a different render layer to allow transparent capes
         // the return of getCapeTexture() from abstract client is ignored here, but it was required for enabling capes to render for those players and also for elytras
-        ETFPlayerTexture playerTexture = ETFManager.getInstance().getPlayerTexture(abstractClientPlayerEntity, abstractClientPlayerEntity.getSkinTexture());
+        ETFPlayerTexture playerTexture = ETFManager.getInstance().getPlayerTexture(abstractClientPlayerEntity, abstractClientPlayerEntity.getSkinTextures().texture());
         //can load these textures
-        if(ETFVersionDifferenceHandler.isFabric() == ETFVersionDifferenceHandler.isThisModLoaded("fabric")) {
+        if (ETFVersionDifferenceHandler.isFabric() == ETFVersionDifferenceHandler.isThisModLoaded("fabric")) {
             if (playerTexture != null && playerTexture.capeType != ETFConfigScreenSkinTool.CapeType.NONE) {
                 playerTexture.renderFeatures(matrixStack, vertexConsumerProvider, i, this.getContextModel());
             } else if (abstractClientPlayerEntity.getUuid().equals(ETFPlayerTexture.Dev)) {
@@ -61,9 +63,6 @@ public abstract class MixinCapeFeatureRenderer extends FeatureRenderer<AbstractC
         etf$player = abstractClientPlayerEntity;
     }
 
-    @Unique
-    AbstractClientPlayerEntity etf$player = null;
-
     @ModifyArg(
             method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/client/network/AbstractClientPlayerEntity;FFFFFF)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/VertexConsumerProvider;getBuffer(Lnet/minecraft/client/render/RenderLayer;)Lnet/minecraft/client/render/VertexConsumer;"),
@@ -71,7 +70,7 @@ public abstract class MixinCapeFeatureRenderer extends FeatureRenderer<AbstractC
     )
     private RenderLayer mixin(RenderLayer layer) {
         if (etf$player != null)
-            return RenderLayer.getEntityTranslucent(etf$player.getCapeTexture());
+            return RenderLayer.getEntityTranslucent(etf$player.getSkinTextures().capeTexture());
         return layer;
     }
 

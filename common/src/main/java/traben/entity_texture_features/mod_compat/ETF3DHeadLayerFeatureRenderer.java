@@ -12,19 +12,19 @@ import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import traben.entity_texture_features.ETFClientCommon;
-import traben.entity_texture_features.texture_handlers.ETFManager;
-import traben.entity_texture_features.texture_handlers.ETFPlayerTexture;
+import traben.entity_texture_features.texture_features.ETFManager;
+import traben.entity_texture_features.texture_features.texture_handlers.ETFPlayerTexture;
 
 //class exists to introduce extra, ETF interacting, child functionality to 3d Skin layer mod featureRenderers
 //this will replace the featureRender added by 3d skin layers mod
 //
 // as long as inheritance remains valid this should remain future-proof
 public class ETF3DHeadLayerFeatureRenderer extends HeadLayerFeatureRenderer {
+    private VertexConsumerProvider thisProvider = null;
+
     public ETF3DHeadLayerFeatureRenderer(FeatureRendererContext<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> renderLayerParent) {
         super(renderLayerParent);
     }
-
-    private VertexConsumerProvider thisProvider = null;
 
     // simply captures vertexConsumerProvider
     @Override
@@ -36,7 +36,7 @@ public class ETF3DHeadLayerFeatureRenderer extends HeadLayerFeatureRenderer {
     // simply defers the parent renderLayers method until ETF has had a chance to change the vertex consumer
     @Override
     public void renderCustomHelmet(PlayerSettings settings, AbstractClientPlayerEntity abstractClientPlayer, MatrixStack matrixStack, VertexConsumer vertices, int light, int overlay) {
-        ETFPlayerTexture thisETF = ETFManager.getInstance().getPlayerTexture(abstractClientPlayer, abstractClientPlayer.getSkinTexture());
+        ETFPlayerTexture thisETF = ETFManager.getInstance().getPlayerTexture(abstractClientPlayer, abstractClientPlayer.getSkinTextures().texture());
         if (thisETF != null) {
             Identifier skin = thisETF.getBaseTextureIdentifierOrNullForVanilla(abstractClientPlayer);
             if (skin != null) {

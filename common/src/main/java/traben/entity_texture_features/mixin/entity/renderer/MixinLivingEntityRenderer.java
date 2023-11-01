@@ -23,12 +23,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import traben.entity_texture_features.ETFClientCommon;
-import traben.entity_texture_features.entity_handlers.ETFEntityWrapper;
 import traben.entity_texture_features.mod_compat.ETF3DSkinLayersUtil;
-import traben.entity_texture_features.texture_handlers.ETFManager;
-import traben.entity_texture_features.texture_handlers.ETFPlayerTexture;
-import traben.entity_texture_features.texture_handlers.ETFTexture;
+import traben.entity_texture_features.texture_features.ETFManager;
+import traben.entity_texture_features.texture_features.texture_handlers.ETFPlayerTexture;
+import traben.entity_texture_features.texture_features.texture_handlers.ETFTexture;
 import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.utils.entity_wrappers.ETFEntityWrapper;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
@@ -41,12 +41,26 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
     private ETFTexture thisETF$Texture = null;
     @Unique
     private ETFPlayerTexture thisETF$PlayerTexture = null;
+    @Unique
+    private T etf$thisEntity = null;
+    @Unique
+    private Identifier etf$thisIdentifier = null;
 
     @SuppressWarnings("unused")
     protected MixinLivingEntityRenderer(EntityRendererFactory.Context ctx) {
         super(ctx);
 
     }
+
+
+// the redirect is not helpful for EMF compatibility the mess down below is preferable unfortunately
+//    @Redirect(
+//            method = "getRenderLayer",
+//            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/LivingEntityRenderer;getTexture(Lnet/minecraft/entity/Entity;)Lnet/minecraft/util/Identifier;"))
+//    private Identifier etf$getTextureRedirect(LivingEntityRenderer<?,?> instance, Entity entity){
+//            return etf$getAndSetTexture(entity, getTexture((T) entity));
+//
+//    }
 
     @Shadow
     public abstract M getModel();
@@ -76,20 +90,10 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
         }
     }
 
-
-// the redirect is not helpful for EMF compatibility the mess down below is preferable unfortunately
-//    @Redirect(
-//            method = "getRenderLayer",
-//            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/LivingEntityRenderer;getTexture(Lnet/minecraft/entity/Entity;)Lnet/minecraft/util/Identifier;"))
-//    private Identifier etf$getTextureRedirect(LivingEntityRenderer<?,?> instance, Entity entity){
-//            return etf$getAndSetTexture(entity, getTexture((T) entity));
-//
-//    }
-
     @Inject(
             method = "getRenderLayer",
             at = @At(value = "HEAD"))
-    private void etf$getEntityParameter(T entity, boolean showBody, boolean translucent, boolean showOutline, CallbackInfoReturnable<RenderLayer> cir){
+    private void etf$getEntityParameter(T entity, boolean showBody, boolean translucent, boolean showOutline, CallbackInfoReturnable<RenderLayer> cir) {
         etf$thisEntity = entity;
     }
 
@@ -97,28 +101,23 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
             method = "getRenderLayer",
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/client/render/RenderLayer;getItemEntityTranslucentCull(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;"))
-    private Identifier etf$changeFirstPossibility(Identifier texture){
+    private Identifier etf$changeFirstPossibility(Identifier texture) {
         return etf$getAndSetTexture(etf$thisEntity, texture);
     }
+
     @ModifyArg(
             method = "getRenderLayer",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/EntityModel;getLayer(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;"))
-    private Identifier etf$changeSecondPossiblility(Identifier texture){
+    private Identifier etf$changeSecondPossiblility(Identifier texture) {
         return etf$getAndSetTexture(etf$thisEntity, texture);
     }
+
     @ModifyArg(
             method = "getRenderLayer",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/RenderLayer;getOutline(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;"))
-    private Identifier etf$changeThirdPossiblility(Identifier texture){
+    private Identifier etf$changeThirdPossiblility(Identifier texture) {
         return etf$getAndSetTexture(etf$thisEntity, texture);
     }
-
-    @Unique
-    private T etf$thisEntity = null;
-    @Unique
-    private Identifier etf$thisIdentifier = null;
-
-
 
     @Unique
     private Identifier etf$getAndSetTexture(T entity, Identifier vanillaTexture) {
@@ -126,7 +125,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
         if (entity instanceof PlayerEntity player) {
             if (ETFConfigData.skinFeaturesEnabled) {
 
-                thisETF$PlayerTexture = ETFManager.getInstance().getPlayerTexture(player, ((AbstractClientPlayerEntity) player).getSkinTexture());
+                thisETF$PlayerTexture = ETFManager.getInstance().getPlayerTexture(player, ((AbstractClientPlayerEntity) player).getSkinTextures().texture());
                 if (thisETF$PlayerTexture != null) {
 
                     Identifier etfTexture = thisETF$PlayerTexture.getBaseTextureIdentifierOrNullForVanilla(player);
@@ -147,12 +146,11 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
             //otherwise uses regular optifine properties in offline mode as with any other mob
         }
         thisETF$Texture = ETFManager.getInstance().getETFTexture(vanillaTexture, new ETFEntityWrapper(entity), ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs);
-        etf$thisIdentifier = thisETF$Texture.getTextureIdentifier(new ETFEntityWrapper( entity));
+        etf$thisIdentifier = thisETF$Texture.getTextureIdentifier(new ETFEntityWrapper(entity));
         return etf$thisIdentifier;
 
 
     }
-
 
 
     @Inject(method = "Lnet/minecraft/client/render/entity/LivingEntityRenderer;getRenderLayer(Lnet/minecraft/entity/LivingEntity;ZZZ)Lnet/minecraft/client/render/RenderLayer;",
@@ -186,7 +184,6 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
     }
 
 
-
     @ModifyArg(
             method = "addFeature",
             at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z"),
@@ -196,19 +193,19 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
         // replace 3d skin layers mod feature renderers with ETF's child versions
 
         try {
-                // handler class is only ever accessed if the mod is present
-                // prevents NoClassDefFoundError
-                if (ETFClientCommon.SKIN_LAYERS_DETECTED
-                        && ETFConfigData.use3DSkinLayerPatch
-                        && ETF3DSkinLayersUtil.canReplace((FeatureRenderer<?, ?>) featureRenderer)) {
-                    return ETF3DSkinLayersUtil.getReplacement((FeatureRenderer<?, ?>) featureRenderer, this);
-                }
+            // handler class is only ever accessed if the mod is present
+            // prevents NoClassDefFoundError
+            if (ETFClientCommon.SKIN_LAYERS_DETECTED
+                    && ETFConfigData.use3DSkinLayerPatch
+                    && ETF3DSkinLayersUtil.canReplace((FeatureRenderer<?, ?>) featureRenderer)) {
+                return ETF3DSkinLayersUtil.getReplacement((FeatureRenderer<?, ?>) featureRenderer, this);
+            }
         } catch (Exception e) {
-                ETFUtils2.logWarn("Exception with ETF's 3D skin layers mod compatibility: " + e);
+            ETFUtils2.logWarn("Exception with ETF's 3D skin layers mod compatibility: " + e);
         } catch (NoClassDefFoundError error) {
-                // Should never be thrown
-                // unless a significant change in 3d skin layers mod
-                ETFUtils2.logError("Error with ETF's 3D skin layers mod compatibility: " + error);
+            // Should never be thrown
+            // unless a significant change in 3d skin layers mod
+            ETFUtils2.logError("Error with ETF's 3D skin layers mod compatibility: " + error);
         }
 
         return featureRenderer;

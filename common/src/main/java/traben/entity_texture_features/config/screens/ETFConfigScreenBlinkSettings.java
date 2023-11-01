@@ -114,7 +114,7 @@ public class ETFConfigScreenBlinkSettings extends ETFConfigScreen {
         int i = 0;
         for (Text txt :
                 lines) {
-            context.drawTextWithShadow( textRenderer, txt, (int) (width * 0.5), (int) (height * 0.18) + i, 0xFFFFFF);
+            context.drawTextWithShadow(textRenderer, txt, (int) (width * 0.5), (int) (height * 0.18) + i, 0xFFFFFF);
             i += txt.getString().isBlank() ? 5 : 10;
         }
 
@@ -129,7 +129,7 @@ public class ETFConfigScreenBlinkSettings extends ETFConfigScreen {
         int i2 = 0;
         for (Text txt :
                 lines2) {
-            context.drawTextWithShadow( textRenderer, txt, (int) (width * 0.5), (int) (height * 0.58) + i2, 0xFFFFFF);
+            context.drawTextWithShadow(textRenderer, txt, (int) (width * 0.5), (int) (height * 0.58) + i2, 0xFFFFFF);
             i2 += txt.getString().isBlank() ? 5 : 10;
         }
     }

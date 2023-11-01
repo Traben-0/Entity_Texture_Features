@@ -29,7 +29,6 @@ public class ETFConfigScreenRandomSettings extends ETFConfigScreen {
                     //temporaryETFConfig = new ETFConfig();
                     ETFConfigScreenMain.temporaryETFConfig.enableCustomTextures = true;
                     ETFConfigScreenMain.temporaryETFConfig.textureUpdateFrequency_V2 = ETFConfig.UpdateFrequency.Fast;
-                    ETFConfigScreenMain.temporaryETFConfig.restrictUpdateProperties = true;
                     ETFConfigScreenMain.temporaryETFConfig.enableTridents = true;
                     ETFConfigScreenMain.temporaryETFConfig.enableCustomBlockEntities = true;
                     ETFConfigScreenMain.temporaryETFConfig.restrictMoonPhase = true;
@@ -114,8 +113,6 @@ public class ETFConfigScreenRandomSettings extends ETFConfigScreen {
 
 
     }
-
-
 
 
 }

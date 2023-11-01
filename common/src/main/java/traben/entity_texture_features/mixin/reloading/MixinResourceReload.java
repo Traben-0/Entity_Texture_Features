@@ -5,7 +5,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import traben.entity_texture_features.texture_handlers.ETFManager;
+import traben.entity_texture_features.texture_features.ETFManager;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 
@@ -13,8 +13,7 @@ import traben.entity_texture_features.utils.ETFUtils2;
 public abstract class MixinResourceReload {
 
 
-
-    @Inject(method = "reloadResources(Z)Ljava/util/concurrent/CompletableFuture;", at = @At("HEAD"))
+    @Inject(method = "reloadResources()Ljava/util/concurrent/CompletableFuture;", at = @At("HEAD"))
     private void etf$injected(CallbackInfoReturnable<Float> cir) {
         ETFUtils2.logMessage("reloading ETF data.");
         ETFManager.resetInstance();
