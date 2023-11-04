@@ -7,17 +7,20 @@ import traben.entity_texture_features.utils.entity_wrappers.ETFEntity;
 
 import java.util.ArrayList;
 
-public abstract class RangeFromStringArrayProperty<N extends Number> extends RandomProperty {
+public abstract class NumberRangeFromStringArrayProperty<N extends Number> extends RandomProperty {
 
-    protected final String ORIGINAL_INPUT;
+    public final String originalInput;
     protected final ArrayList<RangeTester<N>> ARRAY = new ArrayList<>();
 
-    protected RangeFromStringArrayProperty(String string) throws RandomPropertyException {
-        ORIGINAL_INPUT = string;
+    protected NumberRangeFromStringArrayProperty(String string) throws RandomPropertyException {
+        originalInput = string;
         if (string == null)
             throw new RandomPropertyException(getPropertyId() + " property was broken");
 
-        String[] array = string.trim().split("\\s+");
+        //if you need to parse custom characters the originalInput is saved in that variable for you
+        String onlyNumbersSpacesDashesAndPeriods = string.replaceAll("[^0-9.\\s-]","");
+
+        String[] array = onlyNumbersSpacesDashesAndPeriods.trim().split("\\s+");
 
         if (array.length == 0)
             throw new RandomPropertyException(getPropertyId() + " property was broken");
@@ -69,7 +72,7 @@ public abstract class RangeFromStringArrayProperty<N extends Number> extends Ran
 
     @Override
     protected String getPrintableRuleInfo() {
-        return ORIGINAL_INPUT;
+        return originalInput;
     }
 
     public interface RangeTester<N> {

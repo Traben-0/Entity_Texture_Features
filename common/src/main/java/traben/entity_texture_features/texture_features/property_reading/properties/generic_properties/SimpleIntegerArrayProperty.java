@@ -14,7 +14,7 @@ import java.util.Properties;
 
 
 /**
- * A simpler implementation of {@link RangeFromStringArrayProperty} utilizing an Integer set containing all valid
+ * A simpler implementation of {@link NumberRangeFromStringArrayProperty} utilizing an Integer set containing all valid
  * integers for property.<p>
  * I.E. a property of  "1-4 8-10" would have an internal set here of {1,2,3,4,8,9,10}
  * instead of parsing the ranges each time
@@ -70,7 +70,7 @@ public abstract class SimpleIntegerArrayProperty extends RandomProperty {
         //assume rawRange =  "20-56"  but can be "-64-56", "-30--10"  or "-14"
         String numberOnlyString = rawRange.trim().replaceAll("[^0-9-]", "");
         try {
-            if (numberOnlyString.matches("\\d-(\\d|-\\d)")) {
+            if (numberOnlyString.matches("(\\d+|-\\d+)-(\\d+|-\\d+)")) {
                 String[] str = numberOnlyString.split("(?<!^|-)-");
                 int small = Integer.parseInt(str[0]);
                 int large = Integer.parseInt(str[1]);
