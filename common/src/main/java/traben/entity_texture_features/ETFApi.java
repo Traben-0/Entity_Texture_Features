@@ -166,12 +166,25 @@ public final class ETFApi {
     public static Identifier getCurrentETFVariantTextureOfBlockEntity(@NotNull BlockEntity entity, @NotNull Identifier defaultTexture, @Nullable Integer hashToAddToUUID) {
         if (entity != null) {
             ETFBlockEntityWrapper etfEntity = new ETFBlockEntityWrapper(entity, hashToAddToUUID);
-            ETFTexture etfTexture = ETFManager.getInstance().getETFTexture(defaultTexture, etfEntity, ETFManager.TextureSource.BLOCK_ENTITY, ETFConfigData.removePixelsUnderEmissiveBlockEntity);
-            if (etfTexture != null) {// just in case
-                Identifier etfIdentifier = etfTexture.getTextureIdentifier(etfEntity);
-                if (etfIdentifier != null) {// just in case
-                    return etfIdentifier;
-                }
+            return getCurrentETFVariantTextureOfBlockEntityInternal(etfEntity,defaultTexture);
+        }
+        return defaultTexture;
+    }
+
+    public static Identifier getCurrentETFVariantTextureOfBlockEntity(@NotNull BlockEntity entity, @NotNull Identifier defaultTexture, @NotNull UUID specifiedUUID) {
+        if (entity != null) {
+            ETFBlockEntityWrapper etfEntity = new ETFBlockEntityWrapper(entity, specifiedUUID);
+            return getCurrentETFVariantTextureOfBlockEntityInternal(etfEntity,defaultTexture);
+        }
+        return defaultTexture;
+    }
+
+    private static Identifier getCurrentETFVariantTextureOfBlockEntityInternal(@NotNull ETFBlockEntityWrapper etfEntity, @NotNull Identifier defaultTexture) {
+        ETFTexture etfTexture = ETFManager.getInstance().getETFTexture(defaultTexture, etfEntity, ETFManager.TextureSource.BLOCK_ENTITY, ETFConfigData.removePixelsUnderEmissiveBlockEntity);
+        if (etfTexture != null) {// just in case
+            Identifier etfIdentifier = etfTexture.getTextureIdentifier(etfEntity);
+            if (etfIdentifier != null) {// just in case
+                return etfIdentifier;
             }
         }
         return defaultTexture;
@@ -465,9 +478,18 @@ public final class ETFApi {
          */
         public int getSuffixForBlockEntity(BlockEntity entityToBeTested, @Nullable Integer hashToAddToUUID, boolean isThisTheFirstTestForEntity, Object2BooleanOpenHashMap<UUID> cacheToMarkEntitiesWhoseVariantCanChangeAgain) {
             if (entityToBeTested == null) return 0;
+            return getBlockEntityLogicInternal(new ETFBlockEntityWrapper(entityToBeTested,hashToAddToUUID), isThisTheFirstTestForEntity, cacheToMarkEntitiesWhoseVariantCanChangeAgain);
+
+        }
+
+        public int getSuffixForBlockEntity(BlockEntity entityToBeTested, UUID specifiedUUID, boolean isThisTheFirstTestForEntity, Object2BooleanOpenHashMap<UUID> cacheToMarkEntitiesWhoseVariantCanChangeAgain) {
+            if (entityToBeTested == null || specifiedUUID == null) return 0;
+            return getBlockEntityLogicInternal(new ETFBlockEntityWrapper(entityToBeTested,specifiedUUID), isThisTheFirstTestForEntity, cacheToMarkEntitiesWhoseVariantCanChangeAgain);
+        }
+
+        private int getBlockEntityLogicInternal(ETFEntity entity, boolean isThisTheFirstTestForEntity, Object2BooleanOpenHashMap<UUID> cacheToMarkEntitiesWhoseVariantCanChangeAgain){
             boolean isAnUpdate = !isThisTheFirstTestForEntity;
             for (RandomPropertyRule testCase : propertyCases) {
-                ETFEntity entity = new ETFBlockEntityWrapper(entityToBeTested, hashToAddToUUID);
                 if (testCase.doesEntityMeetConditionsOfThisCase(entity, isThisTheFirstTestForEntity, cacheToMarkEntitiesWhoseVariantCanChangeAgain)) {
                     return testCase.getVariantSuffixFromThisCase(entity.getUuid());
                 }
@@ -475,10 +497,8 @@ public final class ETFApi {
             return 0;
         }
 
-        @Deprecated
-        public int getSuffixForBlockEntity(BlockEntity entityToBeTested, UUID uuidForBlockEntity, boolean isThisTheFirstTestForEntity, Object2BooleanOpenHashMap<UUID> cacheToMarkEntitiesWhoseVariantCanChangeAgain) {
-            return getSuffixForBlockEntity(entityToBeTested, uuidForBlockEntity.hashCode(), isThisTheFirstTestForEntity, cacheToMarkEntitiesWhoseVariantCanChangeAgain);
-        }
+
+
     }
 
 

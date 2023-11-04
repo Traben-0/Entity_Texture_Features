@@ -1,6 +1,7 @@
 package traben.entity_texture_features.texture_features.property_reading.properties.optifine_properties;
 
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.texture_features.property_reading.properties.generic_properties.FloatRangeFromStringArrayProperty;
@@ -10,9 +11,11 @@ import java.util.Properties;
 
 public class HealthProperty extends FloatRangeFromStringArrayProperty {
 
+    private final boolean isPercentage;
 
     protected HealthProperty(Properties properties, int propertyNum) throws RandomPropertyException {
         super(readPropertiesOrThrow(properties, propertyNum, "health"));
+        isPercentage = originalInput.contains("%");
     }
 
     public static HealthProperty getPropertyOrNull(Properties properties, int propertyNum) {
@@ -27,8 +30,11 @@ public class HealthProperty extends FloatRangeFromStringArrayProperty {
     @Nullable
     @Override
     protected Float getRangeValueFromEntity(ETFEntity entity) {
-        if (entity.getEntity() instanceof LivingEntity alive)
-            return alive.getHealth() / alive.getMaxHealth() * 100;
+        if (entity.getEntity() instanceof LivingEntity alive) {
+            float health = alive.getHealth();
+            //integer required by optifine when it is percentage
+            return isPercentage ? MathHelper.ceil(health / alive.getMaxHealth() * 100) : health;
+        }
         return null;
     }
 
