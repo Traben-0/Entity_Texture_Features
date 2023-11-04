@@ -11,6 +11,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
@@ -26,6 +27,11 @@ public class ETFBlockEntityWrapper implements ETFEntity {
         this.hashToAddToUUID = hashToAddToUUID;
     }
 
+    public ETFBlockEntityWrapper(BlockEntity entity, @NotNull UUID uuid) {
+        this.blockEntity = entity;
+        this.id = uuid;
+        this.hashToAddToUUID = 0;
+    }
 
     public static UUID getUUIDForBlockEntity(BlockEntity blockEntity, @Nullable Integer hashToAddToUUID) {
         //Random random = new Random(blockEntity.getClass().hashCode());
