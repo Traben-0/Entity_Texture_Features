@@ -1,5 +1,18 @@
 [**ETF Changelog:**]
 
+[4.6.1]
+
+Several fixes, primarily for the random property system rewrite in 4.6.0
+
+- fixed api methods not being static
+- fixed texture names ending with numbers not correctly using a "." to separate the variant *(e.g big_chungus_0.png should variate with big_chungus_0.2.png)*
+- fixed `health` property not working at all in 4.6
+- fixed `health` property percentage mode values not being rounded as integers *(an entity with health percentage 3.5%  would not trigger 0-3% or 4-6% checks, which they do in OptiFine)*
+- fixed range property values not working correctly *(e.g   12-33 )*
+- further api additions for EMF
+- removed some log spam related to player head blocks
+- 
+
 [4.6.0]
 - rewrote the Random Property reading code to be more object-oriented, stable, and simplified.
 This also allows other mods to add new random properties for easy use in ETF & EMF.

@@ -42,7 +42,7 @@ public abstract class ETFUtils2 {
 
     @NotNull
     public static String addVariantNumberSuffix(String identifierString, int variant) {
-        if (identifierString.matches("\\d\\.png")) {
+        if (identifierString.matches("\\D+\\d+\\.png")) {
             return identifierString.replace(".png", "." + variant + ".png");
         } else {
             return identifierString.replace(".png", variant + ".png");
