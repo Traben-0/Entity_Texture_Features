@@ -127,7 +127,7 @@ public class ETFPlayerTexture {
                 //originalSkin = ETFUtils2.getNativeImageElseNull(rendererGivenSkin);
                 checkTexture(true);
             } catch (Exception e) {
-                e.printStackTrace();
+                //e.printStackTrace();
                 skinFailed();
             }
         }
