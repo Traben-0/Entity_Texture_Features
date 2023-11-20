@@ -36,9 +36,6 @@ public class MixinEntityRenderDispatcher {
             index = 4
     )
     private VertexConsumerProvider etf$injectIntoGetBuffer(VertexConsumerProvider vertexConsumers) {
-        return layer -> {
-            ETFRenderContext.setCurrentRenderLayer(layer);
-            return vertexConsumers.getBuffer(layer);
-        };
+        return layer -> ETFRenderContext.processVertexConsumer(vertexConsumers, layer);
     }
 }

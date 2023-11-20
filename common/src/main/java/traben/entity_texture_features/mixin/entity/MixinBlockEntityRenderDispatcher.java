@@ -33,10 +33,7 @@ public class MixinBlockEntityRenderDispatcher {
             argsOnly = true)
     private static VertexConsumerProvider etf$injectIntoGetBuffer(VertexConsumerProvider vertexConsumers) {
         ETFRenderContext.setCurrentProvider(vertexConsumers);
-        return layer -> {
-            ETFRenderContext.setCurrentRenderLayer(layer);
-            return vertexConsumers.getBuffer(layer);
-        };
+        return layer -> ETFRenderContext.processVertexConsumer(vertexConsumers, layer);
     }
     @ModifyVariable(
             method = "method_23081",
@@ -45,9 +42,6 @@ public class MixinBlockEntityRenderDispatcher {
             argsOnly = true)
     private static VertexConsumerProvider etf$injectIntoGetBuffer2(VertexConsumerProvider vertexConsumers) {
         ETFRenderContext.setCurrentProvider(vertexConsumers);
-        return layer -> {
-            ETFRenderContext.setCurrentRenderLayer(layer);
-            return vertexConsumers.getBuffer(layer);
-        };
+        return layer -> ETFRenderContext.processVertexConsumer(vertexConsumers, layer);
     }
 }
