@@ -5,12 +5,16 @@
   "minVersion": "0.8",
   "client": [
     "MixinIdentifier",
+    "MixinModelPart",
     "MixinPackScreen",
+    "MixinRenderLayer",
     "accessor.ElytraEntityModelAccessor",
+    "accessor.FileCacheAccessor",
     "accessor.PlayerSkinProviderAccessor",
     "accessor.PlayerSkinTextureAccessor",
     "accessor.SpriteContentsAccessor",
     "accessor.TooltipAccessor",
+    "entity.MixinEntityRenderDispatcher",
     "entity.block_entity.MixinBedBlockEntityRenderer",
     "entity.block_entity.MixinBellBlockEntityRenderer",
     "entity.block_entity.MixinChestBlockEntityRenderer",
@@ -27,6 +31,7 @@
     "entity.misc.MixinPlayerEntity",
     "entity.misc.MixinTridentEntity",
     "entity.renderer.MixinArmorStandEntityRenderer",
+    "entity.MixinBlockEntityRenderDispatcher",
     "entity.renderer.MixinBoatEntityRenderer",
     "entity.renderer.MixinEndCrystalEntityRenderer",
     "entity.renderer.MixinEnderDragonEntityRenderer",
@@ -60,7 +65,6 @@
     "reloading.MixinResourceReload"
   ],
   "mixins": [
-    "accessor.FileCacheAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

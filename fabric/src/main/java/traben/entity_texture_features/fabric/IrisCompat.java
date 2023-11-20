@@ -1,6 +1,5 @@
 package traben.entity_texture_features.fabric;
 
-import net.irisshaders.iris.api.v0.IrisApi;
 import traben.entity_texture_features.ETFClientCommon;
 
 // iris compat improved by @Maximum#8760
@@ -23,7 +22,7 @@ public abstract class IrisCompat {
     private static class InternalHandlerImpl implements InternalHandler {
         @Override
         public boolean isShaderPackInUse() {
-            return IrisApi.getInstance().isShaderPackInUse();
+            return false;// IrisApi.getInstance().isShaderPackInUse();//todo
         }
 
     }
