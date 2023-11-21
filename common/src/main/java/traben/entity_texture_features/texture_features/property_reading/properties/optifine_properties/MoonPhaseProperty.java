@@ -2,7 +2,7 @@ package traben.entity_texture_features.texture_features.property_reading.propert
 
 import org.jetbrains.annotations.NotNull;
 import traben.entity_texture_features.texture_features.property_reading.properties.generic_properties.SimpleIntegerArrayProperty;
-import traben.entity_texture_features.utils.entity_wrappers.ETFEntity;
+import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.Properties;
 
@@ -36,8 +36,8 @@ public class MoonPhaseProperty extends SimpleIntegerArrayProperty {
 
     @Override
     protected int getValueFromEntity(ETFEntity entity) {
-        if (entity.getWorld() == null)
+        if (entity.etf$getWorld() == null)
             return Integer.MIN_VALUE;
-        return entity.getWorld().getMoonPhase();
+        return entity.etf$getWorld().getMoonPhase();
     }
 }

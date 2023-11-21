@@ -2,7 +2,7 @@ package traben.entity_texture_features.texture_features.property_reading.propert
 
 import org.jetbrains.annotations.NotNull;
 import traben.entity_texture_features.texture_features.property_reading.properties.generic_properties.SimpleIntegerArrayProperty;
-import traben.entity_texture_features.utils.entity_wrappers.ETFEntity;
+import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.Properties;
 
@@ -48,6 +48,6 @@ public class HeightProperty extends SimpleIntegerArrayProperty {
 
     @Override
     protected int getValueFromEntity(ETFEntity entity) {
-        return entity.getBlockY();
+        return entity.etf$getBlockY();
     }
 }

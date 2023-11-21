@@ -2,7 +2,7 @@ package traben.entity_texture_features.texture_features.property_reading.propert
 
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import org.jetbrains.annotations.NotNull;
-import traben.entity_texture_features.utils.entity_wrappers.ETFEntity;
+import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.Properties;
 

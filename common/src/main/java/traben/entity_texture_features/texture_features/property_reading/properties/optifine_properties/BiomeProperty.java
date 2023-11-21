@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.texture_features.property_reading.properties.RandomProperty;
 import traben.entity_texture_features.texture_features.property_reading.properties.generic_properties.StringArrayOrRegexProperty;
-import traben.entity_texture_features.utils.entity_wrappers.ETFEntity;
+import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.Properties;
 
@@ -84,8 +84,8 @@ public class BiomeProperty extends StringArrayOrRegexProperty {
 
     @Override
     public @Nullable String getValueFromEntity(ETFEntity etfEntity) {
-        if (etfEntity.getWorld() != null && etfEntity.getBlockPos() != null) {
-            return ETFVersionDifferenceHandler.getBiomeString(etfEntity.getWorld(), etfEntity.getBlockPos()).replace("minecraft:", "");
+        if (etfEntity.etf$getWorld() != null && etfEntity.etf$getBlockPos() != null) {
+            return ETFVersionDifferenceHandler.getBiomeString(etfEntity.etf$getWorld(), etfEntity.etf$getBlockPos()).replace("minecraft:", "");
         }
         return null;
     }

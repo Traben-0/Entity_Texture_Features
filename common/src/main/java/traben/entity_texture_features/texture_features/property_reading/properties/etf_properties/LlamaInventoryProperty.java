@@ -3,7 +3,7 @@ package traben.entity_texture_features.texture_features.property_reading.propert
 import net.minecraft.entity.passive.LlamaEntity;
 import org.jetbrains.annotations.NotNull;
 import traben.entity_texture_features.texture_features.property_reading.properties.generic_properties.SimpleIntegerArrayProperty;
-import traben.entity_texture_features.utils.entity_wrappers.ETFEntity;
+import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.Properties;
 
@@ -34,7 +34,7 @@ public class LlamaInventoryProperty extends SimpleIntegerArrayProperty {
 
     @Override
     protected int getValueFromEntity(ETFEntity entity) {
-        if (entity.getEntity() instanceof LlamaEntity llama)
+        if (entity instanceof LlamaEntity llama)
             return llama.getInventoryColumns();
         return Integer.MIN_VALUE;
     }

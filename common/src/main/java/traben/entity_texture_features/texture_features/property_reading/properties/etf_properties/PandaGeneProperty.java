@@ -1,11 +1,10 @@
 package traben.entity_texture_features.texture_features.property_reading.properties.etf_properties;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.PandaEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.texture_features.property_reading.properties.generic_properties.StringArrayOrRegexProperty;
-import traben.entity_texture_features.utils.entity_wrappers.ETFEntity;
+import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.Properties;
 
@@ -33,9 +32,8 @@ public class PandaGeneProperty extends StringArrayOrRegexProperty {
     @Override
     @Nullable
     protected String getValueFromEntity(ETFEntity entityETF) {
-        Entity entity = entityETF.getEntity();
-        if (entity != null) {
-            if (entity instanceof PandaEntity panda) {
+        if (entityETF != null) {
+            if (entityETF instanceof PandaEntity panda) {
                 return panda.getHiddenGene().asString();
             }
         }

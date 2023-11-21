@@ -22,7 +22,7 @@ import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.screens.ETFConfigScreen;
 import traben.entity_texture_features.texture_features.ETFManager;
-import traben.entity_texture_features.texture_features.texture_handlers.ETFPlayerTexture;
+import traben.entity_texture_features.texture_features.player.ETFPlayerTexture;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.nio.file.Path;

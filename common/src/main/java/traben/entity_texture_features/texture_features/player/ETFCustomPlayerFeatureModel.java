@@ -1,4 +1,4 @@
-package traben.entity_texture_features.texture_features;
+package traben.entity_texture_features.texture_features.player;
 
 
 import net.minecraft.client.model.*;

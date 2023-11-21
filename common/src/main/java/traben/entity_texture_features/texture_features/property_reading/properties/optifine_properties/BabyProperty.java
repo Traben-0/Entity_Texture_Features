@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.texture_features.property_reading.properties.RandomProperty;
 import traben.entity_texture_features.texture_features.property_reading.properties.generic_properties.BooleanProperty;
-import traben.entity_texture_features.utils.entity_wrappers.ETFEntity;
+import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.Properties;
 
@@ -29,7 +29,7 @@ public class BabyProperty extends BooleanProperty {
     @Override
     @Nullable
     protected Boolean getValueFromEntity(ETFEntity entity) {
-        if (entity.getEntity() instanceof LivingEntity alive) {
+        if (entity instanceof LivingEntity alive) {
             return alive.isBaby();
         }
         return null;

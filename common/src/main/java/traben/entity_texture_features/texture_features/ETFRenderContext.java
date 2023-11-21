@@ -6,7 +6,7 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.util.Identifier;
 import traben.entity_texture_features.texture_features.texture_handlers.ETFTexture;
-import traben.entity_texture_features.utils.entity_wrappers.ETFEntity;
+import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -75,9 +75,9 @@ public class ETFRenderContext {
             possibleId.ifPresent(identifier -> currentETFTexture = ETFManager.getInstance().getETFDefaultTexture(identifier, false));
 
             //modify render layer if needed
-            if(!multiPhase.isOutline() && getCurrentEntity() != null && ETFManager.getInstance().ENTITY_TYPE_RENDER_LAYER.containsKey(getCurrentEntity().getType())){
+            if(!multiPhase.isOutline() && getCurrentEntity() != null && ETFManager.getInstance().ENTITY_TYPE_RENDER_LAYER.containsKey(getCurrentEntity().etf$getType())){
                 preventRenderLayerTextureModify();
-                switch (ETFManager.getInstance().ENTITY_TYPE_RENDER_LAYER.getInt(getCurrentEntity().getType())) {
+                switch (ETFManager.getInstance().ENTITY_TYPE_RENDER_LAYER.getInt(getCurrentEntity().etf$getType())) {
                     case 1 -> currentRenderLayer = RenderLayer.getEntityTranslucent(currentETFTexture.getTextureIdentifier(getCurrentEntity()));
                     case 2 -> currentRenderLayer = RenderLayer.getEntityTranslucentCull(currentETFTexture.getTextureIdentifier(getCurrentEntity()));
                     case 3 -> currentRenderLayer = RenderLayer.getEndGateway();

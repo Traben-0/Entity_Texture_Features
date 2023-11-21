@@ -3,7 +3,7 @@ package traben.entity_texture_features.texture_features.property_reading.propert
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.texture_features.property_reading.properties.RandomProperty;
-import traben.entity_texture_features.utils.entity_wrappers.ETFEntity;
+import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

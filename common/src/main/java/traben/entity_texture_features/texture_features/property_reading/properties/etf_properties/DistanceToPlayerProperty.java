@@ -4,7 +4,7 @@ import net.minecraft.client.MinecraftClient;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.texture_features.property_reading.properties.generic_properties.FloatRangeFromStringArrayProperty;
-import traben.entity_texture_features.utils.entity_wrappers.ETFEntity;
+import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.Properties;
 
@@ -29,7 +29,7 @@ public class DistanceToPlayerProperty extends FloatRangeFromStringArrayProperty 
     protected Float getRangeValueFromEntity(ETFEntity entity) {
         if (MinecraftClient.getInstance().player == null)
             return null;
-        return entity.distanceTo(MinecraftClient.getInstance().player);
+        return entity.etf$distanceTo(MinecraftClient.getInstance().player);
     }
 
     @Override

@@ -5,7 +5,7 @@ import net.minecraft.entity.mob.SlimeEntity;
 import org.jetbrains.annotations.NotNull;
 import traben.entity_texture_features.texture_features.property_reading.properties.RandomProperty;
 import traben.entity_texture_features.texture_features.property_reading.properties.generic_properties.SimpleIntegerArrayProperty;
-import traben.entity_texture_features.utils.entity_wrappers.ETFEntity;
+import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.Properties;
 
@@ -37,10 +37,10 @@ public class SizeProperty extends SimpleIntegerArrayProperty {
 
     @Override
     protected int getValueFromEntity(ETFEntity entity) {
-        if (entity.getEntity() instanceof SlimeEntity slime) {
+        if (entity instanceof SlimeEntity slime) {
             //magma cube too
             return slime.getSize() - 1;
-        } else if (entity.getEntity() instanceof PhantomEntity phantom) {
+        } else if (entity instanceof PhantomEntity phantom) {
             return phantom.getPhantomSize();
         }
         return Integer.MIN_VALUE;

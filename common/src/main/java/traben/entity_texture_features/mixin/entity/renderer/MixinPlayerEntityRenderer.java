@@ -18,11 +18,13 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.mod_compat.ETF3DSkinLayersUtil;
 import traben.entity_texture_features.texture_features.ETFManager;
-import traben.entity_texture_features.texture_features.texture_handlers.ETFPlayerTexture;
+import traben.entity_texture_features.texture_features.player.ETFPlayerFeatureRenderer;
+import traben.entity_texture_features.texture_features.player.ETFPlayerTexture;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
@@ -37,7 +39,14 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
         super(ctx, model, shadowRadius);
     }
 
-    @Inject(method = "renderArm",
+    @Inject(method = "<init>",
+            at = @At(value = "TAIL"))
+    private void etf$addFeatures(EntityRendererFactory.Context ctx, boolean slim, CallbackInfo ci) {
+        PlayerEntityRenderer self = (PlayerEntityRenderer)((Object)this);
+        this.addFeature(new ETFPlayerFeatureRenderer<>(self));
+    }
+
+        @Inject(method = "renderArm",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/PlayerEntityModel;setAngles(Lnet/minecraft/entity/LivingEntity;FFFFF)V",
                     shift = At.Shift.AFTER), cancellable = true)
     private void etf$redirectNicely(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, AbstractClientPlayerEntity player, ModelPart arm, ModelPart sleeve, CallbackInfo ci) {
@@ -117,5 +126,19 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
             }
         }
         //else vanilla render
+    }
+
+    @Inject(method = "getTexture(Lnet/minecraft/client/network/AbstractClientPlayerEntity;)Lnet/minecraft/util/Identifier;",
+            at = @At(value = "RETURN"),cancellable = true)
+    private void etf$addFeatures(AbstractClientPlayerEntity abstractClientPlayerEntity, CallbackInfoReturnable<Identifier> cir) {
+        if(ETFConfigData.skinFeaturesEnabled) {
+            ETFPlayerTexture playerTexture = ETFManager.getInstance().getPlayerTexture(abstractClientPlayerEntity, cir.getReturnValue());
+            if (playerTexture != null && playerTexture.hasFeatures) {
+                Identifier texture = playerTexture.getBaseTextureIdentifierOrNullForVanilla(abstractClientPlayerEntity);
+                if (texture != null) {
+                    cir.setReturnValue(texture);
+                }
+            }
+        }
     }
 }

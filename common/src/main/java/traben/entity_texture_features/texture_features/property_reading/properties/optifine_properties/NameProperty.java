@@ -6,7 +6,7 @@ import net.minecraft.text.TextContent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.texture_features.property_reading.properties.generic_properties.StringArrayOrRegexProperty;
-import traben.entity_texture_features.utils.entity_wrappers.ETFEntity;
+import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.ArrayList;
 import java.util.Properties;
@@ -66,8 +66,8 @@ public class NameProperty extends StringArrayOrRegexProperty {
 
     @Override
     public @Nullable String getValueFromEntity(ETFEntity etfEntity) {
-        if (etfEntity.hasCustomName()) {
-            Text entityNameText = etfEntity.getCustomName();
+        if (etfEntity.etf$hasCustomName()) {
+            Text entityNameText = etfEntity.etf$getCustomName();
             if (entityNameText != null) {
                 TextContent content = entityNameText.getContent();
                 if (content instanceof LiteralTextContent literal) {

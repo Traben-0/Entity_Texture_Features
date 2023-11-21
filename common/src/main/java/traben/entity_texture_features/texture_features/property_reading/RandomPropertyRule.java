@@ -4,7 +4,7 @@ import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import traben.entity_texture_features.texture_features.ETFManager;
 import traben.entity_texture_features.texture_features.property_reading.properties.RandomProperty;
 import traben.entity_texture_features.utils.ETFUtils2;
-import traben.entity_texture_features.utils.entity_wrappers.ETFEntity;
+import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -63,7 +63,7 @@ public class RandomPropertyRule {
         if (RULE_ALWAYS_APPROVED) return true;
         if (etfEntity == null) return false;
 
-        UUID id = etfEntity.getUuid();
+        UUID id = etfEntity.etf$getUuid();
 
         Object2BooleanOpenHashMap<RandomProperty> spawnConditions;
         if (ETFManager.getInstance().ENTITY_SPAWN_CONDITIONS_CACHE.containsKey(id)) {
@@ -92,7 +92,7 @@ public class RandomPropertyRule {
         }
 
         if (wasEntityTestedByAnUpdatableProperty && UUID_CaseHasUpdateablesCustom != null) {
-            UUID_CaseHasUpdateablesCustom.put(etfEntity.getUuid(), true);
+            UUID_CaseHasUpdateablesCustom.put(etfEntity.etf$getUuid(), true);
         }
 
         ETFManager.getInstance().LAST_MET_RULE_INDEX.put(id, entityMetRequirements ? RULE_NUMBER : 0);

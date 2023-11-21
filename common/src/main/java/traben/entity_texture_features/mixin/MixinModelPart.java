@@ -8,6 +8,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -36,35 +37,10 @@ public abstract class MixinModelPart {
             ETFRenderContext.decrementCurrentModelPartDepth();
         }else{
             if(ETFRenderContext.isRenderReady()) {
-                //attempt emissive render
-                Identifier emissive = ETFRenderContext.getCurrentETFTexture().getEmissiveIdentifierOfCurrentState();
-                if (emissive != null) {
-
-                    ETFRenderContext.preventRenderLayerTextureModify();
-
-                    VertexConsumer emissiveConsumer = ETFRenderContext.getCurrentProvider().getBuffer(
-                            ETFManager.getEmissiveMode() == ETFManager.EmissiveRenderModes.BRIGHT
-                                    && ETFRenderContext.getCurrentEntity().getBlockEntity() == null ?
-                                RenderLayer.getBeaconBeam(emissive,true):
-                                RenderLayer.getEntityTranslucentCull(emissive));
-
-                    ETFRenderContext.allowRenderLayerTextureModify();
-
-                    render(matrices, emissiveConsumer, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, overlay, red, green, blue, alpha);
-                }
-
-                //attempt enchanted render
-                Identifier enchanted = ETFRenderContext.getCurrentETFTexture().getEnchantIdentifierOfCurrentState();
-                if(enchanted != null){
-                    ETFRenderContext.preventRenderLayerTextureModify();
-                    VertexConsumer enchantedVertex = ItemRenderer.getArmorGlintConsumer(ETFRenderContext.getCurrentProvider(), RenderLayer.getArmorCutoutNoCull(enchanted), false, true);
-                    ETFRenderContext.allowRenderLayerTextureModify();
-
-                    render(matrices, enchantedVertex, light, overlay, red, green, blue, alpha);
-                }
-
-                if(enchanted != null || emissive != null){
-                    //reset whatever render layer statics this establishes
+                //attempt special renders as eager OR checks
+                if(etf$renderEmissive(matrices, overlay, red, green, blue, alpha) |
+                        etf$renderEnchanted(matrices, light, overlay, red, green, blue, alpha)){
+                    //reset render layer stuff behind the scenes if special renders occurred
                     ETFRenderContext.getCurrentProvider().getBuffer(ETFRenderContext.getCurrentRenderLayer());
                 }
             }
@@ -73,6 +49,41 @@ public abstract class MixinModelPart {
         }
     }
 
+    @Unique
+    private boolean etf$renderEmissive(MatrixStack matrices, int overlay, float red, float green, float blue, float alpha){
+        Identifier emissive = ETFRenderContext.getCurrentETFTexture().getEmissiveIdentifierOfCurrentState();
+        if (emissive != null) {
+
+            ETFRenderContext.preventRenderLayerTextureModify();
+
+            VertexConsumer emissiveConsumer = ETFRenderContext.getCurrentProvider().getBuffer(
+                    ETFManager.getEmissiveMode() == ETFManager.EmissiveRenderModes.BRIGHT
+                            && ETFRenderContext.getCurrentEntity().etf$canBeBright() ?
+                            RenderLayer.getBeaconBeam(emissive,true):
+                            RenderLayer.getEntityTranslucentCull(emissive));
+
+            ETFRenderContext.allowRenderLayerTextureModify();
+
+            render(matrices, emissiveConsumer, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, overlay, red, green, blue, alpha);
+            return true;
+        }
+        return false;
+    }
+
+    @Unique
+    private boolean etf$renderEnchanted(MatrixStack matrices, int light, int overlay, float red, float green, float blue, float alpha){
+        //attempt enchanted render
+        Identifier enchanted = ETFRenderContext.getCurrentETFTexture().getEnchantIdentifierOfCurrentState();
+        if(enchanted != null){
+            ETFRenderContext.preventRenderLayerTextureModify();
+            VertexConsumer enchantedVertex = ItemRenderer.getArmorGlintConsumer(ETFRenderContext.getCurrentProvider(), RenderLayer.getArmorCutoutNoCull(enchanted), false, true);
+            ETFRenderContext.allowRenderLayerTextureModify();
+
+            render(matrices, enchantedVertex, light, overlay, red, green, blue, alpha);
+            return true;
+        }
+        return false;
+    }
 
 
 

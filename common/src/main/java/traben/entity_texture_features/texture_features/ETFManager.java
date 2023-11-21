@@ -19,14 +19,13 @@ import traben.entity_texture_features.texture_features.property_reading.RandomPr
 import traben.entity_texture_features.texture_features.property_reading.RandomPropertyRule;
 import traben.entity_texture_features.texture_features.property_reading.properties.RandomProperty;
 import traben.entity_texture_features.texture_features.texture_handlers.ETFDirectory;
-import traben.entity_texture_features.texture_features.texture_handlers.ETFPlayerTexture;
+import traben.entity_texture_features.texture_features.player.ETFPlayerTexture;
 import traben.entity_texture_features.texture_features.texture_handlers.ETFTexture;
 import traben.entity_texture_features.utils.ETFCacheKey;
 import traben.entity_texture_features.utils.ETFLruCache;
 import traben.entity_texture_features.utils.ETFUtils2;
-import traben.entity_texture_features.utils.entity_wrappers.ETFEntity;
-import traben.entity_texture_features.utils.entity_wrappers.ETFPlayerEntity;
-import traben.entity_texture_features.utils.entity_wrappers.ETFPlayerEntityWrapper;
+import traben.entity_texture_features.utils.ETFEntity;
+import traben.entity_texture_features.texture_features.player.ETFPlayerEntity;
 
 import java.util.*;
 
@@ -225,7 +224,7 @@ public class ETFManager {
                 //this should only purposefully call for features like armor or elytra that append to players and have no ETF customizing
                 return getETFDefaultTexture(vanillaIdentifier, canBePatched);
             }
-            UUID id = entity.getUuid();
+            UUID id = entity.etf$getUuid();
             //use custom cache id this differentiates feature renderer calls here and makes the base feature still identifiable by uuid only when features are called
             ETFCacheKey cacheKey = new ETFCacheKey(id, vanillaIdentifier); //source == TextureSource.ENTITY_FEATURE ? vanillaIdentifier : null);
             if (source == TextureSource.ENTITY) {
@@ -234,7 +233,7 @@ public class ETFManager {
             }
 
             //fastest in subsequent runs
-            if (id == ETF_GENERIC_UUID || entity.getBlockPos().equals(Vec3i.ZERO)) {
+            if (id == ETF_GENERIC_UUID || entity.etf$getBlockPos().equals(Vec3i.ZERO)) {
                 return getETFDefaultTexture(vanillaIdentifier, canBePatched);
             }
             if (ENTITY_TEXTURE_MAP.containsKey(cacheKey)) {
@@ -251,7 +250,7 @@ public class ETFManager {
                         ETFUtils2.logMessage(
                                 "\nGeneral ETF:" +
                                         "\n - Texture cache size: " + ETF_TEXTURE_CACHE.size() +
-                                        "\nThis " + entity.getType().toString() + ":" +
+                                        "\nThis " + entity.etf$getType().toString() + ":" +
                                         "\n - Texture: " + quickReturn + "\nEntity cache size: " + ENTITY_TEXTURE_MAP.size() +
                                         "\n - Original spawn state: " + ENTITY_SPAWN_CONDITIONS_CACHE.get(id) +
                                         "\n - OptiFine property count: " + (OPTIFINE_PROPERTY_CACHE.containsKey(vanillaIdentifier) ? Objects.requireNonNullElse(OPTIFINE_PROPERTY_CACHE.get(vanillaIdentifier), new ArrayList<>()).size() : 0) +
@@ -309,9 +308,9 @@ public class ETFManager {
             }
             ENTITY_TEXTURE_MAP.put(cacheKey, foundTexture);
             if (source == TextureSource.ENTITY_FEATURE) {
-                ObjectOpenHashSet<ETFCacheKey> knownFeatures = ENTITY_KNOWN_FEATURES_LIST.getOrDefault(entity.getUuid(), new ObjectOpenHashSet<>());
+                ObjectOpenHashSet<ETFCacheKey> knownFeatures = ENTITY_KNOWN_FEATURES_LIST.getOrDefault(entity.etf$getUuid(), new ObjectOpenHashSet<>());
                 knownFeatures.add(cacheKey);
-                ENTITY_KNOWN_FEATURES_LIST.put(entity.getUuid(), knownFeatures);
+                ENTITY_KNOWN_FEATURES_LIST.put(entity.etf$getUuid(), knownFeatures);
             }
             return foundTexture;
 
@@ -333,7 +332,7 @@ public class ETFManager {
             //random assignment either failed or returned texture1
             //as this is a feature we will also try one last time to match it to a possible variant of the base texture
 
-            ETFCacheKey baseCacheId = UUID_TO_MOB_CACHE_KEY_MAP_FOR_FEATURE_USAGE.get(entity.getUuid()); //new ETFCacheKey(entity.getUuid(), null);
+            ETFCacheKey baseCacheId = UUID_TO_MOB_CACHE_KEY_MAP_FOR_FEATURE_USAGE.get(entity.etf$getUuid()); //new ETFCacheKey(entity.getUuid(), null);
 
             if (baseCacheId != null && ENTITY_TEXTURE_MAP.containsKey(baseCacheId)) {
                 ETFTexture baseETFTexture = ENTITY_TEXTURE_MAP.get(baseCacheId);
@@ -484,7 +483,7 @@ public class ETFManager {
             for (RandomPropertyRule property :
                     optifineProperties) {
                 if (property.doesEntityMeetConditionsOfThisCase(entity, isThisAnUpdate, ENTITY_IS_UPDATABLE)) {
-                    return property.getVariantSuffixFromThisCase(entity.getUuid());
+                    return property.getVariantSuffixFromThisCase(entity.etf$getUuid());
                 }
             }
         } catch (Exception e) {
@@ -502,7 +501,7 @@ public class ETFManager {
 
     @NotNull
     private Identifier returnNewAlreadyConfirmedTrueRandomTexture(ETFEntity entity, Identifier vanillaIdentifier, int totalCount) {
-        int randomReliable = Math.abs(entity.getUuid().hashCode());
+        int randomReliable = Math.abs(entity.etf$getUuid().hashCode());
         randomReliable %= totalCount;
         randomReliable++;
         //no need to test as they have already all been confirmed existing by code
@@ -556,13 +555,13 @@ public class ETFManager {
 
     @Nullable
     public ETFPlayerTexture getPlayerTexture(PlayerEntity player, Identifier rendererGivenSkin) {
-        return getPlayerTexture(new ETFPlayerEntityWrapper(player), rendererGivenSkin);
+        return getPlayerTexture((ETFPlayerEntity) player, rendererGivenSkin);
     }
 
     @Nullable
     public ETFPlayerTexture getPlayerTexture(ETFPlayerEntity player, Identifier rendererGivenSkin) {
         try {
-            UUID id = player.getUuid();
+            UUID id = player.etf$getUuid();
             if (PLAYER_TEXTURE_MAP.containsKey(id)) {
                 ETFPlayerTexture possibleSkin = PLAYER_TEXTURE_MAP.get(id);
                 if (possibleSkin == null ||

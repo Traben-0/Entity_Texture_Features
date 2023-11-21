@@ -27,12 +27,10 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import traben.entity_texture_features.texture_features.ETFManager;
-import traben.entity_texture_features.texture_features.texture_handlers.ETFPlayerTexture;
+import traben.entity_texture_features.texture_features.player.ETFPlayerTexture;
 import traben.entity_texture_features.texture_features.texture_handlers.ETFTexture;
-import traben.entity_texture_features.utils.entity_wrappers.ETFBlockEntityWrapper;
-import traben.entity_texture_features.utils.entity_wrappers.ETFEntity;
-import traben.entity_texture_features.utils.entity_wrappers.ETFPlayerEntity;
-import traben.entity_texture_features.utils.entity_wrappers.ETFPlayerHeadWrapper;
+import traben.entity_texture_features.utils.ETFEntity;
+import traben.entity_texture_features.texture_features.player.ETFPlayerEntity;
 
 import java.util.Map;
 
@@ -77,16 +75,16 @@ public abstract class MixinSkullBlockEntityRenderer implements BlockEntityRender
             if (worldCheck != null) {
 
                 //make uuid for block based on set data
-                int hash = (direction == null ? 0 : direction.hashCode()) + (bl ? 1 : 0) + skullType.hashCode();
+                //int hash = (direction == null ? 0 : direction.hashCode()) + (bl ? 1 : 0) + skullType.hashCode();
 
                 Identifier identifier = etf$getIdentifier(skullType, skullBlockEntity.getOwner());
                 boolean player = skullBlockEntity.getOwner() != null;
                 if (player) {
-                    ETFPlayerEntity etfPlayer = new ETFPlayerHeadWrapper(skullBlockEntity, hash + skullBlockEntity.getOwner().getId().hashCode());
+                    ETFPlayerEntity etfPlayer = (ETFPlayerEntity) skullBlockEntity;
                     etf$entity = etfPlayer;
                     entity_texture_features$thisETFPlayerTexture = ETFManager.getInstance().getPlayerTexture(etfPlayer, identifier);
                 } else {
-                    etf$entity = new ETFBlockEntityWrapper(skullBlockEntity, hash);
+                    etf$entity = (ETFEntity) skullBlockEntity;
                     entity_texture_features$thisETFTexture = ETFManager.getInstance().getETFTexture(identifier, etf$entity, ETFManager.TextureSource.BLOCK_ENTITY, true);
                 }
             }

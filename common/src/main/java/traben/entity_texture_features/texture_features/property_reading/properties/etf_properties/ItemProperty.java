@@ -4,7 +4,7 @@ import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.texture_features.property_reading.properties.generic_properties.StringArrayOrRegexProperty;
-import traben.entity_texture_features.utils.entity_wrappers.ETFEntity;
+import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.Properties;
 
@@ -36,7 +36,7 @@ public class ItemProperty extends StringArrayOrRegexProperty {
                 && (ARRAY.stream().anyMatch((string) ->
                 "none".equals(string) || "any".equals(string) || "holding".equals(string) || "wearing".equals(string)))) {
             if (ARRAY.contains("none")) {
-                Iterable<ItemStack> equipped = entity.getItemsEquipped();
+                Iterable<ItemStack> equipped = entity.etf$getItemsEquipped();
                 for (ItemStack item :
                         equipped) {
                     if (item != null && !item.isEmpty()) {
@@ -48,11 +48,11 @@ public class ItemProperty extends StringArrayOrRegexProperty {
             } else {
                 Iterable<ItemStack> items;
                 if (ARRAY.contains("any")) {//any
-                    items = entity.getItemsEquipped();
+                    items = entity.etf$getItemsEquipped();
                 } else if (ARRAY.contains("holding")) {
-                    items = entity.getHandItems();
+                    items = entity.etf$getHandItems();
                 } else {//wearing
-                    items = entity.getArmorItems();
+                    items = entity.etf$getArmorItems();
                 }
                 boolean found = false;
                 for (ItemStack item :
@@ -69,7 +69,7 @@ public class ItemProperty extends StringArrayOrRegexProperty {
             //specifically named item
 
             //both armour and hand held
-            Iterable<ItemStack> equipped = entity.getItemsEquipped();
+            Iterable<ItemStack> equipped = entity.etf$getItemsEquipped();
             boolean found = false;
             for (ItemStack item :
                     equipped) {

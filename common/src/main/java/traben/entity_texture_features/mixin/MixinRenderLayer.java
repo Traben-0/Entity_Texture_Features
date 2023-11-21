@@ -25,7 +25,7 @@ public class MixinRenderLayer {
         ETFManager.TextureSource source;
         if(ETFRenderContext.isRenderingFeatures()){
             source = ETFManager.TextureSource.ENTITY_FEATURE;//this is still needed to speed up some feature renderers
-        } else if (ETFRenderContext.getCurrentEntity().getEntity() == null) {
+        } else if (ETFRenderContext.getCurrentEntity().etf$isBlockEntity()) {
             source = ETFManager.TextureSource.BLOCK_ENTITY;//todo still needed in rewrite?
         }else{
             source = ETFManager.TextureSource.ENTITY;

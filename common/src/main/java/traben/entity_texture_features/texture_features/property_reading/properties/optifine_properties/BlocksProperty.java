@@ -9,7 +9,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.texture_features.property_reading.properties.generic_properties.StringArrayOrRegexProperty;
-import traben.entity_texture_features.utils.entity_wrappers.ETFEntity;
+import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.Map;
 import java.util.Properties;
@@ -68,8 +68,7 @@ public class BlocksProperty extends StringArrayOrRegexProperty {
     public boolean testEntityInternal(ETFEntity entity) {
 
         String[] entityBlocks;
-        BlockEntity blockEntity = entity.getBlockEntity();
-        if (blockEntity != null) {
+        if (entity instanceof BlockEntity blockEntity) {
             if(blockEntity.getWorld() == null){
                 entityBlocks = new String[]{getBlockFormattedFromState(blockEntity.getCachedState())};
             }else {
@@ -79,9 +78,9 @@ public class BlocksProperty extends StringArrayOrRegexProperty {
                 };
             }
         } else {
-            if (entity.getWorld() == null || entity.getBlockPos() == null) return false;
-            World world = entity.getWorld();
-            BlockPos pos = entity.getBlockPos();
+            if (entity.etf$getWorld() == null || entity.etf$getBlockPos() == null) return false;
+            World world = entity.etf$getWorld();
+            BlockPos pos = entity.etf$getBlockPos();
             entityBlocks = new String[]{
                     getBlockFormattedFromState(world.getBlockState(pos)),
                     getBlockFormattedFromState(world.getBlockState(pos.down()))

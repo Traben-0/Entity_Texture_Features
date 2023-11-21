@@ -13,7 +13,7 @@ public abstract class MixinPiglinEntityRenderer {
 
     @ModifyVariable(method = "getPiglinModel", at = @At("HEAD"), index = 2, argsOnly = true)
     private static boolean injected(boolean zombie) {
-        //if it is a zombie pigling and we want to override the vanilla behaviour of hiding zombie piglin's right ear
+        //if it is a zombie piglin and we want to override the vanilla behaviour of hiding zombie piglin's right ear
         if (zombie && ETFManager.getInstance().zombiePiglinRightEarEnabled) {
             return false;
         }

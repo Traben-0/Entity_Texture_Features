@@ -21,6 +21,8 @@
     "entity.block_entity.MixinSkullBlockEntityRenderer",
     "entity.misc.MixinAbstractClientPlayerEntity",
     "entity.misc.MixinBlazeEntity",
+    "entity.misc.MixinBlockEntity",
+    "entity.misc.MixinEntity",
     "entity.misc.MixinGlowSquidEntity",
     "entity.misc.MixinPlayerEntity",
     "entity.renderer.MixinEnderDragonEntityRenderer",
@@ -38,6 +40,7 @@
     "reloading.MixinResourceReload"
   ],
   "mixins": [
+    "entity.misc.MixinSkullBlockEntity"
   ],
   "injectors": {
     "defaultRequire": 1

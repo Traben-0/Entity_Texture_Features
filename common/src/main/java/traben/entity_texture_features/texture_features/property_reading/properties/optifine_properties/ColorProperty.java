@@ -1,6 +1,5 @@
 package traben.entity_texture_features.texture_features.property_reading.properties.optifine_properties;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.ShulkerEntity;
 import net.minecraft.entity.passive.*;
 import net.minecraft.util.DyeColor;
@@ -8,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.texture_features.property_reading.properties.RandomProperty;
 import traben.entity_texture_features.texture_features.property_reading.properties.generic_properties.StringArrayOrRegexProperty;
-import traben.entity_texture_features.utils.entity_wrappers.ETFEntity;
+import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.Properties;
 
@@ -35,8 +34,7 @@ public class ColorProperty extends StringArrayOrRegexProperty {
 
     @Override
     @Nullable
-    protected String getValueFromEntity(ETFEntity entityETF) {
-        Entity entity = entityETF.getEntity();
+    protected String getValueFromEntity(ETFEntity entity) {
         if (entity != null) {
             if (entity instanceof WolfEntity wolf) {
                 return wolf.getCollarColor().getName();

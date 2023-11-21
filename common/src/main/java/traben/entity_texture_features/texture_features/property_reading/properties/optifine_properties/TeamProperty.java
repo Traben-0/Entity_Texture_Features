@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.texture_features.property_reading.properties.RandomProperty;
 import traben.entity_texture_features.texture_features.property_reading.properties.generic_properties.StringArrayOrRegexProperty;
-import traben.entity_texture_features.utils.entity_wrappers.ETFEntity;
+import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.Properties;
 
@@ -26,8 +26,8 @@ public class TeamProperty extends StringArrayOrRegexProperty {
 
     @Override
     public @Nullable String getValueFromEntity(ETFEntity etfEntity) {
-        if (etfEntity.getScoreboardTeam() != null) {
-            return etfEntity.getScoreboardTeam().getName();
+        if (etfEntity.etf$getScoreboardTeam() != null) {
+            return etfEntity.etf$getScoreboardTeam().getName();
         }
         return null;
     }

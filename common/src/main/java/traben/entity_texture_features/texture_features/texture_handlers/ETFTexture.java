@@ -20,6 +20,7 @@ import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFClientCommon;
@@ -27,8 +28,9 @@ import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.screens.ETFConfigScreen;
 import traben.entity_texture_features.texture_features.ETFManager;
 import traben.entity_texture_features.utils.ETFUtils2;
-import traben.entity_texture_features.utils.entity_wrappers.ETFEntity;
+import traben.entity_texture_features.utils.ETFEntity;
 
+import java.io.IOException;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Random;
@@ -639,42 +641,44 @@ public class ETFTexture {
         }
 
         //force eyes closed if asleep
-        if (entity.getPose() == EntityPose.SLEEPING) {
+        if (entity.etf$getPose() == EntityPose.SLEEPING) {
             modifyTextureState(TextureReturnState.APPLY_BLINK);
             return identifierOfCurrentState();
         }
         //force eyes closed if blinded
-        else if (entity.getEntity() instanceof LivingEntity alive && alive.hasStatusEffect(StatusEffects.BLINDNESS)) {
+        else if (entity instanceof LivingEntity alive && alive.hasStatusEffect(StatusEffects.BLINDNESS)) {
             modifyTextureState(doesBlink2() ? TextureReturnState.APPLY_BLINK2 : TextureReturnState.APPLY_BLINK);
             return identifierOfCurrentState();
-        } else {
+        } else{
             //do regular blinking
-            if (entity.getWorld() != null) {
-                UUID id = entity.getUuid();
-                if (!ETFManager.getInstance().ENTITY_BLINK_TIME.containsKey(id)) {
-                    ETFManager.getInstance().ENTITY_BLINK_TIME.put(id, entity.getWorld().getTime() + blinkLength + 1);
-                    return identifierOfCurrentState();
-                }
-                long nextBlink = ETFManager.getInstance().ENTITY_BLINK_TIME.getLong(id);
-                long currentTime = entity.getWorld().getTime();
+            try (World world = entity.etf$getWorld()) {
+                if (world != null) {
+                    UUID id = entity.etf$getUuid();
+                    if (!ETFManager.getInstance().ENTITY_BLINK_TIME.containsKey(id)) {
+                        ETFManager.getInstance().ENTITY_BLINK_TIME.put(id, world.getTime() + blinkLength + 1);
+                        return identifierOfCurrentState();
+                    }
+                    long nextBlink = ETFManager.getInstance().ENTITY_BLINK_TIME.getLong(id);
+                    long currentTime = world.getTime();
 
-                if (currentTime >= nextBlink - blinkLength && currentTime <= nextBlink + blinkLength) {
-                    if (doesBlink2()) {
-                        if (currentTime >= nextBlink - (blinkLength / 3) && currentTime <= nextBlink + (blinkLength / 3)) {
+                    if (currentTime >= nextBlink - blinkLength && currentTime <= nextBlink + blinkLength) {
+                        if (doesBlink2()) {
+                            if (currentTime >= nextBlink - (blinkLength / 3) && currentTime <= nextBlink + (blinkLength / 3)) {
+                                modifyTextureState(TextureReturnState.APPLY_BLINK);
+                                return identifierOfCurrentState();
+                            }
+                            modifyTextureState(TextureReturnState.APPLY_BLINK2);
+                            return identifierOfCurrentState();
+                        } else if (!(currentTime > nextBlink)) {
                             modifyTextureState(TextureReturnState.APPLY_BLINK);
                             return identifierOfCurrentState();
                         }
-                        modifyTextureState(TextureReturnState.APPLY_BLINK2);
-                        return identifierOfCurrentState();
-                    } else if (!(currentTime > nextBlink)) {
-                        modifyTextureState(TextureReturnState.APPLY_BLINK);
-                        return identifierOfCurrentState();
+                    } else if (currentTime > nextBlink + blinkLength) {
+                        //calculate new next blink
+                        ETFManager.getInstance().ENTITY_BLINK_TIME.put(id, currentTime + randomBlink.nextInt(blinkFrequency) + 20);
                     }
-                } else if (currentTime > nextBlink + blinkLength) {
-                    //calculate new next blink
-                    ETFManager.getInstance().ENTITY_BLINK_TIME.put(id, currentTime + randomBlink.nextInt(blinkFrequency) + 20);
                 }
-            }
+            }catch (IOException ignored){}
         }
         return identifierOfCurrentState();
     }

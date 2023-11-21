@@ -4,7 +4,7 @@ import net.minecraft.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.texture_features.property_reading.properties.generic_properties.FloatRangeFromStringArrayProperty;
-import traben.entity_texture_features.utils.entity_wrappers.ETFEntity;
+import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.Properties;
 
@@ -26,7 +26,7 @@ public class MaxHealthProperty extends FloatRangeFromStringArrayProperty {
     @Nullable
     @Override
     protected Float getRangeValueFromEntity(ETFEntity entity) {
-        if (entity.getEntity() instanceof LivingEntity alive)
+        if (entity instanceof LivingEntity alive)
             return alive.getMaxHealth();
         return null;
     }

@@ -10,14 +10,14 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.texture_features.ETFRenderContext;
-import traben.entity_texture_features.utils.entity_wrappers.ETFEntityWrapper;
+import traben.entity_texture_features.utils.ETFEntity;
 
 @Mixin(EntityRenderDispatcher.class)
 public class MixinEntityRenderDispatcher {
     @Inject(method = "render",
             at = @At(value = "HEAD"))
     private <E extends Entity> void etf$grabContext(E entity, double x, double y, double z, float yaw, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci) {
-        ETFRenderContext.setCurrentEntity(new ETFEntityWrapper(entity));
+        ETFRenderContext.setCurrentEntity((ETFEntity) entity);
         ETFRenderContext.setCurrentProvider(vertexConsumers);
 
     }

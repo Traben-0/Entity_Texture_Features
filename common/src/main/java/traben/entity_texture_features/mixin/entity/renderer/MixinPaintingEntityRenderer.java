@@ -29,8 +29,7 @@ import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.texture_features.ETFManager;
 import traben.entity_texture_features.texture_features.texture_handlers.ETFSprite;
 import traben.entity_texture_features.texture_features.texture_handlers.ETFTexture;
-import traben.entity_texture_features.utils.entity_wrappers.ETFEntity;
-import traben.entity_texture_features.utils.entity_wrappers.ETFEntityWrapper;
+import traben.entity_texture_features.utils.ETFEntity;
 
 @Mixin(PaintingEntityRenderer.class)
 public abstract class MixinPaintingEntityRenderer extends EntityRenderer<PaintingEntity> {
@@ -57,7 +56,7 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
             Identifier paintingId = paintingSprite.getContents().getId();
             Identifier paintingTexture = new Identifier(paintingId.getNamespace(), "textures/painting/" + paintingId.getPath() + ".png");
 
-            ETFEntity etfEntity = new ETFEntityWrapper(paintingEntity);
+            ETFEntity etfEntity = (ETFEntity) paintingEntity;
 
             ETFTexture frontTexture = ETFManager.getInstance().getETFTexture(paintingTexture, etfEntity, ETFManager.TextureSource.ENTITY, false);
             ETFSprite etf$Sprite = frontTexture.getSprite(paintingSprite);

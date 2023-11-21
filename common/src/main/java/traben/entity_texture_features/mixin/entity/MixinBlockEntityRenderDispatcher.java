@@ -9,14 +9,14 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.texture_features.ETFRenderContext;
-import traben.entity_texture_features.utils.entity_wrappers.ETFBlockEntityWrapper;
+import traben.entity_texture_features.utils.ETFEntity;
 
 @Mixin(BlockEntityRenderDispatcher.class)
 public class MixinBlockEntityRenderDispatcher {
     @Inject(method = "runReported",
             at = @At(value = "HEAD"))
     private static  void etf$grabContext(BlockEntity blockEntity, Runnable runnable, CallbackInfo ci) {
-        ETFRenderContext.setCurrentEntity(new ETFBlockEntityWrapper(blockEntity, blockEntity.getPos().hashCode()));
+        ETFRenderContext.setCurrentEntity((ETFEntity) blockEntity);
 
     }
 

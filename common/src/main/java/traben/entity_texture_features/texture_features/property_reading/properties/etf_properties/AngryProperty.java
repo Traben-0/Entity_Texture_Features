@@ -1,11 +1,10 @@
 package traben.entity_texture_features.texture_features.property_reading.properties.etf_properties;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.texture_features.property_reading.properties.generic_properties.BooleanProperty;
-import traben.entity_texture_features.utils.entity_wrappers.ETFEntity;
+import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.Properties;
 
@@ -28,20 +27,20 @@ public class AngryProperty extends BooleanProperty {
     @Override
     @Nullable
     protected Boolean getValueFromEntity(ETFEntity etfEntity) {
-        Entity entity = etfEntity.getEntity();
-        if (entity != null) {
-            if (entity instanceof EndermanEntity) {
-                return ((EndermanEntity) entity).isAngry();
-            } else if (entity instanceof BlazeEntity) {
-                return entity.isOnFire();
-            } else if (entity instanceof GuardianEntity) {
-                return (((GuardianEntity) entity).getBeamTarget() != null);
-            } else if (entity instanceof VindicatorEntity) {
-                return (((VindicatorEntity) entity).isAttacking());
-            } else if (entity instanceof SpellcastingIllagerEntity) {
-                return (((SpellcastingIllagerEntity) entity).isSpellcasting());
-            } else if (entity instanceof Angerable) {
-                return (((Angerable) entity).hasAngerTime());
+
+        if (etfEntity != null) {
+            if (etfEntity instanceof EndermanEntity enderman) {
+                return enderman.isAngry();
+            } else if (etfEntity instanceof BlazeEntity blaze) {
+                return blaze.isOnFire();
+            } else if (etfEntity instanceof GuardianEntity guardian) {
+                return guardian.getBeamTarget() != null;
+            } else if (etfEntity instanceof VindicatorEntity vindicator) {
+                return vindicator.isAttacking();
+            } else if (etfEntity instanceof SpellcastingIllagerEntity caster) {
+                return caster.isSpellcasting();
+            } else if (etfEntity instanceof Angerable angry) {
+                return angry.hasAngerTime();
             }
         }
         return null;

@@ -13,7 +13,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.texture_features.ETFManager;
-import traben.entity_texture_features.texture_features.texture_handlers.ETFPlayerTexture;
+import traben.entity_texture_features.texture_features.player.ETFPlayerTexture;
 
 //class exists to introduce extra, ETF interacting, child functionality to 3d Skin layer mod featureRenderers
 //this will replace the featureRender added by 3d skin layers mod

@@ -1,12 +1,13 @@
 package traben.entity_texture_features.texture_features.property_reading;
 
+import net.minecraft.entity.mob.ZombifiedPiglinEntity;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.texture_features.ETFManager;
 import traben.entity_texture_features.texture_features.property_reading.properties.RandomProperties;
 import traben.entity_texture_features.texture_features.property_reading.properties.generic_properties.SimpleIntegerArrayProperty;
 import traben.entity_texture_features.utils.ETFUtils2;
-import traben.entity_texture_features.utils.entity_wrappers.ETFEntity;
+import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.*;
 
@@ -30,16 +31,16 @@ public abstract class RandomPropertiesFileHandler {
                     }
                     if (tryNumber >= 16) tryNumber = 15;
                     if (tryNumber < 0) tryNumber = 0;
-                    manager.ENTITY_TYPE_VANILLA_BRIGHTNESS_OVERRIDE_VALUE.put(entity.getType(), tryNumber);
+                    manager.ENTITY_TYPE_VANILLA_BRIGHTNESS_OVERRIDE_VALUE.put(entity.etf$getType(), tryNumber);
                 }
-                if (entity.isZombiePiglin()
+                if (entity instanceof ZombifiedPiglinEntity
                         && props.containsKey("showHiddenModelParts")
                         && "true".equals(props.getProperty("showHiddenModelParts"))) {
                     manager.zombiePiglinRightEarEnabled = true;
                 }
                 if (props.containsKey("suppressParticles")
                         && "true".equals(props.getProperty("suppressParticles"))) {
-                    manager.ENTITY_TYPE_IGNORE_PARTICLES.add(entity.getType());
+                    manager.ENTITY_TYPE_IGNORE_PARTICLES.add(entity.etf$getType());
                 }
 
                 if (props.containsKey("entityRenderLayerOverride")) {
@@ -47,16 +48,16 @@ public abstract class RandomPropertiesFileHandler {
                     //noinspection EnhancedSwitchMigration
                     switch (layer) {
                         case "translucent":
-                            manager.ENTITY_TYPE_RENDER_LAYER.put(entity.getType(), 1);
+                            manager.ENTITY_TYPE_RENDER_LAYER.put(entity.etf$getType(), 1);
                             break;
                         case "translucent_cull":
-                            manager.ENTITY_TYPE_RENDER_LAYER.put(entity.getType(), 2);
+                            manager.ENTITY_TYPE_RENDER_LAYER.put(entity.etf$getType(), 2);
                             break;
                         case "end_portal":
-                            manager.ENTITY_TYPE_RENDER_LAYER.put(entity.getType(), 3);
+                            manager.ENTITY_TYPE_RENDER_LAYER.put(entity.etf$getType(), 3);
                             break;
                         case "outline":
-                            manager.ENTITY_TYPE_RENDER_LAYER.put(entity.getType(), 4);
+                            manager.ENTITY_TYPE_RENDER_LAYER.put(entity.etf$getType(), 4);
                             break;
                     }
                 }

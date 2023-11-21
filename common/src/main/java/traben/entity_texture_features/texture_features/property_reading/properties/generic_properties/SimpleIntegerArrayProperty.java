@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.texture_features.property_reading.RandomPropertiesFileHandler;
 import traben.entity_texture_features.texture_features.property_reading.properties.RandomProperty;
 import traben.entity_texture_features.utils.ETFUtils2;
-import traben.entity_texture_features.utils.entity_wrappers.ETFEntity;
+import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -12,7 +12,7 @@ import traben.entity_texture_features.texture_features.property_reading.properti
 import traben.entity_texture_features.texture_features.property_reading.properties.generic_properties.SimpleIntegerArrayProperty;
 import traben.entity_texture_features.texture_features.property_reading.properties.generic_properties.StringArrayOrRegexProperty;
 import traben.entity_texture_features.utils.ETFUtils2;
-import traben.entity_texture_features.utils.entity_wrappers.ETFEntity;
+import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -62,11 +62,10 @@ public class NBTProperty extends RandomProperty {
     protected boolean testEntityInternal(ETFEntity entity) {
 
         NbtCompound entityNBT;
-        Entity internal = entity.getEntity();
-        if (internal != null) {
+        if (entity instanceof Entity internal) {
             entityNBT = NbtPredicate.entityToNbt(internal);
         } else {
-            entityNBT = entity.writeNbt(new NbtCompound());
+            entityNBT = entity.etf$writeNbt(new NbtCompound());
         }
 
         boolean doesEntityMeetThisCaseTest = true;
