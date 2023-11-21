@@ -17,12 +17,21 @@ public class MixinRenderLayer {
     @Unique
     private static Identifier etf$getETFVariantOf(Identifier identifier){
 
-        if(ETFRenderContext.getCurrentEntity() == null)//todo is this too wide of a net?
+        if(ETFRenderContext.getCurrentEntity() == null
+                || !ETFRenderContext.isAllowedToRenderLayerTextureModify())
             return identifier;
 
-        //System.out.println("trying="+identifier.toString());
 
-        return ETFManager.getInstance().getETFTexture(identifier, ETFRenderContext.getCurrentEntity(), ETFManager.TextureSource.ENTITY,false)
+        ETFManager.TextureSource source;
+        if(ETFRenderContext.isRenderingFeatures()){
+            source = ETFManager.TextureSource.ENTITY_FEATURE;//this is still needed to speed up some feature renderers
+        } else if (ETFRenderContext.getCurrentEntity().getEntity() == null) {
+            source = ETFManager.TextureSource.BLOCK_ENTITY;//todo still needed in rewrite?
+        }else{
+            source = ETFManager.TextureSource.ENTITY;
+        }
+
+        return ETFManager.getInstance().getETFTexture(identifier, ETFRenderContext.getCurrentEntity(), source,false)
                 .getTextureIdentifier(ETFRenderContext.getCurrentEntity());
     }
 

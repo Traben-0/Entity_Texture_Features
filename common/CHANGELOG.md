@@ -1,7 +1,14 @@
 [**ETF Changelog:**]
 
 
+- block property again checks below block entities differing from optifine
+- changed lectern book feature
+- broke shield and trident
+- removed elytra thickness fix
 
+working in enchants
+
+still needs etf player feature renderer
 
 [4.6.1]
 

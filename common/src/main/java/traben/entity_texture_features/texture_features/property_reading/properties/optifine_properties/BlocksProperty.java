@@ -70,7 +70,14 @@ public class BlocksProperty extends StringArrayOrRegexProperty {
         String[] entityBlocks;
         BlockEntity blockEntity = entity.getBlockEntity();
         if (blockEntity != null) {
-            entityBlocks = new String[]{getBlockFormattedFromState(blockEntity.getCachedState())};
+            if(blockEntity.getWorld() == null){
+                entityBlocks = new String[]{getBlockFormattedFromState(blockEntity.getCachedState())};
+            }else {
+                entityBlocks = new String[]{
+                        getBlockFormattedFromState(blockEntity.getCachedState()),
+                        getBlockFormattedFromState(blockEntity.getWorld().getBlockState(blockEntity.getPos().down()))
+                };
+            }
         } else {
             if (entity.getWorld() == null || entity.getBlockPos() == null) return false;
             World world = entity.getWorld();

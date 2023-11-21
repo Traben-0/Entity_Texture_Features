@@ -26,6 +26,7 @@ public class ETFConfig {
     public boolean restrictDayTime = true;
     public boolean restrictMoonPhase = true;
     public boolean enableEmissiveTextures = true;
+    public boolean enableEnchantedTextures = true;
     public boolean enableEmissiveBlockEntities = true;
 
     public ETFManager.EmissiveRenderModes emissiveRenderMode = ETFManager.EmissiveRenderModes.DULL;

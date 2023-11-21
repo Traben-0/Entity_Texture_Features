@@ -3,6 +3,7 @@ package traben.entity_texture_features.mixin;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
@@ -11,6 +12,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.ETFClientCommon;
+import traben.entity_texture_features.texture_features.ETFManager;
 import traben.entity_texture_features.texture_features.ETFRenderContext;
 
 @Mixin(ModelPart.class)
@@ -30,25 +32,40 @@ public abstract class MixinModelPart {
             at = @At(value = "RETURN"))
     private void etf$doEmissiveIfInitialPart(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha, CallbackInfo ci) {
         //run code if this is the initial topmost rendered part
-        ETFRenderContext.decrementCurrentModelPartDepth();
-        if(ETFRenderContext.getCurrentModelPartDepth() == 0){// ETFRenderContext.getCurrentTopPart() == this){
-            //ETFRenderContext.setCurrentTopPart(null);
+        if(ETFRenderContext.getCurrentModelPartDepth() != 1){
+            ETFRenderContext.decrementCurrentModelPartDepth();
+        }else{
             if(ETFRenderContext.isRenderReady()) {
+                //attempt emissive render
                 Identifier emissive = ETFRenderContext.getCurrentETFTexture().getEmissiveIdentifierOfCurrentState();
                 if (emissive != null) {
-                   //VertexConsumer emissiveConsumer = ETFRenderContext.getCurrentProvider().getBuffer(etf$ENTITY_TRANSLUCENT_CULL_Z_OFFSET.apply(emissive));//RenderLayer.getEntityTranslucentCull(emissive));
-                    VertexConsumer emissiveConsumer = ETFRenderContext.getCurrentProvider()
-                            .getBuffer(RenderLayer.getEntityTranslucentCull(emissive));//todo options
 
+                    ETFRenderContext.preventRenderLayerTextureModify();
 
-                    //ensure this doesnt trigger again
-                    ETFRenderContext.incrementCurrentModelPartDepth();
+                    VertexConsumer emissiveConsumer = ETFRenderContext.getCurrentProvider().getBuffer(
+                            ETFManager.getEmissiveMode() == ETFManager.EmissiveRenderModes.BRIGHT
+                                    && ETFRenderContext.getCurrentEntity().getBlockEntity() == null ?
+                                RenderLayer.getBeaconBeam(emissive,true):
+                                RenderLayer.getEntityTranslucentCull(emissive));
+
+                    ETFRenderContext.allowRenderLayerTextureModify();
+
                     render(matrices, emissiveConsumer, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, overlay, red, green, blue, alpha);
+                }
 
+                //attempt enchanted render
+                Identifier enchanted = ETFRenderContext.getCurrentETFTexture().getEnchantIdentifierOfCurrentState();
+                if(enchanted != null){
+                    ETFRenderContext.preventRenderLayerTextureModify();
+                    VertexConsumer enchantedVertex = ItemRenderer.getArmorGlintConsumer(ETFRenderContext.getCurrentProvider(), RenderLayer.getArmorCutoutNoCull(enchanted), false, true);
+                    ETFRenderContext.allowRenderLayerTextureModify();
+
+                    render(matrices, enchantedVertex, light, overlay, red, green, blue, alpha);
+                }
+
+                if(enchanted != null || emissive != null){
                     //reset whatever render layer statics this establishes
                     ETFRenderContext.getCurrentProvider().getBuffer(ETFRenderContext.getCurrentRenderLayer());
-
-                    //that should be it ???
                 }
             }
             //ensure model count is reset

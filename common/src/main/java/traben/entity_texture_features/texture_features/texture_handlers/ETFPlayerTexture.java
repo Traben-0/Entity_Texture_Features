@@ -1406,7 +1406,10 @@ public class ETFPlayerTexture {
                         blink2EmissiveIdentifier,
                         modifiedSkinPatchedIdentifier,
                         modifiedSkinBlinkPatchedIdentifier,
-                        modifiedSkinBlink2PatchedIdentifier);
+                        modifiedSkinBlink2PatchedIdentifier,
+                        baseEnchantIdentifier,
+                        baseEnchantBlinkIdentifier,
+                        baseEnchantBlink2Identifier);
 
 
                 //if vanilla cape and there is no enchant or emissive
@@ -1430,7 +1433,7 @@ public class ETFPlayerTexture {
                     //parseSkinTransparency(originalSkin,wasForcedSolid);
                     Identifier skinIdentifier = new Identifier(SKIN_NAMESPACE, id + ".png");
                     ETFUtils2.registerNativeImageToIdentifier(originalSkin, skinIdentifier);
-                    etfTextureOfFinalBaseSkin = new ETFTexture(skinIdentifier, null, null, null, null, null, null, null, null);
+                    etfTextureOfFinalBaseSkin = new ETFTexture(skinIdentifier, null, null, null, null, null, null, null, null, null, null, null);
 
                 } else {
                     skinFailed();

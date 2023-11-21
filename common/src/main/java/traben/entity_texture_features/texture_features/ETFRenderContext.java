@@ -17,6 +17,28 @@ public class ETFRenderContext {
 
     private static VertexConsumerProvider currentProvider = null;
 
+    public static boolean isRenderingFeatures() {
+        return renderingFeatures;
+    }
+
+    public static void setRenderingFeatures(boolean renderingFeatures) {
+        ETFRenderContext.renderingFeatures = renderingFeatures;
+    }
+
+    public static boolean renderingFeatures = false;
+
+    public static boolean isAllowedToRenderLayerTextureModify() {
+        return allowRenderLayerTextureModify;
+    }
+
+    public static void preventRenderLayerTextureModify() {
+        ETFRenderContext.allowRenderLayerTextureModify = false;
+    }
+    public static void allowRenderLayerTextureModify() {
+        ETFRenderContext.allowRenderLayerTextureModify = true;
+    }
+    private static boolean allowRenderLayerTextureModify = true;
+
     public static void setCurrentRenderLayer(RenderLayer currentRenderLayer) {
         ETFRenderContext.currentRenderLayer = currentRenderLayer;
     }
@@ -51,11 +73,23 @@ public class ETFRenderContext {
             Optional<Identifier> possibleId = multiPhase.phases.texture.getId();
             // ETFManager.getInstance().getETFTexture(texture,ETFRenderContext.getCurrentEntity(), ETFManager.TextureSource.ENTITY,false);
             possibleId.ifPresent(identifier -> currentETFTexture = ETFManager.getInstance().getETFDefaultTexture(identifier, false));
-            //todo render layer override feature?
+
+            //modify render layer if needed
+            if(!multiPhase.isOutline() && getCurrentEntity() != null && ETFManager.getInstance().ENTITY_TYPE_RENDER_LAYER.containsKey(getCurrentEntity().getType())){
+                preventRenderLayerTextureModify();
+                switch (ETFManager.getInstance().ENTITY_TYPE_RENDER_LAYER.getInt(getCurrentEntity().getType())) {
+                    case 1 -> currentRenderLayer = RenderLayer.getEntityTranslucent(currentETFTexture.getTextureIdentifier(getCurrentEntity()));
+                    case 2 -> currentRenderLayer = RenderLayer.getEntityTranslucentCull(currentETFTexture.getTextureIdentifier(getCurrentEntity()));
+                    case 3 -> currentRenderLayer = RenderLayer.getEndGateway();
+                    case 4 -> currentRenderLayer = RenderLayer.getOutline(currentETFTexture.getTextureIdentifier(getCurrentEntity()));
+                    default -> {}
+                }
+                allowRenderLayerTextureModify();
+            }
         }else{
             System.out.println("failed 3565683856");
         }
-        return provider.getBuffer(renderLayer);
+        return provider.getBuffer(currentRenderLayer);
     }
 
     public static VertexConsumer processSpriteVertexConsumer(Function<Identifier, RenderLayer> layerFactory, VertexConsumer consumer) {
@@ -66,18 +100,27 @@ public class ETFRenderContext {
         //note this will prevent sprite animations, but only if ETF features are found
         if(consumer instanceof SpriteTexturedVertexConsumer spriteTexturedVertexConsumer){
             Identifier rawId = spriteTexturedVertexConsumer.sprite.getContents().getId();
+
             //infer actual texture
-            //todo check all block entities follow this logic? i know chests, shulker boxes, and beds do
-            Identifier actualTexture = new Identifier(rawId.getNamespace(),"textures/"+rawId.getPath()+".png");
-            System.out.println("raw="+rawId+"\nactual="+actualTexture);
+            Identifier actualTexture;
+            if(rawId.toString().endsWith(".png")){
+                actualTexture = rawId;
+            }else{
+                //todo check all block entities follow this logic? i know chests, shulker boxes, and beds do
+                actualTexture = new Identifier(rawId.getNamespace(),"textures/"+rawId.getPath()+".png");
+            }
+
+            //System.out.println("raw="+rawId+"\nactual="+actualTexture);
+
             currentETFTexture = ETFManager.getInstance().getETFTexture(actualTexture, ETFRenderContext.getCurrentEntity(), ETFManager.TextureSource.BLOCK_ENTITY,false);
+
             //if texture is emissive or a variant send in as a non sprite vertex consumer
             if(currentETFTexture.getVariantNumber() != 0 || currentETFTexture.isEmissive()){
+                preventRenderLayerTextureModify();
                 currentRenderLayer = layerFactory.apply(currentETFTexture.thisIdentifier);
+                allowRenderLayerTextureModify();
                 return ETFRenderContext.getCurrentProvider().getBuffer(currentRenderLayer);
             }
-        }else{
-            System.out.println("failed 4679756345");
         }
         return consumer;
     }

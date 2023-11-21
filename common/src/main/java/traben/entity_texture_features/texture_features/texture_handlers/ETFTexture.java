@@ -61,6 +61,10 @@ public class ETFTexture {
     private Identifier emissiveIdentifier = null;
     private Identifier emissiveBlinkIdentifier = null;
     private Identifier emissiveBlink2Identifier = null;
+
+    private Identifier enchantIdentifier = null;
+    private Identifier enchantBlinkIdentifier = null;
+    private Identifier enchantBlink2Identifier = null;
     private Identifier blinkIdentifier = null;
     private Identifier blink2Identifier = null;
     private Identifier blinkIdentifier_Patched = null;
@@ -97,10 +101,10 @@ public class ETFTexture {
         }
         this.variantNumber = intFound;
         canPatch = allowedToPatch;
+
         setupBlinking();
         setupEmissives();
-
-
+        setupEnchants();
     }
 
     //alternative initiator for already known textures used for players
@@ -112,7 +116,10 @@ public class ETFTexture {
                       @Nullable Identifier blink2EmissiveIdentifier,
                       @Nullable Identifier modifiedSkinPatchedIdentifier,
                       @Nullable Identifier modifiedSkinBlinkPatchedIdentifier,
-                      @Nullable Identifier modifiedSkinBlink2PatchedIdentifier) {
+                      @Nullable Identifier modifiedSkinBlink2PatchedIdentifier,
+                      @Nullable Identifier enchantIdentifier,
+                      @Nullable Identifier blinkenchantIdentifier,
+                      @Nullable Identifier blink2enchantIdentifier) {
 
         //ALL input already tested and confirmed existing
         this.variantNumber = 0;
@@ -125,9 +132,9 @@ public class ETFTexture {
         this.thisIdentifier_Patched = modifiedSkinPatchedIdentifier;
         this.blinkIdentifier_Patched = modifiedSkinBlinkPatchedIdentifier;
         this.blink2Identifier_Patched = modifiedSkinBlink2PatchedIdentifier;
-        //setupBlinking(); neither required
-        //setupEmissives();
-        //createPatchedTextures();
+        this.enchantIdentifier = enchantIdentifier;
+        this.enchantBlinkIdentifier = blinkenchantIdentifier;
+        this.enchantBlink2Identifier = blink2enchantIdentifier;
     }
 
     //alternative initiator for already known textures used for MooShroom's mushrooms
@@ -356,8 +363,75 @@ public class ETFTexture {
                     }
                 }
             }
-            if (isEmissive())
-                createPatchedTextures();
+//            if (isEmissive())
+//                createPatchedTextures();
+        }
+    }
+
+    private void setupEnchants() {
+
+        if (ETFConfigData.enableEnchantedTextures) {
+            ResourceManager resourceManager = MinecraftClient.getInstance().getResourceManager();
+
+                String enchantSuffix = "_enchant";
+                Optional<Resource> vanillaR1 = resourceManager.getResource(thisIdentifier);
+                if (vanillaR1.isEmpty() && thisIdentifier.getPath().contains("textures/trims/models/armor/")) {
+                    //create this armor trim as an identifier because fuck Sprites, all my homies hate Sprites
+
+                    //try get an armor trims base texture just to match what texture pack level it is
+                    ResourcePack pack;
+                    vanillaR1 = resourceManager.getResource(new Identifier(thisIdentifier.getNamespace(), thisIdentifier.getPath().replaceAll("_(.*?)(?=\\.png)", "")));
+                    if (vanillaR1.isPresent()) {
+                        pack = vanillaR1.get().getPack();
+                    } else {
+                        pack = MinecraftClient.getInstance().getDefaultResourcePack();
+                    }
+                    //create resource object sufficient for following code
+                    vanillaR1 = Optional.of(new Resource(pack, null));
+                }
+                if (vanillaR1.isPresent()) {
+                    Identifier possibleEnchantIdentifier = ETFUtils2.replaceIdentifier(thisIdentifier, ".png", enchantSuffix + ".png");
+                    Optional<Resource> enchantR1 = resourceManager.getResource(possibleEnchantIdentifier);
+                    if (enchantR1.isPresent()) {
+
+                        String enchantPackName = enchantR1.get().getResourcePackName();
+//                        ObjectSet<String> packs = new ObjectOpenHashSet<>();
+//                        packs.add(emissivePackName);
+//                        packs.add(vanillaR1.get().getResourcePackName());
+                        if (enchantPackName.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(new String[]{enchantPackName, vanillaR1.get().getResourcePackName()}))) {
+                            //is higher or same pack
+                            enchantIdentifier = possibleEnchantIdentifier;
+                            Identifier possibleEnchantBlinkIdentifier = ETFUtils2.replaceIdentifier(thisIdentifier, ".png", "_blink" + enchantSuffix + ".png");
+                            Optional<Resource> enchantBlinkR1 = resourceManager.getResource(possibleEnchantBlinkIdentifier);
+                            if (enchantBlinkR1.isPresent()) {
+
+                                String enchantBlinkPackName = enchantBlinkR1.get().getResourcePackName();
+                                //packs.clear();
+                                //packs.add(emissiveBlinkPackName);
+                                //packs.add(vanillaR1.get().getResourcePackName());
+                                if (enchantBlinkPackName.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(new String[]{enchantBlinkPackName, vanillaR1.get().getResourcePackName()}))) {
+                                    //is higher or same pack
+                                    enchantBlinkIdentifier = possibleEnchantBlinkIdentifier;
+                                    Identifier possibleEnchantBlink2Identifier = ETFUtils2.replaceIdentifier(thisIdentifier, ".png", "_blink2" + enchantSuffix + ".png");
+                                    Optional<Resource> enchantBlink2R1 = resourceManager.getResource(possibleEnchantBlink2Identifier);
+                                    if (enchantBlink2R1.isPresent()) {
+                                        String enchantBlink2PackName = enchantBlink2R1.get().getResourcePackName();
+                                        // packs.clear();
+                                        // packs.add(emissiveBlink2PackName);
+                                        // packs.add(vanillaR1.get().getResourcePackName());
+                                        if (enchantBlink2PackName.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(new String[]{enchantBlink2PackName, vanillaR1.get().getResourcePackName()}))) {
+                                            //is higher or same pack
+                                            enchantBlink2Identifier = possibleEnchantBlink2Identifier;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+//            if (isEnchanted())
+//                createPatchedTextures();
         }
     }
 
@@ -609,6 +683,10 @@ public class ETFTexture {
         return this.emissiveIdentifier != null;
     }
 
+    public boolean isEnchanted() {
+        return this.enchantIdentifier != null;
+    }
+
     public boolean isPatched() {
         return this.thisIdentifier_Patched != null;
     }
@@ -725,6 +803,18 @@ public class ETFTexture {
             case NORMAL, NORMAL_PATCHED -> emissiveIdentifier;
             case BLINK, BLINK_PATCHED -> emissiveBlinkIdentifier;
             case BLINK2, BLINK2_PATCHED -> emissiveBlink2Identifier;
+            default ->
+                //ETFUtils.logError("identifierOfCurrentState failed, it should not have, returning default");
+                    null;
+        };
+    }
+
+    @Nullable
+    public Identifier getEnchantIdentifierOfCurrentState() {
+        return switch (currentTextureState) {
+            case NORMAL, NORMAL_PATCHED -> enchantIdentifier;
+            case BLINK, BLINK_PATCHED -> enchantBlinkIdentifier;
+            case BLINK2, BLINK2_PATCHED -> enchantBlink2Identifier;
             default ->
                 //ETFUtils.logError("identifierOfCurrentState failed, it should not have, returning default");
                     null;
