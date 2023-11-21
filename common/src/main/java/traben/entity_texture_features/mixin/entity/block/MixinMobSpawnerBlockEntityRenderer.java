@@ -1,4 +1,4 @@
-package traben.entity_texture_features.mixin.entity.block_entity;
+package traben.entity_texture_features.mixin.entity.block;
 
 import net.minecraft.block.entity.BellBlockEntity;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;

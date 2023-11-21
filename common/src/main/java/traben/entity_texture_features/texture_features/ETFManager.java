@@ -55,14 +55,14 @@ public class ETFManager {
      */
     public final ObjectOpenHashSet<String> EMISSIVE_SUFFIX_LIST = new ObjectOpenHashSet<>();
     //trident entities do not send item name data to clients when thrown, this is to keep that name in memory so custom tridents can at least display until reloading
-    public final Object2ReferenceOpenHashMap<UUID, String> UUID_TRIDENT_NAME = new Object2ReferenceOpenHashMap<>();
+    //public final Object2ReferenceOpenHashMap<UUID, String> UUID_TRIDENT_NAME = new Object2ReferenceOpenHashMap<>();
     public final ETFLruCache<ETFCacheKey, ETFTexture> ENTITY_TEXTURE_MAP = new ETFLruCache<>();
     public final ETFLruCache<UUID, ETFPlayerTexture> PLAYER_TEXTURE_MAP = new ETFLruCache<>();
     public final Object2LongOpenHashMap<UUID> ENTITY_BLINK_TIME = new Object2LongOpenHashMap<>();
     //private static final Object2ReferenceOpenHashMap<@NotNull UUID, @NotNull ETFTexture> ENTITY_TEXTURE_MAP = new Object2ReferenceOpenHashMap<>();
     public final Object2ObjectOpenHashMap<UUID, ETFCacheKey> UUID_TO_MOB_CACHE_KEY_MAP_FOR_FEATURE_USAGE = new Object2ObjectOpenHashMap<>();
     //todo extend this to as many isPresent() calls as possible to lower repeated resource manager calls, may need to consider LRUCache usage if this is expanded too greatly
-    public final Object2BooleanOpenHashMap<Identifier> DOES_IDENTIFIER_EXIST_CACHED_RESULT = new Object2BooleanOpenHashMap<>();
+    //public final Object2BooleanOpenHashMap<Identifier> DOES_IDENTIFIER_EXIST_CACHED_RESULT = new Object2BooleanOpenHashMap<>();
     public final ArrayList<String> KNOWN_RESOURCEPACK_ORDER = new ArrayList<>();
     public final Object2IntOpenHashMap<EntityType<?>> ENTITY_TYPE_VANILLA_BRIGHTNESS_OVERRIDE_VALUE = new Object2IntOpenHashMap<>();
     public final ObjectOpenHashSet<EntityType<?>> ENTITY_TYPE_IGNORE_PARTICLES = new ObjectOpenHashSet<>();
@@ -87,7 +87,7 @@ public class ETFManager {
     public int mooshroomBrownCustomShroom = 0;
     //marks whether mooshroom mushroom overrides exist
     public int mooshroomRedCustomShroom = 0;
-    public Boolean lecternHasCustomTexture = null;
+    //public Boolean lecternHasCustomTexture = null;
     public ETFTexture redMooshroomAlt = null;
     public ETFTexture brownMooshroomAlt = null;
 

@@ -10,7 +10,7 @@ import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
@@ -18,6 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.mod_compat.ETF3DSkinLayersUtil;
 import traben.entity_texture_features.texture_features.ETFRenderContext;
+import traben.entity_texture_features.utils.ETFEntity;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
@@ -32,13 +33,21 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
 
     }
 
-    @Shadow
-    public abstract M getModel();
-
     @Inject(method = "render(Lnet/minecraft/entity/LivingEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
             at = @At(value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;"))
     private void etf$markFeatures(T livingEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
+        etf$heldEntity = ETFRenderContext.getCurrentEntity();
         ETFRenderContext.setRenderingFeatures(true);
+    }
+
+    @Unique
+    private ETFEntity etf$heldEntity = null;
+
+    @Inject(method = "render(Lnet/minecraft/entity/LivingEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
+            at = @At(value = "INVOKE", target = "Ljava/util/Iterator;next()Ljava/lang/Object;"))
+    private void etf$markFeaturesLoopEnd(T livingEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
+        //assert main entity each loop in case of other entities within feature renderer
+        ETFRenderContext.setCurrentEntity(etf$heldEntity);
     }
 
     @Inject(method = "render(Lnet/minecraft/entity/LivingEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
@@ -47,11 +56,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
         ETFRenderContext.setRenderingFeatures(false);
     }
 
-    @ModifyArg(
-            method = "addFeature",
-            at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z"),
-            index = 0
-    )
+    @ModifyArg(method = "addFeature", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z"), index = 0)
     private Object etf$3dSkinLayerCompat(Object featureRenderer) {
         // replace 3d skin layers mod feature renderers with ETF's child versions
 

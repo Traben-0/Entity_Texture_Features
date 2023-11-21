@@ -79,8 +79,7 @@ public class NBTProperty extends RandomProperty {
                 nbtTestInstruction = nbtTestInstruction.replaceFirst("!", "");
 
                 if (nbtTestInstruction.startsWith("print:")) {
-                    ETFUtils2.logMessage("NBT entity data print: ");
-                    System.out.println(entityNBT.asString());
+                    ETFUtils2.logMessage("NBT entity data print: \n" +entityNBT.asString());
                     nbtTestInstruction = nbtTestInstruction.replaceFirst("print:", "");
                 }
 
@@ -91,7 +90,7 @@ public class NBTProperty extends RandomProperty {
                 Iterator<String> nbtPathInstructionIterator = Arrays.stream(nbtIdentifier.split("\\.")).iterator();
                 while (nbtPathInstructionIterator.hasNext()) {
                     if (lastIterationNBTElement == null) {
-                        System.out.println("null nbt in ETF");
+                        ETFUtils2.logWarn("null nbt in ETF");
                         break;
                     }
                     String nextPathInstruction = nbtPathInstructionIterator.next();

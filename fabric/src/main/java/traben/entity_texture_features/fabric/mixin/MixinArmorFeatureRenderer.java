@@ -48,6 +48,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
         thisETFTexture = ETFManager.getInstance().getETFTexture(texture, null, ETFManager.TextureSource.ENTITY_FEATURE, ETFConfigData.removePixelsUnderEmissiveArmour);
         //noinspection ConstantConditions
         if (thisETFTexture != null) {
+            thisETFTexture.patchBaseTextures();
             return thisETFTexture.getTextureIdentifier(null, ETFConfigData.enableEmissiveTextures);
         }
         return texture;
@@ -90,19 +91,19 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
     private void etf$trimGet(ArmorMaterial material, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ArmorTrim trim, A model, boolean leggings, CallbackInfo ci) {
 
 
-            Identifier trimBaseId = leggings ? trim.getLeggingsModelId(material) : trim.getGenericModelId(material) ;
-            //support modded trims with namespace
-            Identifier trimMaterialIdentifier = new Identifier(trimBaseId.getNamespace(),"textures/"+trimBaseId.getPath()+".png");
-            thisETFTrimTexture = ETFManager.getInstance().getETFTexture(trimMaterialIdentifier, null, ETFManager.TextureSource.ENTITY_FEATURE, false);
-            etf$VCP = vertexConsumers;
+        Identifier trimBaseId = leggings ? trim.getLeggingsModelId(material) : trim.getGenericModelId(material) ;
+        //support modded trims with namespace
+        Identifier trimMaterialIdentifier = new Identifier(trimBaseId.getNamespace(),"textures/"+trimBaseId.getPath()+".png");
+        thisETFTrimTexture = ETFManager.getInstance().getETFTexture(trimMaterialIdentifier, null, ETFManager.TextureSource.ENTITY_FEATURE, false);
+        etf$VCP = vertexConsumers;
 
-            //if it is emmissive we need to create an identifier of the trim to render seperately in iris
-            if(!thisETFTrimTexture.exists()
-                    && ETFConfigData.enableEmissiveTextures
-                    && thisETFTrimTexture.isEmissive()
-                    && ETFClientCommon.IRIS_DETECTED){
-                thisETFTrimTexture.buildTrimTexture(trim,leggings);
-            }
+        //if it is emmissive we need to create an identifier of the trim to render seperately in iris
+        if(!thisETFTrimTexture.exists()
+                && ETFConfigData.enableEmissiveTextures
+                && thisETFTrimTexture.isEmissive()
+                && ETFClientCommon.IRIS_DETECTED){
+            thisETFTrimTexture.buildTrimTexture(trim,leggings);
+        }
 
 
     }
@@ -129,20 +130,15 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
     @Inject(method = "renderTrim",
             at = @At(value = "TAIL"))
     private void etf$trimEmissive(ArmorMaterial material, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ArmorTrim trim, A model, boolean leggings, CallbackInfo ci) {
-            if(ETFConfigData.enableEmissiveTextures && thisETFTrimTexture != null){
-               //trimTexture.renderEmissive(matrices,vertexConsumers,model);
-                Identifier emissive = thisETFTrimTexture.getEmissiveIdentifierOfCurrentState();
-                if (emissive != null) {
-                    VertexConsumer textureVert= vertexConsumers.getBuffer(RenderLayer.getArmorCutoutNoCull(emissive));
-                    model.render(matrices, textureVert, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
-                }
+        if(ETFConfigData.enableEmissiveTextures && thisETFTrimTexture != null){
+            //trimTexture.renderEmissive(matrices,vertexConsumers,model);
+            Identifier emissive = thisETFTrimTexture.getEmissiveIdentifierOfCurrentState();
+            if (emissive != null) {
+                VertexConsumer textureVert= vertexConsumers.getBuffer(RenderLayer.getArmorCutoutNoCull(emissive));
+                model.render(matrices, textureVert, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
             }
+        }
     }
 
-
-
-
-
 }
-
 

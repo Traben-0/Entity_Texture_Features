@@ -13,6 +13,7 @@ import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -24,13 +25,14 @@ import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.mod_compat.ETF3DSkinLayersUtil;
 import traben.entity_texture_features.texture_features.ETFManager;
 import traben.entity_texture_features.texture_features.player.ETFPlayerFeatureRenderer;
+import traben.entity_texture_features.texture_features.player.ETFPlayerSkinHolder;
 import traben.entity_texture_features.texture_features.player.ETFPlayerTexture;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
 @Mixin(PlayerEntityRenderer.class)
-public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
+public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> implements ETFPlayerSkinHolder {
     @Unique
     public int entity_texture_features$timerBeforeTrySkin = 200;
 
@@ -132,13 +134,22 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
             at = @At(value = "RETURN"),cancellable = true)
     private void etf$addFeatures(AbstractClientPlayerEntity abstractClientPlayerEntity, CallbackInfoReturnable<Identifier> cir) {
         if(ETFConfigData.skinFeaturesEnabled) {
-            ETFPlayerTexture playerTexture = ETFManager.getInstance().getPlayerTexture(abstractClientPlayerEntity, cir.getReturnValue());
-            if (playerTexture != null && playerTexture.hasFeatures) {
-                Identifier texture = playerTexture.getBaseTextureIdentifierOrNullForVanilla(abstractClientPlayerEntity);
+            etf$ETFPlayerTexture = ETFManager.getInstance().getPlayerTexture(abstractClientPlayerEntity, cir.getReturnValue());
+            if (etf$ETFPlayerTexture != null && etf$ETFPlayerTexture.hasFeatures) {
+                Identifier texture = etf$ETFPlayerTexture.getBaseTextureIdentifierOrNullForVanilla(abstractClientPlayerEntity);
                 if (texture != null) {
                     cir.setReturnValue(texture);
                 }
             }
+        }else{
+            etf$ETFPlayerTexture = null;
         }
+    }
+
+    @Unique
+    ETFPlayerTexture etf$ETFPlayerTexture = null;
+    @Override
+    public @Nullable ETFPlayerTexture etf$getETFPlayerTexture() {
+        return etf$ETFPlayerTexture;
     }
 }

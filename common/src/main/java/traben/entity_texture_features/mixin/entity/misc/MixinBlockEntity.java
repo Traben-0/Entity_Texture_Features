@@ -18,6 +18,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import traben.entity_texture_features.ETFApi;
+import traben.entity_texture_features.texture_features.ETFManager;
 import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.UUID;
@@ -117,7 +118,7 @@ public abstract class MixinBlockEntity implements ETFEntity {
 
     @Override
     public boolean etf$canBeBright() {
-        return false;
+        return ETFManager.EmissiveRenderModes.blockEntityMode() == ETFManager.EmissiveRenderModes.BRIGHT;
     }
 
     @Override

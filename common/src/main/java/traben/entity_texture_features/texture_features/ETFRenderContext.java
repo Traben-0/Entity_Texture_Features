@@ -17,6 +17,7 @@ public class ETFRenderContext {
 
     private static VertexConsumerProvider currentProvider = null;
 
+
     public static boolean isRenderingFeatures() {
         return renderingFeatures;
     }
@@ -171,7 +172,6 @@ public class ETFRenderContext {
     public static void reset(){
         currentETFTexture = null;
         currentProvider = null;
-
 //        currentTopPart = null;
         currentModelPartDepth = 0;
 

@@ -1,4 +1,4 @@
-package traben.entity_texture_features.mixin.entity.block_entity;
+package traben.entity_texture_features.mixin.entity.block;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.block.BlockState;

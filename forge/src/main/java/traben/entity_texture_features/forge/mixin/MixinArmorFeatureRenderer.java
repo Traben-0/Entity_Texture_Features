@@ -2,7 +2,10 @@ package traben.entity_texture_features.forge.mixin;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.Model;
-import net.minecraft.client.render.*;
+import net.minecraft.client.render.OverlayTexture;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
@@ -42,9 +45,10 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
     @ModifyArg(method = "Lnet/minecraft/client/render/entity/feature/ArmorFeatureRenderer;renderModel(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/item/ArmorItem;Lnet/minecraft/client/model/Model;ZFFFLnet/minecraft/util/Identifier;)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/RenderLayer;getArmorCutoutNoCull(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;"))
     private Identifier etf$changeTexture(Identifier texture) {
-        thisETF$Texture = ETFManager.getInstance().getETFTexture(texture, null, ETFManager.TextureSource.ENTITY_FEATURE, ETFConfigData.removePixelsUnderEmissiveArmour);
+        thisETF$Texture = ETFManager.getInstance().getETFTexture(texture, null, ETFManager.TextureSource.ENTITY_FEATURE, true);
         //noinspection ConstantConditions
         if (thisETF$Texture != null) {
+            thisETF$Texture.patchBaseTextures();
             return thisETF$Texture.getTextureIdentifier(null, ETFConfigData.enableEmissiveTextures);
         }
         return texture;
