@@ -23,8 +23,9 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.config.screens.ETFConfigScreen;
-import traben.entity_texture_features.texture_features.ETFManager;
-import traben.entity_texture_features.texture_features.texture_handlers.ETFTexture;
+import traben.entity_texture_features.features.ETFManager;
+import traben.entity_texture_features.features.ETFRenderContext;
+import traben.entity_texture_features.features.texture_handlers.ETFTexture;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
@@ -39,17 +40,27 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
     public MixinArmorFeatureRenderer(FeatureRendererContext<T, M> context) {
         super(context);
     }
+    @Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
+            at = @At(value = "HEAD"))
+    private void etf$markNotToChange(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
+        ETFRenderContext.preventRenderLayerTextureModify();
+    }
 
+    @Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
+            at = @At(value = "RETURN"))
+    private void etf$markAllowedToChange(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
+        ETFRenderContext.allowRenderLayerTextureModify();
+    }
 
     @ModifyArg(method = "renderArmorParts",
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/client/render/RenderLayer;getArmorCutoutNoCull(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;"),index = 0)
     private Identifier etf$changeTexture2(Identifier texture) {
-        thisETFTexture = ETFManager.getInstance().getETFTexture(texture, null, ETFManager.TextureSource.ENTITY_FEATURE, ETFConfigData.removePixelsUnderEmissiveArmour);
+        thisETFTexture = ETFManager.getInstance().getETFTexture(texture, null, ETFManager.TextureSource.ENTITY_FEATURE);
         //noinspection ConstantConditions
         if (thisETFTexture != null) {
-            thisETFTexture.patchBaseTextures();
-            return thisETFTexture.getTextureIdentifier(null, ETFConfigData.enableEmissiveTextures);
+            thisETFTexture.reRegisterBaseTexture();
+            return thisETFTexture.getTextureIdentifier(null);
         }
         return texture;
     }
@@ -94,7 +105,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
         Identifier trimBaseId = leggings ? trim.getLeggingsModelId(material) : trim.getGenericModelId(material) ;
         //support modded trims with namespace
         Identifier trimMaterialIdentifier = new Identifier(trimBaseId.getNamespace(),"textures/"+trimBaseId.getPath()+".png");
-        thisETFTrimTexture = ETFManager.getInstance().getETFTexture(trimMaterialIdentifier, null, ETFManager.TextureSource.ENTITY_FEATURE, false);
+        thisETFTrimTexture = ETFManager.getInstance().getETFTexture(trimMaterialIdentifier, null, ETFManager.TextureSource.ENTITY_FEATURE);
         etf$VCP = vertexConsumers;
 
         //if it is emmissive we need to create an identifier of the trim to render seperately in iris

@@ -31,9 +31,7 @@ public class ETFVersionDifferenceHandlerImpl {
         return false;
     }
 
-    public static boolean areShadersInUse() {
-        return oculusCompat.isShaderPackInUse();
-    }
+
 
     public static Logger getLogger() {
         //1.19 & 1.18.2 variation

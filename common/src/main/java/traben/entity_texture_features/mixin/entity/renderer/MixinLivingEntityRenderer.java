@@ -16,8 +16,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.ETFClientCommon;
-import traben.entity_texture_features.mod_compat.ETF3DSkinLayersUtil;
-import traben.entity_texture_features.texture_features.ETFRenderContext;
+import traben.entity_texture_features.compat.ETF3DSkinLayersUtil;
+import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.utils.ETFEntity;
 import traben.entity_texture_features.utils.ETFUtils2;
 
@@ -26,6 +26,9 @@ import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
 @Mixin(LivingEntityRenderer.class)
 public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extends EntityModel<T>> extends EntityRenderer<T> implements FeatureRendererContext<T, M> {
+
+    @Unique
+    private ETFEntity etf$heldEntity = null;
 
     @SuppressWarnings("unused")
     protected MixinLivingEntityRenderer(EntityRendererFactory.Context ctx) {
@@ -39,9 +42,6 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
         etf$heldEntity = ETFRenderContext.getCurrentEntity();
         ETFRenderContext.setRenderingFeatures(true);
     }
-
-    @Unique
-    private ETFEntity etf$heldEntity = null;
 
     @Inject(method = "render(Lnet/minecraft/entity/LivingEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
             at = @At(value = "INVOKE", target = "Ljava/util/Iterator;next()Ljava/lang/Object;"))

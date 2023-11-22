@@ -8,14 +8,14 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import traben.entity_texture_features.texture_features.ETFRenderContext;
+import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.utils.ETFEntity;
 
 @Mixin(BlockEntityRenderDispatcher.class)
 public class MixinBlockEntityRenderDispatcher {
     @Inject(method = "runReported",
             at = @At(value = "HEAD"))
-    private static  void etf$grabContext(BlockEntity blockEntity, Runnable runnable, CallbackInfo ci) {
+    private static void etf$grabContext(BlockEntity blockEntity, Runnable runnable, CallbackInfo ci) {
         ETFRenderContext.setCurrentEntity((ETFEntity) blockEntity);
 
     }
@@ -35,6 +35,7 @@ public class MixinBlockEntityRenderDispatcher {
         ETFRenderContext.setCurrentProvider(vertexConsumers);
         return layer -> ETFRenderContext.processVertexConsumer(vertexConsumers, layer);
     }
+
     @ModifyVariable(
             method = "method_23081",
             at = @At(value = "HEAD"),

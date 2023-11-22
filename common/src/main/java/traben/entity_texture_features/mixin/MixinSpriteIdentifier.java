@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import traben.entity_texture_features.texture_features.ETFRenderContext;
+import traben.entity_texture_features.features.ETFRenderContext;
 
 import java.util.function.Function;
 
@@ -17,8 +17,8 @@ import java.util.function.Function;
 public class MixinSpriteIdentifier {
     @Inject(method = "getVertexConsumer(Lnet/minecraft/client/render/VertexConsumerProvider;Ljava/util/function/Function;)Lnet/minecraft/client/render/VertexConsumer;",
             at = @At(value = "RETURN"), cancellable = true)
-    private  void etf$modifyIfRequired(VertexConsumerProvider vertexConsumers, Function<Identifier, RenderLayer> layerFactory, CallbackInfoReturnable<VertexConsumer> cir) {
-            cir.setReturnValue(ETFRenderContext.processSpriteVertexConsumer(layerFactory, cir.getReturnValue()));
+    private void etf$modifyIfRequired(VertexConsumerProvider vertexConsumers, Function<Identifier, RenderLayer> layerFactory, CallbackInfoReturnable<VertexConsumer> cir) {
+        cir.setReturnValue(ETFRenderContext.processSpriteVertexConsumer(layerFactory, cir.getReturnValue()));
     }
 
 }

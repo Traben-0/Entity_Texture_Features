@@ -34,11 +34,6 @@ public class ETFVersionDifferenceHandler {
         return false;
     }
 
-    @ExpectPlatform
-    public static boolean areShadersInUse() {
-        return false;
-    }
-
 
     //the below act as handlers for minecraft version differences that have come up during development
     //for instance biome code changed in 1.18.2

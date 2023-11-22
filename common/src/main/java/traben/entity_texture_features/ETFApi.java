@@ -1,5 +1,6 @@
 package traben.entity_texture_features;
 
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.model.Model;
@@ -13,21 +14,19 @@ import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.config.screens.warnings.ETFConfigWarning;
 import traben.entity_texture_features.config.screens.warnings.ETFConfigWarnings;
-import traben.entity_texture_features.texture_features.ETFManager;
-import traben.entity_texture_features.texture_features.property_reading.RandomPropertiesFileHandler;
-import traben.entity_texture_features.texture_features.property_reading.RandomPropertyRule;
-import traben.entity_texture_features.texture_features.property_reading.properties.RandomProperties;
-import traben.entity_texture_features.texture_features.property_reading.properties.RandomProperty;
-import traben.entity_texture_features.texture_features.property_reading.properties.optifine_properties.BabyProperty;
-import traben.entity_texture_features.texture_features.texture_handlers.ETFTexture;
-import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.features.ETFManager;
+import traben.entity_texture_features.features.property_reading.RandomPropertiesFileHandler;
+import traben.entity_texture_features.features.property_reading.RandomPropertyRule;
+import traben.entity_texture_features.features.property_reading.properties.RandomProperties;
+import traben.entity_texture_features.features.property_reading.properties.RandomProperty;
+import traben.entity_texture_features.features.property_reading.properties.optifine_properties.BabyProperty;
+import traben.entity_texture_features.features.texture_handlers.ETFTexture;
 import traben.entity_texture_features.utils.ETFEntity;
+import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
-
-import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
 /**
  * ETF's api for external mod access (primarily puzzle and EMF at this time)
@@ -43,24 +42,24 @@ import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
  * {@link ETFApi#resetETF()}
  * @get_variant_textures API methods for returning valid variant textures given an Entity, and it's default texture<p>
  * {@link ETFApi#getCurrentETFVariantTextureOfEntity(Entity, Identifier)} <p>
- * {@link ETFApi#getCurrentETFVariantTextureOfBlockEntity(BlockEntity, Identifier, Integer)}
+ * {@link ETFApi#getCurrentETFVariantTextureOfBlockEntity(BlockEntity, Identifier)}
  * @get_emissive_textures API methods for returning valid emissive textures given an Entity, and it's default texture<p>
  * These methods will first find the variant of the texture and then find that variants emissive texture<p>
  * {@link ETFApi#getCurrentETFEmissiveTextureOfEntityOrNull(Entity, Identifier)} <p>
- * {@link ETFApi#getCurrentETFEmissiveTextureOfBlockEntityOrNull(BlockEntity, Identifier, Integer)}
+ * {@link ETFApi#getCurrentETFEmissiveTextureOfBlockEntityOrNull(BlockEntity, Identifier)}
  * @automatic_emissive_rendering These methods will automatically find an entities emissive texture and render it on a given Model | ModelPart <p>
  * These methods should be placed directly after the initial models render, and before the MatrixStack's modifications are popped or changed<p>
  * {@link ETFApi#renderETFEmissiveModel(Entity, Identifier, MatrixStack, VertexConsumerProvider, Model)} <p>
- * {@link ETFApi#renderETFEmissiveModel(BlockEntity, Integer, Identifier, MatrixStack, VertexConsumerProvider, Model)}<p>
+ * {@link ETFApi#renderETFEmissiveModel(BlockEntity, Identifier, MatrixStack, VertexConsumerProvider, Model)}<p>
  * {@link ETFApi#renderETFEmissiveModelPart(Entity, Identifier, MatrixStack, VertexConsumerProvider, ModelPart)} <p>
- * {@link ETFApi#renderETFEmissiveModelPart(BlockEntity, Integer, Identifier, MatrixStack, VertexConsumerProvider, ModelPart)}
+ * {@link ETFApi#renderETFEmissiveModelPart(BlockEntity, Identifier, MatrixStack, VertexConsumerProvider, ModelPart)}
  * @adding_custom_optifine_properties This method allows registering custom {@link RandomProperty} objects to be included in OptiFine property file testing.<p>
  * {@link ETFApi#registerCustomRandomPropertyFactory(String, RandomProperties.RandomPropertyFactory...)}
  * @adding_custom_warnings This method allows registering custom {@link ETFConfigWarning} objects to be included in the ETF config screens and mod compatibility fixes.<p>
  * {@link ETFApi#registerCustomETFConfigWarning(String, ETFConfigWarning...)}
  * @recent_rule_matches These methods allow retrieving the latest matched OptiFine property rule index of a given entity.<p>
  * {@link ETFApi#getLastMatchingRuleOfEntity(Entity)}<p>
- * {@link ETFApi#getLastMatchingRuleOfBlockEntity(BlockEntity, Integer)}
+ * {@link ETFApi#getLastMatchingRuleOfBlockEntity(BlockEntity)}
  * @optifine_property_reading This method allows an external mod to send in the path of an OptiFine random properties file and return an object<p>
  * that can test specific entities to discover their assigned random suffix<p>
  * {@link ETFApi#readRandomPropertiesFileAndReturnTestingObject3(Identifier, String...)} <p>
@@ -131,13 +130,13 @@ public final class ETFApi {
 
 
     /**
-     * pass in a bloack entity and receive the UUID ETF will recognise it as
+     * pass in a block entity and receive the UUID ETF will recognise it as
      *
-     * @param blockEntity         the block entity
+     * @param blockEntity the block entity
      * @return the UUID ETF recognises for that block Entity
      */
     public static UUID getUUIDForBlockEntity(BlockEntity blockEntity) {
-        long most = blockEntity.getCachedState().hashCode() ;
+        long most = blockEntity.getCachedState().hashCode();
         long least = blockEntity.getPos().hashCode();
         return new UUID(most, least);
     }
@@ -153,7 +152,7 @@ public final class ETFApi {
     public static Identifier getCurrentETFVariantTextureOfEntity(@NotNull Entity entity, @NotNull Identifier defaultTexture) {
         if (entity != null) {
             ETFEntity etfEntity = (ETFEntity) entity;
-            ETFTexture etfTexture = ETFManager.getInstance().getETFTexture(defaultTexture, etfEntity, ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs);
+            ETFTexture etfTexture = ETFManager.getInstance().getETFTexture(defaultTexture, etfEntity, ETFManager.TextureSource.ENTITY);
             if (etfTexture != null) {// just in case
                 Identifier etfIdentifier = etfTexture.getTextureIdentifier(etfEntity);
                 if (etfIdentifier != null) {// just in case
@@ -169,14 +168,13 @@ public final class ETFApi {
      *
      * @param entity          the entity
      * @param defaultTexture  the default texture
-     * @param hashToAddToUUID Nullable hash value that will be added to ETF's auto generated block entity uuid.
      *                        (send the hash of any extra identifying type parameter your block entity might have, e.g. facing direction)
      * @return the variant texture or the defaultTexture if no variant exists
      */
-    public static Identifier getCurrentETFVariantTextureOfBlockEntity(@NotNull BlockEntity entity, @NotNull Identifier defaultTexture, @Nullable Integer hashToAddToUUID) {
+    public static Identifier getCurrentETFVariantTextureOfBlockEntity(@NotNull BlockEntity entity, @NotNull Identifier defaultTexture) {
         if (entity != null) {
             ETFEntity etfEntity = (ETFEntity) entity;
-            return getCurrentETFVariantTextureOfBlockEntityInternal(etfEntity,defaultTexture);
+            return getCurrentETFVariantTextureOfBlockEntityInternal(etfEntity, defaultTexture);
         }
         return defaultTexture;
     }
@@ -184,13 +182,13 @@ public final class ETFApi {
     public static Identifier getCurrentETFVariantTextureOfBlockEntity(@NotNull BlockEntity entity, @NotNull Identifier defaultTexture, @NotNull UUID specifiedUUID) {
         if (entity != null) {
             ETFEntity etfEntity = (ETFEntity) entity;
-            return getCurrentETFVariantTextureOfBlockEntityInternal(etfEntity,defaultTexture);
+            return getCurrentETFVariantTextureOfBlockEntityInternal(etfEntity, defaultTexture);
         }
         return defaultTexture;
     }
 
     private static Identifier getCurrentETFVariantTextureOfBlockEntityInternal(@NotNull ETFEntity etfEntity, @NotNull Identifier defaultTexture) {
-        ETFTexture etfTexture = ETFManager.getInstance().getETFTexture(defaultTexture, etfEntity, ETFManager.TextureSource.BLOCK_ENTITY, ETFConfigData.removePixelsUnderEmissiveBlockEntity);
+        ETFTexture etfTexture = ETFManager.getInstance().getETFTexture(defaultTexture, etfEntity, ETFManager.TextureSource.BLOCK_ENTITY);
         if (etfTexture != null) {// just in case
             Identifier etfIdentifier = etfTexture.getTextureIdentifier(etfEntity);
             if (etfIdentifier != null) {// just in case
@@ -203,7 +201,7 @@ public final class ETFApi {
     @NotNull
     @Deprecated
     public static Identifier getCurrentETFVariantTextureOfEntity(@NotNull BlockEntity entity, @NotNull Identifier defaultTexture, UUID ignore) {
-        return getCurrentETFVariantTextureOfBlockEntity(entity, defaultTexture, ignore.hashCode());
+        return getCurrentETFVariantTextureOfBlockEntity(entity, defaultTexture);
     }
 
     /**
@@ -216,7 +214,7 @@ public final class ETFApi {
     @Nullable
     public static Identifier getCurrentETFEmissiveTextureOfEntityOrNull(@NotNull Entity entity, @NotNull Identifier defaultTexture) {
         if (entity != null) {
-            ETFTexture etfTexture = ETFManager.getInstance().getETFTexture(defaultTexture, (ETFEntity) entity, ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs);
+            ETFTexture etfTexture = ETFManager.getInstance().getETFTexture(defaultTexture, (ETFEntity) entity, ETFManager.TextureSource.ENTITY);
             if (etfTexture != null) {// just in case
                 return etfTexture.getEmissiveIdentifierOfCurrentState();
             }
@@ -229,13 +227,12 @@ public final class ETFApi {
      *
      * @param entity          the entity
      * @param defaultTexture  the default texture
-     * @param hashToAddToUUID Nullable hash value that will be added to ETF's auto generated block entity uuid.
      * @return the emissive texture or null if it doesn't exist
      */
     @Nullable
-    public static Identifier getCurrentETFEmissiveTextureOfBlockEntityOrNull(@NotNull BlockEntity entity, @NotNull Identifier defaultTexture, @Nullable Integer hashToAddToUUID) {
+    public static Identifier getCurrentETFEmissiveTextureOfBlockEntityOrNull(@NotNull BlockEntity entity, @NotNull Identifier defaultTexture) {
         if (entity != null) {
-            ETFTexture etfTexture = ETFManager.getInstance().getETFTexture(defaultTexture, (ETFEntity) entity, ETFManager.TextureSource.BLOCK_ENTITY, ETFConfigData.removePixelsUnderEmissiveBlockEntity);
+            ETFTexture etfTexture = ETFManager.getInstance().getETFTexture(defaultTexture, (ETFEntity) entity, ETFManager.TextureSource.BLOCK_ENTITY);
             if (etfTexture != null) {// just in case
                 return etfTexture.getEmissiveIdentifierOfCurrentState();
             }
@@ -260,7 +257,7 @@ public final class ETFApi {
             @NotNull VertexConsumerProvider vertexConsumerProvider,
             @NotNull Model model
     ) {
-        ETFTexture etfTexture = ETFManager.getInstance().getETFTexture(defaultTextureOfEntity, (ETFEntity) entity, ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs);
+        ETFTexture etfTexture = ETFManager.getInstance().getETFTexture(defaultTextureOfEntity, (ETFEntity) entity, ETFManager.TextureSource.ENTITY);
         if (etfTexture != null) {// just in case
             etfTexture.renderEmissive(matrixStack, vertexConsumerProvider, model);
         }
@@ -282,7 +279,7 @@ public final class ETFApi {
             @NotNull VertexConsumerProvider vertexConsumerProvider,
             @NotNull ModelPart modelPart
     ) {
-        ETFTexture etfTexture = ETFManager.getInstance().getETFTexture(defaultTextureOfEntity, (ETFEntity) entity, ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs);
+        ETFTexture etfTexture = ETFManager.getInstance().getETFTexture(defaultTextureOfEntity, (ETFEntity) entity, ETFManager.TextureSource.ENTITY);
         if (etfTexture != null) {// just in case
             etfTexture.renderEmissive(matrixStack, vertexConsumerProvider, modelPart);
         }
@@ -293,7 +290,6 @@ public final class ETFApi {
      * your entity model is rendered, but before you pop or modify the matrix stack
      *
      * @param entity                 the entity
-     * @param hashToAddToUUID        Nullable hash value that will be added to ETF's auto generated block entity uuid.
      * @param defaultTextureOfEntity the default (non-variant) texture of entity
      * @param matrixStack            the matrix stack
      * @param vertexConsumerProvider the vertex consumer provider
@@ -301,13 +297,12 @@ public final class ETFApi {
      */
     public static void renderETFEmissiveModel(
             @NotNull BlockEntity entity,
-            @Nullable Integer hashToAddToUUID,
             @NotNull Identifier defaultTextureOfEntity,
             @NotNull MatrixStack matrixStack,
             @NotNull VertexConsumerProvider vertexConsumerProvider,
             @NotNull Model model
     ) {
-        ETFTexture etfTexture = ETFManager.getInstance().getETFTexture(defaultTextureOfEntity, (ETFEntity) entity, ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs);
+        ETFTexture etfTexture = ETFManager.getInstance().getETFTexture(defaultTextureOfEntity, (ETFEntity) entity, ETFManager.TextureSource.ENTITY);
         if (etfTexture != null) {// just in case
             etfTexture.renderEmissive(matrixStack, vertexConsumerProvider, model);
         }
@@ -317,7 +312,6 @@ public final class ETFApi {
      * same method as {@link ETFApi#renderETFEmissiveModel(Entity, Identifier, MatrixStack, VertexConsumerProvider, Model)} but for an individual ModelPart
      *
      * @param entity                 the entity
-     * @param hashToAddToUUID        Nullable hash value that will be added to ETF's auto generated block entity uuid.
      * @param defaultTextureOfEntity the default (non-variant) texture of entity
      * @param matrixStack            the matrix stack
      * @param vertexConsumerProvider the vertex consumer provider
@@ -325,13 +319,12 @@ public final class ETFApi {
      */
     public static void renderETFEmissiveModelPart(
             @NotNull BlockEntity entity,
-            @Nullable Integer hashToAddToUUID,
             @NotNull Identifier defaultTextureOfEntity,
             @NotNull MatrixStack matrixStack,
             @NotNull VertexConsumerProvider vertexConsumerProvider,
             @NotNull ModelPart modelPart
     ) {
-        ETFTexture etfTexture = ETFManager.getInstance().getETFTexture(defaultTextureOfEntity, (ETFEntity) entity, ETFManager.TextureSource.ENTITY, ETFConfigData.removePixelsUnderEmissiveMobs);
+        ETFTexture etfTexture = ETFManager.getInstance().getETFTexture(defaultTextureOfEntity, (ETFEntity) entity, ETFManager.TextureSource.ENTITY);
         if (etfTexture != null) {// just in case
             etfTexture.renderEmissive(matrixStack, vertexConsumerProvider, modelPart);
         }
@@ -378,12 +371,11 @@ public final class ETFApi {
      * Used by EMF.
      *
      * @param entity          block entity to get the latest rule matching for.
-     * @param hashToAddToUUID Nullable hash value that will be added to ETF's auto generated block entity uuid.
      * @return Integer index of the most recent random property rule to be matched.<p>
      * default value = 0
      */
-    private static int getLastMatchingRuleOfBlockEntity(BlockEntity entity, @Nullable Integer hashToAddToUUID) {
-        Integer ruleIndex = ETFManager.getInstance().LAST_MET_RULE_INDEX.get(getUUIDForBlockEntity(entity));
+    private static int getLastMatchingRuleOfBlockEntity(BlockEntity entity) {
+        Integer ruleIndex = ETFManager.getInstance().LAST_MET_RULE_INDEX.get(((ETFEntity)entity).etf$getUuid());
         return ruleIndex == null ? 0 : ruleIndex;
     }
 
@@ -428,9 +420,15 @@ public final class ETFApi {
      */
     public static class ETFRandomTexturePropertyInstance {
         protected final List<RandomPropertyRule> propertyCases;
+        protected final IntOpenHashSet allSuffixes;
 
         protected ETFRandomTexturePropertyInstance(List<RandomPropertyRule> etfs) {
             propertyCases = etfs;
+            allSuffixes = new IntOpenHashSet();
+            for (RandomPropertyRule rule:
+                 etfs) {
+                allSuffixes.addAll(rule.getSuffixSet());
+            }
         }
 
         @Nullable
@@ -438,9 +436,33 @@ public final class ETFApi {
             Properties props = ETFUtils2.readAndReturnPropertiesElseNull(propertiesFileIdentifier);
             if (props == null) return null;
             List<RandomPropertyRule> etfs = RandomPropertiesFileHandler.getAllValidPropertyObjects(props, propertiesFileIdentifier, suffixKeyName);
-            if (etfs.isEmpty()) return null;
-            return new ETFRandomTexturePropertyInstance(etfs);
+            return of(etfs);
 
+        }
+
+        /**
+         * If you don't know what you are doing use {@link ETFApi#readRandomPropertiesFileAndReturnTestingObject3(Identifier, String...)}
+         * 
+         * @return a ETFRandomTexturePropertyInstance generated from the given RandomPropertyRule List
+         */
+        @Nullable
+        public static ETFRandomTexturePropertyInstance of(List<RandomPropertyRule> propertyRules){
+            if (propertyRules.isEmpty()) return null;
+            return new ETFRandomTexturePropertyInstance(propertyRules);
+        }
+        
+        /**
+         * @return all the suffixes mentioned in this OptiFine property file
+         */
+        public IntOpenHashSet getAllSuffixes(){
+            return allSuffixes;
+        }
+
+        /**
+         * @return the amount of rules in this OptiFine property file
+         */
+        public int size(){
+            return propertyCases.size();
         }
 
         /**
@@ -466,49 +488,41 @@ public final class ETFApi {
          * also choose to check for a #1 suffix, I would recommend using 1 to mean the vanilla/default variant.
          */
         public int getSuffixForEntity(Entity entityToBeTested, boolean isThisTheFirstTestForEntity, Object2BooleanOpenHashMap<UUID> cacheToMarkEntitiesWhoseVariantCanChangeAgain) {
-            if (entityToBeTested == null) return 0;
-            boolean isAnUpdate = !isThisTheFirstTestForEntity;
-            for (RandomPropertyRule testCase : propertyCases) {
-                ETFEntity entity = (ETFEntity) entityToBeTested;
-                if (testCase.doesEntityMeetConditionsOfThisCase(entity, isThisTheFirstTestForEntity, cacheToMarkEntitiesWhoseVariantCanChangeAgain)) {
-                    return testCase.getVariantSuffixFromThisCase(entity.etf$getUuid());
-                }
-            }
-            return 0;
+            return getSuffixForETFEntity((ETFEntity) entityToBeTested,isThisTheFirstTestForEntity,cacheToMarkEntitiesWhoseVariantCanChangeAgain);
+
         }
 
         /**
          * Same as {@link ETFRandomTexturePropertyInstance#getSuffixForEntity(Entity, boolean, Object2BooleanOpenHashMap)} but for block entities
          *
          * @param entityToBeTested                              the block entity to be tested
-         * @param hashToAddToUUID                               Nullable hash value that will be added to ETF's auto generated block entity uuid.
          * @param isThisTheFirstTestForEntity                   boolean that is true for every entities first test
          * @param cacheToMarkEntitiesWhoseVariantCanChangeAgain the cache to mark entities whose variant can change again
          * @return the suffix number for the block entity
          */
-        public int getSuffixForBlockEntity(BlockEntity entityToBeTested, @Nullable Integer hashToAddToUUID, boolean isThisTheFirstTestForEntity, Object2BooleanOpenHashMap<UUID> cacheToMarkEntitiesWhoseVariantCanChangeAgain) {
+
+        public int getSuffixForBlockEntity(BlockEntity entityToBeTested, boolean isThisTheFirstTestForEntity, Object2BooleanOpenHashMap<UUID> cacheToMarkEntitiesWhoseVariantCanChangeAgain) {
+            return getSuffixForETFEntity((ETFEntity) entityToBeTested,isThisTheFirstTestForEntity,cacheToMarkEntitiesWhoseVariantCanChangeAgain);
+        }
+
+        /**
+         * Same as {@link ETFRandomTexturePropertyInstance#getSuffixForEntity(Entity, boolean, Object2BooleanOpenHashMap)} but for the internal use ETFEntity interface
+         *
+         * @param entityToBeTested                              the block entity to be tested
+         * @param isThisTheFirstTestForEntity                   boolean that is true for every entities first test
+         * @param cacheToMarkEntitiesWhoseVariantCanChangeAgain the cache to mark entities whose variant can change again
+         * @return the suffix number for the block entity
+         */
+        public int getSuffixForETFEntity(ETFEntity entityToBeTested, boolean isThisTheFirstTestForEntity, Object2BooleanOpenHashMap<UUID> cacheToMarkEntitiesWhoseVariantCanChangeAgain) {
             if (entityToBeTested == null) return 0;
-            return getBlockEntityLogicInternal((ETFEntity) entityToBeTested, isThisTheFirstTestForEntity, cacheToMarkEntitiesWhoseVariantCanChangeAgain);
-
-        }
-
-        public int getSuffixForBlockEntity(BlockEntity entityToBeTested, UUID specifiedUUID, boolean isThisTheFirstTestForEntity, Object2BooleanOpenHashMap<UUID> cacheToMarkEntitiesWhoseVariantCanChangeAgain) {
-            if (entityToBeTested == null || specifiedUUID == null) return 0;
-            return getBlockEntityLogicInternal((ETFEntity) entityToBeTested, isThisTheFirstTestForEntity, cacheToMarkEntitiesWhoseVariantCanChangeAgain);
-        }
-
-        private int getBlockEntityLogicInternal(ETFEntity entity, boolean isThisTheFirstTestForEntity, Object2BooleanOpenHashMap<UUID> cacheToMarkEntitiesWhoseVariantCanChangeAgain){
             boolean isAnUpdate = !isThisTheFirstTestForEntity;
             for (RandomPropertyRule testCase : propertyCases) {
-                if (testCase.doesEntityMeetConditionsOfThisCase(entity, isThisTheFirstTestForEntity, cacheToMarkEntitiesWhoseVariantCanChangeAgain)) {
-                    return testCase.getVariantSuffixFromThisCase(entity.etf$getUuid());
+                if (testCase.doesEntityMeetConditionsOfThisCase(entityToBeTested, isThisTheFirstTestForEntity, cacheToMarkEntitiesWhoseVariantCanChangeAgain)) {
+                    return testCase.getVariantSuffixFromThisCase(entityToBeTested.etf$getUuid());
                 }
             }
             return 0;
         }
-
-
-
     }
 
 

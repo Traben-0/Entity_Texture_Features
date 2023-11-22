@@ -18,7 +18,7 @@ import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.screens.warnings.ETFConfigWarning;
 import traben.entity_texture_features.config.screens.warnings.ETFConfigWarnings;
-import traben.entity_texture_features.texture_features.ETFManager;
+import traben.entity_texture_features.features.ETFManager;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -42,11 +42,12 @@ public abstract class ETFUtils2 {
 
     @NotNull
     public static String addVariantNumberSuffix(String identifierString, int variant) {
+        if(variant < 2)
+            return identifierString;
         if (identifierString.matches("\\D+\\d+\\.png")) {
             return identifierString.replace(".png", "." + variant + ".png");
-        } else {
-            return identifierString.replace(".png", variant + ".png");
         }
+        return identifierString.replace(".png", variant + ".png");
     }
 
     @Nullable

@@ -3,7 +3,6 @@ package traben.entity_texture_features.mixin.entity.misc;
 import net.minecraft.client.render.entity.PlayerModelPart;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
@@ -16,8 +15,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import traben.entity_texture_features.config.ETFConfig;
-import traben.entity_texture_features.texture_features.ETFManager;
-import traben.entity_texture_features.texture_features.player.ETFPlayerEntity;
+import traben.entity_texture_features.features.ETFManager;
+import traben.entity_texture_features.features.player.ETFPlayerEntity;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
@@ -25,22 +24,25 @@ import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 public abstract class MixinPlayerEntity extends Entity implements ETFPlayerEntity {
 
 
-    @Shadow public abstract PlayerInventory getInventory();
-
-    @Shadow public abstract boolean isPartVisible(PlayerModelPart modelPart);
-
-    @Shadow public abstract Text getName();
-
+    @SuppressWarnings("unused")
     public MixinPlayerEntity(EntityType<?> type, World world) {
         super(type, world);
     }
+
+    @Shadow
+    public abstract PlayerInventory getInventory();
+
+    @Shadow
+    public abstract boolean isPartVisible(PlayerModelPart modelPart);
+
+    @Shadow
+    public abstract Text getName();
 
     //will force update entity texture at any player interaction useful for debugging
     @Inject(method = "interact", at = @At("HEAD"))
     private void etf$injected(Entity entity, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
 
-        //noinspection DataFlowIssue
-        if (((LivingEntity) (Object) this).getWorld().isClient()) {
+        if (getWorld().isClient()) {
             if (ETFConfigData.debugLoggingMode != ETFConfig.DebugLogMode.None)
                 ETFManager.getInstance().markEntityForDebugPrint(entity.getUuid());
         }

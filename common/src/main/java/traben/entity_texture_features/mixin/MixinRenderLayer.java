@@ -3,38 +3,40 @@ package traben.entity_texture_features.mixin;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import traben.entity_texture_features.texture_features.ETFManager;
-import traben.entity_texture_features.texture_features.ETFRenderContext;
+import traben.entity_texture_features.features.ETFManager;
+import traben.entity_texture_features.features.ETFRenderContext;
 
 
 @Mixin(RenderLayer.class)
-public class MixinRenderLayer {
+public abstract class MixinRenderLayer {
 
+
+    @Shadow public abstract boolean isOutline();
 
     @Unique
-    private static Identifier etf$getETFVariantOf(Identifier identifier){
+    private static Identifier etf$getETFVariantOf(Identifier identifier) {
 
-        if(ETFRenderContext.getCurrentEntity() == null
+        if (ETFRenderContext.getCurrentEntity() == null
                 || !ETFRenderContext.isAllowedToRenderLayerTextureModify())
             return identifier;
 
 
         ETFManager.TextureSource source;
-        if(ETFRenderContext.isRenderingFeatures()){
+        if (ETFRenderContext.isRenderingFeatures()) {
             source = ETFManager.TextureSource.ENTITY_FEATURE;//this is still needed to speed up some feature renderers
         } else if (ETFRenderContext.getCurrentEntity().etf$isBlockEntity()) {
             source = ETFManager.TextureSource.BLOCK_ENTITY;//todo still needed in rewrite?
-        }else{
+        } else {
             source = ETFManager.TextureSource.ENTITY;
         }
-
-        return ETFManager.getInstance().getETFTexture(identifier, ETFRenderContext.getCurrentEntity(), source,false)
+        Identifier modified = ETFManager.getInstance().getETFTexture(identifier, ETFRenderContext.getCurrentEntity(), source)
                 .getTextureIdentifier(ETFRenderContext.getCurrentEntity());
+        return modified == null ? identifier : modified;
     }
-
 
 
     @ModifyVariable(
@@ -52,6 +54,7 @@ public class MixinRenderLayer {
     private static Identifier etf$mixinLayer2(Identifier value) {
         return etf$getETFVariantOf(value);
     }
+
     @ModifyVariable(
             method = "getEnergySwirl",
             at = @At(value = "HEAD"),

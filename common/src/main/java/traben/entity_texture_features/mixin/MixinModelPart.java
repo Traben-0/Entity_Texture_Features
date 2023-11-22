@@ -13,12 +13,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.ETFClientCommon;
-import traben.entity_texture_features.texture_features.ETFManager;
-import traben.entity_texture_features.texture_features.ETFRenderContext;
+import traben.entity_texture_features.features.ETFManager;
+import traben.entity_texture_features.features.ETFRenderContext;
 
 @Mixin(ModelPart.class)
 public abstract class MixinModelPart {
-    @Shadow public abstract void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha);
+    @Shadow
+    public abstract void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha);
 
     @Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V",
             at = @At(value = "HEAD"))
@@ -33,13 +34,13 @@ public abstract class MixinModelPart {
             at = @At(value = "RETURN"))
     private void etf$doEmissiveIfInitialPart(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha, CallbackInfo ci) {
         //run code if this is the initial topmost rendered part
-        if(ETFRenderContext.getCurrentModelPartDepth() != 1){
+        if (ETFRenderContext.getCurrentModelPartDepth() != 1) {
             ETFRenderContext.decrementCurrentModelPartDepth();
-        }else{
-            if(ETFRenderContext.isRenderReady()) {
+        } else {
+            if (ETFRenderContext.isRenderReady()) {
                 //attempt special renders as eager OR checks
-                if(etf$renderEmissive(matrices, overlay, red, green, blue, alpha) |
-                        etf$renderEnchanted(matrices, light, overlay, red, green, blue, alpha)){
+                if (etf$renderEmissive(matrices, overlay, red, green, blue, alpha) |
+                        etf$renderEnchanted(matrices, light, overlay, red, green, blue, alpha)) {
                     //reset render layer stuff behind the scenes if special renders occurred
                     ETFRenderContext.getCurrentProvider().getBuffer(ETFRenderContext.getCurrentRenderLayer());
                 }
@@ -50,20 +51,20 @@ public abstract class MixinModelPart {
     }
 
     @Unique
-    private boolean etf$renderEmissive(MatrixStack matrices, int overlay, float red, float green, float blue, float alpha){
+    private boolean etf$renderEmissive(MatrixStack matrices, int overlay, float red, float green, float blue, float alpha) {
         Identifier emissive = ETFRenderContext.getCurrentETFTexture().getEmissiveIdentifierOfCurrentState();
         if (emissive != null) {
 
             ETFRenderContext.preventRenderLayerTextureModify();
 
-            boolean textureIsAllowedBrightRender =ETFManager.getEmissiveMode() == ETFManager.EmissiveRenderModes.BRIGHT
+            boolean textureIsAllowedBrightRender = ETFManager.getEmissiveMode() == ETFManager.EmissiveRenderModes.BRIGHT
                     && ETFRenderContext.getCurrentEntity().etf$canBeBright() && !ETFRenderContext.getCurrentETFTexture().isPatched_CurrentlyOnlyArmor();
 
             VertexConsumer emissiveConsumer = ETFRenderContext.getCurrentProvider().getBuffer(
                     textureIsAllowedBrightRender ?
-                                RenderLayer.getBeaconBeam(emissive,true):
-                                ETFRenderContext.getCurrentEntity().etf$isBlockEntity() ?
-                                    RenderLayer.getEntityTranslucentCull(emissive)  :
+                            RenderLayer.getBeaconBeam(emissive, true) :
+                            ETFRenderContext.getCurrentEntity().etf$isBlockEntity() ?
+                                    RenderLayer.getEntityTranslucentCull(emissive) :
                                     RenderLayer.getEntityTranslucent(emissive));
 
 
@@ -76,10 +77,10 @@ public abstract class MixinModelPart {
     }
 
     @Unique
-    private boolean etf$renderEnchanted(MatrixStack matrices, int light, int overlay, float red, float green, float blue, float alpha){
+    private boolean etf$renderEnchanted(MatrixStack matrices, int light, int overlay, float red, float green, float blue, float alpha) {
         //attempt enchanted render
         Identifier enchanted = ETFRenderContext.getCurrentETFTexture().getEnchantIdentifierOfCurrentState();
-        if(enchanted != null){
+        if (enchanted != null) {
             ETFRenderContext.preventRenderLayerTextureModify();
             VertexConsumer enchantedVertex = ItemRenderer.getArmorGlintConsumer(ETFRenderContext.getCurrentProvider(), RenderLayer.getArmorCutoutNoCull(enchanted), false, true);
             ETFRenderContext.allowRenderLayerTextureModify();
@@ -89,7 +90,6 @@ public abstract class MixinModelPart {
         }
         return false;
     }
-
 
 
 }

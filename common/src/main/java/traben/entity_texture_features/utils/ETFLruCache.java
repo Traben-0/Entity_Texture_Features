@@ -2,7 +2,7 @@ package traben.entity_texture_features.utils;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import org.jetbrains.annotations.Nullable;
-import traben.entity_texture_features.texture_features.ETFManager;
+import traben.entity_texture_features.features.ETFManager;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 

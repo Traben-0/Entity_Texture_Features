@@ -39,7 +39,7 @@ public abstract class MixinWardenFeatureRenderer<T extends WardenEntity, M exten
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/feature/WardenFeatureRenderer;updateModelPartVisibility()V",
                     shift = At.Shift.AFTER))
     private void etf$preventHiding(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T wardenEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
-        if (ETFConfigData.enableFullBodyWardenTextures && !texture.equals(VANILLA_TEXTURE)) {
+        if (ETFConfigData.enableFullBodyWardenTextures && !VANILLA_TEXTURE.equals(texture)) {
             unhideAllModelParts();
         }
     }

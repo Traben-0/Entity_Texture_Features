@@ -12,8 +12,8 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import traben.entity_texture_features.texture_features.ETFManager;
-import traben.entity_texture_features.texture_features.player.ETFPlayerTexture;
+import traben.entity_texture_features.features.ETFManager;
+import traben.entity_texture_features.features.player.ETFPlayerTexture;
 
 import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 
@@ -68,17 +68,4 @@ public abstract class MixinAbstractClientPlayerEntity extends PlayerEntity {
             ));
         }
     }
-
-//    @Inject(method = "cape",
-//            at = @At("RETURN"),
-//            cancellable = true)
-//    private void changeCapeReturnsBoolean(CallbackInfoReturnable<Boolean> cir) {
-//        //returns null if skin features disabled check is inbuilt
-//        ETFPlayerTexture textureData = ETFManager.getInstance().getPlayerTexture(this, getSkinTexture());
-//        if ((textureData != null && textureData.hasCustomCape())
-//                || getUuid().equals(ETFPlayerTexture.Dev)
-//                || getUuid().equals(ETFPlayerTexture.Wife)) {
-//            cir.setReturnValue(true);
-//        }
-//    }
 }

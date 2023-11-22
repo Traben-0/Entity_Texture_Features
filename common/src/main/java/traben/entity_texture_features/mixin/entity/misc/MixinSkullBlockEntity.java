@@ -11,7 +11,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import org.spongepowered.asm.mixin.Mixin;
-import traben.entity_texture_features.texture_features.player.ETFPlayerEntity;
+import traben.entity_texture_features.features.player.ETFPlayerEntity;
 
 @Mixin(SkullBlockEntity.class)
 public abstract class MixinSkullBlockEntity extends BlockEntity implements ETFPlayerEntity {

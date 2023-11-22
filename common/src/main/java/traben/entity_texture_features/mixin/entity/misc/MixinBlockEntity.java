@@ -18,7 +18,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import traben.entity_texture_features.ETFApi;
-import traben.entity_texture_features.texture_features.ETFManager;
 import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.UUID;
@@ -26,24 +25,27 @@ import java.util.UUID;
 @Mixin(BlockEntity.class)
 public abstract class MixinBlockEntity implements ETFEntity {
 
-    @Shadow public abstract BlockPos getPos();
+    @Unique
+    private UUID etf$id = null;
 
-    @Shadow @Nullable public abstract World getWorld();
+    @Shadow
+    public abstract BlockPos getPos();
 
-    @Shadow public abstract NbtCompound createNbt();
+    @Shadow
+    @Nullable
+    public abstract World getWorld();
+
+    @Shadow
+    public abstract NbtCompound createNbt();
 
     @Override
     public EntityType<?> etf$getType() {
         return EntityType.MARKER;
     }
 
-    @Unique
-    private UUID etf$id = null;
-
-
     @Override
     public UUID etf$getUuid() {
-        if (etf$id == null) etf$id = ETFApi.getUUIDForBlockEntity((BlockEntity) ((Object)this));
+        if (etf$id == null) etf$id = ETFApi.getUUIDForBlockEntity((BlockEntity) ((Object) this));
         return etf$id;
     }
 
@@ -100,9 +102,9 @@ public abstract class MixinBlockEntity implements ETFEntity {
     @Override
     public float etf$distanceTo(Entity entity) {
         BlockPos pos = getPos();
-        float f = (float)(pos.getX() - entity.getX());
-        float g = (float)(pos.getY() - entity.getY());
-        float h = (float)(pos.getZ() - entity.getZ());
+        float f = (float) (pos.getX() - entity.getX());
+        float g = (float) (pos.getY() - entity.getY());
+        float h = (float) (pos.getZ() - entity.getZ());
         return MathHelper.sqrt(f * f + g * g + h * h);
     }
 
@@ -118,7 +120,7 @@ public abstract class MixinBlockEntity implements ETFEntity {
 
     @Override
     public boolean etf$canBeBright() {
-        return ETFManager.EmissiveRenderModes.blockEntityMode() == ETFManager.EmissiveRenderModes.BRIGHT;
+        return false;
     }
 
     @Override

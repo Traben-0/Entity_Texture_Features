@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import traben.entity_texture_features.texture_features.ETFRenderContext;
+import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.Optional;
@@ -37,7 +37,7 @@ public abstract class MixinShoulderParrotFeatureRenderer<T extends PlayerEntity>
 
     @Inject(method = "method_17958(Lnet/minecraft/client/util/math/MatrixStack;ZLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/nbt/NbtCompound;Lnet/minecraft/client/render/VertexConsumerProvider;IFFFFLnet/minecraft/entity/EntityType;)V",
             at = @At(value = "HEAD"))
-    private void etf$alterEntity(MatrixStack matrixStack, boolean bl, PlayerEntity playerEntity, NbtCompound nbtCompound, VertexConsumerProvider vertexConsumerProvider, int i, float f, float g, float h, float j, EntityType type, CallbackInfo ci) {
+    private void etf$alterEntity(MatrixStack matrixStack, boolean bl, PlayerEntity playerEntity, NbtCompound nbtCompound, VertexConsumerProvider vertexConsumerProvider, int i, float f, float g, float h, float j, EntityType<?> type, CallbackInfo ci) {
         if (entity_texture_features$parrotNBT != null) {
 
             entity_texture_features$player = ETFRenderContext.getCurrentEntity();
@@ -49,9 +49,10 @@ public abstract class MixinShoulderParrotFeatureRenderer<T extends PlayerEntity>
             }
         }
     }
+
     @Inject(method = "method_17958(Lnet/minecraft/client/util/math/MatrixStack;ZLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/nbt/NbtCompound;Lnet/minecraft/client/render/VertexConsumerProvider;IFFFFLnet/minecraft/entity/EntityType;)V",
             at = @At(value = "RETURN"))
-    private void etf$resetEntity(MatrixStack matrixStack, boolean bl, PlayerEntity playerEntity, NbtCompound nbtCompound, VertexConsumerProvider vertexConsumerProvider, int i, float f, float g, float h, float j, EntityType type, CallbackInfo ci) {
+    private void etf$resetEntity(MatrixStack matrixStack, boolean bl, PlayerEntity playerEntity, NbtCompound nbtCompound, VertexConsumerProvider vertexConsumerProvider, int i, float f, float g, float h, float j, EntityType<?> type, CallbackInfo ci) {
         if (entity_texture_features$parrotNBT != null) {
             ETFRenderContext.setCurrentEntity(entity_texture_features$player);
         }

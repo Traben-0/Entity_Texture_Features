@@ -24,6 +24,7 @@ public interface ETFEntity {
 
     UUID etf$getUuid();
 
+
     World etf$getWorld();
 
     BlockPos etf$getBlockPos();

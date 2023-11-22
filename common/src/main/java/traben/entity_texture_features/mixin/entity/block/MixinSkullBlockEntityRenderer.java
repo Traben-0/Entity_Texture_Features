@@ -26,11 +26,13 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-import traben.entity_texture_features.texture_features.ETFManager;
-import traben.entity_texture_features.texture_features.player.ETFPlayerTexture;
-import traben.entity_texture_features.texture_features.texture_handlers.ETFTexture;
+import traben.entity_texture_features.features.ETFManager;
+import traben.entity_texture_features.features.ETFRenderContext;
+import traben.entity_texture_features.features.player.ETFPlayerEntity;
+import traben.entity_texture_features.features.player.ETFPlayerFeatureRenderer;
+import traben.entity_texture_features.features.player.ETFPlayerTexture;
+import traben.entity_texture_features.features.texture_handlers.ETFTexture;
 import traben.entity_texture_features.utils.ETFEntity;
-import traben.entity_texture_features.texture_features.player.ETFPlayerEntity;
 
 import java.util.Map;
 
@@ -50,6 +52,19 @@ public abstract class MixinSkullBlockEntityRenderer implements BlockEntityRender
     private ETFPlayerTexture entity_texture_features$thisETFPlayerTexture = null;
     @Unique
     private ETFEntity etf$entity = null;
+
+
+    @Inject(method = "renderSkull",
+            at = @At(value = "HEAD"))
+    private static void etf$markNotToChange(Direction direction, float yaw, float animationProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, SkullBlockEntityModel model, RenderLayer renderLayer, CallbackInfo ci) {
+        ETFRenderContext.preventRenderLayerTextureModify();
+    }
+
+    @Inject(method = "renderSkull",
+            at = @At(value = "RETURN"))
+    private static void etf$markAllowedToChange(Direction direction, float yaw, float animationProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, SkullBlockEntityModel model, RenderLayer renderLayer, CallbackInfo ci) {
+        ETFRenderContext.allowRenderLayerTextureModify();
+    }
 
     @Unique
     private static Identifier etf$getIdentifier(SkullBlock.SkullType type, @Nullable GameProfile profile) {
@@ -85,7 +100,7 @@ public abstract class MixinSkullBlockEntityRenderer implements BlockEntityRender
                     entity_texture_features$thisETFPlayerTexture = ETFManager.getInstance().getPlayerTexture(etfPlayer, identifier);
                 } else {
                     etf$entity = (ETFEntity) skullBlockEntity;
-                    entity_texture_features$thisETFTexture = ETFManager.getInstance().getETFTexture(identifier, etf$entity, ETFManager.TextureSource.BLOCK_ENTITY, true);
+                    entity_texture_features$thisETFTexture = ETFManager.getInstance().getETFTexture(identifier, etf$entity, ETFManager.TextureSource.BLOCK_ENTITY);
                 }
             }
         }
@@ -110,7 +125,7 @@ public abstract class MixinSkullBlockEntityRenderer implements BlockEntityRender
             if (entity_texture_features$thisETFTexture != null) {
                 entity_texture_features$thisETFTexture.renderEmissive(matrixStack, vertexConsumerProvider, skullBlockEntityModel, ETFManager.EmissiveRenderModes.DULL);
             } else if (entity_texture_features$thisETFPlayerTexture != null) {
-                entity_texture_features$thisETFPlayerTexture.renderFeatures(matrixStack, vertexConsumerProvider, i, skullBlockEntityModel);
+                ETFPlayerFeatureRenderer.renderSkullFeatures(matrixStack, vertexConsumerProvider, i, skullBlockEntityModel, entity_texture_features$thisETFPlayerTexture);
             }
             matrixStack.pop();
         }

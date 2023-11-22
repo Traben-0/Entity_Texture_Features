@@ -29,21 +29,19 @@ import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 public abstract class MixinPackScreen extends Screen {
 
 
+    @Unique
+    private static final Identifier etf$FOCUSED = new Identifier(MOD_ID, "textures/gui/settings_focused.png");
+    @Unique
+    private static final Identifier etf$UNFOCUSED = new Identifier(MOD_ID, "textures/gui/settings_unfocused.png");
     @Shadow
     @Final
     private Path file;
-
-    @Shadow private ButtonWidget doneButton;
-
+    @Shadow
+    private ButtonWidget doneButton;
     @SuppressWarnings("unused")
     protected MixinPackScreen(Text title) {
         super(title);
     }
-
-    @Unique
-    private static final Identifier etf$FOCUSED = new Identifier(MOD_ID , "textures/gui/settings_focused.png");
-    @Unique
-    private static final Identifier etf$UNFOCUSED = new Identifier(MOD_ID , "textures/gui/settings_unfocused.png");
 
     @Inject(method = "init", at = @At("TAIL"))
     private void etf$etfButton(CallbackInfo ci) {

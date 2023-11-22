@@ -19,35 +19,52 @@ import java.util.UUID;
 
 @Mixin(Entity.class)
 public abstract class MixinEntity implements ETFEntity {
-    @Shadow public abstract EntityType<?> getType();
+    @Shadow
+    public abstract EntityType<?> getType();
 
-    @Shadow public abstract UUID getUuid();
+    @Shadow
+    public abstract UUID getUuid();
 
-    @Shadow public abstract World getWorld();
+    @Shadow
+    public abstract World getWorld();
 
-    @Shadow public abstract BlockPos getBlockPos();
+    @Shadow
+    public abstract BlockPos getBlockPos();
 
-    @Shadow public abstract int getBlockY();
+    @Shadow
+    public abstract int getBlockY();
 
-    @Shadow public abstract NbtCompound writeNbt(NbtCompound nbt);
+    @Shadow
+    public abstract NbtCompound writeNbt(NbtCompound nbt);
 
-    @Shadow public abstract boolean hasCustomName();
+    @Shadow
+    public abstract boolean hasCustomName();
 
-    @Shadow @Nullable public abstract Text getCustomName();
+    @Shadow
+    @Nullable
+    public abstract Text getCustomName();
 
-    @Shadow @Nullable public abstract AbstractTeam getScoreboardTeam();
+    @Shadow
+    @Nullable
+    public abstract AbstractTeam getScoreboardTeam();
 
-    @Shadow public abstract Iterable<ItemStack> getItemsEquipped();
+    @Shadow
+    public abstract Iterable<ItemStack> getItemsEquipped();
 
-    @Shadow public abstract Iterable<ItemStack> getHandItems();
+    @Shadow
+    public abstract Iterable<ItemStack> getHandItems();
 
-    @Shadow public abstract Iterable<ItemStack> getArmorItems();
+    @Shadow
+    public abstract Iterable<ItemStack> getArmorItems();
 
-    @Shadow public abstract float distanceTo(Entity entity);
+    @Shadow
+    public abstract float distanceTo(Entity entity);
 
-    @Shadow public abstract Vec3d getVelocity();
+    @Shadow
+    public abstract Vec3d getVelocity();
 
-    @Shadow public abstract EntityPose getPose();
+    @Shadow
+    public abstract EntityPose getPose();
 
     @Override
     public EntityType<?> etf$getType() {

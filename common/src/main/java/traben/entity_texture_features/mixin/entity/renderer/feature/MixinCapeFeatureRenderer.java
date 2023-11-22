@@ -20,8 +20,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.screens.skin.ETFConfigScreenSkinTool;
-import traben.entity_texture_features.texture_features.ETFManager;
-import traben.entity_texture_features.texture_features.player.ETFPlayerTexture;
+import traben.entity_texture_features.features.ETFManager;
+import traben.entity_texture_features.features.ETFRenderContext;
+import traben.entity_texture_features.features.player.ETFPlayerTexture;
 
 import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 
@@ -51,7 +52,9 @@ public abstract class MixinCapeFeatureRenderer extends FeatureRenderer<AbstractC
             if (playerTexture != null && playerTexture.capeType != ETFConfigScreenSkinTool.CapeType.NONE) {
                 playerTexture.renderFeatures(matrixStack, vertexConsumerProvider, i, this.getContextModel());
             } else if (abstractClientPlayerEntity.getUuid().equals(ETFPlayerTexture.Dev)) {
+                ETFRenderContext.preventRenderLayerTextureModify();
                 VertexConsumer emissiveVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(dev_cape_e));
+                ETFRenderContext.allowRenderLayerTextureModify();
                 (this.getContextModel()).renderCape(matrixStack, emissiveVert, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV);
             }
         }
@@ -69,8 +72,12 @@ public abstract class MixinCapeFeatureRenderer extends FeatureRenderer<AbstractC
             index = 0
     )
     private RenderLayer mixin(RenderLayer layer) {
-        if (etf$player != null)
-            return RenderLayer.getEntityTranslucent(etf$player.getSkinTextures().capeTexture());
+        if (etf$player != null) {
+            ETFRenderContext.preventRenderLayerTextureModify();
+            RenderLayer layer2 = RenderLayer.getEntityTranslucent(etf$player.getSkinTextures().capeTexture());
+            ETFRenderContext.allowRenderLayerTextureModify();
+            return layer2;
+        }
         return layer;
     }
 

@@ -30,9 +30,7 @@ public class ETFVersionDifferenceHandlerImpl {
         return true;
     }
 
-    public static boolean areShadersInUse() {
-        return IrisCompat.isShaderPackInUse();
-    }
+
 
     public static Logger getLogger() {
         //1.19 & 1.18.2 variation
