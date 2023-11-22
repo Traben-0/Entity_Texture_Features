@@ -75,7 +75,7 @@ public class ETFConfigScreenEmissiveSettings extends ETFConfigScreen {
         ));
 
 
-        this.addDrawableChild(getETFButton((int) (this.width * 0.525), (int) (this.height * 0.5), (int) (this.width * 0.45), 20,
+        this.addDrawableChild(getETFButton((int) (this.width * 0.525), (int) (this.height * 0.3), (int) (this.width * 0.45), 20,
                 Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
                         "config." + ETFClientCommon.MOD_ID + ".emissive_block_entity.title"
                 ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.enableEmissiveBlockEntities ? ScreenTexts.ON : ScreenTexts.OFF).getString()),

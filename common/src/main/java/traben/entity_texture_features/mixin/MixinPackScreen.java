@@ -38,6 +38,7 @@ public abstract class MixinPackScreen extends Screen {
     private Path file;
     @Shadow
     private ButtonWidget doneButton;
+
     @SuppressWarnings("unused")
     protected MixinPackScreen(Text title) {
         super(title);

@@ -11,14 +11,14 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3i;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import traben.entity_texture_features.ETFApi;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.config.screens.skin.ETFConfigScreenSkinTool;
 import traben.entity_texture_features.features.player.ETFPlayerEntity;
 import traben.entity_texture_features.features.player.ETFPlayerTexture;
-import traben.entity_texture_features.features.property_reading.RandomPropertiesFileHandler;
+import traben.entity_texture_features.features.property_reading.RandomPropertiesFile;
+import traben.entity_texture_features.features.property_reading.RandomPropertyRule;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperty;
 import traben.entity_texture_features.features.texture_handlers.ETFDirectory;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
@@ -30,12 +30,13 @@ import traben.entity_texture_features.utils.ETFUtils2;
 import java.util.*;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
+import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 
 // ETF re-write
 //this class will ideally be where everything in vanilla interacts to get ETF stuff done
 public class ETFManager {
 
-   public static final UUID ETF_GENERIC_UUID = UUID.nameUUIDFromBytes(("GENERIC").getBytes());
+    public static final UUID ETF_GENERIC_UUID = UUID.nameUUIDFromBytes(("GENERIC").getBytes());
     private static final ETFTexture ETF_ERROR_TEXTURE = getErrorETFTexture();
     private static ETFManager manager;
     public final ETFLruCache<UUID, Integer> LAST_MET_RULE_INDEX = new ETFLruCache<>();
@@ -56,14 +57,14 @@ public class ETFManager {
     public final ETFLruCache<ETFCacheKey, ETFTexture> ENTITY_TEXTURE_MAP = new ETFLruCache<>();
     public final ETFLruCache<UUID, ETFPlayerTexture> PLAYER_TEXTURE_MAP = new ETFLruCache<>();
     public final Object2LongOpenHashMap<UUID> ENTITY_BLINK_TIME = new Object2LongOpenHashMap<>();
-   public final Object2ObjectOpenHashMap<UUID, ETFCacheKey> UUID_TO_MOB_CACHE_KEY_MAP_FOR_FEATURE_USAGE = new Object2ObjectOpenHashMap<>();
+    public final Object2ObjectOpenHashMap<UUID, ETFCacheKey> UUID_TO_MOB_CACHE_KEY_MAP_FOR_FEATURE_USAGE = new Object2ObjectOpenHashMap<>();
     public final ArrayList<String> KNOWN_RESOURCEPACK_ORDER = new ArrayList<>();
     public final Object2IntOpenHashMap<EntityType<?>> ENTITY_TYPE_VANILLA_BRIGHTNESS_OVERRIDE_VALUE = new Object2IntOpenHashMap<>();
     public final ObjectOpenHashSet<EntityType<?>> ENTITY_TYPE_IGNORE_PARTICLES = new ObjectOpenHashSet<>();
     public final Object2IntOpenHashMap<EntityType<?>> ENTITY_TYPE_RENDER_LAYER = new Object2IntOpenHashMap<>();
     public final ETFLruCache<UUID, Object2BooleanOpenHashMap<RandomProperty>> ENTITY_SPAWN_CONDITIONS_CACHE = new ETFLruCache<>();
     //null means it is true random as in no properties
-    public final Object2ReferenceOpenHashMap<Identifier, ETFApi.@Nullable ETFRandomTexturePropertyInstance> OPTIFINE_PROPERTY_CACHE = new Object2ReferenceOpenHashMap<>();
+    public final Object2ReferenceOpenHashMap<Identifier, RandomPropertiesFile> OPTIFINE_PROPERTY_CACHE = new Object2ReferenceOpenHashMap<>();
     //this is a cache of all known ETFTexture versions of any existing resource-pack texture, used to prevent remaking objects
     private final Object2ReferenceOpenHashMap<@NotNull Identifier, @Nullable ETFTexture> ETF_TEXTURE_CACHE = new Object2ReferenceOpenHashMap<>();
     private final Object2BooleanOpenHashMap<UUID> ENTITY_IS_UPDATABLE = new Object2BooleanOpenHashMap<>();
@@ -145,17 +146,80 @@ public class ETFManager {
 
 
     public static ETFTexture getErrorETFTexture() {
-        ETFUtils2.registerNativeImageToIdentifier(ETFUtils2.emptyNativeImage(), new Identifier("etf:error.png"));
-        return new ETFTexture(new Identifier("etf:error.png")/*, false*/);//, ETFTexture.TextureSource.GENERIC_DEBUG);
+        ETFUtils2.registerNativeImageToIdentifier(ETFUtils2.emptyNativeImage(), new Identifier(MOD_ID, "error.png"));
+        return new ETFTexture(new Identifier(MOD_ID, "error.png")/*, false*/);//, ETFTexture.TextureSource.GENERIC_DEBUG);
     }
 
     public static EmissiveRenderModes getEmissiveMode() {
-        if(ETFConfigData.emissiveRenderMode == EmissiveRenderModes.BRIGHT
+        if (ETFConfigData.emissiveRenderMode == EmissiveRenderModes.BRIGHT
                 && ETFRenderContext.getCurrentEntity() != null
-                && !ETFRenderContext.getCurrentEntity().etf$canBeBright()){
+                && !ETFRenderContext.getCurrentEntity().etf$canBeBright()) {
             return EmissiveRenderModes.DULL;
         }
         return ETFConfigData.emissiveRenderMode;
+    }
+
+    public static void processNewOptiFinePropertiesFile(ETFEntity entity, Identifier vanillaIdentifier, Identifier properties) {
+        ETFManager manager = getInstance();
+        try {
+            Properties props = ETFUtils2.readAndReturnPropertiesElseNull(properties);
+
+            if (props != null) {
+                //check for etf entity properties
+                if (props.containsKey("vanillaBrightnessOverride")) {
+                    String value = props.getProperty("vanillaBrightnessOverride").trim();
+                    int tryNumber;
+                    try {
+                        tryNumber = Integer.parseInt(value.replaceAll("\\D", ""));
+                    } catch (NumberFormatException e) {
+                        tryNumber = 0;
+                    }
+                    if (tryNumber >= 16) tryNumber = 15;
+                    if (tryNumber < 0) tryNumber = 0;
+                    manager.ENTITY_TYPE_VANILLA_BRIGHTNESS_OVERRIDE_VALUE.put(entity.etf$getType(), tryNumber);
+                }
+
+                if (props.containsKey("suppressParticles")
+                        && "true".equals(props.getProperty("suppressParticles"))) {
+                    manager.ENTITY_TYPE_IGNORE_PARTICLES.add(entity.etf$getType());
+                }
+
+                if (props.containsKey("entityRenderLayerOverride")) {
+                    String layer = props.getProperty("entityRenderLayerOverride");
+                    //noinspection EnhancedSwitchMigration
+                    switch (layer) {
+                        case "translucent":
+                            manager.ENTITY_TYPE_RENDER_LAYER.put(entity.etf$getType(), 1);
+                            break;
+                        case "translucent_cull":
+                            manager.ENTITY_TYPE_RENDER_LAYER.put(entity.etf$getType(), 2);
+                            break;
+                        case "end_portal":
+                            manager.ENTITY_TYPE_RENDER_LAYER.put(entity.etf$getType(), 3);
+                            break;
+                        case "outline":
+                            manager.ENTITY_TYPE_RENDER_LAYER.put(entity.etf$getType(), 4);
+                            break;
+                    }
+                }
+                List<RandomPropertyRule> allCasesForTexture = RandomPropertiesFile.getAllValidPropertyObjects(props, vanillaIdentifier, "skins", "textures");
+
+                if (!allCasesForTexture.isEmpty()) {
+                    //it all worked now just get the first texture called and everything is set for the next time the texture is called for fast processing
+                    manager.OPTIFINE_PROPERTY_CACHE.put(vanillaIdentifier, RandomPropertiesFile.of(allCasesForTexture));
+                } else {
+                    ETFUtils2.logMessage("Ignoring properties file that failed to load any cases @ " + vanillaIdentifier, false);
+                    manager.OPTIFINE_PROPERTY_CACHE.put(vanillaIdentifier, null);
+                }
+            } else {//properties file is null
+                ETFUtils2.logMessage("Ignoring properties file that was null @ " + vanillaIdentifier, false);
+                manager.OPTIFINE_PROPERTY_CACHE.put(vanillaIdentifier, null);
+            }
+        } catch (Exception e) {
+            ETFUtils2.logWarn("Ignoring properties file that caused Exception @ " + vanillaIdentifier + "\n" + e, false);
+            e.printStackTrace();
+            manager.OPTIFINE_PROPERTY_CACHE.put(vanillaIdentifier, null);
+        }
     }
 
     public void removeThisEntityDataFromAllStorage(ETFCacheKey ETFId) {
@@ -197,9 +261,8 @@ public class ETFManager {
     }
 
     @NotNull
-    public ETFTexture getETFDefaultTexture(Identifier vanillaIdentifier) {
-
-        return getOrCreateETFTexture(vanillaIdentifier, vanillaIdentifier);
+    public ETFTexture getETFTextureNoVariation(Identifier vanillaIdentifier) {
+        return getOrCreateETFTexture(vanillaIdentifier);
     }
 
     @NotNull
@@ -207,7 +270,7 @@ public class ETFManager {
         try {
             if (entity == null) {
                 //this should only purposefully call for features like armor or elytra that append to players and have no ETF customizing
-                return getETFDefaultTexture(vanillaIdentifier);
+                return getETFTextureNoVariation(vanillaIdentifier);
             }
             UUID id = entity.etf$getUuid();
             //use custom cache id this differentiates feature renderer calls here and makes the base feature still identifiable by uuid only when features are called
@@ -219,12 +282,12 @@ public class ETFManager {
 
             //fastest in subsequent runs
             if (id == ETF_GENERIC_UUID || entity.etf$getBlockPos().equals(Vec3i.ZERO)) {
-                return getETFDefaultTexture(vanillaIdentifier);
+                return getETFTextureNoVariation(vanillaIdentifier);
             }
             if (ENTITY_TEXTURE_MAP.containsKey(cacheKey)) {
                 ETFTexture quickReturn = ENTITY_TEXTURE_MAP.get(cacheKey);
                 if (quickReturn == null) {
-                    ETFTexture vanillaETF = getETFDefaultTexture(vanillaIdentifier);
+                    ETFTexture vanillaETF = getETFTextureNoVariation(vanillaIdentifier);
                     ENTITY_TEXTURE_MAP.put(cacheKey, vanillaETF);
                     quickReturn = vanillaETF;
 
@@ -244,8 +307,8 @@ public class ETFManager {
                         ENTITY_DEBUG_QUEUE.remove(id);
                     }
                     if (ENTITY_UPDATE_QUEUE.contains(id)) {//&& source != TextureSource.ENTITY_FEATURE) {
-                        Identifier newVariantIdentifier = returnNewAlreadyConfirmedOptifineTexture(entity, vanillaIdentifier, true);
-                        ENTITY_TEXTURE_MAP.put(cacheKey, Objects.requireNonNullElse(getOrCreateETFTexture(vanillaIdentifier, Objects.requireNonNullElse(newVariantIdentifier, vanillaIdentifier)), getETFDefaultTexture(vanillaIdentifier)));
+                        Identifier newVariantIdentifier = returnNewAlreadyConfirmedOptifineTexture(entity, vanillaIdentifier, false);
+                        ENTITY_TEXTURE_MAP.put(cacheKey, Objects.requireNonNullElse(getOrCreateETFTexture(Objects.requireNonNullElse(newVariantIdentifier, vanillaIdentifier)), getETFTextureNoVariation(vanillaIdentifier)));
 
                         //only if changed
                         if (!quickReturn.thisIdentifier.equals(newVariantIdentifier)) {
@@ -254,7 +317,7 @@ public class ETFManager {
                             //possible concurrent editing of hashmap issues but simplest way to perform this
                             featureSet.forEach((forKey) -> {
                                 Identifier forVariantIdentifier = getPossibleVariantIdentifierRedirectForFeatures(entity, forKey.identifier(), TextureSource.ENTITY_FEATURE); //  returnNewAlreadyConfirmedOptifineTexture(entity, forKey.identifier(), true);
-                                ENTITY_TEXTURE_MAP.put(forKey, Objects.requireNonNullElse(getOrCreateETFTexture(forKey.identifier(), Objects.requireNonNullElse(forVariantIdentifier, forKey.identifier())), getETFDefaultTexture(forKey.identifier())));
+                                ENTITY_TEXTURE_MAP.put(forKey, Objects.requireNonNullElse(getOrCreateETFTexture(Objects.requireNonNullElse(forVariantIdentifier, forKey.identifier())), getETFTextureNoVariation(forKey.identifier())));
 
                             });
                         }
@@ -271,7 +334,7 @@ public class ETFManager {
                 return quickReturn;
             }
             //need to create or find an ETFTexture object for entity and find or add to cache and entity map
-            //firstly just going to check if this mob is some sort of gui element or not a real mod
+            //firstly just going to check if this mob is some sort of gui element or not a real mob
 
 
             Identifier possibleIdentifier;
@@ -282,14 +345,14 @@ public class ETFManager {
             }
 
             ETFTexture foundTexture;
-            foundTexture = Objects.requireNonNullElse(getOrCreateETFTexture(vanillaIdentifier, possibleIdentifier == null ? vanillaIdentifier : possibleIdentifier), getETFDefaultTexture(vanillaIdentifier));
+            foundTexture = Objects.requireNonNullElse(getOrCreateETFTexture(possibleIdentifier == null ? vanillaIdentifier : possibleIdentifier), getETFTextureNoVariation(vanillaIdentifier));
             //if(!(source == TextureSource.ENTITY_FEATURE && possibleIdentifier == null))
 
             // replace with vanilla non-variant texture if it is a variant and the path is vanilla and this has been disabled in config
             if (ETFConfigData.disableVanillaDirectoryVariantTextures
                     && !foundTexture.thisIdentifier.equals(vanillaIdentifier)
                     && ETFDirectory.getDirectoryOf(foundTexture.thisIdentifier) == ETFDirectory.VANILLA) {
-                foundTexture = getETFDefaultTexture(vanillaIdentifier);
+                foundTexture = getETFTextureNoVariation(vanillaIdentifier);
             }
             ENTITY_TEXTURE_MAP.put(cacheKey, foundTexture);
             if (source == TextureSource.ENTITY_FEATURE) {
@@ -301,7 +364,7 @@ public class ETFManager {
 
         } catch (Exception e) {
             ETFUtils2.logWarn("ETF Texture error! if this happens more than a couple times, then something is wrong");
-            return getETFDefaultTexture(vanillaIdentifier);
+            return getETFTextureNoVariation(vanillaIdentifier);
         }
     }
 
@@ -340,9 +403,9 @@ public class ETFManager {
             if (TRUE_RANDOM_COUNT_CACHE.containsKey(vanillaIdentifier) || OPTIFINE_PROPERTY_CACHE.containsKey(vanillaIdentifier)) {
                 //has optifine checked before?
                 if (OPTIFINE_PROPERTY_CACHE.containsKey(vanillaIdentifier)) {
-                    ETFApi.ETFRandomTexturePropertyInstance optifineProperties = OPTIFINE_PROPERTY_CACHE.get(vanillaIdentifier);
+                    RandomPropertiesFile optifineProperties = OPTIFINE_PROPERTY_CACHE.get(vanillaIdentifier);
                     if (optifineProperties != null) {
-                        return returnNewAlreadyConfirmedOptifineTexture(entity, vanillaIdentifier, false, optifineProperties);
+                        return returnNewAlreadyConfirmedOptifineTexture(entity, vanillaIdentifier, true, optifineProperties);
                     }
                 }
                 //has true random checked before?
@@ -380,8 +443,8 @@ public class ETFManager {
                 }
             } else if (/*only*/possible2PNG == null) {
                 //optifine random confirmed
-                RandomPropertiesFileHandler.processNewOptiFinePropertiesFile(entity, vanillaIdentifier, possibleProperty);
-                return returnNewAlreadyConfirmedOptifineTexture(entity, vanillaIdentifier, false);
+                processNewOptiFinePropertiesFile(entity, vanillaIdentifier, possibleProperty);
+                return returnNewAlreadyConfirmedOptifineTexture(entity, vanillaIdentifier, true);
             } else //noinspection CommentedOutCode
             {//neither null this will be annoying
                 //if 2.png is higher it MUST be treated as true random confirmed
@@ -396,8 +459,8 @@ public class ETFManager {
 
                 // System.out.println("debug6534="+p2pngPackName+","+propertiesPackName+","+ETFUtils2.returnNameOfHighestPackFrom(packs));
                 if (propertiesPackName != null && propertiesPackName.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(new String[]{p2pngPackName, propertiesPackName}))) {
-                    RandomPropertiesFileHandler.processNewOptiFinePropertiesFile(entity, vanillaIdentifier, possibleProperty);
-                    return returnNewAlreadyConfirmedOptifineTexture(entity, vanillaIdentifier, false);
+                    processNewOptiFinePropertiesFile(entity, vanillaIdentifier, possibleProperty);
+                    return returnNewAlreadyConfirmedOptifineTexture(entity, vanillaIdentifier, true);
                 } else {
                     if (source != TextureSource.ENTITY_FEATURE) {
                         newTrueRandomTextureFound(vanillaIdentifier, possible2PNG);
@@ -430,14 +493,14 @@ public class ETFManager {
     }
 
     @Nullable
-    private Identifier returnNewAlreadyConfirmedOptifineTexture(ETFEntity entity, Identifier vanillaIdentifier, boolean isThisAnUpdate) {
-        return returnNewAlreadyConfirmedOptifineTexture(entity, vanillaIdentifier, isThisAnUpdate, OPTIFINE_PROPERTY_CACHE.get(vanillaIdentifier));
+    private Identifier returnNewAlreadyConfirmedOptifineTexture(ETFEntity entity, Identifier vanillaIdentifier, boolean firstTimeForEntity) {
+        return returnNewAlreadyConfirmedOptifineTexture(entity, vanillaIdentifier, firstTimeForEntity, OPTIFINE_PROPERTY_CACHE.get(vanillaIdentifier));
     }
 
     @Nullable
-    private Identifier returnNewAlreadyConfirmedOptifineTexture(ETFEntity entity, Identifier vanillaIdentifier, boolean isThisAnUpdate, ETFApi.ETFRandomTexturePropertyInstance optifineProperties) {
+    private Identifier returnNewAlreadyConfirmedOptifineTexture(ETFEntity entity, Identifier vanillaIdentifier, boolean firstTimeForEntity, RandomPropertiesFile optifineProperties) {
 
-        int variantNumber = optifineProperties.getSuffixForETFEntity(entity, isThisAnUpdate, ENTITY_IS_UPDATABLE);
+        int variantNumber = optifineProperties.getSuffixForETFEntity(entity, firstTimeForEntity, ENTITY_IS_UPDATABLE);
 
         Identifier variantIdentifier = returnNewAlreadyNumberedRandomTexture(vanillaIdentifier, variantNumber);
         if (variantIdentifier == null) {
@@ -486,29 +549,18 @@ public class ETFManager {
 
 
     @NotNull
-    private ETFTexture getOrCreateETFTexture(Identifier vanillaIdentifier, Identifier variantIdentifier) {
-        if (ETF_TEXTURE_CACHE.containsKey(variantIdentifier)) {
+    private ETFTexture getOrCreateETFTexture(Identifier ofIdentifier) {
+        if (ETF_TEXTURE_CACHE.containsKey(ofIdentifier)) {
             //use cached ETFTexture
-            ETFTexture cached = ETF_TEXTURE_CACHE.get(variantIdentifier);
+            ETFTexture cached = ETF_TEXTURE_CACHE.get(ofIdentifier);
             if (cached != null) {
                 return cached;
-            } else {
-                ETFUtils2.logWarn("getOrCreateETFTexture found a null, this probably should not be happening");
-                //texture doesn't exist
-                cached = ETF_TEXTURE_CACHE.get(vanillaIdentifier);
-                if (cached != null) {
-                    return cached;
-                }
             }
         } else {
-            if (vanillaIdentifier == null) {
-                ETFUtils2.logError("getOrCreateETFTexture identifier was null and should not have been");
-                return ETF_ERROR_TEXTURE;
-            }
             //create new ETFTexture and cache it
-            ETFTexture foundTexture = new ETFTexture(variantIdentifier/*, canBePatched*/);
-            ETF_TEXTURE_CACHE.put(variantIdentifier, foundTexture);
-            return foundTexture;
+            ETFTexture newTexture = new ETFTexture(ofIdentifier);
+            ETF_TEXTURE_CACHE.put(ofIdentifier, newTexture);
+            return newTexture;
         }
         ETFUtils2.logError("getOrCreateETFTexture reached the end and should not have");
         return ETF_ERROR_TEXTURE;
@@ -571,7 +623,7 @@ public class ETFManager {
         }
 
         public EmissiveRenderModes next() {
-            if(this == DULL)
+            if (this == DULL)
                 return BRIGHT;
             return DULL;
         }

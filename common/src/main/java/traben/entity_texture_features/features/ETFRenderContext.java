@@ -65,7 +65,7 @@ public class ETFRenderContext {
 //            RenderPhase.TextureBase base = params.texture;
             Optional<Identifier> possibleId = multiPhase.phases.texture.getId();
             // ETFManager.getInstance().getETFTexture(texture,ETFRenderContext.getCurrentEntity(), ETFManager.TextureSource.ENTITY,false);
-            possibleId.ifPresent(identifier -> currentETFTexture = ETFManager.getInstance().getETFDefaultTexture(identifier));
+            possibleId.ifPresent(identifier -> currentETFTexture = ETFManager.getInstance().getETFTextureNoVariation(identifier));
 
             //modify render layer if needed
             if (!multiPhase.isOutline() && getCurrentEntity() != null && ETFManager.getInstance().ENTITY_TYPE_RENDER_LAYER.containsKey(getCurrentEntity().etf$getType())) {

@@ -74,6 +74,7 @@ public class ETFTexture {
     private boolean isBuilt = false;
     private ETFSprite atlasSprite = null;
     private boolean hasBeenReRegistered = false;
+    private Boolean resourceExists = null;
 
     public ETFTexture(Identifier variantIdentifier) {
 
@@ -207,7 +208,10 @@ public class ETFTexture {
     }
 
     public boolean exists() {
-        return isBuilt || MinecraftClient.getInstance().getResourceManager().getResource(thisIdentifier).isPresent();
+        if (resourceExists == null) {
+            resourceExists = MinecraftClient.getInstance().getResourceManager().getResource(thisIdentifier).isPresent();
+        }
+        return isBuilt || resourceExists;
     }
 
     public void buildTrimTexture(ArmorTrim trim, boolean leggings) {
@@ -480,32 +484,32 @@ public class ETFTexture {
         } else {
             //do regular blinking
             World world = entity.etf$getWorld();
-                if (world != null) {
-                    UUID id = entity.etf$getUuid();
-                    if (!ETFManager.getInstance().ENTITY_BLINK_TIME.containsKey(id)) {
-                        ETFManager.getInstance().ENTITY_BLINK_TIME.put(id, world.getTime() + blinkLength + 1);
-                        return identifierOfCurrentState();
-                    }
-                    long nextBlink = ETFManager.getInstance().ENTITY_BLINK_TIME.getLong(id);
-                    long currentTime = world.getTime();
+            if (world != null) {
+                UUID id = entity.etf$getUuid();
+                if (!ETFManager.getInstance().ENTITY_BLINK_TIME.containsKey(id)) {
+                    ETFManager.getInstance().ENTITY_BLINK_TIME.put(id, world.getTime() + blinkLength + 1);
+                    return identifierOfCurrentState();
+                }
+                long nextBlink = ETFManager.getInstance().ENTITY_BLINK_TIME.getLong(id);
+                long currentTime = world.getTime();
 
-                    if (currentTime >= nextBlink - blinkLength && currentTime <= nextBlink + blinkLength) {
-                        if (doesBlink2()) {
-                            if (currentTime >= nextBlink - (blinkLength / 3) && currentTime <= nextBlink + (blinkLength / 3)) {
-                                modifyTextureState(TextureReturnState.APPLY_BLINK);
-                                return identifierOfCurrentState();
-                            }
-                            modifyTextureState(TextureReturnState.APPLY_BLINK2);
-                            return identifierOfCurrentState();
-                        } else if (!(currentTime > nextBlink)) {
+                if (currentTime >= nextBlink - blinkLength && currentTime <= nextBlink + blinkLength) {
+                    if (doesBlink2()) {
+                        if (currentTime >= nextBlink - (blinkLength / 3) && currentTime <= nextBlink + (blinkLength / 3)) {
                             modifyTextureState(TextureReturnState.APPLY_BLINK);
                             return identifierOfCurrentState();
                         }
-                    } else if (currentTime > nextBlink + blinkLength) {
-                        //calculate new next blink
-                        ETFManager.getInstance().ENTITY_BLINK_TIME.put(id, currentTime + randomBlink.nextInt(blinkFrequency) + 20);
+                        modifyTextureState(TextureReturnState.APPLY_BLINK2);
+                        return identifierOfCurrentState();
+                    } else if (!(currentTime > nextBlink)) {
+                        modifyTextureState(TextureReturnState.APPLY_BLINK);
+                        return identifierOfCurrentState();
                     }
+                } else if (currentTime > nextBlink + blinkLength) {
+                    //calculate new next blink
+                    ETFManager.getInstance().ENTITY_BLINK_TIME.put(id, currentTime + randomBlink.nextInt(blinkFrequency) + 20);
                 }
+            }
 
         }
         return identifierOfCurrentState();
@@ -514,7 +518,6 @@ public class ETFTexture {
     public boolean isEmissive() {
         return this.emissiveIdentifier != null;
     }
-
 
     public boolean isPatched_CurrentlyOnlyArmor() {
         return this.thisIdentifier_Patched != null;

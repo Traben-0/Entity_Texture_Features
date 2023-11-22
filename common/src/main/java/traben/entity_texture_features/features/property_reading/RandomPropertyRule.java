@@ -55,7 +55,7 @@ public class RandomPropertyRule {
         }
     }
 
-    public Set<Integer> getSuffixSet(){
+    public Set<Integer> getSuffixSet() {
         return new HashSet<>(List.of(SUFFIX_NUMBERS_WEIGHTED));
     }
 

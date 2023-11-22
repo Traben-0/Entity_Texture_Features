@@ -15,7 +15,7 @@ import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.config.screens.warnings.ETFConfigWarning;
 import traben.entity_texture_features.config.screens.warnings.ETFConfigWarnings;
 import traben.entity_texture_features.features.ETFManager;
-import traben.entity_texture_features.features.property_reading.RandomPropertiesFileHandler;
+import traben.entity_texture_features.features.property_reading.RandomPropertiesFile;
 import traben.entity_texture_features.features.property_reading.RandomPropertyRule;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperties;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperty;
@@ -166,9 +166,9 @@ public final class ETFApi {
     /**
      * pass in a block entity, and its default texture and receive the current variant of that texture or the default if no variant exists
      *
-     * @param entity          the entity
-     * @param defaultTexture  the default texture
-     *                        (send the hash of any extra identifying type parameter your block entity might have, e.g. facing direction)
+     * @param entity         the entity
+     * @param defaultTexture the default texture
+     *                       (send the hash of any extra identifying type parameter your block entity might have, e.g. facing direction)
      * @return the variant texture or the defaultTexture if no variant exists
      */
     public static Identifier getCurrentETFVariantTextureOfBlockEntity(@NotNull BlockEntity entity, @NotNull Identifier defaultTexture) {
@@ -225,8 +225,8 @@ public final class ETFApi {
     /**
      * pass in an entity, and it's default texture and receive it's current emissive texture if it exists else returns null
      *
-     * @param entity          the entity
-     * @param defaultTexture  the default texture
+     * @param entity         the entity
+     * @param defaultTexture the default texture
      * @return the emissive texture or null if it doesn't exist
      */
     @Nullable
@@ -350,10 +350,6 @@ public final class ETFApi {
         return ETFRandomTexturePropertyInstance.getInstance(propertiesFileIdentifier, suffixKeys);
     }
 
-    @Deprecated //remove once EMF is updated
-    public static ETFRandomTexturePropertyInstance readRandomPropertiesFileAndReturnTestingObject2(Identifier propertiesFileIdentifier, String suffixKey) {
-        return readRandomPropertiesFileAndReturnTestingObject3(propertiesFileIdentifier, suffixKey);
-    }
 
     /**
      * Used by EMF.
@@ -370,12 +366,12 @@ public final class ETFApi {
     /**
      * Used by EMF.
      *
-     * @param entity          block entity to get the latest rule matching for.
+     * @param entity block entity to get the latest rule matching for.
      * @return Integer index of the most recent random property rule to be matched.<p>
      * default value = 0
      */
     private static int getLastMatchingRuleOfBlockEntity(BlockEntity entity) {
-        Integer ruleIndex = ETFManager.getInstance().LAST_MET_RULE_INDEX.get(((ETFEntity)entity).etf$getUuid());
+        Integer ruleIndex = ETFManager.getInstance().LAST_MET_RULE_INDEX.get(((ETFEntity) entity).etf$getUuid());
         return ruleIndex == null ? 0 : ruleIndex;
     }
 
@@ -397,7 +393,7 @@ public final class ETFApi {
     }
 
     /**
-     * Pass in custom warnings to be displayed to ETF users, given certain predicates.
+     * Pass in custom warnings to be displayed to ETF users, given certain conditions.
      *
      * @param yourModId your Mod's ID
      * @param warnings  one or more instance of {@link ETFConfigWarning} to be listed on the ETF config warning screen
@@ -418,52 +414,32 @@ public final class ETFApi {
      * <p>
      * Should only be built via {@link ETFApi#readRandomPropertiesFileAndReturnTestingObject3(Identifier, String...)}
      */
-    public static class ETFRandomTexturePropertyInstance {
-        protected final List<RandomPropertyRule> propertyCases;
-        protected final IntOpenHashSet allSuffixes;
-
-        protected ETFRandomTexturePropertyInstance(List<RandomPropertyRule> etfs) {
-            propertyCases = etfs;
-            allSuffixes = new IntOpenHashSet();
-            for (RandomPropertyRule rule:
-                 etfs) {
-                allSuffixes.addAll(rule.getSuffixSet());
-            }
-        }
+    public interface ETFRandomTexturePropertyInstance {
 
         @Nullable
         private static ETFRandomTexturePropertyInstance getInstance(Identifier propertiesFileIdentifier, String... suffixKeyName) {
-            Properties props = ETFUtils2.readAndReturnPropertiesElseNull(propertiesFileIdentifier);
-            if (props == null) return null;
-            List<RandomPropertyRule> etfs = RandomPropertiesFileHandler.getAllValidPropertyObjects(props, propertiesFileIdentifier, suffixKeyName);
-            return of(etfs);
-
+            return RandomPropertiesFile.getInstance(propertiesFileIdentifier, suffixKeyName);
         }
 
         /**
          * If you don't know what you are doing use {@link ETFApi#readRandomPropertiesFileAndReturnTestingObject3(Identifier, String...)}
-         * 
+         *
          * @return a ETFRandomTexturePropertyInstance generated from the given RandomPropertyRule List
          */
         @Nullable
-        public static ETFRandomTexturePropertyInstance of(List<RandomPropertyRule> propertyRules){
-            if (propertyRules.isEmpty()) return null;
-            return new ETFRandomTexturePropertyInstance(propertyRules);
+        static ETFRandomTexturePropertyInstance of(List<RandomPropertyRule> propertyRules) {
+            return RandomPropertiesFile.of(propertyRules);
         }
-        
+
         /**
          * @return all the suffixes mentioned in this OptiFine property file
          */
-        public IntOpenHashSet getAllSuffixes(){
-            return allSuffixes;
-        }
+        IntOpenHashSet getAllSuffixes();
 
         /**
          * @return the amount of rules in this OptiFine property file
          */
-        public int size(){
-            return propertyCases.size();
-        }
+        int size();
 
         /**
          * This method will accept an entity and some additional args and will output a variant suffix integer that matches
@@ -487,10 +463,7 @@ public final class ETFApi {
          * <p> An output of 1, can be handled in 2 ways, usually it is used to refer to the vanilla suffix, but you might
          * also choose to check for a #1 suffix, I would recommend using 1 to mean the vanilla/default variant.
          */
-        public int getSuffixForEntity(Entity entityToBeTested, boolean isThisTheFirstTestForEntity, Object2BooleanOpenHashMap<UUID> cacheToMarkEntitiesWhoseVariantCanChangeAgain) {
-            return getSuffixForETFEntity((ETFEntity) entityToBeTested,isThisTheFirstTestForEntity,cacheToMarkEntitiesWhoseVariantCanChangeAgain);
-
-        }
+        int getSuffixForEntity(Entity entityToBeTested, boolean isThisTheFirstTestForEntity, Object2BooleanOpenHashMap<UUID> cacheToMarkEntitiesWhoseVariantCanChangeAgain);
 
         /**
          * Same as {@link ETFRandomTexturePropertyInstance#getSuffixForEntity(Entity, boolean, Object2BooleanOpenHashMap)} but for block entities
@@ -501,9 +474,7 @@ public final class ETFApi {
          * @return the suffix number for the block entity
          */
 
-        public int getSuffixForBlockEntity(BlockEntity entityToBeTested, boolean isThisTheFirstTestForEntity, Object2BooleanOpenHashMap<UUID> cacheToMarkEntitiesWhoseVariantCanChangeAgain) {
-            return getSuffixForETFEntity((ETFEntity) entityToBeTested,isThisTheFirstTestForEntity,cacheToMarkEntitiesWhoseVariantCanChangeAgain);
-        }
+        int getSuffixForBlockEntity(BlockEntity entityToBeTested, boolean isThisTheFirstTestForEntity, Object2BooleanOpenHashMap<UUID> cacheToMarkEntitiesWhoseVariantCanChangeAgain);
 
         /**
          * Same as {@link ETFRandomTexturePropertyInstance#getSuffixForEntity(Entity, boolean, Object2BooleanOpenHashMap)} but for the internal use ETFEntity interface
@@ -513,16 +484,7 @@ public final class ETFApi {
          * @param cacheToMarkEntitiesWhoseVariantCanChangeAgain the cache to mark entities whose variant can change again
          * @return the suffix number for the block entity
          */
-        public int getSuffixForETFEntity(ETFEntity entityToBeTested, boolean isThisTheFirstTestForEntity, Object2BooleanOpenHashMap<UUID> cacheToMarkEntitiesWhoseVariantCanChangeAgain) {
-            if (entityToBeTested == null) return 0;
-            boolean isAnUpdate = !isThisTheFirstTestForEntity;
-            for (RandomPropertyRule testCase : propertyCases) {
-                if (testCase.doesEntityMeetConditionsOfThisCase(entityToBeTested, isThisTheFirstTestForEntity, cacheToMarkEntitiesWhoseVariantCanChangeAgain)) {
-                    return testCase.getVariantSuffixFromThisCase(entityToBeTested.etf$getUuid());
-                }
-            }
-            return 0;
-        }
+        int getSuffixForETFEntity(ETFEntity entityToBeTested, boolean isThisTheFirstTestForEntity, Object2BooleanOpenHashMap<UUID> cacheToMarkEntitiesWhoseVariantCanChangeAgain);
     }
 
 

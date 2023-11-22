@@ -3,7 +3,6 @@ package traben.entity_texture_features.mixin;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -14,8 +13,6 @@ import traben.entity_texture_features.features.ETFRenderContext;
 @Mixin(RenderLayer.class)
 public abstract class MixinRenderLayer {
 
-
-    @Shadow public abstract boolean isOutline();
 
     @Unique
     private static Identifier etf$getETFVariantOf(Identifier identifier) {
@@ -35,9 +32,9 @@ public abstract class MixinRenderLayer {
         }
         Identifier modified = ETFManager.getInstance().getETFTexture(identifier, ETFRenderContext.getCurrentEntity(), source)
                 .getTextureIdentifier(ETFRenderContext.getCurrentEntity());
+        //noinspection ConstantValue
         return modified == null ? identifier : modified;
     }
-
 
     @ModifyVariable(
             method = "getEntitySolid",

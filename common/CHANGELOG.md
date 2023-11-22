@@ -5,11 +5,11 @@
 - all entities have enchanted overlay support via "_enchant.png" just like "_e.png"
 
 removed due to being possible via `EMF` now
+
 - removed elytra thickness tweak feature
 - removed async elytra feature
 - removed lectern book unique texture feature
 - removed piglin ear model visibility feature
-
 
 [4.6.1]
 

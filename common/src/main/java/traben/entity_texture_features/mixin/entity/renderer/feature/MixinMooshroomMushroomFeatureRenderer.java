@@ -57,7 +57,7 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
         //enable custom mooshroom mushrooms
         if (ETFConfigData.enableCustomTextures) {
             if (mushroomState.isOf(Blocks.RED_MUSHROOM)) {
-                if(ETFManager.getInstance().mooshroomRedCustomShroomExists == null){
+                if (ETFManager.getInstance().mooshroomRedCustomShroomExists == null) {
                     if (MinecraftClient.getInstance().getResourceManager().getResource(RED_SHROOM).isPresent()) {
                         ETFManager.getInstance().mooshroomRedCustomShroomExists = entity_texture_features$prepareMushroomTextures(true);
                     } else {
@@ -66,7 +66,7 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
                 }
                 return ETFManager.getInstance().mooshroomRedCustomShroomExists;
             } else if (mushroomState.isOf(Blocks.BROWN_MUSHROOM)) {
-                if(ETFManager.getInstance().mooshroomBrownCustomShroomExists == null){
+                if (ETFManager.getInstance().mooshroomBrownCustomShroomExists == null) {
                     if (MinecraftClient.getInstance().getResourceManager().getResource(BROWN_SHROOM).isPresent()) {
                         ETFManager.getInstance().mooshroomBrownCustomShroomExists = entity_texture_features$prepareMushroomTextures(false);
                     } else {

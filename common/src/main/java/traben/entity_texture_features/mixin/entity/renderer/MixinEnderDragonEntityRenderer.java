@@ -11,8 +11,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
-import traben.entity_texture_features.features.ETFManager;
-import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
@@ -52,9 +50,7 @@ public abstract class MixinEnderDragonEntityRenderer extends EntityRenderer<Ende
                 } else if (DRAGON_CUTOUT.equals(texturedRenderLayer)) {
                     return RenderLayer.getEntityCutoutNoCull(TEXTURE);
                 } else if (DRAGON_EYES.equals(texturedRenderLayer)) {
-                    return RenderLayer.getEyes(ETFManager.getInstance()
-                            .getETFTexture(EYE_TEXTURE, ETFRenderContext.getCurrentEntity(), ETFManager.TextureSource.ENTITY_FEATURE)
-                            .getTextureIdentifier(ETFRenderContext.getCurrentEntity()));
+                    return RenderLayer.getEyes(EYE_TEXTURE);
                 }
             } catch (Exception e) {
                 ETFUtils2.logError(e.toString(), false);

@@ -56,7 +56,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/client/render/RenderLayer;getArmorCutoutNoCull(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;"),index = 0)
     private Identifier etf$changeTexture2(Identifier texture) {
-        thisETFTexture = ETFManager.getInstance().getETFTexture(texture, null, ETFManager.TextureSource.ENTITY_FEATURE);
+        thisETFTexture = ETFManager.getInstance().getETFTextureNoVariation(texture);
         //noinspection ConstantConditions
         if (thisETFTexture != null) {
             thisETFTexture.reRegisterBaseTexture();
@@ -94,8 +94,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
             }
         }
     }
-    @Unique
-    private VertexConsumerProvider etf$VCP =null;
+
 
     @Inject(method = "renderTrim",
             at = @At(value = "HEAD"))
@@ -105,10 +104,9 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
         Identifier trimBaseId = leggings ? trim.getLeggingsModelId(material) : trim.getGenericModelId(material) ;
         //support modded trims with namespace
         Identifier trimMaterialIdentifier = new Identifier(trimBaseId.getNamespace(),"textures/"+trimBaseId.getPath()+".png");
-        thisETFTrimTexture = ETFManager.getInstance().getETFTexture(trimMaterialIdentifier, null, ETFManager.TextureSource.ENTITY_FEATURE);
-        etf$VCP = vertexConsumers;
+        thisETFTrimTexture = ETFManager.getInstance().getETFTextureNoVariation(trimMaterialIdentifier);
 
-        //if it is emmissive we need to create an identifier of the trim to render seperately in iris
+        //if it is emmissive we need to create an identifier of the trim to render separately in iris
         if(!thisETFTrimTexture.exists()
                 && ETFConfigData.enableEmissiveTextures
                 && thisETFTrimTexture.isEmissive()
@@ -127,12 +125,12 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
         //allow a specified override trim texture if you dont want to be confined by a pallette
         if(thisETFTrimTexture!= null){
             if(thisETFTrimTexture.exists()){
-                return etf$VCP.getBuffer(RenderLayer.getArmorCutoutNoCull(thisETFTrimTexture.getTextureIdentifier(null)));
-            }else if (ETFConfigData.enableEmissiveTextures && thisETFTrimTexture.isEmissive() && ETFClientCommon.IRIS_DETECTED){
+                return ETFRenderContext.getCurrentProvider().getBuffer(RenderLayer.getArmorCutoutNoCull(thisETFTrimTexture.getTextureIdentifier(null)));
+            }else if (thisETFTrimTexture.isEmissive() && ETFConfigData.enableEmissiveTextures && ETFClientCommon.IRIS_DETECTED){
                 //iris is weird and will always render the armor trim atlas over everything else
                 // if for some reason no trim texture is present then just dont render it at all
                 // this is to favour packs with fully emissive trims :/
-                return etf$VCP.getBuffer(RenderLayer.getArmorCutoutNoCull(ETFManager.getErrorETFTexture().thisIdentifier));
+                return ETFRenderContext.getCurrentProvider().getBuffer(RenderLayer.getArmorCutoutNoCull(ETFManager.getErrorETFTexture().thisIdentifier));
             }
         }
         return par2;

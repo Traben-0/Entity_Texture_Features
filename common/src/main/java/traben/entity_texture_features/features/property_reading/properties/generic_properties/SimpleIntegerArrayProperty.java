@@ -2,7 +2,7 @@ package traben.entity_texture_features.features.property_reading.properties.gene
 
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import org.jetbrains.annotations.Nullable;
-import traben.entity_texture_features.features.property_reading.RandomPropertiesFileHandler;
+import traben.entity_texture_features.features.property_reading.RandomPropertiesFile;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperty;
 import traben.entity_texture_features.utils.ETFEntity;
 import traben.entity_texture_features.utils.ETFUtils2;
@@ -19,7 +19,7 @@ import java.util.Properties;
  * I.E. a property of  "1-4 8-10" would have an internal set here of {1,2,3,4,8,9,10}
  * instead of parsing the ranges each time
  * <p>
- * also holding some static methods used by {@link RandomPropertiesFileHandler}
+ * also holding some static methods used by {@link RandomPropertiesFile}
  */
 public abstract class SimpleIntegerArrayProperty extends RandomProperty {
 

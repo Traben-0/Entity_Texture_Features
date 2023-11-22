@@ -19,8 +19,7 @@ public class ETFClientCommon {
     public static final String MOD_ID = "entity_texture_features";
     //logging object
     public final static Logger LOGGER = ETFVersionDifferenceHandler.getLogger();
-    @SuppressWarnings("unused")// still used by EMF for now
-    public static final int EYES_FEATURE_LIGHT_VALUE = LightmapTextureManager.MAX_LIGHT_COORDINATE + 1;
+
 
     public static final int EMISSIVE_FEATURE_LIGHT_VALUE = LightmapTextureManager.MAX_LIGHT_COORDINATE + 2;
     public static boolean IRIS_DETECTED = false;

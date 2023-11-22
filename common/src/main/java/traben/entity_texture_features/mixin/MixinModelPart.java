@@ -58,7 +58,7 @@ public abstract class MixinModelPart {
             ETFRenderContext.preventRenderLayerTextureModify();
 
             boolean textureIsAllowedBrightRender = ETFManager.getEmissiveMode() == ETFManager.EmissiveRenderModes.BRIGHT
-                    && ETFRenderContext.getCurrentEntity().etf$canBeBright() && !ETFRenderContext.getCurrentETFTexture().isPatched_CurrentlyOnlyArmor();
+                    && ETFRenderContext.getCurrentEntity().etf$canBeBright();// && !ETFRenderContext.getCurrentETFTexture().isPatched_CurrentlyOnlyArmor();
 
             VertexConsumer emissiveConsumer = ETFRenderContext.getCurrentProvider().getBuffer(
                     textureIsAllowedBrightRender ?

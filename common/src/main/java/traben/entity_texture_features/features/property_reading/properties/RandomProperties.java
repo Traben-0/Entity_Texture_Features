@@ -81,7 +81,7 @@ public class RandomProperties {
 
 
     public interface RandomPropertyFactory {
-        RandomProperty getPropertyOrNull(Properties properties, int propertyNum);
+        RandomProperty getPropertyOrNull(@SuppressWarnings("unused") Properties properties, @SuppressWarnings("unused") int propertyNum);
     }
 
 }
