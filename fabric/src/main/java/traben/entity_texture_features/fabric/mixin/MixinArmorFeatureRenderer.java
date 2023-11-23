@@ -78,7 +78,9 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
                 //} else {
                 textureVert = vertexConsumers.getBuffer(RenderLayer.getArmorCutoutNoCull(emissive)); //ItemRenderer.getArmorGlintConsumer(vertexConsumers, RenderLayer.getEntityTranslucent(emissive), false, usesSecondLayer);
                 //}
+                ETFRenderContext.startSpecialRenderOverlayPhase();
                 model.render(matrices, textureVert, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, red, green, blue, 1.0F);
+                ETFRenderContext.startSpecialRenderOverlayPhase();
             }
         }
 
@@ -144,7 +146,9 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
             Identifier emissive = thisETFTrimTexture.getEmissiveIdentifierOfCurrentState();
             if (emissive != null) {
                 VertexConsumer textureVert= vertexConsumers.getBuffer(RenderLayer.getArmorCutoutNoCull(emissive));
+                ETFRenderContext.startSpecialRenderOverlayPhase();
                 model.render(matrices, textureVert, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
+                ETFRenderContext.endSpecialRenderOverlayPhase();
             }
         }
     }

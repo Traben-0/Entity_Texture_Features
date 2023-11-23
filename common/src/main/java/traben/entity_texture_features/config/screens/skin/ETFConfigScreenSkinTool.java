@@ -22,6 +22,7 @@ import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.screens.ETFConfigScreen;
 import traben.entity_texture_features.features.ETFManager;
+import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.player.ETFPlayerTexture;
 import traben.entity_texture_features.utils.ETFUtils2;
 
@@ -540,7 +541,9 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
                         if (bob instanceof LivingEntityRenderer<?, ?>) {
                             //System.out.println("rendered");
                             //((LivingEntityRenderer<PlayerEntity, PlayerEntityModel<PlayerEntity>>) bob).render((PlayerEntity) entity, 0, 1, matrixStack2, immediate, 0xE000E0);
+                            ETFRenderContext.startSpecialRenderOverlayPhase();
                             ((LivingEntityRenderer<?, ?>) bob).getModel().render(matrixStack, vertexC, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
+                            ETFRenderContext.endSpecialRenderOverlayPhase();
                         }
                     }
                 }

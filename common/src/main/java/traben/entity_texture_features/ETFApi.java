@@ -370,7 +370,7 @@ public final class ETFApi {
      * @return Integer index of the most recent random property rule to be matched.<p>
      * default value = 0
      */
-    private static int getLastMatchingRuleOfBlockEntity(BlockEntity entity) {
+    public static int getLastMatchingRuleOfBlockEntity(BlockEntity entity) {
         Integer ruleIndex = ETFManager.getInstance().LAST_MET_RULE_INDEX.get(((ETFEntity) entity).etf$getUuid());
         return ruleIndex == null ? 0 : ruleIndex;
     }

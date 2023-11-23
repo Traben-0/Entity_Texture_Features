@@ -24,9 +24,6 @@ public abstract class MixinModelPart {
     @Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V",
             at = @At(value = "HEAD"))
     private void etf$findOutIfInitialModelPart(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha, CallbackInfo ci) {
-//        if(ETFRenderContext.getCurrentTopPart() == null){
-//            ETFRenderContext.setCurrentTopPart(this);
-//        }
         ETFRenderContext.incrementCurrentModelPartDepth();
     }
 
@@ -57,20 +54,21 @@ public abstract class MixinModelPart {
 
             ETFRenderContext.preventRenderLayerTextureModify();
 
-            boolean textureIsAllowedBrightRender = ETFManager.getEmissiveMode() == ETFManager.EmissiveRenderModes.BRIGHT
+                boolean textureIsAllowedBrightRender = ETFManager.getEmissiveMode() == ETFManager.EmissiveRenderModes.BRIGHT
                     && ETFRenderContext.getCurrentEntity().etf$canBeBright();// && !ETFRenderContext.getCurrentETFTexture().isPatched_CurrentlyOnlyArmor();
 
-            VertexConsumer emissiveConsumer = ETFRenderContext.getCurrentProvider().getBuffer(
+                VertexConsumer emissiveConsumer = ETFRenderContext.getCurrentProvider().getBuffer(
                     textureIsAllowedBrightRender ?
                             RenderLayer.getBeaconBeam(emissive, true) :
                             ETFRenderContext.getCurrentEntity().etf$isBlockEntity() ?
                                     RenderLayer.getEntityTranslucentCull(emissive) :
                                     RenderLayer.getEntityTranslucent(emissive));
 
-
             ETFRenderContext.allowRenderLayerTextureModify();
 
-            render(matrices, emissiveConsumer, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, overlay, red, green, blue, alpha);
+            ETFRenderContext.startSpecialRenderOverlayPhase();
+                render(matrices, emissiveConsumer, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, overlay, red, green, blue, alpha);
+            ETFRenderContext.endSpecialRenderOverlayPhase();
             return true;
         }
         return false;
@@ -82,10 +80,12 @@ public abstract class MixinModelPart {
         Identifier enchanted = ETFRenderContext.getCurrentETFTexture().getEnchantIdentifierOfCurrentState();
         if (enchanted != null) {
             ETFRenderContext.preventRenderLayerTextureModify();
-            VertexConsumer enchantedVertex = ItemRenderer.getArmorGlintConsumer(ETFRenderContext.getCurrentProvider(), RenderLayer.getArmorCutoutNoCull(enchanted), false, true);
+                VertexConsumer enchantedVertex = ItemRenderer.getArmorGlintConsumer(ETFRenderContext.getCurrentProvider(), RenderLayer.getArmorCutoutNoCull(enchanted), false, true);
             ETFRenderContext.allowRenderLayerTextureModify();
 
-            render(matrices, enchantedVertex, light, overlay, red, green, blue, alpha);
+            ETFRenderContext.startSpecialRenderOverlayPhase();
+                render(matrices, enchantedVertex, light, overlay, red, green, blue, alpha);
+            ETFRenderContext.endSpecialRenderOverlayPhase();
             return true;
         }
         return false;

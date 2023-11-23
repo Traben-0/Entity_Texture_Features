@@ -55,7 +55,9 @@ public abstract class MixinCapeFeatureRenderer extends FeatureRenderer<AbstractC
                 ETFRenderContext.preventRenderLayerTextureModify();
                 VertexConsumer emissiveVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(dev_cape_e));
                 ETFRenderContext.allowRenderLayerTextureModify();
+                ETFRenderContext.startSpecialRenderOverlayPhase();
                 (this.getContextModel()).renderCape(matrixStack, emissiveVert, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV);
+                ETFRenderContext.endSpecialRenderOverlayPhase();
             }
         }
     }

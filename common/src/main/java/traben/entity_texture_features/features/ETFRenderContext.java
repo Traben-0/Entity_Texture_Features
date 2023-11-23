@@ -23,6 +23,8 @@ public class ETFRenderContext {
     private static ETFEntity currentEntity = null;
     private static int currentModelPartDepth = 0;
 
+    private static boolean isInSpecialRenderOverlayPhase = false;
+
     public static boolean isRenderingFeatures() {
         return renderingFeatures;
     }
@@ -179,5 +181,16 @@ public class ETFRenderContext {
 
         currentRenderLayer = null;
         currentEntity = null;
+    }
+
+    public static boolean isIsInSpecialRenderOverlayPhase() {
+        return isInSpecialRenderOverlayPhase;
+    }
+
+    public static void startSpecialRenderOverlayPhase() {
+        ETFRenderContext.isInSpecialRenderOverlayPhase = true;
+    }
+    public static void endSpecialRenderOverlayPhase() {
+        ETFRenderContext.isInSpecialRenderOverlayPhase = false;
     }
 }

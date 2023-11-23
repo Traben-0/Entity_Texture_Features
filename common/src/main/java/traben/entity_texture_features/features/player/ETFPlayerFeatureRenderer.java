@@ -92,7 +92,9 @@ public class ETFPlayerFeatureRenderer<T extends PlayerEntity, M extends PlayerEn
     }
 
     public void renderFeatures(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light, M model, ETFPlayerTexture playerTexture) {
+
         if (playerTexture.canUseFeaturesForThisPlayer()) {
+            ETFRenderContext.startSpecialRenderOverlayPhase();
             ETFRenderContext.preventRenderLayerTextureModify();
 
             renderNose(matrixStack, vertexConsumerProvider, light, playerTexture, model);
@@ -102,6 +104,7 @@ public class ETFPlayerFeatureRenderer<T extends PlayerEntity, M extends PlayerEn
             ETFPlayerFeatureRenderer.renderEnchanted(matrixStack, vertexConsumerProvider, light, playerTexture, model);
 
             ETFRenderContext.allowRenderLayerTextureModify();
+            ETFRenderContext.endSpecialRenderOverlayPhase();
         }
     }
 

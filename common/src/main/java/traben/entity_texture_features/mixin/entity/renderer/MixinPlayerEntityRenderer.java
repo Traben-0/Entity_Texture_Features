@@ -88,8 +88,10 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
                     Identifier emissive = thisETFPlayerTexture.getBaseTextureEmissiveIdentifierOrNullForNone();
                     if (emissive != null) {
                         VertexConsumer vc2 = vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(emissive));
+                        ETFRenderContext.startSpecialRenderOverlayPhase();
                         arm.render(matrices, vc2, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV);
                         sleeve.render(matrices, vc2, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV);
+                        ETFRenderContext.endSpecialRenderOverlayPhase();
                         if (ETFVersionDifferenceHandler.isThisModLoaded("skinlayers") || ETFVersionDifferenceHandler.isThisModLoaded("skinlayers3d")) {
                             try {
                                 // handler class is only ever accessed if the mod is present

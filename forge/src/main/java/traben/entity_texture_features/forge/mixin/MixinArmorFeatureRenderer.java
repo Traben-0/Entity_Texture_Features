@@ -80,7 +80,9 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
                 //} else {
                 textureVert = arg2.getBuffer(RenderLayer.getArmorCutoutNoCull(emissive));
                 //}
+                ETFRenderContext.startSpecialRenderOverlayPhase();
                 arg4.render(arg, textureVert, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, f, g, h, 1.0F);
+                ETFRenderContext.endSpecialRenderOverlayPhase();
             }
         }
 
@@ -148,7 +150,9 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
             Identifier emissive = thisETF$TrimTexture.getEmissiveIdentifierOfCurrentState();
             if (emissive != null) {
                 VertexConsumer textureVert= arg3.getBuffer(RenderLayer.getArmorCutoutNoCull(emissive));
+                ETFRenderContext.startSpecialRenderOverlayPhase();
                 arg5.render(arg2, textureVert, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
+                ETFRenderContext.endSpecialRenderOverlayPhase();
             }
         }
     }
