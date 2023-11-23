@@ -42,12 +42,19 @@ public abstract class ETFUtils2 {
 
     @NotNull
     public static String addVariantNumberSuffix(String identifierString, int variant) {
+        String file;
+        if (identifierString.endsWith(".png")) {
+            file = "png";
+        } else {
+            String[] split = identifierString.split("\\.");
+            file = split[split.length - 1];
+        }
         if (variant < 2)
             return identifierString;
-        if (identifierString.matches("\\D+\\d+\\.png")) {
-            return identifierString.replace(".png", "." + variant + ".png");
+        if (identifierString.matches("\\D+\\d+\\." + file)) {
+            return identifierString.replace("." + file, "." + variant + "." + file);
         }
-        return identifierString.replace(".png", variant + ".png");
+        return identifierString.replace("." + file, variant + "." + file);
     }
 
     @Nullable

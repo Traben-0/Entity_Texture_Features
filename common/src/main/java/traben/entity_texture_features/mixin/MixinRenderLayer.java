@@ -30,7 +30,7 @@ public abstract class MixinRenderLayer {
         } else {
             source = ETFManager.TextureSource.ENTITY;
         }
-        Identifier modified = ETFManager.getInstance().getETFTexture(identifier, ETFRenderContext.getCurrentEntity(), source)
+        Identifier modified = ETFManager.getInstance().getETFTextureVariant(identifier, ETFRenderContext.getCurrentEntity(), source)
                 .getTextureIdentifier(ETFRenderContext.getCurrentEntity());
         //noinspection ConstantValue
         return modified == null ? identifier : modified;

@@ -15,8 +15,8 @@ import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.config.screens.warnings.ETFConfigWarning;
 import traben.entity_texture_features.config.screens.warnings.ETFConfigWarnings;
 import traben.entity_texture_features.features.ETFManager;
-import traben.entity_texture_features.features.property_reading.RandomPropertiesFile;
-import traben.entity_texture_features.features.property_reading.RandomPropertyRule;
+import traben.entity_texture_features.features.property_reading.RandomPropertiesProvider;
+import traben.entity_texture_features.features.property_reading.TrueRandomProvider;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperties;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperty;
 import traben.entity_texture_features.features.property_reading.properties.optifine_properties.BabyProperty;
@@ -24,7 +24,6 @@ import traben.entity_texture_features.features.texture_handlers.ETFTexture;
 import traben.entity_texture_features.utils.ETFEntity;
 import traben.entity_texture_features.utils.ETFUtils2;
 
-import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -62,8 +61,8 @@ import java.util.UUID;
  * {@link ETFApi#getLastMatchingRuleOfBlockEntity(BlockEntity)}
  * @optifine_property_reading This method allows an external mod to send in the path of an OptiFine random properties file and return an object<p>
  * that can test specific entities to discover their assigned random suffix<p>
- * {@link ETFApi#readRandomPropertiesFileAndReturnTestingObject3(Identifier, String...)} <p>
- * {@link ETFRandomTexturePropertyInstance}
+ * {@link ETFApi#readRandomPropertiesFileAndReturnTestingObject3(Identifier, Identifier, String...)} <p>
+ * {@link ETFVariantSuffixProvider}
  */
 @SuppressWarnings({"unused", "ConstantValue"})
 public final class ETFApi {
@@ -152,7 +151,7 @@ public final class ETFApi {
     public static Identifier getCurrentETFVariantTextureOfEntity(@NotNull Entity entity, @NotNull Identifier defaultTexture) {
         if (entity != null) {
             ETFEntity etfEntity = (ETFEntity) entity;
-            ETFTexture etfTexture = ETFManager.getInstance().getETFTexture(defaultTexture, etfEntity, ETFManager.TextureSource.ENTITY);
+            ETFTexture etfTexture = ETFManager.getInstance().getETFTextureVariant(defaultTexture, etfEntity, ETFManager.TextureSource.ENTITY);
             if (etfTexture != null) {// just in case
                 Identifier etfIdentifier = etfTexture.getTextureIdentifier(etfEntity);
                 if (etfIdentifier != null) {// just in case
@@ -188,7 +187,7 @@ public final class ETFApi {
     }
 
     private static Identifier getCurrentETFVariantTextureOfBlockEntityInternal(@NotNull ETFEntity etfEntity, @NotNull Identifier defaultTexture) {
-        ETFTexture etfTexture = ETFManager.getInstance().getETFTexture(defaultTexture, etfEntity, ETFManager.TextureSource.BLOCK_ENTITY);
+        ETFTexture etfTexture = ETFManager.getInstance().getETFTextureVariant(defaultTexture, etfEntity, ETFManager.TextureSource.BLOCK_ENTITY);
         if (etfTexture != null) {// just in case
             Identifier etfIdentifier = etfTexture.getTextureIdentifier(etfEntity);
             if (etfIdentifier != null) {// just in case
@@ -214,7 +213,7 @@ public final class ETFApi {
     @Nullable
     public static Identifier getCurrentETFEmissiveTextureOfEntityOrNull(@NotNull Entity entity, @NotNull Identifier defaultTexture) {
         if (entity != null) {
-            ETFTexture etfTexture = ETFManager.getInstance().getETFTexture(defaultTexture, (ETFEntity) entity, ETFManager.TextureSource.ENTITY);
+            ETFTexture etfTexture = ETFManager.getInstance().getETFTextureVariant(defaultTexture, (ETFEntity) entity, ETFManager.TextureSource.ENTITY);
             if (etfTexture != null) {// just in case
                 return etfTexture.getEmissiveIdentifierOfCurrentState();
             }
@@ -232,7 +231,7 @@ public final class ETFApi {
     @Nullable
     public static Identifier getCurrentETFEmissiveTextureOfBlockEntityOrNull(@NotNull BlockEntity entity, @NotNull Identifier defaultTexture) {
         if (entity != null) {
-            ETFTexture etfTexture = ETFManager.getInstance().getETFTexture(defaultTexture, (ETFEntity) entity, ETFManager.TextureSource.BLOCK_ENTITY);
+            ETFTexture etfTexture = ETFManager.getInstance().getETFTextureVariant(defaultTexture, (ETFEntity) entity, ETFManager.TextureSource.BLOCK_ENTITY);
             if (etfTexture != null) {// just in case
                 return etfTexture.getEmissiveIdentifierOfCurrentState();
             }
@@ -257,7 +256,7 @@ public final class ETFApi {
             @NotNull VertexConsumerProvider vertexConsumerProvider,
             @NotNull Model model
     ) {
-        ETFTexture etfTexture = ETFManager.getInstance().getETFTexture(defaultTextureOfEntity, (ETFEntity) entity, ETFManager.TextureSource.ENTITY);
+        ETFTexture etfTexture = ETFManager.getInstance().getETFTextureVariant(defaultTextureOfEntity, (ETFEntity) entity, ETFManager.TextureSource.ENTITY);
         if (etfTexture != null) {// just in case
             etfTexture.renderEmissive(matrixStack, vertexConsumerProvider, model);
         }
@@ -279,7 +278,7 @@ public final class ETFApi {
             @NotNull VertexConsumerProvider vertexConsumerProvider,
             @NotNull ModelPart modelPart
     ) {
-        ETFTexture etfTexture = ETFManager.getInstance().getETFTexture(defaultTextureOfEntity, (ETFEntity) entity, ETFManager.TextureSource.ENTITY);
+        ETFTexture etfTexture = ETFManager.getInstance().getETFTextureVariant(defaultTextureOfEntity, (ETFEntity) entity, ETFManager.TextureSource.ENTITY);
         if (etfTexture != null) {// just in case
             etfTexture.renderEmissive(matrixStack, vertexConsumerProvider, modelPart);
         }
@@ -302,7 +301,7 @@ public final class ETFApi {
             @NotNull VertexConsumerProvider vertexConsumerProvider,
             @NotNull Model model
     ) {
-        ETFTexture etfTexture = ETFManager.getInstance().getETFTexture(defaultTextureOfEntity, (ETFEntity) entity, ETFManager.TextureSource.ENTITY);
+        ETFTexture etfTexture = ETFManager.getInstance().getETFTextureVariant(defaultTextureOfEntity, (ETFEntity) entity, ETFManager.TextureSource.ENTITY);
         if (etfTexture != null) {// just in case
             etfTexture.renderEmissive(matrixStack, vertexConsumerProvider, model);
         }
@@ -324,7 +323,7 @@ public final class ETFApi {
             @NotNull VertexConsumerProvider vertexConsumerProvider,
             @NotNull ModelPart modelPart
     ) {
-        ETFTexture etfTexture = ETFManager.getInstance().getETFTexture(defaultTextureOfEntity, (ETFEntity) entity, ETFManager.TextureSource.ENTITY);
+        ETFTexture etfTexture = ETFManager.getInstance().getETFTextureVariant(defaultTextureOfEntity, (ETFEntity) entity, ETFManager.TextureSource.ENTITY);
         if (etfTexture != null) {// just in case
             etfTexture.renderEmissive(matrixStack, vertexConsumerProvider, modelPart);
         }
@@ -334,20 +333,21 @@ public final class ETFApi {
      * This should only be used if you want to handle your own variation code.
      * This is used by EMF for random model variations.
      * <p>.<p>
-     * creates an instance of {@link ETFRandomTexturePropertyInstance}.
+     * creates an instance of {@link ETFVariantSuffixProvider}.
      * this method will return null for any failure and should print some relevant information on the failure reason.
      * the return from this method only requires
-     * {@link ETFRandomTexturePropertyInstance#getSuffixForEntity(Entity, boolean, Object2BooleanOpenHashMap)}
+     * {@link ETFVariantSuffixProvider#getSuffixForEntity(Entity, boolean, Object2BooleanOpenHashMap)}
      * to be called to retrieve a suffix integer,
      * the suffix may or may not exist, it is up to you to test if the file with that suffix actually exists.
      * see the JavaDocs within the object itself for further info.
      *
      * @param propertiesFileIdentifier the properties file identifier
+     * @param vanillaIdentifier        the vanilla file identifier
      * @param suffixKeys               the suffix keys to use. These would be {"skins","textures"} for regular OptiFine random textures and "models" for OptiFine random entity models.
-     * @return a valid {@link ETFRandomTexturePropertyInstance} or null.
+     * @return a valid {@link ETFVariantSuffixProvider} or null.
      */
-    public static ETFRandomTexturePropertyInstance readRandomPropertiesFileAndReturnTestingObject3(Identifier propertiesFileIdentifier, String... suffixKeys) {
-        return ETFRandomTexturePropertyInstance.getInstance(propertiesFileIdentifier, suffixKeys);
+    public static ETFVariantSuffixProvider readRandomPropertiesFileAndReturnTestingObject3(Identifier propertiesFileIdentifier, Identifier vanillaIdentifier, String... suffixKeys) {
+        return ETFVariantSuffixProvider.getInstance(propertiesFileIdentifier, vanillaIdentifier, suffixKeys);
     }
 
 
@@ -412,24 +412,45 @@ public final class ETFApi {
      * provides functionality to input an entity and output a suffix integer as defined in
      * a valid OptiFine random entity properties file.
      * <p>
-     * Should only be built via {@link ETFApi#readRandomPropertiesFileAndReturnTestingObject3(Identifier, String...)}
+     * Should only be built via {@link ETFApi#readRandomPropertiesFileAndReturnTestingObject3(Identifier, Identifier, String...)}
      */
-    public interface ETFRandomTexturePropertyInstance {
+    public interface ETFVariantSuffixProvider {
 
         @Nullable
-        private static ETFRandomTexturePropertyInstance getInstance(Identifier propertiesFileIdentifier, String... suffixKeyName) {
-            return RandomPropertiesFile.getInstance(propertiesFileIdentifier, suffixKeyName);
+        static ETFApi.ETFVariantSuffixProvider getInstance(Identifier propertiesFileIdentifier, Identifier vanillaIdentifier, String... suffixKeyName) {
+            RandomPropertiesProvider optifine = RandomPropertiesProvider.of(propertiesFileIdentifier, vanillaIdentifier, suffixKeyName);
+            TrueRandomProvider random = TrueRandomProvider.of(vanillaIdentifier);
+
+            //try fallback property
+            if (optifine == null
+                    && vanillaIdentifier.getPath().endsWith(".png")
+                    && "minecraft".equals(vanillaIdentifier.getNamespace())
+                    && vanillaIdentifier.getPath().contains("_")) {
+                String vanId = vanillaIdentifier.getPath().replaceAll("(_tame|_angry|_nectar|_shooting|_cold)", "");
+                optifine = RandomPropertiesProvider.of(new Identifier(vanId.replace(".png", ".properties")), new Identifier(vanId), suffixKeyName);
+            }
+
+            if (random == null && optifine == null) {
+                //no variation at all
+                return null;
+            } else if (/*only*/optifine == null) {
+                //todo why was this there     if (source != ETFManager.TextureSource.ENTITY_FEATURE) {
+                return random;
+            } else if (/*only*/random == null) {
+                //optifine random confirmed
+                return optifine;
+            } else {
+                //if 2.png is higher it MUST be treated as true random confirmed
+                if (optifine.getPackName() != null
+                        && optifine.getPackName().equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(new String[]{random.getPackName(), optifine.getPackName()}))) {
+                    return optifine;
+                } else {
+                    //todo why was this there     if (source != ETFManager.TextureSource.ENTITY_FEATURE) {
+                    return random;
+                }
+            }
         }
 
-        /**
-         * If you don't know what you are doing use {@link ETFApi#readRandomPropertiesFileAndReturnTestingObject3(Identifier, String...)}
-         *
-         * @return a ETFRandomTexturePropertyInstance generated from the given RandomPropertyRule List
-         */
-        @Nullable
-        static ETFRandomTexturePropertyInstance of(List<RandomPropertyRule> propertyRules) {
-            return RandomPropertiesFile.of(propertyRules);
-        }
 
         /**
          * @return all the suffixes mentioned in this OptiFine property file
@@ -466,7 +487,7 @@ public final class ETFApi {
         int getSuffixForEntity(Entity entityToBeTested, boolean isThisTheFirstTestForEntity, Object2BooleanOpenHashMap<UUID> cacheToMarkEntitiesWhoseVariantCanChangeAgain);
 
         /**
-         * Same as {@link ETFRandomTexturePropertyInstance#getSuffixForEntity(Entity, boolean, Object2BooleanOpenHashMap)} but for block entities
+         * Same as {@link ETFVariantSuffixProvider#getSuffixForEntity(Entity, boolean, Object2BooleanOpenHashMap)} but for block entities
          *
          * @param entityToBeTested                              the block entity to be tested
          * @param isThisTheFirstTestForEntity                   boolean that is true for every entities first test
@@ -477,7 +498,7 @@ public final class ETFApi {
         int getSuffixForBlockEntity(BlockEntity entityToBeTested, boolean isThisTheFirstTestForEntity, Object2BooleanOpenHashMap<UUID> cacheToMarkEntitiesWhoseVariantCanChangeAgain);
 
         /**
-         * Same as {@link ETFRandomTexturePropertyInstance#getSuffixForEntity(Entity, boolean, Object2BooleanOpenHashMap)} but for the internal use ETFEntity interface
+         * Same as {@link ETFVariantSuffixProvider#getSuffixForEntity(Entity, boolean, Object2BooleanOpenHashMap)} but for the internal use ETFEntity interface
          *
          * @param entityToBeTested                              the block entity to be tested
          * @param isThisTheFirstTestForEntity                   boolean that is true for every entities first test

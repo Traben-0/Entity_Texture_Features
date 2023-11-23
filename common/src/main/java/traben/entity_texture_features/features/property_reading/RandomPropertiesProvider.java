@@ -3,40 +3,71 @@ package traben.entity_texture_features.features.property_reading;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
+import net.minecraft.resource.Resource;
+import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFApi;
+import traben.entity_texture_features.features.ETFManager;
+import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperties;
 import traben.entity_texture_features.features.property_reading.properties.generic_properties.SimpleIntegerArrayProperty;
+import traben.entity_texture_features.features.texture_handlers.ETFDirectory;
 import traben.entity_texture_features.utils.ETFEntity;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.*;
 
-public class RandomPropertiesFile implements ETFApi.ETFRandomTexturePropertyInstance {
+public class RandomPropertiesProvider implements ETFApi.ETFVariantSuffixProvider {
 
 
     protected final List<RandomPropertyRule> propertyRules;
 
+    protected final String packname;
 
-    protected RandomPropertiesFile(List<RandomPropertyRule> propertyRules) {
+    private RandomPropertiesProvider(Identifier propertiesFileIdentifier, List<RandomPropertyRule> propertyRules) {
         this.propertyRules = propertyRules;
+        this.packname = MinecraftClient.getInstance().getResourceManager().getResource(propertiesFileIdentifier)
+                .map(Resource::getResourcePackName)
+                .orElse("vanilla");
     }
 
     @Nullable
-    public static RandomPropertiesFile getInstance(Identifier propertiesFileIdentifier, String... suffixKeyName) {
-        Properties props = ETFUtils2.readAndReturnPropertiesElseNull(propertiesFileIdentifier);
-        if (props == null) return null;
-        List<RandomPropertyRule> etfs = RandomPropertiesFile.getAllValidPropertyObjects(props, propertiesFileIdentifier, suffixKeyName);
-        return of(etfs);
+    public static RandomPropertiesProvider of(Identifier initialPropertiesFileIdentifier, Identifier vanillaIdentifier, String... suffixKeyName) {
+        Identifier propertiesFileIdentifier = ETFDirectory.getDirectoryVersionOf(initialPropertiesFileIdentifier);
+        if (propertiesFileIdentifier == null) return null;
 
-    }
+        try {
+            Properties props = ETFUtils2.readAndReturnPropertiesElseNull(propertiesFileIdentifier);
+            if (props == null) {
+                ETFUtils2.logMessage("Ignoring properties file that was null @ " + propertiesFileIdentifier, false);
+                return null;
+            }
+            if (vanillaIdentifier.getPath().endsWith(".png")) {
+                ETFManager.getInstance().grabSpecialProperties(props, ETFRenderContext.getCurrentEntity());
+            }
 
-    @Nullable
-    public static RandomPropertiesFile of(List<RandomPropertyRule> propertyRules) {
-        if (propertyRules.isEmpty()) return null;
-        return new RandomPropertiesFile(propertyRules);
+            List<RandomPropertyRule> propertyRules = RandomPropertiesProvider.getAllValidPropertyObjects(props, propertiesFileIdentifier, suffixKeyName);
+            if (propertyRules.isEmpty()) {
+                ETFUtils2.logMessage("Ignoring properties file that failed to load any cases @ " + propertiesFileIdentifier, false);
+                return null;
+            }
+
+            ResourceManager resourceManager = MinecraftClient.getInstance().getResourceManager();
+            String properties = resourceManager.getResource(propertiesFileIdentifier).map(Resource::getResourcePackName).orElse(null);
+            String vanillaPack = resourceManager.getResource(vanillaIdentifier).map(Resource::getResourcePackName).orElse(null);
+
+            if (properties != null
+                    && properties.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(new String[]{properties, vanillaPack}))) {
+                return new RandomPropertiesProvider(propertiesFileIdentifier, propertyRules);
+            }
+        } catch (Exception e) {
+            ETFUtils2.logWarn("Ignoring properties file that caused Exception @ " + propertiesFileIdentifier + "\n" + e, false);
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static List<RandomPropertyRule> getAllValidPropertyObjects(Properties properties, Identifier propertiesFilePath, String... suffixToTest) {
@@ -95,6 +126,10 @@ public class RandomPropertiesFile implements ETFApi.ETFRandomTexturePropertyInst
     @Nullable
     private static Integer[] getWeights(Properties props, int num) {
         return SimpleIntegerArrayProperty.getGenericIntegerSplitWithRanges(props, num, "weights");
+    }
+
+    public String getPackName() {
+        return packname;
     }
 
     @SuppressWarnings("unused")

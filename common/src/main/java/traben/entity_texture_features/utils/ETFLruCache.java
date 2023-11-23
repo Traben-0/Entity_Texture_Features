@@ -4,13 +4,15 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.features.ETFManager;
 
+import java.util.UUID;
+
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
 public class ETFLruCache<X, Y> {
 
     //cache with lru functionality
     final Object2ObjectLinkedOpenHashMap<X, Y> cache;
-    final int capacity = 2048;
+    final int capacity;
 
 //    public ETFLruCache(int upperCapacity) {
 //        capacity = upperCapacity;
@@ -21,7 +23,7 @@ public class ETFLruCache<X, Y> {
 
     public ETFLruCache() {
         this.cache = new InternalCache<>();
-
+        this.capacity = 2048;
     }
 
     public boolean containsKey(X key) {
@@ -39,6 +41,8 @@ public class ETFLruCache<X, Y> {
             X lastKey = cache.lastKey();
             if (!lastKey.equals(key)) {
                 if (lastKey instanceof ETFCacheKey ETFKey) {
+                    ETFManager.getInstance().removeThisEntityDataFromAllStorage(ETFKey.uuid());
+                } else if (lastKey instanceof UUID ETFKey) {
                     ETFManager.getInstance().removeThisEntityDataFromAllStorage(ETFKey);
                 }
                 cache.remove(lastKey);

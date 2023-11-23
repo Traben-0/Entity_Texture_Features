@@ -111,7 +111,7 @@ public class ETFRenderContext {
 
             //System.out.println("raw="+rawId+"\nactual="+actualTexture);
 
-            currentETFTexture = ETFManager.getInstance().getETFTexture(actualTexture, ETFRenderContext.getCurrentEntity(), ETFManager.TextureSource.BLOCK_ENTITY);
+            currentETFTexture = ETFManager.getInstance().getETFTextureVariant(actualTexture, ETFRenderContext.getCurrentEntity(), ETFManager.TextureSource.BLOCK_ENTITY);
 
             //if texture is emissive or a variant send in as a non sprite vertex consumer
             if (currentETFTexture.getVariantNumber() != 0 || currentETFTexture.isEmissive()) {
@@ -183,6 +183,7 @@ public class ETFRenderContext {
         currentEntity = null;
     }
 
+    @SuppressWarnings("unused")//used in EMF
     public static boolean isIsInSpecialRenderOverlayPhase() {
         return isInSpecialRenderOverlayPhase;
     }
@@ -190,6 +191,7 @@ public class ETFRenderContext {
     public static void startSpecialRenderOverlayPhase() {
         ETFRenderContext.isInSpecialRenderOverlayPhase = true;
     }
+
     public static void endSpecialRenderOverlayPhase() {
         ETFRenderContext.isInSpecialRenderOverlayPhase = false;
     }
