@@ -68,9 +68,7 @@ public abstract class RandomProperty {
      *
      * @return the boolean
      */
-    public boolean isPropertyUpdatable() {
-        return true;
-    }
+    public abstract boolean isPropertyUpdatable();
 
     /**
      * Returns a String[] of all valid property id's these will be the text before the first full stop in the properties file.
