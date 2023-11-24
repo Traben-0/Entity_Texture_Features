@@ -1,7 +1,6 @@
 package traben.entity_texture_features.features.texture_handlers;
 
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.ModelPart;
@@ -48,7 +47,7 @@ public class ETFTexture {
     private static final Random randomBlink = new Random();
     //this variants id , might be vanilla
     public final Identifier thisIdentifier;
-    private final Object2ReferenceOpenHashMap<Identifier, Identifier> FEATURE_TEXTURE_MAP = new Object2ReferenceOpenHashMap<>();
+//    private final Object2ReferenceOpenHashMap<Identifier, Identifier> FEATURE_TEXTURE_MAP = new Object2ReferenceOpenHashMap<>();
     private final int variantNumber;
     public TextureReturnState currentTextureState = TextureReturnState.NORMAL;
     public String eSuffix = null;
@@ -164,7 +163,7 @@ public class ETFTexture {
                     // packs.add(blink1PackName);
                     // packs.add(vanillaR1.get().getResourcePackName());
 
-                    if (blink1PackName.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(new String[]{blink1PackName, vanillaR1.get().getResourcePackName()}))) {
+                    if (blink1PackName.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(blink1PackName, vanillaR1.get().getResourcePackName()))) {
                         //is higher or same pack
                         blinkIdentifier = possibleBlinkIdentifier;
 
@@ -189,7 +188,7 @@ public class ETFTexture {
                                 //packs.add(propertyResourcePackName);
                                 //packs.add(blink1PackName);
 
-                                if (propertyResourcePackName.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(new String[]{propertyResourcePackName, blink1PackName}))) {
+                                if (propertyResourcePackName.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(propertyResourcePackName, blink1PackName))) {
                                     blinkLength = blinkingProps.containsKey("blinkLength") ?
                                             Integer.parseInt(blinkingProps.getProperty("blinkLength").replaceAll("\\D", "")) :
                                             ETFConfigData.blinkLength;
@@ -293,7 +292,7 @@ public class ETFTexture {
 //                        ObjectSet<String> packs = new ObjectOpenHashSet<>();
 //                        packs.add(emissivePackName);
 //                        packs.add(vanillaR1.get().getResourcePackName());
-                        if (emissivePackName.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(new String[]{emissivePackName, vanillaR1.get().getResourcePackName()}))) {
+                        if (emissivePackName.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(emissivePackName, vanillaR1.get().getResourcePackName()))) {
                             //is higher or same pack
                             emissiveIdentifier = possibleEmissiveIdentifier;
                             Identifier possibleEmissiveBlinkIdentifier = ETFUtils2.replaceIdentifier(thisIdentifier, ".png", "_blink" + possibleEmissiveSuffix + ".png");
@@ -304,7 +303,7 @@ public class ETFTexture {
                                 //packs.clear();
                                 //packs.add(emissiveBlinkPackName);
                                 //packs.add(vanillaR1.get().getResourcePackName());
-                                if (emissiveBlinkPackName.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(new String[]{emissiveBlinkPackName, vanillaR1.get().getResourcePackName()}))) {
+                                if (emissiveBlinkPackName.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(emissiveBlinkPackName, vanillaR1.get().getResourcePackName()))) {
                                     //is higher or same pack
                                     emissiveBlinkIdentifier = possibleEmissiveBlinkIdentifier;
                                     Identifier possibleEmissiveBlink2Identifier = ETFUtils2.replaceIdentifier(thisIdentifier, ".png", "_blink2" + possibleEmissiveSuffix + ".png");
@@ -314,7 +313,7 @@ public class ETFTexture {
                                         // packs.clear();
                                         // packs.add(emissiveBlink2PackName);
                                         // packs.add(vanillaR1.get().getResourcePackName());
-                                        if (emissiveBlink2PackName.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(new String[]{emissiveBlink2PackName, vanillaR1.get().getResourcePackName()}))) {
+                                        if (emissiveBlink2PackName.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(emissiveBlink2PackName, vanillaR1.get().getResourcePackName()))) {
                                             //is higher or same pack
                                             emissiveBlink2Identifier = possibleEmissiveBlink2Identifier;
                                         }
@@ -363,7 +362,7 @@ public class ETFTexture {
 //                        ObjectSet<String> packs = new ObjectOpenHashSet<>();
 //                        packs.add(emissivePackName);
 //                        packs.add(vanillaR1.get().getResourcePackName());
-                    if (enchantPackName.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(new String[]{enchantPackName, vanillaR1.get().getResourcePackName()}))) {
+                    if (enchantPackName.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(enchantPackName, vanillaR1.get().getResourcePackName()))) {
                         //is higher or same pack
                         enchantIdentifier = possibleEnchantIdentifier;
                         Identifier possibleEnchantBlinkIdentifier = ETFUtils2.replaceIdentifier(thisIdentifier, ".png", "_blink" + enchantSuffix + ".png");
@@ -374,7 +373,7 @@ public class ETFTexture {
                             //packs.clear();
                             //packs.add(emissiveBlinkPackName);
                             //packs.add(vanillaR1.get().getResourcePackName());
-                            if (enchantBlinkPackName.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(new String[]{enchantBlinkPackName, vanillaR1.get().getResourcePackName()}))) {
+                            if (enchantBlinkPackName.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(enchantBlinkPackName, vanillaR1.get().getResourcePackName()))) {
                                 //is higher or same pack
                                 enchantBlinkIdentifier = possibleEnchantBlinkIdentifier;
                                 Identifier possibleEnchantBlink2Identifier = ETFUtils2.replaceIdentifier(thisIdentifier, ".png", "_blink2" + enchantSuffix + ".png");
@@ -384,7 +383,7 @@ public class ETFTexture {
                                     // packs.clear();
                                     // packs.add(emissiveBlink2PackName);
                                     // packs.add(vanillaR1.get().getResourcePackName());
-                                    if (enchantBlink2PackName.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(new String[]{enchantBlink2PackName, vanillaR1.get().getResourcePackName()}))) {
+                                    if (enchantBlink2PackName.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(enchantBlink2PackName, vanillaR1.get().getResourcePackName()))) {
                                         //is higher or same pack
                                         enchantBlink2Identifier = possibleEnchantBlink2Identifier;
                                     }
@@ -413,44 +412,44 @@ public class ETFTexture {
     }
 
 
-    @NotNull
-    public Identifier getFeatureTexture(Identifier vanillaFeatureTexture) {
-
-        if (FEATURE_TEXTURE_MAP.containsKey(vanillaFeatureTexture)) {
-            return FEATURE_TEXTURE_MAP.get(vanillaFeatureTexture);
-        }
-        //otherwise we need to find what it is and add to map
-        ETFDirectory directory = ETFDirectory.getDirectoryOf(thisIdentifier);
-        if (variantNumber != 0) {
-            Identifier possibleFeatureVariantIdentifier =
-                    ETFDirectory.getIdentifierAsDirectory(
-                            ETFUtils2.replaceIdentifier(
-                                    vanillaFeatureTexture,
-                                    ".png",
-                                    variantNumber + ".png")
-                            , directory);
-            Optional<Resource> possibleResource = MinecraftClient.getInstance().getResourceManager().getResource(possibleFeatureVariantIdentifier);
-            if (possibleResource.isPresent()) {
-                //feature variant exists so return
-                FEATURE_TEXTURE_MAP.put(vanillaFeatureTexture, possibleFeatureVariantIdentifier);
-                return possibleFeatureVariantIdentifier;
-            }
-        }
-        //System.out.println("feature="+vanillaFeatureTexture.toString()+thisIdentifier.toString()+directory.toString());
-        //here we have no number and are likely vanilla texture or something went wrong in which case vanilla anyway
-        //ETFUtils2.logWarn("getFeatureTexture() either vanilla or failed");
-        ETFDirectory tryDirectory = ETFDirectory.getDirectoryOf(vanillaFeatureTexture);
-        if (tryDirectory == directory || tryDirectory == ETFDirectory.VANILLA) {
-            //if same directory as main texture or is vanilla texture use it
-            Identifier tryDirectoryVariant = ETFDirectory.getIdentifierAsDirectory(vanillaFeatureTexture, tryDirectory);
-            FEATURE_TEXTURE_MAP.put(vanillaFeatureTexture, tryDirectoryVariant);
-            return tryDirectoryVariant;
-        }
-        //final fallback just use vanilla
-        FEATURE_TEXTURE_MAP.put(vanillaFeatureTexture, vanillaFeatureTexture);
-        return vanillaFeatureTexture;
-
-    }
+//    @NotNull
+//    public Identifier getFeatureTexture(Identifier vanillaFeatureTexture) {
+//
+//        if (FEATURE_TEXTURE_MAP.containsKey(vanillaFeatureTexture)) {
+//            return FEATURE_TEXTURE_MAP.get(vanillaFeatureTexture);
+//        }
+//        //otherwise we need to find what it is and add to map
+//        ETFDirectory directory = ETFDirectory.getDirectoryOf(thisIdentifier);
+//        if (variantNumber != 0) {
+//            Identifier possibleFeatureVariantIdentifier =
+//                    ETFDirectory.getIdentifierAsDirectory(
+//                            ETFUtils2.replaceIdentifier(
+//                                    vanillaFeatureTexture,
+//                                    ".png",
+//                                    variantNumber + ".png")
+//                            , directory);
+//            Optional<Resource> possibleResource = MinecraftClient.getInstance().getResourceManager().getResource(possibleFeatureVariantIdentifier);
+//            if (possibleResource.isPresent()) {
+//                //feature variant exists so return
+//                FEATURE_TEXTURE_MAP.put(vanillaFeatureTexture, possibleFeatureVariantIdentifier);
+//                return possibleFeatureVariantIdentifier;
+//            }
+//        }
+//        //System.out.println("feature="+vanillaFeatureTexture.toString()+thisIdentifier.toString()+directory.toString());
+//        //here we have no number and are likely vanilla texture or something went wrong in which case vanilla anyway
+//        //ETFUtils2.logWarn("getFeatureTexture() either vanilla or failed");
+//        ETFDirectory tryDirectory = ETFDirectory.getDirectoryOf(vanillaFeatureTexture);
+//        if (tryDirectory == directory || tryDirectory == ETFDirectory.VANILLA) {
+//            //if same directory as main texture or is vanilla texture use it
+//            Identifier tryDirectoryVariant = ETFDirectory.getIdentifierAsDirectory(vanillaFeatureTexture, tryDirectory);
+//            FEATURE_TEXTURE_MAP.put(vanillaFeatureTexture, tryDirectoryVariant);
+//            return tryDirectoryVariant;
+//        }
+//        //final fallback just use vanilla
+//        FEATURE_TEXTURE_MAP.put(vanillaFeatureTexture, vanillaFeatureTexture);
+//        return vanillaFeatureTexture;
+//
+//    }
 
 
     @NotNull

@@ -48,7 +48,7 @@ public class ETFManager {
     public final ETFLruCache<UUID, Object2BooleanOpenHashMap<RandomProperty>> ENTITY_SPAWN_CONDITIONS_CACHE = new ETFLruCache<>();
     //this is a cache of all known ETFTexture versions of any existing resource-pack texture, used to prevent remaking objects
     public final Object2ReferenceOpenHashMap<@NotNull Identifier, @Nullable ETFTexture> ETF_TEXTURE_CACHE = new Object2ReferenceOpenHashMap<>();
-    public final Object2BooleanOpenHashMap<UUID> ENTITY_IS_UPDATABLE = new Object2BooleanOpenHashMap<>();
+//    public final Object2BooleanOpenHashMap<UUID> ENTITY_IS_UPDATABLE = new Object2BooleanOpenHashMap<>();
     public final ObjectOpenHashSet<UUID> ENTITY_DEBUG_QUEUE = new ObjectOpenHashSet<>();
     public final Object2IntLinkedOpenHashMap<UUID> LAST_SUFFIX_OF_ENTITY = new EntitySuffixLRU();
     private final Object2ObjectOpenHashMap<Identifier, ETFTextureVariator> VARIATOR_MAP = new Object2ObjectOpenHashMap<>();
@@ -179,7 +179,7 @@ public class ETFManager {
     public void removeThisEntityDataFromAllStorage(UUID uuid) {
         //todo still needed? expand?
         ENTITY_SPAWN_CONDITIONS_CACHE.removeEntryOnly(uuid);
-        ENTITY_IS_UPDATABLE.removeBoolean(uuid);
+//        ENTITY_IS_UPDATABLE.removeBoolean(uuid);
         ENTITY_DEBUG_QUEUE.remove(uuid);
         ENTITY_BLINK_TIME.removeLong(uuid);
     }

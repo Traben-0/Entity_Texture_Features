@@ -2,9 +2,7 @@ package traben.entity_texture_features.features.property_reading;
 
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.Entity;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
@@ -20,14 +18,16 @@ import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.*;
 
-public class RandomPropertiesProvider implements ETFApi.ETFVariantSuffixProvider {
+public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider {
 
 
     protected final List<RandomPropertyRule> propertyRules;
 
+    protected final Object2BooleanOpenHashMap<UUID> entityCanUpdate = new Object2BooleanOpenHashMap<>();
+
     protected final String packname;
 
-    private RandomPropertiesProvider(Identifier propertiesFileIdentifier, List<RandomPropertyRule> propertyRules) {
+    private PropertiesRandomProvider(Identifier propertiesFileIdentifier, List<RandomPropertyRule> propertyRules) {
         this.propertyRules = propertyRules;
         this.packname = MinecraftClient.getInstance().getResourceManager().getResource(propertiesFileIdentifier)
                 .map(Resource::getResourcePackName)
@@ -35,7 +35,7 @@ public class RandomPropertiesProvider implements ETFApi.ETFVariantSuffixProvider
     }
 
     @Nullable
-    public static RandomPropertiesProvider of(Identifier initialPropertiesFileIdentifier, Identifier vanillaIdentifier, String... suffixKeyName) {
+    public static PropertiesRandomProvider of(Identifier initialPropertiesFileIdentifier, Identifier vanillaIdentifier, String... suffixKeyName) {
         Identifier propertiesFileIdentifier = ETFDirectory.getDirectoryVersionOf(initialPropertiesFileIdentifier);
         if (propertiesFileIdentifier == null) return null;
 
@@ -49,7 +49,7 @@ public class RandomPropertiesProvider implements ETFApi.ETFVariantSuffixProvider
                 ETFManager.getInstance().grabSpecialProperties(props, ETFRenderContext.getCurrentEntity());
             }
 
-            List<RandomPropertyRule> propertyRules = RandomPropertiesProvider.getAllValidPropertyObjects(props, propertiesFileIdentifier, suffixKeyName);
+            List<RandomPropertyRule> propertyRules = PropertiesRandomProvider.getAllValidPropertyObjects(props, propertiesFileIdentifier, suffixKeyName);
             if (propertyRules.isEmpty()) {
                 ETFUtils2.logMessage("Ignoring properties file that failed to load any cases @ " + propertiesFileIdentifier, false);
                 return null;
@@ -60,8 +60,8 @@ public class RandomPropertiesProvider implements ETFApi.ETFVariantSuffixProvider
             String vanillaPack = resourceManager.getResource(vanillaIdentifier).map(Resource::getResourcePackName).orElse(null);
 
             if (properties != null
-                    && properties.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(new String[]{properties, vanillaPack}))) {
-                return new RandomPropertiesProvider(propertiesFileIdentifier, propertyRules);
+                    && properties.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(properties, vanillaPack))) {
+                return new PropertiesRandomProvider(propertiesFileIdentifier, propertyRules);
             }
         } catch (Exception e) {
             ETFUtils2.logWarn("Ignoring properties file that caused Exception @ " + propertiesFileIdentifier + "\n" + e, false);
@@ -132,6 +132,11 @@ public class RandomPropertiesProvider implements ETFApi.ETFVariantSuffixProvider
         return packname;
     }
 
+    @Override
+    public boolean entityCanUpdate(UUID uuid) {
+        return entityCanUpdate.getBoolean(uuid);
+    }
+
     @SuppressWarnings("unused")
     @Override
     public IntOpenHashSet getAllSuffixes() {
@@ -148,26 +153,15 @@ public class RandomPropertiesProvider implements ETFApi.ETFVariantSuffixProvider
         return propertyRules.size();
     }
 
-    @SuppressWarnings("unused")
-    @Override
-    public int getSuffixForEntity(Entity entityToBeTested, boolean isThisTheFirstTestForEntity, Object2BooleanOpenHashMap<UUID> cacheToMarkEntitiesWhoseVariantCanChangeAgain) {
-        return getSuffixForETFEntity((ETFEntity) entityToBeTested, isThisTheFirstTestForEntity, cacheToMarkEntitiesWhoseVariantCanChangeAgain);
-
-    }
-
-    @SuppressWarnings("unused")
-    @Override
-    public int getSuffixForBlockEntity(BlockEntity entityToBeTested, boolean isThisTheFirstTestForEntity, Object2BooleanOpenHashMap<UUID> cacheToMarkEntitiesWhoseVariantCanChangeAgain) {
-        return getSuffixForETFEntity((ETFEntity) entityToBeTested, isThisTheFirstTestForEntity, cacheToMarkEntitiesWhoseVariantCanChangeAgain);
-    }
 
     @Override
-    public int getSuffixForETFEntity(ETFEntity entityToBeTested, boolean isThisTheFirstTestForEntity, Object2BooleanOpenHashMap<UUID> cacheToMarkEntitiesWhoseVariantCanChangeAgain) {
+    public int getSuffixForETFEntity(ETFEntity entityToBeTested) {
         if (entityToBeTested == null) return 0;
-        boolean isAnUpdate = !isThisTheFirstTestForEntity;
+        UUID id = entityToBeTested.etf$getUuid();
+        boolean entityTestedBefore = entityCanUpdate.containsKey(id);
         for (RandomPropertyRule testCase : propertyRules) {
-            if (testCase.doesEntityMeetConditionsOfThisCase(entityToBeTested, isAnUpdate, cacheToMarkEntitiesWhoseVariantCanChangeAgain)) {
-                return testCase.getVariantSuffixFromThisCase(entityToBeTested.etf$getUuid());
+            if (testCase.doesEntityMeetConditionsOfThisCase(entityToBeTested, entityTestedBefore, entityCanUpdate)) {
+                return testCase.getVariantSuffixFromThisCase(id);
             }
         }
         return 0;

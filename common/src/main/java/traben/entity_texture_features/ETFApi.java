@@ -1,7 +1,6 @@
 package traben.entity_texture_features;
 
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
-import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.ModelPart;
@@ -15,7 +14,7 @@ import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.config.screens.warnings.ETFConfigWarning;
 import traben.entity_texture_features.config.screens.warnings.ETFConfigWarnings;
 import traben.entity_texture_features.features.ETFManager;
-import traben.entity_texture_features.features.property_reading.RandomPropertiesProvider;
+import traben.entity_texture_features.features.property_reading.PropertiesRandomProvider;
 import traben.entity_texture_features.features.property_reading.TrueRandomProvider;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperties;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperty;
@@ -61,7 +60,7 @@ import java.util.UUID;
  * {@link ETFApi#getLastMatchingRuleOfBlockEntity(BlockEntity)}
  * @optifine_property_reading This method allows an external mod to send in the path of an OptiFine random properties file and return an object<p>
  * that can test specific entities to discover their assigned random suffix<p>
- * {@link ETFApi#readRandomPropertiesFileAndReturnTestingObject3(Identifier, Identifier, String...)} <p>
+ * {@link ETFApi#getVariantSupplierOrNull(Identifier, Identifier, String...)} <p>
  * {@link ETFVariantSuffixProvider}
  */
 @SuppressWarnings({"unused", "ConstantValue"})
@@ -336,7 +335,7 @@ public final class ETFApi {
      * creates an instance of {@link ETFVariantSuffixProvider}.
      * this method will return null for any failure and should print some relevant information on the failure reason.
      * the return from this method only requires
-     * {@link ETFVariantSuffixProvider#getSuffixForEntity(Entity, boolean, Object2BooleanOpenHashMap)}
+     * {@link ETFVariantSuffixProvider#getSuffixForEntity(Entity)}
      * to be called to retrieve a suffix integer,
      * the suffix may or may not exist, it is up to you to test if the file with that suffix actually exists.
      * see the JavaDocs within the object itself for further info.
@@ -346,8 +345,8 @@ public final class ETFApi {
      * @param suffixKeys               the suffix keys to use. These would be {"skins","textures"} for regular OptiFine random textures and "models" for OptiFine random entity models.
      * @return a valid {@link ETFVariantSuffixProvider} or null.
      */
-    public static ETFVariantSuffixProvider readRandomPropertiesFileAndReturnTestingObject3(Identifier propertiesFileIdentifier, Identifier vanillaIdentifier, String... suffixKeys) {
-        return ETFVariantSuffixProvider.getInstance(propertiesFileIdentifier, vanillaIdentifier, suffixKeys);
+    public static @Nullable ETFVariantSuffixProvider getVariantSupplierOrNull(Identifier propertiesFileIdentifier, Identifier vanillaIdentifier, String... suffixKeys) {
+        return ETFVariantSuffixProvider.getVariantProviderOrNull(propertiesFileIdentifier, vanillaIdentifier, suffixKeys);
     }
 
 
@@ -412,22 +411,24 @@ public final class ETFApi {
      * provides functionality to input an entity and output a suffix integer as defined in
      * a valid OptiFine random entity properties file.
      * <p>
-     * Should only be built via {@link ETFApi#readRandomPropertiesFileAndReturnTestingObject3(Identifier, Identifier, String...)}
+     * Should only be built via {@link ETFApi#getVariantSupplierOrNull(Identifier, Identifier, String...)}
      */
     public interface ETFVariantSuffixProvider {
 
         @Nullable
-        static ETFApi.ETFVariantSuffixProvider getInstance(Identifier propertiesFileIdentifier, Identifier vanillaIdentifier, String... suffixKeyName) {
-            RandomPropertiesProvider optifine = RandomPropertiesProvider.of(propertiesFileIdentifier, vanillaIdentifier, suffixKeyName);
+        static ETFApi.ETFVariantSuffixProvider getVariantProviderOrNull(Identifier propertiesFileIdentifier, Identifier vanillaIdentifier, String... suffixKeyName) {
+            //get optifine property provider or null
+            PropertiesRandomProvider optifine = PropertiesRandomProvider.of(propertiesFileIdentifier, vanillaIdentifier, suffixKeyName);
+            //get true random provider or null
             TrueRandomProvider random = TrueRandomProvider.of(vanillaIdentifier);
 
-            //try fallback property
+            //try fallback property if null
             if (optifine == null
                     && vanillaIdentifier.getPath().endsWith(".png")
                     && "minecraft".equals(vanillaIdentifier.getNamespace())
                     && vanillaIdentifier.getPath().contains("_")) {
-                String vanId = vanillaIdentifier.getPath().replaceAll("(_tame|_angry|_nectar|_shooting|_cold)", "");
-                optifine = RandomPropertiesProvider.of(new Identifier(vanId.replace(".png", ".properties")), new Identifier(vanId), suffixKeyName);
+                String vanId = vanillaIdentifier.getPath().replaceAll("_(tame|angry|nectar|shooting|cold)", "");
+                optifine = PropertiesRandomProvider.of(new Identifier(vanId.replace(".png", ".properties")), new Identifier(vanId), suffixKeyName);
             }
 
             if (random == null && optifine == null) {
@@ -442,7 +443,8 @@ public final class ETFApi {
             } else {
                 //if 2.png is higher it MUST be treated as true random confirmed
                 if (optifine.getPackName() != null
-                        && optifine.getPackName().equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(new String[]{random.getPackName(), optifine.getPackName()}))) {
+                        && optifine.getPackName().equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(
+                                random.getPackName(), optifine.getPackName()))) {
                     return optifine;
                 } else {
                     //todo why was this there     if (source != ETFManager.TextureSource.ENTITY_FEATURE) {
@@ -451,6 +453,10 @@ public final class ETFApi {
             }
         }
 
+        /**
+         *
+         */
+        boolean entityCanUpdate(UUID uuid);
 
         /**
          * @return all the suffixes mentioned in this OptiFine property file
@@ -468,44 +474,35 @@ public final class ETFApi {
          * variant number exists or not is up to you.
          *
          * @param entityToBeTested                              the entity to be tested
-         * @param isThisTheFirstTestForEntity                   provides context to allow for faster iterations when an entity needs to be
-         *                                                      repeatedly tested, as is the case with the health property, since it can change over time you must retest the
-         *                                                      entity occasionally, the boolean should be true the first time a specific entity is sent to this method,
-         *                                                      and false every time thereafter.
-         * @param cacheToMarkEntitiesWhoseVariantCanChangeAgain a FastUtil type of Map<UUID,boolean>. this map is for your own optimization usage as
-         *                                                      the method will put a boolean into the map to mark whether an entity ever needs to be updated again.
-         *                                                      if the entity has no update-able properties (like health) it will never need to be tested again, so you can
-         *                                                      check this map to skip testing it if it's not needed.
-         *                                                      if the map returns [true] then that entity can possibly update, and you should retest it periodically, if the
-         *                                                      map returns [false] then the entity will never change its suffix, and you can skip testing it.
-         *                                                      the map can simply be hard coded [null] if you do not care.
          * @return the suffix number for this entity. An output of 0 ALWAYS means you need to use the vanilla variant,
          * usually due to finding no match.
          * <p> An output of 1, can be handled in 2 ways, usually it is used to refer to the vanilla suffix, but you might
          * also choose to check for a #1 suffix, I would recommend using 1 to mean the vanilla/default variant.
          */
-        int getSuffixForEntity(Entity entityToBeTested, boolean isThisTheFirstTestForEntity, Object2BooleanOpenHashMap<UUID> cacheToMarkEntitiesWhoseVariantCanChangeAgain);
+        default int getSuffixForEntity(Entity entityToBeTested) {
+            return getSuffixForETFEntity((ETFEntity) entityToBeTested);
+
+        }
 
         /**
-         * Same as {@link ETFVariantSuffixProvider#getSuffixForEntity(Entity, boolean, Object2BooleanOpenHashMap)} but for block entities
+         * Same as {@link ETFVariantSuffixProvider#getSuffixForEntity(Entity)} but for block entities
          *
          * @param entityToBeTested                              the block entity to be tested
-         * @param isThisTheFirstTestForEntity                   boolean that is true for every entities first test
-         * @param cacheToMarkEntitiesWhoseVariantCanChangeAgain the cache to mark entities whose variant can change again
          * @return the suffix number for the block entity
          */
 
-        int getSuffixForBlockEntity(BlockEntity entityToBeTested, boolean isThisTheFirstTestForEntity, Object2BooleanOpenHashMap<UUID> cacheToMarkEntitiesWhoseVariantCanChangeAgain);
+        default int getSuffixForBlockEntity(BlockEntity entityToBeTested) {
+            return getSuffixForETFEntity((ETFEntity) entityToBeTested);
+        }
 
         /**
-         * Same as {@link ETFVariantSuffixProvider#getSuffixForEntity(Entity, boolean, Object2BooleanOpenHashMap)} but for the internal use ETFEntity interface
+         * Same as {@link ETFVariantSuffixProvider#getSuffixForEntity(Entity)} but for the internal use ETFEntity interface
          *
          * @param entityToBeTested                              the block entity to be tested
-         * @param isThisTheFirstTestForEntity                   boolean that is true for every entities first test
-         * @param cacheToMarkEntitiesWhoseVariantCanChangeAgain the cache to mark entities whose variant can change again
          * @return the suffix number for the block entity
          */
-        int getSuffixForETFEntity(ETFEntity entityToBeTested, boolean isThisTheFirstTestForEntity, Object2BooleanOpenHashMap<UUID> cacheToMarkEntitiesWhoseVariantCanChangeAgain);
+        int getSuffixForETFEntity(ETFEntity entityToBeTested);
+
     }
 
 

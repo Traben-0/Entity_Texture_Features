@@ -104,36 +104,18 @@ public abstract class ETFUtils2 {
     }
 
     @Nullable
-    public static String returnNameOfHighestPackFromTheseTwo(String[] packNameList) {
-        //simpler faster 2 length array logic
-        if (packNameList.length != 2) {
-            logError("highest pack check failed");
-            return null;
+    public static String returnNameOfHighestPackFromTheseTwo(String pack1, String pack2) {
+        if(pack1 == null) return null;
+
+        if (pack1.equals(pack2)) {
+            return pack1;
         }
-        if (packNameList[0].equals(packNameList[1])) {
-            return packNameList[0];
-        }
-        if (ETFManager.getInstance().KNOWN_RESOURCEPACK_ORDER.indexOf(packNameList[0]) >= ETFManager.getInstance().KNOWN_RESOURCEPACK_ORDER.indexOf(packNameList[1])) {
-            return packNameList[0];
+        if (ETFManager.getInstance().KNOWN_RESOURCEPACK_ORDER.indexOf(pack1)
+                >= ETFManager.getInstance().KNOWN_RESOURCEPACK_ORDER.indexOf(pack2)) {
+            return pack1;
         } else {
-            return packNameList[1];
+            return pack2;
         }
-
-
-//        for (
-//
-//            if (packNameList.contains(packName)) {
-//                //simply loops through packs and removes them from the list to check
-//                if (packNameList.size() <= 1) {
-//                    //if there is only 1 left we have our winner in the highest resource-pack
-//                    return (String) packNameList.toArray()[0];
-//                } else {
-//                    packNameList.remove(packName);
-//                }
-//            }
-//        }
-
-        //return null;
     }
 
     @Nullable

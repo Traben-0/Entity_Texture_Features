@@ -1,10 +1,7 @@
 package traben.entity_texture_features.features.property_reading;
 
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
-import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.Entity;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
@@ -19,14 +16,11 @@ import java.util.UUID;
 public class TrueRandomProvider implements ETFApi.ETFVariantSuffixProvider {
 
 
-    private final int[] suffixes;
+    private final int suffixTotal;
     private final String packname;
 
     private TrueRandomProvider(String secondPack, int suffixes) {
-        this.suffixes = new int[suffixes];
-        for (int i = 0; i < suffixes; i++) {
-            this.suffixes[i] = i + 1;
-        }
+        this.suffixTotal = suffixes;
         this.packname = secondPack;
     }
 
@@ -42,7 +36,7 @@ public class TrueRandomProvider implements ETFApi.ETFVariantSuffixProvider {
             String vanillaPack = resources.getResource(vanillaIdentifier).map(Resource::getResourcePackName).orElse(null);
 
             if (secondPack != null
-                    && secondPack.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(new String[]{secondPack, vanillaPack}))) {
+                    && secondPack.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(secondPack, vanillaPack))) {
                 int totalTextureCount = 2;
                 while (ETFDirectory.getDirectoryVersionOf(ETFUtils2.addVariantNumberSuffix(vanillaIdentifier, totalTextureCount + 1))
                         != null) {
@@ -58,10 +52,19 @@ public class TrueRandomProvider implements ETFApi.ETFVariantSuffixProvider {
         return packname;
     }
 
+    @Override
+    public boolean entityCanUpdate(UUID uuid) {
+        return false;
+    }
+
     @SuppressWarnings("unused")
     @Override
     public IntOpenHashSet getAllSuffixes() {
-        return new IntOpenHashSet(suffixes);
+        IntOpenHashSet allSuffixes = new IntOpenHashSet();
+        for (int i = 0; i < suffixTotal; i++) {
+            allSuffixes.add( i + 1);
+        }
+        return allSuffixes;
     }
 
     @Override
@@ -70,23 +73,13 @@ public class TrueRandomProvider implements ETFApi.ETFVariantSuffixProvider {
     }
 
     @SuppressWarnings("unused")
-    @Override
-    public int getSuffixForEntity(Entity entityToBeTested, boolean isThisTheFirstTestForEntity, Object2BooleanOpenHashMap<UUID> cacheToMarkEntitiesWhoseVariantCanChangeAgain) {
-        return getSuffixForETFEntity((ETFEntity) entityToBeTested, isThisTheFirstTestForEntity, cacheToMarkEntitiesWhoseVariantCanChangeAgain);
 
-    }
-
-    @SuppressWarnings("unused")
-    @Override
-    public int getSuffixForBlockEntity(BlockEntity entityToBeTested, boolean isThisTheFirstTestForEntity, Object2BooleanOpenHashMap<UUID> cacheToMarkEntitiesWhoseVariantCanChangeAgain) {
-        return getSuffixForETFEntity((ETFEntity) entityToBeTested, isThisTheFirstTestForEntity, cacheToMarkEntitiesWhoseVariantCanChangeAgain);
-    }
 
     @Override
-    public int getSuffixForETFEntity(ETFEntity entityToBeTested, boolean isThisTheFirstTestForEntity, Object2BooleanOpenHashMap<UUID> cacheToMarkEntitiesWhoseVariantCanChangeAgain) {
+    public int getSuffixForETFEntity(ETFEntity entityToBeTested) {
         if (entityToBeTested == null) return 0;
         int randomSeededByUUID = Math.abs(entityToBeTested.etf$getUuid().hashCode());
-        return suffixes[randomSeededByUUID % suffixes.length];
+        return (randomSeededByUUID % suffixTotal)+1;
     }
 
 
