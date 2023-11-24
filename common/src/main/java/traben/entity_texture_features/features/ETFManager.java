@@ -15,7 +15,6 @@ import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.config.screens.skin.ETFConfigScreenSkinTool;
 import traben.entity_texture_features.features.player.ETFPlayerEntity;
 import traben.entity_texture_features.features.player.ETFPlayerTexture;
-import traben.entity_texture_features.features.property_reading.properties.RandomProperty;
 import traben.entity_texture_features.features.texture_handlers.ETFDirectory;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
 import traben.entity_texture_features.features.texture_handlers.ETFTextureVariator;
@@ -45,7 +44,7 @@ public class ETFManager {
     public final Object2IntOpenHashMap<EntityType<?>> ENTITY_TYPE_VANILLA_BRIGHTNESS_OVERRIDE_VALUE = new Object2IntOpenHashMap<>();
     public final ObjectOpenHashSet<EntityType<?>> ENTITY_TYPE_IGNORE_PARTICLES = new ObjectOpenHashSet<>();
     public final Object2IntOpenHashMap<EntityType<?>> ENTITY_TYPE_RENDER_LAYER = new Object2IntOpenHashMap<>();
-    public final ETFLruCache<UUID, Object2BooleanOpenHashMap<RandomProperty>> ENTITY_SPAWN_CONDITIONS_CACHE = new ETFLruCache<>();
+//    public final ETFLruCache<UUID, Object2BooleanOpenHashMap<RandomProperty>> ENTITY_SPAWN_CONDITIONS_CACHE = new ETFLruCache<>();
     //this is a cache of all known ETFTexture versions of any existing resource-pack texture, used to prevent remaking objects
     public final Object2ReferenceOpenHashMap<@NotNull Identifier, @Nullable ETFTexture> ETF_TEXTURE_CACHE = new Object2ReferenceOpenHashMap<>();
 //    public final Object2BooleanOpenHashMap<UUID> ENTITY_IS_UPDATABLE = new Object2BooleanOpenHashMap<>();
@@ -178,7 +177,7 @@ public class ETFManager {
 
     public void removeThisEntityDataFromAllStorage(UUID uuid) {
         //todo still needed? expand?
-        ENTITY_SPAWN_CONDITIONS_CACHE.removeEntryOnly(uuid);
+//        ENTITY_SPAWN_CONDITIONS_CACHE.removeEntryOnly(uuid);
 //        ENTITY_IS_UPDATABLE.removeBoolean(uuid);
         ENTITY_DEBUG_QUEUE.remove(uuid);
         ENTITY_BLINK_TIME.removeLong(uuid);
@@ -306,4 +305,5 @@ public class ETFManager {
             return this.putAndMoveToFirst(uuid, v);
         }
     }
+
 }

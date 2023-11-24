@@ -1,7 +1,6 @@
 package traben.entity_texture_features.features.property_reading;
 
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
-import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
@@ -15,6 +14,7 @@ import traben.entity_texture_features.features.property_reading.properties.gener
 import traben.entity_texture_features.features.texture_handlers.ETFDirectory;
 import traben.entity_texture_features.utils.ETFEntity;
 import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.utils.EntityBooleanLRU;
 
 import java.util.*;
 
@@ -23,7 +23,7 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
 
     protected final List<RandomPropertyRule> propertyRules;
 
-    protected final Object2BooleanOpenHashMap<UUID> entityCanUpdate = new Object2BooleanOpenHashMap<>();
+    protected final EntityBooleanLRU entityCanUpdate = new EntityBooleanLRU(1000);
 
     protected final String packname;
 
@@ -158,11 +158,30 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
     public int getSuffixForETFEntity(ETFEntity entityToBeTested) {
         if (entityToBeTested == null) return 0;
         UUID id = entityToBeTested.etf$getUuid();
-        boolean entityTestedBefore = entityCanUpdate.containsKey(id);
-        for (RandomPropertyRule testCase : propertyRules) {
-            if (testCase.doesEntityMeetConditionsOfThisCase(entityToBeTested, entityTestedBefore, entityCanUpdate)) {
-                return testCase.getVariantSuffixFromThisCase(id);
+        boolean entityHasBeenTestedBefore = entityCanUpdate.containsKey(id);
+        if(entityHasBeenTestedBefore){
+            //return andNothingElse
+            for (RandomPropertyRule testCase : propertyRules) {
+                if (testCase.doesEntityMeetConditionsOfThisCase(entityToBeTested, true, entityCanUpdate)) {
+                    return testCase.getVariantSuffixFromThisCase(id);
+                }
             }
+        } else {
+            //return but capture spawn conditions of first time entity
+            int foundSuffix = -1;
+            for (RandomPropertyRule rule : propertyRules) {
+                if (rule.doesEntityMeetConditionsOfThisCase(entityToBeTested, false, entityCanUpdate)) {
+                    foundSuffix = rule.getVariantSuffixFromThisCase(id);
+                    break;
+                }
+            }
+            if(entityCanUpdate.getBoolean(entityToBeTested.etf$getUuid())) {
+                for (RandomPropertyRule rule : propertyRules) {
+                    //cache entity spawns
+                    rule.cacheEntityInitialResultsOfNonUpdatingProperties(entityToBeTested);
+                }
+            }
+            return foundSuffix == -1 ? 0 : foundSuffix;
         }
         return 0;
     }

@@ -1,8 +1,8 @@
 package traben.entity_texture_features.features.property_reading.properties;
 
-import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import traben.entity_texture_features.utils.ETFEntity;
+import traben.entity_texture_features.utils.EntityBooleanLRU;
 
 import java.util.Properties;
 
@@ -44,28 +44,21 @@ public abstract class RandomProperty {
      *
      * @param entity          the ETFEntity being tested by this property
      * @param isUpdate        flags if this test is part of an update
-     * @param spawnConditions the original spawn conditions map of this entity, possibly holding a prior value for this test
      * @return true if the entity meets the requirements of this property
      */
-    public boolean testEntity(ETFEntity entity, boolean isUpdate, Object2BooleanOpenHashMap<RandomProperty> spawnConditions) {
+    public boolean testEntity(ETFEntity entity, boolean isUpdate) {
+        if (isUpdate && !isPropertyUpdatable()) {
+            return entityCachedInitialResult.getBoolean(entity.etf$getUuid());//false default value
+        }
         try {
-            if (isUpdate && !isPropertyUpdatable()) {
-                if (spawnConditions.containsKey(this)) {
-                    return spawnConditions.getBoolean(this);
-                }
-                return false;
-            }
-            boolean result = testEntityInternal(entity);
-            if (!isPropertyUpdatable())
-                spawnConditions.put(this, result);
-            return result;
+            return testEntityInternal(entity);
         } catch (Exception ignored) {
             return false;
         }
     }
 
     /**
-     * Internal abstract method functionality for {@link RandomProperty#testEntity(ETFEntity, boolean, Object2BooleanOpenHashMap)}
+     * Internal abstract method functionality for {@link RandomProperty#testEntity(ETFEntity, boolean)}
      */
     protected abstract boolean testEntityInternal(ETFEntity entity);
 
@@ -131,5 +124,11 @@ public abstract class RandomProperty {
         public RandomPropertyException(String reason) {
             super("[ETF] " + reason);
         }
+    }
+
+    protected EntityBooleanLRU entityCachedInitialResult = new EntityBooleanLRU();
+
+    public void cacheEntityInitialResult(ETFEntity entity){
+        entityCachedInitialResult.put(entity.etf$getUuid(),testEntityInternal(entity));
     }
 }

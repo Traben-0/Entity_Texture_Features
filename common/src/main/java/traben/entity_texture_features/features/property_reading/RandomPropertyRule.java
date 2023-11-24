@@ -1,10 +1,10 @@
 package traben.entity_texture_features.features.property_reading;
 
-import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperty;
 import traben.entity_texture_features.utils.ETFEntity;
 import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.utils.EntityBooleanLRU;
 
 import java.util.*;
 
@@ -59,19 +59,11 @@ public class RandomPropertyRule {
         return new HashSet<>(List.of(SUFFIX_NUMBERS_WEIGHTED));
     }
 
-    public boolean doesEntityMeetConditionsOfThisCase(ETFEntity etfEntity, boolean isUpdate, Object2BooleanOpenHashMap<UUID> UUID_CaseHasUpdateablesCustom) {
+    public boolean doesEntityMeetConditionsOfThisCase(ETFEntity etfEntity, boolean isUpdate, EntityBooleanLRU UUID_CaseHasUpdateablesCustom) {
         if (RULE_ALWAYS_APPROVED) return true;
         if (etfEntity == null) return false;
 
         UUID id = etfEntity.etf$getUuid();
-
-        Object2BooleanOpenHashMap<RandomProperty> spawnConditions;
-        if (ETFManager.getInstance().ENTITY_SPAWN_CONDITIONS_CACHE.containsKey(id)) {
-            spawnConditions = (ETFManager.getInstance().ENTITY_SPAWN_CONDITIONS_CACHE.get(id));
-        } else {
-            spawnConditions = new Object2BooleanOpenHashMap<>();
-            ETFManager.getInstance().ENTITY_SPAWN_CONDITIONS_CACHE.put(id, spawnConditions);
-        }
 
         boolean wasEntityTestedByAnUpdatableProperty = false;
         boolean entityMetRequirements = true;
@@ -81,7 +73,7 @@ public class RandomPropertyRule {
                 if (!entityMetRequirements) break;
                 if (property.isPropertyUpdatable())
                     wasEntityTestedByAnUpdatableProperty = true;
-                entityMetRequirements = property.testEntity(etfEntity, isUpdate, spawnConditions);
+                entityMetRequirements = property.testEntity(etfEntity, isUpdate);
             }
         } catch (Exception e) {
             ETFUtils2.logWarn("Random Property file [" +
@@ -103,6 +95,18 @@ public class RandomPropertyRule {
     public int getVariantSuffixFromThisCase(UUID uuid) {
         int randomSeededByUUID = Math.abs(uuid.hashCode());
         return SUFFIX_NUMBERS_WEIGHTED[randomSeededByUUID % SUFFIX_NUMBERS_WEIGHTED.length];
+    }
+
+
+    public void cacheEntityInitialResultsOfNonUpdatingProperties(ETFEntity entity){
+        try {
+            for (RandomProperty property :
+                    PROPERTIES_TO_TEST) {
+                if (!property.isPropertyUpdatable()) {
+                    property.cacheEntityInitialResult(entity);
+                }
+            }
+        } catch (Exception ignored) {}
     }
 
 }
