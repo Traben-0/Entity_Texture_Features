@@ -11,9 +11,9 @@ public class EntityIntLRU extends Object2IntLinkedOpenHashMap<UUID> {
         defaultReturnValue(-1);
     }
 
-//    public EntityIntLRU(int capacity) {
-//        this.capacity = capacity;
-//    }
+    public EntityIntLRU(int capacity) {
+        this.capacity = capacity;
+    }
 
     public EntityIntLRU() {
         this.capacity = 2048;

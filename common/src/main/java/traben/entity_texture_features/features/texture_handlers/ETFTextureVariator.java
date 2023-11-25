@@ -2,7 +2,6 @@ package traben.entity_texture_features.features.texture_handlers;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
-import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import traben.entity_texture_features.ETFApi;
@@ -12,6 +11,7 @@ import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.property_reading.PropertiesRandomProvider;
 import traben.entity_texture_features.utils.ETFEntity;
 import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.utils.EntityIntLRU;
 
 import java.util.UUID;
 
@@ -96,7 +96,7 @@ public abstract class ETFTextureVariator{
 
     private static class ETFTextureMultiple extends ETFTextureVariator {
 
-        public final @NotNull Object2IntLinkedOpenHashMap<UUID> entitySuffixMap = new Object2IntLinkedOpenHashMap<>();
+        public final @NotNull EntityIntLRU entitySuffixMap = new EntityIntLRU(500);
         private final @NotNull Int2ObjectArrayMap<ETFTexture> variantMap = new Int2ObjectArrayMap<>();
         private final @NotNull ETFApi.ETFVariantSuffixProvider suffixProvider;
         private final @NotNull Identifier vanillaId;
@@ -158,12 +158,6 @@ public abstract class ETFTextureVariator{
                 ) {
                     //marks texture to update next render if a certain delay time is reached
                     entitySuffixMap.removeInt(id);
-                }
-            }
-            if (entitySuffixMap.size() > 500) {
-                UUID lastId = entitySuffixMap.lastKey();
-                if (!lastId.equals(id)) {
-                    entitySuffixMap.removeInt(lastId);
                 }
             }
         }
