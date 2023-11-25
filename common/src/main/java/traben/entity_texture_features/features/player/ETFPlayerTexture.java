@@ -742,6 +742,7 @@ public class ETFPlayerTexture {
                         getSkinPixelColourToNumber(originalSkin.getColor(11, 14)) == 666 && getSkinPixelColourToNumber(originalSkin.getColor(12, 14)) == 666 &&
                         getSkinPixelColourToNumber(originalSkin.getColor(11, 15)) == 666 && getSkinPixelColourToNumber(originalSkin.getColor(12, 15)) == 666);
                 hasVillagerNose = noseLower || noseUpper;
+                boolean removeNosePixels = noseUpper;
                 if (noseUpper) {
                     deletePixels(modifiedSkin, 43, 13, 44, 15);
                 }
@@ -753,6 +754,7 @@ public class ETFPlayerTexture {
                         hasVillagerNose = true;
                         noseType = noseChoice == 1 || noseChoice == 8 ? ETFConfigScreenSkinTool.NoseType.VILLAGER : ETFConfigScreenSkinTool.NoseType.VILLAGER_TEXTURED;
                         if(noseChoice > 7){
+                            removeNosePixels = true;
                             deletePixels(modifiedSkin, 43, 13, 44, 15);
                         }
                     } else {
@@ -860,6 +862,9 @@ public class ETFPlayerTexture {
 
                     //check if lazy blink
                     if (blinkChoice <= 2) {
+                        if(removeNosePixels){
+                            deletePixels(modifiedSkin, 35, 5, 36, 7);
+                        }
                         //blink 1 frame if either pink or blue optional
                         blinkSkinFile = returnOptimizedBlinkFace(modifiedSkin, getSkinPixelBounds("face1"), 1, getSkinPixelBounds("face3"));
                         parseSkinTransparency(blinkSkinFile, wasForcedSolid);
@@ -867,6 +872,9 @@ public class ETFPlayerTexture {
 
                         //blink is 2 frames with blue optional
                         if (blinkChoice == 2) {
+                            if(removeNosePixels){
+                                deletePixels(modifiedSkin, 59, 5, 60, 7);
+                            }
                             blinkSkinFile2 = returnOptimizedBlinkFace(modifiedSkin, getSkinPixelBounds("face2"), 1, getSkinPixelBounds("face4"));
                             parseSkinTransparency(blinkSkinFile2, wasForcedSolid);
                             ETFUtils2.registerNativeImageToIdentifier(blinkSkinFile2, blink2Identifier);
