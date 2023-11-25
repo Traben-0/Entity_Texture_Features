@@ -154,9 +154,9 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
                 if (!doingEmissive) {
                     entity_texture_features$prepareMushroomTextures(isRed, true);
                     if (isRed) {
-                        ETFManager.getInstance().redMooshroomAlt = new ETFTexture(idOfNew, entity_texture_features$redEmissive);
+                        ETFManager.getInstance().redMooshroomAlt = ETFTexture.ofUnmodifiable(idOfNew, entity_texture_features$redEmissive);
                     } else {
-                        ETFManager.getInstance().brownMooshroomAlt = new ETFTexture(idOfNew, entity_texture_features$brownEmissive);
+                        ETFManager.getInstance().brownMooshroomAlt = ETFTexture.ofUnmodifiable(idOfNew, entity_texture_features$brownEmissive);
                     }
                 }
                 return isRed;

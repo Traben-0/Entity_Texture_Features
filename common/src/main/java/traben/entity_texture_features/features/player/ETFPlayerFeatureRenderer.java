@@ -83,19 +83,23 @@ public class ETFPlayerFeatureRenderer<T extends PlayerEntity, M extends PlayerEn
 
     @Override
     public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, T entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
+
         if (ETFConfigData.skinFeaturesEnabled && skinHolder != null) {
+            ETFRenderContext.preventRenderLayerTextureModify();
+
             ETFPlayerTexture playerTexture = skinHolder.etf$getETFPlayerTexture();
             if (playerTexture != null && playerTexture.hasFeatures) {
+
                 renderFeatures(matrices, vertexConsumers, light, getContextModel(), playerTexture);
             }
+
+            ETFRenderContext.allowRenderLayerTextureModify();
         }
     }
 
     public void renderFeatures(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light, M model, ETFPlayerTexture playerTexture) {
-
         if (playerTexture.canUseFeaturesForThisPlayer()) {
             ETFRenderContext.startSpecialRenderOverlayPhase();
-            ETFRenderContext.preventRenderLayerTextureModify();
 
             renderNose(matrixStack, vertexConsumerProvider, light, playerTexture, model);
             renderCoat(matrixStack, vertexConsumerProvider, light, playerTexture, model);
@@ -103,7 +107,6 @@ public class ETFPlayerFeatureRenderer<T extends PlayerEntity, M extends PlayerEn
             ETFPlayerFeatureRenderer.renderEmmisive(matrixStack, vertexConsumerProvider, playerTexture, model);
             ETFPlayerFeatureRenderer.renderEnchanted(matrixStack, vertexConsumerProvider, light, playerTexture, model);
 
-            ETFRenderContext.allowRenderLayerTextureModify();
             ETFRenderContext.endSpecialRenderOverlayPhase();
         }
     }

@@ -52,6 +52,7 @@ public abstract class MixinModelPart {
         Identifier emissive = ETFRenderContext.getCurrentETFTexture().getEmissiveIdentifierOfCurrentState();
         if (emissive != null) {
 
+            boolean wasAllowed = ETFRenderContext.isAllowedToRenderLayerTextureModify();
             ETFRenderContext.preventRenderLayerTextureModify();
 
             boolean textureIsAllowedBrightRender = ETFManager.getEmissiveMode() == ETFManager.EmissiveRenderModes.BRIGHT
@@ -64,10 +65,10 @@ public abstract class MixinModelPart {
                                     RenderLayer.getEntityTranslucentCull(emissive) :
                                     RenderLayer.getEntityTranslucent(emissive));
 
-            ETFRenderContext.allowRenderLayerTextureModify();
+            if(wasAllowed) ETFRenderContext.allowRenderLayerTextureModify();
 
             ETFRenderContext.startSpecialRenderOverlayPhase();
-            render(matrices, emissiveConsumer, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, overlay, red, green, blue, alpha);
+                render(matrices, emissiveConsumer, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, overlay, red, green, blue, alpha);
             ETFRenderContext.endSpecialRenderOverlayPhase();
             return true;
         }
@@ -79,12 +80,13 @@ public abstract class MixinModelPart {
         //attempt enchanted render
         Identifier enchanted = ETFRenderContext.getCurrentETFTexture().getEnchantIdentifierOfCurrentState();
         if (enchanted != null) {
+            boolean wasAllowed = ETFRenderContext.isAllowedToRenderLayerTextureModify();
             ETFRenderContext.preventRenderLayerTextureModify();
-            VertexConsumer enchantedVertex = ItemRenderer.getArmorGlintConsumer(ETFRenderContext.getCurrentProvider(), RenderLayer.getArmorCutoutNoCull(enchanted), false, true);
-            ETFRenderContext.allowRenderLayerTextureModify();
+                VertexConsumer enchantedVertex = ItemRenderer.getArmorGlintConsumer(ETFRenderContext.getCurrentProvider(), RenderLayer.getArmorCutoutNoCull(enchanted), false, true);
+            if(wasAllowed) ETFRenderContext.allowRenderLayerTextureModify();
 
             ETFRenderContext.startSpecialRenderOverlayPhase();
-            render(matrices, enchantedVertex, light, overlay, red, green, blue, alpha);
+                render(matrices, enchantedVertex, light, overlay, red, green, blue, alpha);
             ETFRenderContext.endSpecialRenderOverlayPhase();
             return true;
         }

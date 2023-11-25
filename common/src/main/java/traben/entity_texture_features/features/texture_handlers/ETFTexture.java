@@ -22,7 +22,6 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFClientCommon;
-import traben.entity_texture_features.config.screens.ETFConfigScreen;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.utils.ETFEntity;
@@ -130,8 +129,8 @@ public class ETFTexture {
     }
 
     //alternative initiator for already known textures used for MooShroom's mushrooms
-    public ETFTexture(@NotNull Identifier modifiedSkinIdentifier,
-                      @Nullable Identifier emissiveIdentifier) {
+    private ETFTexture(@NotNull Identifier modifiedSkinIdentifier,
+                       @Nullable Identifier emissiveIdentifier) {
 
         //ALL input already tested and confirmed existing
         this.variantNumber = 0;
@@ -140,6 +139,11 @@ public class ETFTexture {
 
 //        ETFManager.getInstance().registerStaticallyCreatedTexture(thisIdentifier,this);
     }
+
+    public static ETFTexture ofUnmodifiable(@NotNull Identifier identifier, @Nullable Identifier emissiveIdentifier) {
+        return new ETFTexture(identifier,emissiveIdentifier);
+    }
+
 
     public int getVariantNumber() {
         return variantNumber;
@@ -410,58 +414,59 @@ public class ETFTexture {
 
     @NotNull
     public Identifier getTextureIdentifier(@Nullable ETFEntity entity) {
-
-        if (isPatched_CurrentlyOnlyArmor() || MinecraftClient.getInstance().currentScreen instanceof ETFConfigScreen) {
+        if (isPatched_CurrentlyOnlyArmor()) {
             //patched required
             currentTextureState = TextureReturnState.NORMAL_PATCHED;
-            return getBlinkingIdentifier(entity);
+        }else{
+            currentTextureState = TextureReturnState.NORMAL;
         }
-        currentTextureState = TextureReturnState.NORMAL;
-        //regular required
         return getBlinkingIdentifier(entity);
     }
 
     @NotNull
     private Identifier getBlinkingIdentifier(@Nullable ETFEntity entity) {
-        if (!doesBlink() || !(entity instanceof LivingEntity) || !ETFConfigData.enableBlinking) {
+        if (!doesBlink() || !(entity instanceof LivingEntity)) {
             return identifierOfCurrentState();
         }
-
-        //force eyes closed if asleep
-        if (entity.etf$getPose() == EntityPose.SLEEPING) {
+        if(guiBlink){
+            setBlink(Math.abs((int) System.currentTimeMillis()/20 % 50000), 0);
+        }else if (entity.etf$getPose() == EntityPose.SLEEPING) {
+            //force eyes closed if asleep
             modifyTextureState(TextureReturnState.APPLY_BLINK);
-            return identifierOfCurrentState();
-        }
-        //force eyes closed if blinded
-        else if (((LivingEntity) entity).hasStatusEffect(StatusEffects.BLINDNESS)) {
+        } else if (((LivingEntity) entity).hasStatusEffect(StatusEffects.BLINDNESS)) {
+            //force eyes closed if blinded
             modifyTextureState(doesBlink2() ? TextureReturnState.APPLY_BLINK2 : TextureReturnState.APPLY_BLINK);
-            return identifierOfCurrentState();
         } else {
             //do regular blinking
-
-                int currentTime = ((LivingEntity) entity).age;
-                int uuidHash = Math.abs(entity.etf$getUuid().hashCode()) % (blinkFrequency * 2) + 20 + blinkFrequency;
-                int timeModulated = Math.abs((currentTime % uuidHash));
-
-                if (timeModulated <= blinkLength + blinkLength) {
-                    if (doesBlink2()) {
-                        if (timeModulated >= (blinkLength / 1.5) && timeModulated <= blinkLength + 1 + (blinkLength / 3)) {
-                            modifyTextureState(TextureReturnState.APPLY_BLINK);
-                        } else {
-                            modifyTextureState(TextureReturnState.APPLY_BLINK2);
-                        }
-                    } else {
-                        modifyTextureState(TextureReturnState.APPLY_BLINK);
-                    }
-                    return identifierOfCurrentState();
-                }
+            setBlink(((LivingEntity) entity).age, Math.abs(entity.etf$getUuid().hashCode()));
         }
         return identifierOfCurrentState();
     }
 
+
+    private void setBlink(int currentTime, int hash) {
+        int uuidHash = hash % (blinkFrequency * 2) + 20 + blinkFrequency;
+        int timeModulated = Math.abs((currentTime % uuidHash));
+
+        if (timeModulated <= blinkLength + blinkLength) {
+            if (doesBlink2()) {
+                if (timeModulated >= (blinkLength / 1.5) && timeModulated <= blinkLength + 1 + (blinkLength / 3)) {
+                    modifyTextureState(TextureReturnState.APPLY_BLINK);
+                } else {
+                    modifyTextureState(TextureReturnState.APPLY_BLINK2);
+                }
+            } else {
+                modifyTextureState(TextureReturnState.APPLY_BLINK);
+            }
+        }
+    }
+
+    private boolean guiBlink = false;
     public void setGUIBlink(){
+        System.out.println("set blink");
         blinkFrequency = 100;
         blinkLength = 40;
+        guiBlink = true;
     }
 
     public boolean isEmissive() {
@@ -559,13 +564,6 @@ public class ETFTexture {
                 case NORMAL_PATCHED, BLINK_PATCHED -> TextureReturnState.BLINK2_PATCHED;
                 default -> TextureReturnState.BLINK2;
             };
-            //shouldn't ever call but may need in future
-//            case APPLY_PATCH -> currentTextureState= switch (currentTextureState){
-//                    case BLINK ->  TextureReturnState.BLINK_PATCHED;
-//                    case BLINK2 -> TextureReturnState.BLINK2_PATCHED;
-//                    default -> TextureReturnState.NORMAL_PATCHED;
-//                };
-            //default -> {}
         }
     }
 

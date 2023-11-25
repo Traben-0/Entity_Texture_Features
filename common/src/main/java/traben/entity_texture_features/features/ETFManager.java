@@ -1,6 +1,9 @@
 package traben.entity_texture_features.features;
 
-import it.unimi.dsi.fastutil.objects.*;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.entity.EntityType;
@@ -32,6 +35,7 @@ import java.util.UUID;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
+import static traben.entity_texture_features.features.player.ETFPlayerTexture.SKIN_NAMESPACE;
 
 
 public class ETFManager {
@@ -201,11 +205,15 @@ public class ETFManager {
             return getETFTextureNoVariation(vanillaIdentifier);
         }
         if (!VARIATOR_MAP.containsKey(vanillaIdentifier)) {
-            VARIATOR_MAP.put(vanillaIdentifier, ETFTextureVariator.of(vanillaIdentifier));
-            if(ETFConfigData.logTextureDataInitialization) {
-                ETFUtils2.logMessage("Amount of 'base' textures: " + VARIATOR_MAP.size() +
-                        "\nTotal textures including variants: " + ETF_TEXTURE_CACHE.size());
-            }
+                if(SKIN_NAMESPACE.equals(vanillaIdentifier.getNamespace())){
+                    VARIATOR_MAP.put(vanillaIdentifier, new ETFTextureVariator.ETFTextureSingleton(ETFTexture.ofUnmodifiable(vanillaIdentifier,null)));
+                }else {
+                    VARIATOR_MAP.put(vanillaIdentifier, ETFTextureVariator.of(vanillaIdentifier));
+                    if (ETFConfigData.logTextureDataInitialization) {
+                        ETFUtils2.logMessage("Amount of 'base' textures: " + VARIATOR_MAP.size());
+                        ETFUtils2.logMessage("Total textures including variants: " + ETF_TEXTURE_CACHE.size());
+                    }
+                }
         }
         return VARIATOR_MAP.get(vanillaIdentifier).getVariantOf(entity, source);
     }
@@ -245,6 +253,7 @@ public class ETFManager {
                     return null;
                 } else if (possibleSkin.isCorrectObjectForThisSkin(rendererGivenSkin)
                         || MinecraftClient.getInstance().currentScreen instanceof ETFConfigScreenSkinTool) {
+                    ETFRenderContext.preventRenderLayerTextureModify();
                     return possibleSkin;
                 }
 
@@ -252,6 +261,7 @@ public class ETFManager {
             PLAYER_TEXTURE_MAP.put(id, null);
             ETFPlayerTexture etfPlayerTexture = new ETFPlayerTexture(player, rendererGivenSkin);
             PLAYER_TEXTURE_MAP.put(id, etfPlayerTexture);
+            ETFRenderContext.preventRenderLayerTextureModify();
             return etfPlayerTexture;
         } catch (Exception e) {
             e.printStackTrace();

@@ -748,10 +748,13 @@ public class ETFPlayerTexture {
                 //////////////////////////////////////////
                 NativeImage noseTexture = null;
                 int noseChoice = choiceBoxChoices[5];
-                if (noseChoice >= 1 && noseChoice <= 7) {
-                    if (noseChoice == 1 || noseChoice == 7) {
+                if (noseChoice >= 1 && noseChoice <= 9) {
+                    if (noseChoice == 1 || noseChoice == 7 || noseChoice == 8 || noseChoice == 9) {
                         hasVillagerNose = true;
-                        noseType = noseChoice == 1 ? ETFConfigScreenSkinTool.NoseType.VILLAGER : ETFConfigScreenSkinTool.NoseType.VILLAGER_TEXTURED;
+                        noseType = noseChoice == 1 || noseChoice == 8 ? ETFConfigScreenSkinTool.NoseType.VILLAGER : ETFConfigScreenSkinTool.NoseType.VILLAGER_TEXTURED;
+                        if(noseChoice > 7){
+                            deletePixels(modifiedSkin, 43, 13, 44, 15);
+                        }
                     } else {
                         noseTexture = ETFUtils2.emptyNativeImage(8, 8);
                         int[] bounds;

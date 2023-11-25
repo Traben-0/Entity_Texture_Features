@@ -40,6 +40,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
             at = @At(value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;"))
     private void etf$markFeatures(T livingEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
         etf$heldEntity = ETFRenderContext.getCurrentEntity();
+        ETFRenderContext.allowRenderLayerTextureModify();
         ETFRenderContext.setRenderingFeatures(true);
     }
 
