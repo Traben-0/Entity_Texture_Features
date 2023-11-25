@@ -147,17 +147,17 @@ public abstract class ETFTextureVariator{
         }
 
         public void checkIfShouldExpireEntity(UUID id) {
-            //type safe check as returns false if missing
-
-            if (suffixProvider.entityCanUpdate(id)
-                    && ETFConfigData.textureUpdateFrequency_V2 != ETFConfig.UpdateFrequency.Never) {
-
-                int delay = ETFConfigData.textureUpdateFrequency_V2.getDelay();
-                long randomizer = delay * 20L;
-                if (System.currentTimeMillis() % randomizer == Math.abs(id.hashCode()) % randomizer
-                ) {
-                    //marks texture to update next render if a certain delay time is reached
-                    entitySuffixMap.removeInt(id);
+            if (suffixProvider.entityCanUpdate(id)) {
+                switch (ETFConfigData.textureUpdateFrequency_V2){
+                    case Never -> {}
+                    case Instant -> this.entitySuffixMap.removeInt(id);
+                    default -> {
+                        int delay = ETFConfigData.textureUpdateFrequency_V2.getDelay();
+                        int time = (int) (ETFRenderContext.getCurrentEntity().etf$getWorld().getTime() % delay);
+                        if (time ==  Math.abs(id.hashCode()) % delay) {
+                            this.entitySuffixMap.removeInt(id);
+                        }
+                    }
                 }
             }
         }
