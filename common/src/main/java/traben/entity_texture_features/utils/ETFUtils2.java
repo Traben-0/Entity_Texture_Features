@@ -32,7 +32,6 @@ import static traben.entity_texture_features.ETFClientCommon.CONFIG_DIR;
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
 public abstract class ETFUtils2 {
-    public static ETFLruCache<Identifier, NativeImage> KNOWN_NATIVE_IMAGES = new ETFLruCache<>();
 
 
     @NotNull
@@ -105,7 +104,7 @@ public abstract class ETFUtils2 {
 
     @Nullable
     public static String returnNameOfHighestPackFromTheseTwo(String pack1, String pack2) {
-        if(pack1 == null) return null;
+        if (pack1 == null) return null;
 
         if (pack1.equals(pack2)) {
             return pack1;
@@ -141,8 +140,9 @@ public abstract class ETFUtils2 {
 
     public static NativeImage getNativeImageElseNull(@Nullable Identifier identifier) {
         if (identifier != null) {
-            if (KNOWN_NATIVE_IMAGES.get(identifier) != null) {
-                return KNOWN_NATIVE_IMAGES.get(identifier);
+            NativeImage image = ETFManager.getInstance().KNOWN_NATIVE_IMAGES.get(identifier);
+            if (image != null) {
+                return image;
             }
         }
         NativeImage img;
@@ -153,7 +153,7 @@ public abstract class ETFUtils2 {
             try {
                 img = NativeImage.read(in);
                 in.close();
-                KNOWN_NATIVE_IMAGES.put(identifier, img);
+                ETFManager.getInstance().KNOWN_NATIVE_IMAGES.put(identifier, img);
                 return img;
             } catch (Exception e) {
                 //resource.close();
@@ -176,7 +176,7 @@ public abstract class ETFUtils2 {
         if (inChat) {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             if (player != null) {
-                player.sendMessage(MutableText.of(new LiteralTextContent("[INFO] [Entity Texture Features]: " + obj)).formatted(Formatting.GRAY, Formatting.ITALIC), false);
+                player.sendMessage(MutableText.of(new LiteralTextContent("§a[INFO]§r [Entity Texture Features]: " + obj))/*.formatted(Formatting.GRAY, Formatting.ITALIC)*/, false);
             } else {
                 ETFClientCommon.LOGGER.info(obj);
             }
@@ -195,7 +195,7 @@ public abstract class ETFUtils2 {
         if (inChat) {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             if (player != null) {
-                player.sendMessage(MutableText.of(new LiteralTextContent("[WARN] [Entity Texture Features]: " + obj)).formatted(Formatting.YELLOW), false);
+                player.sendMessage(MutableText.of(new LiteralTextContent("§e[WARN]§r [Entity Texture Features]: " + obj)).formatted(Formatting.YELLOW), false);
             } else {
                 ETFClientCommon.LOGGER.warn(obj);
             }
@@ -214,7 +214,7 @@ public abstract class ETFUtils2 {
         if (inChat) {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             if (player != null) {
-                player.sendMessage(MutableText.of(new LiteralTextContent("[ERROR] [Entity Texture Features]: " + obj)).formatted(Formatting.RED, Formatting.BOLD), false);
+                player.sendMessage(MutableText.of(new LiteralTextContent("§4[ERROR]§r [Entity Texture Features]: " + obj)).formatted(Formatting.RED, Formatting.BOLD), false);
             } else {
                 ETFClientCommon.LOGGER.error(obj);
             }
@@ -254,7 +254,7 @@ public abstract class ETFUtils2 {
             NativeImageBackedTexture bob = new NativeImageBackedTexture(img);
             MinecraftClient.getInstance().getTextureManager().registerTexture(identifier, bob);
             //MinecraftClient.getInstance().getResourceManager().
-            KNOWN_NATIVE_IMAGES.put(identifier, img);
+            ETFManager.getInstance().KNOWN_NATIVE_IMAGES.put(identifier, img);
             return true;
         } else {
             logError("registering native image failed: " + img + ", " + identifier);

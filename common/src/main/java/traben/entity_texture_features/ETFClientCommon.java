@@ -68,7 +68,6 @@ public class ETFClientCommon {
                 "did you know this mod was made because I missed the glowing drowned textures in the Fresh animations addons.",
                 "0% Opti, 100% Fine.",
                 "Curse you Perry the Platypus!",
-                "¯\\_(ツ)_/¯",
                 "Lisa needs braces.",
                 "Paranormal ResourcePacktivity.",
                 "Has Anyone Really Been Far Even as Decided to Use Even Go Want to do Look More Like?"

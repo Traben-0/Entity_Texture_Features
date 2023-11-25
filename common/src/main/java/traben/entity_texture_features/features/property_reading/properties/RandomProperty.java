@@ -12,6 +12,8 @@ import java.util.Properties;
  */
 public abstract class RandomProperty {
 
+    protected EntityBooleanLRU entityCachedInitialResult = new EntityBooleanLRU();
+
     /**
      * Reads the given property data from the properties file, allowing for multiple property names and throws an
      * exception to ensure that any actual returned String is always non-blank.
@@ -42,8 +44,8 @@ public abstract class RandomProperty {
      * This method wraps {@link RandomProperty#testEntityInternal(ETFEntity)} testEntityInternal()}
      * to provide spawn condition & repeated check efficiency
      *
-     * @param entity          the ETFEntity being tested by this property
-     * @param isUpdate        flags if this test is part of an update
+     * @param entity   the ETFEntity being tested by this property
+     * @param isUpdate flags if this test is part of an update
      * @return true if the entity meets the requirements of this property
      */
     public boolean testEntity(ETFEntity entity, boolean isUpdate) {
@@ -102,6 +104,10 @@ public abstract class RandomProperty {
         return getClass().getSimpleName() + "[Property: " + getPropertyId() + ", Rule: " + getPrintableRuleInfo() + "]";
     }
 
+    public void cacheEntityInitialResult(ETFEntity entity) {
+        entityCachedInitialResult.put(entity.etf$getUuid(), testEntityInternal(entity));
+    }
+
     /**
      * This exception indicates that something has failed while creating an instance of {@link RandomProperty} from a
      * properties file.
@@ -122,11 +128,5 @@ public abstract class RandomProperty {
         public RandomPropertyException(String reason) {
             super("[ETF] " + reason);
         }
-    }
-
-    protected EntityBooleanLRU entityCachedInitialResult = new EntityBooleanLRU();
-
-    public void cacheEntityInitialResult(ETFEntity entity){
-        entityCachedInitialResult.put(entity.etf$getUuid(),testEntityInternal(entity));
     }
 }

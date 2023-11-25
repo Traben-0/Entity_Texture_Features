@@ -159,7 +159,7 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
         if (entityToBeTested == null) return 0;
         UUID id = entityToBeTested.etf$getUuid();
         boolean entityHasBeenTestedBefore = entityCanUpdate.containsKey(id);
-        if(entityHasBeenTestedBefore){
+        if (entityHasBeenTestedBefore) {
             //return andNothingElse
             for (RandomPropertyRule testCase : propertyRules) {
                 if (testCase.doesEntityMeetConditionsOfThisCase(entityToBeTested, true, entityCanUpdate)) {
@@ -175,7 +175,7 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
                     break;
                 }
             }
-            if(entityCanUpdate.getBoolean(entityToBeTested.etf$getUuid())) {
+            if (entityCanUpdate.getBoolean(entityToBeTested.etf$getUuid())) {
                 for (RandomPropertyRule rule : propertyRules) {
                     //cache entity spawns
                     rule.cacheEntityInitialResultsOfNonUpdatingProperties(entityToBeTested);

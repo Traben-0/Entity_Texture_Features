@@ -5,11 +5,11 @@ import it.unimi.dsi.fastutil.objects.Object2BooleanLinkedOpenHashMap;
 import java.util.UUID;
 
 public class EntityBooleanLRU extends Object2BooleanLinkedOpenHashMap<UUID> {
+    final int capacity;
+
     {
         defaultReturnValue(false);
     }
-
-    final int capacity;
 
     public EntityBooleanLRU(int capacity) {
         this.capacity = capacity;
@@ -17,6 +17,12 @@ public class EntityBooleanLRU extends Object2BooleanLinkedOpenHashMap<UUID> {
 
     public EntityBooleanLRU() {
         this.capacity = 2048;
+    }
+
+
+    @Override
+    public boolean getBoolean(Object k) {
+        return super.getAndMoveToFirst((UUID) k);
     }
 
     @Override

@@ -2,6 +2,7 @@ package traben.entity_texture_features.features;
 
 import it.unimi.dsi.fastutil.objects.*;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.texture.NativeImage;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.resource.ResourcePack;
@@ -9,6 +10,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3i;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import traben.entity_texture_features.ETFApi;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.ETFConfig;
@@ -21,6 +23,7 @@ import traben.entity_texture_features.features.texture_handlers.ETFTextureVariat
 import traben.entity_texture_features.utils.ETFEntity;
 import traben.entity_texture_features.utils.ETFLruCache;
 import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.utils.EntityIntLRU;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,24 +36,22 @@ import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 
 public class ETFManager {
 
-    public static final UUID ETF_GENERIC_UUID = UUID.nameUUIDFromBytes(("GENERIC").getBytes());
+    private static ETFManager instance;
     private static final ETFTexture ETF_ERROR_TEXTURE = getErrorETFTexture();
-    private static ETFManager manager;
-    public final ETFLruCache<UUID, Integer> LAST_MET_RULE_INDEX = new ETFLruCache<>();
+    public final EntityIntLRU LAST_MET_RULE_INDEX = new EntityIntLRU();
     public final ObjectOpenHashSet<String> EMISSIVE_SUFFIX_LIST = new ObjectOpenHashSet<>();
     public final ETFLruCache<UUID, ETFPlayerTexture> PLAYER_TEXTURE_MAP = new ETFLruCache<>();
-    public final Object2LongOpenHashMap<UUID> ENTITY_BLINK_TIME = new Object2LongOpenHashMap<>();
     public final ArrayList<String> KNOWN_RESOURCEPACK_ORDER = new ArrayList<>();
     public final Object2IntOpenHashMap<EntityType<?>> ENTITY_TYPE_VANILLA_BRIGHTNESS_OVERRIDE_VALUE = new Object2IntOpenHashMap<>();
     public final ObjectOpenHashSet<EntityType<?>> ENTITY_TYPE_IGNORE_PARTICLES = new ObjectOpenHashSet<>();
     public final Object2IntOpenHashMap<EntityType<?>> ENTITY_TYPE_RENDER_LAYER = new Object2IntOpenHashMap<>();
-//    public final ETFLruCache<UUID, Object2BooleanOpenHashMap<RandomProperty>> ENTITY_SPAWN_CONDITIONS_CACHE = new ETFLruCache<>();
     //this is a cache of all known ETFTexture versions of any existing resource-pack texture, used to prevent remaking objects
     public final Object2ReferenceOpenHashMap<@NotNull Identifier, @Nullable ETFTexture> ETF_TEXTURE_CACHE = new Object2ReferenceOpenHashMap<>();
-//    public final Object2BooleanOpenHashMap<UUID> ENTITY_IS_UPDATABLE = new Object2BooleanOpenHashMap<>();
-    public final ObjectOpenHashSet<UUID> ENTITY_DEBUG_QUEUE = new ObjectOpenHashSet<>();
-    public final Object2IntLinkedOpenHashMap<UUID> LAST_SUFFIX_OF_ENTITY = new EntitySuffixLRU();
+    public UUID ENTITY_DEBUG = null;
+    public final EntityIntLRU LAST_SUFFIX_OF_ENTITY = new EntityIntLRU();
+    public final ETFLruCache<Identifier, NativeImage> KNOWN_NATIVE_IMAGES = new ETFLruCache<>();
     private final Object2ObjectOpenHashMap<Identifier, ETFTextureVariator> VARIATOR_MAP = new Object2ObjectOpenHashMap<>();
+    public Object2ReferenceOpenHashMap<@NotNull Identifier, @NotNull ETFDirectory> ETF_DIRECTORY_CACHE = new Object2ReferenceOpenHashMap<>();// = new Object2ReferenceOpenHashMap<>();
     public Boolean mooshroomBrownCustomShroomExists = null;
     //marks whether mooshroom mushroom overrides exist
     public Boolean mooshroomRedCustomShroomExists = null;
@@ -105,19 +106,17 @@ public class ETFManager {
     }
 
     public static ETFManager getInstance() {
-        if (manager == null)
-            manager = new ETFManager();
-        return manager;
+        if (instance == null)
+            instance = new ETFManager();
+        return instance;
     }
 
     public static void resetInstance() {
-        ETFUtils2.KNOWN_NATIVE_IMAGES = new ETFLruCache<>();
         ETFClientCommon.etf$loadConfig();
-        ETFDirectory.resetCache();
 
         //instance based format solves the issue of hashmaps and arrays being clearing while also being accessed
         //as now those rare transitional (reading during clearing) occurrences will simply read from the previous instance of manager
-        manager = new ETFManager();
+        instance = new ETFManager();
     }
 
     public static ETFTexture getErrorETFTexture() {
@@ -132,6 +131,13 @@ public class ETFManager {
             return EmissiveRenderModes.DULL;
         }
         return ETFConfigData.emissiveRenderMode;
+    }
+
+    public String getGeneralPrintout() {
+        return "§aGeneral: §r" +
+                "\n§2 - amount of 'base' textures: §r" + VARIATOR_MAP.size() +
+                "\n§2 - total textures including variants: §r" + ETF_TEXTURE_CACHE.size()
+                ;
     }
 
     public void grabSpecialProperties(Properties props, ETFEntity entity) {
@@ -175,17 +181,10 @@ public class ETFManager {
         }
     }
 
-    public void removeThisEntityDataFromAllStorage(UUID uuid) {
-        //todo still needed? expand?
-//        ENTITY_SPAWN_CONDITIONS_CACHE.removeEntryOnly(uuid);
-//        ENTITY_IS_UPDATABLE.removeBoolean(uuid);
-        ENTITY_DEBUG_QUEUE.remove(uuid);
-        ENTITY_BLINK_TIME.removeLong(uuid);
-    }
 
-    public void markEntityForDebugPrint(UUID id) {
+    public void markEntityForDebugPrint(UUID uuid) {
         if (ETFConfigData.debugLoggingMode != ETFConfig.DebugLogMode.None) {
-            ENTITY_DEBUG_QUEUE.add(id);
+            ENTITY_DEBUG = uuid;
         }
     }
 
@@ -197,12 +196,16 @@ public class ETFManager {
     @NotNull
     public ETFTexture getETFTextureVariant(@NotNull Identifier vanillaIdentifier, @Nullable ETFEntity entity, @NotNull TextureSource source) {
         if (entity == null
-                || entity.etf$getUuid() == ETF_GENERIC_UUID
+                || entity.etf$getUuid() == ETFApi.ETF_GENERIC_UUID
                 || entity.etf$getBlockPos().equals(Vec3i.ZERO)) {
             return getETFTextureNoVariation(vanillaIdentifier);
         }
         if (!VARIATOR_MAP.containsKey(vanillaIdentifier)) {
             VARIATOR_MAP.put(vanillaIdentifier, ETFTextureVariator.of(vanillaIdentifier));
+            if(ETFConfigData.logTextureDataInitialization) {
+                ETFUtils2.logMessage("Amount of 'base' textures: " + VARIATOR_MAP.size() +
+                        "\nTotal textures including variants: " + ETF_TEXTURE_CACHE.size());
+            }
         }
         return VARIATOR_MAP.get(vanillaIdentifier).getVariantOf(entity, source);
     }
@@ -289,21 +292,5 @@ public class ETFManager {
         }
     }
 
-    private static class EntitySuffixLRU extends Object2IntLinkedOpenHashMap<UUID> {
-        {
-            defaultReturnValue(-1);
-        }
-
-        @Override
-        public int put(UUID uuid, int v) {
-            if (size() >= 3000) {
-                UUID lastKey = lastKey();
-                if (!lastKey.equals(uuid)) {
-                    removeInt(lastKey);
-                }
-            }
-            return this.putAndMoveToFirst(uuid, v);
-        }
-    }
 
 }

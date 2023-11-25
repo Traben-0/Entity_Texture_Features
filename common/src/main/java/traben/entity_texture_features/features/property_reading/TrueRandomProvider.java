@@ -62,7 +62,7 @@ public class TrueRandomProvider implements ETFApi.ETFVariantSuffixProvider {
     public IntOpenHashSet getAllSuffixes() {
         IntOpenHashSet allSuffixes = new IntOpenHashSet();
         for (int i = 0; i < suffixTotal; i++) {
-            allSuffixes.add( i + 1);
+            allSuffixes.add(i + 1);
         }
         return allSuffixes;
     }
@@ -79,7 +79,7 @@ public class TrueRandomProvider implements ETFApi.ETFVariantSuffixProvider {
     public int getSuffixForETFEntity(ETFEntity entityToBeTested) {
         if (entityToBeTested == null) return 0;
         int randomSeededByUUID = Math.abs(entityToBeTested.etf$getUuid().hashCode());
-        return (randomSeededByUUID % suffixTotal)+1;
+        return (randomSeededByUUID % suffixTotal) + 1;
     }
 
 

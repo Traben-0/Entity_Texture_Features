@@ -19,7 +19,6 @@ import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.util.Identifier;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFClientCommon;
@@ -31,8 +30,6 @@ import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.Optional;
 import java.util.Properties;
-import java.util.Random;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,10 +41,9 @@ public class ETFTexture {
 
 
     private final static String PATCH_NAMESPACE_PREFIX = "etf_patched_";
-    private static final Random randomBlink = new Random();
+
     //this variants id , might be vanilla
     public final Identifier thisIdentifier;
-//    private final Object2ReferenceOpenHashMap<Identifier, Identifier> FEATURE_TEXTURE_MAP = new Object2ReferenceOpenHashMap<>();
     private final int variantNumber;
     public TextureReturnState currentTextureState = TextureReturnState.NORMAL;
     public String eSuffix = null;
@@ -412,46 +408,6 @@ public class ETFTexture {
     }
 
 
-//    @NotNull
-//    public Identifier getFeatureTexture(Identifier vanillaFeatureTexture) {
-//
-//        if (FEATURE_TEXTURE_MAP.containsKey(vanillaFeatureTexture)) {
-//            return FEATURE_TEXTURE_MAP.get(vanillaFeatureTexture);
-//        }
-//        //otherwise we need to find what it is and add to map
-//        ETFDirectory directory = ETFDirectory.getDirectoryOf(thisIdentifier);
-//        if (variantNumber != 0) {
-//            Identifier possibleFeatureVariantIdentifier =
-//                    ETFDirectory.getIdentifierAsDirectory(
-//                            ETFUtils2.replaceIdentifier(
-//                                    vanillaFeatureTexture,
-//                                    ".png",
-//                                    variantNumber + ".png")
-//                            , directory);
-//            Optional<Resource> possibleResource = MinecraftClient.getInstance().getResourceManager().getResource(possibleFeatureVariantIdentifier);
-//            if (possibleResource.isPresent()) {
-//                //feature variant exists so return
-//                FEATURE_TEXTURE_MAP.put(vanillaFeatureTexture, possibleFeatureVariantIdentifier);
-//                return possibleFeatureVariantIdentifier;
-//            }
-//        }
-//        //System.out.println("feature="+vanillaFeatureTexture.toString()+thisIdentifier.toString()+directory.toString());
-//        //here we have no number and are likely vanilla texture or something went wrong in which case vanilla anyway
-//        //ETFUtils2.logWarn("getFeatureTexture() either vanilla or failed");
-//        ETFDirectory tryDirectory = ETFDirectory.getDirectoryOf(vanillaFeatureTexture);
-//        if (tryDirectory == directory || tryDirectory == ETFDirectory.VANILLA) {
-//            //if same directory as main texture or is vanilla texture use it
-//            Identifier tryDirectoryVariant = ETFDirectory.getIdentifierAsDirectory(vanillaFeatureTexture, tryDirectory);
-//            FEATURE_TEXTURE_MAP.put(vanillaFeatureTexture, tryDirectoryVariant);
-//            return tryDirectoryVariant;
-//        }
-//        //final fallback just use vanilla
-//        FEATURE_TEXTURE_MAP.put(vanillaFeatureTexture, vanillaFeatureTexture);
-//        return vanillaFeatureTexture;
-//
-//    }
-
-
     @NotNull
     public Identifier getTextureIdentifier(@Nullable ETFEntity entity) {
 
@@ -467,7 +423,7 @@ public class ETFTexture {
 
     @NotNull
     private Identifier getBlinkingIdentifier(@Nullable ETFEntity entity) {
-        if (!doesBlink() || entity == null || !ETFConfigData.enableBlinking) {
+        if (!doesBlink() || !(entity instanceof LivingEntity) || !ETFConfigData.enableBlinking) {
             return identifierOfCurrentState();
         }
 
@@ -477,41 +433,35 @@ public class ETFTexture {
             return identifierOfCurrentState();
         }
         //force eyes closed if blinded
-        else if (entity instanceof LivingEntity alive && alive.hasStatusEffect(StatusEffects.BLINDNESS)) {
+        else if (((LivingEntity) entity).hasStatusEffect(StatusEffects.BLINDNESS)) {
             modifyTextureState(doesBlink2() ? TextureReturnState.APPLY_BLINK2 : TextureReturnState.APPLY_BLINK);
             return identifierOfCurrentState();
         } else {
             //do regular blinking
-            World world = entity.etf$getWorld();
-            if (world != null) {
-                UUID id = entity.etf$getUuid();
-                if (!ETFManager.getInstance().ENTITY_BLINK_TIME.containsKey(id)) {
-                    ETFManager.getInstance().ENTITY_BLINK_TIME.put(id, world.getTime() + blinkLength + 1);
+
+                int currentTime = ((LivingEntity) entity).age;
+                int uuidHash = Math.abs(entity.etf$getUuid().hashCode()) % (blinkFrequency * 2) + 20 + blinkFrequency;
+                int timeModulated = Math.abs((currentTime % uuidHash));
+
+                if (timeModulated <= blinkLength + blinkLength) {
+                    if (doesBlink2()) {
+                        if (timeModulated >= (blinkLength / 1.5) && timeModulated <= blinkLength + 1 + (blinkLength / 3)) {
+                            modifyTextureState(TextureReturnState.APPLY_BLINK);
+                        } else {
+                            modifyTextureState(TextureReturnState.APPLY_BLINK2);
+                        }
+                    } else {
+                        modifyTextureState(TextureReturnState.APPLY_BLINK);
+                    }
                     return identifierOfCurrentState();
                 }
-                long nextBlink = ETFManager.getInstance().ENTITY_BLINK_TIME.getLong(id);
-                long currentTime = world.getTime();
-
-                if (currentTime >= nextBlink - blinkLength && currentTime <= nextBlink + blinkLength) {
-                    if (doesBlink2()) {
-                        if (currentTime >= nextBlink - (blinkLength / 3) && currentTime <= nextBlink + (blinkLength / 3)) {
-                            modifyTextureState(TextureReturnState.APPLY_BLINK);
-                            return identifierOfCurrentState();
-                        }
-                        modifyTextureState(TextureReturnState.APPLY_BLINK2);
-                        return identifierOfCurrentState();
-                    } else if (!(currentTime > nextBlink)) {
-                        modifyTextureState(TextureReturnState.APPLY_BLINK);
-                        return identifierOfCurrentState();
-                    }
-                } else if (currentTime > nextBlink + blinkLength) {
-                    //calculate new next blink
-                    ETFManager.getInstance().ENTITY_BLINK_TIME.put(id, currentTime + randomBlink.nextInt(blinkFrequency) + 20);
-                }
-            }
-
         }
         return identifierOfCurrentState();
+    }
+
+    public void setGUIBlink(){
+        blinkFrequency = 100;
+        blinkLength = 40;
     }
 
     public boolean isEmissive() {
@@ -540,7 +490,7 @@ public class ETFTexture {
 
     @Override
     public String toString() {
-        return "ETFTexture{texture=" + this.thisIdentifier.toString() +/*", vanilla="+this.vanillaIdentifier.toString()+*/", emissive=" + isEmissive() + ", patched=" + isPatched_CurrentlyOnlyArmor() + "}";
+        return "[" + this.thisIdentifier.toString() + ", emissive=" + isEmissive() + ", blinks=" + doesBlink() + "]";
     }
 
     public void renderEmissive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, ModelPart modelPart) {

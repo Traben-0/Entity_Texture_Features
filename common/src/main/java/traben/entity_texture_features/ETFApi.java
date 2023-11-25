@@ -29,7 +29,9 @@ import java.util.UUID;
 /**
  * ETF's api for external mod access (primarily puzzle and EMF at this time)
  *
- * @API_Version {@link ETFApi#ETFApiVersion}
+ * @constants
+ *  {@link ETFApi#ETFApiVersion}
+ *  {@link ETFApi#ETF_GENERIC_UUID}<p>
  * @config_handling These methods allow for retrieving, editing, replacing, and saving ETF's config<p>
  * {@link ETFApi#getETFConfigObject()}<p>
  * {@link ETFApi#getCopyOfETFConfigObject()} <p>
@@ -69,9 +71,15 @@ public final class ETFApi {
     /**
      * The current ETF API version.
      */
-    final public static int ETFApiVersion = 9;
+    public static final int ETFApiVersion = 9;
     @Deprecated
     public static ETFConfig getETFConfigObject = null;
+
+
+    /**
+     * This UUID if passed into ETF will tell it to skip looking for variants
+     */
+    public static final UUID ETF_GENERIC_UUID = UUID.nameUUIDFromBytes(("GENERIC").getBytes());
 
     /**
      * provides access to the live ETF config object to read AND modify its values
@@ -358,7 +366,7 @@ public final class ETFApi {
      * default value = 0
      */
     public static int getLastMatchingRuleOfEntity(Entity entity) {
-        Integer ruleIndex = ETFManager.getInstance().LAST_MET_RULE_INDEX.get(entity.getUuid());
+        Integer ruleIndex = ETFManager.getInstance().LAST_MET_RULE_INDEX.getInt(entity.getUuid());
         return ruleIndex == null ? 0 : ruleIndex;
     }
 
@@ -370,7 +378,7 @@ public final class ETFApi {
      * default value = 0
      */
     public static int getLastMatchingRuleOfBlockEntity(BlockEntity entity) {
-        Integer ruleIndex = ETFManager.getInstance().LAST_MET_RULE_INDEX.get(((ETFEntity) entity).etf$getUuid());
+        Integer ruleIndex = ETFManager.getInstance().LAST_MET_RULE_INDEX.getInt(((ETFEntity) entity).etf$getUuid());
         return ruleIndex == null ? 0 : ruleIndex;
     }
 
@@ -408,10 +416,11 @@ public final class ETFApi {
      * This should only be used if you want to handle your own variation code.
      * This is used by EMF for random model variations.
      * <p>.<p>
-     * provides functionality to input an entity and output a suffix integer as defined in
-     * a valid OptiFine random entity properties file.
+     * provides functionality to input an entity and output a suffix integer as defined in either:<p>
+     *  - a valid OptiFine random entity properties file.<p>
+     *  - non property random variation (E.G. having a *2.png texture and so forth).
      * <p>
-     * Should only be built via {@link ETFApi#getVariantSupplierOrNull(Identifier, Identifier, String...)}
+     * Should be built via {@link ETFApi#getVariantSupplierOrNull(Identifier, Identifier, String...)}
      */
     public interface ETFVariantSuffixProvider {
 
@@ -444,7 +453,7 @@ public final class ETFApi {
                 //if 2.png is higher it MUST be treated as true random confirmed
                 if (optifine.getPackName() != null
                         && optifine.getPackName().equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(
-                                random.getPackName(), optifine.getPackName()))) {
+                        random.getPackName(), optifine.getPackName()))) {
                     return optifine;
                 } else {
                     //todo why was this there     if (source != ETFManager.TextureSource.ENTITY_FEATURE) {
@@ -454,7 +463,7 @@ public final class ETFApi {
         }
 
         /**
-         *
+         * @return a boolean confirming if the entity's variant can be updated
          */
         boolean entityCanUpdate(UUID uuid);
 
@@ -473,7 +482,7 @@ public final class ETFApi {
          * the OptiFine cases outlined in the properties file, it ONLY outputs an integer, testing whether that
          * variant number exists or not is up to you.
          *
-         * @param entityToBeTested                              the entity to be tested
+         * @param entityToBeTested the entity to be tested
          * @return the suffix number for this entity. An output of 0 ALWAYS means you need to use the vanilla variant,
          * usually due to finding no match.
          * <p> An output of 1, can be handled in 2 ways, usually it is used to refer to the vanilla suffix, but you might
@@ -487,7 +496,7 @@ public final class ETFApi {
         /**
          * Same as {@link ETFVariantSuffixProvider#getSuffixForEntity(Entity)} but for block entities
          *
-         * @param entityToBeTested                              the block entity to be tested
+         * @param entityToBeTested the block entity to be tested
          * @return the suffix number for the block entity
          */
 
@@ -498,7 +507,7 @@ public final class ETFApi {
         /**
          * Same as {@link ETFVariantSuffixProvider#getSuffixForEntity(Entity)} but for the internal use ETFEntity interface
          *
-         * @param entityToBeTested                              the block entity to be tested
+         * @param entityToBeTested the block entity to be tested
          * @return the suffix number for the block entity
          */
         int getSuffixForETFEntity(ETFEntity entityToBeTested);

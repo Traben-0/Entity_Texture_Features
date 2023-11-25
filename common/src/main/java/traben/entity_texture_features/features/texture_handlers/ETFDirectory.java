@@ -8,6 +8,7 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.Optional;
@@ -19,23 +20,15 @@ public enum ETFDirectory {
     OPTIFINE(new String[]{"textures", "optifine/random"}),
     VANILLA(null);
 
-    @SuppressWarnings("StaticCollection")
-    private static Object2ReferenceOpenHashMap<@NotNull Identifier, @NotNull ETFDirectory> ETF_DIRECTORY_CACHE = null;// = new Object2ReferenceOpenHashMap<>();
     private final String[] replaceStrings;
 
     ETFDirectory(String[] replaceStrings) {
         this.replaceStrings = replaceStrings;
     }
 
-    public static void resetCache() {
-        ETF_DIRECTORY_CACHE = new Object2ReferenceOpenHashMap<>();
-    }
 
     public static Object2ReferenceOpenHashMap<@NotNull Identifier, @NotNull ETFDirectory> getCache() {
-        if (ETF_DIRECTORY_CACHE == null) {
-            ETF_DIRECTORY_CACHE = new Object2ReferenceOpenHashMap<>();
-        }
-        return ETF_DIRECTORY_CACHE;
+        return ETFManager.getInstance().ETF_DIRECTORY_CACHE;
     }
 
     @SuppressWarnings("StaticMethodOnlyUsedInOneClass")

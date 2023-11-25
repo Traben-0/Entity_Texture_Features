@@ -30,8 +30,7 @@ public class ETFConfigScreenGeneralSettings extends ETFConfigScreen {
                     ETFConfigScreenMain.temporaryETFConfig.debugLoggingMode = ETFConfig.DebugLogMode.None;
                     ETFConfigScreenMain.temporaryETFConfig.illegalPathSupportMode = ETFConfig.IllegalPathMode.None;
                     ETFConfigScreenMain.temporaryETFConfig.hideConfigButton = false;
-                    //ETFConfigScreenMain.temporaryETFConfig.zombiePiglinRightEarEnabled = false;
-                    //ETFConfigScreenMain.temporaryETFConfig.temporary_fixIrisPBR = false;
+                    ETFConfigScreenMain.temporaryETFConfig.logTextureDataInitialization = false;
                     this.clearAndInit();
                     //Objects.requireNonNull(client).setScreen(parent);
                 }));
@@ -51,6 +50,18 @@ public class ETFConfigScreenGeneralSettings extends ETFConfigScreen {
         ));
         this.addDrawableChild(getETFButton((int) (this.width * 0.2), (int) (this.height * 0.3), (int) (this.width * 0.6), 20,
                 Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
+                        "config." + ETFClientCommon.MOD_ID + ".log_creation"
+                ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.logTextureDataInitialization ? ScreenTexts.ON : ScreenTexts.OFF).getString()),
+                (button) -> {
+                    ETFConfigScreenMain.temporaryETFConfig.logTextureDataInitialization = !ETFConfigScreenMain.temporaryETFConfig.logTextureDataInitialization;
+                    button.setMessage(Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
+                            "config." + ETFClientCommon.MOD_ID + ".log_creation"
+                    ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.logTextureDataInitialization ? ScreenTexts.ON : ScreenTexts.OFF).getString()));
+                },
+                ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".log_creation.tooltip")
+        ));
+        this.addDrawableChild(getETFButton((int) (this.width * 0.2), (int) (this.height * 0.4), (int) (this.width * 0.6), 20,
+                Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
                         "config." + ETFClientCommon.MOD_ID + ".allow_illegal_texture_paths.title"
                 ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.illegalPathSupportMode)),
                 (button) -> {
@@ -61,7 +72,7 @@ public class ETFConfigScreenGeneralSettings extends ETFConfigScreen {
                 },
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".allow_illegal_texture_paths.tooltip")
         ));
-        this.addDrawableChild(getETFButton((int) (this.width * 0.2), (int) (this.height * 0.4), (int) (this.width * 0.6), 20,
+        this.addDrawableChild(getETFButton((int) (this.width * 0.2), (int) (this.height * 0.5), (int) (this.width * 0.6), 20,
                 Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
                         "config." + ETFClientCommon.MOD_ID + ".hide_button"
                 ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.hideConfigButton ? ScreenTexts.ON : ScreenTexts.OFF).getString()),
@@ -73,7 +84,7 @@ public class ETFConfigScreenGeneralSettings extends ETFConfigScreen {
                 },
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".hide_button.tooltip")
         ));
-        this.addDrawableChild(getETFButton((int) (this.width * 0.2), (int) (this.height * 0.5), (int) (this.width * 0.6), 20,
+        this.addDrawableChild(getETFButton((int) (this.width * 0.2), (int) (this.height * 0.6), (int) (this.width * 0.6), 20,
                 Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
                         "config." + ETFClientCommon.MOD_ID + ".warden.title"
                 ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.enableFullBodyWardenTextures ? ScreenTexts.ON : ScreenTexts.OFF).getString()),
@@ -85,6 +96,7 @@ public class ETFConfigScreenGeneralSettings extends ETFConfigScreen {
                 },
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".warden.tooltip")
         ));
+
     }
 
 

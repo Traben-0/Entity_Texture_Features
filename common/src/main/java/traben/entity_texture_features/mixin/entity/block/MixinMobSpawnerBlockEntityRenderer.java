@@ -7,8 +7,7 @@ import net.minecraft.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
-
-import static traben.entity_texture_features.features.ETFManager.ETF_GENERIC_UUID;
+import traben.entity_texture_features.ETFApi;
 
 @Mixin(MobSpawnerBlockEntityRenderer.class)
 public abstract class MixinMobSpawnerBlockEntityRenderer implements BlockEntityRenderer<BellBlockEntity> {
@@ -18,7 +17,7 @@ public abstract class MixinMobSpawnerBlockEntityRenderer implements BlockEntityR
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/EntityRenderDispatcher;render(Lnet/minecraft/entity/Entity;DDDFFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V"
             ), index = 0)
     private Entity etf$addUUID(Entity entity) {
-        entity.setUuid(ETF_GENERIC_UUID);
+        entity.setUuid(ETFApi.ETF_GENERIC_UUID);
         return entity;
 
     }

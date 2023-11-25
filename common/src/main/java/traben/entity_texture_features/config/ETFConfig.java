@@ -48,6 +48,7 @@ public class ETFConfig {
     public double advanced_IncreaseCacheSizeModifier = 1.0;
 
     public DebugLogMode debugLoggingMode = DebugLogMode.None;
+    public boolean logTextureDataInitialization = false;
 
 
     public Set<String> ignoredConfigs2 = new HashSet<>();

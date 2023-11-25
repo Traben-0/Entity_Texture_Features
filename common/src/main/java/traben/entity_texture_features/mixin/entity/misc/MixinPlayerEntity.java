@@ -41,7 +41,6 @@ public abstract class MixinPlayerEntity extends Entity implements ETFPlayerEntit
     //will force update entity texture at any player interaction useful for debugging
     @Inject(method = "interact", at = @At("HEAD"))
     private void etf$injected(Entity entity, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
-
         if (getWorld().isClient()) {
             if (ETFConfigData.debugLoggingMode != ETFConfig.DebugLogMode.None)
                 ETFManager.getInstance().markEntityForDebugPrint(entity.getUuid());

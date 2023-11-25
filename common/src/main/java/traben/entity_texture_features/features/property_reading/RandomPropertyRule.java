@@ -98,7 +98,7 @@ public class RandomPropertyRule {
     }
 
 
-    public void cacheEntityInitialResultsOfNonUpdatingProperties(ETFEntity entity){
+    public void cacheEntityInitialResultsOfNonUpdatingProperties(ETFEntity entity) {
         try {
             for (RandomProperty property :
                     PROPERTIES_TO_TEST) {
@@ -106,7 +106,8 @@ public class RandomPropertyRule {
                     property.cacheEntityInitialResult(entity);
                 }
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
 
 }

@@ -86,7 +86,6 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
         ETFConfigData.blinkLength = originalBlinkLength;
         if (MinecraftClient.getInstance().player != null) {
             ETFManager.getInstance().PLAYER_TEXTURE_MAP.removeEntryOnly(MinecraftClient.getInstance().player.getUuid());
-            ETFManager.getInstance().ENTITY_BLINK_TIME.put(MinecraftClient.getInstance().player.getUuid(), 0L);
         }
         thisETFPlayerTexture = null;
 
@@ -427,8 +426,6 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             if (player != null) {
 
-                int blinkModifierBySystemTimeInTicks = (int) ((System.currentTimeMillis() / 50) % (30 + (ETFConfigData.blinkLength * 2)));
-                ETFManager.getInstance().ENTITY_BLINK_TIME.put(player.getUuid(), player.getWorld().getTime() + blinkModifierBySystemTimeInTicks - (15 + ETFConfigData.blinkLength));
 
 
                 int height = (int) (this.height * 0.75);

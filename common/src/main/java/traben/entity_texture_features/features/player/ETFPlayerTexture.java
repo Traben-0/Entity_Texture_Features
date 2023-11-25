@@ -141,6 +141,7 @@ public class ETFPlayerTexture {
                 return;
             }
         }
+
         ETFUtils2.logError("ETFPlayerTexture went wrong");
     }
 
@@ -1166,6 +1167,8 @@ public class ETFPlayerTexture {
         //this.THIS_SKIN_IS_IN_EDITOR = true;
         this.originalSkin = image;
         checkTexture(true);
+
+        etfTextureOfFinalBaseSkin.setGUIBlink();
     }
 
 }

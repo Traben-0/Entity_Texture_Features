@@ -128,7 +128,6 @@ public class ETFConfigScreenSkinToolOutcome extends ETFConfigScreen {
                             //clear etf data of skin
                             if (MinecraftClient.getInstance().player != null) {
                                 ETFManager.getInstance().PLAYER_TEXTURE_MAP.removeEntryOnly(MinecraftClient.getInstance().player.getUuid());
-                                ETFManager.getInstance().ENTITY_BLINK_TIME.put(MinecraftClient.getInstance().player.getUuid(), 0L);
                             }
                         }
                         button.active = false;
