@@ -1,6 +1,7 @@
 package traben.entity_texture_features.config.screens;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.CubeMapRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.RotatingCubeMapRenderer;
@@ -78,6 +79,11 @@ public abstract class ETFConfigScreen extends Screen {
     }
 
     @Override
+    public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
+        renderBackgroundTexture(context);
+    }
+
+    @Override
     public boolean shouldCloseOnEsc() {
         return true;
     }
@@ -90,19 +96,8 @@ public abstract class ETFConfigScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-
-
-        backgroundCube.render((float) 0.5, 1);
-        renderInGameBackground(context);
-        renderBackgroundTexture(context);
-//        renderBackgroundTexture(0, new Identifier("textures/gui/options_background.png"), (int) (height * 0.15), width);
-//        renderBackgroundTexture(0, new Identifier("textures/gui/options_background.png"), height, width, (int) (height * 0.85));
-        //context.fillGradient( 0, (int) (height * 0.15), width, (int) (height * 0.85), -1072689136, -804253680);
-
-
-        //context.fill(RenderLayer.getEndGateway(),0, (int) (height * 0.15), width, (int) (height * 0.85), ColorHelper.Argb.getArgb(255,255,255,255));
+        backgroundCube.render(MinecraftClient.getInstance().getLastFrameDuration() * 1.5f, 1);
         context.drawCenteredTextWithShadow(textRenderer, title, width / 2, 15, 0xFFFFFF);
-
         super.render(context, mouseX, mouseY, delta);
     }
 
