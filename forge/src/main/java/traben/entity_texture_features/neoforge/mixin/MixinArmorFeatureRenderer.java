@@ -1,4 +1,4 @@
-package traben.entity_texture_features.forge.mixin;
+package traben.entity_texture_features.neoforge.mixin;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.Model;
