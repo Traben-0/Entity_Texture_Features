@@ -12,8 +12,9 @@ architectury {
 loom {
     accessWidenerPath = project(":common").loom.accessWidenerPath
 //    neoForge{
-//       // convertAccessWideners = true
-////        extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
+//        convertAccessWideners = true
+
+//        extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
 //    }
 //    forge {
 //        convertAccessWideners = true
@@ -78,6 +79,8 @@ shadowJar {
 }
 
 remapJar {
+
+    atAccessWideners.add('entity_texture_features.accesswidener')
     input.set shadowJar.archiveFile
     dependsOn shadowJar
 //    classifier null
