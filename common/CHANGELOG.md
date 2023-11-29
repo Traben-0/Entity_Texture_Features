@@ -1,11 +1,20 @@
 [**ETF Changelog:**]
 
-- massive rework of the code
-- block property again additionally checks the block below block entities differing from optifine
-- all entities have enchanted overlay support via "_enchant.png" just like "_e.png"
+ETF 5.0 is a massive rework of the code, ETF is now almost an entirely different mod in its application from what v4.5 was.
+It should now universally affect every entity and entity render feature. 
+- the `blocks` property now again additionally checks the block below block entities differing from OptiFine's behaviour
+- all entities have enchanted overlay support via "_enchant.png" just like emissives with "_e.png"
+- much improved and more helpful right click debug printout
+- all possible texture variants are now preloaded on the first instance of a texture being used.
+- texture variation is now implemented at the creation of entity render layers allowing all entity textures and features to be modified by ETF
+- emissive rendering now occurs within the normal rendering of all models
+- fixed entity spawn conditions not saving for all non update-able properties (e.g. the heights property would not always save the entities original spawn height in v4.6)
+- fixed the ETF & EMF config screen getting faded black in recent versions
+- removed iris z-fighting fixes for everything except armor emissives as they don't appear to be needed anymore
+- several changes and optimizations that are not worth listing.
 
-removed due to being possible via `EMF` now
 
+removed features due to them now being possible, and preferred, via `EMF`
 - removed elytra thickness tweak feature
 - removed async elytra feature
 - removed lectern book unique texture feature
