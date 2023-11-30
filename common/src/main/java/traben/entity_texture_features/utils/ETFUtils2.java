@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.resource.Resource;
@@ -26,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.Properties;
 
 import static traben.entity_texture_features.ETFClientCommon.CONFIG_DIR;
@@ -149,15 +151,24 @@ public abstract class ETFUtils2 {
         try {
             //try catch is intended
             //noinspection OptionalGetWithoutIsPresent
-            InputStream in = MinecraftClient.getInstance().getResourceManager().getResource(identifier).get().getInputStream();
-            try {
-                img = NativeImage.read(in);
-                in.close();
-                ETFManager.getInstance().KNOWN_NATIVE_IMAGES.put(identifier, img);
-                return img;
-            } catch (Exception e) {
-                //resource.close();
-                in.close();
+            Optional<Resource> resource =MinecraftClient.getInstance().getResourceManager().getResource(identifier);
+            if(resource.isPresent()) {
+                InputStream in = resource.get().getInputStream();
+                try {
+                    img = NativeImage.read(in);
+                    in.close();
+                    ETFManager.getInstance().KNOWN_NATIVE_IMAGES.put(identifier, img);
+                    return img;
+                } catch (Exception e) {
+                    //resource.close();
+                    in.close();
+                    return null;
+                }
+            }else{
+                AbstractTexture texture = MinecraftClient.getInstance().getTextureManager().getTexture(identifier);
+                if(texture instanceof NativeImageBackedTexture nativeImageBackedTexture){
+                    return nativeImageBackedTexture.getImage();
+                }
                 return null;
             }
         } catch (Exception e) {
@@ -254,7 +265,7 @@ public abstract class ETFUtils2 {
             NativeImageBackedTexture bob = new NativeImageBackedTexture(img);
             MinecraftClient.getInstance().getTextureManager().registerTexture(identifier, bob);
             //MinecraftClient.getInstance().getResourceManager().
-            ETFManager.getInstance().KNOWN_NATIVE_IMAGES.put(identifier, img);
+//            ETFManager.getInstance().KNOWN_NATIVE_IMAGES.put(identifier, img);
             return true;
         } else {
             logError("registering native image failed: " + img + ", " + identifier);

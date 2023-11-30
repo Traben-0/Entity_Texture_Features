@@ -73,13 +73,25 @@ public class ETFRenderContext {
             if (!multiPhase.isOutline() && getCurrentEntity() != null && ETFManager.getInstance().ENTITY_TYPE_RENDER_LAYER.containsKey(getCurrentEntity().etf$getType())) {
                 preventRenderLayerTextureModify();
                 switch (ETFManager.getInstance().ENTITY_TYPE_RENDER_LAYER.getInt(getCurrentEntity().etf$getType())) {
-                    case 1 ->
-                            currentRenderLayer = RenderLayer.getEntityTranslucent(currentETFTexture.getTextureIdentifier(getCurrentEntity()));
-                    case 2 ->
-                            currentRenderLayer = RenderLayer.getEntityTranslucentCull(currentETFTexture.getTextureIdentifier(getCurrentEntity()));
+                    case 1 -> {
+                        Identifier newId = currentETFTexture.getTextureIdentifier(getCurrentEntity());
+                        //noinspection ConstantValue
+                        if(newId != null)
+                            currentRenderLayer = RenderLayer.getEntityTranslucent(newId);
+                    }
+                    case 2 -> {
+                        Identifier newId = currentETFTexture.getTextureIdentifier(getCurrentEntity());
+                        //noinspection ConstantValue
+                        if (newId != null)
+                            currentRenderLayer = RenderLayer.getEntityTranslucentCull(newId);
+                    }
                     case 3 -> currentRenderLayer = RenderLayer.getEndGateway();
-                    case 4 ->
-                            currentRenderLayer = RenderLayer.getOutline(currentETFTexture.getTextureIdentifier(getCurrentEntity()));
+                    case 4 ->{
+                        Identifier newId = currentETFTexture.getTextureIdentifier(getCurrentEntity());
+                        //noinspection ConstantValue
+                        if (newId != null)
+                            currentRenderLayer = RenderLayer.getOutline(newId);
+                    }
                     default -> {
                     }
                 }
@@ -111,7 +123,7 @@ public class ETFRenderContext {
 
             //System.out.println("raw="+rawId+"\nactual="+actualTexture);
 
-            currentETFTexture = ETFManager.getInstance().getETFTextureVariant(actualTexture, ETFRenderContext.getCurrentEntity(), ETFManager.TextureSource.BLOCK_ENTITY);
+            currentETFTexture = ETFManager.getInstance().getETFTextureVariant(actualTexture, ETFRenderContext.getCurrentEntity());
 
             //if texture is emissive or a variant send in as a non sprite vertex consumer
             if (currentETFTexture.getVariantNumber() != 0 || currentETFTexture.isEmissive()) {
@@ -150,6 +162,8 @@ public class ETFRenderContext {
     }
 
     public static void setCurrentEntity(ETFEntity currentEntity) {
+        //assert this
+        allowRenderLayerTextureModify = true;
         ETFRenderContext.currentEntity = currentEntity;
     }
 
@@ -181,6 +195,8 @@ public class ETFRenderContext {
 
         currentRenderLayer = null;
         currentEntity = null;
+        allowedToPatch = false;
+        allowRenderLayerTextureModify = true;
     }
 
     @SuppressWarnings("unused")//used in EMF
@@ -195,4 +211,16 @@ public class ETFRenderContext {
     public static void endSpecialRenderOverlayPhase() {
         ETFRenderContext.isInSpecialRenderOverlayPhase = false;
     }
+
+    public static boolean isAllowedToPatch() {
+        return allowedToPatch;
+    }
+
+    public static void allowTexturePatching() {
+        allowedToPatch = true;
+    }
+    public static void preventTexturePatching() {
+        allowedToPatch = false;
+    }
+    private static boolean allowedToPatch = false;
 }

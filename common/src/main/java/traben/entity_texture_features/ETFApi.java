@@ -158,7 +158,7 @@ public final class ETFApi {
     public static Identifier getCurrentETFVariantTextureOfEntity(@NotNull Entity entity, @NotNull Identifier defaultTexture) {
         if (entity != null) {
             ETFEntity etfEntity = (ETFEntity) entity;
-            ETFTexture etfTexture = ETFManager.getInstance().getETFTextureVariant(defaultTexture, etfEntity, ETFManager.TextureSource.ENTITY);
+            ETFTexture etfTexture = ETFManager.getInstance().getETFTextureVariant(defaultTexture, etfEntity);
             if (etfTexture != null) {// just in case
                 Identifier etfIdentifier = etfTexture.getTextureIdentifier(etfEntity);
                 if (etfIdentifier != null) {// just in case
@@ -194,7 +194,7 @@ public final class ETFApi {
     }
 
     private static Identifier getCurrentETFVariantTextureOfBlockEntityInternal(@NotNull ETFEntity etfEntity, @NotNull Identifier defaultTexture) {
-        ETFTexture etfTexture = ETFManager.getInstance().getETFTextureVariant(defaultTexture, etfEntity, ETFManager.TextureSource.BLOCK_ENTITY);
+        ETFTexture etfTexture = ETFManager.getInstance().getETFTextureVariant(defaultTexture, etfEntity);
         if (etfTexture != null) {// just in case
             Identifier etfIdentifier = etfTexture.getTextureIdentifier(etfEntity);
             if (etfIdentifier != null) {// just in case
@@ -220,7 +220,7 @@ public final class ETFApi {
     @Nullable
     public static Identifier getCurrentETFEmissiveTextureOfEntityOrNull(@NotNull Entity entity, @NotNull Identifier defaultTexture) {
         if (entity != null) {
-            ETFTexture etfTexture = ETFManager.getInstance().getETFTextureVariant(defaultTexture, (ETFEntity) entity, ETFManager.TextureSource.ENTITY);
+            ETFTexture etfTexture = ETFManager.getInstance().getETFTextureVariant(defaultTexture, (ETFEntity) entity);
             if (etfTexture != null) {// just in case
                 return etfTexture.getEmissiveIdentifierOfCurrentState();
             }
@@ -238,7 +238,7 @@ public final class ETFApi {
     @Nullable
     public static Identifier getCurrentETFEmissiveTextureOfBlockEntityOrNull(@NotNull BlockEntity entity, @NotNull Identifier defaultTexture) {
         if (entity != null) {
-            ETFTexture etfTexture = ETFManager.getInstance().getETFTextureVariant(defaultTexture, (ETFEntity) entity, ETFManager.TextureSource.BLOCK_ENTITY);
+            ETFTexture etfTexture = ETFManager.getInstance().getETFTextureVariant(defaultTexture, (ETFEntity) entity);
             if (etfTexture != null) {// just in case
                 return etfTexture.getEmissiveIdentifierOfCurrentState();
             }
@@ -263,7 +263,7 @@ public final class ETFApi {
             @NotNull VertexConsumerProvider vertexConsumerProvider,
             @NotNull Model model
     ) {
-        ETFTexture etfTexture = ETFManager.getInstance().getETFTextureVariant(defaultTextureOfEntity, (ETFEntity) entity, ETFManager.TextureSource.ENTITY);
+        ETFTexture etfTexture = ETFManager.getInstance().getETFTextureVariant(defaultTextureOfEntity, (ETFEntity) entity);
         if (etfTexture != null) {// just in case
             etfTexture.renderEmissive(matrixStack, vertexConsumerProvider, model);
         }
@@ -285,7 +285,7 @@ public final class ETFApi {
             @NotNull VertexConsumerProvider vertexConsumerProvider,
             @NotNull ModelPart modelPart
     ) {
-        ETFTexture etfTexture = ETFManager.getInstance().getETFTextureVariant(defaultTextureOfEntity, (ETFEntity) entity, ETFManager.TextureSource.ENTITY);
+        ETFTexture etfTexture = ETFManager.getInstance().getETFTextureVariant(defaultTextureOfEntity, (ETFEntity) entity);
         if (etfTexture != null) {// just in case
             etfTexture.renderEmissive(matrixStack, vertexConsumerProvider, modelPart);
         }
@@ -308,7 +308,7 @@ public final class ETFApi {
             @NotNull VertexConsumerProvider vertexConsumerProvider,
             @NotNull Model model
     ) {
-        ETFTexture etfTexture = ETFManager.getInstance().getETFTextureVariant(defaultTextureOfEntity, (ETFEntity) entity, ETFManager.TextureSource.ENTITY);
+        ETFTexture etfTexture = ETFManager.getInstance().getETFTextureVariant(defaultTextureOfEntity, (ETFEntity) entity);
         if (etfTexture != null) {// just in case
             etfTexture.renderEmissive(matrixStack, vertexConsumerProvider, model);
         }
@@ -330,7 +330,7 @@ public final class ETFApi {
             @NotNull VertexConsumerProvider vertexConsumerProvider,
             @NotNull ModelPart modelPart
     ) {
-        ETFTexture etfTexture = ETFManager.getInstance().getETFTextureVariant(defaultTextureOfEntity, (ETFEntity) entity, ETFManager.TextureSource.ENTITY);
+        ETFTexture etfTexture = ETFManager.getInstance().getETFTextureVariant(defaultTextureOfEntity, (ETFEntity) entity);
         if (etfTexture != null) {// just in case
             etfTexture.renderEmissive(matrixStack, vertexConsumerProvider, modelPart);
         }

@@ -49,6 +49,8 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, M extend
     private void etf$markFeaturesLoopEnd(T livingEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
         //assert main entity each loop in case of other entities within feature renderer
         ETFRenderContext.setCurrentEntity(etf$heldEntity);
+        ETFRenderContext.allowRenderLayerTextureModify();
+        ETFRenderContext.endSpecialRenderOverlayPhase();
     }
 
     @Inject(method = "render(Lnet/minecraft/entity/LivingEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",

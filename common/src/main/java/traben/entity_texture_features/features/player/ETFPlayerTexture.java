@@ -968,9 +968,9 @@ public class ETFPlayerTexture {
                         getSkinPixelColourToNumber(originalSkin.getColor(2, 18)));
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //emissives
-                NativeImage emissiveImage;
-                NativeImage emissiveBlinkImage;
-                NativeImage emissiveBlink2Image;
+                NativeImage emissiveImage = null;
+                NativeImage emissiveBlinkImage = null;
+                NativeImage emissiveBlink2Image = null;
                 Identifier emissiveIdentifier = null;
                 Identifier blinkEmissiveIdentifier = null;//new Identifier( SKIN_NAMESPACE , id + "_blink_e.png");
                 Identifier blink2EmissiveIdentifier = null;//new Identifier( SKIN_NAMESPACE , id + "_blink2_e.png");
@@ -1093,6 +1093,30 @@ public class ETFPlayerTexture {
                 parseSkinTransparency(modifiedSkin, wasForcedSolid);
 
 
+                Identifier modifiedSkinBlinkPatchedIdentifier = null;
+                Identifier modifiedSkinPatchedIdentifier = null;
+                Identifier modifiedSkinBlink2PatchedIdentifier = null;
+                if (hasEmissives) {
+                    if (emissiveImage != null) {
+                        modifiedSkinPatchedIdentifier = new Identifier(SKIN_NAMESPACE, id + "_e_patched.png");
+                        ETFTexture.patchTextureToRemoveZFightingWithOtherTexture(modifiedSkin, emissiveImage);
+
+                        ETFUtils2.registerNativeImageToIdentifier(modifiedSkin, modifiedSkinPatchedIdentifier);
+                        if (blinkSkinFile != null) {
+                            modifiedSkinBlinkPatchedIdentifier = new Identifier(SKIN_NAMESPACE, id + "_blink_e_patched.png");
+                            ETFTexture.patchTextureToRemoveZFightingWithOtherTexture(blinkSkinFile, emissiveBlinkImage);
+                            ETFUtils2.registerNativeImageToIdentifier(blinkSkinFile, modifiedSkinBlinkPatchedIdentifier);
+                        }
+                        if (blinkSkinFile2 != null) {
+                            modifiedSkinBlink2PatchedIdentifier = new Identifier(SKIN_NAMESPACE, id + "_blink2_e_patched.png");
+                            ETFTexture.patchTextureToRemoveZFightingWithOtherTexture(blinkSkinFile2, emissiveBlink2Image);
+                            ETFUtils2.registerNativeImageToIdentifier(blinkSkinFile2, modifiedSkinBlink2PatchedIdentifier);
+                        }
+                    }
+                }
+
+
+
                 Identifier modifiedSkinIdentifier = new Identifier(SKIN_NAMESPACE, id + ".png");
                 ETFUtils2.registerNativeImageToIdentifier(modifiedSkin, modifiedSkinIdentifier);
 
@@ -1105,7 +1129,10 @@ public class ETFPlayerTexture {
                         blink2EmissiveIdentifier,
                         baseEnchantIdentifier,
                         baseEnchantBlinkIdentifier,
-                        baseEnchantBlink2Identifier);
+                        baseEnchantBlink2Identifier,
+                        modifiedSkinPatchedIdentifier,
+                        modifiedSkinBlinkPatchedIdentifier,
+                        modifiedSkinBlink2PatchedIdentifier);
 
 
                 //if vanilla cape and there is no enchant or emissive
@@ -1129,7 +1156,7 @@ public class ETFPlayerTexture {
                     //parseSkinTransparency(originalSkin,wasForcedSolid);
                     Identifier skinIdentifier = new Identifier(SKIN_NAMESPACE, id + ".png");
                     ETFUtils2.registerNativeImageToIdentifier(originalSkin, skinIdentifier);
-                    etfTextureOfFinalBaseSkin = new ETFTexture(skinIdentifier, null, null, null, null, null, null, null, null);
+                    etfTextureOfFinalBaseSkin = new ETFTexture(skinIdentifier, null, null, null, null, null, null, null, null, null, null, null);
 
                 } else {
                     skinFailed();

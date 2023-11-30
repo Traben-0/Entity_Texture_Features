@@ -198,7 +198,7 @@ public class ETFManager {
     }
 
     @NotNull
-    public ETFTexture getETFTextureVariant(@NotNull Identifier vanillaIdentifier, @Nullable ETFEntity entity, @NotNull TextureSource source) {
+    public ETFTexture getETFTextureVariant(@NotNull Identifier vanillaIdentifier, @Nullable ETFEntity entity) {
         if (entity == null
                 || entity.etf$getUuid() == ETFApi.ETF_GENERIC_UUID
                 || entity.etf$getBlockPos().equals(Vec3i.ZERO)) {
@@ -206,7 +206,7 @@ public class ETFManager {
         }
         if (!VARIATOR_MAP.containsKey(vanillaIdentifier)) {
                 if(SKIN_NAMESPACE.equals(vanillaIdentifier.getNamespace())){
-                    VARIATOR_MAP.put(vanillaIdentifier, new ETFTextureVariator.ETFTextureSingleton(ETFTexture.ofUnmodifiable(vanillaIdentifier,null)));
+                    return getETFTextureNoVariation(vanillaIdentifier);
                 }else {
                     VARIATOR_MAP.put(vanillaIdentifier, ETFTextureVariator.of(vanillaIdentifier));
                     if (ETFConfigData.logTextureDataInitialization) {
@@ -215,7 +215,7 @@ public class ETFManager {
                     }
                 }
         }
-        return VARIATOR_MAP.get(vanillaIdentifier).getVariantOf(entity, source);
+        return VARIATOR_MAP.get(vanillaIdentifier).getVariantOf(entity);
     }
 
 
@@ -253,7 +253,7 @@ public class ETFManager {
                     return null;
                 } else if (possibleSkin.isCorrectObjectForThisSkin(rendererGivenSkin)
                         || MinecraftClient.getInstance().currentScreen instanceof ETFConfigScreenSkinTool) {
-                    ETFRenderContext.preventRenderLayerTextureModify();
+                    //ETFRenderContext.preventRenderLayerTextureModify();
                     return possibleSkin;
                 }
 
@@ -261,7 +261,7 @@ public class ETFManager {
             PLAYER_TEXTURE_MAP.put(id, null);
             ETFPlayerTexture etfPlayerTexture = new ETFPlayerTexture(player, rendererGivenSkin);
             PLAYER_TEXTURE_MAP.put(id, etfPlayerTexture);
-            ETFRenderContext.preventRenderLayerTextureModify();
+            //ETFRenderContext.preventRenderLayerTextureModify();
             return etfPlayerTexture;
         } catch (Exception e) {
             e.printStackTrace();

@@ -59,11 +59,11 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
 
             ETFEntity etfEntity = (ETFEntity) paintingEntity;
 
-            ETFTexture frontTexture = ETFManager.getInstance().getETFTextureVariant(paintingTexture, etfEntity, ETFManager.TextureSource.ENTITY);
+            ETFTexture frontTexture = ETFManager.getInstance().getETFTextureVariant(paintingTexture, etfEntity);
             ETFSprite etf$Sprite = frontTexture.getSprite(paintingSprite);
 
 
-            ETFTexture backTexture = ETFManager.getInstance().getETFTextureVariant(etf$BACK_SPRITE_ID, etfEntity, ETFManager.TextureSource.ENTITY);
+            ETFTexture backTexture = ETFManager.getInstance().getETFTextureVariant(etf$BACK_SPRITE_ID, etfEntity);
             ETFSprite etf$BackSprite = backTexture.getSprite(MinecraftClient.getInstance().getPaintingManager().getBackSprite());
 
             if (etf$Sprite.isETFAltered || etf$Sprite.isEmissive() || etf$BackSprite.isETFAltered || etf$BackSprite.isEmissive()) {

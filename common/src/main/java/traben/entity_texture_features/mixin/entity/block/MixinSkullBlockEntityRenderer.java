@@ -36,16 +36,17 @@ public abstract class MixinSkullBlockEntityRenderer implements BlockEntityRender
     private ETFPlayerTexture entity_texture_features$thisETFPlayerTexture = null;
 
 
-    @Inject(method = "renderSkull",
+    @Inject(method = "render(Lnet/minecraft/block/entity/SkullBlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II)V",
             at = @At(value = "HEAD"))
-    private static void etf$markNotToChange(Direction direction, float yaw, float animationProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, SkullBlockEntityModel model, RenderLayer renderLayer, CallbackInfo ci) {
-        ETFRenderContext.preventRenderLayerTextureModify();
+    private void etf$markNotToChange(SkullBlockEntity skullBlockEntity, float f, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j, CallbackInfo ci) {
+        ETFRenderContext.allowTexturePatching();
     }
 
-    @Inject(method = "renderSkull",
+    @Inject(method = "render(Lnet/minecraft/block/entity/SkullBlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II)V",
             at = @At(value = "RETURN"))
-    private static void etf$markAllowedToChange(Direction direction, float yaw, float animationProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, SkullBlockEntityModel model, RenderLayer renderLayer, CallbackInfo ci) {
+    private void etf$markAllowedToChange(SkullBlockEntity skullBlockEntity, float f, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j, CallbackInfo ci) {
         ETFRenderContext.allowRenderLayerTextureModify();
+        ETFRenderContext.preventTexturePatching();
     }
 
 
@@ -62,6 +63,9 @@ public abstract class MixinSkullBlockEntityRenderer implements BlockEntityRender
                         .getSkinProvider().getSkinTextures(skullBlockEntity.getOwner()).texture();
 
                 entity_texture_features$thisETFPlayerTexture = ETFManager.getInstance().getPlayerTexture((ETFPlayerEntity) skullBlockEntity, identifier);
+                if(entity_texture_features$thisETFPlayerTexture != null){
+                    ETFRenderContext.preventRenderLayerTextureModify();
+                }
             }
         }
     }
@@ -82,7 +86,7 @@ public abstract class MixinSkullBlockEntityRenderer implements BlockEntityRender
             skullBlockEntityModel.setHeadRotation(g, h, 0.0F);
             //vanilla end
 
-            ETFPlayerFeatureRenderer.renderSkullFeatures(matrixStack, vertexConsumerProvider, i, skullBlockEntityModel, entity_texture_features$thisETFPlayerTexture);
+            ETFPlayerFeatureRenderer.renderSkullFeatures(matrixStack, vertexConsumerProvider, i, skullBlockEntityModel, entity_texture_features$thisETFPlayerTexture,h);
 
             matrixStack.pop();
         }

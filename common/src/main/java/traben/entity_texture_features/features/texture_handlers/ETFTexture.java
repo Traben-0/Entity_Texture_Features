@@ -22,6 +22,7 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFClientCommon;
+import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.utils.ETFEntity;
@@ -39,7 +40,7 @@ import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 public class ETFTexture {
 
 
-    private final static String PATCH_NAMESPACE_PREFIX = "etf_patched_";
+    public final static String PATCH_NAMESPACE_PREFIX = "etf_patched_";
 
     //this variants id , might be vanilla
     public final Identifier thisIdentifier;
@@ -109,7 +110,10 @@ public class ETFTexture {
                       @Nullable Identifier blink2EmissiveIdentifier,
                       @Nullable Identifier enchantIdentifier,
                       @Nullable Identifier blinkenchantIdentifier,
-                      @Nullable Identifier blink2enchantIdentifier) {
+                      @Nullable Identifier blink2enchantIdentifier,
+                      @Nullable Identifier patchIdentifier,
+                      @Nullable Identifier blinkpatchIdentifier,
+                      @Nullable Identifier blink2patchIdentifier) {
         //ALL input already tested and confirmed existing
         this.variantNumber = 0;
         this.thisIdentifier = modifiedSkinIdentifier;
@@ -118,14 +122,24 @@ public class ETFTexture {
         this.emissiveIdentifier = emissiveIdentifier;
         this.emissiveBlinkIdentifier = blinkEmissiveIdentifier;
         this.emissiveBlink2Identifier = blink2EmissiveIdentifier;
-        this.thisIdentifier_Patched = null;//modifiedSkinPatchedIdentifier;
-        this.blinkIdentifier_Patched = null;//modifiedSkinBlinkPatchedIdentifier;
-        this.blink2Identifier_Patched = null;//modifiedSkinBlink2PatchedIdentifier;
+        this.thisIdentifier_Patched = patchIdentifier;
+        this.blinkIdentifier_Patched = blinkpatchIdentifier;
+        this.blink2Identifier_Patched = blink2patchIdentifier;
         this.enchantIdentifier = enchantIdentifier;
         this.enchantBlinkIdentifier = blinkenchantIdentifier;
         this.enchantBlink2Identifier = blink2enchantIdentifier;
 
-//        ETFManager.getInstance().registerStaticallyCreatedTexture(thisIdentifier,this);
+        hasPatched = thisIdentifier_Patched != null;
+        if(hasPatched) {
+            ETFManager.getInstance().ETF_TEXTURE_CACHE.put(thisIdentifier_Patched, this);
+            if(blinkIdentifier_Patched != null)
+                ETFManager.getInstance().ETF_TEXTURE_CACHE.put(blinkIdentifier_Patched, this);
+            if(blink2Identifier_Patched != null)
+                ETFManager.getInstance().ETF_TEXTURE_CACHE.put(blink2Identifier_Patched, this);
+        }
+
+        //register this etf texture
+        ETFManager.getInstance().ETF_TEXTURE_CACHE.put(thisIdentifier,this);
     }
 
     //alternative initiator for already known textures used for MooShroom's mushrooms
@@ -409,12 +423,14 @@ public class ETFTexture {
         NativeImage newBaseTexture = ETFUtils2.getNativeImageElseNull(thisIdentifier);
         thisIdentifier_Patched = new Identifier(PATCH_NAMESPACE_PREFIX + thisIdentifier.getNamespace(), thisIdentifier.getPath());
         ETFUtils2.registerNativeImageToIdentifier(newBaseTexture, thisIdentifier_Patched);
+        ETFManager.getInstance().ETF_TEXTURE_CACHE.put(thisIdentifier_Patched, this);
+
     }
 
 
     @NotNull
     public Identifier getTextureIdentifier(@Nullable ETFEntity entity) {
-        if (isPatched_CurrentlyOnlyArmor()) {
+        if (canPatch()) {
             //patched required
             currentTextureState = TextureReturnState.NORMAL_PATCHED;
         }else{
@@ -473,8 +489,8 @@ public class ETFTexture {
         return this.emissiveIdentifier != null;
     }
 
-    public boolean isPatched_CurrentlyOnlyArmor() {
-        return this.thisIdentifier_Patched != null;
+    public boolean canPatch() {
+        return ETFRenderContext.isAllowedToPatch() && this.thisIdentifier_Patched != null;
     }
 
     public boolean doesBlink() {
@@ -585,7 +601,7 @@ public class ETFTexture {
     @Nullable
     public Identifier getEmissiveIdentifierOfCurrentState() {
         return switch (currentTextureState) {
-            case NORMAL, NORMAL_PATCHED -> emissiveIdentifier;
+            case NORMAL, NORMAL_PATCHED  -> emissiveIdentifier;
             case BLINK, BLINK_PATCHED -> emissiveBlinkIdentifier;
             case BLINK2, BLINK2_PATCHED -> emissiveBlink2Identifier;
             default ->
@@ -631,6 +647,129 @@ public class ETFTexture {
                 case APPLY_BLINK2 -> "apply_blink2";
                 case APPLY_PATCH -> "apply_patch";
             };
+        }
+    }
+
+    public static void patchTextureToRemoveZFightingWithOtherTexture(NativeImage baseImage, NativeImage otherImage) throws IndexOutOfBoundsException {
+        //here we alter the first image removing all pixels that are present in the second image to prevent z fighting
+        //this does not support transparency and is a hard counter to f-fighting
+        try {
+            if (otherImage.getWidth() == baseImage.getWidth() && otherImage.getHeight() == baseImage.getHeight()) {
+                //float widthMultipleEmissive  = originalCopy.getWidth()  / (float)emissive.getWidth();
+                //float heightMultipleEmissive = originalCopy.getHeight() / (float)emissive.getHeight();
+
+                for (int x = 0; x < baseImage.getWidth(); x++) {
+                    for (int y = 0; y < baseImage.getHeight(); y++) {
+                        //int newX = Math.min((int)(x*widthMultipleEmissive),originalCopy.getWidth()-1);
+                        //int newY = Math.min((int)(y*heightMultipleEmissive),originalCopy.getHeight()-1);
+                        if (otherImage.getOpacity(x, y) != 0) {
+                            baseImage.setColor(x, y, 0);
+                        }
+                    }
+                }
+            }
+            //return baseImage;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IndexOutOfBoundsException("additional texture is not the correct size, ETF has crashed in the patching stage");
+        }
+    }
+
+    private static boolean doesAnimaticaVersionExist(Identifier identifier) {
+        if (identifier == null) return false;
+        String idString = identifier.toString();
+        //check if its already an anim and animatica has already gotten to replacing it before etf sees it
+        if (idString.endsWith("-anim")) return true;
+        //check if animatica has registered its animated version of this texture
+        return MinecraftClient.getInstance().getTextureManager().getOrDefault(new Identifier(idString + "-anim"), null) != null;
+    }
+
+    private boolean hasPatched = false;
+    public void assertPatchedTextures() {
+        if (!this.isEmissive() || hasPatched) {
+            return;
+        }
+        hasPatched = true;
+
+        ResourceManager files = MinecraftClient.getInstance().getResourceManager();
+        //should this process cancel itself due to presence of PBR textures
+        if ((ETFVersionDifferenceHandler.isThisModLoaded("iris") || ETFVersionDifferenceHandler.isThisModLoaded("oculus")) &&
+                //do pbr files exist?
+                (files.getResource(ETFUtils2.replaceIdentifier(thisIdentifier, ".png", "_s.png")).isPresent() ||
+                        files.getResource(ETFUtils2.replaceIdentifier(thisIdentifier, ".png", "_n.png")).isPresent())
+        ) {
+            //here the setting to cancel is enabled, iris is present, and pbr files exist, so cancel patching
+            return;
+        }
+
+        //should patching cancel due to presence of animation mods and animated textures
+        if (((ETFVersionDifferenceHandler.isThisModLoaded("animatica")) && (
+                doesAnimaticaVersionExist(thisIdentifier)
+                        || doesAnimaticaVersionExist(emissiveIdentifier)
+        ) || (ETFVersionDifferenceHandler.isThisModLoaded("moremcmeta") &&
+                (files.getResource(ETFUtils2.replaceIdentifier(thisIdentifier, ".png", ".png.mcmeta")).isPresent() ||
+                        files.getResource(ETFUtils2.replaceIdentifier(thisIdentifier, ".png", ".png.moremcmeta")).isPresent())
+        )
+        )) {
+            //here the setting to cancel is enabled, animation mod is present, and mcmeta files exist, so cancel patching
+            return;
+        }
+
+        //here we will 'patch' the base texture to prevent z-fighting when it occurs
+
+        //null depending on existence
+        NativeImage newBaseTexture = ETFUtils2.getNativeImageElseNull(thisIdentifier);
+        NativeImage newBlinkTexture = ETFUtils2.getNativeImageElseNull(blinkIdentifier);
+        NativeImage newBlink2Texture = ETFUtils2.getNativeImageElseNull(blink2Identifier);
+
+        boolean didPatch = false;
+
+        //patch out emissive textures for shader z fighting fix
+        if (this.emissiveIdentifier != null && ETFConfigData.enableEmissiveTextures) {
+            //create patched texture
+            NativeImage emissiveImage = ETFUtils2.getNativeImageElseNull(emissiveIdentifier);
+            try {
+                patchTextureToRemoveZFightingWithOtherTexture(newBaseTexture, emissiveImage);
+                didPatch = true;
+                //no errors here means it all , and we have a patched texture in originalCopyToPatch
+                //thisIdentifier_Patched = new Identifier(PATCH_NAMESPACE_PREFIX + thisIdentifier.getNamespace(), thisIdentifier.getPath());
+                //ETFUtils2.registerNativeImageToIdentifier(originalCopyToPatch, thisIdentifier_Patched);
+
+                if (doesBlink() && emissiveBlinkIdentifier != null) {
+                    NativeImage emissiveBlinkImage = ETFUtils2.getNativeImageElseNull(emissiveBlinkIdentifier);
+                    patchTextureToRemoveZFightingWithOtherTexture(newBlinkTexture, emissiveBlinkImage);
+                    //no errors here means it all worked, and we have a patched texture in
+                    //blinkIdentifier_Patched = new Identifier(PATCH_NAMESPACE_PREFIX + blinkIdentifier.getNamespace(), blinkIdentifier.getPath());
+                    //ETFUtils2.registerNativeImageToIdentifier(blinkCopyToPatch, blinkIdentifier_Patched);
+
+                    if (doesBlink2() && emissiveBlink2Identifier != null) {
+                        NativeImage emissiveBlink2Image = ETFUtils2.getNativeImageElseNull(emissiveBlink2Identifier);
+                        patchTextureToRemoveZFightingWithOtherTexture(newBlink2Texture, emissiveBlink2Image);
+                        //no errors here means it all worked, and we have a patched texture in
+                        //blink2Identifier_Patched = new Identifier(PATCH_NAMESPACE_PREFIX + blink2Identifier.getNamespace(), blink2Identifier.getPath());
+                        //ETFUtils2.registerNativeImageToIdentifier(blink2CopyToPatch, blinkIdentifier_Patched);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            //save successful patches after any iris or other future patching reasons
+            if (didPatch) {
+                thisIdentifier_Patched = new Identifier(PATCH_NAMESPACE_PREFIX + thisIdentifier.getNamespace(), thisIdentifier.getPath());
+                ETFUtils2.registerNativeImageToIdentifier(newBaseTexture, thisIdentifier_Patched);
+                ETFManager.getInstance().ETF_TEXTURE_CACHE.put(thisIdentifier_Patched, this);
+                if (doesBlink()) {
+                    blinkIdentifier_Patched = new Identifier(PATCH_NAMESPACE_PREFIX + blinkIdentifier.getNamespace(), blinkIdentifier.getPath());
+                    ETFUtils2.registerNativeImageToIdentifier(newBlinkTexture, blinkIdentifier_Patched);
+                    ETFManager.getInstance().ETF_TEXTURE_CACHE.put(blinkIdentifier_Patched, this);
+                    if (doesBlink2()) {
+                        blink2Identifier_Patched = new Identifier(PATCH_NAMESPACE_PREFIX + blink2Identifier.getNamespace(), blink2Identifier.getPath());
+                        ETFUtils2.registerNativeImageToIdentifier(newBlink2Texture, blink2Identifier_Patched);
+                        ETFManager.getInstance().ETF_TEXTURE_CACHE.put(blink2Identifier_Patched, this);
+                    }
+                }
+            }
         }
     }
 
