@@ -418,7 +418,7 @@ public class ETFTexture {
      */
     public void reRegisterBaseTexture() {
         if (hasBeenReRegistered) return;
-
+        hasPatched = true;
         hasBeenReRegistered = true;
         NativeImage newBaseTexture = ETFUtils2.getNativeImageElseNull(thisIdentifier);
         thisIdentifier_Patched = new Identifier(PATCH_NAMESPACE_PREFIX + thisIdentifier.getNamespace(), thisIdentifier.getPath());
@@ -487,6 +487,9 @@ public class ETFTexture {
 
     public boolean isEmissive() {
         return this.emissiveIdentifier != null;
+    }
+    public boolean isEnchanted() {
+        return this.enchantIdentifier != null;
     }
 
     public boolean canPatch() {

@@ -38,7 +38,7 @@ public abstract class MixinModelPart {
                 //attempt special renders as eager OR checks
                 if (etf$renderEmissive(matrices, overlay, red, green, blue, alpha) |
                         etf$renderEnchanted(matrices, light, overlay, red, green, blue, alpha)) {
-                    //reset render layer stuff behind the scenes if special renders occurred
+                        //reset render layer stuff behind the scenes if special renders occurred
                     ETFRenderContext.getCurrentProvider().getBuffer(ETFRenderContext.getCurrentRenderLayer());
                 }
             }

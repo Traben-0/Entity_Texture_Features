@@ -15,7 +15,6 @@
     "accessor.TooltipAccessor",
     "entity.block.MixinMobSpawnerBlockEntityRenderer",
     "entity.block.MixinSkullBlockEntityRenderer",
-    "entity.misc.MixinAbstractClientPlayerEntity",
     "entity.misc.MixinBlazeEntity",
     "entity.misc.MixinBlockEntity",
     "entity.misc.MixinBlockEntityRenderDispatcher",
@@ -29,12 +28,12 @@
     "entity.renderer.MixinLivingEntityRenderer",
     "entity.renderer.MixinPaintingEntityRenderer",
     "entity.renderer.MixinPlayerEntityRenderer",
-    "entity.renderer.feature.MixinCapeFeatureRenderer",
     "entity.renderer.feature.MixinMooshroomMushroomFeatureRenderer",
     "entity.renderer.feature.MixinShoulderParrotFeatureRenderer",
     "entity.renderer.feature.MixinWardenFeatureRenderer",
     "reloading.MixinMinecraftClient",
-    "reloading.MixinResourceReload"
+    "reloading.MixinResourceReload",
+    "entity.renderer.feature.MixinElytraFeatureRenderer"
   ],
   "mixins": [
   ],

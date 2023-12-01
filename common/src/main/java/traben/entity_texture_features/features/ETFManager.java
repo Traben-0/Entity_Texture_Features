@@ -144,6 +144,61 @@ public class ETFManager {
                 ;
     }
 
+    public void doTheBigBoyPrintoutKronk(){
+        StringBuilder out = new StringBuilder();
+
+        out.append("\n||||||||||||||-ETF EVERYTHING LOG START-|||||||||||||||")
+                .append("\n----------------------------------------")
+                .append("\n-----------General stats-------------")
+                .append("\n----------------------------------------")
+                .append("\n known emissive suffixes: \n - ").append(EMISSIVE_SUFFIX_LIST)
+                .append("\n player textures: \n - ").append(PLAYER_TEXTURE_MAP.size())
+                .append("\n image files read: \n - ").append(KNOWN_NATIVE_IMAGES.size())
+//                .append("\n - known resource-pack order: §r\n   ").append(KNOWN_RESOURCEPACK_ORDER.size())
+                .append("\n----------------------------------------")
+                .append("\n----------Texture totals----------------")
+                .append("\n----------------------------------------")
+                .append("\n amount of textures that have or can variate: \n - ").append(VARIATOR_MAP.size())
+                .append("\n amount of textures seen by ETF total (not including emissives): \n - ").append(ETF_TEXTURE_CACHE.size());
+
+        StringBuilder textureLoopVariates = new StringBuilder();
+        StringBuilder textureLoopNormal = new StringBuilder();
+        int totalEmissive = 0;
+        int totalEnchant = 0;
+        for (ETFTexture texture:
+                ETF_TEXTURE_CACHE.values()) {
+            if(texture != null) {
+                if (texture.isEmissive()) totalEmissive++;
+                if (texture.isEnchanted()) totalEnchant++;
+                if(VARIATOR_MAP.containsKey(texture.thisIdentifier)){
+                    textureLoopVariates.append("\n - ").append(
+                            VARIATOR_MAP.get(texture.thisIdentifier).getPrintout().replaceAll("\n","\n      "));
+                }
+                textureLoopNormal.append("\n - ").append(texture);
+
+            }
+        }
+        out.append("\n total emissives: \n - ").append(totalEmissive)
+                .append("\n total enchanted: \n - ").append(totalEnchant)
+                .append("\n----------------------------------------")
+                .append("\n----------ALL texture groups-------------")
+                .append("\n----------------------------------------")
+                .append("\n (Note: all of these can be varied via random entity rules)")
+                .append(textureLoopVariates.toString().replaceAll("§.",""))
+                .append("\n----------------------------------------")
+                .append("\n----------ALL Textures Seen-------------")
+                .append("\n----------------------------------------")
+                .append("\n (Note: these are not all variable by random entity rules, but can usually be emissive)")
+                .append(textureLoopNormal)
+                .append("\n----------------------------------------");
+
+
+        out.append("\n----------------------------------------")
+        .append("\n||||||||||||||-ETF EVERYTHING LOG END-|||||||||||||||");
+
+        ETFUtils2.logMessage(out.toString());
+    }
+
     public void grabSpecialProperties(Properties props, ETFEntity entity) {
         if (entity == null) return;
 

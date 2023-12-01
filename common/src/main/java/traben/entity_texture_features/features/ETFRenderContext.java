@@ -23,6 +23,7 @@ public class ETFRenderContext {
     private static ETFEntity currentEntity = null;
     private static int currentModelPartDepth = 0;
 
+
     private static boolean isInSpecialRenderOverlayPhase = false;
 
     public static boolean isRenderingFeatures() {
@@ -59,15 +60,18 @@ public class ETFRenderContext {
     }
 
     public static VertexConsumer processVertexConsumer(VertexConsumerProvider provider, RenderLayer renderLayer) {
+
         currentETFTexture = null;
         ETFRenderContext.currentRenderLayer = renderLayer;
         //sprites will give the atlas id if not handled separately, and the only hook in seems to be the consumer
-        if (currentRenderLayer instanceof RenderLayer.MultiPhase multiPhase) {//
+        if (renderLayer instanceof RenderLayer.MultiPhase multiPhase) {//
+
 //            RenderLayer.MultiPhaseParameters params = multiPhase.phases;
 //            RenderPhase.TextureBase base = params.texture;
             Optional<Identifier> possibleId = multiPhase.phases.texture.getId();
             // ETFManager.getInstance().getETFTexture(texture,ETFRenderContext.getCurrentEntity(), ETFManager.TextureSource.ENTITY,false);
             possibleId.ifPresent(identifier -> currentETFTexture = ETFManager.getInstance().getETFTextureNoVariation(identifier));
+
 
             //modify render layer if needed
             if (!multiPhase.isOutline() && getCurrentEntity() != null && ETFManager.getInstance().ENTITY_TYPE_RENDER_LAYER.containsKey(getCurrentEntity().etf$getType())) {

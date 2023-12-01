@@ -13,6 +13,7 @@ import traben.entity_texture_features.utils.ETFEntity;
 import traben.entity_texture_features.utils.ETFUtils2;
 import traben.entity_texture_features.utils.EntityIntLRU;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
@@ -44,13 +45,15 @@ public abstract class ETFTextureVariator{
                 ETFTexture output = getVariantOfInternal(entity);
 
                 ETFUtils2.logMessage(
-                        "\n§cETF Printout:§r" +
+                            "\n§e-----------ETF Debug Printout-------------§r" +
                                 "\n" + ETFManager.getInstance().getGeneralPrintout() +
-                                "\n§eCurrent Entity:§r" +
+                                "\n§eEntity:§r" +
                                 "\n§6 - type:§r " + entity.etf$getType().getTranslationKey() +
                                 "\n§6 - texture:§r " + output +
+                                "\n§6 - can_update_variant:§r "+ (this instanceof ETFTextureMultiple multi && multi.suffixProvider.entityCanUpdate(entity.etf$getUuid()))+
                                 "\n§6 - last matching rule:§r " + ETFManager.getInstance().LAST_MET_RULE_INDEX.getInt(entity.etf$getUuid()) +
-                                "\n" + getPrintout()
+                                "\n" + getPrintout() +
+                                "\n§e----------------------------------------§r"
                         , inChat);
                 ETFManager.getInstance().ENTITY_DEBUG = null;
 
@@ -61,7 +64,7 @@ public abstract class ETFTextureVariator{
 
 
 
-    protected abstract String getPrintout();
+    public abstract String getPrintout();
 
     protected abstract @NotNull ETFTexture getVariantOfInternal(@NotNull ETFEntity entity);
 
@@ -78,9 +81,6 @@ public abstract class ETFTextureVariator{
             }
         }
 
-        public ETFTextureSingleton(ETFTexture singleton) {
-            self = singleton;
-        }
 
         @Override
         protected @NotNull ETFTexture getVariantOfInternal(@NotNull ETFEntity entity) {
@@ -88,9 +88,9 @@ public abstract class ETFTextureVariator{
         }
 
         public String getPrintout() {
-            return "§bCurrent texture: §r"+
+            return "§bTexture: §r"+
                     "\n§3 - base texture:§r " + self.toString() +
-                    "\n§3 - variates:§r NO"
+                    "\n§3 - variates:§r no"
                     ;
         }
     }
@@ -99,7 +99,7 @@ public abstract class ETFTextureVariator{
 
         public final @NotNull EntityIntLRU entitySuffixMap = new EntityIntLRU(500);
         private final @NotNull Int2ObjectArrayMap<ETFTexture> variantMap = new Int2ObjectArrayMap<>();
-        private final @NotNull ETFApi.ETFVariantSuffixProvider suffixProvider;
+        final @NotNull ETFApi.ETFVariantSuffixProvider suffixProvider;
         private final @NotNull Identifier vanillaId;
 
         ETFTextureMultiple(@NotNull Identifier vanillaId, @NotNull ETFApi.ETFVariantSuffixProvider suffixProvider) {
@@ -137,10 +137,23 @@ public abstract class ETFTextureVariator{
             }
         }
 
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ETFTextureMultiple that = (ETFTextureMultiple) o;
+            return vanillaId.equals(that.vanillaId);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(vanillaId);
+        }
+
         public String getPrintout() {
-            return "§bCurrent texture: §r" +
+            return "§bTexture: §r" +
                     "\n§3 - base texture:§r "  + vanillaId +
-                    "\n§3 - variates:§r YES"  +
+                    "\n§3 - variates:§r yes"  +
                     "\n§3 - set by properties:§r " + (suffixProvider instanceof PropertiesRandomProvider) +
                     "\n§3 - variant count:§r " + variantMap.size() +
                     "\n§3 - all suffixes:§r " + variantMap.keySet()

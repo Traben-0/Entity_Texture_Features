@@ -1,5 +1,20 @@
 [**ETF Changelog:**]
 
+[beta 2]
+- fixed skull block emissives
+- fixed render context desync *(mobs textures defaulting depending on where you are looking last beta)*
+- fixed elytra emissives
+- removed the ETF cape skin feature, it was fun working with putting a cape inside the skin texture, but it added quite a lot
+of overhead, when the minecraftcapes.net mod is just more effective. With this removed I plan to add support for
+player skin feature emissives in whatever cape texture is being used at a future time. Which will be more freeing than 
+only applying skin feature emissives to etf loaded capes
+- Added a new config screen category `Debug settings`. the debug right click option is now here. the log texture creation setting is now here.
+- added a new debug button in the debug settings screen that will print **ALL** currently cached ETF texture data to the log, details of every known texture and every variant,
+as well as telling you which textures can and cannot be varied. for example elytra.png shows up in the list of textures that can be varied with random entity rules ;)
+
+
+[beta 1]
+
 ETF 5.0 is a massive rework of the code, ETF is now almost an entirely different mod in its application from what v4.5 was.
 It should now universally affect every entity and entity render feature. 
 - the `blocks` property now again additionally checks the block below block entities differing from OptiFine's behaviour

@@ -45,7 +45,7 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
     ButtonWidget emissiveSelectButton = null;
     ButtonWidget enchantButton = null;
     ButtonWidget enchantSelectButton = null;
-    ButtonWidget capeButton = null;
+//    ButtonWidget capeButton = null;
     ButtonWidget transparencyButton = null;
 
     protected ETFConfigScreenSkinTool(Screen parent) {
@@ -183,21 +183,21 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
                                 thisETFPlayerTexture.noseType.getButtonText().getString()));
                     }, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.tooltip"));
 
-            capeButton = getETFButton((int) (this.width * 0.47), (int) (this.height * 0.7), (int) (this.width * 0.2), 20,
-                    Text.of(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.cape.button").getString() +
-                            thisETFPlayerTexture.capeType.getButtonText().getString()),
-                    (button) -> {
-                        CapeType cape = thisETFPlayerTexture.capeType.next();
-
-                        button.setMessage(Text.of(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.cape.button").getString() +
-                                cape.getButtonText().getString()));
-
-                        currentEditorSkin.setColor(53, 16, cape.getCapePixelColour());
-
-                        thisETFPlayerTexture.changeSkinToThisForTool(currentEditorSkin);
-                        updateButtons();
-                    }, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.cape.tooltip")
-            );
+//            capeButton = getETFButton((int) (this.width * 0.47), (int) (this.height * 0.7), (int) (this.width * 0.2), 20,
+//                    Text.of(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.cape.button").getString() +
+//                            thisETFPlayerTexture.capeType.getButtonText().getString()),
+//                    (button) -> {
+//                        CapeType cape = thisETFPlayerTexture.capeType.next();
+//
+//                        button.setMessage(Text.of(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.cape.button").getString() +
+//                                cape.getButtonText().getString()));
+//
+//                        currentEditorSkin.setColor(53, 16, cape.getCapePixelColour());
+//
+//                        thisETFPlayerTexture.changeSkinToThisForTool(currentEditorSkin);
+//                        updateButtons();
+//                    }, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.cape.tooltip")
+//            );
 
             transparencyButton = getETFButton((int) (this.width * 0.695), (int) (this.height * 0.7), (int) (this.width * 0.275), 20,
                     Text.of(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.transparency.button").getString() +
@@ -346,7 +346,7 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
             this.addDrawableChild(emissiveSelectButton);
             this.addDrawableChild(enchantButton);
             this.addDrawableChild(enchantSelectButton);
-            this.addDrawableChild(capeButton);
+//            this.addDrawableChild(capeButton);
             this.addDrawableChild(transparencyButton);
 
 
@@ -400,11 +400,11 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
             enchantSelectButton.active = activeFeatures
                     && currentEditorSkin.getColor(1, 18) == getPixelColour(2);
         }
-        if (capeButton != null) {
-            capeButton.active = activeFeatures;
-            capeButton.setMessage(Text.of(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.cape.button").getString() +
-                    thisETFPlayerTexture.capeType.getButtonText().getString()));
-        }
+//        if (capeButton != null) {
+//            capeButton.active = activeFeatures;
+//            capeButton.setMessage(Text.of(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.cape.button").getString() +
+//                    thisETFPlayerTexture.capeType.getButtonText().getString()));
+//        }
         if (transparencyButton != null) {
             transparencyButton.active = activeFeatures;
             transparencyButton.setMessage(Text.of(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.transparency.button").getString() +
@@ -553,56 +553,56 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
         DiffuseLighting.enableGuiDepthLighting();
     }
 
-    @SuppressWarnings("EnhancedSwitchMigration")
-    public enum CapeType {
-        OPTIFINE(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.cape.optifine")),
-        MINECRAFT_CAPES_NET(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.cape.minecraftcapes")),
-        ETF(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.cape.etf")),
-        CUSTOM(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.cape.custom")),
-        NONE(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.cape.none"));
-
-        private final Text buttonText;
-
-
-        CapeType(Text buttonText) {
-            this.buttonText = buttonText;
-        }
-
-        public Text getButtonText() {
-            return buttonText;
-        }
-
-        public CapeType next() {
-            switch (this) {
-                case NONE:
-                    return ETF;
-                case ETF:
-                    return CUSTOM;
-                case CUSTOM:
-                    return MINECRAFT_CAPES_NET;
-                case MINECRAFT_CAPES_NET:
-                    return OPTIFINE;
-                default:
-                    return NONE;
-            }
-        }
-
-        public int getCapePixelColour() {
-            switch (this) {
-                case CUSTOM:
-                    return getPixelColour(1);
-                case OPTIFINE:
-                    return getPixelColour(3);
-                case MINECRAFT_CAPES_NET:
-                    return getPixelColour(2);
-                case ETF:
-                    return getPixelColour(4);
-                default:
-                    return 0;
-
-            }
-        }
-    }
+//    @SuppressWarnings("EnhancedSwitchMigration")
+//    public enum CapeType {
+//        OPTIFINE(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.cape.optifine")),
+//        MINECRAFT_CAPES_NET(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.cape.minecraftcapes")),
+//        ETF(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.cape.etf")),
+//        CUSTOM(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.cape.custom")),
+//        NONE(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.cape.none"));
+//
+//        private final Text buttonText;
+//
+//
+//        CapeType(Text buttonText) {
+//            this.buttonText = buttonText;
+//        }
+//
+//        public Text getButtonText() {
+//            return buttonText;
+//        }
+//
+//        public CapeType next() {
+//            switch (this) {
+//                case NONE:
+//                    return ETF;
+//                case ETF:
+//                    return CUSTOM;
+//                case CUSTOM:
+//                    return MINECRAFT_CAPES_NET;
+//                case MINECRAFT_CAPES_NET:
+//                    return OPTIFINE;
+//                default:
+//                    return NONE;
+//            }
+//        }
+//
+//        public int getCapePixelColour() {
+//            switch (this) {
+//                case CUSTOM:
+//                    return getPixelColour(1);
+//                case OPTIFINE:
+//                    return getPixelColour(3);
+//                case MINECRAFT_CAPES_NET:
+//                    return getPixelColour(2);
+//                case ETF:
+//                    return getPixelColour(4);
+//                default:
+//                    return 0;
+//
+//            }
+//        }
+//    }
 
     @SuppressWarnings("EnhancedSwitchMigration")
     public enum NoseType {

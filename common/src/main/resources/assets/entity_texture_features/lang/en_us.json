@@ -203,5 +203,9 @@
   "config.entity_texture_features.player_skin_editor.reason_4": "-ETF has not yet had the chance to parse the client players skin,\n try open a world and open third person or your inventory\n to see yourself for a few seconds first.",
   "config.entity_texture_features.button_tooltip": "Opens the Entity Texture Features config screen.",
   "config.entity_texture_features.log_creation": "Log texture initialization",
-  "config.entity_texture_features.log_creation.tooltip": "Logs details about a texture when it is first initialized.\nE.G. what variants are found if any, what has emissives, etc"
+  "config.entity_texture_features.log_creation.tooltip": "Logs details about a texture when it is first initialized.\nE.G. what variants are found if any, what has emissives, etc",
+  "config.entity_texture_features.debug_screen.title": "Debug settings",
+  "config.entity_texture_features.debug_screen.mass_log": "Send ALL! ETF data to the log",
+  "config.entity_texture_features.debug_screen.mass_log.done": "Send ALL! ETF data to the log",
+  "config.entity_texture_features.debug_screen.mass_log.tooltip": "This setting will print out all of ETF's current texture data to the log.\n including all textures, all texture variation groups\n anything registered to ETF"
 }
