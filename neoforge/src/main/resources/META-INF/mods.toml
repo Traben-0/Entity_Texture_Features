@@ -27,14 +27,14 @@ logoFile = "icon.png"
 [[dependencies.entity_texture_features]]
 modId = "neoforge"
 mandatory = true
-versionRange = "[20.2,)"
+versionRange = "[20.3,)"
 ordering = "NONE"
 side = "CLIENT"
 
 [[dependencies.entity_texture_features]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.20.2,)"
+versionRange = "[1.20.3,)"
 ordering = "NONE"
 side = "CLIENT"
 
