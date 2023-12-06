@@ -100,10 +100,13 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFConfigScreen {
                                 currentSkinToRender = randomID2;
                             }
                         }, Supplier::get) {
+
                     @Override
-                    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+                    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
                         //invisible lol
+//                        super.renderWidget(context, mouseX, mouseY, delta);
                     }
+
                 };
 
                 this.addDrawableChild(butt);

@@ -8,8 +8,8 @@ import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.resource.Resource;
-import net.minecraft.text.LiteralTextContent;
 import net.minecraft.text.MutableText;
+import net.minecraft.text.PlainTextContent;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
@@ -187,7 +187,7 @@ public abstract class ETFUtils2 {
         if (inChat) {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             if (player != null) {
-                player.sendMessage(MutableText.of(new LiteralTextContent("§a[INFO]§r [Entity Texture Features]: " + obj))/*.formatted(Formatting.GRAY, Formatting.ITALIC)*/, false);
+                player.sendMessage(MutableText.of(new PlainTextContent.Literal("§a[INFO]§r [Entity Texture Features]: " + obj))/*.formatted(Formatting.GRAY, Formatting.ITALIC)*/, false);
             } else {
                 ETFClientCommon.LOGGER.info(obj);
             }
@@ -206,7 +206,7 @@ public abstract class ETFUtils2 {
         if (inChat) {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             if (player != null) {
-                player.sendMessage(MutableText.of(new LiteralTextContent("§e[WARN]§r [Entity Texture Features]: " + obj)).formatted(Formatting.YELLOW), false);
+                player.sendMessage(MutableText.of(new PlainTextContent.Literal("§e[WARN]§r [Entity Texture Features]: " + obj)).formatted(Formatting.YELLOW), false);
             } else {
                 ETFClientCommon.LOGGER.warn(obj);
             }
@@ -225,7 +225,7 @@ public abstract class ETFUtils2 {
         if (inChat) {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             if (player != null) {
-                player.sendMessage(MutableText.of(new LiteralTextContent("§4[ERROR]§r [Entity Texture Features]: " + obj)).formatted(Formatting.RED, Formatting.BOLD), false);
+                player.sendMessage(MutableText.of(new PlainTextContent.Literal("§4[ERROR]§r [Entity Texture Features]: " + obj)).formatted(Formatting.RED, Formatting.BOLD), false);
             } else {
                 ETFClientCommon.LOGGER.error(obj);
             }

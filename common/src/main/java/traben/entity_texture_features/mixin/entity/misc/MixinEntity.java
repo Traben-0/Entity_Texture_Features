@@ -6,6 +6,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.scoreboard.AbstractTeam;
+import net.minecraft.scoreboard.Team;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -44,9 +45,8 @@ public abstract class MixinEntity implements ETFEntity {
     @Nullable
     public abstract Text getCustomName();
 
-    @Shadow
-    @Nullable
-    public abstract AbstractTeam getScoreboardTeam();
+
+
 
     @Shadow
     public abstract Iterable<ItemStack> getItemsEquipped();
@@ -65,6 +65,8 @@ public abstract class MixinEntity implements ETFEntity {
 
     @Shadow
     public abstract EntityPose getPose();
+
+    @Shadow @Nullable public abstract Team getScoreboardTeam();
 
     @Override
     public EntityType<?> etf$getType() {

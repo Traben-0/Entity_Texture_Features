@@ -1,6 +1,7 @@
 package traben.entity_texture_features.features.property_reading.properties.optifine_properties;
 
-import net.minecraft.text.LiteralTextContent;
+
+import net.minecraft.text.PlainTextContent;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextContent;
 import org.jetbrains.annotations.NotNull;
@@ -70,7 +71,7 @@ public class NameProperty extends StringArrayOrRegexProperty {
             Text entityNameText = etfEntity.etf$getCustomName();
             if (entityNameText != null) {
                 TextContent content = entityNameText.getContent();
-                if (content instanceof LiteralTextContent literal) {
+                if (content instanceof PlainTextContent.Literal literal) {
                     return literal.string();
                 } else {
                     return entityNameText.getString();
