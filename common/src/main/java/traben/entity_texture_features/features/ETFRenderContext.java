@@ -193,7 +193,7 @@ public class ETFRenderContext {
 
     public static void reset() {
         currentETFTexture = null;
-        currentProvider = null;
+        //currentProvider = null;
 //        currentTopPart = null;
         currentModelPartDepth = 0;
 
