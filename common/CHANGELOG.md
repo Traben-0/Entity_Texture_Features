@@ -1,19 +1,7 @@
 [**ETF Changelog:**]
 
-[beta 2]
-- fixed skull block emissives
-- fixed render context desync *(mobs textures defaulting depending on where you are looking last beta)*
-- fixed elytra emissives
-- removed the ETF cape skin feature, it was fun working with putting a cape inside the skin texture, but it added quite a lot
-of overhead, when the minecraftcapes.net mod is just more effective. With this removed I plan to add support for
-player skin feature emissives in whatever cape texture is being used at a future time. Which will be more freeing than 
-only applying skin feature emissives to etf loaded capes
-- Added a new config screen category `Debug settings`. the debug right click option is now here. the log texture creation setting is now here.
-- added a new debug button in the debug settings screen that will print **ALL** currently cached ETF texture data to the log, details of every known texture and every variant,
-as well as telling you which textures can and cannot be varied. for example elytra.png shows up in the list of textures that can be varied with random entity rules ;)
 
-
-[beta 1]
+[5.0]
 
 ETF 5.0 is a massive rework of the code, ETF is now almost an entirely different mod in its application from what v4.5 was.
 It should now universally affect every entity and entity render feature. 
@@ -27,13 +15,21 @@ It should now universally affect every entity and entity render feature.
 - fixed the ETF & EMF config screen getting faded black in recent versions
 - removed iris z-fighting fixes for everything except armor emissives as they don't appear to be needed anymore
 - several changes and optimizations that are not worth listing.
-
+- Added a new config screen category `Debug settings`. the debug right click option is now here. the log texture creation setting is now here.
+- added a new debug button in the debug settings screen that will print **ALL** currently cached ETF texture data to the log, details of every known texture and every variant,
+  as well as telling you which textures can and cannot be varied. for example elytra.png shows up in the list of textures that can be varied with random entity rules ;)
+- removed the ETF cape skin feature, it was fun working with putting a cape inside the skin texture, but it added quite a lot
+  of overhead, when the minecraftcapes.net mod is just more effective. With this removed I plan to add support for
+  player skin feature emissives in whatever cape texture is being used at a future time. Which will be more freeing than
+  only applying skin feature emissives to etf loaded capes
+- fixed for sodium 0.5.4
 
 removed features due to them now being possible, and preferred, via `EMF`
 - removed elytra thickness tweak feature
 - removed async elytra feature
 - removed lectern book unique texture feature
 - removed piglin ear model visibility feature
+
 
 [4.6.1]
 
