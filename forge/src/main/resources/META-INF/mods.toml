@@ -18,7 +18,7 @@ With more features such as:
  - Blinking textures
  - Player Skin support",
  '''
-logoFile = "assets/entity_texture_features/textures/gui/icon.png"
+logoFile = "icon.png"
 
 [[dependencies.entity_texture_features]]
 modId = "forge"
@@ -30,7 +30,7 @@ side = "CLIENT"
 [[dependencies.entity_texture_features]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.20.2,)"
+versionRange = "[1.20.3,)"
 ordering = "NONE"
 side = "CLIENT"
 

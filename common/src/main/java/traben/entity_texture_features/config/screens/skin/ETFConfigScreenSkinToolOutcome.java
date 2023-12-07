@@ -19,10 +19,10 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.screens.ETFConfigScreen;
+import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.mixin.accessor.FileCacheAccessor;
 import traben.entity_texture_features.mixin.accessor.PlayerSkinProviderAccessor;
 import traben.entity_texture_features.mixin.accessor.PlayerSkinTextureAccessor;
-import traben.entity_texture_features.texture_features.ETFManager;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.io.FileInputStream;
@@ -128,7 +128,6 @@ public class ETFConfigScreenSkinToolOutcome extends ETFConfigScreen {
                             //clear etf data of skin
                             if (MinecraftClient.getInstance().player != null) {
                                 ETFManager.getInstance().PLAYER_TEXTURE_MAP.removeEntryOnly(MinecraftClient.getInstance().player.getUuid());
-                                ETFManager.getInstance().ENTITY_BLINK_TIME.put(MinecraftClient.getInstance().player.getUuid(), 0L);
                             }
                         }
                         button.active = false;

@@ -19,7 +19,7 @@ import org.joml.Quaternionf;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.screens.ETFConfigScreen;
-import traben.entity_texture_features.texture_features.ETFManager;
+import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.ArrayList;
@@ -28,7 +28,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 
 //inspired by puzzles custom gui code
@@ -101,10 +100,13 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFConfigScreen {
                                 currentSkinToRender = randomID2;
                             }
                         }, Supplier::get) {
+
                     @Override
-                    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+                    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
                         //invisible lol
+//                        super.renderWidget(context, mouseX, mouseY, delta);
                     }
+
                 };
 
                 this.addDrawableChild(butt);
@@ -139,10 +141,6 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFConfigScreen {
         if (MinecraftClient.getInstance() != null) {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             if (player != null) {
-
-                int blinkModifierBySystemTimeInTicks = (int) ((System.currentTimeMillis() / 50) % (30 + (ETFConfigData.blinkLength * 2)));
-                ETFManager.getInstance().ENTITY_BLINK_TIME.put(player.getUuid(), player.getWorld().getTime() + blinkModifierBySystemTimeInTicks - (15 + ETFConfigData.blinkLength));
-
 
                 int height = (int) (this.height * 0.75);
                 int playerX = (int) (this.width * 0.14);
@@ -210,7 +208,9 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFConfigScreen {
                         if (bob instanceof LivingEntityRenderer<?, ?>) {
                             // System.out.println("rendered");
                             //((LivingEntityRenderer<PlayerEntity, PlayerEntityModel<PlayerEntity>>) bob).render((PlayerEntity) entity, 0, 1, matrixStack2, immediate, 0xE000E0);
+                            ETFRenderContext.startSpecialRenderOverlayPhase();
                             ((LivingEntityRenderer<?, ?>) bob).getModel().render(matrixStack, vertexC, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
+                            ETFRenderContext.endSpecialRenderOverlayPhase();
                         }
                     }
                 }

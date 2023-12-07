@@ -1,8 +1,8 @@
 plugins {
-    id "com.github.johnrengelman.shadow" version "7.1.2"
+    id "com.github.johnrengelman.shadow" version "8.1.1"
 }
 
-archivesBaseName = rootProject.archives_base_name + "_fabric_1.20.2"
+archivesBaseName = rootProject.archives_base_name + "_fabric_1.20.3"
 
 architectury {
     platformSetupLoomIde()
@@ -30,9 +30,7 @@ dependencies {
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 
-    modImplementation("maven.modrinth:iris:${project.iris_version}") {
-        exclude(group: "net.fabricmc.fabric-api")
-    }
+
 
     modImplementation("maven.modrinth:3dskinlayers:${project.skinlayers_version}") {
         exclude(group: "net.fabricmc.fabric-api")
@@ -59,18 +57,20 @@ shadowJar {
     exclude "architectury.common.json"
 
     configurations = [project.configurations.shadowCommon]
-    classifier "dev-shadow"
+//    classifier "dev-shadow"
+    archiveClassifier.set('dev-shadow')
 }
 
 remapJar {
     injectAccessWidener = true
-    input.set shadowJar.archiveFile
+    input.set shadowJar.archiveFile as Provider<? extends RegularFile>
     dependsOn shadowJar
-    classifier null
+    archiveClassifier.set(null)
 }
 
 jar {
-    classifier "dev"
+//    classifier "dev"
+    archiveClassifier.set('dev')
 }
 
 sourcesJar {

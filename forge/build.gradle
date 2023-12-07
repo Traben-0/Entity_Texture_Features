@@ -1,8 +1,8 @@
 plugins {
-    id "com.github.johnrengelman.shadow" version "7.1.2"
+    id "com.github.johnrengelman.shadow" version "8.1.1"
 }
 
-archivesBaseName = rootProject.archives_base_name + "_forge_1.20.2"
+archivesBaseName = rootProject.archives_base_name + "_forge_1.20.3"
 
 architectury {
     platformSetupLoomIde()
@@ -43,9 +43,7 @@ dependencies {
     implementation(forgeDependencies("org.apache.httpcomponents:httpmime:4.5.10"))
     shadow('org.apache.httpcomponents:httpmime:4.5.14')
 
-    modImplementation("maven.modrinth:oculus:${project.oculus_version}") {
-        //  exclude(group: "net.fabricmc.fabric-api")//??
-    }
+
     modImplementation("maven.modrinth:3dskinlayers:${project.skinlayers_version_forge}") {
         //exclude(group: "net.fabricmc.fabric-api")
     }
@@ -67,17 +65,20 @@ shadowJar {
     exclude "architectury.common.json"
 
     configurations = [project.configurations.shadowCommon]
-    classifier "dev-shadow"
+//    classifier "dev-shadow"
+    archiveClassifier.set('dev-shadow')
 }
 
 remapJar {
     input.set shadowJar.archiveFile
     dependsOn shadowJar
-    classifier null
+//    classifier null
+    archiveClassifier.set(null)
 }
 
 jar {
-    classifier "dev"
+//    classifier "dev"
+    archiveClassifier.set('dev')
 }
 
 sourcesJar {

@@ -1,0 +1,44 @@
+modLoader = "javafml"
+loaderVersion = "[1,)"
+issueTrackerURL = "https://github.com/Traben-0/EmissiveMod/issues"
+license = "LGPL-3.0"
+showAsResourcePack = false
+
+#neoforge changes
+#https://github.com/neoforged/MDK/blob/main/src/main/resources/META-INF/mods.toml
+
+
+[[mods]]
+modId = "entity_texture_features"
+version = "${version}"
+displayName = "Entity Texture Features"
+authors = "Traben"
+description = '''
+Adds support for resource-pack driven features for entity textures including some OptiFine features
+Supports OptiFine:
+ - Random & Custom textures
+ - Emissive textures
+With more features such as:
+ - Blinking textures
+ - Player Skin support",
+ '''
+logoFile = "icon.png"
+
+[[dependencies.entity_texture_features]]
+modId = "neoforge"
+mandatory = true
+versionRange = "[20.3,)"
+ordering = "NONE"
+side = "CLIENT"
+
+[[dependencies.entity_texture_features]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.20.3,)"
+ordering = "NONE"
+side = "CLIENT"
+
+[[mixins]]
+config = "entity_texture_features-forge.mixins.json"
+[[mixins]]
+config = "entity_texture_features-common.mixins.json"

@@ -15,16 +15,15 @@ import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 public abstract class MixinIdentifier {
 
 
-
     @Inject(method = "isPathValid(Ljava/lang/String;)Z", cancellable = true, at = @At("RETURN"))
     private static void etf$illegalPathOverride(String path, CallbackInfoReturnable<Boolean> cir) {
         if (ETFConfigData != null) {
             if (ETFConfigData.illegalPathSupportMode != ETFConfig.IllegalPathMode.None) {
                 if (!cir.getReturnValue() && path != null) {
 
-                    //noinspection EnhancedSwitchMigration
+
                     switch (ETFConfigData.illegalPathSupportMode) {
-                        case Entity: {
+                        case Entity -> {
                             if ((path.contains("/entity/") || path.contains("/optifine/") || path.contains("/etf/"))
                                     && (path.endsWith(".png") || path.endsWith(".properties") || path.endsWith(".mcmeta"))) {
                                 ETFUtils2.logWarn(ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.illegal_path_warn").getString()
@@ -37,16 +36,13 @@ public abstract class MixinIdentifier {
                                 cir.setReturnValue(true);
                             }
                         }
-                        break;
-                        case All:
+                        case All -> {
                             ETFUtils2.logWarn(ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.illegal_path_warn").getString()
                                     + " [" + path + "]");
                             if (!path.isBlank())
                                 cir.setReturnValue(true);
-                            break;
-                        default:
-                            ETFUtils2.logWarn("this message should not appear #65164");
-                            break;
+                        }
+                        default -> ETFUtils2.logWarn("this message should not appear #65164");
                     }
                 }
             }
