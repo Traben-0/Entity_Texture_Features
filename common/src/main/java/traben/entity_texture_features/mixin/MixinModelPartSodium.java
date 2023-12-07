@@ -1,5 +1,8 @@
 package traben.entity_texture_features.mixin;
 
+import me.jellysquid.mods.sodium.client.render.immediate.model.EntityRenderer;
+import me.jellysquid.mods.sodium.client.render.vertex.VertexConsumerUtils;
+import net.caffeinemc.mods.sodium.api.vertex.buffer.VertexBufferWriter;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
@@ -7,6 +10,7 @@ import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,35 +21,35 @@ import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
 
 /**
- * this method figures out if a {@link ModelPart} is the top level of the children tree being rendered,
- * then applies overlay rendering like emissives and enchanted pixels.
+ * this is a copy of {@link MixinModelPart} but for sodium's alternative model part render method
  * <p>
- * this is copied in {@link MixinModelPartSodium} for sodium's alternative model part render method.
- * <p>
- * the priority is required so this method will never mixin before sodium.
+ * this should have no negative impact on sodium's render process, other than of course adding more code that needs to run
  */
-@Mixin(value = ModelPart.class, priority = 99999999)
-public abstract class MixinModelPart {
-    @Shadow
-    public abstract void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha);
+@Pseudo
+@Mixin(value = EntityRenderer.class)
+public abstract class MixinModelPartSodium {
 
-    @Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V",
+    @Shadow
+    public static void render(MatrixStack matrixStack, VertexBufferWriter writer, ModelPart part, int light, int overlay, int color) {
+    }
+
+    @Inject(method = "render",
             at = @At(value = "HEAD"))
-    private void etf$findOutIfInitialModelPart(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha, CallbackInfo ci) {
+    private static void etf$findOutIfInitialModelPart(MatrixStack matrixStack, VertexBufferWriter writer, ModelPart part, int light, int overlay, int color, CallbackInfo ci) {
         ETFRenderContext.incrementCurrentModelPartDepth();
     }
 
-    @Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V",
+    @Inject(method = "render",
             at = @At(value = "RETURN"))
-    private void etf$doEmissiveIfInitialPart(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha, CallbackInfo ci) {
+    private static void etf$doEmissiveIfInitialPart(MatrixStack matrixStack, VertexBufferWriter writer, ModelPart part, int light, int overlay, int color, CallbackInfo ci) {
         //run code if this is the initial topmost rendered part
         if (ETFRenderContext.getCurrentModelPartDepth() != 1) {
             ETFRenderContext.decrementCurrentModelPartDepth();
         } else {
             if (ETFRenderContext.isRenderReady()) {
                 //attempt special renders as eager OR checks
-                if (etf$renderEmissive(matrices, overlay, red, green, blue, alpha) |
-                        etf$renderEnchanted(matrices, light, overlay, red, green, blue, alpha)) {
+                if (etf$renderEmissive(matrixStack, part, overlay, color) |
+                        etf$renderEnchanted(matrixStack, part, light, overlay, color)) {
                         //reset render layer stuff behind the scenes if special renders occurred
                     ETFRenderContext.getCurrentProvider().getBuffer(ETFRenderContext.getCurrentRenderLayer());
                 }
@@ -56,7 +60,7 @@ public abstract class MixinModelPart {
     }
 
     @Unique
-    private boolean etf$renderEmissive(MatrixStack matrices, int overlay, float red, float green, float blue, float alpha) {
+    private static boolean etf$renderEmissive(MatrixStack matrices, ModelPart part, int overlay, int color) {
         Identifier emissive = ETFRenderContext.getCurrentETFTexture().getEmissiveIdentifierOfCurrentState();
         if (emissive != null) {
             boolean wasAllowed = ETFRenderContext.isAllowedToRenderLayerTextureModify();
@@ -74,8 +78,16 @@ public abstract class MixinModelPart {
 
             if(wasAllowed) ETFRenderContext.allowRenderLayerTextureModify();
 
+            //sodium
+            VertexBufferWriter writer = VertexConsumerUtils.convertOrLog(emissiveConsumer);
+
+            if (writer == null) {
+                return false;
+            }
+            //
+
             ETFRenderContext.startSpecialRenderOverlayPhase();
-                render(matrices, emissiveConsumer, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, overlay, red, green, blue, alpha);
+                render(matrices, writer, part, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, overlay, color);
             ETFRenderContext.endSpecialRenderOverlayPhase();
             return true;
         }
@@ -83,7 +95,7 @@ public abstract class MixinModelPart {
     }
 
     @Unique
-    private boolean etf$renderEnchanted(MatrixStack matrices, int light, int overlay, float red, float green, float blue, float alpha) {
+    private static boolean etf$renderEnchanted(MatrixStack matrices, ModelPart part, int light, int overlay, int color) {
         //attempt enchanted render
         Identifier enchanted = ETFRenderContext.getCurrentETFTexture().getEnchantIdentifierOfCurrentState();
         if (enchanted != null) {
@@ -92,8 +104,16 @@ public abstract class MixinModelPart {
                 VertexConsumer enchantedVertex = ItemRenderer.getArmorGlintConsumer(ETFRenderContext.getCurrentProvider(), RenderLayer.getArmorCutoutNoCull(enchanted), false, true);
             if(wasAllowed) ETFRenderContext.allowRenderLayerTextureModify();
 
+            //sodium
+            VertexBufferWriter writer = VertexConsumerUtils.convertOrLog(enchantedVertex);
+
+            if (writer == null) {
+                return false;
+            }
+            //
+
             ETFRenderContext.startSpecialRenderOverlayPhase();
-                render(matrices, enchantedVertex, light, overlay, red, green, blue, alpha);
+                render(matrices, writer, part, light, overlay, color);
             ETFRenderContext.endSpecialRenderOverlayPhase();
             return true;
         }
