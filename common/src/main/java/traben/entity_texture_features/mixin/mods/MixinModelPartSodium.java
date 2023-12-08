@@ -1,4 +1,4 @@
-package traben.entity_texture_features.mixin;
+package traben.entity_texture_features.mixin.mods;
 
 import me.jellysquid.mods.sodium.client.render.immediate.model.EntityRenderer;
 import me.jellysquid.mods.sodium.client.render.vertex.VertexConsumerUtils;
@@ -19,6 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
+import traben.entity_texture_features.mixin.MixinModelPart;
 
 /**
  * this is a copy of {@link MixinModelPart} but for sodium's alternative model part render method

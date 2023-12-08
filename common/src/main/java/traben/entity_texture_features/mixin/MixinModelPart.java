@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
+import traben.entity_texture_features.mixin.mods.MixinModelPartSodium;
 
 /**
  * this method figures out if a {@link ModelPart} is the top level of the children tree being rendered,
@@ -22,9 +23,9 @@ import traben.entity_texture_features.features.ETFRenderContext;
  * <p>
  * this is copied in {@link MixinModelPartSodium} for sodium's alternative model part render method.
  * <p>
- * the priority is required so this method will never mixin before sodium.
+ * the priority is set so this method will never run before sodium cancels the vanilla rendering code.
  */
-@Mixin(value = ModelPart.class, priority = 99999999)
+@Mixin(value = ModelPart.class, priority = 2000)
 public abstract class MixinModelPart {
     @Shadow
     public abstract void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha);

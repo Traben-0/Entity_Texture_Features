@@ -32,9 +32,11 @@
     "entity.renderer.feature.MixinMooshroomMushroomFeatureRenderer",
     "entity.renderer.feature.MixinShoulderParrotFeatureRenderer",
     "entity.renderer.feature.MixinWardenFeatureRenderer",
+    "mods.Mixin3DSkinLayersBody",
+    "mods.Mixin3DSkinLayersHead",
+    "mods.MixinModelPartSodium",
     "reloading.MixinMinecraftClient",
-    "reloading.MixinResourceReload",
-    "MixinModelPartSodium"
+    "reloading.MixinResourceReload"
   ],
   "mixins": [
   ],
