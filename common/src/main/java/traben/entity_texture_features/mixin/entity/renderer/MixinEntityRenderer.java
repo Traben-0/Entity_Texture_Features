@@ -11,12 +11,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import traben.entity_texture_features.ETFClientCommon;
-import traben.entity_texture_features.texture_features.ETFManager;
+import traben.entity_texture_features.features.ETFManager;
 
 @Mixin(EntityRenderer.class)
 public abstract class MixinEntityRenderer<T extends Entity> {
-
-
 
 
     @Inject(method = "getLight", at = @At(value = "RETURN"), cancellable = true)

@@ -29,7 +29,6 @@ public class ETFConfigScreenRandomSettings extends ETFConfigScreen {
                     //temporaryETFConfig = new ETFConfig();
                     ETFConfigScreenMain.temporaryETFConfig.enableCustomTextures = true;
                     ETFConfigScreenMain.temporaryETFConfig.textureUpdateFrequency_V2 = ETFConfig.UpdateFrequency.Fast;
-                    ETFConfigScreenMain.temporaryETFConfig.enableTridents = true;
                     ETFConfigScreenMain.temporaryETFConfig.enableCustomBlockEntities = true;
                     ETFConfigScreenMain.temporaryETFConfig.restrictMoonPhase = true;
                     ETFConfigScreenMain.temporaryETFConfig.restrictDayTime = true;
@@ -67,19 +66,8 @@ public class ETFConfigScreenRandomSettings extends ETFConfigScreen {
                 },
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".texture_update_frequency.tooltip")
         ));
+
         this.addDrawableChild(getETFButton((int) (this.width * 0.2), (int) (this.height * 0.4), (int) (this.width * 0.6), 20,
-                Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
-                        "config." + ETFClientCommon.MOD_ID + ".enable_tridents.title"
-                ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.enableTridents ? ScreenTexts.ON : ScreenTexts.OFF).getString()),
-                (button) -> {
-                    ETFConfigScreenMain.temporaryETFConfig.enableTridents = !ETFConfigScreenMain.temporaryETFConfig.enableTridents;
-                    button.setMessage(Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
-                            "config." + ETFClientCommon.MOD_ID + ".enable_tridents.title"
-                    ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.enableTridents ? ScreenTexts.ON : ScreenTexts.OFF).getString()));
-                },
-                ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".enable_tridents.tooltip")
-        ));
-        this.addDrawableChild(getETFButton((int) (this.width * 0.2), (int) (this.height * 0.5), (int) (this.width * 0.6), 20,
                 Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
                         "config." + ETFClientCommon.MOD_ID + ".custom_block_entity.title"
                 ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.enableCustomBlockEntities ? ScreenTexts.ON : ScreenTexts.OFF).getString()),
@@ -92,13 +80,13 @@ public class ETFConfigScreenRandomSettings extends ETFConfigScreen {
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".custom_block_entity.tooltip")
         ));
 
-        this.addDrawableChild(getETFButton((int) (this.width * 0.2), (int) (this.height * 0.6), (int) (this.width * 0.6), 20,
+        this.addDrawableChild(getETFButton((int) (this.width * 0.2), (int) (this.height * 0.5), (int) (this.width * 0.6), 20,
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".restrict_update_properties"),
                 (button) -> Objects.requireNonNull(client).setScreen(new ETFConfigScreenRandomRestrictSettings(this)),
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".restrict_update_properties.tooltip")
         ));
 
-        this.addDrawableChild(getETFButton((int) (this.width * 0.2), (int) (this.height * 0.7), (int) (this.width * 0.6), 20,
+        this.addDrawableChild(getETFButton((int) (this.width * 0.2), (int) (this.height * 0.6), (int) (this.width * 0.6), 20,
                 Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
                         "config." + ETFClientCommon.MOD_ID + ".disable_default_directory.title"
                 ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.disableVanillaDirectoryVariantTextures ? ScreenTexts.ON : ScreenTexts.OFF).getString()),

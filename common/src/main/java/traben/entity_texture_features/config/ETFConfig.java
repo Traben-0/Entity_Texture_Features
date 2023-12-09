@@ -3,7 +3,7 @@ package traben.entity_texture_features.config;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
-import traben.entity_texture_features.texture_features.ETFManager;
+import traben.entity_texture_features.features.ETFManager;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -26,11 +26,12 @@ public class ETFConfig {
     public boolean restrictDayTime = true;
     public boolean restrictMoonPhase = true;
     public boolean enableEmissiveTextures = true;
+    public boolean enableEnchantedTextures = true;
     public boolean enableEmissiveBlockEntities = true;
 
     public ETFManager.EmissiveRenderModes emissiveRenderMode = ETFManager.EmissiveRenderModes.DULL;
 
-    public boolean specialEmissiveShield = true;
+
     public boolean alwaysCheckVanillaEmissiveSuffix = true;
 
     public boolean skinFeaturesEnabled = true;
@@ -43,23 +44,11 @@ public class ETFConfig {
     public boolean enableBlinking = true;
     public int blinkFrequency = 150;
     public int blinkLength = 1;
-    public boolean enableTridents = true;
-    public boolean enableElytra = true;
-    public boolean elytraThicknessFix = false;
 
     public double advanced_IncreaseCacheSizeModifier = 1.0;
 
     public DebugLogMode debugLoggingMode = DebugLogMode.None;
-
-
-    public boolean removePixelsUnderEmissiveElytra = true;
-    public boolean removePixelsUnderEmissiveArmour = true;
-    public boolean removePixelsUnderEmissivePlayers = true;
-    public boolean removePixelsUnderEmissiveMobs = true;
-    public boolean removePixelsUnderEmissiveBlockEntity = true;
-
-    public boolean dontPatchPBRTextures = true;
-    public boolean dontPatchAnimatedTextures = true;
+    public boolean logTextureDataInitialization = false;
 
 
     public Set<String> ignoredConfigs2 = new HashSet<>();

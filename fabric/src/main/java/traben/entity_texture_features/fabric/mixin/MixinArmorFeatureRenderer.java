@@ -23,8 +23,9 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.config.screens.ETFConfigScreen;
-import traben.entity_texture_features.texture_features.ETFManager;
-import traben.entity_texture_features.texture_features.texture_handlers.ETFTexture;
+import traben.entity_texture_features.features.ETFManager;
+import traben.entity_texture_features.features.ETFRenderContext;
+import traben.entity_texture_features.features.texture_handlers.ETFTexture;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
@@ -39,16 +40,29 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
     public MixinArmorFeatureRenderer(FeatureRendererContext<T, M> context) {
         super(context);
     }
+    @Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
+            at = @At(value = "HEAD"))
+    private void etf$markNotToChange(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
+        ETFRenderContext.preventRenderLayerTextureModify();
+//        ETFRenderContext.allowTexturePatching();
+    }
 
+    @Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
+            at = @At(value = "RETURN"))
+    private void etf$markAllowedToChange(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
+        ETFRenderContext.allowRenderLayerTextureModify();
+        ETFRenderContext.preventTexturePatching();
+    }
 
     @ModifyArg(method = "renderArmorParts",
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/client/render/RenderLayer;getArmorCutoutNoCull(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;"),index = 0)
     private Identifier etf$changeTexture2(Identifier texture) {
-        thisETFTexture = ETFManager.getInstance().getETFTexture(texture, null, ETFManager.TextureSource.ENTITY_FEATURE, ETFConfigData.removePixelsUnderEmissiveArmour);
+        thisETFTexture = ETFManager.getInstance().getETFTextureNoVariation(texture);
         //noinspection ConstantConditions
         if (thisETFTexture != null) {
-            return thisETFTexture.getTextureIdentifier(null, ETFConfigData.enableEmissiveTextures);
+            thisETFTexture.reRegisterBaseTexture();
+            return thisETFTexture.getTextureIdentifier(null);
         }
         return texture;
     }
@@ -66,7 +80,9 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
                 //} else {
                 textureVert = vertexConsumers.getBuffer(RenderLayer.getArmorCutoutNoCull(emissive)); //ItemRenderer.getArmorGlintConsumer(vertexConsumers, RenderLayer.getEntityTranslucent(emissive), false, usesSecondLayer);
                 //}
+                ETFRenderContext.startSpecialRenderOverlayPhase();
                 model.render(matrices, textureVert, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, red, green, blue, 1.0F);
+                ETFRenderContext.startSpecialRenderOverlayPhase();
             }
         }
 
@@ -82,27 +98,25 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
             }
         }
     }
-    @Unique
-    private VertexConsumerProvider etf$VCP =null;
+
 
     @Inject(method = "renderTrim",
             at = @At(value = "HEAD"))
     private void etf$trimGet(ArmorMaterial material, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ArmorTrim trim, A model, boolean leggings, CallbackInfo ci) {
 
 
-            Identifier trimBaseId = leggings ? trim.getLeggingsModelId(material) : trim.getGenericModelId(material) ;
-            //support modded trims with namespace
-            Identifier trimMaterialIdentifier = new Identifier(trimBaseId.getNamespace(),"textures/"+trimBaseId.getPath()+".png");
-            thisETFTrimTexture = ETFManager.getInstance().getETFTexture(trimMaterialIdentifier, null, ETFManager.TextureSource.ENTITY_FEATURE, false);
-            etf$VCP = vertexConsumers;
+        Identifier trimBaseId = leggings ? trim.getLeggingsModelId(material) : trim.getGenericModelId(material) ;
+        //support modded trims with namespace
+        Identifier trimMaterialIdentifier = new Identifier(trimBaseId.getNamespace(),"textures/"+trimBaseId.getPath()+".png");
+        thisETFTrimTexture = ETFManager.getInstance().getETFTextureNoVariation(trimMaterialIdentifier);
 
-            //if it is emmissive we need to create an identifier of the trim to render seperately in iris
-            if(!thisETFTrimTexture.exists()
-                    && ETFConfigData.enableEmissiveTextures
-                    && thisETFTrimTexture.isEmissive()
-                    && ETFClientCommon.IRIS_DETECTED){
-                thisETFTrimTexture.buildTrimTexture(trim,leggings);
-            }
+        //if it is emmissive we need to create an identifier of the trim to render separately in iris
+        if(!thisETFTrimTexture.exists()
+                && ETFConfigData.enableEmissiveTextures
+                && thisETFTrimTexture.isEmissive()
+                && ETFClientCommon.IRIS_DETECTED){
+            thisETFTrimTexture.buildTrimTexture(trim,leggings);
+        }
 
 
     }
@@ -115,12 +129,12 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
         //allow a specified override trim texture if you dont want to be confined by a pallette
         if(thisETFTrimTexture!= null){
             if(thisETFTrimTexture.exists()){
-                return etf$VCP.getBuffer(RenderLayer.getArmorCutoutNoCull(thisETFTrimTexture.getTextureIdentifier(null)));
-            }else if (ETFConfigData.enableEmissiveTextures && thisETFTrimTexture.isEmissive() && ETFClientCommon.IRIS_DETECTED){
+                return ETFRenderContext.getCurrentProvider().getBuffer(RenderLayer.getArmorCutoutNoCull(thisETFTrimTexture.getTextureIdentifier(null)));
+            }else if (thisETFTrimTexture.isEmissive() && ETFConfigData.enableEmissiveTextures && ETFClientCommon.IRIS_DETECTED){
                 //iris is weird and will always render the armor trim atlas over everything else
                 // if for some reason no trim texture is present then just dont render it at all
                 // this is to favour packs with fully emissive trims :/
-                return etf$VCP.getBuffer(RenderLayer.getArmorCutoutNoCull(ETFManager.getErrorETFTexture().thisIdentifier));
+                return ETFRenderContext.getCurrentProvider().getBuffer(RenderLayer.getArmorCutoutNoCull(ETFManager.getErrorETFTexture().thisIdentifier));
             }
         }
         return par2;
@@ -129,20 +143,17 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
     @Inject(method = "renderTrim",
             at = @At(value = "TAIL"))
     private void etf$trimEmissive(ArmorMaterial material, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ArmorTrim trim, A model, boolean leggings, CallbackInfo ci) {
-            if(ETFConfigData.enableEmissiveTextures && thisETFTrimTexture != null){
-               //trimTexture.renderEmissive(matrices,vertexConsumers,model);
-                Identifier emissive = thisETFTrimTexture.getEmissiveIdentifierOfCurrentState();
-                if (emissive != null) {
-                    VertexConsumer textureVert= vertexConsumers.getBuffer(RenderLayer.getArmorCutoutNoCull(emissive));
-                    model.render(matrices, textureVert, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
-                }
+        if(ETFConfigData.enableEmissiveTextures && thisETFTrimTexture != null){
+            //trimTexture.renderEmissive(matrices,vertexConsumers,model);
+            Identifier emissive = thisETFTrimTexture.getEmissiveIdentifierOfCurrentState();
+            if (emissive != null) {
+                VertexConsumer textureVert= vertexConsumers.getBuffer(RenderLayer.getArmorCutoutNoCull(emissive));
+                ETFRenderContext.startSpecialRenderOverlayPhase();
+                model.render(matrices, textureVert, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1.0F);
+                ETFRenderContext.endSpecialRenderOverlayPhase();
             }
+        }
     }
 
-
-
-
-
 }
-
 

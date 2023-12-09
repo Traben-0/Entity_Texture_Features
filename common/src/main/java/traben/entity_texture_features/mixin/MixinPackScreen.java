@@ -1,7 +1,9 @@
 package traben.entity_texture_features.mixin;
 
+
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.pack.PackScreen;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -27,6 +29,8 @@ public abstract class MixinPackScreen extends Screen {
     @Shadow
     @Final
     private Path file;
+    @Shadow
+    private ButtonWidget doneButton;
 
     @SuppressWarnings("unused")
     protected MixinPackScreen(Text title) {
@@ -41,7 +45,9 @@ public abstract class MixinPackScreen extends Screen {
                 && this.file.equals(this.client.getResourcePackDir())
                 //fabric api required for mod asset texture loading
                 && (ETFVersionDifferenceHandler.isFabric() == ETFVersionDifferenceHandler.isThisModLoaded("fabric"))) {
-            this.addDrawableChild(new TexturedButtonWidget((int) (this.width * 0.9), (int) (this.height * 0.8), 24, 20,
+            int x = doneButton.getX() + doneButton.getWidth() + 8;
+            int y = doneButton.getY();
+            this.addDrawableChild(new TexturedButtonWidget(x, y, 24, 20,
                     0, 0, 20, new Identifier(MOD_ID + ":textures/gui/settings.png"), 24, 40,
                     (button) -> Objects.requireNonNull(client).setScreen(new ETFConfigScreenMain(this))));
         }

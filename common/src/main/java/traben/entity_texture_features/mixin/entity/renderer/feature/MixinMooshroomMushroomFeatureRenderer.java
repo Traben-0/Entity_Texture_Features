@@ -12,14 +12,15 @@ import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import traben.entity_texture_features.texture_features.ETFManager;
-import traben.entity_texture_features.texture_features.texture_handlers.ETFTexture;
+import traben.entity_texture_features.features.ETFManager;
+import traben.entity_texture_features.features.texture_handlers.ETFTexture;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
@@ -56,40 +57,23 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
         //enable custom mooshroom mushrooms
         if (ETFConfigData.enableCustomTextures) {
             if (mushroomState.isOf(Blocks.RED_MUSHROOM)) {
-                switch (ETFManager.getInstance().mooshroomRedCustomShroom) {
-                    case 1 -> {
-                        return null;
-                    }
-                    case 2 -> {
-                        return true;
-                    }
-                    default -> {
-                        if (MinecraftClient.getInstance().getResourceManager().getResource(RED_SHROOM).isPresent()) {
-                            ETFManager.getInstance().mooshroomRedCustomShroom = 2;
-                            return entity_texture_features$prepareMushroomTextures(true);
-                        } else {
-                            ETFManager.getInstance().mooshroomRedCustomShroom = 1;
-                        }
+                if (ETFManager.getInstance().mooshroomRedCustomShroomExists == null) {
+                    if (MinecraftClient.getInstance().getResourceManager().getResource(RED_SHROOM).isPresent()) {
+                        ETFManager.getInstance().mooshroomRedCustomShroomExists = entity_texture_features$prepareMushroomTextures(true);
+                    } else {
+                        ETFManager.getInstance().mooshroomRedCustomShroomExists = false;
                     }
                 }
+                return ETFManager.getInstance().mooshroomRedCustomShroomExists;
             } else if (mushroomState.isOf(Blocks.BROWN_MUSHROOM)) {
-                switch (ETFManager.getInstance().mooshroomBrownCustomShroom) {
-                    case 1 -> {
-                        return null;
-                    }
-                    case 2 -> {
-                        return false;
-                    }
-                    default -> {
-                        if (MinecraftClient.getInstance().getResourceManager().getResource(BROWN_SHROOM).isPresent()) {
-
-                            ETFManager.getInstance().mooshroomBrownCustomShroom = 2;
-                            return entity_texture_features$prepareMushroomTextures(false);
-                        } else {
-                            ETFManager.getInstance().mooshroomBrownCustomShroom = 1;
-                        }
+                if (ETFManager.getInstance().mooshroomBrownCustomShroomExists == null) {
+                    if (MinecraftClient.getInstance().getResourceManager().getResource(BROWN_SHROOM).isPresent()) {
+                        ETFManager.getInstance().mooshroomBrownCustomShroomExists = entity_texture_features$prepareMushroomTextures(false);
+                    } else {
+                        ETFManager.getInstance().mooshroomBrownCustomShroomExists = false;
                     }
                 }
+                return ETFManager.getInstance().mooshroomBrownCustomShroomExists;
             }
 
         }
@@ -98,11 +82,14 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
 
     //return isRed if valid else return null
     @Unique
+    @NotNull
     private static Boolean entity_texture_features$prepareMushroomTextures(boolean isRed) {
-        return entity_texture_features$prepareMushroomTextures(isRed, false);
+        Boolean bool = entity_texture_features$prepareMushroomTextures(isRed, false);
+        return bool != null && bool;
     }
 
     @Unique
+    @Nullable
     private static Boolean entity_texture_features$prepareMushroomTextures(boolean isRed, boolean doingEmissive) {
         Identifier idOfOriginal = isRed ? RED_SHROOM : BROWN_SHROOM;
         String suffix = null;
@@ -167,9 +154,9 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
                 if (!doingEmissive) {
                     entity_texture_features$prepareMushroomTextures(isRed, true);
                     if (isRed) {
-                        ETFManager.getInstance().redMooshroomAlt = new ETFTexture(idOfNew, entity_texture_features$redEmissive);
+                        ETFManager.getInstance().redMooshroomAlt = ETFTexture.ofUnmodifiable(idOfNew, entity_texture_features$redEmissive);
                     } else {
-                        ETFManager.getInstance().brownMooshroomAlt = new ETFTexture(idOfNew, entity_texture_features$brownEmissive);
+                        ETFManager.getInstance().brownMooshroomAlt = ETFTexture.ofUnmodifiable(idOfNew, entity_texture_features$brownEmissive);
                     }
                 }
                 return isRed;
