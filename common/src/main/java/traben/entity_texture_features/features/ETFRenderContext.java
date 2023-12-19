@@ -62,6 +62,7 @@ public class ETFRenderContext {
     public static VertexConsumer processVertexConsumer(VertexConsumerProvider provider, RenderLayer renderLayer) {
 
         currentETFTexture = null;
+
         ETFRenderContext.currentRenderLayer = renderLayer;
         //sprites will give the atlas id if not handled separately, and the only hook in seems to be the consumer
         if (renderLayer instanceof RenderLayer.MultiPhase multiPhase) {//
@@ -197,7 +198,7 @@ public class ETFRenderContext {
 //        currentTopPart = null;
         currentModelPartDepth = 0;
 
-        currentRenderLayer = null;
+//        currentRenderLayer = null;
         currentEntity = null;
         allowedToPatch = false;
         allowRenderLayerTextureModify = true;
