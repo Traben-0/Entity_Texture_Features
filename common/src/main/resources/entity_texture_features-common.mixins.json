@@ -4,11 +4,13 @@
   "compatibilityLevel": "JAVA_17",
   "minVersion": "0.8",
   "client": [
+    "MixinBufferBuilder",
     "MixinIdentifier",
     "MixinModelPart",
     "MixinPackScreen",
     "MixinRenderLayer",
     "MixinSpriteIdentifier",
+    "MixinVertexConsumerProvider_Immediate",
     "accessor.FileCacheAccessor",
     "accessor.PlayerSkinProviderAccessor",
     "accessor.PlayerSkinTextureAccessor",

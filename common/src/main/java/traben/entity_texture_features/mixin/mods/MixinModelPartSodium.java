@@ -6,6 +6,7 @@ import net.caffeinemc.mods.sodium.api.vertex.buffer.VertexBufferWriter;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
@@ -19,7 +20,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
+import traben.entity_texture_features.features.texture_handlers.ETFTexture;
 import traben.entity_texture_features.mixin.MixinModelPart;
+import traben.entity_texture_features.utils.ETFVertexConsumer;
 
 /**
  * this is a copy of {@link MixinModelPart} but for sodium's alternative model part render method
@@ -47,12 +50,20 @@ public abstract class MixinModelPartSodium {
         if (ETFRenderContext.getCurrentModelPartDepth() != 1) {
             ETFRenderContext.decrementCurrentModelPartDepth();
         } else {
-            if (ETFRenderContext.isRenderReady()) {
-                //attempt special renders as eager OR checks
-                if (etf$renderEmissive(matrixStack, part, overlay, color) |
-                        etf$renderEnchanted(matrixStack, part, light, overlay, color)) {
-                        //reset render layer stuff behind the scenes if special renders occurred
-                    ETFRenderContext.getCurrentProvider().getBuffer(ETFRenderContext.getCurrentRenderLayer());
+            if (writer instanceof ETFVertexConsumer etfVertexConsumer
+                    && etfVertexConsumer.etf$getRenderLayer() != null) {
+                ETFTexture texture = etfVertexConsumer.etf$getETFTexture();
+                if(texture != null && (texture.isEmissive() || texture.isEnchanted())) {
+                    VertexConsumerProvider provider = etfVertexConsumer.etf$getProvider();
+                    RenderLayer layer = etfVertexConsumer.etf$getRenderLayer();
+                    if (provider != null && layer != null) {
+                        //attempt special renders as eager OR checks
+                        if (etf$renderEmissive(texture, provider, matrixStack, part, overlay, color) |
+                                etf$renderEnchanted(texture, provider, matrixStack, part, light, overlay, color)) {
+                            //reset render layer stuff behind the scenes if special renders occurred
+                            provider.getBuffer(layer);
+                        }
+                    }
                 }
             }
             //ensure model count is reset
@@ -61,8 +72,8 @@ public abstract class MixinModelPartSodium {
     }
 
     @Unique
-    private static boolean etf$renderEmissive(MatrixStack matrices, ModelPart part, int overlay, int color) {
-        Identifier emissive = ETFRenderContext.getCurrentETFTexture().getEmissiveIdentifierOfCurrentState();
+    private static boolean etf$renderEmissive(ETFTexture texture, VertexConsumerProvider provider, MatrixStack matrices, ModelPart part, int overlay, int color) {
+        Identifier emissive = texture.getEmissiveIdentifierOfCurrentState();
         if (emissive != null) {
             boolean wasAllowed = ETFRenderContext.isAllowedToRenderLayerTextureModify();
             ETFRenderContext.preventRenderLayerTextureModify();
@@ -70,7 +81,7 @@ public abstract class MixinModelPartSodium {
             boolean textureIsAllowedBrightRender = ETFManager.getEmissiveMode() == ETFManager.EmissiveRenderModes.BRIGHT
                     && ETFRenderContext.getCurrentEntity().etf$canBeBright();// && !ETFRenderContext.getCurrentETFTexture().isPatched_CurrentlyOnlyArmor();
 
-            VertexConsumer emissiveConsumer = ETFRenderContext.getCurrentProvider().getBuffer(
+            VertexConsumer emissiveConsumer = provider.getBuffer(
                     textureIsAllowedBrightRender ?
                             RenderLayer.getBeaconBeam(emissive, true) :
                             ETFRenderContext.getCurrentEntity().etf$isBlockEntity() ?
@@ -96,13 +107,13 @@ public abstract class MixinModelPartSodium {
     }
 
     @Unique
-    private static boolean etf$renderEnchanted(MatrixStack matrices, ModelPart part, int light, int overlay, int color) {
+    private static boolean etf$renderEnchanted(ETFTexture texture, VertexConsumerProvider provider, MatrixStack matrices, ModelPart part, int light, int overlay, int color) {
         //attempt enchanted render
-        Identifier enchanted = ETFRenderContext.getCurrentETFTexture().getEnchantIdentifierOfCurrentState();
+        Identifier enchanted = texture.getEnchantIdentifierOfCurrentState();
         if (enchanted != null) {
             boolean wasAllowed = ETFRenderContext.isAllowedToRenderLayerTextureModify();
             ETFRenderContext.preventRenderLayerTextureModify();
-                VertexConsumer enchantedVertex = ItemRenderer.getArmorGlintConsumer(ETFRenderContext.getCurrentProvider(), RenderLayer.getArmorCutoutNoCull(enchanted), false, true);
+                VertexConsumer enchantedVertex = ItemRenderer.getArmorGlintConsumer(provider, RenderLayer.getArmorCutoutNoCull(enchanted), false, true);
             if(wasAllowed) ETFRenderContext.allowRenderLayerTextureModify();
 
             //sodium
