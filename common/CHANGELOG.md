@@ -1,5 +1,6 @@
 [**ETF Changelog:**]
 
+[5.1]
 
 - mob spawner entities can now variate their textures again.
 - moved some temp rework code into more compatible mixins for mod compatibility
