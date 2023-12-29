@@ -16,7 +16,7 @@
     "accessor.PlayerSkinProviderAccessor",
     "accessor.PlayerSkinTextureAccessor",
     "accessor.TooltipAccessor",
-    "entity.block.MixinMobSpawnerBlockEntityRenderer",
+    "entity.block.MixinMobSpawnerLogic",
     "entity.block.MixinSkullBlockEntityRenderer",
     "entity.misc.MixinBlazeEntity",
     "entity.misc.MixinBlockEntity",
