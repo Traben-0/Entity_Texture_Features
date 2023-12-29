@@ -1,4 +1,4 @@
-package traben.entity_texture_features.neoforge;
+package traben.entity_texture_features.forge;
 
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;

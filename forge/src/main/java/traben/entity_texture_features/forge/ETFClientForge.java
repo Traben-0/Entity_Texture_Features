@@ -1,4 +1,4 @@
-package traben.entity_texture_features.neoforge;
+package traben.entity_texture_features.forge;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ConfigScreenHandler;
