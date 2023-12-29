@@ -3,6 +3,8 @@
 
 - mob spawner entities can now variate their textures again.
 - moved some temp rework code into more compatible mixins for mod compatibility
+- more stable implementation of the 5.0 rework changes for emissives
+- random properties now also allow ranges with the format <high>-<low> instead of only <low>-<high> *(OptiFine parity)*
 
 
 [5.0]

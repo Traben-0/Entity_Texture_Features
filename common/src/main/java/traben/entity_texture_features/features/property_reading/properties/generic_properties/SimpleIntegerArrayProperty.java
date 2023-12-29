@@ -98,7 +98,19 @@ public abstract class SimpleIntegerArrayProperty extends RandomProperty {
         return String.valueOf(ARRAY);
     }
 
-    public record IntRange(int lower, int higher) {
+    public static class IntRange {
+        final int lower;
+        final int higher;
+
+        public IntRange(int left, int right){
+            if(left > right){
+                higher = left;
+                lower = right;
+            }else{
+                higher = right;
+                lower = left;
+            }
+        }
         public boolean isWithinRange(int value) {
             return value >= lower && value <= higher;
         }
@@ -109,7 +121,7 @@ public abstract class SimpleIntegerArrayProperty extends RandomProperty {
             }
 
             ArrayList<Integer> builder = new ArrayList<>();
-            for (int i = Math.min(lower, higher); i <= Math.max(lower, higher); i++) {
+            for (int i = lower; i <= higher; i++) {
                 builder.add(i);
             }
             return builder.toArray(new Integer[0]);
