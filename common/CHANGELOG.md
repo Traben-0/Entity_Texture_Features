@@ -1,6 +1,10 @@
 [**ETF Changelog:**]
 
 
+- mob spawner entities can now variate their textures again.
+- moved some temp rework code into more compatible mixins for mod compatibility
+
+
 [5.0]
 
 ETF 5.0 is a massive rework of the code, ETF is now almost an entirely different mod in its application from what v4.5 was.

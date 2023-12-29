@@ -1,4 +1,4 @@
-package traben.entity_texture_features.mixin.mods;
+package traben.entity_texture_features.mixin.mods.sodium;
 
 import me.jellysquid.mods.sodium.client.render.immediate.model.EntityRenderer;
 import me.jellysquid.mods.sodium.client.render.vertex.VertexConsumerUtils;
@@ -50,8 +50,8 @@ public abstract class MixinModelPartSodium {
         if (ETFRenderContext.getCurrentModelPartDepth() != 1) {
             ETFRenderContext.decrementCurrentModelPartDepth();
         } else {
-            if (writer instanceof ETFVertexConsumer etfVertexConsumer
-                    && etfVertexConsumer.etf$getRenderLayer() != null) {
+            if (ETFRenderContext.isCurrentlyRenderingEntity()
+                    && writer instanceof ETFVertexConsumer etfVertexConsumer) {
                 ETFTexture texture = etfVertexConsumer.etf$getETFTexture();
                 if(texture != null && (texture.isEmissive() || texture.isEnchanted())) {
                     VertexConsumerProvider provider = etfVertexConsumer.etf$getProvider();

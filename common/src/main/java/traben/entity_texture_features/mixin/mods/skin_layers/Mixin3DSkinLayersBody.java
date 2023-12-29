@@ -1,4 +1,4 @@
-package traben.entity_texture_features.mixin.mods;
+package traben.entity_texture_features.mixin.mods.skin_layers;
 
 import dev.tr7zw.skinlayers.accessor.PlayerSettings;
 import dev.tr7zw.skinlayers.renderlayers.BodyLayerFeatureRenderer;

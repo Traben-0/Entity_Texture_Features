@@ -36,6 +36,8 @@ import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 public abstract class ETFUtils2 {
 
 
+
+
     @NotNull
     public static Identifier addVariantNumberSuffix(Identifier identifier, int variant) {
         return new Identifier(addVariantNumberSuffix(identifier.toString(), variant));

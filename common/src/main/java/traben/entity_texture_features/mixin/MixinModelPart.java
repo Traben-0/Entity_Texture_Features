@@ -17,7 +17,7 @@ import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
-import traben.entity_texture_features.mixin.mods.MixinModelPartSodium;
+import traben.entity_texture_features.mixin.mods.sodium.MixinModelPartSodium;
 import traben.entity_texture_features.utils.ETFVertexConsumer;
 
 /**
@@ -47,7 +47,8 @@ public abstract class MixinModelPart {
             ETFRenderContext.decrementCurrentModelPartDepth();
         } else {
             //top level model so try special rendering
-            if (vertices instanceof ETFVertexConsumer etfVertexConsumer) {
+            if (ETFRenderContext.isCurrentlyRenderingEntity()
+                    && vertices instanceof ETFVertexConsumer etfVertexConsumer) {
                 ETFTexture texture = etfVertexConsumer.etf$getETFTexture();
                 //is etf texture not null and does it special render?
                 if(texture != null && (texture.isEmissive() || texture.isEnchanted())) {
