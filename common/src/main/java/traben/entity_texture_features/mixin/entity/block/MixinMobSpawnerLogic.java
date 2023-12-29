@@ -17,7 +17,7 @@ public abstract class MixinMobSpawnerLogic {
 
     @Inject(method = "getRenderedEntity",
             at = @At(value = "RETURN"))
-    private static void etf$stabiliseMobSpawnerUUID(World world, BlockPos pos, CallbackInfoReturnable<Entity> cir) {
+    private void etf$stabiliseMobSpawnerUUID(World world, BlockPos pos, CallbackInfoReturnable<Entity> cir) {
         Entity entity = cir.getReturnValue();
         if(entity != null){
             entity.setUuid(new UUID(pos.asLong(), world.hashCode()));
