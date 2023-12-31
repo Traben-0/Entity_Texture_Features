@@ -109,7 +109,7 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
                 ETFPlayerTexture etfPlayerTexture = new ETFPlayerTexture();
                 ETFManager.getInstance().PLAYER_TEXTURE_MAP.put(MinecraftClient.getInstance().player.getUuid(), etfPlayerTexture);
                 thisETFPlayerTexture = etfPlayerTexture;
-            } else {
+            } else if (thisETFPlayerTexture.etfTextureOfFinalBaseSkin != null){
                 thisETFPlayerTexture.etfTextureOfFinalBaseSkin.setGUIBlink();
             }
         }
