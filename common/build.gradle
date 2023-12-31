@@ -19,6 +19,10 @@ dependencies {
     modImplementation("maven.modrinth:sodium:${project.sodium_version}") {
         exclude(group: "net.fabricmc.fabric-api")
     }
+
+    modImplementation("maven.modrinth:iris:${project.iris_version}") {
+        exclude(group: "net.fabricmc.fabric-api")
+    }
 }
 
 publishing {

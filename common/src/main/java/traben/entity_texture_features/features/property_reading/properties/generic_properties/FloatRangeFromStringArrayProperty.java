@@ -15,9 +15,15 @@ public abstract class FloatRangeFromStringArrayProperty extends NumberRangeFromS
         try {
             if (possibleRange.matches("([\\d.]+|-[\\d.]+)-([\\d.]+|-[\\d.]+)")) {
                 String[] str = possibleRange.split("(?<!^|-)-");
-                float small = Float.parseFloat(str[0].replaceAll("[^0-9.-]", ""));
-                float big = Float.parseFloat(str[1].replaceAll("[^0-9.-]", ""));
-                return (value) -> value >= small && value <= big;
+                float left = Float.parseFloat(str[0].replaceAll("[^0-9.-]", ""));
+                float right = Float.parseFloat(str[1].replaceAll("[^0-9.-]", ""));
+                if(left == right){
+                    return (value) -> value == left;
+                } else if (right > left) {
+                    return (value) -> value >= left && value <= right;
+                } else {
+                    return (value) -> value >= right && value <= left;
+                }
             } else {
                 float single = Float.parseFloat(possibleRange.replaceAll("[^0-9.-]", ""));
                 return (value) -> value == single;

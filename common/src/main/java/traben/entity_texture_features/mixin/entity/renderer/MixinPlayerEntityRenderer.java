@@ -21,7 +21,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import traben.entity_texture_features.ETFClientCommon;
-import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.compat.ETF3DSkinLayersUtil;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
@@ -57,20 +56,20 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/PlayerEntityModel;setAngles(Lnet/minecraft/entity/LivingEntity;FFFFF)V",
                     shift = At.Shift.AFTER), cancellable = true)
     private void etf$redirectNicely(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, AbstractClientPlayerEntity player, ModelPart arm, ModelPart sleeve, CallbackInfo ci) {
-        arm.pitch = 0.0F;
-        sleeve.pitch = 0.0F;
-
         if (ETFConfigData.skinFeaturesEnabled) {
             ETFPlayerTexture thisETFPlayerTexture = ETFManager.getInstance().getPlayerTexture(player, player.getSkinTextures().texture());
-            if (thisETFPlayerTexture != null) {
+            if (thisETFPlayerTexture != null && thisETFPlayerTexture.hasFeatures) {
                 Identifier etfTexture = thisETFPlayerTexture.getBaseTextureIdentifierOrNullForVanilla(player);
                 if (etfTexture != null) {
                     ETFRenderContext.preventRenderLayerTextureModify();
 
+                    arm.pitch = 0.0F;
+                    sleeve.pitch = 0.0F;
+
                     VertexConsumer vc1 = vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(etfTexture));
                     arm.render(matrices, vc1, light, OverlayTexture.DEFAULT_UV);
                     sleeve.render(matrices, vc1, light, OverlayTexture.DEFAULT_UV);
-                    if (ETFVersionDifferenceHandler.isThisModLoaded("skinlayers") || ETFVersionDifferenceHandler.isThisModLoaded("skinlayers3d")) {
+                    if (ETFClientCommon.SKIN_LAYERS_DETECTED) {
                         try {
                             // handler class is only ever accessed if the mod is present
                             // prevents NoClassDefFoundError
@@ -92,7 +91,7 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
                         arm.render(matrices, vc2, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV);
                         sleeve.render(matrices, vc2, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV);
                         ETFRenderContext.endSpecialRenderOverlayPhase();
-                        if (ETFVersionDifferenceHandler.isThisModLoaded("skinlayers") || ETFVersionDifferenceHandler.isThisModLoaded("skinlayers3d")) {
+                        if (ETFClientCommon.SKIN_LAYERS_DETECTED) {
                             try {
                                 // handler class is only ever accessed if the mod is present
                                 // prevents NoClassDefFoundError
@@ -112,7 +111,7 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
                         VertexConsumer vc3 = ItemRenderer.getArmorGlintConsumer(vertexConsumers, RenderLayer.getArmorCutoutNoCull(thisETFPlayerTexture.baseEnchantIdentifier), false, true);
                         arm.render(matrices, vc3, light, OverlayTexture.DEFAULT_UV);
                         sleeve.render(matrices, vc3, light, OverlayTexture.DEFAULT_UV);
-                        if (ETFVersionDifferenceHandler.isThisModLoaded("skinlayers") || ETFVersionDifferenceHandler.isThisModLoaded("skinlayers3d")) {
+                        if (ETFClientCommon.SKIN_LAYERS_DETECTED) {
                             try {
                                 // handler class is only ever accessed if the mod is present
                                 // prevents NoClassDefFoundError
