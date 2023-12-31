@@ -1,4 +1,4 @@
-package traben.entity_texture_features.neoforge.mixin;
+package traben.entity_texture_features.forge.mixin;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.Model;
@@ -27,6 +27,7 @@ import traben.entity_texture_features.config.screens.ETFConfigScreen;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
+import traben.entity_texture_features.utils.ETFVertexConsumer;
 
 import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
@@ -131,14 +132,16 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
             index = 1)
     private VertexConsumer etf$changeTrim(VertexConsumer par2) {
         //allow a specified override trim texture if you dont want to be confined by a pallette
-        if(thisETF$TrimTexture!= null){
+        if(thisETF$TrimTexture!= null
+                && par2 instanceof ETFVertexConsumer etfVertexConsumer
+                && etfVertexConsumer.etf$getProvider() != null){
             if(thisETF$TrimTexture.exists()){
-                return ETFRenderContext.getCurrentProvider().getBuffer(RenderLayer.getArmorCutoutNoCull(thisETF$TrimTexture.getTextureIdentifier(null)));
+                return etfVertexConsumer.etf$getProvider().getBuffer(RenderLayer.getArmorCutoutNoCull(thisETF$TrimTexture.getTextureIdentifier(null)));
             }else if (ETFConfigData.enableEmissiveTextures && thisETF$TrimTexture.isEmissive() && ETFClientCommon.IRIS_DETECTED){
                 //iris is weird and will always render the armor trim atlas over everything else
                 // if for some reason no trim texture is present then just dont render it at all
                 // this is to favour packs with fully emissive trims :/
-                return ETFRenderContext.getCurrentProvider().getBuffer(RenderLayer.getArmorCutoutNoCull(ETFManager.getErrorETFTexture().thisIdentifier));
+                return etfVertexConsumer.etf$getProvider().getBuffer(RenderLayer.getArmorCutoutNoCull(ETFManager.getErrorETFTexture().thisIdentifier));
             }
         }
         return par2;

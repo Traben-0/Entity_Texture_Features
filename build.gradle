@@ -20,7 +20,12 @@ subprojects {
         // mappings loom.officialMojangMappings()
         // The following line declares the yarn mappings you may select this one as well.
         //mappings "net.fabricmc:yarn:1.19+build.4:v2"
+
         mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+//        mappings loom.layered {
+//            //it.mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+//            it.mappings "dev.architectury:yarn-mappings-patch-forge:1.20.4+build.1"
+//        }
 
         implementation group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.10'
     }
