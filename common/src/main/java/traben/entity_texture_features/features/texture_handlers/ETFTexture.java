@@ -138,8 +138,13 @@ public class ETFTexture {
                 ETFManager.getInstance().ETF_TEXTURE_CACHE.put(blink2Identifier_Patched, this);
         }
 
+
         //register this etf texture
         ETFManager.getInstance().ETF_TEXTURE_CACHE.put(thisIdentifier,this);
+        if(blinkIdentifier != null)
+            ETFManager.getInstance().ETF_TEXTURE_CACHE.put(blinkIdentifier,this);
+        if(blink2Identifier != null)
+            ETFManager.getInstance().ETF_TEXTURE_CACHE.put(blink2Identifier,this);
     }
 
     //alternative initiator for already known textures used for MooShroom's mushrooms

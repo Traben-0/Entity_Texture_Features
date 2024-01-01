@@ -1142,6 +1142,9 @@ public class ETFPlayerTexture {
                         modifiedSkinBlinkPatchedIdentifier,
                         modifiedSkinBlink2PatchedIdentifier);
 
+                if(normalVanillaSkinIdentifier != null)
+                    ETFManager.getInstance().ETF_TEXTURE_CACHE.put(normalVanillaSkinIdentifier,etfTextureOfFinalBaseSkin);
+
 
                 //if vanilla cape and there is no enchant or emissive
                 //then just clear it from etf to defer to cape mods

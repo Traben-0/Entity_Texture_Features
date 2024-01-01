@@ -4,6 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
@@ -20,6 +24,8 @@ import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.screens.warnings.ETFConfigWarning;
 import traben.entity_texture_features.config.screens.warnings.ETFConfigWarnings;
 import traben.entity_texture_features.features.ETFManager;
+import traben.entity_texture_features.features.ETFRenderContext;
+import traben.entity_texture_features.features.texture_handlers.ETFTexture;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -36,7 +42,53 @@ import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 public abstract class ETFUtils2 {
 
 
+    public interface RenderMethodForOverlay{
+        void render(VertexConsumer consumer, int light);
+    }
 
+    public static boolean renderEmissive(ETFTexture texture, VertexConsumerProvider provider, RenderMethodForOverlay renderer) {
+        Identifier emissive = texture.getEmissiveIdentifierOfCurrentState();
+        if (emissive != null) {
+            boolean wasAllowed = ETFRenderContext.isAllowedToRenderLayerTextureModify();
+            ETFRenderContext.preventRenderLayerTextureModify();
+
+            boolean textureIsAllowedBrightRender = ETFManager.getEmissiveMode() == ETFManager.EmissiveRenderModes.BRIGHT
+                    && ETFRenderContext.getCurrentEntity().etf$canBeBright();// && !ETFRenderContext.getCurrentETFTexture().isPatched_CurrentlyOnlyArmor();
+
+            VertexConsumer emissiveConsumer = provider.getBuffer(
+                    textureIsAllowedBrightRender ?
+                            RenderLayer.getBeaconBeam(emissive, true) :
+                            ETFRenderContext.getCurrentEntity().etf$isBlockEntity() ?
+                                    RenderLayer.getEntityTranslucentCull(emissive) :
+                                    RenderLayer.getEntityTranslucent(emissive));
+
+            if(wasAllowed) ETFRenderContext.allowRenderLayerTextureModify();
+
+            ETFRenderContext.startSpecialRenderOverlayPhase();
+            renderer.render( emissiveConsumer, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE);
+            ETFRenderContext.endSpecialRenderOverlayPhase();
+            return true;
+        }
+        return false;
+    }
+
+
+    public static boolean renderEnchanted(ETFTexture texture, VertexConsumerProvider provider, int light, RenderMethodForOverlay renderer) {
+        //attempt enchanted render
+        Identifier enchanted = texture.getEnchantIdentifierOfCurrentState();
+        if (enchanted != null) {
+            boolean wasAllowed = ETFRenderContext.isAllowedToRenderLayerTextureModify();
+            ETFRenderContext.preventRenderLayerTextureModify();
+            VertexConsumer enchantedVertex = ItemRenderer.getArmorGlintConsumer(provider, RenderLayer.getArmorCutoutNoCull(enchanted), false, true);
+            if(wasAllowed) ETFRenderContext.allowRenderLayerTextureModify();
+
+            ETFRenderContext.startSpecialRenderOverlayPhase();
+            renderer.render( enchantedVertex, light);
+            ETFRenderContext.endSpecialRenderOverlayPhase();
+            return true;
+        }
+        return false;
+    }
 
     @NotNull
     public static Identifier addVariantNumberSuffix(Identifier identifier, int variant) {

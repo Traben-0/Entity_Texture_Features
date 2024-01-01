@@ -121,7 +121,7 @@ public class ETFPlayerFeatureRenderer<T extends PlayerEntity, M extends PlayerEn
             renderCoat(matrixStack, vertexConsumerProvider, light, playerTexture, model);
 
 //            ETFPlayerFeatureRenderer.renderEmmisive(matrixStack, vertexConsumerProvider, playerTexture, model);
-            ETFPlayerFeatureRenderer.renderEnchanted(matrixStack, vertexConsumerProvider, light, playerTexture, model);
+            //ETFPlayerFeatureRenderer.renderEnchanted(matrixStack, vertexConsumerProvider, light, playerTexture, model);
 
             ETFRenderContext.endSpecialRenderOverlayPhase();
         }
