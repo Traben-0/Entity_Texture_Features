@@ -56,11 +56,13 @@ public class ETFConfig {
             if (instance == null) {
                 ETFUtils2.logMessage("Config was null, using defaults", false);
                 instance = new ETFConfig();
+                saveConfig();
                 ETFClientCommon.configHadLoadError = true;
             }
         } catch (Exception e) {
             ETFUtils2.logError("Config was corrupt or broken, using defaults", false);
             instance = new ETFConfig();
+            saveConfig();
             ETFClientCommon.configHadLoadError = true;
         }
     }
