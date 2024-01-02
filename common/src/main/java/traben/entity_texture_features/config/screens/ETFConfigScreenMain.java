@@ -19,7 +19,6 @@ import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.Objects;
 
-import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 
 //inspired by puzzles custom gui code
@@ -39,7 +38,7 @@ public class ETFConfigScreenMain extends ETFConfigScreen {
 
     public ETFConfigScreenMain(Screen parent) {
         super(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".title"), parent);
-        temporaryETFConfig = ETFConfig.copyFrom(ETFConfigData);
+        temporaryETFConfig = ETFConfig.copyFrom(ETFConfig.getInstance());
 
 
         if (ETFClientCommon.configHadLoadError) {
@@ -84,8 +83,8 @@ public class ETFConfigScreenMain extends ETFConfigScreen {
         this.addDrawableChild(ButtonWidget.builder(
                 ETFVersionDifferenceHandler.getTextFromTranslation("gui.done"),
                 (button) -> {
-                    ETFConfigData = temporaryETFConfig;
-                    ETFUtils2.saveConfig();
+                    ETFConfig.setInstance(temporaryETFConfig);
+                    ETFConfig.saveConfig();
                     ETFUtils2.checkModCompatibility();
                     ETFManager.resetInstance();
                     ETFClientCommon.configHadLoadError = false;

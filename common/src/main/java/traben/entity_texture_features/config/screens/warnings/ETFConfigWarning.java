@@ -2,10 +2,11 @@ package traben.entity_texture_features.config.screens.warnings;
 
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
+import traben.entity_texture_features.config.ETFConfig;
 
 import java.util.function.Supplier;
 
-import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
+
 
 /**
  * An object pertaining to an ETF config screen warning used in {@link ETFConfigScreenWarnings}
@@ -42,7 +43,7 @@ public abstract class ETFConfigWarning {
     public abstract void testWarningAndApplyFixIfEnabled();
 
     protected boolean isEnabled() {
-        return isConditionMet() && !ETFConfigData.ignoredConfigs2.contains(getID());
+        return isConditionMet() && !ETFConfig.getInstance().ignoredConfigs2.contains(getID());
     }
 
     public abstract boolean doesShowDisableButton();

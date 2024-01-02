@@ -9,7 +9,6 @@ import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.utils.ETFUtils2;
 
-import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
 @Mixin(Identifier.class)
 public abstract class MixinIdentifier {
@@ -17,12 +16,12 @@ public abstract class MixinIdentifier {
 
     @Inject(method = "isPathValid(Ljava/lang/String;)Z", cancellable = true, at = @At("RETURN"))
     private static void etf$illegalPathOverride(String path, CallbackInfoReturnable<Boolean> cir) {
-        if (ETFConfigData != null) {
-            if (ETFConfigData.illegalPathSupportMode != ETFConfig.IllegalPathMode.None) {
+        if (ETFConfig.getInstance() != null) {
+            if (ETFConfig.getInstance().illegalPathSupportMode != ETFConfig.IllegalPathMode.None) {
                 if (!cir.getReturnValue() && path != null) {
 
 
-                    switch (ETFConfigData.illegalPathSupportMode) {
+                    switch (ETFConfig.getInstance().illegalPathSupportMode) {
                         case Entity -> {
                             if ((path.contains("/entity/") || path.contains("/optifine/") || path.contains("/etf/"))
                                     && (path.endsWith(".png") || path.endsWith(".properties") || path.endsWith(".mcmeta"))) {

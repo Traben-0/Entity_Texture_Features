@@ -18,6 +18,7 @@ import net.minecraft.util.Identifier;
 import org.joml.Quaternionf;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
+import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.config.screens.ETFConfigScreen;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.player.ETFPlayerTexture;
@@ -26,7 +27,8 @@ import traben.entity_texture_features.utils.ETFUtils2;
 import java.nio.file.Path;
 import java.util.Objects;
 
-import static traben.entity_texture_features.ETFClientCommon.*;
+import static traben.entity_texture_features.ETFClientCommon.CONFIG_DIR;
+import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 
 //inspired by puzzles custom gui code
 @SuppressWarnings("EnhancedSwitchMigration")
@@ -78,7 +80,7 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
     }
 
     private void onExit() {
-        ETFConfigData.enableBlinking = originalEnableBlinking;
+        ETFConfig.getInstance().enableBlinking = originalEnableBlinking;
         if (MinecraftClient.getInstance().player != null) {
             ETFManager.getInstance().PLAYER_TEXTURE_MAP.removeEntryOnly(MinecraftClient.getInstance().player.getUuid());
         }
@@ -98,8 +100,8 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
 
         //make blinking enabled for skin tool
         if (originalEnableBlinking == null) {
-            originalEnableBlinking = ETFConfigData.enableBlinking;
-            ETFConfigData.enableBlinking = true;
+            originalEnableBlinking = ETFConfig.getInstance().enableBlinking;
+            ETFConfig.getInstance().enableBlinking = true;
         }
 
 

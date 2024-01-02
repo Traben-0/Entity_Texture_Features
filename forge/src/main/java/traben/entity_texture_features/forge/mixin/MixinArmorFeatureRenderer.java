@@ -23,13 +23,13 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.ETFClientCommon;
+import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.config.screens.ETFConfigScreen;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
 import traben.entity_texture_features.utils.ETFVertexConsumer;
 
-import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
 @Mixin(ArmorFeatureRenderer.class)
 public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extends BipedEntityModel<T>> extends FeatureRenderer<T, M> {
@@ -74,7 +74,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
             at = @At(value = "TAIL"))
     private void etf$applyEmissive(MatrixStack arg, VertexConsumerProvider arg2, int i, ArmorItem arg3, Model arg4, boolean bl, float f, float g, float h, Identifier armorResource, CallbackInfo ci) {
         //UUID id = livingEntity.getUuid();
-        if (thisETF$Texture != null && ETFConfigData.enableEmissiveTextures) {
+        if (thisETF$Texture != null && ETFConfig.getInstance().enableEmissiveTextures) {
             Identifier emissive = thisETF$Texture.getEmissiveIdentifierOfCurrentState();
             if (emissive != null) {
                 VertexConsumer textureVert;// = ItemRenderer.getArmorGlintConsumer(vertexConsumers, RenderLayer.getBeaconBeam(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString), true), false, usesSecondLayer);
@@ -117,7 +117,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
 
         //if it is emmissive we need to create an identifier of the trim to render separately in iris
         if(!thisETF$TrimTexture.exists()
-                && ETFConfigData.enableEmissiveTextures
+                && ETFConfig.getInstance().enableEmissiveTextures
                 && thisETF$TrimTexture.isEmissive()
                 && ETFClientCommon.IRIS_DETECTED){
             thisETF$TrimTexture.buildTrimTexture(trim,leggings);
@@ -137,7 +137,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
                 && etfVertexConsumer.etf$getProvider() != null){
             if(thisETF$TrimTexture.exists()){
                 return etfVertexConsumer.etf$getProvider().getBuffer(RenderLayer.getArmorCutoutNoCull(thisETF$TrimTexture.getTextureIdentifier(null)));
-            }else if (ETFConfigData.enableEmissiveTextures && thisETF$TrimTexture.isEmissive() && ETFClientCommon.IRIS_DETECTED){
+            }else if (ETFConfig.getInstance().enableEmissiveTextures && thisETF$TrimTexture.isEmissive() && ETFClientCommon.IRIS_DETECTED){
                 //iris is weird and will always render the armor trim atlas over everything else
                 // if for some reason no trim texture is present then just dont render it at all
                 // this is to favour packs with fully emissive trims :/
@@ -150,7 +150,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
     @Inject(method = "Lnet/minecraft/client/render/entity/feature/ArmorFeatureRenderer;renderTrim(Lnet/minecraft/item/ArmorMaterial;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/item/trim/ArmorTrim;Lnet/minecraft/client/model/Model;Z)V",
             at = @At(value = "TAIL"))
     private void etf$trimEmissive(ArmorMaterial arg, MatrixStack arg2, VertexConsumerProvider arg3, int i, ArmorTrim arg4, Model arg5, boolean bl, CallbackInfo ci) {
-        if(ETFConfigData.enableEmissiveTextures && thisETF$TrimTexture != null){
+        if(ETFConfig.getInstance().enableEmissiveTextures && thisETF$TrimTexture != null){
             //trimTexture.renderEmissive(matrices,vertexConsumers,model);
             Identifier emissive = thisETF$TrimTexture.getEmissiveIdentifierOfCurrentState();
             if (emissive != null) {
