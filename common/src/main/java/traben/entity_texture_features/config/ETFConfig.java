@@ -2,6 +2,7 @@ package traben.entity_texture_features.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.jetbrains.annotations.NotNull;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.features.ETFManager;
@@ -20,9 +21,10 @@ import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 @SuppressWarnings("CanBeFinal")
 public class ETFConfig {
 
+    @NotNull
     public static ETFConfig getInstance() {
         if(instance == null){
-            loadConfig();
+            instance = new ETFConfig();
         }
         return instance;
     }
@@ -64,6 +66,7 @@ public class ETFConfig {
     }
 
     public static void saveConfig() {
+        if(instance == null) ETFUtils2.logError("Config file could not be saved: null", false);
         File config = new File(CONFIG_DIR, "entity_texture_features.json");
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         if (!config.getParentFile().exists()) {
@@ -72,10 +75,10 @@ public class ETFConfig {
         }
         try {
             FileWriter fileWriter = new FileWriter(config);
-            fileWriter.write(gson.toJson(ETFConfig.getInstance()));
+            fileWriter.write(gson.toJson(instance));
             fileWriter.close();
         } catch (IOException e) {
-            ETFUtils2.logError("Config file could not be saved", false);
+            ETFUtils2.logError("Config file could not be saved: "+e.getMessage(), false);
         }
     }
 
