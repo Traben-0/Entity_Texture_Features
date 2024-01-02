@@ -16,13 +16,11 @@ import traben.entity_texture_features.utils.EntityIntLRU;
 import java.util.Objects;
 import java.util.UUID;
 
-import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
-
 public abstract class ETFTextureVariator{
 
 
     public static @NotNull ETFTextureVariator of(@NotNull Identifier vanillaIdentifier) {
-        if (ETFConfigData.enableCustomTextures) {
+        if (ETFConfig.getInstance().enableCustomTextures) {
             ETFApi.ETFVariantSuffixProvider variantProvider = ETFApi.ETFVariantSuffixProvider.getVariantProviderOrNull(
                     ETFUtils2.replaceIdentifier(vanillaIdentifier, ".png", ".properties"),
                     vanillaIdentifier,
@@ -40,7 +38,7 @@ public abstract class ETFTextureVariator{
 
         if (ETFManager.getInstance().ENTITY_DEBUG != null
                 && ETFManager.getInstance().ENTITY_DEBUG.equals(entity.etf$getUuid())) {
-                boolean inChat = ETFConfigData.debugLoggingMode == ETFConfig.DebugLogMode.Chat;
+                boolean inChat = ETFConfig.getInstance().debugLoggingMode == ETFConfig.DebugLogMode.Chat;
 
                 ETFTexture output = getVariantOfInternal(entity);
 
@@ -74,7 +72,7 @@ public abstract class ETFTextureVariator{
         public ETFTextureSingleton(Identifier singletonId) {
             self = ETFManager.getInstance().getETFTextureNoVariation(singletonId);
 
-            if(ETFConfigData.logTextureDataInitialization) {
+            if(ETFConfig.getInstance().logTextureDataInitialization) {
                 ETFUtils2.logMessage("Initializing texture for the first time: " + singletonId);
                 ETFUtils2.logMessage(" - no variants for: " + self);
 
@@ -114,7 +112,7 @@ public abstract class ETFTextureVariator{
 //            variantMap.put(0, vanilla);
             variantMap.defaultReturnValue(vanilla);
 
-            boolean logging = ETFConfigData.logTextureDataInitialization;
+            boolean logging = ETFConfig.getInstance().logTextureDataInitialization;
             if(logging) ETFUtils2.logMessage("Initializing texture for the first time: " + vanillaId);
 
             IntOpenHashSet suffixes = suffixProvider.getAllSuffixes();
@@ -162,11 +160,11 @@ public abstract class ETFTextureVariator{
 
         public void checkIfShouldExpireEntity(UUID id) {
             if (suffixProvider.entityCanUpdate(id)) {
-                switch (ETFConfigData.textureUpdateFrequency_V2){
+                switch (ETFConfig.getInstance().textureUpdateFrequency_V2){
                     case Never -> {}
                     case Instant -> this.entitySuffixMap.removeInt(id);
                     default -> {
-                        int delay = ETFConfigData.textureUpdateFrequency_V2.getDelay();
+                        int delay = ETFConfig.getInstance().textureUpdateFrequency_V2.getDelay();
                         int time = (int) (ETFRenderContext.getCurrentEntity().etf$getWorld().getTime() % delay);
                         if (time ==  Math.abs(id.hashCode()) % delay) {
                             this.entitySuffixMap.removeInt(id);
