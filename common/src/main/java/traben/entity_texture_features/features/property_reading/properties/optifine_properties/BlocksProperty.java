@@ -8,6 +8,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.features.property_reading.properties.generic_properties.StringArrayOrRegexProperty;
 import traben.entity_texture_features.utils.ETFEntity;
 
@@ -16,7 +17,7 @@ import java.util.Properties;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
+
 
 public class BlocksProperty extends StringArrayOrRegexProperty {
 
@@ -123,7 +124,7 @@ public class BlocksProperty extends StringArrayOrRegexProperty {
 
     @Override
     public boolean isPropertyUpdatable() {
-        return !ETFConfigData.restrictBlock;
+        return !ETFConfig.getInstance().restrictBlock;
     }
 
     @Override

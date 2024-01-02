@@ -38,7 +38,7 @@
     "mods.iris.MixinFullyBufferedMultiBufferSource",
     "mods.iris.MixinInnerWrappedRenderType",
     "mods.iris.MixinOuterWrappedRenderType",
-    "mods.skin_layers.MixinMesh",
+    "mods.skin_layers.MixinCustomizableModelPart",
     "mods.sodium.MixinModelPartSodium",
     "reloading.MixinMinecraftClient",
     "reloading.MixinResourceReload"

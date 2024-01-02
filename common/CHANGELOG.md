@@ -1,5 +1,14 @@
 [**ETF Changelog:**]
 
+
+[5.1.1]
+- fixed 3d skin layers mod & etf skin feature, compat for the 1.6 update *(also removed log warning spam for future changes to 3d skin layers)*.
+- restructured the config
+- generified the emissive and enchanted pixel rendering methods
+- the mini entities in mob spawners UUID's should now always use the following format in nbt *("[I;?,?,12345,12345]")*
+making them identifiable for randomisation, the blocks property should also return the actual mob spawner block.
+
+
 [5.1]
 
 - mob spawner entities can now variate their textures again.

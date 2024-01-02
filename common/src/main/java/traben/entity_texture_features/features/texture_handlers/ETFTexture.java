@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
+import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.utils.ETFEntity;
@@ -33,7 +34,7 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
+
 
 
 //can either refer to a vanilla identifier or a variant
@@ -61,8 +62,8 @@ public class ETFTexture {
     private Identifier blink2Identifier = null;
     private Identifier blinkIdentifier_Patched = null;
     private Identifier blink2Identifier_Patched = null;
-    private Integer blinkLength = ETFConfigData.blinkLength;
-    private Integer blinkFrequency = ETFConfigData.blinkFrequency;
+    private Integer blinkLength = ETFConfig.getInstance().blinkLength;
+    private Integer blinkFrequency = ETFConfig.getInstance().blinkFrequency;
 
     // private final TextureSource source;
 
@@ -169,7 +170,7 @@ public class ETFTexture {
     }
 
     private void setupBlinking() {
-        if (ETFConfigData.enableBlinking) {
+        if (ETFConfig.getInstance().enableBlinking) {
             ResourceManager resourceManager = MinecraftClient.getInstance().getResourceManager();
             Optional<Resource> vanillaR1 = resourceManager.getResource(thisIdentifier);
             if (vanillaR1.isPresent()) {
@@ -210,10 +211,10 @@ public class ETFTexture {
                                 if (propertyResourcePackName.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(propertyResourcePackName, blink1PackName))) {
                                     blinkLength = blinkingProps.containsKey("blinkLength") ?
                                             Integer.parseInt(blinkingProps.getProperty("blinkLength").replaceAll("\\D", "")) :
-                                            ETFConfigData.blinkLength;
+                                            ETFConfig.getInstance().blinkLength;
                                     blinkFrequency = blinkingProps.containsKey("blinkFrequency") ?
                                             Integer.parseInt(blinkingProps.getProperty("blinkFrequency").replaceAll("\\D", "")) :
-                                            ETFConfigData.blinkFrequency;
+                                            ETFConfig.getInstance().blinkFrequency;
 
                                 }
 
@@ -282,7 +283,7 @@ public class ETFTexture {
 
     private void setupEmissives() {
 
-        if (ETFConfigData.enableEmissiveTextures) {
+        if (ETFConfig.getInstance().enableEmissiveTextures) {
             ResourceManager resourceManager = MinecraftClient.getInstance().getResourceManager();
 
             for (String possibleEmissiveSuffix :
@@ -353,7 +354,7 @@ public class ETFTexture {
 
     private void setupEnchants() {
 
-        if (ETFConfigData.enableEnchantedTextures) {
+        if (ETFConfig.getInstance().enableEnchantedTextures) {
             ResourceManager resourceManager = MinecraftClient.getInstance().getResourceManager();
 
             String enchantSuffix = "_enchant";
@@ -733,7 +734,7 @@ public class ETFTexture {
         boolean didPatch = false;
 
         //patch out emissive textures for shader z fighting fix
-        if (this.emissiveIdentifier != null && ETFConfigData.enableEmissiveTextures) {
+        if (this.emissiveIdentifier != null && ETFConfig.getInstance().enableEmissiveTextures) {
             //create patched texture
             NativeImage emissiveImage = ETFUtils2.getNativeImageElseNull(emissiveIdentifier);
             try {

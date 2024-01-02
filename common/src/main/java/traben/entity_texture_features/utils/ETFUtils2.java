@@ -1,7 +1,5 @@
 package traben.entity_texture_features.utils;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.RenderLayer;
@@ -27,17 +25,12 @@ import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Properties;
 
-import static traben.entity_texture_features.ETFClientCommon.CONFIG_DIR;
-import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
 public abstract class ETFUtils2 {
 
@@ -143,20 +136,20 @@ public abstract class ETFUtils2 {
         return packNames.get(0);
     }
 
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted") //makes more logical sense
-    public static boolean isNativeImageEmpty(@NotNull NativeImage image) {
-        boolean foundNonEmptyPixel = false;
-        for (int x = 0; x < image.getWidth(); x++) {
-            for (int y = 0; y < image.getHeight(); y++) {
-                if (image.getColor(x, y) != 0) {
-                    foundNonEmptyPixel = true;
-                    break;
-                }
-            }
-            if (foundNonEmptyPixel) break;
-        }
-        return !foundNonEmptyPixel;
-    }
+//    @SuppressWarnings("BooleanMethodIsAlwaysInverted") //makes more logical sense
+//    public static boolean isNativeImageEmpty(@NotNull NativeImage image) {
+//        boolean foundNonEmptyPixel = false;
+//        for (int x = 0; x < image.getWidth(); x++) {
+//            for (int y = 0; y < image.getHeight(); y++) {
+//                if (image.getColor(x, y) != 0) {
+//                    foundNonEmptyPixel = true;
+//                    break;
+//                }
+//            }
+//            if (foundNonEmptyPixel) break;
+//        }
+//        return !foundNonEmptyPixel;
+//    }
 
     @Nullable
     public static String returnNameOfHighestPackFromTheseTwo(String pack1, String pack2) {
@@ -204,7 +197,6 @@ public abstract class ETFUtils2 {
         NativeImage img;
         try {
             //try catch is intended
-            //noinspection OptionalGetWithoutIsPresent
             Optional<Resource> resource =MinecraftClient.getInstance().getResourceManager().getResource(identifier);
             if(resource.isPresent()) {
                 InputStream in = resource.get().getInputStream();
@@ -288,21 +280,7 @@ public abstract class ETFUtils2 {
         }
     }
 
-    public static void saveConfig() {
-        File config = new File(CONFIG_DIR, "entity_texture_features.json");
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        if (!config.getParentFile().exists()) {
-            //noinspection ResultOfMethodCallIgnored
-            config.getParentFile().mkdir();
-        }
-        try {
-            FileWriter fileWriter = new FileWriter(config);
-            fileWriter.write(gson.toJson(ETFConfigData));
-            fileWriter.close();
-        } catch (IOException e) {
-            logError("Config file could not be saved", false);
-        }
-    }
+
 
     public static NativeImage emptyNativeImage() {
         return emptyNativeImage(64, 64);

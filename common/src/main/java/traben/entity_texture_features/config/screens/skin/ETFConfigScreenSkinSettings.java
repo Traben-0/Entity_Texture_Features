@@ -8,6 +8,7 @@ import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
+import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.config.screens.ETFConfigScreen;
 import traben.entity_texture_features.config.screens.ETFConfigScreenMain;
 import traben.entity_texture_features.features.player.ETFPlayerTexture;
@@ -120,7 +121,7 @@ public class ETFConfigScreenSkinSettings extends ETFConfigScreen {
         }
 
         //capture conditions separately to generate specific instructions for users to fix tool
-        boolean condition1 = ETFClientCommon.ETFConfigData.skinFeaturesEnabled;
+        boolean condition1 = ETFConfig.getInstance().skinFeaturesEnabled;
         boolean condition2 = !ETFVersionDifferenceHandler.isFabric() || ETFVersionDifferenceHandler.isThisModLoaded("fabric");
         boolean condition3 = MinecraftClient.getInstance().player != null;
         boolean condition4 = ETFPlayerTexture.clientPlayerOriginalSkinImageForTool != null;

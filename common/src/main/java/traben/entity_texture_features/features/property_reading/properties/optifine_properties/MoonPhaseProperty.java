@@ -1,12 +1,13 @@
 package traben.entity_texture_features.features.property_reading.properties.optifine_properties;
 
 import org.jetbrains.annotations.NotNull;
+import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.features.property_reading.properties.generic_properties.SimpleIntegerArrayProperty;
 import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.Properties;
 
-import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
+
 
 public class MoonPhaseProperty extends SimpleIntegerArrayProperty {
 
@@ -26,7 +27,7 @@ public class MoonPhaseProperty extends SimpleIntegerArrayProperty {
 
     @Override
     public boolean isPropertyUpdatable() {
-        return !ETFConfigData.restrictHeight;
+        return !ETFConfig.getInstance().restrictHeight;
     }
 
     @Override
