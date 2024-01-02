@@ -17,11 +17,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.Identifier;
 import traben.entity_texture_features.ETFClientCommon;
+import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.config.screens.skin.ETFConfigScreenSkinTool;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
 
-import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
+
 
 public class ETFPlayerFeatureRenderer<T extends PlayerEntity, M extends PlayerEntityModel<T>> extends FeatureRenderer<T, M> {
     static private final Identifier VILLAGER_TEXTURE = new Identifier("textures/entity/villager/villager.png");
@@ -75,11 +76,11 @@ public class ETFPlayerFeatureRenderer<T extends PlayerEntity, M extends PlayerEn
         ETFRenderContext.allowRenderLayerTextureModify();
     }
 
-    private static void renderEmmisive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, ETFPlayerTexture playerTexture, Model model) {
-        if (playerTexture.hasEmissives && playerTexture.etfTextureOfFinalBaseSkin != null) {
-            playerTexture.etfTextureOfFinalBaseSkin.renderEmissive(matrixStack, vertexConsumerProvider, model);
-        }
-    }
+//    private static void renderEmmisive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, ETFPlayerTexture playerTexture, Model model) {
+//        if (playerTexture.hasEmissives && playerTexture.etfTextureOfFinalBaseSkin != null) {
+//            playerTexture.etfTextureOfFinalBaseSkin.renderEmissive(matrixStack, vertexConsumerProvider, model);
+//        }
+//    }
 
     private static void renderEnchanted(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light, ETFPlayerTexture playerTexture, Model model) {
         if (playerTexture.hasEnchant && playerTexture.baseEnchantIdentifier != null && playerTexture.etfTextureOfFinalBaseSkin != null) {
@@ -96,7 +97,7 @@ public class ETFPlayerFeatureRenderer<T extends PlayerEntity, M extends PlayerEn
     @Override
     public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, T entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
 
-        if (ETFConfigData.skinFeaturesEnabled && skinHolder != null) {
+        if (ETFConfig.getInstance().skinFeaturesEnabled && skinHolder != null) {
             ETFRenderContext.preventRenderLayerTextureModify();
 
             ETFPlayerTexture playerTexture = skinHolder.etf$getETFPlayerTexture();
@@ -121,7 +122,7 @@ public class ETFPlayerFeatureRenderer<T extends PlayerEntity, M extends PlayerEn
             renderCoat(matrixStack, vertexConsumerProvider, light, playerTexture, model);
 
 //            ETFPlayerFeatureRenderer.renderEmmisive(matrixStack, vertexConsumerProvider, playerTexture, model);
-            ETFPlayerFeatureRenderer.renderEnchanted(matrixStack, vertexConsumerProvider, light, playerTexture, model);
+            //ETFPlayerFeatureRenderer.renderEnchanted(matrixStack, vertexConsumerProvider, light, playerTexture, model);
 
             ETFRenderContext.endSpecialRenderOverlayPhase();
         }

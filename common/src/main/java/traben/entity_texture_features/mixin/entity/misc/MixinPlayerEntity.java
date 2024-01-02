@@ -18,8 +18,6 @@ import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.player.ETFPlayerEntity;
 
-import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
-
 @Mixin(PlayerEntity.class)
 public abstract class MixinPlayerEntity extends Entity implements ETFPlayerEntity {
 
@@ -42,7 +40,7 @@ public abstract class MixinPlayerEntity extends Entity implements ETFPlayerEntit
     @Inject(method = "interact", at = @At("HEAD"))
     private void etf$injected(Entity entity, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
         if (getWorld().isClient()) {
-            if (ETFConfigData.debugLoggingMode != ETFConfig.DebugLogMode.None)
+            if (ETFConfig.getInstance().debugLoggingMode != ETFConfig.DebugLogMode.None)
                 ETFManager.getInstance().markEntityForDebugPrint(entity.getUuid());
         }
     }

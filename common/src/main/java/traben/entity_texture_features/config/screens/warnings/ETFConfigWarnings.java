@@ -2,12 +2,10 @@ package traben.entity_texture_features.config.screens.warnings;
 
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
-import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.config.ETFConfig;
 
 import java.util.HashSet;
 import java.util.Set;
-
-import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
 
 public abstract class ETFConfigWarnings {
@@ -24,8 +22,8 @@ public abstract class ETFConfigWarnings {
                         "config." + ETFClientCommon.MOD_ID + ".warn.figura.text.1",
                         "config." + ETFClientCommon.MOD_ID + ".warn.figura.text.2",
                         () -> {
-                            ETFConfigData.skinFeaturesEnabled = false;
-                            ETFUtils2.saveConfig();
+                            ETFConfig.getInstance().skinFeaturesEnabled = false;
+                            ETFConfig.saveConfig();
                         }),
                 //EBE
                 new ETFConfigWarning.Simple(

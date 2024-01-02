@@ -11,9 +11,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.utils.ETFUtils2;
 
-import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
+
 
 @Mixin(EnderDragonEntityRenderer.class)
 public abstract class MixinEnderDragonEntityRenderer extends EntityRenderer<EnderDragonEntity> {
@@ -43,7 +44,7 @@ public abstract class MixinEnderDragonEntityRenderer extends EntityRenderer<Ende
             method = "render(Lnet/minecraft/entity/boss/dragon/EnderDragonEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/VertexConsumerProvider;getBuffer(Lnet/minecraft/client/render/RenderLayer;)Lnet/minecraft/client/render/VertexConsumer;"))
     private RenderLayer etf$returnAlteredTexture(RenderLayer texturedRenderLayer) {
-        if (ETFConfigData.enableCustomTextures) {
+        if (ETFConfig.getInstance().enableCustomTextures) {
             try {
                 if (DRAGON_DECAL.equals(texturedRenderLayer)) {
                     return RenderLayer.getEntityDecal(TEXTURE);

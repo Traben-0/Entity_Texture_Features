@@ -88,7 +88,7 @@ public final class ETFApi {
      * @return the etf config object
      */
     public static ETFConfig getETFConfigObject() {
-        return ETFClientCommon.ETFConfigData;
+        return ETFConfig.getInstance();
     }
 
     /**
@@ -97,8 +97,12 @@ public final class ETFApi {
      * @param newETFConfig the new ETF config to be saved and used by ETF
      */
     public static void setETFConfigObject(ETFConfig newETFConfig) {
-        ETFClientCommon.ETFConfigData = newETFConfig;
-        saveETFConfigChangesAndResetETF();
+        if(newETFConfig != null) {
+            ETFConfig.setInstance(newETFConfig);
+            saveETFConfigChangesAndResetETF();
+        }else{
+            ETFUtils2.logError("new config was null: ignoring.");
+        }
     }
 
     /**
@@ -107,7 +111,7 @@ public final class ETFApi {
      * @return the copy of ETF's current config object
      */
     public static ETFConfig getCopyOfETFConfigObject() {
-        return ETFConfig.copyFrom(ETFClientCommon.ETFConfigData);
+        return ETFConfig.copyFrom(ETFConfig.getInstance());
     }
 
     /**
@@ -123,7 +127,7 @@ public final class ETFApi {
      * saves any config changes to the live ETF config to file and resets ETF to function with the new settings
      */
     public static void saveETFConfigChangesAndResetETF() {
-        ETFUtils2.saveConfig();
+        ETFConfig.saveConfig();
         ETFManager.resetInstance();
     }
 

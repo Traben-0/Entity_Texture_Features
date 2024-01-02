@@ -53,9 +53,9 @@ dependencies {
     shadow('org.apache.httpcomponents:httpmime:4.5.14')
 
 
-    modImplementation("maven.modrinth:3dskinlayers:${project.skinlayers_version_forge}") {
-        //exclude(group: "net.fabricmc.fabric-api")
-    }
+//    modImplementation("maven.modrinth:3dskinlayers:${project.skinlayers_version_forge}") {
+//        //exclude(group: "net.fabricmc.fabric-api")
+//    }
 
     include group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.10'
     implementation group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.10'
