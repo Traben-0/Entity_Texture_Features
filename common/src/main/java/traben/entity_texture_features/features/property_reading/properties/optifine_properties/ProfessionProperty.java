@@ -1,6 +1,6 @@
 package traben.entity_texture_features.features.property_reading.properties.optifine_properties;
 
-import net.minecraft.entity.passive.VillagerEntity;
+import net.minecraft.village.VillagerDataContainer;
 import org.jetbrains.annotations.NotNull;
 import traben.entity_texture_features.features.property_reading.properties.generic_properties.SimpleIntegerArrayProperty;
 import traben.entity_texture_features.features.property_reading.properties.generic_properties.StringArrayOrRegexProperty;
@@ -28,7 +28,7 @@ public class ProfessionProperty extends StringArrayOrRegexProperty {
 
     @Override
     public boolean testEntityInternal(ETFEntity entity) {
-        if (entity instanceof VillagerEntity villagerEntity) {
+        if (entity instanceof VillagerDataContainer villagerEntity) {
             String entityProfession = villagerEntity.getVillagerData().getProfession().toString().toLowerCase().replace("minecraft:", "");
             int entityProfessionLevel = villagerEntity.getVillagerData().getLevel();
             boolean check = false;

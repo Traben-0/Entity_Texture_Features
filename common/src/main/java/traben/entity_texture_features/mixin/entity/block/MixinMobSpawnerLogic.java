@@ -5,10 +5,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import traben.entity_texture_features.ETFApi;
 
 import java.util.UUID;
 
@@ -16,16 +16,14 @@ import java.util.UUID;
 public abstract class MixinMobSpawnerLogic {
 
 
-    @Unique
-    private static final long ETF$SPAWNER_MARKER = (12345L << 32) + 12345L;
 
     @Inject(method = "getRenderedEntity",
             at = @At(value = "RETURN"))
     private void etf$stabiliseMobSpawnerUUID(World world, BlockPos pos, CallbackInfoReturnable<Entity> cir) {
         Entity entity = cir.getReturnValue();
         if(entity != null){
-            entity.setUuid(new UUID(pos.asLong(), ETF$SPAWNER_MARKER));
-            entity.setPos(pos.getX(),pos.getY(),pos.getZ());
+            entity.setUuid(new UUID(pos.asLong(), ETFApi.ETF_SPAWNER_MARKER));
+
             //resulting nbt should be [I;?,?,12345,12345]
         }
     }

@@ -1,5 +1,6 @@
 package traben.entity_texture_features.features.property_reading.properties.optifine_properties;
 
+import net.minecraft.entity.VariantHolder;
 import net.minecraft.entity.mob.ShulkerEntity;
 import net.minecraft.entity.passive.*;
 import net.minecraft.util.DyeColor;
@@ -9,6 +10,7 @@ import traben.entity_texture_features.features.property_reading.properties.Rando
 import traben.entity_texture_features.features.property_reading.properties.generic_properties.StringArrayOrRegexProperty;
 import traben.entity_texture_features.utils.ETFEntity;
 
+import java.util.Optional;
 import java.util.Properties;
 
 public class ColorProperty extends StringArrayOrRegexProperty {
@@ -57,6 +59,16 @@ public class ColorProperty extends StringArrayOrRegexProperty {
                 if (str != null) {
                     return str.getName();
                 }
+            } else if (entity instanceof VariantHolder<?> variantHolder){
+                try {
+                    //who knows what issues modded mobs might have
+                    if (variantHolder.getVariant() instanceof DyeColor dye) {
+                        return dye.getName();
+                    } else if (variantHolder.getVariant() instanceof Optional<?> optional
+                            && optional.isPresent() && optional.get() instanceof DyeColor dye) {
+                        return dye.getName();
+                    }
+                }catch (Exception ignored){}
             }
         }
         return null;

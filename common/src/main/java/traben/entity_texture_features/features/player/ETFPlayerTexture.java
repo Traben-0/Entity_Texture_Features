@@ -447,24 +447,16 @@ public class ETFPlayerTexture {
     @Nullable
     public Identifier getBaseTextureIdentifierOrNullForVanilla(ETFPlayerEntity player) {
         this.player = player;//refresh player data
-        if (etfTextureOfFinalBaseSkin != null) {
-            if (/*allowThisETFBaseSkin &&*/ canUseFeaturesForThisPlayer()) {
-                return etfTextureOfFinalBaseSkin.getTextureIdentifier(player);
-            } else if (ETFConfig.getInstance().tryETFTransparencyForAllSkins) {
-                return etfTextureOfFinalBaseSkin.getTextureIdentifier(player);
-            }
+        if (etfTextureOfFinalBaseSkin != null && canUseFeaturesForThisPlayer() && ETFConfig.getInstance().tryETFTransparencyForAllSkins) {
+            return etfTextureOfFinalBaseSkin.getTextureIdentifier(player);
         }
         return null;
     }
 
     @Nullable
     public Identifier getBaseHeadTextureIdentifierOrNullForVanilla() {
-        if (etfTextureOfFinalBaseSkin != null) {
-            if (/*allowThisETFBaseSkin &&*/ canUseFeaturesForThisPlayer()) {
-                return etfTextureOfFinalBaseSkin.getTextureIdentifier(null);
-            } else if (ETFConfig.getInstance().tryETFTransparencyForAllSkins) {
-                return etfTextureOfFinalBaseSkin.getTextureIdentifier(null);
-            }
+        if (etfTextureOfFinalBaseSkin != null && canUseFeaturesForThisPlayer() && ETFConfig.getInstance().tryETFTransparencyForAllSkins) {
+            return etfTextureOfFinalBaseSkin.getTextureIdentifier(null);
         }
         return null;
     }
