@@ -1,5 +1,8 @@
 [**ETF Changelog:**]
 
+[5.2.1]
+- fixed a crash related to unexpected null values #234
+
 [5.2]
 with the new optimizations in how properties work now I don't need to worry too much about adding too many of them,
 that being said, I've added a bunch of new properties mostly introducing some external non-entity values.
