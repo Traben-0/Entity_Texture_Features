@@ -50,7 +50,8 @@ public abstract class MixinRenderLayer {
                     "getEntityTranslucent(Lnet/minecraft/util/Identifier;Z)Lnet/minecraft/client/render/RenderLayer;",
                     "getEntityTranslucentCull",
                     "getEntityTranslucentEmissive(Lnet/minecraft/util/Identifier;Z)Lnet/minecraft/client/render/RenderLayer;",
-                    "getArmorCutoutNoCull"
+                    "getArmorCutoutNoCull",
+                    "getEntityShadow"
             },
             at = @At(value = "HEAD"),
             index = 0, argsOnly = true)
@@ -58,125 +59,8 @@ public abstract class MixinRenderLayer {
         return etf$getETFVariantOf(value);
     }
 
-//    @ModifyVariable(
-//            method = "getEntitySolid",
-//            at = @At(value = "HEAD"),
-//            index = 0, argsOnly = true)
-//    private static Identifier etf$mixinLayer(Identifier value) {
-//        return etf$getETFVariantOf(value);
-//    }
-//
-//    @ModifyVariable(
-//            method = "getEyes",
-//            at = @At(value = "HEAD"),
-//            index = 0, argsOnly = true)
-//    private static Identifier etf$mixinLayer2(Identifier value) {
-//        return etf$getETFVariantOf(value);
-//    }
 
-//    @ModifyVariable(
-//            method = "getEnergySwirl",
-//            at = @At(value = "HEAD"),
-//            index = 0, argsOnly = true)
-//    private static Identifier etf$mixinLayer3(Identifier value) {
-//        return etf$getETFVariantOf(value);
-//    }
-//
-//    @ModifyVariable(
-//            method = "getEntityAlpha",
-//            at = @At(value = "HEAD"),
-//            index = 0, argsOnly = true)
-//    private static Identifier etf$mixinLayer4(Identifier value) {
-//        return etf$getETFVariantOf(value);
-//    }
-//
-//    @ModifyVariable(
-//            method = "getItemEntityTranslucentCull",
-//            at = @At(value = "HEAD"),
-//            index = 0, argsOnly = true)
-//    private static Identifier etf$mixinLayer5(Identifier value) {
-//        return etf$getETFVariantOf(value);
-//    }
-//
-//    @ModifyVariable(
-//            method = "getEntityCutout",
-//            at = @At(value = "HEAD"),
-//            index = 0, argsOnly = true)
-//    private static Identifier etf$mixinLayer6(Identifier value) {
-//        return etf$getETFVariantOf(value);
-//    }
-//
-//    @ModifyVariable(
-//            method = "getEntityCutoutNoCull(Lnet/minecraft/util/Identifier;Z)Lnet/minecraft/client/render/RenderLayer;",
-//            at = @At(value = "HEAD"),
-//            index = 0, argsOnly = true)
-//    private static Identifier etf$mixinLayer7(Identifier value) {
-//        return etf$getETFVariantOf(value);
-//    }
-//
-//    @ModifyVariable(
-//            method = "getEntityCutoutNoCullZOffset(Lnet/minecraft/util/Identifier;Z)Lnet/minecraft/client/render/RenderLayer;",
-//            at = @At(value = "HEAD"),
-//            index = 0, argsOnly = true)
-//    private static Identifier etf$mixinLayer8(Identifier value) {
-//        return etf$getETFVariantOf(value);
-//    }
-//
-//    @ModifyVariable(
-//            method = "getEntityDecal",
-//            at = @At(value = "HEAD"),
-//            index = 0, argsOnly = true)
-//    private static Identifier etf$mixinLayer9(Identifier value) {
-//        return etf$getETFVariantOf(value);
-//    }
-//
-//    @ModifyVariable(
-//            method = "getEntityNoOutline",
-//            at = @At(value = "HEAD"),
-//            index = 0, argsOnly = true)
-//    private static Identifier etf$mixinLayer10(Identifier value) {
-//        return etf$getETFVariantOf(value);
-//    }
-//
-//    @ModifyVariable(
-//            method = "getEntitySmoothCutout",
-//            at = @At(value = "HEAD"),
-//            index = 0, argsOnly = true)
-//    private static Identifier etf$mixinLayer11(Identifier value) {
-//        return etf$getETFVariantOf(value);
-//    }
-//
-//    @ModifyVariable(
-//            method = "getEntityTranslucent(Lnet/minecraft/util/Identifier;Z)Lnet/minecraft/client/render/RenderLayer;",
-//            at = @At(value = "HEAD"),
-//            index = 0, argsOnly = true)
-//    private static Identifier etf$mixinLayer12(Identifier value) {
-//        return etf$getETFVariantOf(value);
-//    }
-//
-//    @ModifyVariable(
-//            method = "getEntityTranslucentCull",
-//            at = @At(value = "HEAD"),
-//            index = 0, argsOnly = true)
-//    private static Identifier etf$mixinLayer13(Identifier value) {
-//        return etf$getETFVariantOf(value);
-//    }
-//
-//    @ModifyVariable(
-//            method = "getEntityTranslucentEmissive(Lnet/minecraft/util/Identifier;Z)Lnet/minecraft/client/render/RenderLayer;",
-//            at = @At(value = "HEAD"),
-//            index = 0, argsOnly = true)
-//    private static Identifier etf$mixinLayer14(Identifier value) {
-//        return etf$getETFVariantOf(value);
-//    }
-//
-//    @ModifyVariable(
-//            method = "getArmorCutoutNoCull",
-//            at = @At(value = "HEAD"),
-//            index = 0, argsOnly = true)
-//    private static Identifier etf$mixinLayer15(Identifier value) {
-//        return etf$getETFVariantOf(value);
-//    }
+
 
 
 }

@@ -5,6 +5,7 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
+import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.utils.ETFEntity;
 import traben.entity_texture_features.utils.ETFRenderLayerWithTexture;
 import traben.entity_texture_features.utils.ETFVertexConsumer;
@@ -32,7 +33,7 @@ public class ETFRenderContext {
     }
 
     public static boolean isAllowedToRenderLayerTextureModify() {
-        return allowRenderLayerTextureModify;
+        return allowRenderLayerTextureModify && ETFConfig.getInstance().enableCustomTextures;
     }
 
     public static void preventRenderLayerTextureModify() {

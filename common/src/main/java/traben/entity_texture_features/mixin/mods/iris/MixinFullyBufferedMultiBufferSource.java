@@ -28,7 +28,8 @@ public class MixinFullyBufferedMultiBufferSource {
             at = @At(value = "HEAD"),
             index = 1, argsOnly = true)
     private RenderLayer etf$modifyRenderLayer(RenderLayer value) {
-        return ETFRenderContext.modifyRenderLayerIfRequired(value);
+        RenderLayer newLayer = ETFRenderContext.modifyRenderLayerIfRequired(value);
+        return newLayer == null ? value : newLayer;
     }
 
 
