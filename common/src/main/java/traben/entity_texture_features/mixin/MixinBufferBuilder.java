@@ -48,5 +48,8 @@ public class MixinBufferBuilder implements ETFVertexConsumer {
             Optional<Identifier> possibleId = etfRenderLayerWithTexture.etf$getId();
             possibleId.ifPresent(identifier -> etf$ETFTexture = ETFManager.getInstance().getETFTextureNoVariation(identifier));
         }
+//        else {
+//            etf$ETFTexture = null;
+//        }
     }
 }

@@ -1,5 +1,52 @@
 [**ETF Changelog:**]
 
+[5.2.1]
+- fixed `Image is not allocated.` crash related to armor rendering
+- added a printout to the right click debug to tell users where the `.properties` and variant files can go, useful for modded entities.
+- slightly tweaked sleeping detection for blinking
+- fixed a crash related to unexpected null values #234
+- fixed _eye textures not variating correctly since v5.0
+- fixed the nose button getting stuck in a loop in the skin settings
+- fixed a crash when removing skin features in the skin tool
+- added an emissive setting to disable Armor & Trims as it has been known to have issues with modded armors and requires future reworking
+
+[5.2]
+with the new optimizations in how properties work now I don't need to worry too much about adding too many of them,
+that being said, I've added a bunch of new properties mostly introducing some external non-entity values.
+Such as irl time & date, and language based localization. 
+Allowing seasonal entity variation, or language variations for any text in your textures.
+
+- fixed player emissives breaking with bright render mode
+- tweaked mob spawner code
+- added the `isSpawner` property which is true if the entity is a miniature mob inside a spawner block
+- the `color` property now also reads modded entity colors if the entity extends VariantHolder<T> with T being either DyeColor or an Optional<DyeColor>
+- the `profession` property should work for all modded mobs implementing VillagerDataContainer
+- added the following irl time & date properties `hour`,`minute`,`second`,`month`,`year`,`monthDay`,`weekDay`,`yearDay`.
+they are all numeric integers and support ranges e.g. `"0 2 4-7"`.
+`hour`,`minute`,`second` will update over time, the others will only be set when the entity spawns.
+`hour` is in 24-hour format, 0 - 23.
+`weekDay` starts with sunday which is 1 up to saturday at 7. 
+`month` starts with january which is 0 up to december at 11.
+`yearDay` is 1 - 366.
+`monthDay` is 1 - 31.
+april fools is thus `month=3, monthDay=1`,The Christmas to new-years period is `month=11, monthDay=25-31`
+- added the `dimension` property, which takes in a list of strings, or regex: or pattern:, and will be true if matching 
+the entities current dimension. 
+Vanilla dimensions are `overworld`, `the_nether`, `the_end`.
+Modded dimension names are entirely up to whatever the mod maker set them to be, expect `mod_name:dimension_name`.
+If you start the property text with `print:` it will work as normal but will also print the found dimension, to help 
+with discovering modded dimension names.
+- added the `language` property, which takes in a list of strings, or regex: or pattern:, and will match to the users
+chosen in-game language to facilitate the localization of textures if desired. default is `en_us` and corresponds to the
+`??_??` format language code of the games language files. 
+Helpful if your texture or model includes text for some reason.
+- added the `light` property, which takes a list of integers and support ranges e.g. `"0 2 4-7"`, and matches it to the
+light level of the block the entity is standing on `0 - 15`, `-1` will be returned if there is some error. 
+This property updates over time. An example use could be differentiating aggressive or passive spiders.
+
+
+[5.1.2]
+- fixed a rare config crash
 
 [5.1.1]
 - fixed 3d skin layers mod & etf skin feature, compat for the 1.6 update *(also removed log warning spam for future changes to 3d skin layers)*.

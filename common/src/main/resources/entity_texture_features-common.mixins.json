@@ -11,7 +11,7 @@
     "MixinPackScreen",
     "MixinRenderLayer",
     "MixinSpriteIdentifier",
-    "MixinVertexConsumerProvider_Immediate",
+    "MixinVertexConsumerProvider$Immediate",
     "accessor.FileCacheAccessor",
     "accessor.PlayerSkinProviderAccessor",
     "accessor.PlayerSkinTextureAccessor",
@@ -41,7 +41,8 @@
     "mods.skin_layers.MixinCustomizableModelPart",
     "mods.sodium.MixinModelPartSodium",
     "reloading.MixinMinecraftClient",
-    "reloading.MixinResourceReload"
+    "reloading.MixinResourceReload",
+    "entity.renderer.feature.MixinEyeFeatureRenderer"
   ],
   "mixins": [
   ],

@@ -608,22 +608,31 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
 
     @SuppressWarnings("EnhancedSwitchMigration")
     public enum NoseType {
-        VILLAGER(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.villager")),
-        VILLAGER_TEXTURED(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.villager2")),
-        VILLAGER_REMOVE(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.villager3")),
-        VILLAGER_TEXTURED_REMOVE(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.villager4")),
-        TEXTURED_1(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.1")),
-        TEXTURED_2(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.2")),
-        TEXTURED_3(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.3")),
-        TEXTURED_4(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.4")),
-        TEXTURED_5(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.5")),
-        NONE(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.none"));
+        VILLAGER(1,ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.villager")),
+        VILLAGER_TEXTURED(7,ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.villager2")),
+        VILLAGER_REMOVE(8,ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.villager3")),
+        VILLAGER_TEXTURED_REMOVE(9,ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.villager4")),
+        TEXTURED_1(2,ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.1")),
+        TEXTURED_2(3,ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.2")),
+        TEXTURED_3(4,ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.3")),
+        TEXTURED_4(5,ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.4")),
+        TEXTURED_5(6,ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.5")),
+        NONE(0,ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.none"));
 
         private final Text buttonText;
+        public final int id;
 
 
-        NoseType(Text buttonText) {
+        NoseType(int i,Text buttonText) {
+            this.id = i;
             this.buttonText = buttonText;
+        }
+
+        public NoseType getByColorId(int id){
+            for (NoseType nose : NoseType.values()) {
+                if (nose.id == id) return nose;
+            }
+            return NONE;
         }
 
         public Text getButtonText() {
@@ -657,29 +666,7 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
         }
 
         public int getNosePixelColour() {
-            switch (this) {
-                case VILLAGER:
-                    return getPixelColour(1);
-                case VILLAGER_TEXTURED:
-                    return getPixelColour(7);
-                case VILLAGER_REMOVE:
-                    return getPixelColour(8);
-                case VILLAGER_TEXTURED_REMOVE:
-                    return getPixelColour(9);
-                case TEXTURED_1:
-                    return getPixelColour(2);
-                case TEXTURED_2:
-                    return getPixelColour(3);
-                case TEXTURED_3:
-                    return getPixelColour(4);
-                case TEXTURED_4:
-                    return getPixelColour(5);
-                case TEXTURED_5:
-                    return getPixelColour(6);
-                default:
-                    return 0;
-
-            }
+            return ETFPlayerTexture.getSkinNumberToPixelColour(id);
         }
     }
 

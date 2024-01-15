@@ -82,6 +82,16 @@ public final class ETFApi {
     public static final UUID ETF_GENERIC_UUID = UUID.nameUUIDFromBytes(("GENERIC").getBytes());
 
     /**
+     * This is the value that is used for mob spawner UUID's least significant bits.
+     * <p>
+     * (uuid.getLeastSignificantBits() == ETF_SPAWNER_MARKER) is true for all mob spawner mini entities
+     * <p>
+     * This is how it appears in NBT as an int list with 4 values "[I;?,?,12345,12345]" making it identifiable there too
+     */
+    public static final long ETF_SPAWNER_MARKER = (12345L << 32) + 12345L;
+
+
+    /**
      * provides access to the live ETF config object to read AND modify its values
      * please be sure to run the save config method below after any changes
      *

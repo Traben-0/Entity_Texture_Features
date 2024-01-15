@@ -108,6 +108,8 @@ public class ETFConfig {
 
     public boolean alwaysCheckVanillaEmissiveSuffix = true;
 
+    public boolean enableArmorAndTrims = true;
+
     public boolean skinFeaturesEnabled = true;
     public boolean skinFeaturesEnableTransparency = true;
     public boolean skinFeaturesEnableFullTransparency = false;

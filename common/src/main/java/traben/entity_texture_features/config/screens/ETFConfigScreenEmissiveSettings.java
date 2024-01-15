@@ -87,7 +87,18 @@ public class ETFConfigScreenEmissiveSettings extends ETFConfigScreen {
                 },
                 ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".emissive_block_entity.tooltip")
         ));
-
+        this.addDrawableChild(getETFButton((int) (this.width * 0.525), (int) (this.height * 0.4), (int) (this.width * 0.45), 20,
+                Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
+                        "config." + ETFClientCommon.MOD_ID + ".armor_enable"
+                ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.enableArmorAndTrims ? ScreenTexts.ON : ScreenTexts.OFF).getString()),
+                (button) -> {
+                    ETFConfigScreenMain.temporaryETFConfig.enableArmorAndTrims = !ETFConfigScreenMain.temporaryETFConfig.enableArmorAndTrims;
+                    button.setMessage(Text.of(ETFVersionDifferenceHandler.getTextFromTranslation(
+                            "config." + ETFClientCommon.MOD_ID + ".armor_enable"
+                    ).getString() + ": " + (ETFConfigScreenMain.temporaryETFConfig.enableArmorAndTrims ? ScreenTexts.ON : ScreenTexts.OFF).getString()));
+                },
+                ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".armor_enable.tooltip")
+        ));
 
     }
 

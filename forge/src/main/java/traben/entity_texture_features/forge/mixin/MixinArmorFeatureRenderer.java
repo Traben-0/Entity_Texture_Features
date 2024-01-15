@@ -30,6 +30,8 @@ import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
 import traben.entity_texture_features.utils.ETFVertexConsumer;
 
+import java.util.Objects;
+
 
 @Mixin(ArmorFeatureRenderer.class)
 public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extends BipedEntityModel<T>> extends FeatureRenderer<T, M> {
@@ -61,11 +63,13 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
     @ModifyArg(method = "Lnet/minecraft/client/render/entity/feature/ArmorFeatureRenderer;renderModel(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/item/ArmorItem;Lnet/minecraft/client/model/Model;ZFFFLnet/minecraft/util/Identifier;)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/RenderLayer;getArmorCutoutNoCull(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;"))
     private Identifier etf$changeTexture(Identifier texture) {
-        thisETF$Texture = ETFManager.getInstance().getETFTextureNoVariation(texture);
-        //noinspection ConstantConditions
-        if (thisETF$Texture != null) {
-            thisETF$Texture.reRegisterBaseTexture();
-            return thisETF$Texture.getTextureIdentifier(null);
+        if(ETFConfig.getInstance().enableArmorAndTrims) {
+            thisETF$Texture = ETFManager.getInstance().getETFTextureNoVariation(texture);
+            //noinspection ConstantConditions
+            if (thisETF$Texture != null) {
+                thisETF$Texture.reRegisterBaseTexture();
+                return thisETF$Texture.getTextureIdentifier(null);
+            }
         }
         return texture;
     }
@@ -108,21 +112,21 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
             at = @At(value = "HEAD"))
     private void etf$trimGet(ArmorMaterial material, MatrixStack arg2, VertexConsumerProvider vertexConsumers, int i, ArmorTrim trim, Model arg5, boolean leggings, CallbackInfo ci) {
 
+        if(ETFConfig.getInstance().enableArmorAndTrims) {
+            Identifier trimBaseId = leggings ? trim.getLeggingsModelId(material) : trim.getGenericModelId(material);
+            //support modded trims with namespace
+            Identifier trimMaterialIdentifier = new Identifier(trimBaseId.getNamespace(), "textures/" + trimBaseId.getPath() + ".png");
+            thisETF$TrimTexture = ETFManager.getInstance().getETFTextureNoVariation(trimMaterialIdentifier);
 
-        Identifier trimBaseId = leggings ? trim.getLeggingsModelId(material) : trim.getGenericModelId(material) ;
-        //support modded trims with namespace
-        Identifier trimMaterialIdentifier = new Identifier(trimBaseId.getNamespace(),"textures/"+trimBaseId.getPath()+".png");
-        thisETF$TrimTexture = ETFManager.getInstance().getETFTextureNoVariation(trimMaterialIdentifier);
 
-
-        //if it is emmissive we need to create an identifier of the trim to render separately in iris
-        if(!thisETF$TrimTexture.exists()
-                && ETFConfig.getInstance().enableEmissiveTextures
-                && thisETF$TrimTexture.isEmissive()
-                && ETFClientCommon.IRIS_DETECTED){
-            thisETF$TrimTexture.buildTrimTexture(trim,leggings);
+            //if it is emmissive we need to create an identifier of the trim to render separately in iris
+            if (!thisETF$TrimTexture.exists()
+                    && ETFConfig.getInstance().enableEmissiveTextures
+                    && thisETF$TrimTexture.isEmissive()
+                    && ETFClientCommon.IRIS_DETECTED) {
+                thisETF$TrimTexture.buildTrimTexture(trim, leggings);
+            }
         }
-
 
     }
 
@@ -136,12 +140,12 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
                 && par2 instanceof ETFVertexConsumer etfVertexConsumer
                 && etfVertexConsumer.etf$getProvider() != null){
             if(thisETF$TrimTexture.exists()){
-                return etfVertexConsumer.etf$getProvider().getBuffer(RenderLayer.getArmorCutoutNoCull(thisETF$TrimTexture.getTextureIdentifier(null)));
+                return Objects.requireNonNull(etfVertexConsumer.etf$getProvider()).getBuffer(RenderLayer.getArmorCutoutNoCull(thisETF$TrimTexture.getTextureIdentifier(null)));
             }else if (ETFConfig.getInstance().enableEmissiveTextures && thisETF$TrimTexture.isEmissive() && ETFClientCommon.IRIS_DETECTED){
                 //iris is weird and will always render the armor trim atlas over everything else
                 // if for some reason no trim texture is present then just dont render it at all
                 // this is to favour packs with fully emissive trims :/
-                return etfVertexConsumer.etf$getProvider().getBuffer(RenderLayer.getArmorCutoutNoCull(ETFManager.getErrorETFTexture().thisIdentifier));
+                return Objects.requireNonNull(etfVertexConsumer.etf$getProvider()).getBuffer(RenderLayer.getArmorCutoutNoCull(ETFManager.getErrorETFTexture().thisIdentifier));
             }
         }
         return par2;

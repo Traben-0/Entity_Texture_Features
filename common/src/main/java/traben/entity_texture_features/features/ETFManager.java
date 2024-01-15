@@ -254,7 +254,7 @@ public class ETFManager {
     public ETFTexture getETFTextureVariant(@NotNull Identifier vanillaIdentifier, @Nullable ETFEntity entity) {
         if (entity == null
                 || entity.etf$getUuid() == ETFApi.ETF_GENERIC_UUID
-                || entity.etf$getBlockPos().equals(Vec3i.ZERO)) {
+                || (entity.etf$getBlockPos().equals(Vec3i.ZERO) && entity.etf$getUuid().getLeastSignificantBits() != ETFApi.ETF_SPAWNER_MARKER)) {
             return getETFTextureNoVariation(vanillaIdentifier);
         }
         if (!VARIATOR_MAP.containsKey(vanillaIdentifier)) {
