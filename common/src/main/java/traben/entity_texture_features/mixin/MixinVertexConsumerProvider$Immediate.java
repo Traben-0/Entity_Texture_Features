@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import traben.entity_texture_features.features.ETFRenderContext;
 
 @Mixin(VertexConsumerProvider.Immediate.class)
-public class MixinVertexConsumerProvider_Immediate {
+public class MixinVertexConsumerProvider$Immediate {
 
 
     @ModifyVariable(

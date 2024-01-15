@@ -33,6 +33,7 @@ import traben.entity_texture_features.utils.ETFUtils2;
 @Mixin(PlayerEntityRenderer.class)
 public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> implements ETFPlayerSkinHolder {
 
+    @Unique
     ETFPlayerTexture etf$ETFPlayerTexture = null;
 
     @SuppressWarnings("unused")
@@ -130,6 +131,7 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
             if (etf$ETFPlayerTexture != null && etf$ETFPlayerTexture.hasFeatures) {
                 Identifier texture = etf$ETFPlayerTexture.getBaseTextureIdentifierOrNullForVanilla(abstractClientPlayerEntity);
                 if (texture != null) {
+                    System.out.println(etf$ETFPlayerTexture.etfTextureOfFinalBaseSkin);
                     cir.setReturnValue(texture);
                 }
             }

@@ -425,7 +425,24 @@ public class ETFPlayerTexture {
             case -16744449 -> 7;
             case -14483457 -> 8;
             case -12362096 -> 666; //villager nose color
-            default -> 0;
+            default -> color;
+        };
+    }
+
+    public static int getSkinNumberToPixelColour(int color) {
+        //            pink   cyan     red       green      brown    blue     orange     yellow
+        //colours = -65281, -256, -16776961, -16711936, -16760705, -65536, -16744449, -14483457
+        return switch (color) {
+            case 1 -> -65281;
+            case 2 -> -256;
+            case 3 -> -16776961;
+            case 4 -> -16711936;
+            case 5 -> -16760705;
+            case 6 -> -65536;
+            case 7 -> -16744449;
+            case 8 -> -14483457;
+            case 666 -> -12362096; //villager nose color
+            default -> color;
         };
     }
 
@@ -446,24 +463,16 @@ public class ETFPlayerTexture {
     @Nullable
     public Identifier getBaseTextureIdentifierOrNullForVanilla(ETFPlayerEntity player) {
         this.player = player;//refresh player data
-        if (etfTextureOfFinalBaseSkin != null) {
-            if (/*allowThisETFBaseSkin &&*/ canUseFeaturesForThisPlayer()) {
-                return etfTextureOfFinalBaseSkin.getTextureIdentifier(player);
-            } else if (ETFConfig.getInstance().tryETFTransparencyForAllSkins) {
-                return etfTextureOfFinalBaseSkin.getTextureIdentifier(player);
-            }
+        if (etfTextureOfFinalBaseSkin != null && canUseFeaturesForThisPlayer() && ETFConfig.getInstance().tryETFTransparencyForAllSkins) {
+            return etfTextureOfFinalBaseSkin.getTextureIdentifier(player);
         }
         return null;
     }
 
     @Nullable
     public Identifier getBaseHeadTextureIdentifierOrNullForVanilla() {
-        if (etfTextureOfFinalBaseSkin != null) {
-            if (/*allowThisETFBaseSkin &&*/ canUseFeaturesForThisPlayer()) {
-                return etfTextureOfFinalBaseSkin.getTextureIdentifier(null);
-            } else if (ETFConfig.getInstance().tryETFTransparencyForAllSkins) {
-                return etfTextureOfFinalBaseSkin.getTextureIdentifier(null);
-            }
+        if (etfTextureOfFinalBaseSkin != null && canUseFeaturesForThisPlayer() && ETFConfig.getInstance().tryETFTransparencyForAllSkins) {
+            return etfTextureOfFinalBaseSkin.getTextureIdentifier(null);
         }
         return null;
     }
@@ -647,36 +656,35 @@ public class ETFPlayerTexture {
                 if (noseChoice >= 1 && noseChoice <= 9) {
                     if (noseChoice == 1 || noseChoice == 7 || noseChoice == 8 || noseChoice == 9) {
                         hasVillagerNose = true;
-                        noseType = noseChoice == 1 || noseChoice == 8 ? ETFConfigScreenSkinTool.NoseType.VILLAGER : ETFConfigScreenSkinTool.NoseType.VILLAGER_TEXTURED;
+                        noseType = ETFConfigScreenSkinTool.NoseType.NONE.getByColorId(noseChoice);
                         if(noseChoice > 7){
                             removeNosePixels = true;
                             deletePixels(modifiedSkin, 43, 13, 44, 15);
                         }
                     } else {
                         noseTexture = ETFUtils2.emptyNativeImage(8, 8);
-                        int[] bounds;
-                        switch (noseChoice) {
-                            case 3:
+                        int[] bounds = switch (noseChoice) {
+                            case 3 -> {
                                 noseType = ETFConfigScreenSkinTool.NoseType.TEXTURED_2;
-                                bounds = getSkinPixelBounds("cape2");
-                                break;
-                            case 4:
+                                yield getSkinPixelBounds("cape2");
+                            }
+                            case 4 -> {
                                 noseType = ETFConfigScreenSkinTool.NoseType.TEXTURED_3;
-                                bounds = getSkinPixelBounds("cape3");
-                                break;
-                            case 5:
+                                yield getSkinPixelBounds("cape3");
+                            }
+                            case 5 -> {
                                 noseType = ETFConfigScreenSkinTool.NoseType.TEXTURED_4;
-                                bounds = getSkinPixelBounds("cape4");
-                                break;
-                            case 6:
+                                yield getSkinPixelBounds("cape4");
+                            }
+                            case 6 -> {
                                 noseType = ETFConfigScreenSkinTool.NoseType.TEXTURED_5;
-                                bounds = getSkinPixelBounds("cape5");
-                                break;
-                            default:
+                                yield getSkinPixelBounds("cape5");
+                            }
+                            default -> {
                                 noseType = ETFConfigScreenSkinTool.NoseType.TEXTURED_1;
-                                bounds = getSkinPixelBounds("cape1");
-                                break;
-                        }
+                                yield getSkinPixelBounds("cape1");
+                            }
+                        };
 
                         int noseY = 0;
                         for (int x = bounds[0]; x <= bounds[2]; x++) {
@@ -1120,7 +1128,8 @@ public class ETFPlayerTexture {
         this.originalSkin = image;
         checkTexture(true);
 
-        etfTextureOfFinalBaseSkin.setGUIBlink();
+        if(etfTextureOfFinalBaseSkin != null)
+            etfTextureOfFinalBaseSkin.setGUIBlink();
     }
 
 }

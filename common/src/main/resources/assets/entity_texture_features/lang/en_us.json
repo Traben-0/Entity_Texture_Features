@@ -207,5 +207,7 @@
   "config.entity_texture_features.debug_screen.title": "Debug settings",
   "config.entity_texture_features.debug_screen.mass_log": "Send ALL! ETF data to the log",
   "config.entity_texture_features.debug_screen.mass_log.done": "Send ALL! ETF data to the log",
-  "config.entity_texture_features.debug_screen.mass_log.tooltip": "This setting will print out all of ETF's current texture data to the log.\n including all textures, all texture variation groups\n anything registered to ETF"
+  "config.entity_texture_features.debug_screen.mass_log.tooltip": "This setting will print out all of ETF's current texture data to the log.\n including all textures, all texture variation groups\n anything registered to ETF",
+  "config.entity_texture_features.armor_enable": "Emissive armor & trims",
+  "config.entity_texture_features.armor_enable.tooltip": "ETF's armor code is know to cause some issues with modded armor and it uses the old ETF system\n this setting exists to allow you to disable emissive armor and trims if you have an incompatibility\n until I am able to reimplement ETF into armor a better way"
 }

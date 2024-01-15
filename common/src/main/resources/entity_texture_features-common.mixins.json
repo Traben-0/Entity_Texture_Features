@@ -11,7 +11,7 @@
     "MixinPackScreen",
     "MixinRenderLayer",
     "MixinSpriteIdentifier",
-    "MixinVertexConsumerProvider_Immediate",
+    "MixinVertexConsumerProvider$Immediate",
     "accessor.MooshroomEntityAccessor",
     "accessor.PlayerSkinProviderAccessor",
     "accessor.PlayerSkinTextureAccessor",
@@ -40,7 +40,8 @@
     "mods.iris.MixinOuterWrappedRenderType",
     "mods.skin_layers.MixinCustomizableModelPart",
     "reloading.MixinMinecraftClient",
-    "reloading.MixinResourceReload"
+    "reloading.MixinResourceReload",
+    "entity.renderer.feature.MixinEyeFeatureRenderer"
   ],
   "mixins": [
   ],
