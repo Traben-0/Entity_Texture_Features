@@ -1,7 +1,14 @@
 [**ETF Changelog:**]
 
 [5.2.1]
+- fixed `Image is not allocated.` crash related to armor rendering
+- added a printout to the right click debug to tell users where the `.properties` and variant files can go, useful for modded entities.
+- slightly tweaked sleeping detection for blinking
 - fixed a crash related to unexpected null values #234
+- fixed _eye textures not variating correctly since v5.0
+- fixed the nose button getting stuck in a loop in the skin settings
+- fixed a crash when removing skin features in the skin tool
+- added an emissive setting to disable Armor & Trims as it has been known to have issues with modded armors and requires future reworking
 
 [5.2]
 with the new optimizations in how properties work now I don't need to worry too much about adding too many of them,

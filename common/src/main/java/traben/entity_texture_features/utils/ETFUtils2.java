@@ -35,6 +35,25 @@ import java.util.Properties;
 public abstract class ETFUtils2 {
 
 
+
+    public static Identifier getETFVariantNotNullForInjector(Identifier identifier) {
+        //do not modify texture
+        if (ETFRenderContext.getCurrentEntity() == null
+                || !ETFRenderContext.isAllowedToRenderLayerTextureModify())
+            return identifier;
+
+        //get etf modified texture
+        ETFTexture etfTexture = ETFManager.getInstance().getETFTextureVariant(identifier, ETFRenderContext.getCurrentEntity());
+        if(ETFRenderContext.isAllowedToPatch()){
+            etfTexture.assertPatchedTextures();
+        }
+        Identifier modified = etfTexture.getTextureIdentifier(ETFRenderContext.getCurrentEntity());
+
+        //check not null just to be safe, it shouldn't be however
+        //noinspection ConstantValue
+        return modified == null ? identifier : modified;
+    }
+
     public interface RenderMethodForOverlay{
         void render(VertexConsumer consumer, int light);
     }

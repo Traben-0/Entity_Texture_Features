@@ -427,9 +427,11 @@ public class ETFTexture {
         hasPatched = true;
         hasBeenReRegistered = true;
         NativeImage newBaseTexture = ETFUtils2.getNativeImageElseNull(thisIdentifier);
-        thisIdentifier_Patched = new Identifier(PATCH_NAMESPACE_PREFIX + thisIdentifier.getNamespace(), thisIdentifier.getPath());
-        ETFUtils2.registerNativeImageToIdentifier(newBaseTexture, thisIdentifier_Patched);
-        ETFManager.getInstance().ETF_TEXTURE_CACHE.put(thisIdentifier_Patched, this);
+        if (newBaseTexture != null) {
+            thisIdentifier_Patched = new Identifier(PATCH_NAMESPACE_PREFIX + thisIdentifier.getNamespace(), thisIdentifier.getPath());
+            ETFUtils2.registerNativeImageToIdentifier(newBaseTexture, thisIdentifier_Patched);
+            ETFManager.getInstance().ETF_TEXTURE_CACHE.put(thisIdentifier_Patched, this);
+        }
 
     }
 
@@ -450,9 +452,11 @@ public class ETFTexture {
         if (!doesBlink() || !(entity instanceof LivingEntity)) {
             return identifierOfCurrentState();
         }
+
+
         if(guiBlink){
             setBlink(Math.abs((int) System.currentTimeMillis()/20 % 50000), 0);
-        }else if (entity.etf$getPose() == EntityPose.SLEEPING) {
+        }else if (((LivingEntity) entity).isInPose(EntityPose.SLEEPING)) {
             //force eyes closed if asleep
             modifyTextureState(TextureReturnState.APPLY_BLINK);
         } else if (((LivingEntity) entity).hasStatusEffect(StatusEffects.BLINDNESS)) {
