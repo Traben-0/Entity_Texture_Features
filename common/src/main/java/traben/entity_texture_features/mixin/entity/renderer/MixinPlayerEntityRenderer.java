@@ -131,7 +131,7 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
             if (etf$ETFPlayerTexture != null && etf$ETFPlayerTexture.hasFeatures) {
                 Identifier texture = etf$ETFPlayerTexture.getBaseTextureIdentifierOrNullForVanilla(abstractClientPlayerEntity);
                 if (texture != null) {
-                    System.out.println(etf$ETFPlayerTexture.etfTextureOfFinalBaseSkin);
+//                    System.out.println(etf$ETFPlayerTexture.etfTextureOfFinalBaseSkin);
                     cir.setReturnValue(texture);
                 }
             }

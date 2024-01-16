@@ -489,7 +489,7 @@ public class ETFTexture {
 
     private boolean guiBlink = false;
     public void setGUIBlink(){
-        System.out.println("set blink");
+//        System.out.println("set blink");
         blinkFrequency = 100;
         blinkLength = 40;
         guiBlink = true;
