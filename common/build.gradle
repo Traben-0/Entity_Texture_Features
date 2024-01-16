@@ -12,7 +12,15 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
     // Remove the next line if you don't want to depend on the API
     //modApi "dev.architectury:architectury:${rootProject.architectury_version}"
-    modImplementation("maven.modrinth:3dskinlayers:${project.skinlayers_version_fabric}") {
+    modImplementation("maven.modrinth:3dskinlayers:${project.skinlayers_version}") {
+        exclude(group: "net.fabricmc.fabric-api")
+    }
+
+    modImplementation("maven.modrinth:sodium:${project.sodium_version}") {
+        exclude(group: "net.fabricmc.fabric-api")
+    }
+
+    modImplementation("maven.modrinth:iris:${project.iris_version}") {
         exclude(group: "net.fabricmc.fabric-api")
     }
 }
@@ -34,8 +42,8 @@ publishing {
         from("LICENSE") {
             rename { "License_${project.archivesBaseName}_${project.version}.txt" }
         }
-        from("CHANGELOG.md") {
-            rename { "Changelog_${project.version}.md" }
-        }
+//        from("CHANGELOG.md") {
+//            rename { "Changelog_${project.version}.md" }
+//        }
     }
 }

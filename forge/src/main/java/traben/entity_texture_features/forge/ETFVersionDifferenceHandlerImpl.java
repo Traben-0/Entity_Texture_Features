@@ -32,9 +32,7 @@ public class ETFVersionDifferenceHandlerImpl {
         return false;
     }
 
-    public static boolean areShadersInUse() {
-        return oculusCompat.isShaderPackInUse();
-    }
+
 
     public static Logger getLogger() {
         //1.19 & 1.18.2 variation
@@ -49,7 +47,7 @@ public class ETFVersionDifferenceHandlerImpl {
     public static String getBiomeString(World world, BlockPos pos) {
         if(world == null || pos == null) return null;
         //1.19 & 1.18.2 variation
-        return world.getBiome(pos).getKey().toString().split("\s/\s")[1].replaceAll("[^\\da-zA-Z_:-]", "");
+        return world.getBiome(pos).getKey().toString().split(" / ")[1].replaceAll("[^\\da-zA-Z_:-]", "");
     }
 
 

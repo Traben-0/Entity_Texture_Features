@@ -48,7 +48,6 @@
     "config.entity_texture_features.emissive_mode.title": "Modo de renderização emissiva",
     "config.entity_texture_features.emissive_mode.tooltip": "Isso define se os emissivos usam renderização 'Mais brilhante' ou 'Padrão'\nIsso é difícil de descrever, apenas experimente no jogo :)\nA renderização brilhante faz com que o emissivo apareça com brilho máximo, se necessário\ne é apenas parcialmente compatível com shaders , etc.\nA renderização padrão respeita os efeitos dos renderizadores padrão nas entidades,\na direção de cada superfície terá uma leve variação de brilho\ne os emissivos serão um pouco menos brilhantes no geral\nassim como um bloom geralmente menor com shaders.\nModo compatível, ajusta automaticamente o modo de renderização para melhor compatibilidade e brilho do sombreador\nAs entidades de bloco sempre estarão no modo padrão, a menos que o Iris esteja instalado.",
     "config.entity_texture_features.emissive_mode.bright": "Mais brilhante",
-    "config.entity_texture_features.emissive_mode.compatible": "Compatível",
     "config.entity_texture_features.emissive_mode.dull": "Padrão",
     "config.entity_texture_features.general_settings.title": "Configurações Gerais",
     "config.entity_texture_features.hide_button": "Esconde o botão do ETF",

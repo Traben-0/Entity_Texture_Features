@@ -39,7 +39,14 @@ public class ETFClientForge {
             //try {
                 ModLoadingContext.get().registerExtensionPoint(
                         ConfigGuiHandler.ConfigGuiFactory.class,
-                        () -> new ConfigGuiHandler.ConfigGuiFactory((minecraftClient, screen) -> new ETFConfigScreenMain(screen)));
+                        () -> new ConfigGuiHandler.ConfigGuiFactory((minecraftClient, screen) -> {
+                            try {
+                                return new ETFConfigScreenMain(screen);}
+                            catch (Exception e) {
+                                System.out.println("[Entity Texture Features]: Mod config broken: " + e.getMessage());
+                                return null;
+                            }
+                        }));
             //}// catch (NoClassDefFoundError e) {
                // System.out.println("[Entity Texture Features]: Mod settings cannot be edited in GUI without cloth config");
             //}
