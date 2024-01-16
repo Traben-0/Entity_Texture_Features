@@ -15,6 +15,14 @@ dependencies {
     modImplementation("maven.modrinth:3dskinlayers:${project.skinlayers_version}") {
         exclude(group: "net.fabricmc.fabric-api")
     }
+
+    modImplementation("maven.modrinth:sodium:${project.sodium_version}") {
+        exclude(group: "net.fabricmc.fabric-api")
+    }
+
+    modImplementation("maven.modrinth:iris:${project.iris_version}") {
+        exclude(group: "net.fabricmc.fabric-api")
+    }
 }
 
 publishing {
@@ -34,8 +42,8 @@ publishing {
         from("LICENSE") {
             rename { "License_${project.archivesBaseName}_${project.version}.txt" }
         }
-        from("CHANGELOG.md") {
-            rename { "Changelog_${project.version}.md" }
-        }
+//        from("CHANGELOG.md") {
+//            rename { "Changelog_${project.version}.md" }
+//        }
     }
 }

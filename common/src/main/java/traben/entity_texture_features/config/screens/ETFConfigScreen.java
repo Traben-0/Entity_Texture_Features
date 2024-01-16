@@ -1,6 +1,7 @@
 package traben.entity_texture_features.config.screens;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.CubeMapRenderer;
 import net.minecraft.client.gui.RotatingCubeMapRenderer;
 import net.minecraft.client.gui.screen.Screen;
@@ -66,6 +67,7 @@ public abstract class ETFConfigScreen extends Screen {
         tessellator.draw();
     }
 
+
     @Override
     public boolean shouldCloseOnEsc() {
         return true;
@@ -80,7 +82,8 @@ public abstract class ETFConfigScreen extends Screen {
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         // ETFUtils2.renderBackgroundTexture(0,new Identifier("textures/block/deepslate_tiles.png"),this.height,this.width);
-        backgroundCube.render((float) 0.5, 1);
+        backgroundCube.render(MinecraftClient.getInstance().getLastFrameDuration() * 1.5f, 1);
+//        backgroundCube.render((float) 0.5, 1);
 
         renderBackgroundTexture(0, new Identifier("textures/gui/options_background.png"), (int) (height * 0.15), width);
         renderBackgroundTexture(0, new Identifier("textures/gui/options_background.png"), height, width, (int) (height * 0.85));

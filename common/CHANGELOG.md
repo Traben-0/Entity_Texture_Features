@@ -1,24 +1,125 @@
 [**ETF Changelog:**]
 
+[5.2.1]
+- fixed `Image is not allocated.` crash related to armor rendering
+- added a printout to the right click debug to tell users where the `.properties` and variant files can go, useful for modded entities.
+- slightly tweaked sleeping detection for blinking
+- fixed a crash related to unexpected null values #234
+- fixed _eye textures not variating correctly since v5.0
+- fixed the nose button getting stuck in a loop in the skin settings
+- fixed a crash when removing skin features in the skin tool
+- added an emissive setting to disable Armor & Trims as it has been known to have issues with modded armors and requires future reworking
+
+[5.2]
+with the new optimizations in how properties work now I don't need to worry too much about adding too many of them,
+that being said, I've added a bunch of new properties mostly introducing some external non-entity values.
+Such as irl time & date, and language based localization. 
+Allowing seasonal entity variation, or language variations for any text in your textures.
+
+- fixed player emissives breaking with bright render mode
+- tweaked mob spawner code
+- added the `isSpawner` property which is true if the entity is a miniature mob inside a spawner block
+- the `color` property now also reads modded entity colors if the entity extends VariantHolder<T> with T being either DyeColor or an Optional<DyeColor>
+- the `profession` property should work for all modded mobs implementing VillagerDataContainer
+- added the following irl time & date properties `hour`,`minute`,`second`,`month`,`year`,`monthDay`,`weekDay`,`yearDay`.
+they are all numeric integers and support ranges e.g. `"0 2 4-7"`.
+`hour`,`minute`,`second` will update over time, the others will only be set when the entity spawns.
+`hour` is in 24-hour format, 0 - 23.
+`weekDay` starts with sunday which is 1 up to saturday at 7. 
+`month` starts with january which is 0 up to december at 11.
+`yearDay` is 1 - 366.
+`monthDay` is 1 - 31.
+april fools is thus `month=3, monthDay=1`,The Christmas to new-years period is `month=11, monthDay=25-31`
+- added the `dimension` property, which takes in a list of strings, or regex: or pattern:, and will be true if matching 
+the entities current dimension. 
+Vanilla dimensions are `overworld`, `the_nether`, `the_end`.
+Modded dimension names are entirely up to whatever the mod maker set them to be, expect `mod_name:dimension_name`.
+If you start the property text with `print:` it will work as normal but will also print the found dimension, to help 
+with discovering modded dimension names.
+- added the `language` property, which takes in a list of strings, or regex: or pattern:, and will match to the users
+chosen in-game language to facilitate the localization of textures if desired. default is `en_us` and corresponds to the
+`??_??` format language code of the games language files. 
+Helpful if your texture or model includes text for some reason.
+- added the `light` property, which takes a list of integers and support ranges e.g. `"0 2 4-7"`, and matches it to the
+light level of the block the entity is standing on `0 - 15`, `-1` will be returned if there is some error. 
+This property updates over time. An example use could be differentiating aggressive or passive spiders.
+
+
+[5.1.2]
+- fixed a rare config crash
+
+[5.1.1]
+- fixed 3d skin layers mod & etf skin feature, compat for the 1.6 update *(also removed log warning spam for future changes to 3d skin layers)*.
+- restructured the config
+- generified the emissive and enchanted pixel rendering methods
+- the mini entities in mob spawners UUID's should now always use the following format in nbt *("[I;?,?,12345,12345]")*
+making them identifiable for randomisation, the blocks property should also return the actual mob spawner block.
+
+
+[5.1]
+
+- mob spawner entities can now variate their textures again.
+- moved some temp rework code into more compatible mixins for mod compatibility
+- more stable implementation of the 5.0 rework changes for emissives
+- random properties now also allow ranges with the format <high>-<low> instead of only <low>-<high> *(OptiFine parity)*
+- fixed a crash in the skin tool
+- fixed a shoulder parrot crash
+
+
+[5.0]
+
+ETF 5.0 is a massive rework of the code, ETF is now almost an entirely different mod in its application from what v4.5 was.
+It should now universally affect every entity and entity render feature. 
+- the `blocks` property now again additionally checks the block below block entities differing from OptiFine's behaviour
+- all entities have enchanted overlay support via "_enchant.png" just like emissives with "_e.png"
+- much improved and more helpful right click debug printout
+- all possible texture variants are now preloaded on the first instance of a texture being used.
+- texture variation is now implemented at the creation of entity render layers allowing all entity textures and features to be modified by ETF
+- emissive rendering now occurs within the normal rendering of all models
+- fixed entity spawn conditions not saving for all non update-able properties (e.g. the heights property would not always save the entities original spawn height in v4.6)
+- fixed the ETF & EMF config screen getting faded black in recent versions
+- removed iris z-fighting fixes for everything except armor emissives as they don't appear to be needed anymore
+- several changes and optimizations that are not worth listing.
+- Added a new config screen category `Debug settings`. the debug right click option is now here. the log texture creation setting is now here.
+- added a new debug button in the debug settings screen that will print **ALL** currently cached ETF texture data to the log, details of every known texture and every variant,
+  as well as telling you which textures can and cannot be varied. for example elytra.png shows up in the list of textures that can be varied with random entity rules ;)
+- removed the ETF cape skin feature, it was fun working with putting a cape inside the skin texture, but it added quite a lot
+  of overhead, when the minecraftcapes.net mod is just more effective. With this removed I plan to add support for
+  player skin feature emissives in whatever cape texture is being used at a future time. Which will be more freeing than
+  only applying skin feature emissives to etf loaded capes
+- fixed for sodium 0.5.4
+
+removed features due to them now being possible, and preferred, via `EMF`
+- removed elytra thickness tweak feature
+- removed async elytra feature
+- removed lectern book unique texture feature
+- removed piglin ear model visibility feature
+
+
 [4.6.1]
 
 Several fixes, primarily for the random property system rewrite in 4.6.0
 
 - fixed api methods not being static
-- fixed texture names ending with numbers not correctly using a "." to separate the variant *(e.g big_chungus_0.png should variate with big_chungus_0.2.png)*
+- fixed texture names ending with numbers not correctly using a "." to separate the variant *(e.g big_chungus_0.png
+  should variate with big_chungus_0.2.png)*
 - fixed `health` property not working at all in 4.6
-- fixed `health` property percentage mode values not being rounded as integers *(an entity with health percentage 3.5%  would not trigger 0-3% or 4-6% checks, which they do in OptiFine)*
-- fixed range property values not working correctly *(e.g   12-33 )*
+- fixed `health` property percentage mode values not being rounded as integers *(an entity with health percentage 3.5%
+  would not trigger 0-3% or 4-6% checks, which they do in OptiFine)*
+- fixed range property values not working correctly *(e.g 12-33 )*
 - further api additions for EMF
 - removed some log spam related to player head blocks
-- 
+-
 
 [4.6.0]
+
 - rewrote the Random Property reading code to be more object-oriented, stable, and simplified.
-This also allows other mods to add new random properties for easy use in ETF & EMF.
-Random property code now only stores the entities initial conditions if they have been tested by that random property already, reducing memory usage.
+  This also allows other mods to add new random properties for easy use in ETF & EMF.
+  Random property code now only stores the entities initial conditions if they have been tested by that random property
+  already, reducing memory usage.
 - fixed the `name` property not respecting text formatting codes e.g. "name=\u00a74\u00a7oName"
-- fixed crashes during random entity property testing in ETF and EMF, all random property testing should be stable even with unexpected failures.
+- fixed crashes during random entity property testing in ETF and EMF, all random property testing should be stable even
+  with unexpected failures.
 - a lot of source code shuffling around and the inclusion of JavaDocs for API relevant classes.
 
 [4.5.1]
@@ -27,17 +128,25 @@ Random property code now only stores the entities initial conditions if they hav
 - fixed a crash related to `pattern` string comparison handling changes in 4.5.0
 
 [4.5]
+
 - added more code to support EMF
 - added a new logo
 - added support for random & emissive painting textures
-- added support for emissive armor trims the same format as OptiFine *(note this seems to break if iris and 3d skin layers are both installed, no idea why, it also fixes itself if a mob in the background is wearing the same trim, I'm tired of pulling my hair out about this so this is just how it will be for now)*
-- added support for armor trim overrides *(e.g. the texture "textures\trims\models\armor\coast_redstone.png" will override the autogenerated trim if present)*
+- added support for emissive armor trims the same format as OptiFine *(note this seems to break if iris and 3d skin
+  layers are both installed, no idea why, it also fixes itself if a mob in the background is wearing the same trim, I'm
+  tired of pulling my hair out about this so this is just how it will be for now)*
+- added support for armor trim overrides *(e.g. the texture "textures\trims\models\armor\coast_redstone.png" will
+  override the autogenerated trim if present)*
 - added support for end crystal random and emissive textures
 - added an option to enable extra warden textures like the heart to apply to the entire model
-- textures ending with numbers now use the separator "." like OptiFine for variants *(e.g "mob4.png" now variates with "mob4.2.png")*
-- Animatica textures are now detected and prevent certain ETF actions that could break these textures *(MoreMcmeta was already supported)*
-- added new ETF skin feature to allow/prevent transparency for your skin specifically, plus general improvements to skin transparency handling.
-- added new ETF skin feature variant of the villager nose setting that can use a custom texture set in the skin, instead of the default villager.
+- textures ending with numbers now use the separator "." like OptiFine for variants *(e.g "mob4.png" now variates with "
+  mob4.2.png")*
+- Animatica textures are now detected and prevent certain ETF actions that could break these textures *(MoreMcmeta was
+  already supported)*
+- added new ETF skin feature to allow/prevent transparency for your skin specifically, plus general improvements to skin
+  transparency handling.
+- added new ETF skin feature variant of the villager nose setting that can use a custom texture set in the skin, instead
+  of the default villager.
 
 - updated the `minecraftcapes.net` api url when used in skin features
 - improved the handling of "_eyes" textures
@@ -57,24 +166,37 @@ Random property code now only stores the entities initial conditions if they hav
 
 [4.4.3]
 
-- added support for creeper energy swirl texture variation and emissives, why emissive texture support you ask? because it lets you set a static texture for the overlay that doesn't spin but still glows
-- Added an option to disable the compatibility patch applied to the `3d skin layers` to enable skin features to work *(this only ever needs to be disabled if it conflicts with some other mods version of a `3d skin layers` compatibility patch, or if a future `3d skin layers` mod update breaks this)*
-- players skulls now correctly reflect the texture they are meant to display, instead of the players current skin if online
-- Fixed crash caused by unexpected values in property ranges 
+- added support for creeper energy swirl texture variation and emissives, why emissive texture support you ask? because
+  it lets you set a static texture for the overlay that doesn't spin but still glows
+- Added an option to disable the compatibility patch applied to the `3d skin layers` to enable skin features to work *(
+  this only ever needs to be disabled if it conflicts with some other mods version of a `3d skin layers` compatibility
+  patch, or if a future `3d skin layers` mod update breaks this)*
+- players skulls now correctly reflect the texture they are meant to display, instead of the players current skin if
+  online
+- Fixed crash caused by unexpected values in property ranges
 - Tweaks to player skin settings screen
 - Tweaks to classes used by EMF
 - api additions
 
 [V4.4.0]
-- full `NBT` property parity with OptiFine, ETF now parses the examples in this link correctly *(https://optifine.readthedocs.io/syntax.html#nbt)*
-- added ETF only `NBT` "raw:" syntax variant "print_raw:" which will act just like "raw:" but will also print what that raw value is for testing purposes
-- added ETF only `NBT` property syntax which will print the entire entities NBT data to the log, not just the specific compound, if the `NBT` property text starts with "print:", this will not affect the function of text after the "print:"
-- vanilla texture variants like `wolf_tame.png` will fall back to `wolf.properties` if `wolf_tame.properties` doesn't exist *(this is true for wolf, bee, ghast & strider texture variants)* *(only for vanilla textures)*
-- the `Blocks` property now utilizes the full OptiFine blocks syntax `[namespace:]name[:property1=value1,...:property2=value1,...]`
+
+- full `NBT` property parity with OptiFine, ETF now parses the examples in this link correctly
+  *(https://optifine.readthedocs.io/syntax.html#nbt)*
+- added ETF only `NBT` "raw:" syntax variant "print_raw:" which will act just like "raw:" but will also print what that
+  raw value is for testing purposes
+- added ETF only `NBT` property syntax which will print the entire entities NBT data to the log, not just the specific
+  compound, if the `NBT` property text starts with "print:", this will not affect the function of text after the "
+  print:"
+- vanilla texture variants like `wolf_tame.png` will fall back to `wolf.properties` if `wolf_tame.properties` doesn't
+  exist *(this is true for wolf, bee, ghast & strider texture variants)* *(only for vanilla textures)*
+- the `Blocks` property now utilizes the full OptiFine blocks
+  syntax `[namespace:]name[:property1=value1,...:property2=value1,...]`
   allowing matches such as `"blocks=oak_stairs:facing=east,west:half=bottom"`
-- made `Name`, `Names`, `Biomes` and `Teams` properties more robust and all 3 can now utilise Regex and Pattern not just `Names`
+- made `Name`, `Names`, `Biomes` and `Teams` properties more robust and all 3 can now utilise Regex and Pattern not
+  just `Names`
 - added support for emissive textures on mob head blocks
-- added support for emissive and enchanted skin features on player head blocks *(will only work for a player online that you have seen at least once that session, I may expand this in future)*
+- added support for emissive and enchanted skin features on player head blocks *(will only work for a player online that
+  you have seen at least once that session, I may expand this in future)*
 - resolved injection warning on mod load
 - improved resource reloading mixin
 - altered the livingEntityMixin structure to accommodate plans for `EMF`

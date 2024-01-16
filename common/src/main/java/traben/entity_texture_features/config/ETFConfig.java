@@ -2,16 +2,90 @@ package traben.entity_texture_features.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.jetbrains.annotations.NotNull;
+import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
-import traben.entity_texture_features.texture_features.ETFManager;
+import traben.entity_texture_features.features.ETFManager;
+import traben.entity_texture_features.utils.ETFUtils2;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+import static traben.entity_texture_features.ETFClientCommon.CONFIG_DIR;
 import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 
 @SuppressWarnings("CanBeFinal")
 public class ETFConfig {
+
+    @NotNull
+    public static ETFConfig getInstance() {
+        if(instance == null){
+            instance = new ETFConfig();
+        }
+        return instance;
+    }
+
+    public static void setInstance(ETFConfig newConfigInstance) {
+        instance = newConfigInstance;
+    }
+
+    public static void loadConfig() {
+        try {
+            File config = new File(ETFClientCommon.CONFIG_DIR, "entity_texture_features.json");
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            if (config.exists()) {
+                try {
+                    FileReader fileReader = new FileReader(config);
+                    instance = gson.fromJson(fileReader, ETFConfig.class);
+                    fileReader.close();
+                    saveConfig();
+                } catch (IOException e) {
+                    ETFUtils2.logMessage("Config could not be loaded, using defaults", false);
+                    instance = new ETFConfig();
+                    saveConfig();
+                    ETFClientCommon.configHadLoadError = true;
+                }
+            } else {
+                instance = new ETFConfig();
+                saveConfig();
+            }
+            if (instance == null) {
+                ETFUtils2.logMessage("Config was null, using defaults", false);
+                instance = new ETFConfig();
+                saveConfig();
+                ETFClientCommon.configHadLoadError = true;
+            }
+        } catch (Exception e) {
+            ETFUtils2.logError("Config was corrupt or broken, using defaults", false);
+            instance = new ETFConfig();
+            saveConfig();
+            ETFClientCommon.configHadLoadError = true;
+        }
+    }
+
+    public static void saveConfig() {
+        if(instance == null) ETFUtils2.logError("Config file could not be saved: null", false);
+        File config = new File(CONFIG_DIR, "entity_texture_features.json");
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        if (!config.getParentFile().exists()) {
+            //noinspection ResultOfMethodCallIgnored
+            config.getParentFile().mkdir();
+        }
+        try {
+            FileWriter fileWriter = new FileWriter(config);
+            fileWriter.write(gson.toJson(instance));
+            fileWriter.close();
+        } catch (IOException e) {
+            ETFUtils2.logError("Config file could not be saved: "+e.getMessage(), false);
+        }
+    }
+
+    //config object
+    private static ETFConfig instance = null;
 
     public IllegalPathMode illegalPathSupportMode = IllegalPathMode.None;
 
@@ -26,12 +100,15 @@ public class ETFConfig {
     public boolean restrictDayTime = true;
     public boolean restrictMoonPhase = true;
     public boolean enableEmissiveTextures = true;
+    public boolean enableEnchantedTextures = true;
     public boolean enableEmissiveBlockEntities = true;
 
     public ETFManager.EmissiveRenderModes emissiveRenderMode = ETFManager.EmissiveRenderModes.DULL;
 
-    public boolean specialEmissiveShield = true;
+
     public boolean alwaysCheckVanillaEmissiveSuffix = true;
+
+    public boolean enableArmorAndTrims = true;
 
     public boolean skinFeaturesEnabled = true;
     public boolean skinFeaturesEnableTransparency = true;
@@ -43,23 +120,11 @@ public class ETFConfig {
     public boolean enableBlinking = true;
     public int blinkFrequency = 150;
     public int blinkLength = 1;
-    public boolean enableTridents = true;
-    public boolean enableElytra = true;
-    public boolean elytraThicknessFix = false;
 
     public double advanced_IncreaseCacheSizeModifier = 1.0;
 
     public DebugLogMode debugLoggingMode = DebugLogMode.None;
-
-
-    public boolean removePixelsUnderEmissiveElytra = true;
-    public boolean removePixelsUnderEmissiveArmour = true;
-    public boolean removePixelsUnderEmissivePlayers = true;
-    public boolean removePixelsUnderEmissiveMobs = true;
-    public boolean removePixelsUnderEmissiveBlockEntity = true;
-
-    public boolean dontPatchPBRTextures = true;
-    public boolean dontPatchAnimatedTextures = true;
+    public boolean logTextureDataInitialization = false;
 
 
     public Set<String> ignoredConfigs2 = new HashSet<>();
@@ -125,7 +190,6 @@ public class ETFConfig {
 
         public UpdateFrequency next() {
             //not enhanced for 1.16 version compat
-            //noinspection DuplicatedCode
             switch (this) {
                 case Never:
                     return Slow;
