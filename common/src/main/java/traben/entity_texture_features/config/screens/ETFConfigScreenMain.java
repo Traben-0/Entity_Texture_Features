@@ -14,12 +14,11 @@ import traben.entity_texture_features.config.screens.skin.ETFConfigScreenSkinSet
 import traben.entity_texture_features.config.screens.warnings.ETFConfigScreenWarnings;
 import traben.entity_texture_features.config.screens.warnings.ETFConfigWarning;
 import traben.entity_texture_features.config.screens.warnings.ETFConfigWarnings;
-import traben.entity_texture_features.texture_features.ETFManager;
+import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.Objects;
 
-import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 
 //inspired by puzzles custom gui code
@@ -32,13 +31,14 @@ public class ETFConfigScreenMain extends ETFConfigScreen {
     final ETFConfigScreenRandomSettings randomSettingsScreen = new ETFConfigScreenRandomSettings(this);
     final ETFConfigScreenEmissiveSettings emissiveSettingsScreen = new ETFConfigScreenEmissiveSettings(this);
     final ETFConfigScreenBlinkSettings blinkSettingsScreen = new ETFConfigScreenBlinkSettings(this);
+    final ETFConfigScreenDebugSettings debugSettingsScreen = new ETFConfigScreenDebugSettings(this);
     final ETFConfigScreenGeneralSettings generalSettingsScreen = new ETFConfigScreenGeneralSettings(this);
     boolean shownWarning = false;
     int warningCount = 0;
 
     public ETFConfigScreenMain(Screen parent) {
         super(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".title"), parent);
-        temporaryETFConfig = ETFConfig.copyFrom(ETFConfigData);
+        temporaryETFConfig = ETFConfig.copyFrom(ETFConfig.getInstance());
 
 
         if (ETFClientCommon.configHadLoadError) {
@@ -83,8 +83,8 @@ public class ETFConfigScreenMain extends ETFConfigScreen {
         this.addDrawableChild(ButtonWidget.builder(
                 ETFVersionDifferenceHandler.getTextFromTranslation("gui.done"),
                 (button) -> {
-                    ETFConfigData = temporaryETFConfig;
-                    ETFUtils2.saveConfig();
+                    ETFConfig.setInstance(temporaryETFConfig);
+                    ETFConfig.saveConfig();
                     ETFUtils2.checkModCompatibility();
                     ETFManager.resetInstance();
                     ETFClientCommon.configHadLoadError = false;
@@ -105,30 +105,39 @@ public class ETFConfigScreenMain extends ETFConfigScreen {
                 }).dimensions((int) (this.width * 0.1), (int) (this.height * 0.9), (int) (this.width * 0.2), 20).build());
 
 
-        this.addDrawableChild(ButtonWidget.builder(
-                        ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".blinking_mob_settings_sub.title"),
-                        (button) -> Objects.requireNonNull(client).setScreen(blinkSettingsScreen))
-                .dimensions((int) (this.width * 0.3) + 75, (int) (this.height * 0.5) + 17, 165, 20).build());
 
-        this.addDrawableChild(ButtonWidget.builder(
-                        ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_settings.title"),
-                        (button) -> Objects.requireNonNull(client).setScreen(playerSkinSettingsScreen))
-                .dimensions((int) (this.width * 0.3) + 75, (int) (this.height * 0.5) - 10, 165, 20).build());
 
         this.addDrawableChild(ButtonWidget.builder(
                         ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".random_settings.title"),
                         (button) -> Objects.requireNonNull(client).setScreen(randomSettingsScreen))
-                .dimensions((int) (this.width * 0.3) + 75, (int) (this.height * 0.5) - 64, 165, 20).build());
+                .dimensions((int) (this.width * 0.3) + 75, (int) (this.height * 0.5) - 73, 165, 20).build());
 
         this.addDrawableChild(ButtonWidget.builder(
                         ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".emissive_settings.title"),
                         (button) -> Objects.requireNonNull(client).setScreen(emissiveSettingsScreen))
-                .dimensions((int) (this.width * 0.3) + 75, (int) (this.height * 0.5) - 37, 165, 20).build());
+                .dimensions((int) (this.width * 0.3) + 75, (int) (this.height * 0.5) - 48, 165, 20).build());
+
+        this.addDrawableChild(ButtonWidget.builder(
+                        ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_settings.title"),
+                        (button) -> Objects.requireNonNull(client).setScreen(playerSkinSettingsScreen))
+                .dimensions((int) (this.width * 0.3) + 75, (int) (this.height * 0.5) - 23, 165, 20).build());
+
+        this.addDrawableChild(ButtonWidget.builder(
+                        ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".blinking_mob_settings_sub.title"),
+                        (button) -> Objects.requireNonNull(client).setScreen(blinkSettingsScreen))
+                .dimensions((int) (this.width * 0.3) + 75, (int) (this.height * 0.5) + 3, 165, 20).build());
+
+        this.addDrawableChild(ButtonWidget.builder(
+                        ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.debug_screen.title"),
+                        (button) -> Objects.requireNonNull(client).setScreen(debugSettingsScreen))
+                .dimensions((int) (this.width * 0.3) + 75, (int) (this.height * 0.5) + 28, 165, 20).build());
 
         this.addDrawableChild(ButtonWidget.builder(
                         ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".general_settings.title"),
                         (button) -> Objects.requireNonNull(client).setScreen(generalSettingsScreen))
-                .dimensions((int) (this.width * 0.3) + 75, (int) (this.height * 0.5) + 44, 165, 20).build());
+                .dimensions((int) (this.width * 0.3) + 75, (int) (this.height * 0.5) + 53, 165, 20).build());
+
+
 
     }
 

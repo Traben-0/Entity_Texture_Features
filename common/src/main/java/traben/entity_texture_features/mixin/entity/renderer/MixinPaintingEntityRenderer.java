@@ -26,11 +26,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.ETFClientCommon;
-import traben.entity_texture_features.texture_features.ETFManager;
-import traben.entity_texture_features.texture_features.texture_handlers.ETFSprite;
-import traben.entity_texture_features.texture_features.texture_handlers.ETFTexture;
-import traben.entity_texture_features.utils.entity_wrappers.ETFEntity;
-import traben.entity_texture_features.utils.entity_wrappers.ETFEntityWrapper;
+import traben.entity_texture_features.features.ETFManager;
+import traben.entity_texture_features.features.ETFRenderContext;
+import traben.entity_texture_features.features.texture_handlers.ETFSprite;
+import traben.entity_texture_features.features.texture_handlers.ETFTexture;
+import traben.entity_texture_features.utils.ETFEntity;
 
 @Mixin(PaintingEntityRenderer.class)
 public abstract class MixinPaintingEntityRenderer extends EntityRenderer<PaintingEntity> {
@@ -57,13 +57,13 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
             Identifier paintingId = paintingSprite.getContents().getId();
             Identifier paintingTexture = new Identifier(paintingId.getNamespace(), "textures/painting/" + paintingId.getPath() + ".png");
 
-            ETFEntity etfEntity = new ETFEntityWrapper(paintingEntity);
+            ETFEntity etfEntity = (ETFEntity) paintingEntity;
 
-            ETFTexture frontTexture = ETFManager.getInstance().getETFTexture(paintingTexture, etfEntity, ETFManager.TextureSource.ENTITY, false);
+            ETFTexture frontTexture = ETFManager.getInstance().getETFTextureVariant(paintingTexture, etfEntity);
             ETFSprite etf$Sprite = frontTexture.getSprite(paintingSprite);
 
 
-            ETFTexture backTexture = ETFManager.getInstance().getETFTexture(etf$BACK_SPRITE_ID, etfEntity, ETFManager.TextureSource.ENTITY, false);
+            ETFTexture backTexture = ETFManager.getInstance().getETFTextureVariant(etf$BACK_SPRITE_ID, etfEntity);
             ETFSprite etf$BackSprite = backTexture.getSprite(MinecraftClient.getInstance().getPaintingManager().getBackSprite());
 
             if (etf$Sprite.isETFAltered || etf$Sprite.isEmissive() || etf$BackSprite.isETFAltered || etf$BackSprite.isEmissive()) {
@@ -93,7 +93,7 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
 
     @Unique
     private void etf$renderETFPainting(MatrixStack matrices, VertexConsumerProvider vertexConsumerProvider, PaintingEntity entity, int width, int height, ETFSprite ETFPaintingSprite, ETFSprite ETFBackSprite) {
-
+        ETFRenderContext.preventRenderLayerTextureModify();
         VertexConsumer vertexConsumerFront = vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(ETFPaintingSprite.getSpriteVariant().getAtlasId()));
         etf$renderETFPaintingFront(matrices, vertexConsumerFront, entity, width, height, ETFPaintingSprite.getSpriteVariant(), false);
 
@@ -109,7 +109,7 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
             vertexConsumerFront = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucentCull(ETFBackSprite.getEmissive().getAtlasId()));
             etf$renderETFPaintingBack(matrices, vertexConsumerFront, entity, width, height, ETFBackSprite.getEmissive(), true);
         }
-
+        ETFRenderContext.allowRenderLayerTextureModify();
     }
 
     @SuppressWarnings("SuspiciousNameCombination")

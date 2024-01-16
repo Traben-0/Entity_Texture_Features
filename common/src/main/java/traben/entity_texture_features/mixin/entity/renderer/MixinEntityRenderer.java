@@ -10,19 +10,17 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import traben.entity_texture_features.ETFClientCommon;
-import traben.entity_texture_features.texture_features.ETFManager;
+import traben.entity_texture_features.config.ETFConfig;
+import traben.entity_texture_features.features.ETFManager;
 
 @Mixin(EntityRenderer.class)
 public abstract class MixinEntityRenderer<T extends Entity> {
 
 
-
-
     @Inject(method = "getLight", at = @At(value = "RETURN"), cancellable = true)
     private void etf$vanillaLightOverrideCancel(T entity, float tickDelta, CallbackInfoReturnable<Integer> cir) {
         //if need to override vanilla brightness behaviour
-        if (ETFClientCommon.ETFConfigData.enableCustomTextures
+        if (ETFConfig.getInstance().enableCustomTextures
                 && ETFManager.getInstance().ENTITY_TYPE_VANILLA_BRIGHTNESS_OVERRIDE_VALUE.containsKey(entity.getType())) {
             int overrideLightValue = ETFManager.getInstance().ENTITY_TYPE_VANILLA_BRIGHTNESS_OVERRIDE_VALUE.getInt(entity.getType());
             //change return with overridden light value still respecting higher block and sky lights

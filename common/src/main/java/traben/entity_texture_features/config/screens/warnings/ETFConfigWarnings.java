@@ -2,12 +2,10 @@ package traben.entity_texture_features.config.screens.warnings;
 
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
-import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.config.ETFConfig;
 
 import java.util.HashSet;
 import java.util.Set;
-
-import static traben.entity_texture_features.ETFClientCommon.ETFConfigData;
 
 
 public abstract class ETFConfigWarnings {
@@ -24,8 +22,8 @@ public abstract class ETFConfigWarnings {
                         "config." + ETFClientCommon.MOD_ID + ".warn.figura.text.1",
                         "config." + ETFClientCommon.MOD_ID + ".warn.figura.text.2",
                         () -> {
-                            ETFConfigData.skinFeaturesEnabled = false;
-                            ETFUtils2.saveConfig();
+                            ETFConfig.getInstance().skinFeaturesEnabled = false;
+                            ETFConfig.saveConfig();
                         }),
                 //EBE
                 new ETFConfigWarning.Simple(
@@ -41,17 +39,10 @@ public abstract class ETFConfigWarnings {
                         "config." + ETFClientCommon.MOD_ID + ".warn.quark.text.3",
                         "config." + ETFClientCommon.MOD_ID + ".warn.quark.text.4",
                         null),
-                //iris
-                new ETFConfigWarning.Simple(
-                        "iris",
-                        "iris",
-                        "config." + ETFClientCommon.MOD_ID + ".warn.iris.text.1",
-                        "config." + ETFClientCommon.MOD_ID + ".warn.iris.text.2",
-                        null),
                 //iris and 3d skin layers trim warning
                 new ETFConfigWarning.Simple(
                         "iris & 3d skin layers",
-                        () -> ETFVersionDifferenceHandler.isThisModLoaded("iris") && ETFClientCommon.SKIN_LAYERS_DETECTED,
+                        () -> ETFClientCommon.IRIS_DETECTED && ETFClientCommon.SKIN_LAYERS_DETECTED,
                         "config." + ETFClientCommon.MOD_ID + ".warn.iris_3d.text.1",
                         "config." + ETFClientCommon.MOD_ID + ".warn.iris_3d.text.2",
                         null),
