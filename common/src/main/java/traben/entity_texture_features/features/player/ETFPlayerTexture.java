@@ -463,7 +463,7 @@ public class ETFPlayerTexture {
     @Nullable
     public Identifier getBaseTextureIdentifierOrNullForVanilla(ETFPlayerEntity player) {
         this.player = player;//refresh player data
-        if (etfTextureOfFinalBaseSkin != null && canUseFeaturesForThisPlayer() && ETFConfig.getInstance().tryETFTransparencyForAllSkins) {
+        if (etfTextureOfFinalBaseSkin != null && (canUseFeaturesForThisPlayer() || ETFConfig.getInstance().tryETFTransparencyForAllSkins)) {
             return etfTextureOfFinalBaseSkin.getTextureIdentifier(player);
         }
         return null;
@@ -471,7 +471,7 @@ public class ETFPlayerTexture {
 
     @Nullable
     public Identifier getBaseHeadTextureIdentifierOrNullForVanilla() {
-        if (etfTextureOfFinalBaseSkin != null && canUseFeaturesForThisPlayer() && ETFConfig.getInstance().tryETFTransparencyForAllSkins) {
+        if (etfTextureOfFinalBaseSkin != null && (canUseFeaturesForThisPlayer() || ETFConfig.getInstance().tryETFTransparencyForAllSkins)) {
             return etfTextureOfFinalBaseSkin.getTextureIdentifier(null);
         }
         return null;
