@@ -68,6 +68,8 @@ public abstract class MixinEntity implements ETFEntity {
 
     @Shadow @Nullable public abstract Team getScoreboardTeam();
 
+    @Shadow public abstract boolean isPlayer();
+
     @Override
     public EntityType<?> etf$getType() {
         return getType();
@@ -145,7 +147,7 @@ public abstract class MixinEntity implements ETFEntity {
 
     @Override
     public boolean etf$canBeBright() {
-        return true;
+        return !isPlayer();
     }
 
     @Override

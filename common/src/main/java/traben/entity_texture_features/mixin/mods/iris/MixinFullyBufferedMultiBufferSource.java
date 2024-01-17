@@ -11,9 +11,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import traben.entity_texture_features.features.ETFRenderContext;
+import traben.entity_texture_features.mixin.MixinVertexConsumerProvider$Immediate;
 
 /**
- * this is a copy of {@link traben.entity_texture_features.mixin.MixinVertexConsumerProvider_Immediate} but for iris's
+ * this is a copy of {@link MixinVertexConsumerProvider$Immediate} but for iris's
  * custom entity {@link VertexConsumerProvider}
  * <p>
  * this should have no negative impact on iris's render process, other than of course adding more code that needs to run
@@ -28,7 +29,8 @@ public class MixinFullyBufferedMultiBufferSource {
             at = @At(value = "HEAD"),
             index = 1, argsOnly = true)
     private RenderLayer etf$modifyRenderLayer(RenderLayer value) {
-        return ETFRenderContext.modifyRenderLayerIfRequired(value);
+        RenderLayer newLayer = ETFRenderContext.modifyRenderLayerIfRequired(value);
+        return newLayer == null ? value : newLayer;
     }
 
 

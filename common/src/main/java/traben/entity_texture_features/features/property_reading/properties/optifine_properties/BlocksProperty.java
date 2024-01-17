@@ -1,6 +1,7 @@
 package traben.entity_texture_features.features.property_reading.properties.optifine_properties;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.registry.Registries;
 import net.minecraft.state.property.Property;
@@ -8,6 +9,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import traben.entity_texture_features.ETFApi;
 import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.features.property_reading.properties.generic_properties.StringArrayOrRegexProperty;
 import traben.entity_texture_features.utils.ETFEntity;
@@ -68,8 +70,15 @@ public class BlocksProperty extends StringArrayOrRegexProperty {
     @Override
     public boolean testEntityInternal(ETFEntity entity) {
 
+
+
         String[] entityBlocks;
-        if (entity instanceof BlockEntity blockEntity) {
+
+        if(entity.etf$getUuid().getLeastSignificantBits() == ETFApi.ETF_SPAWNER_MARKER){
+            // entity is a mini mob spawner entity
+            // return a blank mob spawner block state
+            entityBlocks = new String[]{getBlockFormattedFromState(Blocks.SPAWNER.getDefaultState())};
+        }else if (entity instanceof BlockEntity blockEntity) {
             if (blockEntity.getWorld() == null) {
                 entityBlocks = new String[]{getBlockFormattedFromState(blockEntity.getCachedState())};
             } else {

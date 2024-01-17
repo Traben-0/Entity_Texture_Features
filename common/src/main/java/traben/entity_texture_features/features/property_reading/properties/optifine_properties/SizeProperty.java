@@ -43,6 +43,6 @@ public class SizeProperty extends SimpleIntegerArrayProperty {
         } else if (entity instanceof PhantomEntity phantom) {
             return phantom.getPhantomSize();
         }
-        return Integer.MIN_VALUE;
+        return 0;
     }
 }

@@ -4,6 +4,8 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
+import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.utils.ETFEntity;
 import traben.entity_texture_features.utils.ETFRenderLayerWithTexture;
 import traben.entity_texture_features.utils.ETFVertexConsumer;
@@ -31,7 +33,7 @@ public class ETFRenderContext {
     }
 
     public static boolean isAllowedToRenderLayerTextureModify() {
-        return allowRenderLayerTextureModify;
+        return allowRenderLayerTextureModify && ETFConfig.getInstance().enableCustomTextures;
     }
 
     public static void preventRenderLayerTextureModify() {
@@ -42,8 +44,31 @@ public class ETFRenderContext {
         ETFRenderContext.allowRenderLayerTextureModify = true;
     }
 
+    @Nullable
     public static ETFEntity getCurrentEntity() {
         return currentEntity;
+    }
+
+    public static boolean canRenderInBrightMode(){
+        boolean setForBrightMode = ETFManager.getEmissiveMode() == ETFManager.EmissiveRenderModes.BRIGHT;
+        if(setForBrightMode){
+            if(currentEntity != null){
+                return currentEntity.etf$canBeBright();// && !ETFRenderContext.getCurrentETFTexture().isPatched_CurrentlyOnlyArmor();
+            }else{
+                //establish default rule
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean shouldEmissiveUseCullingLayer(){
+        if(currentEntity != null){
+            return currentEntity.etf$isBlockEntity();
+        }else{
+            //establish default rule
+            return true;
+        }
     }
 
     public static void setCurrentEntity(ETFEntity currentEntity) {

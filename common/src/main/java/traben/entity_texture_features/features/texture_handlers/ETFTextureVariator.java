@@ -50,6 +50,7 @@ public abstract class ETFTextureVariator{
                                 "\n§6 - texture:§r " + output +
                                 "\n§6 - can_update_variant:§r "+ (this instanceof ETFTextureMultiple multi && multi.suffixProvider.entityCanUpdate(entity.etf$getUuid()))+
                                 "\n§6 - last matching rule:§r " + ETFManager.getInstance().LAST_MET_RULE_INDEX.getInt(entity.etf$getUuid()) +
+                                "\n" + getVanillaVariantDetails() +
                                 "\n" + getPrintout() +
                                 "\n§e----------------------------------------§r"
                         , inChat);
@@ -60,16 +61,37 @@ public abstract class ETFTextureVariator{
         return getVariantOfInternal(entity);
     }
 
+    private String getVanillaVariantDetails(){
+        Identifier vanilla = getVanillaIdentifier();
+        if(vanilla == null) return "§aProperty locations: NULL§r";
+        Identifier property = ETFUtils2.replaceIdentifier(vanilla,".png",".properties");
+        if(property == null) return "§aProperty locations: NULL§r";
+
+        Identifier optifine = ETFDirectory.getIdentifierAsDirectory(property,ETFDirectory.OPTIFINE);
+        Identifier optifineOld = ETFDirectory.getIdentifierAsDirectory(property,ETFDirectory.OLD_OPTIFINE);
+        Identifier etf = ETFDirectory.getIdentifierAsDirectory(property,ETFDirectory.ETF);
+
+        return "§aProperty locations:§r" +
+                "\n§2 - regular:§r " + property +
+                "\n§2 - etf:§r " + etf +
+                "\n§2 - optifine:§r " + optifine +
+                "\n§2 - optifine_old:§r " + optifineOld;
+    }
+
 
 
     public abstract String getPrintout();
 
     protected abstract @NotNull ETFTexture getVariantOfInternal(@NotNull ETFEntity entity);
 
+    protected abstract Identifier getVanillaIdentifier();
+
     public static class ETFTextureSingleton extends ETFTextureVariator {
         private final ETFTexture self;
+        private final Identifier vanilla;
 
         public ETFTextureSingleton(Identifier singletonId) {
+            vanilla = singletonId;
             self = ETFManager.getInstance().getETFTextureNoVariation(singletonId);
 
             if(ETFConfig.getInstance().logTextureDataInitialization) {
@@ -83,6 +105,11 @@ public abstract class ETFTextureVariator{
         @Override
         protected @NotNull ETFTexture getVariantOfInternal(@NotNull ETFEntity entity) {
             return self;
+        }
+
+        @Override
+        protected Identifier getVanillaIdentifier() {
+            return vanilla;
         }
 
         public String getPrintout() {
@@ -165,6 +192,7 @@ public abstract class ETFTextureVariator{
                     case Instant -> this.entitySuffixMap.removeInt(id);
                     default -> {
                         int delay = ETFConfig.getInstance().textureUpdateFrequency_V2.getDelay();
+                        assert ETFRenderContext.getCurrentEntity() != null;
                         int time = (int) (ETFRenderContext.getCurrentEntity().etf$getWorld().getTime() % delay);
                         if (time ==  Math.abs(id.hashCode()) % delay) {
                             this.entitySuffixMap.removeInt(id);
@@ -176,6 +204,7 @@ public abstract class ETFTextureVariator{
 
         @Override
         protected @NotNull ETFTexture getVariantOfInternal(@NotNull ETFEntity entity) {
+
 
             ETFManager.TextureSource source;
             if (ETFRenderContext.isRenderingFeatures()) {
@@ -202,7 +231,8 @@ public abstract class ETFTextureVariator{
                     newSuffix = suffixProvider.getSuffixForETFEntity(entity);
                 } else {
                     //try to use the base entities suffix first
-                    int baseEntitySuffix = ETFManager.getInstance().LAST_SUFFIX_OF_ENTITY.getInt(ETFRenderContext.getCurrentEntity().etf$getUuid());
+                    int baseEntitySuffix = ETFRenderContext.getCurrentEntity() == null ? -1 :
+                            ETFManager.getInstance().LAST_SUFFIX_OF_ENTITY.getInt(ETFRenderContext.getCurrentEntity().etf$getUuid());
                     if (baseEntitySuffix != -1 && variantMap.containsKey(baseEntitySuffix)) {
                         newSuffix = baseEntitySuffix;
                     } else {
@@ -217,6 +247,11 @@ public abstract class ETFTextureVariator{
             //System.out.println("new = "+newSuffix);
             entitySuffixMap.put(id, newSuffix);
             return variantMap.get(newSuffix);
+        }
+
+        @Override
+        protected Identifier getVanillaIdentifier() {
+            return vanillaId;
         }
     }
 }

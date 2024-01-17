@@ -131,7 +131,7 @@ public class ETFPlayerFeatureRenderer<T extends PlayerEntity, M extends PlayerEn
     private static void renderNose(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light, ETFPlayerTexture playerTexture) {
         if (playerTexture.hasVillagerNose) {
 //            villagerNose.copyTransform(model.head);
-            if (playerTexture.noseType == ETFConfigScreenSkinTool.NoseType.VILLAGER_TEXTURED) {
+            if (playerTexture.noseType == ETFConfigScreenSkinTool.NoseType.VILLAGER_TEXTURED || playerTexture.noseType == ETFConfigScreenSkinTool.NoseType.VILLAGER_TEXTURED_REMOVE) {
                 VertexConsumer villagerVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(playerTexture.etfTextureOfFinalBaseSkin.getTextureIdentifier(null)));
                 villagerNose.render(matrixStack, villagerVert, light, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
                 playerTexture.etfTextureOfFinalBaseSkin.renderEmissive(matrixStack, vertexConsumerProvider, villagerNose);

@@ -14,3 +14,6 @@ accessible method net/minecraft/client/render/RenderPhase$TextureBase getId ()Lj
 
 # for sprites reading from VertexConsumer
 accessible field net/minecraft/client/render/SpriteTexturedVertexConsumer sprite Lnet/minecraft/client/texture/Sprite;
+
+# for alternative texture modification
+accessible class net/minecraft/client/render/RenderPhase$Texture

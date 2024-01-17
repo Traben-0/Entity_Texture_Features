@@ -35,6 +35,25 @@ import java.util.Properties;
 public abstract class ETFUtils2 {
 
 
+
+    public static Identifier getETFVariantNotNullForInjector(Identifier identifier) {
+        //do not modify texture
+        if (ETFRenderContext.getCurrentEntity() == null
+                || !ETFRenderContext.isAllowedToRenderLayerTextureModify())
+            return identifier;
+
+        //get etf modified texture
+        ETFTexture etfTexture = ETFManager.getInstance().getETFTextureVariant(identifier, ETFRenderContext.getCurrentEntity());
+        if(ETFRenderContext.isAllowedToPatch()){
+            etfTexture.assertPatchedTextures();
+        }
+        Identifier modified = etfTexture.getTextureIdentifier(ETFRenderContext.getCurrentEntity());
+
+        //check not null just to be safe, it shouldn't be however
+        //noinspection ConstantValue
+        return modified == null ? identifier : modified;
+    }
+
     public interface RenderMethodForOverlay{
         void render(VertexConsumer consumer, int light);
     }
@@ -45,20 +64,17 @@ public abstract class ETFUtils2 {
             boolean wasAllowed = ETFRenderContext.isAllowedToRenderLayerTextureModify();
             ETFRenderContext.preventRenderLayerTextureModify();
 
-            boolean textureIsAllowedBrightRender = ETFManager.getEmissiveMode() == ETFManager.EmissiveRenderModes.BRIGHT
-                    && ETFRenderContext.getCurrentEntity().etf$canBeBright();// && !ETFRenderContext.getCurrentETFTexture().isPatched_CurrentlyOnlyArmor();
-
             VertexConsumer emissiveConsumer = provider.getBuffer(
-                    textureIsAllowedBrightRender ?
+                    ETFRenderContext.canRenderInBrightMode() ?
                             RenderLayer.getBeaconBeam(emissive, true) :
-                            ETFRenderContext.getCurrentEntity().etf$isBlockEntity() ?
+                            ETFRenderContext.shouldEmissiveUseCullingLayer() ?
                                     RenderLayer.getEntityTranslucentCull(emissive) :
                                     RenderLayer.getEntityTranslucent(emissive));
 
             if(wasAllowed) ETFRenderContext.allowRenderLayerTextureModify();
 
             ETFRenderContext.startSpecialRenderOverlayPhase();
-            renderer.render( emissiveConsumer, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE);
+            renderer.render(emissiveConsumer, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE);
             ETFRenderContext.endSpecialRenderOverlayPhase();
             return true;
         }
@@ -76,7 +92,7 @@ public abstract class ETFUtils2 {
             if(wasAllowed) ETFRenderContext.allowRenderLayerTextureModify();
 
             ETFRenderContext.startSpecialRenderOverlayPhase();
-            renderer.render( enchantedVertex, light);
+            renderer.render(enchantedVertex, light);
             ETFRenderContext.endSpecialRenderOverlayPhase();
             return true;
         }

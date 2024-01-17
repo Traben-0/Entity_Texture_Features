@@ -2,6 +2,7 @@ package traben.entity_texture_features.features.property_reading.properties;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import traben.entity_texture_features.features.property_reading.properties.etf_properties.*;
+import traben.entity_texture_features.features.property_reading.properties.etf_properties.external.*;
 import traben.entity_texture_features.features.property_reading.properties.optifine_properties.*;
 
 import java.util.ArrayList;
@@ -27,6 +28,20 @@ public class RandomProperties {
                 PlayerCreatedProperty::getPropertyOrNull,
                 ScreamingGoatProperty::getPropertyOrNull,
                 SpeedProperty::getPropertyOrNull,
+                SpawnerProperty::getPropertyOrNull,
+                DimensionProperty::getPropertyOrNull,
+                LightProperty::getPropertyOrNull,
+
+                //etf externals
+                HourProperty::getPropertyOrNull,
+                MinuteProperty::getPropertyOrNull,
+                MonthDayProperty::getPropertyOrNull,
+                MonthProperty::getPropertyOrNull,
+                SecondProperty::getPropertyOrNull,
+                WeekDayProperty::getPropertyOrNull,
+                YearDayProperty::getPropertyOrNull,
+                YearProperty::getPropertyOrNull,
+                LanguageProperty::getPropertyOrNull,
 
                 //OptiFine properties
                 BabyProperty::getPropertyOrNull,
