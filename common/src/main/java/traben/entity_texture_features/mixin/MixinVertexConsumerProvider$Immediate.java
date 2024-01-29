@@ -8,9 +8,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import traben.entity_texture_features.compat.SodiumGetBufferInjector;
 import traben.entity_texture_features.features.ETFRenderContext;
 
-@Mixin(VertexConsumerProvider.Immediate.class)
+@Mixin(value = VertexConsumerProvider.Immediate.class, priority = 800)
 public class MixinVertexConsumerProvider$Immediate {
 
 
@@ -27,10 +28,12 @@ public class MixinVertexConsumerProvider$Immediate {
             method = "getBuffer",
             at = @At(value = "RETURN"))
     private void etf$injectIntoGetBufferReturn(RenderLayer renderLayer, CallbackInfoReturnable<VertexConsumer> cir) {
-        ETFRenderContext.insertETFDataIntoVertexConsumer(
-                (VertexConsumerProvider) this,
-                renderLayer,
-                cir.getReturnValue());
+        var returned = cir.getReturnValue();
+        ETFRenderContext.insertETFDataIntoVertexConsumer((VertexConsumerProvider) this, renderLayer, returned);
+
+        //quarantined class to contain all sodium interaction
+        //sodium ExtendedBufferBuilder classes contain a delegate that must instead have the above data passed into
+        SodiumGetBufferInjector.inject((VertexConsumerProvider) this, renderLayer, returned);
     }
 
 }

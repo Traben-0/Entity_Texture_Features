@@ -32,6 +32,7 @@
     "entity.renderer.MixinPaintingEntityRenderer",
     "entity.renderer.MixinPlayerEntityRenderer",
     "entity.renderer.feature.MixinElytraFeatureRenderer",
+    "entity.renderer.feature.MixinEyeFeatureRenderer",
     "entity.renderer.feature.MixinMooshroomMushroomFeatureRenderer",
     "entity.renderer.feature.MixinShoulderParrotFeatureRenderer",
     "entity.renderer.feature.MixinWardenFeatureRenderer",
@@ -39,9 +40,10 @@
     "mods.iris.MixinInnerWrappedRenderType",
     "mods.iris.MixinOuterWrappedRenderType",
     "mods.skin_layers.MixinCustomizableModelPart",
+    "mods.sodium.MixinSodiumBufferBuilder",
     "reloading.MixinMinecraftClient",
     "reloading.MixinResourceReload",
-    "entity.renderer.feature.MixinEyeFeatureRenderer"
+    "mods.sodium.MixinModelPartSodium"
   ],
   "mixins": [
   ],
