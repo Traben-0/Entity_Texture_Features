@@ -33,7 +33,6 @@ import java.util.Properties;
 public abstract class ETFUtils2 {
 
 
-
     public static Identifier getETFVariantNotNullForInjector(Identifier identifier) {
         //do not modify texture
         if (ETFRenderContext.getCurrentEntity() == null
@@ -42,7 +41,7 @@ public abstract class ETFUtils2 {
 
         //get etf modified texture
         ETFTexture etfTexture = ETFManager.getInstance().getETFTextureVariant(identifier, ETFRenderContext.getCurrentEntity());
-        if(ETFRenderContext.isAllowedToPatch()){
+        if (ETFRenderContext.isAllowedToPatch()) {
             etfTexture.assertPatchedTextures();
         }
         Identifier modified = etfTexture.getTextureIdentifier(ETFRenderContext.getCurrentEntity());
@@ -50,10 +49,6 @@ public abstract class ETFUtils2 {
         //check not null just to be safe, it shouldn't be however
         //noinspection ConstantValue
         return modified == null ? identifier : modified;
-    }
-
-    public interface RenderMethodForOverlay{
-        void render(VertexConsumer consumer, int light);
     }
 
     public static boolean renderEmissive(ETFTexture texture, VertexConsumerProvider provider, RenderMethodForOverlay renderer) {
@@ -69,7 +64,7 @@ public abstract class ETFUtils2 {
                                     RenderLayer.getEntityTranslucentCull(emissive) :
                                     RenderLayer.getEntityTranslucent(emissive));
 
-            if(wasAllowed) ETFRenderContext.allowRenderLayerTextureModify();
+            if (wasAllowed) ETFRenderContext.allowRenderLayerTextureModify();
 
             ETFRenderContext.startSpecialRenderOverlayPhase();
             renderer.render(emissiveConsumer, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE);
@@ -79,7 +74,6 @@ public abstract class ETFUtils2 {
         return false;
     }
 
-
     public static boolean renderEnchanted(ETFTexture texture, VertexConsumerProvider provider, int light, RenderMethodForOverlay renderer) {
         //attempt enchanted render
         Identifier enchanted = texture.getEnchantIdentifierOfCurrentState();
@@ -87,7 +81,7 @@ public abstract class ETFUtils2 {
             boolean wasAllowed = ETFRenderContext.isAllowedToRenderLayerTextureModify();
             ETFRenderContext.preventRenderLayerTextureModify();
             VertexConsumer enchantedVertex = ItemRenderer.getArmorGlintConsumer(provider, RenderLayer.getArmorCutoutNoCull(enchanted), false, true);
-            if(wasAllowed) ETFRenderContext.allowRenderLayerTextureModify();
+            if (wasAllowed) ETFRenderContext.allowRenderLayerTextureModify();
 
             ETFRenderContext.startSpecialRenderOverlayPhase();
             renderer.render(enchantedVertex, light);
@@ -150,21 +144,6 @@ public abstract class ETFUtils2 {
         return packNames.get(0);
     }
 
-//    @SuppressWarnings("BooleanMethodIsAlwaysInverted") //makes more logical sense
-//    public static boolean isNativeImageEmpty(@NotNull NativeImage image) {
-//        boolean foundNonEmptyPixel = false;
-//        for (int x = 0; x < image.getWidth(); x++) {
-//            for (int y = 0; y < image.getHeight(); y++) {
-//                if (image.getColor(x, y) != 0) {
-//                    foundNonEmptyPixel = true;
-//                    break;
-//                }
-//            }
-//            if (foundNonEmptyPixel) break;
-//        }
-//        return !foundNonEmptyPixel;
-//    }
-
     @Nullable
     public static String returnNameOfHighestPackFromTheseTwo(String pack1, String pack2) {
         if (pack1 == null) return null;
@@ -179,6 +158,21 @@ public abstract class ETFUtils2 {
             return pack2;
         }
     }
+
+//    @SuppressWarnings("BooleanMethodIsAlwaysInverted") //makes more logical sense
+//    public static boolean isNativeImageEmpty(@NotNull NativeImage image) {
+//        boolean foundNonEmptyPixel = false;
+//        for (int x = 0; x < image.getWidth(); x++) {
+//            for (int y = 0; y < image.getHeight(); y++) {
+//                if (image.getColor(x, y) != 0) {
+//                    foundNonEmptyPixel = true;
+//                    break;
+//                }
+//            }
+//            if (foundNonEmptyPixel) break;
+//        }
+//        return !foundNonEmptyPixel;
+//    }
 
     @Nullable
     public static Properties readAndReturnPropertiesElseNull(Identifier path) {
@@ -210,6 +204,7 @@ public abstract class ETFUtils2 {
 //            }
 //        }
         NativeImage img;
+        try{
         try {
             //try catch is intended
             //noinspection OptionalGetWithoutIsPresent
@@ -226,10 +221,18 @@ public abstract class ETFUtils2 {
             }
         } catch (Exception e) {
             AbstractTexture texture = MinecraftClient.getInstance().getTextureManager().getTexture(identifier);
-            if(texture instanceof NativeImageBackedTexture nativeImageBackedTexture){
-                return nativeImageBackedTexture.getImage();
+            if (texture instanceof NativeImageBackedTexture nativeImageBackedTexture) {
+                var image2 = nativeImageBackedTexture.getImage();
+                if(image2 == null) return null;
+                NativeImage image3 = new NativeImage(image2.getWidth(), image2.getHeight(), false);
+                image3.copyFrom(image2);
+                return image3;
             }
             return null;
+        }
+        } catch (Exception e) {
+
+                return null;
         }
 
     }
@@ -312,8 +315,6 @@ public abstract class ETFUtils2 {
         return Optional.empty();
     }
 
-
-
     public static NativeImage emptyNativeImage() {
         return emptyNativeImage(64, 64);
     }
@@ -324,25 +325,38 @@ public abstract class ETFUtils2 {
         return empty;
     }
 
-    public static boolean registerNativeImageToIdentifier(NativeImage img, Identifier identifier) {
-        if (img != null && identifier != null) {
-            NativeImageBackedTexture bob = new NativeImageBackedTexture(img);
-            MinecraftClient.getInstance().getTextureManager().registerTexture(identifier, bob);
-            //MinecraftClient.getInstance().getResourceManager().
-//            ETFManager.getInstance().KNOWN_NATIVE_IMAGES.put(identifier, img);
-            return true;
-        } else {
-            logError("registering native image failed: " + img + ", " + identifier);
+    public static boolean registerNativeImageToIdentifier(NativeImage image, Identifier identifier) {
+        if (image == null || identifier == null) {
+            logError("registering native image failed: " + image + ", " + identifier);
             return false;
         }
-    }
+        try {
+            NativeImage closableImage = new NativeImage(image.getWidth(), image.getHeight(), true);
+            closableImage.copyFrom(image);
 
+            MinecraftClient.getInstance().getTextureManager().destroyTexture(identifier);
+
+            NativeImageBackedTexture closableBackedTexture = new NativeImageBackedTexture(closableImage);
+            MinecraftClient.getInstance().getTextureManager().registerTexture(identifier, closableBackedTexture);
+
+            return true;
+        } catch (Exception e) {
+            logError("registering native image failed: " + e);
+            return false;
+        }
+
+    }
 
     public static void checkModCompatibility() {
         for (ETFConfigWarning warning :
                 ETFConfigWarnings.getRegisteredWarnings()) {
             warning.testWarningAndApplyFixIfEnabled();
         }
+    }
+
+
+    public interface RenderMethodForOverlay {
+        void render(VertexConsumer consumer, int light);
     }
 
 }
