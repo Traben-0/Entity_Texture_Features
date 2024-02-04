@@ -312,9 +312,14 @@ public class ETFTexture {
         hasBeenReRegistered = true;
         NativeImage newBaseTexture = ETFUtils2.getNativeImageElseNull(thisIdentifier);
         if (newBaseTexture != null) {
-            thisIdentifier_Patched = new Identifier(PATCH_NAMESPACE_PREFIX + thisIdentifier.getNamespace(), thisIdentifier.getPath());
-            ETFUtils2.registerNativeImageToIdentifier(newBaseTexture, thisIdentifier_Patched);
-            ETFManager.getInstance().ETF_TEXTURE_CACHE.put(thisIdentifier_Patched, this);
+            var newPatchIdentifier = new Identifier(PATCH_NAMESPACE_PREFIX + thisIdentifier.getNamespace(), thisIdentifier.getPath());
+            if (ETFUtils2.registerNativeImageToIdentifier(newBaseTexture, newPatchIdentifier)){
+                thisIdentifier_Patched = newPatchIdentifier;
+                ETFManager.getInstance().ETF_TEXTURE_CACHE.put(thisIdentifier_Patched, this);
+            }else{
+                //assert
+                thisIdentifier_Patched = null;
+            }
         }
     }
 
