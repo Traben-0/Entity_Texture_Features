@@ -73,66 +73,6 @@ public abstract class MixinModelPartSodium {
         }
     }
 
-//    @Unique
-//    private static boolean etf$renderEmissive(ETFTexture texture, VertexConsumerProvider provider, MatrixStack matrices, ModelPart part, int overlay, int color) {
-//        Identifier emissive = texture.getEmissiveIdentifierOfCurrentState();
-//        if (emissive != null) {
-//            boolean wasAllowed = ETFRenderContext.isAllowedToRenderLayerTextureModify();
-//            ETFRenderContext.preventRenderLayerTextureModify();
-//
-//            boolean textureIsAllowedBrightRender = ETFManager.getEmissiveMode() == ETFManager.EmissiveRenderModes.BRIGHT
-//                    && ETFRenderContext.getCurrentEntity().etf$canBeBright();// && !ETFRenderContext.getCurrentETFTexture().isPatched_CurrentlyOnlyArmor();
-//
-//            VertexConsumer emissiveConsumer = provider.getBuffer(
-//                    textureIsAllowedBrightRender ?
-//                            RenderLayer.getBeaconBeam(emissive, true) :
-//                            ETFRenderContext.getCurrentEntity().etf$isBlockEntity() ?
-//                                    RenderLayer.getEntityTranslucentCull(emissive) :
-//                                    RenderLayer.getEntityTranslucent(emissive));
-//
-//            if(wasAllowed) ETFRenderContext.allowRenderLayerTextureModify();
-//
-//            //sodium
-//            VertexBufferWriter writer = VertexConsumerUtils.convertOrLog(emissiveConsumer);
-//
-//            if (writer == null) {
-//                return false;
-//            }
-//            //
-//
-//            ETFRenderContext.startSpecialRenderOverlayPhase();
-//                render(matrices, writer, part, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, overlay, color);
-//            ETFRenderContext.endSpecialRenderOverlayPhase();
-//            return true;
-//        }
-//        return false;
-//    }
-//
-//    @Unique
-//    private static boolean etf$renderEnchanted(ETFTexture texture, VertexConsumerProvider provider, MatrixStack matrices, ModelPart part, int light, int overlay, int color) {
-//        //attempt enchanted render
-//        Identifier enchanted = texture.getEnchantIdentifierOfCurrentState();
-//        if (enchanted != null) {
-//            boolean wasAllowed = ETFRenderContext.isAllowedToRenderLayerTextureModify();
-//            ETFRenderContext.preventRenderLayerTextureModify();
-//                VertexConsumer enchantedVertex = ItemRenderer.getArmorGlintConsumer(provider, RenderLayer.getArmorCutoutNoCull(enchanted), false, true);
-//            if(wasAllowed) ETFRenderContext.allowRenderLayerTextureModify();
-//
-//            //sodium
-//            VertexBufferWriter writer = VertexConsumerUtils.convertOrLog(enchantedVertex);
-//
-//            if (writer == null) {
-//                return false;
-//            }
-//            //
-//
-//            ETFRenderContext.startSpecialRenderOverlayPhase();
-//                render(matrices, writer, part, light, overlay, color);
-//            ETFRenderContext.endSpecialRenderOverlayPhase();
-//            return true;
-//        }
-//        return false;
-//    }
 
 
 }
