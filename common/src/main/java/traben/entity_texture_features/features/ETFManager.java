@@ -5,7 +5,6 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.texture.NativeImage;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.resource.ResourcePack;
@@ -51,7 +50,7 @@ public class ETFManager {
     public final Object2ReferenceOpenHashMap<@NotNull Identifier, @Nullable ETFTexture> ETF_TEXTURE_CACHE = new Object2ReferenceOpenHashMap<>();
     public UUID ENTITY_DEBUG = null;
     public final EntityIntLRU LAST_SUFFIX_OF_ENTITY = new EntityIntLRU();
-    public final ETFLruCache<Identifier, NativeImage> KNOWN_NATIVE_IMAGES = new ETFLruCache<>();
+//    public final ETFLruCache<Identifier, NativeImage> KNOWN_NATIVE_IMAGES = new ETFLruCache<>();
     private final Object2ObjectOpenHashMap<Identifier, ETFTextureVariator> VARIATOR_MAP = new Object2ObjectOpenHashMap<>();
     public Object2ReferenceOpenHashMap<@NotNull Identifier, @NotNull ETFDirectory> ETF_DIRECTORY_CACHE = new Object2ReferenceOpenHashMap<>();// = new Object2ReferenceOpenHashMap<>();
     public Boolean mooshroomBrownCustomShroomExists = null;
@@ -151,7 +150,7 @@ public class ETFManager {
                 .append("\n----------------------------------------")
                 .append("\n known emissive suffixes: \n - ").append(EMISSIVE_SUFFIX_LIST)
                 .append("\n player textures: \n - ").append(PLAYER_TEXTURE_MAP.size())
-                .append("\n image files read: \n - ").append(KNOWN_NATIVE_IMAGES.size())
+//                .append("\n image files read: \n - ").append(KNOWN_NATIVE_IMAGES.size())
 //                .append("\n - known resource-pack order: §r\n   ").append(KNOWN_RESOURCEPACK_ORDER.size())
                 .append("\n----------------------------------------")
                 .append("\n----------Texture totals----------------")
