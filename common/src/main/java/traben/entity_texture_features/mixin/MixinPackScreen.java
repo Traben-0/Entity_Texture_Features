@@ -16,9 +16,9 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import traben.entity_features.config.gui.EFMainConfigScreen;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.ETFConfig;
-import traben.entity_texture_features.config.screens.ETFConfigScreenMain;
 
 import java.nio.file.Path;
 import java.util.Objects;
@@ -46,7 +46,7 @@ public abstract class MixinPackScreen extends Screen {
 
     @Inject(method = "init", at = @At("TAIL"))
     private void etf$etfButton(CallbackInfo ci) {
-        if (!ETFConfig.getInstance().hideConfigButton
+        if (!ETFConfig.getConfig().hideConfigButton
                 && this.client != null
                 //ensure this is the resource-pack screen and not the data-pack screen
                 && this.file.equals(this.client.getResourcePackDir())
@@ -72,7 +72,7 @@ public abstract class MixinPackScreen extends Screen {
             this.addDrawableChild(new TexturedButtonWidget(
                     x, y, 24, 20,
                     new ButtonTextures(etf$UNFOCUSED, etf$FOCUSED),
-                    (button) -> Objects.requireNonNull(client).setScreen(new ETFConfigScreenMain(this)),
+                    (button) -> Objects.requireNonNull(client).setScreen(new EFMainConfigScreen(this)),
                     Text.translatable(MOD_ID + ".open_tooltip")) {
                 {
                     setTooltip(Tooltip.of(ETFVersionDifferenceHandler.getTextFromTranslation(

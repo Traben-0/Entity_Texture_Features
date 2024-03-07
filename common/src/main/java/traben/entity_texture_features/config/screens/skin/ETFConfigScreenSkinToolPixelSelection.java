@@ -18,7 +18,6 @@ import net.minecraft.util.Identifier;
 import org.joml.Quaternionf;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
-import traben.entity_texture_features.config.screens.ETFConfigScreen;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.utils.ETFUtils2;
 
@@ -31,7 +30,7 @@ import java.util.function.Supplier;
 import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 
 //inspired by puzzles custom gui code
-public class ETFConfigScreenSkinToolPixelSelection extends ETFConfigScreen {
+public class ETFConfigScreenSkinToolPixelSelection extends ETFScreenOldCompat {
 
     private final SelectionMode MODE;
 
@@ -40,7 +39,7 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFConfigScreen {
     Identifier currentSkinToRender = new Identifier(MOD_ID + ":textures/gui/icon.png");
 
     protected ETFConfigScreenSkinToolPixelSelection(ETFConfigScreenSkinTool parent, SelectionMode mode) {
-        super(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + (mode == SelectionMode.EMISSIVE ? ".emissive_select" : ".enchanted_select") + ".title"), parent);
+        super("config." + ETFClientCommon.MOD_ID + (mode == SelectionMode.EMISSIVE ? ".emissive_select" : ".enchanted_select") + ".title", parent, false);
         this.MODE = mode;
         etfParent = parent;
 
@@ -135,6 +134,7 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFConfigScreen {
         super.render(context, mouseX, mouseY, delta);
 
         int pixelSize = (int) (this.height * 0.7 / 64);
+
         renderGUITexture(currentSkinToRender, (int) ((this.width * 0.35)), (int) ((this.height * 0.2)), (int) ((this.width * 0.35) + (64 * pixelSize)), (int) ((this.height * 0.2) + (64 * pixelSize)));
         context.drawTextWithShadow(textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".skin_select" + (selectedPixels.size() > 64 ? ".warn" : ".hint")), width / 7, (int) (this.height * 0.8), selectedPixels.size() > 64 ? 0xff1515 : 0xFFFFFF);
 

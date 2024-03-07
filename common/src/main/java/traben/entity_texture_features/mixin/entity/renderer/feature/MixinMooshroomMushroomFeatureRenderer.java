@@ -56,7 +56,7 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
     @Nullable
     private static Boolean entity_texture_features$returnRedTrueBrownFalseVanillaNull(BlockState mushroomState) {
         //enable custom mooshroom mushrooms
-        if (ETFConfig.getInstance().enableCustomTextures) {
+        if (ETFConfig.getConfig().enableCustomTextures) {
             if (mushroomState.isOf(Blocks.RED_MUSHROOM)) {
                 if (ETFManager.getInstance().mooshroomRedCustomShroomExists == null) {
                     if (MinecraftClient.getInstance().getResourceManager().getResource(RED_SHROOM).isPresent()) {

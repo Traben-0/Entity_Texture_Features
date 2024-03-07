@@ -133,7 +133,7 @@ public class BlocksProperty extends StringArrayOrRegexProperty {
 
     @Override
     public boolean isPropertyUpdatable() {
-        return !ETFConfig.getInstance().restrictBlock;
+        return !ETFConfig.getConfig().restrictBlock;
     }
 
     @Override

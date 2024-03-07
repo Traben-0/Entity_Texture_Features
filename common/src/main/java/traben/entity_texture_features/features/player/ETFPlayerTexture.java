@@ -304,11 +304,11 @@ public class ETFPlayerTexture {
     }
 
     private static void parseSkinTransparency(NativeImage skin, boolean forceSolidSkin) {
-        if (forceSolidSkin || !ETFConfig.getInstance().skinFeaturesEnableTransparency) {
+        if (forceSolidSkin || !ETFConfig.getConfig().skinFeaturesEnableTransparency) {
             forceSolidLowerSkin(skin);
             return;
         }
-        if (!ETFConfig.getInstance().skinFeaturesEnableFullTransparency) {
+        if (!ETFConfig.getConfig().skinFeaturesEnableFullTransparency) {
             int countTransparent = 0;
             //map of bottom skin layer
             countTransparent += countTransparentInBox(skin, 8, 0, 23, 15);
@@ -464,7 +464,7 @@ public class ETFPlayerTexture {
     @Nullable
     public Identifier getBaseTextureIdentifierOrNullForVanilla(ETFPlayerEntity player) {
         this.player = player;//refresh player data
-        if (etfTextureOfFinalBaseSkin != null && (canUseFeaturesForThisPlayer() || ETFConfig.getInstance().tryETFTransparencyForAllSkins)) {
+        if (etfTextureOfFinalBaseSkin != null && (canUseFeaturesForThisPlayer() || ETFConfig.getConfig().tryETFTransparencyForAllSkins)) {
             return etfTextureOfFinalBaseSkin.getTextureIdentifier(player);
         }
         return null;
@@ -472,7 +472,7 @@ public class ETFPlayerTexture {
 
     @Nullable
     public Identifier getBaseHeadTextureIdentifierOrNullForVanilla() {
-        if (etfTextureOfFinalBaseSkin != null && (canUseFeaturesForThisPlayer() || ETFConfig.getInstance().tryETFTransparencyForAllSkins)) {
+        if (etfTextureOfFinalBaseSkin != null && (canUseFeaturesForThisPlayer() || ETFConfig.getConfig().tryETFTransparencyForAllSkins)) {
             return etfTextureOfFinalBaseSkin.getTextureIdentifier(null);
         }
         return null;
@@ -526,7 +526,7 @@ public class ETFPlayerTexture {
         return isTextureReady
                 && hasFeatures
                 && (//not on enemy team or doesn't matter
-                ETFConfig.getInstance().enableEnemyTeamPlayersSkinFeatures
+                ETFConfig.getConfig().enableEnemyTeamPlayersSkinFeatures
                         || (player.etf$isTeammate(MinecraftClient.getInstance().player)
                         || player.etf$getScoreboardTeam() == null));
     }
@@ -1165,7 +1165,7 @@ public class ETFPlayerTexture {
             } else {
 
                 //check if they want to try load transparent skin anyway
-                if (ETFConfig.getInstance().tryETFTransparencyForAllSkins) {
+                if (ETFConfig.getConfig().tryETFTransparencyForAllSkins) {
                     //parseSkinTransparency(originalSkin,wasForcedSolid);
                     Identifier skinIdentifier = new Identifier(SKIN_NAMESPACE, id + ".png");
                     ETFUtils2.registerNativeImageToIdentifier(originalSkin, skinIdentifier);

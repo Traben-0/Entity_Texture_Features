@@ -11,8 +11,8 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.config.ETFConfig;
-import traben.entity_texture_features.config.screens.warnings.ETFConfigWarning;
-import traben.entity_texture_features.config.screens.warnings.ETFConfigWarnings;
+import traben.entity_features.config.EFConfigWarning;
+import traben.entity_features.config.EFConfigWarnings;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.property_reading.PropertiesRandomProvider;
 import traben.entity_texture_features.features.property_reading.TrueRandomProvider;
@@ -55,8 +55,8 @@ import java.util.UUID;
  * {@link ETFApi#renderETFEmissiveModelPart(BlockEntity, Identifier, MatrixStack, VertexConsumerProvider, ModelPart)}
  * @adding_custom_optifine_properties This method allows registering custom {@link RandomProperty} objects to be included in OptiFine property file testing.<p>
  * {@link ETFApi#registerCustomRandomPropertyFactory(String, RandomProperties.RandomPropertyFactory...)}
- * @adding_custom_warnings This method allows registering custom {@link ETFConfigWarning} objects to be included in the ETF config screens and mod compatibility fixes.<p>
- * {@link ETFApi#registerCustomETFConfigWarning(String, ETFConfigWarning...)}
+ * @adding_custom_warnings This method allows registering custom {@link EFConfigWarning} objects to be included in the ETF config screens and mod compatibility fixes.<p>
+ * {@link ETFApi#registerCustomETFConfigWarning(String, EFConfigWarning...)}
  * @recent_rule_matches These methods allow retrieving the latest matched OptiFine property rule index of a given entity.<p>
  * {@link ETFApi#getLastMatchingRuleOfEntity(Entity)}<p>
  * {@link ETFApi#getLastMatchingRuleOfBlockEntity(BlockEntity)}
@@ -98,7 +98,7 @@ public final class ETFApi {
      * @return the etf config object
      */
     public static ETFConfig getETFConfigObject() {
-        return ETFConfig.getInstance();
+        return ETFConfig.getConfig();
     }
 
     /**
@@ -108,7 +108,7 @@ public final class ETFApi {
      */
     public static void setETFConfigObject(ETFConfig newETFConfig) {
         if(newETFConfig != null) {
-            ETFConfig.setInstance(newETFConfig);
+            ETFConfig.setConfig(newETFConfig);
             saveETFConfigChangesAndResetETF();
         }else{
             ETFUtils2.logError("new config was null: ignoring.");
@@ -121,7 +121,7 @@ public final class ETFApi {
      * @return the copy of ETF's current config object
      */
     public static ETFConfig getCopyOfETFConfigObject() {
-        return ETFConfig.copyFrom(ETFConfig.getInstance());
+        return ETFConfig.copyConfig();
     }
 
     /**
@@ -417,11 +417,11 @@ public final class ETFApi {
      * Pass in custom warnings to be displayed to ETF users, given certain conditions.
      *
      * @param yourModId your Mod's ID
-     * @param warnings  one or more instance of {@link ETFConfigWarning} to be listed on the ETF config warning screen
+     * @param warnings  one or more instance of {@link EFConfigWarning} to be listed on the ETF config warning screen
      */
-    public static void registerCustomETFConfigWarning(String yourModId, ETFConfigWarning... warnings) {
+    public static void registerCustomETFConfigWarning(String yourModId, EFConfigWarning... warnings) {
         if (warnings != null && warnings.length != 0) {
-            ETFConfigWarnings.registerConfigWarning(warnings);
+            EFConfigWarnings.registerConfigWarning(warnings);
             ETFUtils2.logMessage(warnings.length + " new ETF Config Warnings registered by " + yourModId);
         }
     }

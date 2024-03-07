@@ -58,7 +58,7 @@ public abstract class MixinSkullBlockEntityRenderer implements BlockEntityRender
 
         entity_texture_features$thisETFPlayerTexture = null;
 
-        if (skullType == SkullBlock.Type.PLAYER && ETFConfig.getInstance().skinFeaturesEnabled && ETFConfig.getInstance().enableCustomTextures && ETFConfig.getInstance().enableCustomBlockEntities) {
+        if (skullType == SkullBlock.Type.PLAYER && ETFConfig.getConfig().skinFeaturesEnabled && ETFConfig.getConfig().enableCustomTextures && ETFConfig.getConfig().enableCustomBlockEntities) {
             if (skullBlockEntity.getOwner() != null) {
                 Identifier identifier = MinecraftClient.getInstance()
                         .getSkinProvider().getSkinTextures(skullBlockEntity.getOwner()).texture();
@@ -75,7 +75,7 @@ public abstract class MixinSkullBlockEntityRenderer implements BlockEntityRender
             at = @At(value = "TAIL"),
             locals = LocalCapture.CAPTURE_FAILHARD)
     private void etf$renderFeatures(SkullBlockEntity skullBlockEntity, float f, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j, CallbackInfo ci, float g, BlockState blockState, boolean bl, Direction direction, int k, float h, SkullBlock.SkullType skullType, SkullBlockEntityModel skullBlockEntityModel, RenderLayer renderLayer) {
-        if (entity_texture_features$thisETFPlayerTexture != null && ETFConfig.getInstance().enableEmissiveBlockEntities) {
+        if (entity_texture_features$thisETFPlayerTexture != null && ETFConfig.getConfig().enableEmissiveBlockEntities) {
             //vanilla positional code copy
             matrixStack.push();
             if (direction == null) {

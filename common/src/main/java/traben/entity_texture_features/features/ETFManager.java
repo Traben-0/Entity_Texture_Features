@@ -88,7 +88,7 @@ public class ETFManager {
                         EMISSIVE_SUFFIX_LIST.add(prop.getProperty("suffix.emissive"));
                 }
             }
-            if (ETFConfig.getInstance().alwaysCheckVanillaEmissiveSuffix) {
+            if (ETFConfig.getConfig().alwaysCheckVanillaEmissiveSuffix) {
                 EMISSIVE_SUFFIX_LIST.add("_e");
             }
 
@@ -126,12 +126,12 @@ public class ETFManager {
     }
 
     public static EmissiveRenderModes getEmissiveMode() {
-        if (ETFConfig.getInstance().emissiveRenderMode == EmissiveRenderModes.BRIGHT
+        if (ETFConfig.getConfig().emissiveRenderMode == EmissiveRenderModes.BRIGHT
                 && ETFRenderContext.getCurrentEntity() != null
                 && !ETFRenderContext.getCurrentEntity().etf$canBeBright()) {
             return EmissiveRenderModes.DULL;
         }
-        return ETFConfig.getInstance().emissiveRenderMode;
+        return ETFConfig.getConfig().emissiveRenderMode;
     }
 
     public String getGeneralPrintout() {
@@ -239,7 +239,7 @@ public class ETFManager {
 
 
     public void markEntityForDebugPrint(UUID uuid) {
-        if (ETFConfig.getInstance().debugLoggingMode != ETFConfig.DebugLogMode.None) {
+        if (ETFConfig.getConfig().debugLoggingMode != ETFConfig.DebugLogMode.None) {
             ENTITY_DEBUG = uuid;
         }
     }
@@ -261,7 +261,7 @@ public class ETFManager {
                     return getETFTextureNoVariation(vanillaIdentifier);
                 }else {
                     VARIATOR_MAP.put(vanillaIdentifier, ETFTextureVariator.of(vanillaIdentifier));
-                    if (ETFConfig.getInstance().logTextureDataInitialization) {
+                    if (ETFConfig.getConfig().logTextureDataInitialization) {
                         ETFUtils2.logMessage("Amount of 'base' textures: " + VARIATOR_MAP.size());
                         ETFUtils2.logMessage("Total textures including variants: " + ETF_TEXTURE_CACHE.size());
                     }

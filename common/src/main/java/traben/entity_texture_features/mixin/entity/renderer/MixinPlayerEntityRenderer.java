@@ -58,7 +58,7 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/PlayerEntityModel;setAngles(Lnet/minecraft/entity/LivingEntity;FFFFF)V",
                     shift = At.Shift.AFTER), cancellable = true)
     private void etf$redirectNicely(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, AbstractClientPlayerEntity player, ModelPart arm, ModelPart sleeve, CallbackInfo ci) {
-        if (ETFConfig.getInstance().skinFeaturesEnabled) {
+        if (ETFConfig.getConfig().skinFeaturesEnabled) {
             ETFPlayerTexture thisETFPlayerTexture = ETFManager.getInstance().getPlayerTexture(player, player.getSkinTextures().texture());
             if (thisETFPlayerTexture != null && thisETFPlayerTexture.hasFeatures) {
                 Identifier etfTexture = thisETFPlayerTexture.getBaseTextureIdentifierOrNullForVanilla(player);
@@ -97,7 +97,7 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
     private void etf$renderOnce(MatrixStack matrixStack, VertexConsumer consumer, int light, AbstractClientPlayerEntity player, ModelPart arm, ModelPart sleeve){
         arm.render(matrixStack, consumer, light, OverlayTexture.DEFAULT_UV);
         sleeve.render(matrixStack, consumer, light, OverlayTexture.DEFAULT_UV);
-        if (ETFClientCommon.SKIN_LAYERS_DETECTED && ETFConfig.getInstance().use3DSkinLayerPatch) {
+        if (ETFClientCommon.SKIN_LAYERS_DETECTED && ETFConfig.getConfig().use3DSkinLayerPatch) {
             try {
                 // handler class is only ever accessed if the mod is present
                 // prevents NoClassDefFoundError
@@ -121,7 +121,7 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
     @Inject(method = "getTexture(Lnet/minecraft/client/network/AbstractClientPlayerEntity;)Lnet/minecraft/util/Identifier;",
             at = @At(value = "RETURN"), cancellable = true)
     private void etf$getTexture(AbstractClientPlayerEntity abstractClientPlayerEntity, CallbackInfoReturnable<Identifier> cir) {
-        if (ETFConfig.getInstance().skinFeaturesEnabled) {
+        if (ETFConfig.getConfig().skinFeaturesEnabled) {
             etf$ETFPlayerTexture = ETFManager.getInstance().getPlayerTexture(abstractClientPlayerEntity, cir.getReturnValue());
             if (etf$ETFPlayerTexture != null && etf$ETFPlayerTexture.hasFeatures) {
                 Identifier texture = etf$ETFPlayerTexture.getBaseTextureIdentifierOrNullForVanilla(abstractClientPlayerEntity);

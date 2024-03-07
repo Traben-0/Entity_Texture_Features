@@ -38,7 +38,7 @@ public class TimeOfDayProperty extends LongRangeFromStringArrayProperty {
 
     @Override
     public boolean isPropertyUpdatable() {
-        return !ETFConfig.getInstance().restrictDayTime;
+        return !ETFConfig.getConfig().restrictDayTime;
     }
 
     @Override

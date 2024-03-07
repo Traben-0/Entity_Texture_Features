@@ -16,12 +16,12 @@ public abstract class MixinIdentifier {
 
     @Inject(method = "isPathValid(Ljava/lang/String;)Z", cancellable = true, at = @At("RETURN"))
     private static void etf$illegalPathOverride(String path, CallbackInfoReturnable<Boolean> cir) {
-        if (ETFConfig.getInstance() != null) {
-            if (ETFConfig.getInstance().illegalPathSupportMode != ETFConfig.IllegalPathMode.None) {
+        if (ETFConfig.getConfig() != null) {
+            if (ETFConfig.getConfig().illegalPathSupportMode != ETFConfig.IllegalPathMode.None) {
                 if (!cir.getReturnValue() && path != null) {
 
 
-                    switch (ETFConfig.getInstance().illegalPathSupportMode) {
+                    switch (ETFConfig.getConfig().illegalPathSupportMode) {
                         case Entity -> {
                             if ((path.contains("/entity/") || path.contains("/optifine/") || path.contains("/etf/"))
                                     && (path.endsWith(".png") || path.endsWith(".properties") || path.endsWith(".mcmeta"))) {

@@ -19,8 +19,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
-import traben.entity_texture_features.config.screens.warnings.ETFConfigWarning;
-import traben.entity_texture_features.config.screens.warnings.ETFConfigWarnings;
+import traben.entity_features.config.EFConfigWarning;
+import traben.entity_features.config.EFConfigWarnings;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
@@ -327,8 +327,8 @@ public abstract class ETFUtils2 {
     }
 
     public static void checkModCompatibility() {
-        for (ETFConfigWarning warning :
-                ETFConfigWarnings.getRegisteredWarnings()) {
+        for (EFConfigWarning warning :
+                EFConfigWarnings.getRegisteredWarnings()) {
             warning.testWarningAndApplyFixIfEnabled();
         }
     }

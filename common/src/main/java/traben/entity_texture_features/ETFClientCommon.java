@@ -2,6 +2,8 @@ package traben.entity_texture_features;
 
 import net.minecraft.client.render.LightmapTextureManager;
 import org.slf4j.Logger;
+import traben.entity_features.config.EFConfigWarning;
+import traben.entity_features.config.EFConfigWarnings;
 import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.utils.ETFUtils2;
 
@@ -21,8 +23,6 @@ public class ETFClientCommon {
     public static boolean IRIS_DETECTED = false;
 
 
-    //sets whether to display config load warning in gui
-    public static boolean configHadLoadError = false;
     public static boolean SKIN_LAYERS_DETECTED = false;
 
     public static void start() {
@@ -31,8 +31,52 @@ public class ETFClientCommon {
         IRIS_DETECTED = ETFVersionDifferenceHandler.isThisModLoaded("iris") || ETFVersionDifferenceHandler.isThisModLoaded("oculus");
 
         LOGGER.info("Loading Entity Texture Features, " + randomQuip());
-        ETFConfig.loadConfig();
+
+        ETFConfig.getConfig();
+
         ETFUtils2.checkModCompatibility();
+
+        EFConfigWarnings.registerConfigWarning(
+                    //figura
+                    new EFConfigWarning.Simple(
+                            "figura",
+                            "figura",
+                            "config." + ETFClientCommon.MOD_ID + ".warn.figura.text.1",
+                            "config." + ETFClientCommon.MOD_ID + ".warn.figura.text.2",
+                            () -> {
+                                ETFConfig.getConfig().skinFeaturesEnabled = false;
+                                ETFConfig.saveConfig();
+                            }),
+                    //EBE
+                    new EFConfigWarning.Simple(
+                            "enhancedblockentities",
+                            "enhancedblockentities",
+                            "config." + ETFClientCommon.MOD_ID + ".warn.ebe.text.1",
+                            "config." + ETFClientCommon.MOD_ID + ".warn.ebe.text.2",
+                            null),
+                    //quark
+                    new EFConfigWarning.Simple(
+                            "quark",
+                            "quark",
+                            "config." + ETFClientCommon.MOD_ID + ".warn.quark.text.3",
+                            "config." + ETFClientCommon.MOD_ID + ".warn.quark.text.4",
+                            null),
+                    //iris and 3d skin layers trim warning
+                    new EFConfigWarning.Simple(
+                            "iris & 3d skin layers",
+                            () -> ETFClientCommon.IRIS_DETECTED && ETFClientCommon.SKIN_LAYERS_DETECTED,
+                            "config." + ETFClientCommon.MOD_ID + ".warn.iris_3d.text.1",
+                            "config." + ETFClientCommon.MOD_ID + ".warn.iris_3d.text.2",
+                            null),
+                    //no CEM mod, recommend EMF
+                    new EFConfigWarning.Simple(
+                            "emf",
+                            () -> !ETFVersionDifferenceHandler.isThisModLoaded("entity_model_features") && !ETFVersionDifferenceHandler.isThisModLoaded("cem"),
+                            "config." + ETFClientCommon.MOD_ID + ".warn.no_emf.text.1",
+                            "config." + ETFClientCommon.MOD_ID + ".warn.no_emf.text.2",
+                            null)
+            );
+
     }
 
     private static String randomQuip() {

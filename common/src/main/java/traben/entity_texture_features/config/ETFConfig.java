@@ -1,98 +1,62 @@
 package traben.entity_texture_features.config;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
-import traben.entity_texture_features.ETFClientCommon;
+import traben.entity_features.config.EFConfig;
+import traben.entity_features.config.EFConfigHandler;
+import traben.entity_features.config.gui.builders.*;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
+import traben.entity_texture_features.config.screens.skin.ETFConfigScreenSkinTool;
 import traben.entity_texture_features.features.ETFManager;
-import traben.entity_texture_features.utils.ETFUtils2;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import static traben.entity_texture_features.ETFClientCommon.CONFIG_DIR;
 import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 
 @SuppressWarnings("CanBeFinal")
-public class ETFConfig {
+public class ETFConfig extends EFConfig {
+
+
 
     @NotNull
-    public static ETFConfig getInstance() {
-        if(instance == null){
-            instance = new ETFConfig();
+    public static ETFConfig getConfig() {
+        if(INSTANCE == null){
+            INSTANCE = new EFConfigHandler<>(ETFConfig::new,MOD_ID);
         }
-        return instance;
+        return INSTANCE.getConfig();
     }
 
-    public static void setInstance(ETFConfig newConfigInstance) {
-        instance = newConfigInstance;
-    }
-
-    public static void loadConfig() {
-        try {
-            File config = new File(ETFClientCommon.CONFIG_DIR, "entity_texture_features.json");
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            if (config.exists()) {
-                try {
-                    FileReader fileReader = new FileReader(config);
-                    instance = gson.fromJson(fileReader, ETFConfig.class);
-                    fileReader.close();
-                    saveConfig();
-                } catch (IOException e) {
-                    ETFUtils2.logMessage("Config could not be loaded, using defaults", false);
-                    instance = new ETFConfig();
-                    saveConfig();
-                    ETFClientCommon.configHadLoadError = true;
-                }
-            } else {
-                instance = new ETFConfig();
-                saveConfig();
-            }
-            if (instance == null) {
-                ETFUtils2.logMessage("Config was null, using defaults", false);
-                instance = new ETFConfig();
-                saveConfig();
-                ETFClientCommon.configHadLoadError = true;
-            }
-        } catch (Exception e) {
-            ETFUtils2.logError("Config was corrupt or broken, using defaults", false);
-            instance = new ETFConfig();
-            saveConfig();
-            ETFClientCommon.configHadLoadError = true;
-        }
+    public static void setConfig(ETFConfig newConfigInstance) {
+        INSTANCE.setConfig(newConfigInstance);
     }
 
     public static void saveConfig() {
-        if(instance == null) ETFUtils2.logError("Config file could not be saved: null", false);
-        File config = new File(CONFIG_DIR, "entity_texture_features.json");
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        if (!config.getParentFile().exists()) {
-            //noinspection ResultOfMethodCallIgnored
-            config.getParentFile().mkdir();
-        }
-        try {
-            FileWriter fileWriter = new FileWriter(config);
-            fileWriter.write(gson.toJson(instance));
-            fileWriter.close();
-        } catch (IOException e) {
-            ETFUtils2.logError("Config file could not be saved: "+e.getMessage(), false);
-        }
+        getConfig();
+        INSTANCE.saveToFile();
     }
 
+    public static void loadConfig() {
+        INSTANCE.loadFromFile();
+    }
+
+    public static ETFConfig copyConfig() {
+        getConfig();
+        return INSTANCE.copyOfConfig();
+    }
+
+
+
+
     //config object
-    private static ETFConfig instance = null;
+    private static EFConfigHandler<ETFConfig> INSTANCE = null;
 
     public IllegalPathMode illegalPathSupportMode = IllegalPathMode.None;
 
     public boolean enableCustomTextures = true;
     public boolean enableCustomBlockEntities = true;
     public UpdateFrequency textureUpdateFrequency_V2 = UpdateFrequency.Fast;
-    //    public boolean restrictUpdateProperties = true;
     public boolean restrictBiome = true;
     public boolean restrictHeight = true;
     public boolean restrictBlock = true;
@@ -115,7 +79,6 @@ public class ETFConfig {
     public boolean skinFeaturesEnableFullTransparency = false;
 
     public boolean tryETFTransparencyForAllSkins = false;
-    //public boolean skinFeaturesPrintETFReadySkin = false;
     public boolean enableEnemyTeamPlayersSkinFeatures = true;
     public boolean enableBlinking = true;
     public int blinkFrequency = 150;
@@ -127,7 +90,7 @@ public class ETFConfig {
     public boolean logTextureDataInitialization = false;
 
 
-    public Set<String> ignoredConfigs2 = new HashSet<>();
+
 
     public boolean hideConfigButton = false;
 
@@ -137,14 +100,101 @@ public class ETFConfig {
 
     public boolean enableFullBodyWardenTextures = true;
 
+    @Override
+    public EFOptionCategory getGUIOptions() {
+        return new EFOptionCategory.Empty().add(
+                new EFOptionCategory("textures","tool").add(
+                        new EFOptionCategory("random","tool").add(
+                                new EFOptionBoolean("enableCustomTextures","tool",
+                                        () -> enableCustomTextures, aBoolean -> enableCustomTextures = aBoolean,true),
+                                new EFOptionEnum<>("textureUpdateFrequency_V2","tool",
+                                        () -> textureUpdateFrequency_V2, updateFrequency -> textureUpdateFrequency_V2 = updateFrequency,
+                                        UpdateFrequency.Fast),
+                                new EFOptionBoolean("blockentities","tool",
+                                        () -> enableCustomBlockEntities, aBoolean -> enableCustomBlockEntities = aBoolean,true),
+                                new EFOptionCategory("restrictions","tool").add(
+                                        new EFOptionBoolean("restrictBiome","tool",
+                                                () -> restrictBiome, aBoolean -> restrictBiome = aBoolean,true),
+                                        new EFOptionBoolean("restrictHeight","tool",
+                                                () -> restrictHeight, aBoolean -> restrictHeight = aBoolean,true),
+                                        new EFOptionBoolean("restrictBlock","tool",
+                                                () -> restrictBlock, aBoolean -> restrictBlock = aBoolean,true),
+                                        new EFOptionBoolean("restrictWeather","tool",
+                                                () -> restrictWeather, aBoolean -> restrictWeather = aBoolean,true),
+                                        new EFOptionBoolean("restrictDayTime","tool",
+                                                () -> restrictDayTime, aBoolean -> restrictDayTime = aBoolean,true),
+                                        new EFOptionBoolean("restrictMoonPhase","tool",
+                                                () -> restrictMoonPhase, aBoolean -> restrictMoonPhase = aBoolean,true)
+                                ),
+                                new EFOptionBoolean("defaultdirectory","tool",
+                                        () -> disableVanillaDirectoryVariantTextures, aBoolean -> disableVanillaDirectoryVariantTextures = aBoolean,true)
+                        ),new EFOptionCategory("Emissive","tool").add(
+                                new EFOptionBoolean("enableEmissiveTextures","tool",
+                                        () -> enableEmissiveTextures, aBoolean -> enableEmissiveTextures = aBoolean,true),
+                                new EFOptionBoolean("enableEmissiveBlockEntities","tool",
+                                        () -> enableEmissiveBlockEntities, aBoolean -> enableEmissiveBlockEntities = aBoolean,true),
+                                new EFOptionEnum<>("emissiveRenderMode","tool",
+                                        () -> emissiveRenderMode, renderMode -> emissiveRenderMode = renderMode,
+                                        ETFManager.EmissiveRenderModes.DULL),
+                                new EFOptionBoolean("alwaysCheckVanillaEmissiveSuffix","tool",
+                                        () -> alwaysCheckVanillaEmissiveSuffix, aBoolean -> alwaysCheckVanillaEmissiveSuffix = aBoolean,true),
+                                new EFOptionBoolean("enableArmorAndTrims","tool",
+                                        () -> enableArmorAndTrims, aBoolean -> enableArmorAndTrims = aBoolean,true)
+                        ), new EFOptionCategory("Skin Features","tool").add(
+                                new EFOptionBoolean("skinFeaturesEnabled","tool",
+                                        () -> skinFeaturesEnabled, aBoolean -> skinFeaturesEnabled = aBoolean,true),
+                                new EFOptionBoolean("skinFeaturesEnableTransparency","tool",
+                                        () -> skinFeaturesEnableTransparency, aBoolean -> skinFeaturesEnableTransparency = aBoolean,true),
+                                new EFOptionBoolean("skinFeaturesEnableFullTransparency","tool",
+                                        () -> skinFeaturesEnableFullTransparency, aBoolean -> skinFeaturesEnableFullTransparency = aBoolean,true),
+                                new EFOptionBoolean("tryETFTransparencyForAllSkins","tool",
+                                        () -> tryETFTransparencyForAllSkins, aBoolean -> tryETFTransparencyForAllSkins = aBoolean,true),
+                                new EFOptionBoolean("enableEnemyTeamPlayersSkinFeatures","tool",
+                                        () -> enableEnemyTeamPlayersSkinFeatures, aBoolean -> enableEnemyTeamPlayersSkinFeatures = aBoolean,true),
+                                new EFOptionBoolean("3dSkinLayerPatch","tool",
+                                        () -> use3DSkinLayerPatch, aBoolean -> use3DSkinLayerPatch = aBoolean,true),
+                                new EFOptionCustomScreenOpener("skin tool","tool",
+                                        () -> new ETFConfigScreenSkinTool(MinecraftClient.getInstance().currentScreen),false)
+                        ), new EFOptionCategory("Blinking","tool").add(
+                                new EFOptionBoolean("enableBlinking","tool",
+                                        () -> enableBlinking, aBoolean -> enableBlinking = aBoolean,true),
+                                new EFOptionInt("blinkFrequency","tool",
+                                        () -> blinkFrequency , aInt -> blinkFrequency = aInt ,150,1,1024,false,false),
+                                new EFOptionInt("blinkLength","tool",
+                                        () -> blinkLength , aInt -> blinkLength = aInt ,1,1,20,false,false)
+
+                        ), new EFOptionCategory("Debug","tool").add(
+                                new EFOptionEnum<>("debugLoggingMode","tool",
+                                        () -> debugLoggingMode, debugLogMode -> debugLoggingMode = debugLogMode, DebugLogMode.None),
+                                new EFOptionBoolean("logTextureDataInitialization","tool",
+                                        () -> logTextureDataInitialization, aBoolean -> logTextureDataInitialization = aBoolean,true),
+                                new EFOptionCustomButton("config.entity_texture_features.debug_screen.mass_log","config.entity_texture_features.debug_screen.mass_log.tooltip",
+                                        (button) -> {ETFManager.getInstance().doTheBigBoyPrintoutKronk();
+                                                    button.setMessage(ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.debug_screen.mass_log.done"));
+                                                    button.active = false;})
+                        )
+                ), new EFOptionCategory("General","tool").add(
+                        new EFOptionEnum<>("illegalPathSupportMode","tool",
+                                () -> illegalPathSupportMode, illegalPathMode -> illegalPathSupportMode = illegalPathMode, IllegalPathMode.None),
+                        new EFOptionBoolean("enableFullBodyWardenTextures","tool",
+                                () -> enableFullBodyWardenTextures, aBoolean -> enableFullBodyWardenTextures = aBoolean,true),
+                        new EFOptionBoolean("hideConfigButton","tool",
+                                () -> hideConfigButton, aBoolean -> hideConfigButton = aBoolean,true)
+                )
+        );
+    }
+
+    @Override
+    public Identifier getModIcon() {
+        return new Identifier(MOD_ID, "textures/gui/icon.png");
+    }
+
     //string name stuff more in-depth than other enum for backwards compatibility
 
-    public static ETFConfig copyFrom(ETFConfig source) {
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-        return gson.fromJson(gson.toJson(source), ETFConfig.class);
-    }
+
+
 
     @SuppressWarnings({"unused", "EnhancedSwitchMigration"})
     public enum UpdateFrequency {

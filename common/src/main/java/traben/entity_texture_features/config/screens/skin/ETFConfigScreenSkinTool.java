@@ -19,7 +19,6 @@ import org.joml.Quaternionf;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.ETFConfig;
-import traben.entity_texture_features.config.screens.ETFConfigScreen;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.player.ETFPlayerTexture;
 import traben.entity_texture_features.utils.ETFUtils2;
@@ -32,7 +31,7 @@ import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 
 //inspired by puzzles custom gui code
 @SuppressWarnings("EnhancedSwitchMigration")
-public class ETFConfigScreenSkinTool extends ETFConfigScreen {
+public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
     public Boolean originalEnableBlinking;
     public ETFPlayerTexture thisETFPlayerTexture = null;
     public NativeImage currentEditorSkin = null;
@@ -50,8 +49,8 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
 //    ButtonWidget capeButton = null;
     ButtonWidget transparencyButton = null;
 
-    protected ETFConfigScreenSkinTool(Screen parent) {
-        super(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_features.title"), parent);
+    public ETFConfigScreenSkinTool(Screen parent) {
+        super("config." + MOD_ID + ".player_skin_features.title", parent, false);
 
     }
 
@@ -80,7 +79,7 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
     }
 
     private void onExit() {
-        ETFConfig.getInstance().enableBlinking = originalEnableBlinking;
+        ETFConfig.getConfig().enableBlinking = originalEnableBlinking;
         if (MinecraftClient.getInstance().player != null) {
             ETFManager.getInstance().PLAYER_TEXTURE_MAP.removeEntryOnly(MinecraftClient.getInstance().player.getUuid());
         }
@@ -100,8 +99,8 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
 
         //make blinking enabled for skin tool
         if (originalEnableBlinking == null) {
-            originalEnableBlinking = ETFConfig.getInstance().enableBlinking;
-            ETFConfig.getInstance().enableBlinking = true;
+            originalEnableBlinking = ETFConfig.getConfig().enableBlinking;
+            ETFConfig.getConfig().enableBlinking = true;
         }
 
 
@@ -876,5 +875,7 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
             }
         }
     }
+
+
 
 }

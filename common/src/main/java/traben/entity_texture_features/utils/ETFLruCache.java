@@ -25,7 +25,7 @@ public class ETFLruCache<X, Y> extends Object2ObjectLinkedOpenHashMap<X, Y> {
 
 
     public Y put(X key, Y value) {
-        if (size() >= capacity * (ETFConfig.getInstance().advanced_IncreaseCacheSizeModifier > 1 ? ETFConfig.getInstance().advanced_IncreaseCacheSizeModifier : 1)) {
+        if (size() >= capacity * (ETFConfig.getConfig().advanced_IncreaseCacheSizeModifier > 1 ? ETFConfig.getConfig().advanced_IncreaseCacheSizeModifier : 1)) {
             X lastKey = lastKey();
             if (!lastKey.equals(key)) {
                 remove(lastKey);

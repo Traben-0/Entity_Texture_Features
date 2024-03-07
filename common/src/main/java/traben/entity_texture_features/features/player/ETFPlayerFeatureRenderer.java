@@ -97,7 +97,7 @@ public class ETFPlayerFeatureRenderer<T extends PlayerEntity, M extends PlayerEn
     @Override
     public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, T entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
 
-        if (ETFConfig.getInstance().skinFeaturesEnabled && skinHolder != null) {
+        if (ETFConfig.getConfig().skinFeaturesEnabled && skinHolder != null) {
             ETFRenderContext.preventRenderLayerTextureModify();
 
             ETFPlayerTexture playerTexture = skinHolder.etf$getETFPlayerTexture();

@@ -33,7 +33,7 @@ public class ETFRenderContext {
     }
 
     public static boolean isAllowedToRenderLayerTextureModify() {
-        return allowRenderLayerTextureModify && ETFConfig.getInstance().enableCustomTextures;
+        return allowRenderLayerTextureModify && ETFConfig.getConfig().enableCustomTextures;
     }
 
     public static void preventRenderLayerTextureModify() {

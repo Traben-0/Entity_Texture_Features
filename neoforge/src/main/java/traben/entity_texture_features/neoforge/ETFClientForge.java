@@ -7,8 +7,8 @@ import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.ConfigScreenHandler;
+import traben.entity_features.config.gui.EFMainConfigScreen;
 import traben.entity_texture_features.ETFClientCommon;
-import traben.entity_texture_features.config.screens.ETFConfigScreenMain;
 
 @Mod("entity_texture_features")
 public class ETFClientForge {
@@ -25,7 +25,7 @@ public class ETFClientForge {
                         ConfigScreenHandler.ConfigScreenFactory.class,
                         () -> new ConfigScreenHandler.ConfigScreenFactory((minecraftClient, screen) -> {
                             try {
-                                return new ETFConfigScreenMain(screen);}
+                                return new EFMainConfigScreen(screen);}
                             catch (Exception e) {
                                 System.out.println("[Entity Texture Features]: Mod config broken: " + e.getMessage());
                                 return null;

@@ -95,7 +95,7 @@ public class BiomeProperty extends StringArrayOrRegexProperty {
 
     @Override
     public boolean isPropertyUpdatable() {
-        return !ETFConfig.getInstance().restrictBiome;
+        return !ETFConfig.getConfig().restrictBiome;
     }
 
     @Override

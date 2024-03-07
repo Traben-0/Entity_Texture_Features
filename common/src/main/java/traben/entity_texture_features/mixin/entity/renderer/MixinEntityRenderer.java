@@ -20,7 +20,7 @@ public abstract class MixinEntityRenderer<T extends Entity> {
     @Inject(method = "getLight", at = @At(value = "RETURN"), cancellable = true)
     private void etf$vanillaLightOverrideCancel(T entity, float tickDelta, CallbackInfoReturnable<Integer> cir) {
         //if need to override vanilla brightness behaviour
-        if (ETFConfig.getInstance().enableCustomTextures
+        if (ETFConfig.getConfig().enableCustomTextures
                 && ETFManager.getInstance().ENTITY_TYPE_VANILLA_BRIGHTNESS_OVERRIDE_VALUE.containsKey(entity.getType())) {
             int overrideLightValue = ETFManager.getInstance().ENTITY_TYPE_VANILLA_BRIGHTNESS_OVERRIDE_VALUE.getInt(entity.getType());
             //change return with overridden light value still respecting higher block and sky lights

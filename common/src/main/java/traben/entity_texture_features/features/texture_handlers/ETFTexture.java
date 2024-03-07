@@ -62,8 +62,8 @@ public class ETFTexture {
     private Identifier blink2Identifier = null;
     private Identifier blinkIdentifier_Patched = null;
     private Identifier blink2Identifier_Patched = null;
-    private Integer blinkLength = ETFConfig.getInstance().blinkLength;
-    private Integer blinkFrequency = ETFConfig.getInstance().blinkFrequency;
+    private Integer blinkLength = ETFConfig.getConfig().blinkLength;
+    private Integer blinkFrequency = ETFConfig.getConfig().blinkFrequency;
 
     // private final TextureSource source;
 
@@ -170,7 +170,7 @@ public class ETFTexture {
     }
 
     private void setupBlinking() {
-        if (ETFConfig.getInstance().enableBlinking) {
+        if (ETFConfig.getConfig().enableBlinking) {
             ResourceManager resourceManager = MinecraftClient.getInstance().getResourceManager();
             Optional<Resource> vanillaR1 = resourceManager.getResource(thisIdentifier);
             if (vanillaR1.isPresent()) {
@@ -211,10 +211,10 @@ public class ETFTexture {
                                 if (propertyResourcePackName.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(propertyResourcePackName, blink1PackName))) {
                                     blinkLength = blinkingProps.containsKey("blinkLength") ?
                                             Integer.parseInt(blinkingProps.getProperty("blinkLength").replaceAll("\\D", "")) :
-                                            ETFConfig.getInstance().blinkLength;
+                                            ETFConfig.getConfig().blinkLength;
                                     blinkFrequency = blinkingProps.containsKey("blinkFrequency") ?
                                             Integer.parseInt(blinkingProps.getProperty("blinkFrequency").replaceAll("\\D", "")) :
-                                            ETFConfig.getInstance().blinkFrequency;
+                                            ETFConfig.getConfig().blinkFrequency;
 
                                 }
 
@@ -283,7 +283,7 @@ public class ETFTexture {
 
     private void setupEmissives() {
 
-        if (ETFConfig.getInstance().enableEmissiveTextures) {
+        if (ETFConfig.getConfig().enableEmissiveTextures) {
             ResourceManager resourceManager = MinecraftClient.getInstance().getResourceManager();
 
             for (String possibleEmissiveSuffix :
@@ -354,7 +354,7 @@ public class ETFTexture {
 
     private void setupEnchants() {
 
-        if (ETFConfig.getInstance().enableEnchantedTextures) {
+        if (ETFConfig.getConfig().enableEnchantedTextures) {
             ResourceManager resourceManager = MinecraftClient.getInstance().getResourceManager();
 
             String enchantSuffix = "_enchant";
@@ -743,7 +743,7 @@ public class ETFTexture {
         boolean didPatch = false;
 
         //patch out emissive textures for shader z fighting fix
-        if (this.emissiveIdentifier != null && ETFConfig.getInstance().enableEmissiveTextures) {
+        if (this.emissiveIdentifier != null && ETFConfig.getConfig().enableEmissiveTextures) {
             //create patched texture
             NativeImage emissiveImage = ETFUtils2.getNativeImageElseNull(emissiveIdentifier);
             try {

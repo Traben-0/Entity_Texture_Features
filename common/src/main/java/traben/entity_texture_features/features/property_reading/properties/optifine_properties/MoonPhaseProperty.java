@@ -27,7 +27,7 @@ public class MoonPhaseProperty extends SimpleIntegerArrayProperty {
 
     @Override
     public boolean isPropertyUpdatable() {
-        return !ETFConfig.getInstance().restrictHeight;
+        return !ETFConfig.getConfig().restrictHeight;
     }
 
     @Override

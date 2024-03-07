@@ -44,7 +44,7 @@ public abstract class MixinEnderDragonEntityRenderer extends EntityRenderer<Ende
             method = "render(Lnet/minecraft/entity/boss/dragon/EnderDragonEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/VertexConsumerProvider;getBuffer(Lnet/minecraft/client/render/RenderLayer;)Lnet/minecraft/client/render/VertexConsumer;"))
     private RenderLayer etf$returnAlteredTexture(RenderLayer texturedRenderLayer) {
-        if (ETFConfig.getInstance().enableCustomTextures) {
+        if (ETFConfig.getConfig().enableCustomTextures) {
             try {
                 if (DRAGON_DECAL.equals(texturedRenderLayer)) {
                     return RenderLayer.getEntityDecal(TEXTURE);

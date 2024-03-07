@@ -44,7 +44,7 @@ public class WeatherProperty extends StringArrayOrRegexProperty {
 
     @Override
     public boolean isPropertyUpdatable() {
-        return !ETFConfig.getInstance().restrictWeather;
+        return !ETFConfig.getConfig().restrictWeather;
     }
 
     @Override

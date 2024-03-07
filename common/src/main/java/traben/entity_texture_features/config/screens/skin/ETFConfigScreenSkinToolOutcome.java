@@ -18,7 +18,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import traben.entity_texture_features.ETFClientCommon;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
-import traben.entity_texture_features.config.screens.ETFConfigScreen;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.mixin.accessor.FileCacheAccessor;
 import traben.entity_texture_features.mixin.accessor.PlayerSkinProviderAccessor;
@@ -36,12 +35,12 @@ import java.util.Objects;
 import static traben.entity_texture_features.ETFClientCommon.CONFIG_DIR;
 
 //inspired by puzzles custom gui code
-public class ETFConfigScreenSkinToolOutcome extends ETFConfigScreen {
+public class ETFConfigScreenSkinToolOutcome extends ETFScreenOldCompat {
     private final boolean didSucceed;
     private final NativeImage skin;
 
     protected ETFConfigScreenSkinToolOutcome(Screen parent, boolean success, NativeImage skin) {
-        super(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.print_skin.result"), parent);
+        super("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.print_skin.result", parent,false);
         didSucceed = success;
         this.skin = skin;
         //this.skin = new PlayerSkinTexture(skin);

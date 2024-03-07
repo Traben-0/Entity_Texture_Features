@@ -40,7 +40,7 @@ public abstract class MixinPlayerEntity extends Entity implements ETFPlayerEntit
     @Inject(method = "interact", at = @At("HEAD"))
     private void etf$injected(Entity entity, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
         if (getWorld().isClient()) {
-            if (ETFConfig.getInstance().debugLoggingMode != ETFConfig.DebugLogMode.None)
+            if (ETFConfig.getConfig().debugLoggingMode != ETFConfig.DebugLogMode.None)
                 ETFManager.getInstance().markEntityForDebugPrint(entity.getUuid());
         }
     }

@@ -31,7 +31,7 @@ public abstract class MixinCustomizableModelPart {
     @Inject(method = "render(Lnet/minecraft/client/model/ModelPart;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V",
             at = @At(value = "HEAD"))
     private void etf$findOutIfInitialModelPart(ModelPart vanillaModel, MatrixStack poseStack, VertexConsumer vertexConsumer, int light, int overlay, float red, float green, float blue, float alpha, CallbackInfo ci) {
-        if(ETFConfig.getInstance().use3DSkinLayerPatch) {
+        if(ETFConfig.getConfig().use3DSkinLayerPatch) {
             ETFRenderContext.incrementCurrentModelPartDepth();
         }
     }
@@ -39,7 +39,7 @@ public abstract class MixinCustomizableModelPart {
     @Inject(method = "render(Lnet/minecraft/client/model/ModelPart;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V",
             at = @At(value = "RETURN"))
     private void etf$doEmissive(ModelPart vanillaModel, MatrixStack poseStack, VertexConsumer vertexConsumer, int light, int overlay, float red, float green, float blue, float alpha, CallbackInfo ci) {
-        if(ETFConfig.getInstance().use3DSkinLayerPatch) {
+        if(ETFConfig.getConfig().use3DSkinLayerPatch) {
             //run code if this is the initial topmost rendered part
             if (ETFRenderContext.getCurrentModelPartDepth() != 1) {
                 ETFRenderContext.decrementCurrentModelPartDepth();
