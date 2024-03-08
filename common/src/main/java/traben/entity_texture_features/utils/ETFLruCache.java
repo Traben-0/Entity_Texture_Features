@@ -2,7 +2,7 @@ package traben.entity_texture_features.utils;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import org.jetbrains.annotations.Nullable;
-import traben.entity_texture_features.config.ETFConfig;
+import traben.entity_texture_features.ETF;
 
 
 public class ETFLruCache<X, Y> extends Object2ObjectLinkedOpenHashMap<X, Y> {
@@ -25,7 +25,7 @@ public class ETFLruCache<X, Y> extends Object2ObjectLinkedOpenHashMap<X, Y> {
 
 
     public Y put(X key, Y value) {
-        if (size() >= capacity * (ETFConfig.getConfig().advanced_IncreaseCacheSizeModifier > 1 ? ETFConfig.getConfig().advanced_IncreaseCacheSizeModifier : 1)) {
+        if (size() >= capacity * (ETF.config().getConfig().advanced_IncreaseCacheSizeModifier > 1 ? ETF.config().getConfig().advanced_IncreaseCacheSizeModifier : 1)) {
             X lastKey = lastKey();
             if (!lastKey.equals(key)) {
                 remove(lastKey);

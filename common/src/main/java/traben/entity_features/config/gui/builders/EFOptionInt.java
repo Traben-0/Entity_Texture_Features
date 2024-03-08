@@ -1,5 +1,6 @@
 package traben.entity_features.config.gui.builders;
 
+import com.demonwav.mcdev.annotations.Translatable;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
@@ -15,13 +16,24 @@ import java.util.function.Supplier;
 public class EFOptionInt extends EFOptionValue<Integer> {
 
 
-
     private final IntSliderWidget widget;
 
-    public EFOptionInt(String text, String tooltip, Supplier<Integer> getter, Consumer<Integer> setter,
-                       int defaultValue, int min, int max, boolean isMinOff, boolean isMaxOff) {
+    public EFOptionInt(@Translatable String text, @Translatable String tooltip, Supplier<Integer> getter, Consumer<Integer> setter, int defaultValue, int min, int max, boolean isMinOff, boolean isMaxOff) {
         super(text, tooltip, getter, setter, defaultValue);
-        widget = new IntSliderWidget( getText(), getter.get(), getTooltip(), min, max, isMinOff, isMaxOff);
+        widget = new IntSliderWidget(getText(), getter.get(), getTooltip(), min, max, isMinOff, isMaxOff);
+    }
+
+    public EFOptionInt(@Translatable String text, @Translatable String tooltip, Supplier<Integer> getter, Consumer<Integer> setter, int defaultValue, int min, int max) {
+        super(text, tooltip, getter, setter, defaultValue);
+        widget = new IntSliderWidget(getText(), getter.get(), getTooltip(), min, max, false, false);
+    }
+
+    public EFOptionInt(@Translatable String text, Supplier<Integer> getter, Consumer<Integer> setter, int defaultValue, int min, int max, boolean isMinOff, boolean isMaxOff) {
+        this(text, null, getter, setter, defaultValue, min, max, isMinOff, isMaxOff);
+    }
+
+    public EFOptionInt(@Translatable String text, Supplier<Integer> getter, Consumer<Integer> setter, int defaultValue, int min, int max) {
+        this(text, null, getter, setter, defaultValue, min, max, false, false);
     }
 
     @Override
@@ -30,7 +42,7 @@ public class EFOptionInt extends EFOptionValue<Integer> {
     }
 
     @Override
-    public <T extends Element & Drawable & Selectable> T  getWidget(final int x, final int y, final int width, final int height) {
+    public <T extends Element & Drawable & Selectable> T getWidget(final int x, final int y, final int width, final int height) {
         widget.setDimensionsAndPosition(width, height, x, y);
         //noinspection unchecked
         return (T) widget;
@@ -56,7 +68,7 @@ public class EFOptionInt extends EFOptionValue<Integer> {
 
         public IntSliderWidget(final Text text,
                                final int initialValue, final Tooltip tooltip, int min, int max, boolean isMinOff, boolean isMaxOff) {
-            super(0,0,20,20, text, 0);
+            super(0, 0, 20, 20, text, 0);
             this.min = min;
             this.max = max;
             this.isMinOff = isMinOff;
@@ -76,7 +88,7 @@ public class EFOptionInt extends EFOptionValue<Integer> {
         }
 
         private void setValue(int intIndex) {
-            this.value = (MathHelper.clamp(intIndex,min,max) -min) / (double) (max-min);
+            this.value = (MathHelper.clamp(intIndex, min, max) - min) / (double) (max - min);
             //snapValueToNearestIndex();
             updateMessage();
         }
@@ -98,7 +110,9 @@ public class EFOptionInt extends EFOptionValue<Integer> {
 
         //snaps the double value to the nearest index
         public int getValueRoundedToIntBetweenMinMax() {
-            if (isOff()) {return 0;}
+            if (isOff()) {
+                return 0;
+            }
             return (int) Math.round(value * (max - min)) + min;
         }
 

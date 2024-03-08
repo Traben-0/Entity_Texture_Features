@@ -7,7 +7,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ColorHelper;
 import org.jetbrains.annotations.Nullable;
-import traben.entity_texture_features.config.ETFConfig;
+import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.config.screens.skin.ETFConfigScreenSkinTool;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
@@ -304,11 +304,11 @@ public class ETFPlayerTexture {
     }
 
     private static void parseSkinTransparency(NativeImage skin, boolean forceSolidSkin) {
-        if (forceSolidSkin || !ETFConfig.getConfig().skinFeaturesEnableTransparency) {
+        if (forceSolidSkin || !ETF.config().getConfig().skinFeaturesEnableTransparency) {
             forceSolidLowerSkin(skin);
             return;
         }
-        if (!ETFConfig.getConfig().skinFeaturesEnableFullTransparency) {
+        if (!ETF.config().getConfig().skinFeaturesEnableFullTransparency) {
             int countTransparent = 0;
             //map of bottom skin layer
             countTransparent += countTransparentInBox(skin, 8, 0, 23, 15);
@@ -464,7 +464,7 @@ public class ETFPlayerTexture {
     @Nullable
     public Identifier getBaseTextureIdentifierOrNullForVanilla(ETFPlayerEntity player) {
         this.player = player;//refresh player data
-        if (etfTextureOfFinalBaseSkin != null && (canUseFeaturesForThisPlayer() || ETFConfig.getConfig().tryETFTransparencyForAllSkins)) {
+        if (etfTextureOfFinalBaseSkin != null && (canUseFeaturesForThisPlayer() || ETF.config().getConfig().tryETFTransparencyForAllSkins)) {
             return etfTextureOfFinalBaseSkin.getTextureIdentifier(player);
         }
         return null;
@@ -472,7 +472,7 @@ public class ETFPlayerTexture {
 
     @Nullable
     public Identifier getBaseHeadTextureIdentifierOrNullForVanilla() {
-        if (etfTextureOfFinalBaseSkin != null && (canUseFeaturesForThisPlayer() || ETFConfig.getConfig().tryETFTransparencyForAllSkins)) {
+        if (etfTextureOfFinalBaseSkin != null && (canUseFeaturesForThisPlayer() || ETF.config().getConfig().tryETFTransparencyForAllSkins)) {
             return etfTextureOfFinalBaseSkin.getTextureIdentifier(null);
         }
         return null;
@@ -526,7 +526,7 @@ public class ETFPlayerTexture {
         return isTextureReady
                 && hasFeatures
                 && (//not on enemy team or doesn't matter
-                ETFConfig.getConfig().enableEnemyTeamPlayersSkinFeatures
+                ETF.config().getConfig().enableEnemyTeamPlayersSkinFeatures
                         || (player.etf$isTeammate(MinecraftClient.getInstance().player)
                         || player.etf$getScoreboardTeam() == null));
     }
@@ -1165,7 +1165,7 @@ public class ETFPlayerTexture {
             } else {
 
                 //check if they want to try load transparent skin anyway
-                if (ETFConfig.getConfig().tryETFTransparencyForAllSkins) {
+                if (ETF.config().getConfig().tryETFTransparencyForAllSkins) {
                     //parseSkinTransparency(originalSkin,wasForcedSolid);
                     Identifier skinIdentifier = new Identifier(SKIN_NAMESPACE, id + ".png");
                     ETFUtils2.registerNativeImageToIdentifier(originalSkin, skinIdentifier);

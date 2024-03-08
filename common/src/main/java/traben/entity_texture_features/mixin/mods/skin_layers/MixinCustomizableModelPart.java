@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import traben.entity_texture_features.config.ETFConfig;
+import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
 import traben.entity_texture_features.mixin.MixinModelPart;
@@ -31,7 +31,7 @@ public abstract class MixinCustomizableModelPart {
     @Inject(method = "render(Lnet/minecraft/client/model/ModelPart;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V",
             at = @At(value = "HEAD"))
     private void etf$findOutIfInitialModelPart(ModelPart vanillaModel, MatrixStack poseStack, VertexConsumer vertexConsumer, int light, int overlay, float red, float green, float blue, float alpha, CallbackInfo ci) {
-        if(ETFConfig.getConfig().use3DSkinLayerPatch) {
+        if(ETF.config().getConfig().use3DSkinLayerPatch) {
             ETFRenderContext.incrementCurrentModelPartDepth();
         }
     }
@@ -39,7 +39,7 @@ public abstract class MixinCustomizableModelPart {
     @Inject(method = "render(Lnet/minecraft/client/model/ModelPart;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V",
             at = @At(value = "RETURN"))
     private void etf$doEmissive(ModelPart vanillaModel, MatrixStack poseStack, VertexConsumer vertexConsumer, int light, int overlay, float red, float green, float blue, float alpha, CallbackInfo ci) {
-        if(ETFConfig.getConfig().use3DSkinLayerPatch) {
+        if(ETF.config().getConfig().use3DSkinLayerPatch) {
             //run code if this is the initial topmost rendered part
             if (ETFRenderContext.getCurrentModelPartDepth() != 1) {
                 ETFRenderContext.decrementCurrentModelPartDepth();

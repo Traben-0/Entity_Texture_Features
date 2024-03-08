@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import traben.entity_features.EFCommon;
 import traben.entity_features.config.gui.EFMainConfigScreen;
-import traben.entity_texture_features.ETFClientCommon;
 
 import java.io.File;
 import java.io.FileReader;
@@ -13,18 +12,43 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-import static traben.entity_texture_features.ETFClientCommon.CONFIG_DIR;
+import static traben.entity_texture_features.ETF.CONFIG_DIR;
+
 
 public class EFConfigHandler<T extends EFConfig> {
 
 
     private final Supplier<T> newConfigSupplier;
+    private final String configFileName;
+    private final Class<T> configClass;
+    private T CONFIG;
+
+    private final String logID;
+
+    public EFConfigHandler(Supplier<T> newConfigSupplier, String configFileName, String logID) {
+        this.newConfigSupplier = newConfigSupplier;
+        this.logID = logID;
+        this.configFileName = configFileName.endsWith(".json") ? configFileName : configFileName + ".json";
+
+        CONFIG = newConfigSupplier.get();
+        //noinspection unchecked
+        this.configClass = (Class<T>) CONFIG.getClass();
+        this.loadFromFile();
+
+        if (!(CONFIG instanceof EFConfig.NoGUI)) {
+            EFMainConfigScreen.registerConfigHandler(this);
+        }
+    }
 
     public T getConfig() {
-        if(CONFIG == null){
+        if (CONFIG == null) {
             loadFromFile();
         }
         return CONFIG;
+    }
+
+    public void setConfig(final T CONFIG) {
+        this.CONFIG = CONFIG;
     }
 
     @Override
@@ -35,35 +59,18 @@ public class EFConfigHandler<T extends EFConfig> {
         return getConfig().getClass().equals(that.getConfig().getClass());
     }
 
+    public boolean configEquals(final Object that) {
+        if (CONFIG == that) return true;
+        if (that == null || CONFIG.getClass() != that.getClass()) return false;
+        return toJson().equals(toJson(that));
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(newConfigSupplier, CONFIG, configFileName, configClass);
     }
 
-    public void setConfig(final T CONFIG) {
-        this.CONFIG = CONFIG;
-    }
-
-    private T CONFIG;
-    private final String configFileName;
-
-    private final Class<T> configClass;
-
-    public EFConfigHandler(Supplier<T> newConfigSupplier, String configFileName){
-        this.newConfigSupplier = newConfigSupplier;
-        this.configFileName = configFileName.endsWith(".json") ? configFileName : configFileName+".json";
-
-        CONFIG = newConfigSupplier.get();
-        //noinspection unchecked
-        this.configClass = (Class<T>) CONFIG.getClass();
-        this.loadFromFile();
-
-        if(!(CONFIG instanceof EFConfig.NoGUI)){
-            EFMainConfigScreen.registerConfigHandler(this);
-        }
-    }
-
-    public void saveToFile(){
+    public void saveToFile() {
         File config = new File(CONFIG_DIR, configFileName);
         if (!config.getParentFile().exists()) {
             //noinspection ResultOfMethodCallIgnored
@@ -71,17 +78,24 @@ public class EFConfigHandler<T extends EFConfig> {
         }
         try {
             FileWriter fileWriter = new FileWriter(config);
-            fileWriter.write(CONFIG.toJson());
+            fileWriter.write(toJson());
             fileWriter.close();
         } catch (IOException e) {
-            EFCommon.logError("Config file could not be saved: "+e.getMessage());
+            EFCommon.logError(logID,"Config file could not be saved: " + e.getMessage());
         }
     }
 
-    public void loadFromFile(){
+    public String toJson() {
+        return toJson(CONFIG);
+    }
+    public String toJson(Object config) {
+        return new GsonBuilder().setPrettyPrinting().create().toJson(config);
+    }
+
+    public void loadFromFile() {
         T loaded;
         try {
-            File config = new File(ETFClientCommon.CONFIG_DIR, configFileName);
+            File config = new File(CONFIG_DIR, configFileName);
             if (config.exists()) {
                 try {
                     FileReader fileReader = new FileReader(config);
@@ -89,7 +103,7 @@ public class EFConfigHandler<T extends EFConfig> {
                     fileReader.close();
                     saveToFile();
                 } catch (IOException e) {
-                    EFCommon.log("Config could not be loaded, using defaults");
+                    EFCommon.log(logID,"Config could not be loaded, using defaults");
                     loaded = newConfigSupplier.get();
                     saveToFile();
                     EFCommon.configHadLoadError = true;
@@ -99,13 +113,13 @@ public class EFConfigHandler<T extends EFConfig> {
                 saveToFile();
             }
             if (loaded == null) {
-                EFCommon.log("Config was null, using defaults");
+                EFCommon.log(logID,"Config was null, using defaults");
                 loaded = newConfigSupplier.get();
                 saveToFile();
                 EFCommon.configHadLoadError = true;
             }
         } catch (Exception e) {
-            EFCommon.logError("Config was corrupt or broken, using defaults");
+            EFCommon.logError(logID,"Config was corrupt or broken, using defaults");
             loaded = newConfigSupplier.get();
             saveToFile();
             EFCommon.configHadLoadError = true;
@@ -113,19 +127,20 @@ public class EFConfigHandler<T extends EFConfig> {
         CONFIG = loaded;
     }
 
-    public T fromJson(String json){
+    public T fromJson(String json) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         return gson.fromJson(json, configClass);
     }
 
-    public T fromJson(FileReader json){
+    public T fromJson(FileReader json) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         return gson.fromJson(json, configClass);
     }
 
     public T copyOfConfig() {
-        return fromJson(CONFIG.toJson());
+        return fromJson(toJson());
     }
+
 
 
 

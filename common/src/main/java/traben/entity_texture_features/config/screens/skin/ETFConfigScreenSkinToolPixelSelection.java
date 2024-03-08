@@ -16,7 +16,7 @@ import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.joml.Quaternionf;
-import traben.entity_texture_features.ETFClientCommon;
+import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.utils.ETFUtils2;
@@ -27,7 +27,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
+import static traben.entity_texture_features.ETF.MOD_ID;
 
 //inspired by puzzles custom gui code
 public class ETFConfigScreenSkinToolPixelSelection extends ETFScreenOldCompat {
@@ -39,7 +39,7 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFScreenOldCompat {
     Identifier currentSkinToRender = new Identifier(MOD_ID + ":textures/gui/icon.png");
 
     protected ETFConfigScreenSkinToolPixelSelection(ETFConfigScreenSkinTool parent, SelectionMode mode) {
-        super("config." + ETFClientCommon.MOD_ID + (mode == SelectionMode.EMISSIVE ? ".emissive_select" : ".enchanted_select") + ".title", parent, false);
+        super("config." + ETF.MOD_ID + (mode == SelectionMode.EMISSIVE ? ".emissive_select" : ".enchanted_select") + ".title", parent, false);
         this.MODE = mode;
         etfParent = parent;
 
@@ -209,7 +209,7 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFScreenOldCompat {
                             // System.out.println("rendered");
                             //((LivingEntityRenderer<PlayerEntity, PlayerEntityModel<PlayerEntity>>) bob).render((PlayerEntity) entity, 0, 1, matrixStack2, immediate, 0xE000E0);
                             ETFRenderContext.startSpecialRenderOverlayPhase();
-                            ((LivingEntityRenderer<?, ?>) bob).getModel().render(matrixStack, vertexC, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
+                            ((LivingEntityRenderer<?, ?>) bob).getModel().render(matrixStack, vertexC, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
                             ETFRenderContext.endSpecialRenderOverlayPhase();
                         }
                     }

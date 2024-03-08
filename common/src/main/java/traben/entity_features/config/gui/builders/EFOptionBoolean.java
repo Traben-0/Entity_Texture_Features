@@ -1,5 +1,6 @@
 package traben.entity_features.config.gui.builders;
 
+import com.demonwav.mcdev.annotations.Translatable;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
@@ -12,13 +13,24 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class EFOptionBoolean extends EFOptionValue<Boolean>{
+public class EFOptionBoolean extends EFOptionValue<Boolean> {
 
     private final BooleanButtonWidget widget;
 
-    public EFOptionBoolean(String text, @Nullable String tooltip, Supplier<Boolean> getter, Consumer<Boolean> setter, boolean defaultValue){
-        super(text, tooltip, getter, setter, defaultValue);
+
+
+    public EFOptionBoolean(@Translatable String translationKey, @Translatable @Nullable String tooltip, Supplier<Boolean> getter, Consumer<Boolean> setter, boolean defaultValue) {
+        super(translationKey, tooltip, getter, setter, defaultValue);
         widget = new BooleanButtonWidget(0, 0, 20, 20, getText().getString(), getter.get(), getTooltip());
+    }
+
+    public EFOptionBoolean(@Translatable String translationKey, Supplier<Boolean> getter, Consumer<Boolean> setter, boolean defaultValue) {
+        this(translationKey, null, getter, setter, defaultValue);
+    }
+
+    public EFOptionBoolean setType(Type type) {
+        widget.type = type;
+        return this;
     }
 
 
@@ -28,7 +40,7 @@ public class EFOptionBoolean extends EFOptionValue<Boolean>{
     }
 
     @Override
-    public <T extends Element & Drawable & Selectable> T  getWidget(final int x, final int y, final int width, final int height) {
+    public <T extends Element & Drawable & Selectable> T getWidget(final int x, final int y, final int width, final int height) {
         widget.setDimensionsAndPosition(width, height, x, y);
         //noinspection unchecked
         return (T) widget;
@@ -50,9 +62,11 @@ public class EFOptionBoolean extends EFOptionValue<Boolean>{
         private final String title;
         private boolean value;
 
+        private Type type = Type.ON_OFF;
+
         public BooleanButtonWidget(final int x, final int y, final int width, final int height, final String text,
                                    final boolean initialValue, final Tooltip tooltip) {
-            super(x, y, width, height, Text.of(""), null,DEFAULT_NARRATION_SUPPLIER);
+            super(x, y, width, height, Text.of(""), null, DEFAULT_NARRATION_SUPPLIER);
             this.value = initialValue;
             this.title = text + ": ";
             updateMessage();
@@ -60,13 +74,30 @@ public class EFOptionBoolean extends EFOptionValue<Boolean>{
         }
 
         private void updateMessage() {
-            setMessage(Text.of(title + (value ? ScreenTexts.ON.getString() : ScreenTexts.OFF.getString())));
+            setMessage(Text.of(title + type.get(value)));
         }
 
         @Override
         public void onPress() {
             value = !value;
             updateMessage();
+        }
+    }
+
+    public enum Type {
+        ON_OFF(ScreenTexts.ON, ScreenTexts.OFF),
+        YES_NO(ScreenTexts.YES, ScreenTexts.NO);
+
+        private String t;
+        private String f;
+
+        Type(Text t, Text f) {
+            this.t = t.getString();
+            this.f = f.getString();
+        }
+
+        public String get(boolean value) {
+            return value ? t : f;
         }
     }
 }

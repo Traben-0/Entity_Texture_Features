@@ -16,9 +16,8 @@ import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.joml.Quaternionf;
-import traben.entity_texture_features.ETFClientCommon;
+import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
-import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.player.ETFPlayerTexture;
 import traben.entity_texture_features.utils.ETFUtils2;
@@ -26,8 +25,8 @@ import traben.entity_texture_features.utils.ETFUtils2;
 import java.nio.file.Path;
 import java.util.Objects;
 
-import static traben.entity_texture_features.ETFClientCommon.CONFIG_DIR;
-import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
+import static traben.entity_texture_features.ETF.CONFIG_DIR;
+import static traben.entity_texture_features.ETF.MOD_ID;
 
 //inspired by puzzles custom gui code
 @SuppressWarnings("EnhancedSwitchMigration")
@@ -79,7 +78,7 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
     }
 
     private void onExit() {
-        ETFConfig.getConfig().enableBlinking = originalEnableBlinking;
+        ETF.config().getConfig().enableBlinking = originalEnableBlinking;
         if (MinecraftClient.getInstance().player != null) {
             ETFManager.getInstance().PLAYER_TEXTURE_MAP.removeEntryOnly(MinecraftClient.getInstance().player.getUuid());
         }
@@ -99,8 +98,8 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
 
         //make blinking enabled for skin tool
         if (originalEnableBlinking == null) {
-            originalEnableBlinking = ETFConfig.getConfig().enableBlinking;
-            ETFConfig.getConfig().enableBlinking = true;
+            originalEnableBlinking = ETF.config().getConfig().enableBlinking;
+            ETF.config().getConfig().enableBlinking = true;
         }
 
 
@@ -470,7 +469,7 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
             Path outputDirectory = Path.of(CONFIG_DIR.getParent(), "\\ETF_player_skin_printout.png");
             try {
                 currentEditorSkin.writeTo(outputDirectory);
-                ETFUtils2.logMessage(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.print_skin.result.success").getString(), false);
+                ETFUtils2.logMessage(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETF.MOD_ID + ".player_skin_editor.print_skin.result.success").getString(), false);
 
                 return true;
             } catch (Exception e) {

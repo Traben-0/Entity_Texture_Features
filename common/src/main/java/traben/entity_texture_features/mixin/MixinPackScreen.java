@@ -17,13 +17,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_features.config.gui.EFMainConfigScreen;
+import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
-import traben.entity_texture_features.config.ETFConfig;
 
 import java.nio.file.Path;
 import java.util.Objects;
 
-import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
+import static traben.entity_texture_features.ETF.MOD_ID;
 
 @Mixin(PackScreen.class)
 public abstract class MixinPackScreen extends Screen {
@@ -46,7 +46,7 @@ public abstract class MixinPackScreen extends Screen {
 
     @Inject(method = "init", at = @At("TAIL"))
     private void etf$etfButton(CallbackInfo ci) {
-        if (!ETFConfig.getConfig().hideConfigButton
+        if (!ETF.config().getConfig().hideConfigButton
                 && this.client != null
                 //ensure this is the resource-pack screen and not the data-pack screen
                 && this.file.equals(this.client.getResourcePackDir())

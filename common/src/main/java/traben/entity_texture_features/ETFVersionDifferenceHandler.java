@@ -1,5 +1,6 @@
 package traben.entity_texture_features;
 
+import com.demonwav.mcdev.annotations.Translatable;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
@@ -45,7 +46,7 @@ public class ETFVersionDifferenceHandler {
 
     @NotNull
     @ExpectPlatform
-    public static Text getTextFromTranslation(String translationKey) {
+    public static Text getTextFromTranslation(@Translatable(foldMethod = true) String translationKey) {
         return Text.of("");
     }
 

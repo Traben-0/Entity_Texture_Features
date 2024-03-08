@@ -28,6 +28,7 @@ subprojects {
 //        }
 
         implementation group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.10'
+        implementation 'com.demonwav.mcdev:annotations:2.1.0'
     }
 }
 
@@ -50,6 +51,7 @@ allprojects {
         maven {url = "https://www.cursemaven.com/"}
         maven { url "https://maven.shedaniel.me/" }
         maven { url "https://maven.terraformersmc.com/releases/" }
+        maven { url "https://mvnrepository.com/artifact/com.demonwav.mcdev/annotations" }
     }
 
 

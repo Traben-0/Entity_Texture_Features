@@ -14,6 +14,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.player.ETFPlayerEntity;
@@ -40,7 +41,7 @@ public abstract class MixinPlayerEntity extends Entity implements ETFPlayerEntit
     @Inject(method = "interact", at = @At("HEAD"))
     private void etf$injected(Entity entity, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
         if (getWorld().isClient()) {
-            if (ETFConfig.getConfig().debugLoggingMode != ETFConfig.DebugLogMode.None)
+            if (ETF.config().getConfig().debugLoggingMode != ETFConfig.DebugLogMode.None)
                 ETFManager.getInstance().markEntityForDebugPrint(entity.getUuid());
         }
     }

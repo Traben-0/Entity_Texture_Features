@@ -71,7 +71,7 @@ public class RandomPropertyRule {
             for (RandomProperty property :
                     PROPERTIES_TO_TEST) {
                 if (!entityMetRequirements) break;
-                if (property.isPropertyUpdatable())
+                if (property.canPropertyUpdate())
                     wasEntityTestedByAnUpdatableProperty = true;
                 entityMetRequirements = property.testEntity(etfEntity, isUpdate);
             }
@@ -102,7 +102,7 @@ public class RandomPropertyRule {
         try {
             for (RandomProperty property :
                     PROPERTIES_TO_TEST) {
-                if (!property.isPropertyUpdatable()) {
+                if (!property.canPropertyUpdate()) {
                     property.cacheEntityInitialResult(entity);
                 }
             }

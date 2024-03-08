@@ -8,7 +8,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.ConfigScreenHandler;
 import traben.entity_features.config.gui.EFMainConfigScreen;
-import traben.entity_texture_features.ETFClientCommon;
+import traben.entity_texture_features.ETF;
 
 @Mod("entity_texture_features")
 public class ETFClientForge {
@@ -37,7 +37,7 @@ public class ETFClientForge {
 
 
             ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> IExtensionPoint.DisplayTest.IGNORESERVERONLY, (a, b) -> true));
-            ETFClientCommon.start();
+            ETF.start();
         } else {
 
             throw new UnsupportedOperationException("Attempting to load a clientside only mod on the server, refusing");

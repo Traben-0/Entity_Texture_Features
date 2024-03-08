@@ -1,5 +1,6 @@
 package traben.entity_features.config.gui.builders;
 
+import com.demonwav.mcdev.annotations.Translatable;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
@@ -13,12 +14,15 @@ import java.util.function.Supplier;
 public class EFOptionEnum<E extends Enum<E>> extends EFOptionValue<E> {
 
 
-
     private final EnumSliderWidget<E> widget;
 
-    public EFOptionEnum(String text, String tooltip, Supplier<E> getter, Consumer<E> setter, E defaultValue) {
+    public EFOptionEnum(@Translatable String text, @Translatable String tooltip, Supplier<E> getter, Consumer<E> setter, E defaultValue) {
         super(text, tooltip, getter, setter, defaultValue);
         widget = new EnumSliderWidget<>(getText(), getter.get(), getTooltip());
+    }
+
+    public EFOptionEnum(@Translatable String text, Supplier<E> getter, Consumer<E> setter, E defaultValue) {
+        this(text, null, getter, setter, defaultValue);
     }
 
     @Override
@@ -27,7 +31,7 @@ public class EFOptionEnum<E extends Enum<E>> extends EFOptionValue<E> {
     }
 
     @Override
-    public <T extends Element & Drawable & Selectable> T  getWidget(final int x, final int y, final int width, final int height) {
+    public <T extends Element & Drawable & Selectable> T getWidget(final int x, final int y, final int width, final int height) {
         widget.setDimensionsAndPosition(width, height, x, y);
         //noinspection unchecked
         return (T) widget;
@@ -47,7 +51,7 @@ public class EFOptionEnum<E extends Enum<E>> extends EFOptionValue<E> {
         private final T[] enumValues;
         private final String title;
 
-        public EnumSliderWidget( final Text text, final T initialValue, final Tooltip tooltip) {
+        public EnumSliderWidget(final Text text, final T initialValue, final Tooltip tooltip) {
             super(0, 0, 20, 20, text, initialValue.ordinal() / (double) (initialValue.getDeclaringClass().getEnumConstants().length - 1));
 
             //noinspection unchecked

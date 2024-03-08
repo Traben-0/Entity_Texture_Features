@@ -21,9 +21,8 @@ import net.minecraft.resource.ResourcePack;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import traben.entity_texture_features.ETFClientCommon;
+import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
-import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.utils.ETFEntity;
@@ -62,8 +61,8 @@ public class ETFTexture {
     private Identifier blink2Identifier = null;
     private Identifier blinkIdentifier_Patched = null;
     private Identifier blink2Identifier_Patched = null;
-    private Integer blinkLength = ETFConfig.getConfig().blinkLength;
-    private Integer blinkFrequency = ETFConfig.getConfig().blinkFrequency;
+    private Integer blinkLength = ETF.config().getConfig().blinkLength;
+    private Integer blinkFrequency = ETF.config().getConfig().blinkFrequency;
 
     // private final TextureSource source;
 
@@ -170,7 +169,7 @@ public class ETFTexture {
     }
 
     private void setupBlinking() {
-        if (ETFConfig.getConfig().enableBlinking) {
+        if (ETF.config().getConfig().enableBlinking) {
             ResourceManager resourceManager = MinecraftClient.getInstance().getResourceManager();
             Optional<Resource> vanillaR1 = resourceManager.getResource(thisIdentifier);
             if (vanillaR1.isPresent()) {
@@ -211,10 +210,10 @@ public class ETFTexture {
                                 if (propertyResourcePackName.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(propertyResourcePackName, blink1PackName))) {
                                     blinkLength = blinkingProps.containsKey("blinkLength") ?
                                             Integer.parseInt(blinkingProps.getProperty("blinkLength").replaceAll("\\D", "")) :
-                                            ETFConfig.getConfig().blinkLength;
+                                            ETF.config().getConfig().blinkLength;
                                     blinkFrequency = blinkingProps.containsKey("blinkFrequency") ?
                                             Integer.parseInt(blinkingProps.getProperty("blinkFrequency").replaceAll("\\D", "")) :
-                                            ETFConfig.getConfig().blinkFrequency;
+                                            ETF.config().getConfig().blinkFrequency;
 
                                 }
 
@@ -283,7 +282,7 @@ public class ETFTexture {
 
     private void setupEmissives() {
 
-        if (ETFConfig.getConfig().enableEmissiveTextures) {
+        if (ETF.config().getConfig().enableEmissiveTextures) {
             ResourceManager resourceManager = MinecraftClient.getInstance().getResourceManager();
 
             for (String possibleEmissiveSuffix :
@@ -354,7 +353,7 @@ public class ETFTexture {
 
     private void setupEnchants() {
 
-        if (ETFConfig.getConfig().enableEnchantedTextures) {
+        if (ETF.config().getConfig().enableEnchantedTextures) {
             ResourceManager resourceManager = MinecraftClient.getInstance().getResourceManager();
 
             String enchantSuffix = "_enchant";
@@ -541,7 +540,7 @@ public class ETFTexture {
         VertexConsumer vertexC = getEmissiveVertexConsumer(vertexConsumerProvider, null, modeToUsePossiblyManuallyChosen);
         if (vertexC != null) {
             ETFRenderContext.startSpecialRenderOverlayPhase();
-            modelPart.render(matrixStack, vertexC, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV);
+            modelPart.render(matrixStack, vertexC, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV);
             ETFRenderContext.endSpecialRenderOverlayPhase();
         }
     }
@@ -554,7 +553,7 @@ public class ETFTexture {
         VertexConsumer vertexC = getEmissiveVertexConsumer(vertexConsumerProvider, model, modeToUsePossiblyManuallyChosen);
         if (vertexC != null) {
             ETFRenderContext.startSpecialRenderOverlayPhase();
-            model.render(matrixStack, vertexC, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
+            model.render(matrixStack, vertexC, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
             ETFRenderContext.endSpecialRenderOverlayPhase();
         }
     }
@@ -743,7 +742,7 @@ public class ETFTexture {
         boolean didPatch = false;
 
         //patch out emissive textures for shader z fighting fix
-        if (this.emissiveIdentifier != null && ETFConfig.getConfig().enableEmissiveTextures) {
+        if (this.emissiveIdentifier != null && ETF.config().getConfig().enableEmissiveTextures) {
             //create patched texture
             NativeImage emissiveImage = ETFUtils2.getNativeImageElseNull(emissiveIdentifier);
             try {

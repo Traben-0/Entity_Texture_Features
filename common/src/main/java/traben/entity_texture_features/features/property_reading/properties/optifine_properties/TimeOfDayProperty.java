@@ -2,7 +2,7 @@ package traben.entity_texture_features.features.property_reading.properties.opti
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import traben.entity_texture_features.config.ETFConfig;
+import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.features.property_reading.properties.generic_properties.LongRangeFromStringArrayProperty;
 import traben.entity_texture_features.utils.ETFEntity;
 
@@ -35,10 +35,13 @@ public class TimeOfDayProperty extends LongRangeFromStringArrayProperty {
     }
 
 
-
+    @Override
+    public boolean canPropertyUpdate() {
+        return isPropertyUpdatable();
+    }
     @Override
     public boolean isPropertyUpdatable() {
-        return !ETFConfig.getConfig().restrictDayTime;
+        return !ETF.config().getConfig().restrictDayTime;
     }
 
     @Override

@@ -32,23 +32,26 @@ import java.util.*;
 public class EFMainConfigScreen extends EFScreen {
 
     private static Set<EFConfigHandler<?>> configHandlers = null;
-
-    public static void registerConfigHandler(EFConfigHandler<?> configHandler){
-        if (configHandlers == null) configHandlers = new ObjectArraySet<>();
-        configHandlers.add(configHandler);
-    }
-
+    final ObjectOpenHashSet<EFConfigWarning> warningsFound = new ObjectOpenHashSet<>();
     private final EFOptionCategory mainCategories;
 
     private final List<Identifier> modIcons;
-
+    private final Random rand = new Random();
     boolean shownWarning = false;
     int warningCount = 0;
-    final ObjectOpenHashSet<EFConfigWarning> warningsFound = new ObjectOpenHashSet<>();
+    private long timer = 0;
+    private LivingEntity livingEntity = null;
 
     public EFMainConfigScreen(Screen parent) {
-        super("Entity Features", parent, true);
-        mainCategories = new EFOptionCategory.Empty();
+        super("config.entity_features", parent, true);
+        mainCategories = new EFOptionCategory.Empty().add(
+                new EFOptionCategory("config.entity_features.textures_main"),
+                new EFOptionCategory("config.entity_features.models_main"),
+                new EFOptionCategory("config.entity_features.sounds_main"),
+                new EFOptionCategory("config.entity_features.general_settings.title")
+        );
+
+
         modIcons = new ArrayList<>();
         for (EFConfigHandler<?> configHandler : configHandlers) {
             EFConfig config = configHandler.getConfig();
@@ -57,7 +60,6 @@ public class EFMainConfigScreen extends EFScreen {
             }
             modIcons.add(config.getModIcon());
         }
-
 
 
         for (EFConfigWarning warning :
@@ -71,9 +73,14 @@ public class EFMainConfigScreen extends EFScreen {
 
     }
 
+    public static void registerConfigHandler(EFConfigHandler<?> configHandler) {
+        if (configHandlers == null) configHandlers = new ObjectArraySet<>();
+        configHandlers.add(configHandler);
+    }
+
     @Override
     public void close() {
-        if(mainCategories.saveValuesToConfig()){
+        if (mainCategories.saveValuesToConfig()) {
             for (EFConfigHandler<?> configHandler : configHandlers) {
                 configHandler.saveToFile();
             }
@@ -85,10 +92,10 @@ public class EFMainConfigScreen extends EFScreen {
     @Override
     protected void init() {
         super.init();
-        addColumn((int) (this.width * 0.6), (int) (this.height * 0.2), (int) (this.width * 0.3),20,0);
+        addColumn((int) (this.width * 0.6), (int) (this.height * 0.2), (int) (this.width * 0.3), 20, 0);
 
         if (shownWarning) {
-            this.addDrawableChild(ButtonWidget.builder(Text.of("warnings"),
+            this.addDrawableChild(ButtonWidget.builder(Text.translatable("config.entity_features.warnings_main"),
                             (button) -> Objects.requireNonNull(client).setScreen(new EFConfigScreenWarnings(this, warningsFound)))
                     .dimensions((int) (this.width * 0.1), (int) (this.height * 0.1) - 15, (int) (this.width * 0.2), 20
                     ).build());
@@ -101,7 +108,7 @@ public class EFMainConfigScreen extends EFScreen {
                     clearAndInit();
                 }).dimensions((int) (this.width * 0.4), (int) (this.height * 0.9), (int) (this.width * 0.22), 20).build());
         this.addDrawableChild(ButtonWidget.builder(
-                Text.of("Undo changes"),
+                Text.translatable("config.entity_features.undo"),
                 (button) -> {
                     mainCategories.resetValuesToInitial();
                     clearAndInit();
@@ -113,22 +120,19 @@ public class EFMainConfigScreen extends EFScreen {
         EFOption[] options = mainCategories.getOptions().values().toArray(new EFOption[0]);
         for (int i = startIndex; i < options.length; i++) {
             EFOption option = options[i];
-            var widget = option.getWidget(x, y + ((i-startIndex) * 24), width, height);
-            if(widget != null)
+            var widget = option.getWidget(x, y + ((i - startIndex) * 24), width, height);
+            if (widget != null)
                 this.addDrawableChild(widget);
         }
     }
 
-    private final Random rand = new Random();
-    private long timer = 0;
-    private LivingEntity livingEntity = null;
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
 
         //draw mod icons in the top right corner of the screen
         // from left to right
-        if(!modIcons.isEmpty()) {
+        if (!modIcons.isEmpty()) {
             int ix = this.width - (modIcons.size() * 12);
             for (Identifier modIcon : modIcons) {
                 context.drawTexture(modIcon, ix, 2, 0, 0, 10, 10);

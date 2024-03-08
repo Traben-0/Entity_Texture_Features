@@ -9,15 +9,15 @@ public class EFCommon {
     //sets whether to display config load warning in gui
     public static boolean configHadLoadError = false;
 
-    public static void log(String message){
-        LOGGER.info("[EF] " + message);
+    public static void log(String ID, String message) {
+        LOGGER.info(ID + ": " + message);
     }
 
-    public static void logError(String message){
-        LOGGER.error("[EF] " + message);
+    public static void logError(String ID, String message) {
+        LOGGER.error(ID + ": " + message);
     }
 
-    public static void logWarn(String message){
-        LOGGER.warn("[EF] " + message);
+    public static void logWarn(String ID, String message) {
+        LOGGER.warn(ID + ": " + message);
     }
 }

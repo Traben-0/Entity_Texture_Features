@@ -25,7 +25,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import traben.entity_texture_features.ETFClientCommon;
+import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.texture_handlers.ETFSprite;
@@ -136,7 +136,7 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
 
                 int light;
                 if (emissive) {
-                    light = ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE;
+                    light = ETF.EMISSIVE_FEATURE_LIGHT_VALUE;
                 } else {
                     int ac = entity.getBlockX();
                     int ad = MathHelper.floor(entity.getY() + (double) ((aa + ab) / 2.0F / 16.0F));
@@ -211,7 +211,7 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
 
                 int light;
                 if (emissive) {
-                    light = ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE;
+                    light = ETF.EMISSIVE_FEATURE_LIGHT_VALUE;
                 } else {
                     int ac = entity.getBlockX();
                     int ad = MathHelper.floor(entity.getY() + (double) ((aa + ab) / 2.0F / 16.0F));

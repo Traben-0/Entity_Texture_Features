@@ -2,6 +2,7 @@ package traben.entity_texture_features;
 
 import net.minecraft.client.render.LightmapTextureManager;
 import org.slf4j.Logger;
+import traben.entity_features.config.EFConfigHandler;
 import traben.entity_features.config.EFConfigWarning;
 import traben.entity_features.config.EFConfigWarnings;
 import traben.entity_texture_features.config.ETFConfig;
@@ -11,7 +12,7 @@ import java.io.File;
 import java.util.Random;
 
 
-public class ETFClientCommon {
+public class ETF {
 
     public static final File CONFIG_DIR = ETFVersionDifferenceHandler.getConfigDir();
     public static final String MOD_ID = "entity_texture_features";
@@ -25,6 +26,16 @@ public class ETFClientCommon {
 
     public static boolean SKIN_LAYERS_DETECTED = false;
 
+    private static EFConfigHandler<ETFConfig> CONFIG = null;
+
+    public static EFConfigHandler<ETFConfig> config() {
+        if (CONFIG == null) {
+            CONFIG = new EFConfigHandler<>(ETFConfig::new,MOD_ID,"ETF");
+        }
+        return CONFIG;
+    }
+
+
     public static void start() {
         //check only once
         SKIN_LAYERS_DETECTED =  ETFVersionDifferenceHandler.isThisModLoaded("skinlayers3d");
@@ -32,7 +43,6 @@ public class ETFClientCommon {
 
         LOGGER.info("Loading Entity Texture Features, " + randomQuip());
 
-        ETFConfig.getConfig();
 
         ETFUtils2.checkModCompatibility();
 
@@ -41,39 +51,39 @@ public class ETFClientCommon {
                     new EFConfigWarning.Simple(
                             "figura",
                             "figura",
-                            "config." + ETFClientCommon.MOD_ID + ".warn.figura.text.1",
-                            "config." + ETFClientCommon.MOD_ID + ".warn.figura.text.2",
+                            "config." + ETF.MOD_ID + ".warn.figura.text.1",
+                            "config." + ETF.MOD_ID + ".warn.figura.text.2",
                             () -> {
-                                ETFConfig.getConfig().skinFeaturesEnabled = false;
-                                ETFConfig.saveConfig();
+                                CONFIG.getConfig().skinFeaturesEnabled = false;
+                                CONFIG.saveToFile();
                             }),
                     //EBE
                     new EFConfigWarning.Simple(
                             "enhancedblockentities",
                             "enhancedblockentities",
-                            "config." + ETFClientCommon.MOD_ID + ".warn.ebe.text.1",
-                            "config." + ETFClientCommon.MOD_ID + ".warn.ebe.text.2",
+                            "config." + ETF.MOD_ID + ".warn.ebe.text.1",
+                            "config." + ETF.MOD_ID + ".warn.ebe.text.2",
                             null),
                     //quark
                     new EFConfigWarning.Simple(
                             "quark",
                             "quark",
-                            "config." + ETFClientCommon.MOD_ID + ".warn.quark.text.3",
-                            "config." + ETFClientCommon.MOD_ID + ".warn.quark.text.4",
+                            "config." + ETF.MOD_ID + ".warn.quark.text.3",
+                            "config." + ETF.MOD_ID + ".warn.quark.text.4",
                             null),
                     //iris and 3d skin layers trim warning
                     new EFConfigWarning.Simple(
                             "iris & 3d skin layers",
-                            () -> ETFClientCommon.IRIS_DETECTED && ETFClientCommon.SKIN_LAYERS_DETECTED,
-                            "config." + ETFClientCommon.MOD_ID + ".warn.iris_3d.text.1",
-                            "config." + ETFClientCommon.MOD_ID + ".warn.iris_3d.text.2",
+                            () -> ETF.IRIS_DETECTED && ETF.SKIN_LAYERS_DETECTED,
+                            "config." + ETF.MOD_ID + ".warn.iris_3d.text.1",
+                            "config." + ETF.MOD_ID + ".warn.iris_3d.text.2",
                             null),
                     //no CEM mod, recommend EMF
                     new EFConfigWarning.Simple(
                             "emf",
                             () -> !ETFVersionDifferenceHandler.isThisModLoaded("entity_model_features") && !ETFVersionDifferenceHandler.isThisModLoaded("cem"),
-                            "config." + ETFClientCommon.MOD_ID + ".warn.no_emf.text.1",
-                            "config." + ETFClientCommon.MOD_ID + ".warn.no_emf.text.2",
+                            "config." + ETF.MOD_ID + ".warn.no_emf.text.1",
+                            "config." + ETF.MOD_ID + ".warn.no_emf.text.2",
                             null)
             );
 
@@ -113,6 +123,8 @@ public class ETFClientCommon {
                 "Has Anyone Really Been Far Even as Decided to Use Even Go Want to do Look More Like?"
         };
     }
+
+
 
 
     // config code based on bedrockify & actually unbreaking fabric config code

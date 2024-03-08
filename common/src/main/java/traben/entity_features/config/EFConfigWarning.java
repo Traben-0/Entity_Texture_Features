@@ -1,11 +1,11 @@
 package traben.entity_features.config;
 
+import com.demonwav.mcdev.annotations.Translatable;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_features.config.gui.EFConfigScreenWarnings;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 
 import java.util.function.Supplier;
-
 
 
 /**
@@ -68,7 +68,7 @@ public abstract class EFConfigWarning {
          * @param sub_title_translation_key The warning sub-title text.
          * @param fix                       Runnable to apply changes to ETF to fix compatibility
          */
-        public Simple(String id, Supplier<Boolean> condition, String title_translation_key, String sub_title_translation_key, @Nullable Runnable fix) {
+        public Simple(String id, Supplier<Boolean> condition, @Translatable String title_translation_key, @Translatable String sub_title_translation_key, @Nullable Runnable fix) {
             this.ID = id;
             this.CONDITION = condition;
             this.TITLE_TRANSLATION_KEY = title_translation_key;
@@ -85,7 +85,7 @@ public abstract class EFConfigWarning {
          * @param sub_title_translation_key The warning sub-title text.
          * @param fix                       Runnable to apply changes to ETF to fix compatibility
          */
-        public Simple(String id, String modName, String title_translation_key, String sub_title_translation_key, @Nullable Runnable fix) {
+        public Simple(String id, String modName, @Translatable String title_translation_key, @Translatable String sub_title_translation_key, @Nullable Runnable fix) {
             this.ID = id;
             this.CONDITION = () -> ETFVersionDifferenceHandler.isThisModLoaded(modName);
             this.TITLE_TRANSLATION_KEY = title_translation_key;

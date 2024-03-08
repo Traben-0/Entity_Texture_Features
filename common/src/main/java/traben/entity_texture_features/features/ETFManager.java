@@ -12,6 +12,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3i;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFApi;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.ETFConfig;
@@ -31,7 +32,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 
-import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
+import static traben.entity_texture_features.ETF.MOD_ID;
 import static traben.entity_texture_features.features.player.ETFPlayerTexture.SKIN_NAMESPACE;
 
 
@@ -88,7 +89,7 @@ public class ETFManager {
                         EMISSIVE_SUFFIX_LIST.add(prop.getProperty("suffix.emissive"));
                 }
             }
-            if (ETFConfig.getConfig().alwaysCheckVanillaEmissiveSuffix) {
+            if (ETF.config().getConfig().alwaysCheckVanillaEmissiveSuffix) {
                 EMISSIVE_SUFFIX_LIST.add("_e");
             }
 
@@ -113,7 +114,7 @@ public class ETFManager {
     }
 
     public static void resetInstance() {
-        ETFConfig.loadConfig();
+        ETF.config().loadFromFile();
 
         //instance based format solves the issue of hashmaps and arrays being clearing while also being accessed
         //as now those rare transitional (reading during clearing) occurrences will simply read from the previous instance of manager
@@ -126,12 +127,12 @@ public class ETFManager {
     }
 
     public static EmissiveRenderModes getEmissiveMode() {
-        if (ETFConfig.getConfig().emissiveRenderMode == EmissiveRenderModes.BRIGHT
+        if (ETF.config().getConfig().emissiveRenderMode == EmissiveRenderModes.BRIGHT
                 && ETFRenderContext.getCurrentEntity() != null
                 && !ETFRenderContext.getCurrentEntity().etf$canBeBright()) {
             return EmissiveRenderModes.DULL;
         }
-        return ETFConfig.getConfig().emissiveRenderMode;
+        return ETF.config().getConfig().emissiveRenderMode;
     }
 
     public String getGeneralPrintout() {
@@ -239,7 +240,7 @@ public class ETFManager {
 
 
     public void markEntityForDebugPrint(UUID uuid) {
-        if (ETFConfig.getConfig().debugLoggingMode != ETFConfig.DebugLogMode.None) {
+        if (ETF.config().getConfig().debugLoggingMode != ETFConfig.DebugLogMode.None) {
             ENTITY_DEBUG = uuid;
         }
     }
@@ -261,7 +262,7 @@ public class ETFManager {
                     return getETFTextureNoVariation(vanillaIdentifier);
                 }else {
                     VARIATOR_MAP.put(vanillaIdentifier, ETFTextureVariator.of(vanillaIdentifier));
-                    if (ETFConfig.getConfig().logTextureDataInitialization) {
+                    if (ETF.config().getConfig().logTextureDataInitialization) {
                         ETFUtils2.logMessage("Amount of 'base' textures: " + VARIATOR_MAP.size());
                         ETFUtils2.logMessage("Total textures including variants: " + ETF_TEXTURE_CACHE.size());
                     }

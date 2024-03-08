@@ -16,8 +16,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.Identifier;
-import traben.entity_texture_features.ETFClientCommon;
-import traben.entity_texture_features.config.ETFConfig;
+import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.config.screens.skin.ETFConfigScreenSkinTool;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
@@ -97,7 +96,7 @@ public class ETFPlayerFeatureRenderer<T extends PlayerEntity, M extends PlayerEn
     @Override
     public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, T entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
 
-        if (ETFConfig.getConfig().skinFeaturesEnabled && skinHolder != null) {
+        if (ETF.config().getConfig().skinFeaturesEnabled && skinHolder != null) {
             ETFRenderContext.preventRenderLayerTextureModify();
 
             ETFPlayerTexture playerTexture = skinHolder.etf$getETFPlayerTexture();
@@ -151,7 +150,7 @@ public class ETFPlayerFeatureRenderer<T extends PlayerEntity, M extends PlayerEn
                 } else {
                     noseVertex_e = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucentCull(playerTexture.texturedNoseIdentifierEmissive));
                 }
-                textureNose.render(matrixStack, noseVertex_e, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                textureNose.render(matrixStack, noseVertex_e, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
             }
             if (playerTexture.texturedNoseIdentifierEnchanted != null) {
 //                textureNose.copyTransform(model.head);
@@ -206,9 +205,9 @@ public class ETFPlayerFeatureRenderer<T extends PlayerEntity, M extends PlayerEn
                 }
 
                 if (playerTexture.hasFatCoat) {
-                    fatJacket.render(matrixStack, emissiveVert, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                    fatJacket.render(matrixStack, emissiveVert, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
                 } else {
-                    jacket.render(matrixStack, emissiveVert, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                    jacket.render(matrixStack, emissiveVert, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
                 }
             }
 

@@ -1,9 +1,11 @@
 package traben.entity_features.config.gui.builders;
 
+import com.demonwav.mcdev.annotations.Translatable;
+
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public abstract class EFOptionValue<V> extends EFOption{
+public abstract class EFOptionValue<V> extends EFOption {
 
 
     protected final Supplier<V> getter;
@@ -11,17 +13,24 @@ public abstract class EFOptionValue<V> extends EFOption{
     protected final V defaultValue;
 
 
-    protected EFOptionValue(String text, String tooltip, Supplier<V> getter, Consumer<V> setter, V defaultValue) {
-        super(text, tooltip);
+    protected EFOptionValue(@Translatable String translationKey, @Translatable String tooltip, Supplier<V> getter, Consumer<V> setter, V defaultValue) {
+        super(translationKey, tooltip);
         this.getter = getter;
         this.setter = setter;
         this.defaultValue = defaultValue;
     }
 
-    public boolean saveValuesToConfig(){
+    protected EFOptionValue(@Translatable String translationKey, Supplier<V> getter, Consumer<V> setter, V defaultValue) {
+        super(translationKey, null);
+        this.getter = getter;
+        this.setter = setter;
+        this.defaultValue = defaultValue;
+    }
+
+    public boolean saveValuesToConfig() {
         V value = getValueFromWidget();
         boolean changed = !value.equals(getter.get());
-        if(changed)
+        if (changed)
             setter.accept(value);
         return changed;
     }
