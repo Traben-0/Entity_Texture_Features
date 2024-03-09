@@ -1,4 +1,4 @@
-package traben.entity_features.config.gui.builders;
+package traben.entity_features.config.gui.options;
 
 import com.demonwav.mcdev.annotations.Translatable;
 import net.minecraft.client.MinecraftClient;
@@ -19,6 +19,7 @@ public class EFOptionCustomScreenOpener extends EFOption {
     private final Runnable resetValuesToInitial;
     private final boolean screenIsSingleton;
     private Screen screen = null;
+
     public EFOptionCustomScreenOpener(@Translatable final String text, @Translatable final String tooltip, Supplier<Screen> screenSupplier, Supplier<Boolean> savedSupplier, Runnable setValuesDefault, Runnable resetValuesToInitial, boolean screenIsSingleton) {
         super(text, tooltip);
         this.screenSupplier = screenSupplier;
@@ -27,11 +28,15 @@ public class EFOptionCustomScreenOpener extends EFOption {
         this.setValuesDefault = setValuesDefault;
         this.resetValuesToInitial = resetValuesToInitial;
     }
+
     public EFOptionCustomScreenOpener(@Translatable final String text, Supplier<Screen> screenSupplier, Supplier<Boolean> savedSupplier, Runnable setValuesDefault, Runnable resetValuesToInitial, boolean screenIsSingleton) {
         this(text, null, screenSupplier, savedSupplier, setValuesDefault, resetValuesToInitial, screenIsSingleton);
     }
+
     public EFOptionCustomScreenOpener(@Translatable final String text, @Translatable final String tooltip, Supplier<Screen> screenSupplier, boolean screenIsSingleton) {
-        this(text, tooltip, screenSupplier, () -> false, () -> {}, () -> {}, screenIsSingleton);
+        this(text, tooltip, screenSupplier, () -> false, () -> {
+        }, () -> {
+        }, screenIsSingleton);
     }
 
     public EFOptionCustomScreenOpener(@Translatable final String text, Supplier<Screen> screenSupplier, boolean screenIsSingleton) {
@@ -67,5 +72,10 @@ public class EFOptionCustomScreenOpener extends EFOption {
     @Override
     void resetValuesToInitial() {
         resetValuesToInitial.run();
+    }
+
+    @Override
+    boolean hasChangedFromInitial() {
+        return false;
     }
 }

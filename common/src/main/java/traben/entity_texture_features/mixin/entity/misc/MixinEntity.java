@@ -46,8 +46,6 @@ public abstract class MixinEntity implements ETFEntity {
     public abstract Text getCustomName();
 
 
-
-
     @Shadow
     public abstract Iterable<ItemStack> getItemsEquipped();
 
@@ -66,9 +64,12 @@ public abstract class MixinEntity implements ETFEntity {
     @Shadow
     public abstract EntityPose getPose();
 
-    @Shadow @Nullable public abstract Team getScoreboardTeam();
+    @Shadow
+    @Nullable
+    public abstract Team getScoreboardTeam();
 
-    @Shadow public abstract boolean isPlayer();
+    @Shadow
+    public abstract boolean isPlayer();
 
     @Override
     public EntityType<?> etf$getType() {

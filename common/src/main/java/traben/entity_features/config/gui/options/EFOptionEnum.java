@@ -1,4 +1,4 @@
-package traben.entity_features.config.gui.builders;
+package traben.entity_features.config.gui.options;
 
 import com.demonwav.mcdev.annotations.Translatable;
 import net.minecraft.client.gui.Drawable;
@@ -10,6 +10,8 @@ import net.minecraft.text.Text;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
+import static traben.entity_features.config.gui.options.EFOption.Empty.CHANGED_COLOR;
 
 public class EFOptionEnum<E extends Enum<E>> extends EFOptionValue<E> {
 
@@ -47,7 +49,7 @@ public class EFOptionEnum<E extends Enum<E>> extends EFOptionValue<E> {
         widget.setValue(getter.get());
     }
 
-    public static class EnumSliderWidget<T extends Enum<?>> extends SliderWidget {
+    public class EnumSliderWidget<T extends Enum<?>> extends SliderWidget {
         private final T[] enumValues;
         private final String title;
 
@@ -70,7 +72,7 @@ public class EFOptionEnum<E extends Enum<E>> extends EFOptionValue<E> {
         protected void updateMessage() {
             int index = getIndex();
             value = index / (double) (enumValues.length - 1);
-            setMessage(Text.of(title + enumValues[getIndex()].toString()));
+            setMessage(Text.of(title + (enumValues[getIndex()] != getter.get() ? CHANGED_COLOR : "") + enumValues[getIndex()].toString()));
         }
 
         @Override

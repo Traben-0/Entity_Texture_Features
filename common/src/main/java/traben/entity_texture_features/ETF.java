@@ -30,7 +30,7 @@ public class ETF {
 
     public static EFConfigHandler<ETFConfig> config() {
         if (CONFIG == null) {
-            CONFIG = new EFConfigHandler<>(ETFConfig::new,MOD_ID,"ETF");
+            CONFIG = new EFConfigHandler<>(ETFConfig::new, MOD_ID, "ETF");
         }
         return CONFIG;
     }
@@ -38,7 +38,7 @@ public class ETF {
 
     public static void start() {
         //check only once
-        SKIN_LAYERS_DETECTED =  ETFVersionDifferenceHandler.isThisModLoaded("skinlayers3d");
+        SKIN_LAYERS_DETECTED = ETFVersionDifferenceHandler.isThisModLoaded("skinlayers3d");
         IRIS_DETECTED = ETFVersionDifferenceHandler.isThisModLoaded("iris") || ETFVersionDifferenceHandler.isThisModLoaded("oculus");
 
         LOGGER.info("Loading Entity Texture Features, " + randomQuip());
@@ -47,45 +47,45 @@ public class ETF {
         ETFUtils2.checkModCompatibility();
 
         EFConfigWarnings.registerConfigWarning(
-                    //figura
-                    new EFConfigWarning.Simple(
-                            "figura",
-                            "figura",
-                            "config." + ETF.MOD_ID + ".warn.figura.text.1",
-                            "config." + ETF.MOD_ID + ".warn.figura.text.2",
-                            () -> {
-                                CONFIG.getConfig().skinFeaturesEnabled = false;
-                                CONFIG.saveToFile();
-                            }),
-                    //EBE
-                    new EFConfigWarning.Simple(
-                            "enhancedblockentities",
-                            "enhancedblockentities",
-                            "config." + ETF.MOD_ID + ".warn.ebe.text.1",
-                            "config." + ETF.MOD_ID + ".warn.ebe.text.2",
-                            null),
-                    //quark
-                    new EFConfigWarning.Simple(
-                            "quark",
-                            "quark",
-                            "config." + ETF.MOD_ID + ".warn.quark.text.3",
-                            "config." + ETF.MOD_ID + ".warn.quark.text.4",
-                            null),
-                    //iris and 3d skin layers trim warning
-                    new EFConfigWarning.Simple(
-                            "iris & 3d skin layers",
-                            () -> ETF.IRIS_DETECTED && ETF.SKIN_LAYERS_DETECTED,
-                            "config." + ETF.MOD_ID + ".warn.iris_3d.text.1",
-                            "config." + ETF.MOD_ID + ".warn.iris_3d.text.2",
-                            null),
-                    //no CEM mod, recommend EMF
-                    new EFConfigWarning.Simple(
-                            "emf",
-                            () -> !ETFVersionDifferenceHandler.isThisModLoaded("entity_model_features") && !ETFVersionDifferenceHandler.isThisModLoaded("cem"),
-                            "config." + ETF.MOD_ID + ".warn.no_emf.text.1",
-                            "config." + ETF.MOD_ID + ".warn.no_emf.text.2",
-                            null)
-            );
+                //figura
+                new EFConfigWarning.Simple(
+                        "figura",
+                        "figura",
+                        "config." + ETF.MOD_ID + ".warn.figura.text.1",
+                        "config." + ETF.MOD_ID + ".warn.figura.text.2",
+                        () -> {
+                            CONFIG.getConfig().skinFeaturesEnabled = false;
+                            CONFIG.saveToFile();
+                        }),
+                //EBE
+                new EFConfigWarning.Simple(
+                        "enhancedblockentities",
+                        "enhancedblockentities",
+                        "config." + ETF.MOD_ID + ".warn.ebe.text.1",
+                        "config." + ETF.MOD_ID + ".warn.ebe.text.2",
+                        null),
+                //quark
+                new EFConfigWarning.Simple(
+                        "quark",
+                        "quark",
+                        "config." + ETF.MOD_ID + ".warn.quark.text.3",
+                        "config." + ETF.MOD_ID + ".warn.quark.text.4",
+                        null),
+                //iris and 3d skin layers trim warning
+                new EFConfigWarning.Simple(
+                        "iris & 3d skin layers",
+                        () -> ETF.IRIS_DETECTED && ETF.SKIN_LAYERS_DETECTED,
+                        "config." + ETF.MOD_ID + ".warn.iris_3d.text.1",
+                        "config." + ETF.MOD_ID + ".warn.iris_3d.text.2",
+                        null),
+                //no CEM mod, recommend EMF
+                new EFConfigWarning.Simple(
+                        "emf",
+                        () -> !ETFVersionDifferenceHandler.isThisModLoaded("entity_model_features") && !ETFVersionDifferenceHandler.isThisModLoaded("cem"),
+                        "config." + ETF.MOD_ID + ".warn.no_emf.text.1",
+                        "config." + ETF.MOD_ID + ".warn.no_emf.text.2",
+                        null)
+        );
 
     }
 
@@ -123,8 +123,6 @@ public class ETF {
                 "Has Anyone Really Been Far Even as Decided to Use Even Go Want to do Look More Like?"
         };
     }
-
-
 
 
     // config code based on bedrockify & actually unbreaking fabric config code

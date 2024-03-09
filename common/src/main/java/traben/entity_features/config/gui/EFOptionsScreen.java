@@ -4,7 +4,7 @@ import com.demonwav.mcdev.annotations.Translatable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
-import traben.entity_features.config.gui.builders.EFOption;
+import traben.entity_features.config.gui.options.EFOption;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 
 public class EFOptionsScreen extends EFScreen {
@@ -24,15 +24,18 @@ public class EFOptionsScreen extends EFScreen {
     @Override
     protected void init() {
         super.init();
-        if (options.length > 14) {
-            addColumn((int) (this.width * 0.15), (int) (this.height * 0.2), (int) (this.width * 0.2), 20, 0);
-            addColumn((int) (this.width * 0.4), (int) (this.height * 0.2), (int) (this.width * 0.2), 20, 7);
-            addColumn((int) (this.width * 0.65), (int) (this.height * 0.2), (int) (this.width * 0.2), 20, 14);
-        } else if (options.length > 7) {
-            addColumn((int) (this.width * 0.15), (int) (this.height * 0.2), (int) (this.width * 0.3), 20, 0);
-            addColumn((int) (this.width * 0.55), (int) (this.height * 0.2), (int) (this.width * 0.3), 20, 7);
+
+        int buttonsFit = (int) (this.height * 0.7 / 24);
+
+        if (options.length > buttonsFit * 2) {
+            addColumn((int) (this.width * 0.15), (int) (this.height * 0.17), (int) (this.width * 0.2), 20, 0);
+            addColumn((int) (this.width * 0.4), (int) (this.height * 0.17), (int) (this.width * 0.2), 20, buttonsFit);
+            addColumn((int) (this.width * 0.65), (int) (this.height * 0.17), (int) (this.width * 0.2), 20, buttonsFit * 2);
+        } else if (options.length > buttonsFit) {
+            addColumn((int) (this.width * 0.15), (int) (this.height * 0.17), (int) (this.width * 0.3), 20, 0);
+            addColumn((int) (this.width * 0.55), (int) (this.height * 0.17), (int) (this.width * 0.3), 20, buttonsFit);
         } else {
-            addColumn((int) (this.width * 0.2), (int) (this.height * 0.2), (int) (this.width * 0.6), 20, 0);
+            addColumn((int) (this.width * 0.2), (int) (this.height * 0.17), (int) (this.width * 0.6), 20, 0);
         }
 
 

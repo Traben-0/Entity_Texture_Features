@@ -1,4 +1,4 @@
-package traben.entity_features.config.gui.builders;
+package traben.entity_features.config.gui.options;
 
 import com.demonwav.mcdev.annotations.Translatable;
 import net.minecraft.client.gui.Drawable;
@@ -35,11 +35,13 @@ public abstract class EFOption {
 
     public EFOption setEnabled(boolean enabled) {
         var widget = getWidget(0, 0, 0, 0);
-        if(widget instanceof ClickableWidget w) {
+        if (widget instanceof ClickableWidget w) {
             w.active = enabled;
         }
         return this;
     }
+
+    abstract boolean hasChangedFromInitial();
 
     abstract boolean saveValuesToConfig();
 
@@ -48,6 +50,8 @@ public abstract class EFOption {
     abstract void resetValuesToInitial();
 
     public static class Empty extends EFOption {
+        public final static String CHANGED_COLOR = "§a";
+
         public Empty() {
             super("", null);
         }
@@ -55,6 +59,11 @@ public abstract class EFOption {
         @Override
         public <T extends Element & Drawable & Selectable> T getWidget(int x, int y, int width, int height) {
             return null;
+        }
+
+        @Override
+        boolean hasChangedFromInitial() {
+            return false;
         }
 
         @Override

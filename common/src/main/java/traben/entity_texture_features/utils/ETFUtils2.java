@@ -17,10 +17,10 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import traben.entity_texture_features.ETF;
-import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_features.config.EFConfigWarning;
 import traben.entity_features.config.EFConfigWarnings;
+import traben.entity_texture_features.ETF;
+import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
@@ -224,7 +224,7 @@ public abstract class ETFUtils2 {
                 AbstractTexture texture = MinecraftClient.getInstance().getTextureManager().getTexture(identifier);
                 if (texture instanceof NativeImageBackedTexture nativeImageBackedTexture) {
                     var image2 = nativeImageBackedTexture.getImage();
-                    if(image2 == null) return null;
+                    if (image2 == null) return null;
                     NativeImage image3 = new NativeImage(image2.getWidth(), image2.getHeight(), false);
                     image3.copyFrom(image2);
                     return image3;

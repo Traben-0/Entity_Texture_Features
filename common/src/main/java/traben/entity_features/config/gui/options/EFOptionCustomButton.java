@@ -1,4 +1,4 @@
-package traben.entity_features.config.gui.builders;
+package traben.entity_features.config.gui.options;
 
 import com.demonwav.mcdev.annotations.Translatable;
 import net.minecraft.client.gui.Drawable;
@@ -37,5 +37,10 @@ public class EFOptionCustomButton extends EFOption {
 
     @Override
     void resetValuesToInitial() {
+    }
+
+    @Override
+    boolean hasChangedFromInitial() {
+        return false;
     }
 }

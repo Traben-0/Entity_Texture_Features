@@ -32,7 +32,7 @@ public class ETFPlayerTexture {
     public Identifier baseEnchantIdentifier = null;
     public Identifier baseEnchantBlinkIdentifier = null;
     public Identifier baseEnchantBlink2Identifier = null;
-//    public Identifier etfCapeIdentifier = null;
+    //    public Identifier etfCapeIdentifier = null;
     public Identifier texturedNoseIdentifier = null;
     public Identifier texturedNoseIdentifierEmissive = null;
     public Identifier texturedNoseIdentifierEnchanted = null;
@@ -44,13 +44,13 @@ public class ETFPlayerTexture {
     public int blinkHeight = 1;
     //public boolean THIS_SKIN_IS_IN_EDITOR = false;
 
-//    public ETFTexture etfCape = null;
+    //    public ETFTexture etfCape = null;
     public boolean hasEmissives = false;
     public boolean hasEnchant = false;
     //provides emissive patching and blinking functionality
     //all ETFPlayerTexture needs to do is build those textures and register them before this ETFTexture is made, and it will auto locate and apply them
     public ETFTexture etfTextureOfFinalBaseSkin;
-//    public ETFConfigScreenSkinTool.CapeType capeType = ETFConfigScreenSkinTool.CapeType.NONE;
+    //    public ETFConfigScreenSkinTool.CapeType capeType = ETFConfigScreenSkinTool.CapeType.NONE;
     public ETFConfigScreenSkinTool.NoseType noseType = ETFConfigScreenSkinTool.NoseType.NONE;
     public ETFPlayerEntity player;
     public boolean wasForcedSolid = false;
@@ -62,7 +62,7 @@ public class ETFPlayerTexture {
     private boolean isTextureReady = false;
     //private boolean hasVanillaCape = false;
     private NativeImage originalSkin;
-//    private NativeImage originalCape;
+    //    private NativeImage originalCape;
 //    private int[] enchantCapeBounds = null;
 //    private int[] emissiveCapeBounds = null;
 //    private Identifier etfCapeEmissiveIdentifier = null;
@@ -745,7 +745,7 @@ public class ETFPlayerTexture {
                     if (noseChoice == 1 || noseChoice == 7 || noseChoice == 8 || noseChoice == 9) {
                         hasVillagerNose = true;
                         noseType = ETFConfigScreenSkinTool.NoseType.NONE.getByColorId(noseChoice);
-                        if(noseChoice > 7){
+                        if (noseChoice > 7) {
                             removeNosePixels = true;
                             deletePixels(modifiedSkin, 43, 13, 44, 15);
                         }
@@ -854,7 +854,7 @@ public class ETFPlayerTexture {
 
                     //check if lazy blink
                     if (blinkChoice <= 2) {
-                        if(removeNosePixels){
+                        if (removeNosePixels) {
                             deletePixels(modifiedSkin, 35, 5, 36, 7);
                         }
                         //blink 1 frame if either pink or blue optional
@@ -864,7 +864,7 @@ public class ETFPlayerTexture {
 
                         //blink is 2 frames with blue optional
                         if (blinkChoice == 2) {
-                            if(removeNosePixels){
+                            if (removeNosePixels) {
                                 deletePixels(modifiedSkin, 59, 5, 60, 7);
                             }
                             blinkSkinFile2 = returnOptimizedBlinkFace(modifiedSkin, getSkinPixelBounds("face2"), 1, getSkinPixelBounds("face4"));
@@ -1121,7 +1121,6 @@ public class ETFPlayerTexture {
                 }
 
 
-
                 Identifier modifiedSkinIdentifier = new Identifier(SKIN_NAMESPACE, id + ".png");
                 ETFUtils2.registerNativeImageToIdentifier(modifiedSkin, modifiedSkinIdentifier);
 
@@ -1139,8 +1138,8 @@ public class ETFPlayerTexture {
                         modifiedSkinBlinkPatchedIdentifier,
                         modifiedSkinBlink2PatchedIdentifier);
 
-                if(normalVanillaSkinIdentifier != null)
-                    ETFManager.getInstance().ETF_TEXTURE_CACHE.put(normalVanillaSkinIdentifier,etfTextureOfFinalBaseSkin);
+                if (normalVanillaSkinIdentifier != null)
+                    ETFManager.getInstance().ETF_TEXTURE_CACHE.put(normalVanillaSkinIdentifier, etfTextureOfFinalBaseSkin);
 
 
                 //if vanilla cape and there is no enchant or emissive
@@ -1217,7 +1216,7 @@ public class ETFPlayerTexture {
         this.originalSkin = image;
         checkTexture(true);
 
-        if(etfTextureOfFinalBaseSkin != null)
+        if (etfTextureOfFinalBaseSkin != null)
             etfTextureOfFinalBaseSkin.setGUIBlink();
     }
 

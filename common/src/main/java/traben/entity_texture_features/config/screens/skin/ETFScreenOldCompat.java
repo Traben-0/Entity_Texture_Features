@@ -22,10 +22,6 @@ public abstract class ETFScreenOldCompat extends EFScreen {
         super(title, parent, showBackButton);
     }
 
-    public ButtonWidget getETFButton(int x, int y, int width, @SuppressWarnings("SameParameterValue") int height, Text buttonText, ButtonWidget.PressAction onPress) {
-        return getETFButton(x, y, width, height, buttonText, onPress, Text.of(""));
-    }
-
     public static void renderGUITexture(Identifier texture, double x1, double y1, double x2, double y2) {
 
         Tessellator tessellator = Tessellator.getInstance();
@@ -40,6 +36,14 @@ public abstract class ETFScreenOldCompat extends EFScreen {
         bufferBuilder.vertex(x2, y1, 0.0).texture(1, 0/*(float)x2*widthXValue, (float)y1*/).color(255, 255, 255, 255).next();
         bufferBuilder.vertex(x1, y1, 0.0).texture(0, 0/*(float)x1, (float)y1*/).color(255, 255, 255, 255).next();
         tessellator.draw();
+    }
+
+    public static String booleanAsOnOff(boolean bool) {
+        return ScreenTexts.onOrOff(bool).getString();
+    }
+
+    public ButtonWidget getETFButton(int x, int y, int width, @SuppressWarnings("SameParameterValue") int height, Text buttonText, ButtonWidget.PressAction onPress) {
+        return getETFButton(x, y, width, height, buttonText, onPress, Text.of(""));
     }
 
     public ButtonWidget getETFButton(int x, int y, int width, int height, Text buttonText, ButtonWidget.PressAction onPress, Text toolTipText) {
@@ -90,9 +94,5 @@ public abstract class ETFScreenOldCompat extends EFScreen {
 
 
         }
-    }
-
-    public static String booleanAsOnOff(boolean bool) {
-        return ScreenTexts.onOrOff(bool).getString();
     }
 }

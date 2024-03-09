@@ -20,7 +20,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 
-
 public class BlocksProperty extends StringArrayOrRegexProperty {
 
 
@@ -71,14 +70,13 @@ public class BlocksProperty extends StringArrayOrRegexProperty {
     public boolean testEntityInternal(ETFEntity entity) {
 
 
-
         String[] entityBlocks;
 
-        if(entity.etf$getUuid().getLeastSignificantBits() == ETFApi.ETF_SPAWNER_MARKER){
+        if (entity.etf$getUuid().getLeastSignificantBits() == ETFApi.ETF_SPAWNER_MARKER) {
             // entity is a mini mob spawner entity
             // return a blank mob spawner block state
             entityBlocks = new String[]{getBlockFormattedFromState(Blocks.SPAWNER.getDefaultState())};
-        }else if (entity instanceof BlockEntity blockEntity) {
+        } else if (entity instanceof BlockEntity blockEntity) {
             if (blockEntity.getWorld() == null) {
                 entityBlocks = new String[]{getBlockFormattedFromState(blockEntity.getCachedState())};
             } else {
@@ -135,6 +133,7 @@ public class BlocksProperty extends StringArrayOrRegexProperty {
     public boolean canPropertyUpdate() {
         return isPropertyUpdatable();
     }
+
     @Override
     public boolean isPropertyUpdatable() {
         return !ETF.config().getConfig().restrictBlock;

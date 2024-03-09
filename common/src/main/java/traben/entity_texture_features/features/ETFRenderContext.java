@@ -23,6 +23,7 @@ public class ETFRenderContext {
 
 
     private static boolean isInSpecialRenderOverlayPhase = false;
+    private static boolean allowedToPatch = false;
 
     public static boolean isRenderingFeatures() {
         return renderingFeatures;
@@ -49,12 +50,18 @@ public class ETFRenderContext {
         return currentEntity;
     }
 
-    public static boolean canRenderInBrightMode(){
+    public static void setCurrentEntity(ETFEntity currentEntity) {
+        //assert this
+        allowRenderLayerTextureModify = true;
+        ETFRenderContext.currentEntity = currentEntity;
+    }
+
+    public static boolean canRenderInBrightMode() {
         boolean setForBrightMode = ETFManager.getEmissiveMode() == ETFManager.EmissiveRenderModes.BRIGHT;
-        if(setForBrightMode){
-            if(currentEntity != null){
+        if (setForBrightMode) {
+            if (currentEntity != null) {
                 return currentEntity.etf$canBeBright();// && !ETFRenderContext.getCurrentETFTexture().isPatched_CurrentlyOnlyArmor();
-            }else{
+            } else {
                 //establish default rule
                 return true;
             }
@@ -62,19 +69,13 @@ public class ETFRenderContext {
         return false;
     }
 
-    public static boolean shouldEmissiveUseCullingLayer(){
-        if(currentEntity != null){
+    public static boolean shouldEmissiveUseCullingLayer() {
+        if (currentEntity != null) {
             return currentEntity.etf$isBlockEntity();
-        }else{
+        } else {
             //establish default rule
             return true;
         }
-    }
-
-    public static void setCurrentEntity(ETFEntity currentEntity) {
-        //assert this
-        allowRenderLayerTextureModify = true;
-        ETFRenderContext.currentEntity = currentEntity;
     }
 
     public static int getCurrentModelPartDepth() {
@@ -120,10 +121,10 @@ public class ETFRenderContext {
     public static void allowTexturePatching() {
         allowedToPatch = true;
     }
+
     public static void preventTexturePatching() {
         allowedToPatch = false;
     }
-    private static boolean allowedToPatch = false;
 
     public static RenderLayer modifyRenderLayerIfRequired(RenderLayer value) {
 
@@ -150,15 +151,15 @@ public class ETFRenderContext {
         return value;
     }
 
-    public static void insertETFDataIntoVertexConsumer(VertexConsumerProvider provider, RenderLayer renderLayer, VertexConsumer vertexConsumer){
-        if(isCurrentlyRenderingEntity() && vertexConsumer instanceof ETFVertexConsumer etfVertexConsumer) {
+    public static void insertETFDataIntoVertexConsumer(VertexConsumerProvider provider, RenderLayer renderLayer, VertexConsumer vertexConsumer) {
+        if (isCurrentlyRenderingEntity() && vertexConsumer instanceof ETFVertexConsumer etfVertexConsumer) {
             //need to store etf texture of consumer and original render layer
             //store provider as well for future actions
             etfVertexConsumer.etf$initETFVertexConsumer(provider, renderLayer);
         }
     }
 
-    public static boolean isCurrentlyRenderingEntity(){
+    public static boolean isCurrentlyRenderingEntity() {
         return currentEntity != null;
     }
 }

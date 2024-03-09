@@ -38,8 +38,8 @@ import static traben.entity_texture_features.features.player.ETFPlayerTexture.SK
 
 public class ETFManager {
 
-    private static ETFManager instance;
     private static final ETFTexture ETF_ERROR_TEXTURE = getErrorETFTexture();
+    private static ETFManager instance;
     public final EntityIntLRU LAST_MET_RULE_INDEX = new EntityIntLRU();
     public final ObjectOpenHashSet<String> EMISSIVE_SUFFIX_LIST = new ObjectOpenHashSet<>();
     public final ETFLruCache<UUID, ETFPlayerTexture> PLAYER_TEXTURE_MAP = new ETFLruCache<>();
@@ -49,10 +49,10 @@ public class ETFManager {
     public final Object2IntOpenHashMap<EntityType<?>> ENTITY_TYPE_RENDER_LAYER = new Object2IntOpenHashMap<>();
     //this is a cache of all known ETFTexture versions of any existing resource-pack texture, used to prevent remaking objects
     public final Object2ReferenceOpenHashMap<@NotNull Identifier, @Nullable ETFTexture> ETF_TEXTURE_CACHE = new Object2ReferenceOpenHashMap<>();
-    public UUID ENTITY_DEBUG = null;
     public final EntityIntLRU LAST_SUFFIX_OF_ENTITY = new EntityIntLRU();
-//    public final ETFLruCache<Identifier, NativeImage> KNOWN_NATIVE_IMAGES = new ETFLruCache<>();
+    //    public final ETFLruCache<Identifier, NativeImage> KNOWN_NATIVE_IMAGES = new ETFLruCache<>();
     private final Object2ObjectOpenHashMap<Identifier, ETFTextureVariator> VARIATOR_MAP = new Object2ObjectOpenHashMap<>();
+    public UUID ENTITY_DEBUG = null;
     public Object2ReferenceOpenHashMap<@NotNull Identifier, @NotNull ETFDirectory> ETF_DIRECTORY_CACHE = new Object2ReferenceOpenHashMap<>();// = new Object2ReferenceOpenHashMap<>();
     public Boolean mooshroomBrownCustomShroomExists = null;
     //marks whether mooshroom mushroom overrides exist
@@ -142,7 +142,7 @@ public class ETFManager {
                 ;
     }
 
-    public void doTheBigBoyPrintoutKronk(){
+    public void doTheBigBoyPrintoutKronk() {
         StringBuilder out = new StringBuilder();
 
         out.append("\n||||||||||||||-ETF EVERYTHING LOG START-|||||||||||||||")
@@ -163,14 +163,14 @@ public class ETFManager {
         StringBuilder textureLoopNormal = new StringBuilder();
         int totalEmissive = 0;
         int totalEnchant = 0;
-        for (ETFTexture texture:
+        for (ETFTexture texture :
                 ETF_TEXTURE_CACHE.values()) {
-            if(texture != null) {
+            if (texture != null) {
                 if (texture.isEmissive()) totalEmissive++;
                 if (texture.isEnchanted()) totalEnchant++;
-                if(VARIATOR_MAP.containsKey(texture.thisIdentifier)){
+                if (VARIATOR_MAP.containsKey(texture.thisIdentifier)) {
                     textureLoopVariates.append("\n - ").append(
-                            VARIATOR_MAP.get(texture.thisIdentifier).getPrintout().replaceAll("\n","\n      "));
+                            VARIATOR_MAP.get(texture.thisIdentifier).getPrintout().replaceAll("\n", "\n      "));
                 }
                 textureLoopNormal.append("\n - ").append(texture);
 
@@ -182,7 +182,7 @@ public class ETFManager {
                 .append("\n----------ALL texture groups-------------")
                 .append("\n----------------------------------------")
                 .append("\n (Note: all of these can be varied via random entity rules)")
-                .append(textureLoopVariates.toString().replaceAll("§.",""))
+                .append(textureLoopVariates.toString().replaceAll("§.", ""))
                 .append("\n----------------------------------------")
                 .append("\n----------ALL Textures Seen-------------")
                 .append("\n----------------------------------------")
@@ -192,7 +192,7 @@ public class ETFManager {
 
 
         out.append("\n----------------------------------------")
-        .append("\n||||||||||||||-ETF EVERYTHING LOG END-|||||||||||||||");
+                .append("\n||||||||||||||-ETF EVERYTHING LOG END-|||||||||||||||");
 
         ETFUtils2.logMessage(out.toString());
     }
@@ -258,15 +258,15 @@ public class ETFManager {
             return getETFTextureNoVariation(vanillaIdentifier);
         }
         if (!VARIATOR_MAP.containsKey(vanillaIdentifier)) {
-                if(SKIN_NAMESPACE.equals(vanillaIdentifier.getNamespace())){
-                    return getETFTextureNoVariation(vanillaIdentifier);
-                }else {
-                    VARIATOR_MAP.put(vanillaIdentifier, ETFTextureVariator.of(vanillaIdentifier));
-                    if (ETF.config().getConfig().logTextureDataInitialization) {
-                        ETFUtils2.logMessage("Amount of 'base' textures: " + VARIATOR_MAP.size());
-                        ETFUtils2.logMessage("Total textures including variants: " + ETF_TEXTURE_CACHE.size());
-                    }
+            if (SKIN_NAMESPACE.equals(vanillaIdentifier.getNamespace())) {
+                return getETFTextureNoVariation(vanillaIdentifier);
+            } else {
+                VARIATOR_MAP.put(vanillaIdentifier, ETFTextureVariator.of(vanillaIdentifier));
+                if (ETF.config().getConfig().logTextureDataInitialization) {
+                    ETFUtils2.logMessage("Amount of 'base' textures: " + VARIATOR_MAP.size());
+                    ETFUtils2.logMessage("Total textures including variants: " + ETF_TEXTURE_CACHE.size());
                 }
+            }
         }
         return VARIATOR_MAP.get(vanillaIdentifier).getVariantOf(entity);
     }

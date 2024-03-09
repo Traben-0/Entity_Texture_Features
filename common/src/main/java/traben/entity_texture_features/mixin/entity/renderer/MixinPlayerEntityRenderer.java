@@ -49,7 +49,6 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
     }
 
 
-
     /*
      * For some reason cancelling in this way is the only way to get this working
      * */
@@ -68,17 +67,17 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
                     sleeve.pitch = 0.0F;
 
                     VertexConsumer vc1 = vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(etfTexture));
-                    etf$renderOnce(matrices,vc1,light,player,arm,sleeve);
+                    etf$renderOnce(matrices, vc1, light, player, arm, sleeve);
 
                     ETFRenderContext.startSpecialRenderOverlayPhase();
                     Identifier emissive = thisETFPlayerTexture.getBaseTextureEmissiveIdentifierOrNullForNone();
                     if (emissive != null) {
                         VertexConsumer vc2 = vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(emissive));
-                        etf$renderOnce(matrices,vc2, ETF.EMISSIVE_FEATURE_LIGHT_VALUE,player,arm,sleeve);
+                        etf$renderOnce(matrices, vc2, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, player, arm, sleeve);
                     }
                     if (thisETFPlayerTexture.baseEnchantIdentifier != null) {
                         VertexConsumer vc3 = ItemRenderer.getArmorGlintConsumer(vertexConsumers, RenderLayer.getArmorCutoutNoCull(thisETFPlayerTexture.baseEnchantIdentifier), false, true);
-                        etf$renderOnce(matrices,vc3,light,player,arm,sleeve);
+                        etf$renderOnce(matrices, vc3, light, player, arm, sleeve);
                     }
                     ETFRenderContext.endSpecialRenderOverlayPhase();
 
@@ -93,7 +92,7 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
 
 
     @Unique
-    private void etf$renderOnce(MatrixStack matrixStack, VertexConsumer consumer, int light, AbstractClientPlayerEntity player, ModelPart arm, ModelPart sleeve){
+    private void etf$renderOnce(MatrixStack matrixStack, VertexConsumer consumer, int light, AbstractClientPlayerEntity player, ModelPart arm, ModelPart sleeve) {
         arm.render(matrixStack, consumer, light, OverlayTexture.DEFAULT_UV);
         sleeve.render(matrixStack, consumer, light, OverlayTexture.DEFAULT_UV);
         if (ETF.SKIN_LAYERS_DETECTED && ETF.config().getConfig().use3DSkinLayerPatch) {
@@ -114,7 +113,6 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
             }
         }
     }
-
 
 
     @Inject(method = "getTexture(Lnet/minecraft/client/network/AbstractClientPlayerEntity;)Lnet/minecraft/util/Identifier;",

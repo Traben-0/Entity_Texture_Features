@@ -1,4 +1,4 @@
-package traben.entity_features.config.gui.builders;
+package traben.entity_features.config.gui.options;
 
 import com.demonwav.mcdev.annotations.Translatable;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
@@ -9,13 +9,19 @@ import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.NotNull;
 import traben.entity_features.config.gui.EFOptionsScreen;
+
+import java.util.function.Supplier;
+
+import static traben.entity_features.config.gui.options.EFOption.Empty.CHANGED_COLOR;
 
 public class EFOptionCategory extends EFOption {
 
     private final Object2ObjectLinkedOpenHashMap<String, EFOption> options = new Object2ObjectLinkedOpenHashMap<>();
     private final String translationKey;
     private EFOptionsScreen screen = null;
+    private Tooltip emptyTooltip = Tooltip.of(Text.translatable("config.entity_features.empty"));
 
     public EFOptionCategory(@Translatable final String text, @Translatable final String tooltip) {
         super(text, tooltip);
@@ -41,15 +47,9 @@ public class EFOptionCategory extends EFOption {
 
     @Override
     public <T extends Element & Drawable & Selectable> T getWidget(final int x, final int y, final int width, final int height) {
-        var but = ButtonWidget.builder(getText(), (button) -> MinecraftClient.getInstance().setScreen(getScreen())
-        ).dimensions(x, y, width, height).tooltip(getTooltip()).build();
-        but.active = !options.isEmpty();
-        if(!but.active){
-            but.setTooltip(Tooltip.of(Text.translatable("config.entity_features.empty")));
-        }
-
         //noinspection unchecked
-        return (T) but;
+        return (T) new CategoryButton(x, y, width, height, getText(),
+                (button) -> MinecraftClient.getInstance().setScreen(getScreen()));
     }
 
     @Override
@@ -83,6 +83,9 @@ public class EFOptionCategory extends EFOption {
     }
 
     public EFOptionCategory add(final EFOption option) {
+        if (option == null) {
+            return this;
+        }
         if (option instanceof EFOptionCategory category) {
             return addOrMerge(category);
         }
@@ -102,6 +105,23 @@ public class EFOptionCategory extends EFOption {
         return this;
     }
 
+    @Override
+    boolean hasChangedFromInitial() {
+        boolean changed = false;
+        for (EFOption value : options.values()) {
+            if (value.hasChangedFromInitial()) {
+                changed = true;
+                break;
+            }
+        }
+        return changed;
+    }
+
+    public EFOptionCategory setEmptyTooltip(@NotNull @Translatable final String emptyTooltipKey) {
+        this.emptyTooltip = Tooltip.of(Text.translatable(emptyTooltipKey));
+        return this;
+    }
+
     public static class Empty extends EFOptionCategory {
         public Empty() {
             super("", null);
@@ -113,6 +133,22 @@ public class EFOptionCategory extends EFOption {
         }
 
 
+    }
+
+    private class CategoryButton extends ButtonWidget {
+
+        protected CategoryButton(final int x, final int y, final int width, final int height, final Text message, final PressAction onPress) {
+            super(x, y, width, height, message, onPress, Supplier::get);
+            active = !options.isEmpty();
+            if (!active) {
+                setTooltip(emptyTooltip);
+            }
+        }
+
+        @Override
+        public Text getMessage() {
+            return hasChangedFromInitial() ? Text.of(CHANGED_COLOR + super.getMessage().getString()) : super.getMessage();
+        }
     }
 
 }

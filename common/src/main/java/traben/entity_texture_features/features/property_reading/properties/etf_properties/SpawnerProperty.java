@@ -12,7 +12,7 @@ public class SpawnerProperty extends BooleanProperty {
 
 
     protected SpawnerProperty(Properties properties, int propertyNum) throws RandomPropertyException {
-        super(getGenericBooleanThatCanNull(properties, propertyNum, "isSpawner","spawner"));
+        super(getGenericBooleanThatCanNull(properties, propertyNum, "isSpawner", "spawner"));
     }
 
     public static SpawnerProperty getPropertyOrNull(Properties properties, int propertyNum) {
@@ -41,7 +41,7 @@ public class SpawnerProperty extends BooleanProperty {
 
     @Override
     public @NotNull String[] getPropertyIds() {
-        return new String[]{"isSpawner","spawner"};
+        return new String[]{"isSpawner", "spawner"};
     }
 
 }

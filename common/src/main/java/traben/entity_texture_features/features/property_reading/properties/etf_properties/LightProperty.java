@@ -35,7 +35,7 @@ public class LightProperty extends SimpleIntegerArrayProperty {
 
     @Override
     protected int getValueFromEntity(ETFEntity entity) {
-        if(entity == null || entity.etf$getWorld() == null || entity.etf$getBlockPos() == null) return -1;
+        if (entity == null || entity.etf$getWorld() == null || entity.etf$getBlockPos() == null) return -1;
 
         return entity.etf$getWorld().getLightLevel(entity.etf$getBlockPos());
     }

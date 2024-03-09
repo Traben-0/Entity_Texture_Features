@@ -22,16 +22,13 @@ import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
 
 
-
 public class ETFPlayerFeatureRenderer<T extends PlayerEntity, M extends PlayerEntityModel<T>> extends FeatureRenderer<T, M> {
-    static private final Identifier VILLAGER_TEXTURE = new Identifier("textures/entity/villager/villager.png");
-    protected final ETFPlayerSkinHolder skinHolder;
-
-
     protected static final ModelPart villagerNose = getModelData(new Dilation(0)).getRoot().getChild("nose").createPart(64, 64);
     protected static final ModelPart textureNose = getModelData(new Dilation(0)).getRoot().getChild("textureNose").createPart(8, 8);
     protected static final ModelPart jacket = getModelData(new Dilation(0)).getRoot().getChild("jacket").createPart(64, 64);
     protected static final ModelPart fatJacket = getModelData(new Dilation(0)).getRoot().getChild("fatJacket").createPart(64, 64);
+    static private final Identifier VILLAGER_TEXTURE = new Identifier("textures/entity/villager/villager.png");
+    protected final ETFPlayerSkinHolder skinHolder;
 
     //public boolean sneaking;
     public ETFPlayerFeatureRenderer(FeatureRendererContext<T, M> context) {
@@ -93,6 +90,39 @@ public class ETFPlayerFeatureRenderer<T extends PlayerEntity, M extends PlayerEn
         }
     }
 
+    private static void renderNose(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light, ETFPlayerTexture playerTexture) {
+        if (playerTexture.hasVillagerNose) {
+//            villagerNose.copyTransform(model.head);
+            if (playerTexture.noseType == ETFConfigScreenSkinTool.NoseType.VILLAGER_TEXTURED || playerTexture.noseType == ETFConfigScreenSkinTool.NoseType.VILLAGER_TEXTURED_REMOVE) {
+                VertexConsumer villagerVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(playerTexture.etfTextureOfFinalBaseSkin.getTextureIdentifier(null)));
+                villagerNose.render(matrixStack, villagerVert, light, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+                playerTexture.etfTextureOfFinalBaseSkin.renderEmissive(matrixStack, vertexConsumerProvider, villagerNose);
+            } else {
+                VertexConsumer villagerVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(VILLAGER_TEXTURE));
+                villagerNose.render(matrixStack, villagerVert, light, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+            }
+        } else if (playerTexture.texturedNoseIdentifier != null) {
+//            textureNose.copyTransform(model.head);
+            VertexConsumer noseVertex = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucentCull(playerTexture.texturedNoseIdentifier));
+            textureNose.render(matrixStack, noseVertex, light, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+            if (playerTexture.texturedNoseIdentifierEmissive != null) {
+//                textureNose.copyTransform(model.head);
+                VertexConsumer noseVertex_e;
+                if (ETFManager.getEmissiveMode() == ETFManager.EmissiveRenderModes.BRIGHT) {
+                    noseVertex_e = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(playerTexture.texturedNoseIdentifierEmissive, true));
+                } else {
+                    noseVertex_e = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucentCull(playerTexture.texturedNoseIdentifierEmissive));
+                }
+                textureNose.render(matrixStack, noseVertex_e, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+            }
+            if (playerTexture.texturedNoseIdentifierEnchanted != null) {
+//                textureNose.copyTransform(model.head);
+                VertexConsumer noseVertex_ench = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(playerTexture.texturedNoseIdentifierEnchanted), false, true);
+                textureNose.render(matrixStack, noseVertex_ench, light, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+            }
+        }
+    }
+
     @Override
     public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, T entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
 
@@ -124,39 +154,6 @@ public class ETFPlayerFeatureRenderer<T extends PlayerEntity, M extends PlayerEn
             //ETFPlayerFeatureRenderer.renderEnchanted(matrixStack, vertexConsumerProvider, light, playerTexture, model);
 
             ETFRenderContext.endSpecialRenderOverlayPhase();
-        }
-    }
-
-    private static void renderNose(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light, ETFPlayerTexture playerTexture) {
-        if (playerTexture.hasVillagerNose) {
-//            villagerNose.copyTransform(model.head);
-            if (playerTexture.noseType == ETFConfigScreenSkinTool.NoseType.VILLAGER_TEXTURED || playerTexture.noseType == ETFConfigScreenSkinTool.NoseType.VILLAGER_TEXTURED_REMOVE) {
-                VertexConsumer villagerVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(playerTexture.etfTextureOfFinalBaseSkin.getTextureIdentifier(null)));
-                villagerNose.render(matrixStack, villagerVert, light, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
-                playerTexture.etfTextureOfFinalBaseSkin.renderEmissive(matrixStack, vertexConsumerProvider, villagerNose);
-            } else {
-                VertexConsumer villagerVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(VILLAGER_TEXTURE));
-                villagerNose.render(matrixStack, villagerVert, light, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
-            }
-        } else if (playerTexture.texturedNoseIdentifier != null) {
-//            textureNose.copyTransform(model.head);
-            VertexConsumer noseVertex = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucentCull(playerTexture.texturedNoseIdentifier));
-            textureNose.render(matrixStack, noseVertex, light, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
-            if (playerTexture.texturedNoseIdentifierEmissive != null) {
-//                textureNose.copyTransform(model.head);
-                VertexConsumer noseVertex_e;
-                if (ETFManager.getEmissiveMode() == ETFManager.EmissiveRenderModes.BRIGHT) {
-                    noseVertex_e = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(playerTexture.texturedNoseIdentifierEmissive, true));
-                } else {
-                    noseVertex_e = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucentCull(playerTexture.texturedNoseIdentifierEmissive));
-                }
-                textureNose.render(matrixStack, noseVertex_e, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
-            }
-            if (playerTexture.texturedNoseIdentifierEnchanted != null) {
-//                textureNose.copyTransform(model.head);
-                VertexConsumer noseVertex_ench = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(playerTexture.texturedNoseIdentifierEnchanted), false, true);
-                textureNose.render(matrixStack, noseVertex_ench, light, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
-            }
         }
     }
 

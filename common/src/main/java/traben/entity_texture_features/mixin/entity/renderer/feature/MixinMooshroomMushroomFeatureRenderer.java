@@ -25,7 +25,6 @@ import traben.entity_texture_features.features.texture_handlers.ETFTexture;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 
-
 @Mixin(MooshroomMushroomFeatureRenderer.class)
 public abstract class MixinMooshroomMushroomFeatureRenderer {
 

@@ -9,7 +9,6 @@ import traben.entity_texture_features.utils.ETFEntity;
 import java.util.Properties;
 
 
-
 public class WeatherProperty extends StringArrayOrRegexProperty {
     protected WeatherProperty(Properties properties, int propertyNum) throws RandomPropertyException {
         super(readPropertiesOrThrow(properties, propertyNum, "weather"));
@@ -45,6 +44,7 @@ public class WeatherProperty extends StringArrayOrRegexProperty {
     public boolean canPropertyUpdate() {
         return isPropertyUpdatable();
     }
+
     @Override
     public boolean isPropertyUpdatable() {
         return !ETF.config().getConfig().restrictWeather;

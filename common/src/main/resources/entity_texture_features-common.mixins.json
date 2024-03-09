@@ -41,9 +41,9 @@
     "mods.iris.MixinOuterWrappedRenderType",
     "mods.skin_layers.MixinCustomizableModelPart",
     "mods.sodium.MixinModelPartSodium",
+    "mods.sodium.MixinSodiumBufferBuilder",
     "reloading.MixinMinecraftClient",
-    "reloading.MixinResourceReload",
-    "mods.sodium.MixinSodiumBufferBuilder"
+    "reloading.MixinResourceReload"
   ],
   "mixins": [
   ],

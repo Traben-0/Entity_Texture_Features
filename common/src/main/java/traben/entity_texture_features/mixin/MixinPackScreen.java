@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import traben.entity_features.config.gui.EFMainConfigScreen;
+import traben.entity_features.config.gui.EFConfigScreenMain;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 
@@ -72,11 +72,11 @@ public abstract class MixinPackScreen extends Screen {
             this.addDrawableChild(new TexturedButtonWidget(
                     x, y, 24, 20,
                     new ButtonTextures(etf$UNFOCUSED, etf$FOCUSED),
-                    (button) -> Objects.requireNonNull(client).setScreen(new EFMainConfigScreen(this)),
-                    Text.translatable(MOD_ID + ".open_tooltip")) {
+                    (button) -> Objects.requireNonNull(client).setScreen(new EFConfigScreenMain(this)),
+                    Text.of("")) {
                 {
                     setTooltip(Tooltip.of(ETFVersionDifferenceHandler.getTextFromTranslation(
-                            "config.entity_texture_features.button_tooltip")));
+                            "config.entity_features.button_tooltip")));
                 }
 
                 //override required because textured button widget just doesnt work

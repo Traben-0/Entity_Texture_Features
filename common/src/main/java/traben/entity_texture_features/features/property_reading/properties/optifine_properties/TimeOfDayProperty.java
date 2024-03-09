@@ -9,7 +9,6 @@ import traben.entity_texture_features.utils.ETFEntity;
 import java.util.Properties;
 
 
-
 public class TimeOfDayProperty extends LongRangeFromStringArrayProperty {
 
 
@@ -39,6 +38,7 @@ public class TimeOfDayProperty extends LongRangeFromStringArrayProperty {
     public boolean canPropertyUpdate() {
         return isPropertyUpdatable();
     }
+
     @Override
     public boolean isPropertyUpdatable() {
         return !ETF.config().getConfig().restrictDayTime;

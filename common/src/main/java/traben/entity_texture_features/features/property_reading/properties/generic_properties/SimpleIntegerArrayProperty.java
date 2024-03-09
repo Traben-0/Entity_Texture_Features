@@ -102,15 +102,16 @@ public abstract class SimpleIntegerArrayProperty extends RandomProperty {
         final int lower;
         final int higher;
 
-        public IntRange(int left, int right){
-            if(left > right){
+        public IntRange(int left, int right) {
+            if (left > right) {
                 higher = left;
                 lower = right;
-            }else{
+            } else {
                 higher = right;
                 lower = left;
             }
         }
+
         public boolean isWithinRange(int value) {
             return value >= lower && value <= higher;
         }

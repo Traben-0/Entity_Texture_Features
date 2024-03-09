@@ -12,7 +12,6 @@ import traben.entity_texture_features.utils.ETFEntity;
 import java.util.Properties;
 
 
-
 public class BiomeProperty extends StringArrayOrRegexProperty {
 
 

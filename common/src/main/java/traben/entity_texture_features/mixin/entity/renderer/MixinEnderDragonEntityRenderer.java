@@ -15,7 +15,6 @@ import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 
-
 @Mixin(EnderDragonEntityRenderer.class)
 public abstract class MixinEnderDragonEntityRenderer extends EntityRenderer<EnderDragonEntity> {
 

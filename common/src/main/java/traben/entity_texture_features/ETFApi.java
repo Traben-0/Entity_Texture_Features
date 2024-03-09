@@ -10,9 +10,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_features.config.EFConfigWarning;
 import traben.entity_features.config.EFConfigWarnings;
+import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.property_reading.PropertiesRandomProvider;
 import traben.entity_texture_features.features.property_reading.TrueRandomProvider;
@@ -29,9 +29,8 @@ import java.util.UUID;
 /**
  * ETF's api for external mod access (primarily puzzle and EMF at this time)
  *
- * @constants
- *  {@link ETFApi#ETFApiVersion}
- *  {@link ETFApi#ETF_GENERIC_UUID}<p>
+ * @constants {@link ETFApi#ETFApiVersion}
+ * {@link ETFApi#ETF_GENERIC_UUID}<p>
  * @config_handling These methods allow for retrieving, editing, replacing, and saving ETF's config<p>
  * {@link ETFApi#getETFConfigObject()}<p>
  * {@link ETFApi#getCopyOfETFConfigObject()} <p>
@@ -72,15 +71,10 @@ public final class ETFApi {
      * The current ETF API version.
      */
     public static final int ETFApiVersion = 9;
-    @Deprecated
-    public static ETFConfig getETFConfigObject = null;
-
-
     /**
      * This UUID if passed into ETF will tell it to skip looking for variants
      */
     public static final UUID ETF_GENERIC_UUID = UUID.nameUUIDFromBytes(("GENERIC").getBytes());
-
     /**
      * This is the value that is used for mob spawner UUID's least significant bits.
      * <p>
@@ -89,7 +83,8 @@ public final class ETFApi {
      * This is how it appears in NBT as an int list with 4 values "[I;?,?,12345,12345]" making it identifiable there too
      */
     public static final long ETF_SPAWNER_MARKER = (12345L << 32) + 12345L;
-
+    @Deprecated
+    public static ETFConfig getETFConfigObject = null;
 
     /**
      * provides access to the live ETF config object to read AND modify its values
@@ -107,10 +102,10 @@ public final class ETFApi {
      * @param newETFConfig the new ETF config to be saved and used by ETF
      */
     public static void setETFConfigObject(ETFConfig newETFConfig) {
-        if(newETFConfig != null) {
+        if (newETFConfig != null) {
             ETF.config().setConfig(newETFConfig);
             saveETFConfigChangesAndResetETF();
-        }else{
+        } else {
             ETFUtils2.logError("new config was null: ignoring.");
         }
     }
@@ -431,8 +426,8 @@ public final class ETFApi {
      * This is used by EMF for random model variations.
      * <p>.<p>
      * provides functionality to input an entity and output a suffix integer as defined in either:<p>
-     *  - a valid OptiFine random entity properties file.<p>
-     *  - non property random variation (E.G. having a *2.png texture and so forth).
+     * - a valid OptiFine random entity properties file.<p>
+     * - non property random variation (E.G. having a *2.png texture and so forth).
      * <p>
      * Should be built via {@link ETFApi#getVariantSupplierOrNull(Identifier, Identifier, String...)}
      */

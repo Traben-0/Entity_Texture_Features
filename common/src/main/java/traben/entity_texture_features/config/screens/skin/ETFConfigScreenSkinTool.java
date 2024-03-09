@@ -45,7 +45,7 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
     ButtonWidget emissiveSelectButton = null;
     ButtonWidget enchantButton = null;
     ButtonWidget enchantSelectButton = null;
-//    ButtonWidget capeButton = null;
+    //    ButtonWidget capeButton = null;
     ButtonWidget transparencyButton = null;
 
     public ETFConfigScreenSkinTool(Screen parent) {
@@ -109,7 +109,7 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
                 ETFPlayerTexture etfPlayerTexture = new ETFPlayerTexture();
                 ETFManager.getInstance().PLAYER_TEXTURE_MAP.put(MinecraftClient.getInstance().player.getUuid(), etfPlayerTexture);
                 thisETFPlayerTexture = etfPlayerTexture;
-            } else if (thisETFPlayerTexture.etfTextureOfFinalBaseSkin != null){
+            } else if (thisETFPlayerTexture.etfTextureOfFinalBaseSkin != null) {
                 thisETFPlayerTexture.etfTextureOfFinalBaseSkin.setGUIBlink();
             }
         }
@@ -422,7 +422,6 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
             if (player != null) {
 
 
-
                 int height = (int) (this.height * 0.75);
                 int playerX = (int) (this.width * 0.14);
                 drawEntity(playerX, height, (int) (this.height * 0.3), (float) (-mouseX + playerX), (float) (-mouseY + (this.height * 0.3)), player);
@@ -606,27 +605,27 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
 
     @SuppressWarnings("EnhancedSwitchMigration")
     public enum NoseType {
-        VILLAGER(1,ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.villager")),
-        VILLAGER_TEXTURED(7,ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.villager2")),
-        VILLAGER_REMOVE(8,ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.villager3")),
-        VILLAGER_TEXTURED_REMOVE(9,ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.villager4")),
-        TEXTURED_1(2,ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.1")),
-        TEXTURED_2(3,ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.2")),
-        TEXTURED_3(4,ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.3")),
-        TEXTURED_4(5,ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.4")),
-        TEXTURED_5(6,ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.5")),
-        NONE(0,ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.none"));
+        VILLAGER(1, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.villager")),
+        VILLAGER_TEXTURED(7, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.villager2")),
+        VILLAGER_REMOVE(8, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.villager3")),
+        VILLAGER_TEXTURED_REMOVE(9, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.villager4")),
+        TEXTURED_1(2, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.1")),
+        TEXTURED_2(3, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.2")),
+        TEXTURED_3(4, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.3")),
+        TEXTURED_4(5, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.4")),
+        TEXTURED_5(6, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.5")),
+        NONE(0, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.none"));
 
-        private final Text buttonText;
         public final int id;
+        private final Text buttonText;
 
 
-        NoseType(int i,Text buttonText) {
+        NoseType(int i, Text buttonText) {
             this.id = i;
             this.buttonText = buttonText;
         }
 
-        public NoseType getByColorId(int id){
+        public NoseType getByColorId(int id) {
             for (NoseType nose : NoseType.values()) {
                 if (nose.id == id) return nose;
             }
@@ -874,7 +873,6 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
             }
         }
     }
-
 
 
 }

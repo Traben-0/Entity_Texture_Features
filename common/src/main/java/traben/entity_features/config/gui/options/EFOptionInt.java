@@ -1,4 +1,4 @@
-package traben.entity_features.config.gui.builders;
+package traben.entity_features.config.gui.options;
 
 import com.demonwav.mcdev.annotations.Translatable;
 import net.minecraft.client.gui.Drawable;
@@ -12,6 +12,8 @@ import net.minecraft.util.math.MathHelper;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
+import static traben.entity_features.config.gui.options.EFOption.Empty.CHANGED_COLOR;
 
 public class EFOptionInt extends EFOptionValue<Integer> {
 
@@ -58,13 +60,14 @@ public class EFOptionInt extends EFOptionValue<Integer> {
         widget.setValue(getter.get());
     }
 
-    public static class IntSliderWidget extends SliderWidget {
+    public class IntSliderWidget extends SliderWidget {
         private final int max;
         private final int min;
         private final String title;
 
         private final boolean isMinOff;
         private final boolean isMaxOff;
+
 
         public IntSliderWidget(final Text text,
                                final int initialValue, final Tooltip tooltip, int min, int max, boolean isMinOff, boolean isMaxOff) {
@@ -96,7 +99,7 @@ public class EFOptionInt extends EFOptionValue<Integer> {
         @Override
         protected void updateMessage() {
             snapValueToNearestIndex();
-            setMessage(Text.of(title + (isOff() ? ScreenTexts.OFF.getString() : getValueRoundedToIntBetweenMinMax())));
+            setMessage(Text.of(title + (value != getter.get() ? CHANGED_COLOR : "") + (isOff() ? ScreenTexts.OFF.getString() : getValueRoundedToIntBetweenMinMax())));
         }
 
         @Override

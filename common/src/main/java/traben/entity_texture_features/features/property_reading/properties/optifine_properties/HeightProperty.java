@@ -8,7 +8,6 @@ import traben.entity_texture_features.utils.ETFEntity;
 import java.util.Properties;
 
 
-
 public class HeightProperty extends SimpleIntegerArrayProperty {
 
 
@@ -36,10 +35,12 @@ public class HeightProperty extends SimpleIntegerArrayProperty {
             return null;
         }
     }
+
     @Override
     public boolean canPropertyUpdate() {
         return isPropertyUpdatable();
     }
+
     @Override
     public boolean isPropertyUpdatable() {
         return !ETF.config().getConfig().restrictHeight;

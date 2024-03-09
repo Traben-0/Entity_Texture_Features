@@ -40,7 +40,7 @@ public class ETFConfigScreenSkinToolOutcome extends ETFScreenOldCompat {
     private final NativeImage skin;
 
     protected ETFConfigScreenSkinToolOutcome(Screen parent, boolean success, NativeImage skin) {
-        super("config." + ETF.MOD_ID + ".player_skin_editor.print_skin.result", parent,false);
+        super("config." + ETF.MOD_ID + ".player_skin_editor.print_skin.result", parent, false);
         didSucceed = success;
         this.skin = skin;
         //this.skin = new PlayerSkinTexture(skin);

@@ -69,7 +69,7 @@ public abstract class RandomProperty {
      * @return true if this property can be considered to update over time. factoring in the unknown restriction setting
      * which can get overridden by separate property settings.
      */
-    public boolean canPropertyUpdate(){
+    public boolean canPropertyUpdate() {
         return isPropertyUpdatable() || !ETF.config().getConfig().allowUnknownRestrictions;
     }
 

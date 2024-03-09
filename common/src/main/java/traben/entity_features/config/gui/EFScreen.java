@@ -31,8 +31,9 @@ public class EFScreen extends Screen {
 
     @Override
     public void render(final DrawContext context, final int mouseX, final int mouseY, final float delta) {
-        context.drawCenteredTextWithShadow(textRenderer, title, width / 2, 15, 0xFFFFFF);
         super.render(context, mouseX, mouseY, delta);
+        context.drawCenteredTextWithShadow(textRenderer, title, width / 2, 15, 0xFFFFFF);
+
     }
 
     @Override
@@ -52,7 +53,7 @@ public class EFScreen extends Screen {
 //        }
 //    }
 
-    protected boolean allowTransparentBackground(){
+    protected boolean allowTransparentBackground() {
         return true;
     }
 
@@ -60,14 +61,13 @@ public class EFScreen extends Screen {
     public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
         context.getMatrices().push();
 
-        context.getMatrices().translate(0,0,-100);
+        context.getMatrices().translate(0, 0, -100);
         if (MinecraftClient.getInstance().world == null || !allowTransparentBackground()) {
             context.setShaderColor(0.15F, 0.15F, 0.15F, 1.0F);
             context.drawTexture(OPTIONS_BACKGROUND_TEXTURE, 0, 0, 0, 0.0F, 0.0F, this.width, height, 32, 32);
-        }// else {
-
-            //context.fillGradient(0, 0, this.width, this.height, -1072689136, -804253680);
-        //}
+        } else {
+            context.fillGradient(0, 0, this.width, this.height, -1072689136, -804253680);
+        }
         context.setShaderColor(0.25F, 0.25F, 0.25F, 1.0F);
         context.drawTexture(OPTIONS_BACKGROUND_TEXTURE, 0, 0, 0, 0.0F, 0.0F, this.width, (int) (height * 0.15), 32, 32);
         context.drawTexture(OPTIONS_BACKGROUND_TEXTURE, 0, (int) (height * 0.85), 0, 0.0F, 0.0F, this.width, (int) (height * 0.15), 32, 32);
@@ -76,10 +76,12 @@ public class EFScreen extends Screen {
     }
 
     @Override
-    public void renderInGameBackground(final DrawContext context) {}
+    public void renderInGameBackground(final DrawContext context) {
+    }
 
     @Override
-    public void renderBackgroundTexture(DrawContext context) {}
+    public void renderBackgroundTexture(DrawContext context) {
+    }
 
     @Override
     public void close() {

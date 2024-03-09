@@ -1,4 +1,4 @@
-package traben.entity_features.config.gui.builders;
+package traben.entity_features.config.gui.options;
 
 import com.demonwav.mcdev.annotations.Translatable;
 
@@ -30,7 +30,7 @@ public abstract class EFOptionValue<V> extends EFOption {
     public boolean saveValuesToConfig() {
         V value = getValueFromWidget();
         boolean changed = !value.equals(getter.get());
-        if (changed)
+        if (hasChangedFromInitial())
             setter.accept(value);
         return changed;
     }
@@ -51,4 +51,9 @@ public abstract class EFOptionValue<V> extends EFOption {
     }
 
     abstract void resetWidgetToInitialValue();
+
+    @Override
+    boolean hasChangedFromInitial() {
+        return !getValueFromWidget().equals(getter.get());
+    }
 }

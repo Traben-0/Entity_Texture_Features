@@ -1,4 +1,4 @@
-package traben.entity_features.config.gui.builders;
+package traben.entity_features.config.gui.options;
 
 import com.demonwav.mcdev.annotations.Translatable;
 import net.minecraft.client.gui.Drawable;
@@ -13,10 +13,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import static traben.entity_features.config.gui.options.EFOption.Empty.CHANGED_COLOR;
+
 public class EFOptionBoolean extends EFOptionValue<Boolean> {
 
     private final BooleanButtonWidget widget;
-
 
 
     public EFOptionBoolean(@Translatable String translationKey, @Translatable @Nullable String tooltip, Supplier<Boolean> getter, Consumer<Boolean> setter, boolean defaultValue) {
@@ -58,9 +59,27 @@ public class EFOptionBoolean extends EFOptionValue<Boolean> {
         widget.updateMessage();
     }
 
-    private static class BooleanButtonWidget extends ButtonWidget {
+    public enum Type {
+        ON_OFF(ScreenTexts.ON, ScreenTexts.OFF),
+        YES_NO(ScreenTexts.YES, ScreenTexts.NO);
+
+        private final String t;
+        private final String f;
+
+        Type(Text t, Text f) {
+            this.t = t.getString();
+            this.f = f.getString();
+        }
+
+        public String get(boolean value) {
+            return value ? t : f;
+        }
+    }
+
+    private class BooleanButtonWidget extends ButtonWidget {
         private final String title;
         private boolean value;
+
 
         private Type type = Type.ON_OFF;
 
@@ -74,30 +93,13 @@ public class EFOptionBoolean extends EFOptionValue<Boolean> {
         }
 
         private void updateMessage() {
-            setMessage(Text.of(title + type.get(value)));
+            setMessage(Text.of(title + (value != getter.get() ? CHANGED_COLOR : "") + type.get(value)));
         }
 
         @Override
         public void onPress() {
             value = !value;
             updateMessage();
-        }
-    }
-
-    public enum Type {
-        ON_OFF(ScreenTexts.ON, ScreenTexts.OFF),
-        YES_NO(ScreenTexts.YES, ScreenTexts.NO);
-
-        private String t;
-        private String f;
-
-        Type(Text t, Text f) {
-            this.t = t.getString();
-            this.f = f.getString();
-        }
-
-        public String get(boolean value) {
-            return value ? t : f;
         }
     }
 }

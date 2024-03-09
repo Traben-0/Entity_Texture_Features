@@ -28,7 +28,6 @@ import traben.entity_texture_features.features.player.ETFPlayerFeatureRenderer;
 import traben.entity_texture_features.features.player.ETFPlayerTexture;
 
 
-
 @Mixin(SkullBlockEntityRenderer.class)
 public abstract class MixinSkullBlockEntityRenderer implements BlockEntityRenderer<BedBlockEntity> {
 
@@ -64,7 +63,7 @@ public abstract class MixinSkullBlockEntityRenderer implements BlockEntityRender
                         .getSkinProvider().getSkinTextures(skullBlockEntity.getOwner()).texture();
 
                 entity_texture_features$thisETFPlayerTexture = ETFManager.getInstance().getPlayerTexture((ETFPlayerEntity) skullBlockEntity, identifier);
-                if(entity_texture_features$thisETFPlayerTexture != null){
+                if (entity_texture_features$thisETFPlayerTexture != null) {
                     ETFRenderContext.preventRenderLayerTextureModify();
                 }
             }
@@ -87,7 +86,7 @@ public abstract class MixinSkullBlockEntityRenderer implements BlockEntityRender
             skullBlockEntityModel.setHeadRotation(g, h, 0.0F);
             //vanilla end
 
-            ETFPlayerFeatureRenderer.renderSkullFeatures(matrixStack, vertexConsumerProvider, i, skullBlockEntityModel, entity_texture_features$thisETFPlayerTexture,h);
+            ETFPlayerFeatureRenderer.renderSkullFeatures(matrixStack, vertexConsumerProvider, i, skullBlockEntityModel, entity_texture_features$thisETFPlayerTexture, h);
 
             matrixStack.pop();
         }
