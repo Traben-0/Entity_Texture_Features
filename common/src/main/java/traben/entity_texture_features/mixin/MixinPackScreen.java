@@ -23,16 +23,14 @@ import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import java.nio.file.Path;
 import java.util.Objects;
 
-import static traben.entity_texture_features.ETF.MOD_ID;
-
 @Mixin(PackScreen.class)
 public abstract class MixinPackScreen extends Screen {
 
 
     @Unique
-    private static final Identifier etf$FOCUSED = new Identifier(MOD_ID, "textures/gui/settings_focused.png");
+    private static final Identifier etf$FOCUSED = new Identifier("entity_features", "textures/gui/settings_focused.png");
     @Unique
-    private static final Identifier etf$UNFOCUSED = new Identifier(MOD_ID, "textures/gui/settings_unfocused.png");
+    private static final Identifier etf$UNFOCUSED = new Identifier("entity_features", "textures/gui/settings_unfocused.png");
     @Shadow
     @Final
     private Path file;
