@@ -101,6 +101,7 @@ public class EFConfigScreenMain extends EFScreen {
         }
 
         entityRenderDispatcher.setRenderShadows(false);
+        //noinspection deprecation
         RenderSystem.runAsFancy(() ->
                 entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, context.getMatrices(), context.getVertexConsumers(), 15728880));
         context.draw();
@@ -210,13 +211,27 @@ public class EFConfigScreenMain extends EFScreen {
         context.getMatrices().multiply(quaternionf);
         DiffuseLighting.method_34742();
 
-        //drawEntity(context, x, y, 1, quaternionf, quaternionf2, );
-        context.getMatrices().translate(-0.6, 0, 0);
-        LOGO_CREEPER.renderSimple(context.getMatrices(), context.getVertexConsumers(), YELLOW);
-        context.getMatrices().translate(0.6, 0, 0);
-        LOGO_CREEPER.renderSimple(context.getMatrices(), context.getVertexConsumers(), RED);
-        context.getMatrices().translate(0.6, 0, 0);
-        LOGO_CREEPER.renderSimple(context.getMatrices(), context.getVertexConsumers(), BLUE);
+        float sin1 = (float) (Math.sin(System.currentTimeMillis() / 500d) / 32);
+        float sin2 = (float) (Math.sin(System.currentTimeMillis() / 500d + 1) / 32);
+        float sin3 = (float) (Math.sin(System.currentTimeMillis() / 500d + 2) / 32);
+
+        MatrixStack matrixStack = context.getMatrices();
+
+        matrixStack.push();
+            matrixStack.translate(-0.6,  -sin1,0);
+            matrixStack.scale( 1+sin1,  1+sin1,  1+sin1);
+            LOGO_CREEPER.renderSimple(matrixStack, context.getVertexConsumers(), YELLOW);
+        matrixStack.pop();
+        matrixStack.push();
+        matrixStack.translate(0,  -sin2,0);
+            matrixStack.scale( 1+sin2,  1+sin2,  1+sin2);
+            LOGO_CREEPER.renderSimple(matrixStack, context.getVertexConsumers(), RED);
+        matrixStack.pop();
+        matrixStack.push();
+            matrixStack.translate(0.6,  -sin3,0);
+            matrixStack.scale( 1+sin3,  1+sin3,  1+sin3);
+            LOGO_CREEPER.renderSimple(matrixStack, context.getVertexConsumers(), BLUE);
+        matrixStack.pop();
 
         DiffuseLighting.enableGuiDepthLighting();
     }
@@ -256,18 +271,16 @@ public class EFConfigScreenMain extends EFScreen {
     public static class LogoCreeperRenderer {
 
 
-        private final ModelPart leftHindLeg;
-        private final ModelPart rightHindLeg;
-        private final ModelPart leftFrontLeg;
-        private final ModelPart rightFrontLeg;
         private final ModelPart root;
 
         public LogoCreeperRenderer() {
             root = CreeperEntityModel.getTexturedModelData(Dilation.NONE).createModel();
-            rightHindLeg = root.getChild("right_hind_leg");
-            leftHindLeg = root.getChild("left_hind_leg");
-            rightFrontLeg = root.getChild("right_front_leg");
-            leftFrontLeg = root.getChild("left_front_leg");
+            root.getChild("right_hind_leg").pitch = (float) -Math.toRadians(25);
+            root.getChild("left_hind_leg").pitch = (float) Math.toRadians(25);
+            root.getChild("left_hind_leg").pivotZ -= 2;
+            root.getChild("right_front_leg").pitch = (float) Math.toRadians(25);
+            root.getChild("left_front_leg").pitch = (float) -Math.toRadians(25);
+            root.getChild("left_front_leg").pivotZ += 2;
         }
 
 
@@ -275,11 +288,7 @@ public class EFConfigScreenMain extends EFScreen {
             matrix.push();
             matrix.scale(-1.0F, -1.0F, 1.0F);
             matrix.translate(0.0F, -1.501F, 0.0F);
-            leftHindLeg.pitch = (float) Math.toRadians(25);//MathHelper.cos(limbAngle * 0.6662F) * 1.4F * limbDistance;
-            rightHindLeg.pitch = (float) -Math.toRadians(25);//MathHelper.cos(limbAngle * 0.6662F + 3.1415927F) * 1.4F * limbDistance;
-            leftFrontLeg.pitch = (float) -Math.toRadians(25);//MathHelper.cos(limbAngle * 0.6662F + 3.1415927F) * 1.4F * limbDistance;
-            rightFrontLeg.pitch = (float) Math.toRadians(25);//MathHelper.cos(limbAngle * 0.6662F) * 1.4F * limbDistance;
-            RenderLayer rendertype = RenderLayer.getEntityCutout(texture);
+            RenderLayer rendertype = RenderLayer.getEntitySolid(texture);
             if (rendertype != null) {
                 VertexConsumer vertexconsumer = vcp.getBuffer(rendertype);
                 root.render(matrix, vertexconsumer, 15728880, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);

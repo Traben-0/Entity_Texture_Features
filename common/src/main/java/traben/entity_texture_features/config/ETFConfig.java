@@ -10,7 +10,6 @@ import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.screens.skin.ETFConfigScreenSkinTool;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.player.ETFPlayerTexture;
-import traben.entity_texture_features.utils.ETFUtils2;
 
 import static traben.entity_texture_features.ETF.MOD_ID;
 
@@ -179,7 +178,7 @@ public final class ETFConfig extends EFConfig {
             if (!condition4) {
                 reasonText.append(ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.player_skin_editor.reason_4").getString());
             }
-            ETFUtils2.logWarn(reasonText.toString());
+            //ETFUtils2.logWarn(reasonText.toString());
         }
 
         return canLaunchSkinTool ?
