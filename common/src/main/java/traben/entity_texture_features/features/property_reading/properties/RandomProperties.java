@@ -34,6 +34,7 @@ public class RandomProperties {
                 VariantProperty::getPropertyOrNull,
                 CreativeProperty::getPropertyOrNull,
                 TeammateProperty::getPropertyOrNull,
+                ClientPlayerProperty::getPropertyOrNull,
 
                 //etf externals
                 HourProperty::getPropertyOrNull,

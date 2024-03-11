@@ -2,7 +2,7 @@
 
 - config
 - player usernames in name property
-- creative teammate variant properties
+- creative teammate variant client properties
 
 
 [5.2.1]
