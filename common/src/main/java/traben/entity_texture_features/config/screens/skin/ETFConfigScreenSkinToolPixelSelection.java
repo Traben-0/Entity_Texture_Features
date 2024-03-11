@@ -15,6 +15,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
@@ -79,39 +80,42 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFScreenOldCompat {
         //simple method to create 4096 buttons instead of extrapolating mouse position
         for (int x = 0; x < 64; x++) {
             for (int y = 0; y < 64; y++) {
-                int finalX = x;
-                int finalY = y;
-
-                ButtonWidget butt = new ButtonWidget((int) ((this.width * 0.35) + (x * pixelSize)), (int) ((this.height * 0.2) + (y * pixelSize)), pixelSize, pixelSize,
-                        Text.of(""),
-                        (button) -> {
-                            int colorAtPixel = etfParent.currentEditorSkin.getColor(finalX, finalY);
-                            if (selectedPixels.contains(colorAtPixel)) {
-                                selectedPixels.remove(colorAtPixel);
-                            } else {
-                                selectedPixels.add(colorAtPixel);
-                            }
-
-                            applyCurrentSelectedPixels();
-                            etfParent.thisETFPlayerTexture.changeSkinToThisForTool(etfParent.currentEditorSkin);
-                            Identifier randomID2 = new Identifier(MOD_ID + "_ignore", "gui_skin_" + System.currentTimeMillis() + ".png");
-                            if (ETFUtils2.registerNativeImageToIdentifier(etfParent.currentEditorSkin, randomID2)) {
-                                currentSkinToRender = randomID2;
-                            }
-                        }, Supplier::get) {
-
-                    @Override
-                    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
-                        //invisible lol
-//                        super.renderWidget(context, mouseX, mouseY, delta);
-                    }
-
-                };
-
+                ButtonWidget butt = getButtonPixels(x, y, pixelSize);
+//todo can do so much better than this
                 this.addDrawableChild(butt);
             }
         }
 
+    }
+
+    @NotNull
+    private ButtonWidget getButtonPixels(final int x, final int y, final int pixelSize) {
+
+        return new ButtonWidget((int) ((ETFConfigScreenSkinToolPixelSelection.this.width * 0.35) + (x * pixelSize)), (int) ((ETFConfigScreenSkinToolPixelSelection.this.height * 0.2) + (y * pixelSize)), pixelSize, pixelSize,
+                Text.of(""),
+                (button) -> {
+                    int colorAtPixel = etfParent.currentEditorSkin.getColor(x, y);
+                    if (selectedPixels.contains(colorAtPixel)) {
+                        selectedPixels.remove(colorAtPixel);
+                    } else {
+                        selectedPixels.add(colorAtPixel);
+                    }
+
+                    applyCurrentSelectedPixels();
+                    etfParent.thisETFPlayerTexture.changeSkinToThisForTool(etfParent.currentEditorSkin);
+                    Identifier randomID2 = new Identifier(MOD_ID + "_ignore", "gui_skin_" + System.currentTimeMillis() + ".png");
+                    if (ETFUtils2.registerNativeImageToIdentifier(etfParent.currentEditorSkin, randomID2)) {
+                        currentSkinToRender = randomID2;
+                    }
+                }, Supplier::get) {
+
+            @Override
+            protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+                //invisible lol
+//                        super.renderWidget(context, mouseX, mouseY, delta);
+            }
+
+        };
     }
 
     private void applyCurrentSelectedPixels() {

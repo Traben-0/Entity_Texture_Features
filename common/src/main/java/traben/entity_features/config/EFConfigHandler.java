@@ -58,6 +58,7 @@ public class EFConfigHandler<T extends EFConfig> {
         return getConfig().getClass().equals(that.getConfig().getClass());
     }
 
+    @SuppressWarnings("unused")
     public boolean configEquals(final Object that) {
         if (CONFIG == that) return true;
         if (that == null || CONFIG.getClass() != that.getClass()) return false;
@@ -106,7 +107,7 @@ public class EFConfigHandler<T extends EFConfig> {
                     EFCommon.log(logID, "Config could not be loaded, using defaults");
                     loaded = newConfigSupplier.get();
                     saveToFile();
-                    EFCommon.configHadLoadError = true;
+//                    EFCommon.configHadLoadError = true;
                 }
             } else {
                 loaded = newConfigSupplier.get();
@@ -116,13 +117,13 @@ public class EFConfigHandler<T extends EFConfig> {
                 EFCommon.log(logID, "Config was null, using defaults");
                 loaded = newConfigSupplier.get();
                 saveToFile();
-                EFCommon.configHadLoadError = true;
+//                EFCommon.configHadLoadError = true;
             }
         } catch (Exception e) {
             EFCommon.logError(logID, "Config was corrupt or broken, using defaults");
             loaded = newConfigSupplier.get();
             saveToFile();
-            EFCommon.configHadLoadError = true;
+//            EFCommon.configHadLoadError = true;
         }
         CONFIG = loaded;
     }

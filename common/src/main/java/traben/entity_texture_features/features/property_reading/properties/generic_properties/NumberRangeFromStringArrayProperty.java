@@ -66,9 +66,7 @@ public abstract class NumberRangeFromStringArrayProperty<N extends Number> exten
     }
 
     @Override
-    public @NotNull String[] getPropertyIds() {
-        return new String[]{"health"};
-    }
+    public abstract @NotNull String[] getPropertyIds();
 
     @Override
     protected String getPrintableRuleInfo() {

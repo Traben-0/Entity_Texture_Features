@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
+import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.utils.ETFEntity;
@@ -321,21 +322,7 @@ public class ETFTexture {
 
             for (String possibleEmissiveSuffix :
                     ETFManager.getInstance().EMISSIVE_SUFFIX_LIST) {
-                Optional<Resource> vanillaR1 = resourceManager.getResource(thisIdentifier);
-                if (vanillaR1.isEmpty() && thisIdentifier.getPath().contains("textures/trims/models/armor/")) {
-                    //create this armor trim as an identifier because fuck Sprites, all my homies hate Sprites
-
-                    //try get an armor trims base texture just to match what texture pack level it is
-                    ResourcePack pack;
-                    vanillaR1 = resourceManager.getResource(new Identifier(thisIdentifier.getNamespace(), thisIdentifier.getPath().replaceAll("_(.*?)(?=\\.png)", "")));
-                    if (vanillaR1.isPresent()) {
-                        pack = vanillaR1.get().getPack();
-                    } else {
-                        pack = MinecraftClient.getInstance().getDefaultResourcePack();
-                    }
-                    //create resource object sufficient for following code
-                    vanillaR1 = Optional.of(new Resource(pack, null));
-                }
+                var vanillaR1 = getResourceOrModifyForTrims(resourceManager);
                 if (vanillaR1.isPresent()) {
                     Identifier possibleEmissiveIdentifier = ETFUtils2.replaceIdentifier(thisIdentifier, ".png", possibleEmissiveSuffix + ".png");
                     Optional<Resource> emissiveR1 = resourceManager.getResource(possibleEmissiveIdentifier);
@@ -391,21 +378,7 @@ public class ETFTexture {
             ResourceManager resourceManager = MinecraftClient.getInstance().getResourceManager();
 
             String enchantSuffix = "_enchant";
-            Optional<Resource> vanillaR1 = resourceManager.getResource(thisIdentifier);
-            if (vanillaR1.isEmpty() && thisIdentifier.getPath().contains("textures/trims/models/armor/")) {
-                //create this armor trim as an identifier because fuck Sprites, all my homies hate Sprites
-
-                //try get an armor trims base texture just to match what texture pack level it is
-                ResourcePack pack;
-                vanillaR1 = resourceManager.getResource(new Identifier(thisIdentifier.getNamespace(), thisIdentifier.getPath().replaceAll("_(.*?)(?=\\.png)", "")));
-                if (vanillaR1.isPresent()) {
-                    pack = vanillaR1.get().getPack();
-                } else {
-                    pack = MinecraftClient.getInstance().getDefaultResourcePack();
-                }
-                //create resource object sufficient for following code
-                vanillaR1 = Optional.of(new Resource(pack, null));
-            }
+            Optional<Resource> vanillaR1 = getResourceOrModifyForTrims(resourceManager);
             if (vanillaR1.isPresent()) {
                 Identifier possibleEnchantIdentifier = ETFUtils2.replaceIdentifier(thisIdentifier, ".png", enchantSuffix + ".png");
                 Optional<Resource> enchantR1 = resourceManager.getResource(possibleEnchantIdentifier);
@@ -450,6 +423,25 @@ public class ETFTexture {
 //            if (isEnchanted())
 //                createPatchedTextures();
         }
+    }
+
+    private Optional<Resource> getResourceOrModifyForTrims(final ResourceManager resourceManager) {
+        Optional<Resource> vanillaR1 = resourceManager.getResource(thisIdentifier);
+        if (vanillaR1.isEmpty() && thisIdentifier.getPath().contains("textures/trims/models/armor/")) {
+            //create this armor trim as an identifier because fuck Sprites, all my homies hate Sprites
+
+            //try get an armor trims base texture just to match what texture pack level it is
+            ResourcePack pack;
+            vanillaR1 = resourceManager.getResource(new Identifier(thisIdentifier.getNamespace(), thisIdentifier.getPath().replaceAll("_(.*?)(?=\\.png)", "")));
+            if (vanillaR1.isPresent()) {
+                pack = vanillaR1.get().getPack();
+            } else {
+                pack = MinecraftClient.getInstance().getDefaultResourcePack();
+            }
+            //create resource object sufficient for following code
+            vanillaR1 = Optional.of(new Resource(pack, null));
+        }
+        return vanillaR1;
     }
 
     /**
@@ -567,7 +559,7 @@ public class ETFTexture {
         renderEmissive(matrixStack, vertexConsumerProvider, modelPart, ETFManager.getEmissiveMode());
     }
 
-    public void renderEmissive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, ModelPart modelPart, ETFManager.EmissiveRenderModes modeToUsePossiblyManuallyChosen) {
+    public void renderEmissive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, ModelPart modelPart, ETFConfig.EmissiveRenderModes modeToUsePossiblyManuallyChosen) {
         VertexConsumer vertexC = getEmissiveVertexConsumer(vertexConsumerProvider, null, modeToUsePossiblyManuallyChosen);
         if (vertexC != null) {
             ETFRenderContext.startSpecialRenderOverlayPhase();
@@ -580,7 +572,7 @@ public class ETFTexture {
         renderEmissive(matrixStack, vertexConsumerProvider, model, ETFManager.getEmissiveMode());
     }
 
-    public void renderEmissive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, Model model, ETFManager.EmissiveRenderModes modeToUsePossiblyManuallyChosen) {
+    public void renderEmissive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, Model model, ETFConfig.EmissiveRenderModes modeToUsePossiblyManuallyChosen) {
         VertexConsumer vertexC = getEmissiveVertexConsumer(vertexConsumerProvider, model, modeToUsePossiblyManuallyChosen);
         if (vertexC != null) {
             ETFRenderContext.startSpecialRenderOverlayPhase();
@@ -590,7 +582,7 @@ public class ETFTexture {
     }
 
     @Nullable
-    public VertexConsumer getEmissiveVertexConsumer(VertexConsumerProvider vertexConsumerProvider, @Nullable Model model, ETFManager.EmissiveRenderModes modeToUsePossiblyManuallyChosen) {
+    public VertexConsumer getEmissiveVertexConsumer(VertexConsumerProvider vertexConsumerProvider, @Nullable Model model, ETFConfig.EmissiveRenderModes modeToUsePossiblyManuallyChosen) {
         ETFRenderContext.preventRenderLayerTextureModify();
         VertexConsumer wrapped = getEmissiveVertexConsumerWrapped(vertexConsumerProvider, model, modeToUsePossiblyManuallyChosen);
         ETFRenderContext.allowRenderLayerTextureModify();
@@ -599,13 +591,13 @@ public class ETFTexture {
     }
 
     @Nullable
-    private VertexConsumer getEmissiveVertexConsumerWrapped(VertexConsumerProvider vertexConsumerProvider, @Nullable Model model, ETFManager.EmissiveRenderModes modeToUsePossiblyManuallyChosen) {
+    private VertexConsumer getEmissiveVertexConsumerWrapped(VertexConsumerProvider vertexConsumerProvider, @Nullable Model model, ETFConfig.EmissiveRenderModes modeToUsePossiblyManuallyChosen) {
         if (isEmissive()) {
             Identifier emissiveToUse = getEmissiveIdentifierOfCurrentState();
 
             if (emissiveToUse != null) {
 
-                if (modeToUsePossiblyManuallyChosen == ETFManager.EmissiveRenderModes.BRIGHT) {
+                if (modeToUsePossiblyManuallyChosen == ETFConfig.EmissiveRenderModes.BRIGHT) {
                     return vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(emissiveToUse, true));
                 } else {
                     if (model == null) {

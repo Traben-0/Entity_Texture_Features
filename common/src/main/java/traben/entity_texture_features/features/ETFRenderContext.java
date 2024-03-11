@@ -6,6 +6,7 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETF;
+import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.utils.ETFEntity;
 import traben.entity_texture_features.utils.ETFRenderLayerWithTexture;
 import traben.entity_texture_features.utils.ETFVertexConsumer;
@@ -57,7 +58,7 @@ public class ETFRenderContext {
     }
 
     public static boolean canRenderInBrightMode() {
-        boolean setForBrightMode = ETFManager.getEmissiveMode() == ETFManager.EmissiveRenderModes.BRIGHT;
+        boolean setForBrightMode = ETFManager.getEmissiveMode() == ETFConfig.EmissiveRenderModes.BRIGHT;
         if (setForBrightMode) {
             if (currentEntity != null) {
                 return currentEntity.etf$canBeBright();// && !ETFRenderContext.getCurrentETFTexture().isPatched_CurrentlyOnlyArmor();

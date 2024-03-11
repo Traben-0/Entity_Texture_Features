@@ -124,6 +124,7 @@ public class EFOptionCategory extends EFOption {
 
     public static class Empty extends EFOptionCategory {
         public Empty() {
+            //noinspection NoTranslation
             super("", null);
         }
 

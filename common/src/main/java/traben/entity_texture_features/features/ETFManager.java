@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFApi;
-import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.config.screens.skin.ETFConfigScreenSkinTool;
 import traben.entity_texture_features.features.player.ETFPlayerEntity;
@@ -50,10 +49,10 @@ public class ETFManager {
     //this is a cache of all known ETFTexture versions of any existing resource-pack texture, used to prevent remaking objects
     public final Object2ReferenceOpenHashMap<@NotNull Identifier, @Nullable ETFTexture> ETF_TEXTURE_CACHE = new Object2ReferenceOpenHashMap<>();
     public final EntityIntLRU LAST_SUFFIX_OF_ENTITY = new EntityIntLRU();
+    public final Object2ReferenceOpenHashMap<@NotNull Identifier, @NotNull ETFDirectory> ETF_DIRECTORY_CACHE = new Object2ReferenceOpenHashMap<>();// = new Object2ReferenceOpenHashMap<>();
     //    public final ETFLruCache<Identifier, NativeImage> KNOWN_NATIVE_IMAGES = new ETFLruCache<>();
     private final Object2ObjectOpenHashMap<Identifier, ETFTextureVariator> VARIATOR_MAP = new Object2ObjectOpenHashMap<>();
     public UUID ENTITY_DEBUG = null;
-    public Object2ReferenceOpenHashMap<@NotNull Identifier, @NotNull ETFDirectory> ETF_DIRECTORY_CACHE = new Object2ReferenceOpenHashMap<>();// = new Object2ReferenceOpenHashMap<>();
     public Boolean mooshroomBrownCustomShroomExists = null;
     //marks whether mooshroom mushroom overrides exist
     public Boolean mooshroomRedCustomShroomExists = null;
@@ -126,11 +125,11 @@ public class ETFManager {
         return new ETFTexture(new Identifier(MOD_ID, "error.png")/*, false*/);//, ETFTexture.TextureSource.GENERIC_DEBUG);
     }
 
-    public static EmissiveRenderModes getEmissiveMode() {
-        if (ETF.config().getConfig().emissiveRenderMode == EmissiveRenderModes.BRIGHT
+    public static ETFConfig.EmissiveRenderModes getEmissiveMode() {
+        if (ETF.config().getConfig().emissiveRenderMode == ETFConfig.EmissiveRenderModes.BRIGHT
                 && ETFRenderContext.getCurrentEntity() != null
                 && !ETFRenderContext.getCurrentEntity().etf$canBeBright()) {
-            return EmissiveRenderModes.DULL;
+            return ETFConfig.EmissiveRenderModes.DULL;
         }
         return ETF.config().getConfig().emissiveRenderMode;
     }
@@ -220,7 +219,6 @@ public class ETFManager {
 
         if (props.containsKey("entityRenderLayerOverride")) {
             String layer = props.getProperty("entityRenderLayerOverride");
-            //noinspection EnhancedSwitchMigration
             switch (layer) {
                 case "translucent":
                     ENTITY_TYPE_RENDER_LAYER.put(entity.etf$getType(), 1);
@@ -327,32 +325,6 @@ public class ETFManager {
         ENTITY,
         BLOCK_ENTITY,
         ENTITY_FEATURE
-    }
-
-    public enum EmissiveRenderModes {
-        DULL,
-        BRIGHT//,
-        //COMPATIBLE
-        ;
-
-
-        @Override
-        public String toString() {
-            return switch (this) {
-                case DULL -> ETFVersionDifferenceHandler.getTextFromTranslation(
-                        "config.entity_texture_features.emissive_mode.dull").getString();
-                case BRIGHT -> ETFVersionDifferenceHandler.getTextFromTranslation(
-                        "config.entity_texture_features.emissive_mode.bright").getString();
-//                default -> ETFVersionDifferenceHandler.getTextFromTranslation(
-//                        "config.entity_texture_features.emissive_mode.compatible").getString();
-            };
-        }
-
-        public EmissiveRenderModes next() {
-            if (this == DULL)
-                return BRIGHT;
-            return DULL;
-        }
     }
 
 

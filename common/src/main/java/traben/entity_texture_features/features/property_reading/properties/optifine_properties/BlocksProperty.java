@@ -104,24 +104,28 @@ public class BlocksProperty extends StringArrayOrRegexProperty {
                 foundAMatch = MATCHER.testString(block.toLowerCase());
                 if (!foundAMatch) {
                     //if no regex or simple contains check match then try each defined property
-                    boolean foundEach = true;
-                    for (String definition :
-                            ARRAY) {
-                        for (String partsToFind :
-                                definition.split(":")) {
-                            if (!block.contains(partsToFind)) {
-                                foundEach = false;
-                                break;
-                            }
-                        }
-                    }
-                    foundAMatch = foundEach;
+                    foundAMatch = tryEach(block);
                 }
                 if (foundAMatch) break;
             }
         }
 
         return foundAMatch;
+    }
+
+    private boolean tryEach(final String block) {
+        boolean foundEach = true;
+        for (String definition :
+                ARRAY) {
+            for (String partsToFind :
+                    definition.split(":")) {
+                if (!block.contains(partsToFind)) {
+                    foundEach = false;
+                    break;
+                }
+            }
+        }
+        return foundEach;
     }
 
     @Override

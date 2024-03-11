@@ -17,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.Identifier;
 import traben.entity_texture_features.ETF;
+import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.config.screens.skin.ETFConfigScreenSkinTool;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
@@ -108,7 +109,7 @@ public class ETFPlayerFeatureRenderer<T extends PlayerEntity, M extends PlayerEn
             if (playerTexture.texturedNoseIdentifierEmissive != null) {
 //                textureNose.copyTransform(model.head);
                 VertexConsumer noseVertex_e;
-                if (ETFManager.getEmissiveMode() == ETFManager.EmissiveRenderModes.BRIGHT) {
+                if (ETFManager.getEmissiveMode() == ETFConfig.EmissiveRenderModes.BRIGHT) {
                     noseVertex_e = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(playerTexture.texturedNoseIdentifierEmissive, true));
                 } else {
                     noseVertex_e = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucentCull(playerTexture.texturedNoseIdentifierEmissive));
@@ -195,7 +196,7 @@ public class ETFPlayerFeatureRenderer<T extends PlayerEntity, M extends PlayerEn
 
             if (playerTexture.coatEmissiveIdentifier != null) {
                 VertexConsumer emissiveVert;// = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(emissive, true));
-                if (ETFManager.getEmissiveMode() == ETFManager.EmissiveRenderModes.BRIGHT) {
+                if (ETFManager.getEmissiveMode() == ETFConfig.EmissiveRenderModes.BRIGHT) {
                     emissiveVert = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(playerTexture.coatEmissiveIdentifier, true));
                 } else {
                     emissiveVert = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(playerTexture.coatEmissiveIdentifier));

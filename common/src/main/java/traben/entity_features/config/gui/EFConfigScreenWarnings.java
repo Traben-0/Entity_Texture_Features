@@ -19,7 +19,7 @@ import java.util.Set;
 
 //inspired by puzzles custom gui code
 public class EFConfigScreenWarnings extends EFScreen {
-    public static EFConfigHandler<WarningConfig> warningConfigHandler = new EFConfigHandler<>(WarningConfig::new, "ef_warnings.json", "EF");
+    public static final EFConfigHandler<WarningConfig> warningConfigHandler = new EFConfigHandler<>(WarningConfig::new, "ef_warnings.json", "EF");
     final ObjectOpenHashSet<EFConfigWarning> warningsFound;
 
     public EFConfigScreenWarnings(Screen parent, ObjectOpenHashSet<EFConfigWarning> warningsFound) {
@@ -98,6 +98,7 @@ public class EFConfigScreenWarnings extends EFScreen {
 
     }
 
+    @SuppressWarnings("CanBeFinal")
     public static class WarningConfig extends EFConfig.NoGUI {
         public Set<String> ignoredConfigIds = new HashSet<>();
     }

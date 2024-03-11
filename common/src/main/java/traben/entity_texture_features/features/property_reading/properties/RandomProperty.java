@@ -13,7 +13,7 @@ import java.util.Properties;
  */
 public abstract class RandomProperty {
 
-    protected EntityBooleanLRU entityCachedInitialResult = new EntityBooleanLRU();
+    protected final EntityBooleanLRU entityCachedInitialResult = new EntityBooleanLRU();
 
     /**
      * Reads the given property data from the properties file, allowing for multiple property names and throws an

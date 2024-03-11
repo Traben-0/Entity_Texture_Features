@@ -7,7 +7,7 @@ public class EFCommon {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("Entity Features");
     //sets whether to display config load warning in gui
-    public static boolean configHadLoadError = false;
+
 
     public static void log(String ID, String message) {
         LOGGER.info(ID + ": " + message);
@@ -17,6 +17,7 @@ public class EFCommon {
         LOGGER.error(ID + ": " + message);
     }
 
+    @SuppressWarnings("unused")
     public static void logWarn(String ID, String message) {
         LOGGER.warn(ID + ": " + message);
     }

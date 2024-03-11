@@ -18,7 +18,8 @@ import java.util.List;
 
 public abstract class ETFScreenOldCompat extends EFScreen {
 
-    protected ETFScreenOldCompat(final String title, final Screen parent, final boolean showBackButton) {
+    @SuppressWarnings("SameParameterValue")
+    protected ETFScreenOldCompat(final String title, final Screen parent, @SuppressWarnings("SameParameterValue") final boolean showBackButton) {
         super(title, parent, showBackButton);
     }
 

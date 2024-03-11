@@ -25,10 +25,12 @@ public class EFOptionBoolean extends EFOptionValue<Boolean> {
         widget = new BooleanButtonWidget(0, 0, 20, 20, getText().getString(), getter.get(), getTooltip());
     }
 
+    @SuppressWarnings("unused")
     public EFOptionBoolean(@Translatable String translationKey, Supplier<Boolean> getter, Consumer<Boolean> setter, boolean defaultValue) {
         this(translationKey, null, getter, setter, defaultValue);
     }
 
+    @SuppressWarnings("unused")
     public EFOptionBoolean setType(Type type) {
         widget.type = type;
         return this;
@@ -61,7 +63,7 @@ public class EFOptionBoolean extends EFOptionValue<Boolean> {
 
     public enum Type {
         ON_OFF(ScreenTexts.ON, ScreenTexts.OFF),
-        YES_NO(ScreenTexts.YES, ScreenTexts.NO);
+        @SuppressWarnings("unused") YES_NO(ScreenTexts.YES, ScreenTexts.NO);
 
         private final String t;
         private final String f;

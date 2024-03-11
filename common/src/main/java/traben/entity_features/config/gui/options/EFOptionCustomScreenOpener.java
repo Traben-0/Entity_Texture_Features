@@ -29,6 +29,7 @@ public class EFOptionCustomScreenOpener extends EFOption {
         this.resetValuesToInitial = resetValuesToInitial;
     }
 
+    @SuppressWarnings("unused")
     public EFOptionCustomScreenOpener(@Translatable final String text, Supplier<Screen> screenSupplier, Supplier<Boolean> savedSupplier, Runnable setValuesDefault, Runnable resetValuesToInitial, boolean screenIsSingleton) {
         this(text, null, screenSupplier, savedSupplier, setValuesDefault, resetValuesToInitial, screenIsSingleton);
     }
@@ -39,6 +40,7 @@ public class EFOptionCustomScreenOpener extends EFOption {
         }, screenIsSingleton);
     }
 
+    @SuppressWarnings("unused")
     public EFOptionCustomScreenOpener(@Translatable final String text, Supplier<Screen> screenSupplier, boolean screenIsSingleton) {
         this(text, null, screenSupplier, screenIsSingleton);
     }

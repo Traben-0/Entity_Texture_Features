@@ -5,6 +5,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFApi;
 import traben.entity_texture_features.features.ETFManager;
@@ -26,6 +27,7 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
     protected final EntityBooleanLRU entityCanUpdate = new EntityBooleanLRU(1000);
 
     protected final String packname;
+    protected EntityRandomSeedFunction entityRandomSeedFunction = (entity) -> entity.etf$getUuid().hashCode();
 
     private PropertiesRandomProvider(Identifier propertiesFileIdentifier, List<RandomPropertyRule> propertyRules) {
         this.propertyRules = propertyRules;
@@ -73,25 +75,7 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
     public static List<RandomPropertyRule> getAllValidPropertyObjects(Properties properties, Identifier propertiesFilePath, String... suffixToTest) {
         Set<String> propIds = properties.stringPropertyNames();
         //set so only 1 of each
-        Set<Integer> foundRuleNumbers = new HashSet<>();
-
-        //get the foundRuleNumbers we are working with
-        for (String str :
-                propIds) {
-            String[] split = str.split("\\.");
-            if (split.length >= 2 && !split[1].isBlank()) {
-                String possibleRuleNumber = split[1].replaceAll("\\D", "");
-                if (!possibleRuleNumber.isBlank()) {
-                    try {
-                        foundRuleNumbers.add(Integer.parseInt(possibleRuleNumber));
-                    } catch (NumberFormatException e) {
-                        //ETFUtils2.logWarn("properties file number error in start count");
-                    }
-                }
-            }
-        }
-        //sort from lowest to largest
-        List<Integer> numbersList = new ArrayList<>(foundRuleNumbers);
+        List<Integer> numbersList = getCaseNumbers(propIds);
         Collections.sort(numbersList);
         List<RandomPropertyRule> allRulesOfProperty = new ArrayList<>();
         for (Integer ruleNumber :
@@ -116,6 +100,29 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
             }
         }
         return allRulesOfProperty;
+    }
+
+    @NotNull
+    private static List<Integer> getCaseNumbers(final Set<String> propIds) {
+        Set<Integer> foundRuleNumbers = new HashSet<>();
+
+        //get the foundRuleNumbers we are working with
+        for (String str :
+                propIds) {
+            String[] split = str.split("\\.");
+            if (split.length >= 2 && !split[1].isBlank()) {
+                String possibleRuleNumber = split[1].replaceAll("\\D", "");
+                if (!possibleRuleNumber.isBlank()) {
+                    try {
+                        foundRuleNumbers.add(Integer.parseInt(possibleRuleNumber));
+                    } catch (NumberFormatException e) {
+                        //ETFUtils2.logWarn("properties file number error in start count");
+                    }
+                }
+            }
+        }
+        //sort from lowest to largest
+        return new ArrayList<>(foundRuleNumbers);
     }
 
     @Nullable
@@ -153,7 +160,6 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
         return propertyRules.size();
     }
 
-
     @Override
     public int getSuffixForETFEntity(ETFEntity entityToBeTested) {
         if (entityToBeTested == null) return 0;
@@ -186,7 +192,6 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
         return 0;
     }
 
-    protected EntityRandomSeedFunction entityRandomSeedFunction = (entity)-> entity.etf$getUuid().hashCode();
     @Override
     public void setRandomSupplier(final EntityRandomSeedFunction entityRandomSeedFunction) {
         if (entityRandomSeedFunction != null) {

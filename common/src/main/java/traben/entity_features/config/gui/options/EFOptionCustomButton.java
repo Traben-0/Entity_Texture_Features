@@ -16,6 +16,7 @@ public class EFOptionCustomButton extends EFOption {
         this.button = button;
     }
 
+    @SuppressWarnings("unused")
     public EFOptionCustomButton(@Translatable final String text, ButtonWidget.PressAction button) {
         this(text, null, button);
     }

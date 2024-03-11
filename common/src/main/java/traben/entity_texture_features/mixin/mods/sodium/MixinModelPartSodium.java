@@ -28,6 +28,7 @@ import traben.entity_texture_features.utils.ETFVertexConsumer;
 @Mixin(value = EntityRenderer.class)
 public abstract class MixinModelPartSodium {
 
+    @SuppressWarnings("EmptyMethod")
     @Shadow
     public static void render(MatrixStack matrixStack, VertexBufferWriter writer, ModelPart part, int light, int overlay, int color) {
     }

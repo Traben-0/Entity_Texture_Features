@@ -525,6 +525,7 @@ public final class ETFApi {
          * sets the method by which the random number to select a suffix is generated. The default returns
          * ETFEntity.getUuid().hashCode() which means the same entity returns the same seed each time.
          * This affects the suffix chosen when multiple are supplied.
+         *
          * @param entityRandomSeedFunction the function to generate the seed
          */
         void setRandomSupplier(EntityRandomSeedFunction entityRandomSeedFunction);

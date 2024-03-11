@@ -20,6 +20,7 @@ public abstract class EFOptionValue<V> extends EFOption {
         this.defaultValue = defaultValue;
     }
 
+    @SuppressWarnings("unused")
     protected EFOptionValue(@Translatable String translationKey, Supplier<V> getter, Consumer<V> setter, V defaultValue) {
         super(translationKey, null);
         this.getter = getter;

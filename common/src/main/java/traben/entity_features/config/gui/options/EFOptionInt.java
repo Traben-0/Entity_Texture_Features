@@ -30,10 +30,12 @@ public class EFOptionInt extends EFOptionValue<Integer> {
         widget = new IntSliderWidget(getText(), getter.get(), getTooltip(), min, max, false, false);
     }
 
+    @SuppressWarnings("unused")
     public EFOptionInt(@Translatable String text, Supplier<Integer> getter, Consumer<Integer> setter, int defaultValue, int min, int max, boolean isMinOff, boolean isMaxOff) {
         this(text, null, getter, setter, defaultValue, min, max, isMinOff, isMaxOff);
     }
 
+    @SuppressWarnings("unused")
     public EFOptionInt(@Translatable String text, Supplier<Integer> getter, Consumer<Integer> setter, int defaultValue, int min, int max) {
         this(text, null, getter, setter, defaultValue, min, max, false, false);
     }

@@ -19,6 +19,7 @@ public abstract class EFOption {
         this.tooltip = tooltip == null || tooltip.isBlank() ? null : Tooltip.of(ETFVersionDifferenceHandler.getTextFromTranslation(tooltip));
     }
 
+    @SuppressWarnings("unused")
     public EFOption(@Translatable String text) {
         this(text, null);
     }
@@ -52,7 +53,9 @@ public abstract class EFOption {
     public static class Empty extends EFOption {
         public final static String CHANGED_COLOR = "§a";
 
+        @SuppressWarnings("unused")
         public Empty() {
+            //noinspection NoTranslation
             super("", null);
         }
 

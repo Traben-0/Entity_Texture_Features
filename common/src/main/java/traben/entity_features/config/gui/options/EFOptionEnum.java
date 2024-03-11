@@ -23,6 +23,7 @@ public class EFOptionEnum<E extends Enum<E>> extends EFOptionValue<E> {
         widget = new EnumSliderWidget<>(getText(), getter.get(), getTooltip());
     }
 
+    @SuppressWarnings("unused")
     public EFOptionEnum(@Translatable String text, Supplier<E> getter, Consumer<E> setter, E defaultValue) {
         this(text, null, getter, setter, defaultValue);
     }

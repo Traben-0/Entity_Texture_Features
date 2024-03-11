@@ -53,6 +53,7 @@ public class EFOptionsScreen extends EFScreen {
                 }).dimensions((int) (this.width * 0.1), (int) (this.height * 0.9), (int) (this.width * 0.2), 20).build());
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void addColumn(int x, int y, int width, int height, int startIndex) {
         for (int i = startIndex; i < options.length; i++) {
             EFOption option = options[i];

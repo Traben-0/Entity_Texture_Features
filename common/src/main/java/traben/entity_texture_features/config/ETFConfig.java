@@ -15,6 +15,7 @@ import traben.entity_texture_features.utils.ETFUtils2;
 import static traben.entity_texture_features.ETF.MOD_ID;
 
 
+@SuppressWarnings("CanBeFinal")
 public final class ETFConfig extends EFConfig {
 
     public IllegalPathMode illegalPathSupportMode = IllegalPathMode.None;
@@ -30,10 +31,11 @@ public final class ETFConfig extends EFConfig {
     public boolean restrictMoonPhase = true;
     public boolean allowUnknownRestrictions = true;
     public boolean enableEmissiveTextures = true;
+
     public boolean enableEnchantedTextures = true;
     public boolean enableEmissiveBlockEntities = true;
 
-    public ETFManager.EmissiveRenderModes emissiveRenderMode = ETFManager.EmissiveRenderModes.DULL;
+    public EmissiveRenderModes emissiveRenderMode = EmissiveRenderModes.DULL;
 
 
     public boolean alwaysCheckVanillaEmissiveSuffix = true;
@@ -101,7 +103,7 @@ public final class ETFConfig extends EFConfig {
                                 new EFOptionBoolean("config.entity_texture_features.emissive_block_entity.title", "config.entity_texture_features.emissive_block_entity.tooltip",
                                         () -> enableEmissiveBlockEntities, aBoolean -> enableEmissiveBlockEntities = aBoolean, true),
                                 new EFOptionEnum<>("config.entity_texture_features.emissive_mode.title", "config.entity_texture_features.emissive_mode.tooltip",
-                                        () -> emissiveRenderMode, renderMode -> emissiveRenderMode = renderMode, ETFManager.EmissiveRenderModes.DULL),
+                                        () -> emissiveRenderMode, renderMode -> emissiveRenderMode = renderMode, EmissiveRenderModes.DULL),
                                 new EFOptionBoolean("config.entity_texture_features.always_check_vanilla_emissive_suffix.title", "config.entity_texture_features.always_check_vanilla_emissive_suffix.tooltip",
                                         () -> alwaysCheckVanillaEmissiveSuffix, aBoolean -> alwaysCheckVanillaEmissiveSuffix = aBoolean, true),
                                 new EFOptionBoolean("config.entity_texture_features.armor_enable", "config.entity_texture_features.armor_enable.tooltip",
@@ -252,6 +254,23 @@ public final class ETFConfig extends EFConfig {
         @Override
         public String toString() {
             return ETFVersionDifferenceHandler.getTextFromTranslation(key).getString();
+        }
+
+    }
+
+    public enum EmissiveRenderModes {
+        DULL,
+        BRIGHT;
+
+
+        @Override
+        public String toString() {
+            return switch (this) {
+                case DULL -> ETFVersionDifferenceHandler.getTextFromTranslation(
+                        "config.entity_texture_features.emissive_mode.dull").getString();
+                case BRIGHT -> ETFVersionDifferenceHandler.getTextFromTranslation(
+                        "config.entity_texture_features.emissive_mode.bright").getString();
+            };
         }
 
     }
