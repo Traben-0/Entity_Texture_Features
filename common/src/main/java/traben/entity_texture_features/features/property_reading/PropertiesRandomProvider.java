@@ -163,7 +163,7 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
             //return andNothingElse
             for (RandomPropertyRule testCase : propertyRules) {
                 if (testCase.doesEntityMeetConditionsOfThisCase(entityToBeTested, true, entityCanUpdate)) {
-                    return testCase.getVariantSuffixFromThisCase(id);
+                    return testCase.getVariantSuffixFromThisCase(entityRandomSeedFunction.toInt(entityToBeTested));
                 }
             }
         } else {
@@ -171,7 +171,7 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
             int foundSuffix = -1;
             for (RandomPropertyRule rule : propertyRules) {
                 if (rule.doesEntityMeetConditionsOfThisCase(entityToBeTested, false, entityCanUpdate)) {
-                    foundSuffix = rule.getVariantSuffixFromThisCase(id);
+                    foundSuffix = rule.getVariantSuffixFromThisCase(entityRandomSeedFunction.toInt(entityToBeTested));
                     break;
                 }
             }
@@ -184,6 +184,14 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
             return foundSuffix == -1 ? 0 : foundSuffix;
         }
         return 0;
+    }
+
+    protected EntityRandomSeedFunction entityRandomSeedFunction = (entity)-> entity.etf$getUuid().hashCode();
+    @Override
+    public void setRandomSupplier(final EntityRandomSeedFunction entityRandomSeedFunction) {
+        if (entityRandomSeedFunction != null) {
+            this.entityRandomSeedFunction = entityRandomSeedFunction;
+        }
     }
 
 

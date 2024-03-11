@@ -92,9 +92,8 @@ public class RandomPropertyRule {
         return entityMetRequirements;
     }
 
-    public int getVariantSuffixFromThisCase(UUID uuid) {
-        int randomSeededByUUID = Math.abs(uuid.hashCode());
-        return SUFFIX_NUMBERS_WEIGHTED[randomSeededByUUID % SUFFIX_NUMBERS_WEIGHTED.length];
+    public int getVariantSuffixFromThisCase(int seed) {
+        return SUFFIX_NUMBERS_WEIGHTED[Math.abs(seed) % SUFFIX_NUMBERS_WEIGHTED.length];
     }
 
 
