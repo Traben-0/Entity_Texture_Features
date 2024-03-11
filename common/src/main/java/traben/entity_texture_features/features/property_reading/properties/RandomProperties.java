@@ -31,6 +31,9 @@ public class RandomProperties {
                 SpawnerProperty::getPropertyOrNull,
                 DimensionProperty::getPropertyOrNull,
                 LightProperty::getPropertyOrNull,
+                VariantProperty::getPropertyOrNull,
+                CreativeProperty::getPropertyOrNull,
+                TeammateProperty::getPropertyOrNull,
 
                 //etf externals
                 HourProperty::getPropertyOrNull,

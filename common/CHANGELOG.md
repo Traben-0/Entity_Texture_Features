@@ -1,5 +1,10 @@
 [**ETF Changelog:**]
 
+- config
+- player usernames in name property
+- creative teammate variant properties
+
+
 [5.2.1]
 
 - fixed `Image is not allocated.` crash related to armor rendering

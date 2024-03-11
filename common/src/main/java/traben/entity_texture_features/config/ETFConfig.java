@@ -107,7 +107,9 @@ public final class ETFConfig extends EFConfig {
                                 new EFOptionBoolean("config.entity_texture_features.always_check_vanilla_emissive_suffix.title", "config.entity_texture_features.always_check_vanilla_emissive_suffix.tooltip",
                                         () -> alwaysCheckVanillaEmissiveSuffix, aBoolean -> alwaysCheckVanillaEmissiveSuffix = aBoolean, true),
                                 new EFOptionBoolean("config.entity_texture_features.armor_enable", "config.entity_texture_features.armor_enable.tooltip",
-                                        () -> enableArmorAndTrims, aBoolean -> enableArmorAndTrims = aBoolean, true)
+                                        () -> enableArmorAndTrims, aBoolean -> enableArmorAndTrims = aBoolean, true),
+                                new EFOptionBoolean( "config.entity_texture_features.enchanted_enable", "config.entity_texture_features.enchanted_enable.tooltip",
+                                        () -> enableEnchantedTextures, aBoolean -> enableEnchantedTextures = aBoolean, true)
                         ), new EFOptionCategory("config.entity_texture_features.player_skin_settings.title").add(
                                 new EFOptionBoolean("config.entity_texture_features.player_skin_features.title", "config.entity_texture_features.player_skin_features.tooltip",
                                         () -> skinFeaturesEnabled, aBoolean -> skinFeaturesEnabled = aBoolean, true),
