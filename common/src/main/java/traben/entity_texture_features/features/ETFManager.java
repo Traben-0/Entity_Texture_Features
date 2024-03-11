@@ -39,7 +39,6 @@ public class ETFManager {
 
     private static final ETFTexture ETF_ERROR_TEXTURE = getErrorETFTexture();
     private static ETFManager instance;
-    public final EntityIntLRU LAST_MET_RULE_INDEX = new EntityIntLRU();
     public final ObjectOpenHashSet<String> EMISSIVE_SUFFIX_LIST = new ObjectOpenHashSet<>();
     public final ETFLruCache<UUID, ETFPlayerTexture> PLAYER_TEXTURE_MAP = new ETFLruCache<>();
     public final ArrayList<String> KNOWN_RESOURCEPACK_ORDER = new ArrayList<>();

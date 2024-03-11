@@ -13,7 +13,7 @@ public class ClientPlayerProperty extends BooleanProperty {
 
 
     protected ClientPlayerProperty(Properties properties, int propertyNum) throws RandomPropertyException {
-        super(getGenericBooleanThatCanNull(properties, propertyNum, "isClient", "client"));
+        super(getGenericBooleanThatCanNull(properties, propertyNum, "isClientPlayer", "clientPlayer"));
     }
 
     public static ClientPlayerProperty getPropertyOrNull(Properties properties, int propertyNum) {
@@ -39,7 +39,7 @@ public class ClientPlayerProperty extends BooleanProperty {
 
     @Override
     public @NotNull String[] getPropertyIds() {
-        return new String[]{"isClient", "client"};
+        return new String[]{"isClientPlayer", "clientPlayer"};
     }
 
 }

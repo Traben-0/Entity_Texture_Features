@@ -64,7 +64,7 @@ import java.util.UUID;
  * {@link ETFApi#getVariantSupplierOrNull(Identifier, Identifier, String...)} <p>
  * {@link ETFVariantSuffixProvider}
  */
-@SuppressWarnings({"unused", "ConstantValue"})
+@SuppressWarnings({"unused", "ConstantValue", "JavadocDeclaration"})
 public final class ETFApi {
 
     /**
@@ -367,28 +367,14 @@ public final class ETFApi {
     }
 
 
-    /**
-     * Used by EMF.
-     *
-     * @param entity entity to get the latest rule matching for.
-     * @return Integer index of the most recent random property rule to be matched.<p>
-     * default value = 0
-     */
+    @Deprecated
     public static int getLastMatchingRuleOfEntity(Entity entity) {
-        Integer ruleIndex = ETFManager.getInstance().LAST_MET_RULE_INDEX.getInt(entity.getUuid());
-        return ruleIndex == null ? 0 : ruleIndex;
+        return 0;
     }
 
-    /**
-     * Used by EMF.
-     *
-     * @param entity block entity to get the latest rule matching for.
-     * @return Integer index of the most recent random property rule to be matched.<p>
-     * default value = 0
-     */
+    @Deprecated
     public static int getLastMatchingRuleOfBlockEntity(BlockEntity entity) {
-        Integer ruleIndex = ETFManager.getInstance().LAST_MET_RULE_INDEX.getInt(((ETFEntity) entity).etf$getUuid());
-        return ruleIndex == null ? 0 : ruleIndex;
+        return 0;
     }
 
     /**

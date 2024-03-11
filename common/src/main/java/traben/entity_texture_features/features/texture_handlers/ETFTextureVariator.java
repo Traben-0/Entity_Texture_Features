@@ -50,7 +50,7 @@ public abstract class ETFTextureVariator {
                             "\n§6 - type:§r " + entity.etf$getType().getTranslationKey() +
                             "\n§6 - texture:§r " + output +
                             "\n§6 - can_update_variant:§r " + (this instanceof ETFTextureMultiple multi && multi.suffixProvider.entityCanUpdate(entity.etf$getUuid())) +
-                            "\n§6 - last matching rule:§r " + ETFManager.getInstance().LAST_MET_RULE_INDEX.getInt(entity.etf$getUuid()) +
+//                            "\n§6 - last matching rule:§r " + ETFManager.getInstance().LAST_MET_RULE_INDEX.getInt(entity.etf$getUuid()) +
                             "\n" + getVanillaVariantDetails() +
                             "\n" + getPrintout() +
                             "\n§e----------------------------------------§r"

@@ -1,6 +1,5 @@
 package traben.entity_texture_features.features.property_reading;
 
-import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperty;
 import traben.entity_texture_features.utils.ETFEntity;
 import traben.entity_texture_features.utils.ETFUtils2;
@@ -14,6 +13,7 @@ public class RandomPropertyRule {
     private final Integer[] SUFFIX_NUMBERS_WEIGHTED;
     private final RandomProperty[] PROPERTIES_TO_TEST;
     private final boolean RULE_ALWAYS_APPROVED;
+
 
     public RandomPropertyRule(
             String propertiesFile,
@@ -63,8 +63,6 @@ public class RandomPropertyRule {
         if (RULE_ALWAYS_APPROVED) return true;
         if (etfEntity == null) return false;
 
-        UUID id = etfEntity.etf$getUuid();
-
         boolean wasEntityTestedByAnUpdatableProperty = false;
         boolean entityMetRequirements = true;
         try {
@@ -87,7 +85,6 @@ public class RandomPropertyRule {
             UUID_CaseHasUpdateablesCustom.put(etfEntity.etf$getUuid(), true);
         }
 
-        ETFManager.getInstance().LAST_MET_RULE_INDEX.put(id, entityMetRequirements ? RULE_NUMBER : 0);
 
         return entityMetRequirements;
     }

@@ -18,6 +18,7 @@ import traben.entity_texture_features.utils.ETFUtils2;
 import traben.entity_texture_features.utils.EntityBooleanLRU;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 
 public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider {
 
@@ -28,6 +29,7 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
 
     protected final String packname;
     protected EntityRandomSeedFunction entityRandomSeedFunction = (entity) -> entity.etf$getUuid().hashCode();
+    protected BiConsumer<ETFEntity,RandomPropertyRule> onMeetsRule = (entity,rule) -> {};
 
     private PropertiesRandomProvider(Identifier propertiesFileIdentifier, List<RandomPropertyRule> propertyRules) {
         this.propertyRules = propertyRules;
@@ -167,16 +169,18 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
         boolean entityHasBeenTestedBefore = entityCanUpdate.containsKey(id);
         if (entityHasBeenTestedBefore) {
             //return andNothingElse
-            for (RandomPropertyRule testCase : propertyRules) {
-                if (testCase.doesEntityMeetConditionsOfThisCase(entityToBeTested, true, entityCanUpdate)) {
-                    return testCase.getVariantSuffixFromThisCase(entityRandomSeedFunction.toInt(entityToBeTested));
+            for (RandomPropertyRule rule : propertyRules) {
+                if (rule.doesEntityMeetConditionsOfThisCase(entityToBeTested, true, entityCanUpdate)) {
+                    onMeetsRule.accept(entityToBeTested,rule);
+                    return rule.getVariantSuffixFromThisCase(entityRandomSeedFunction.toInt(entityToBeTested));
                 }
             }
         } else {
             //return but capture spawn conditions of first time entity
-            int foundSuffix = -1;
+            int foundSuffix = 0;
             for (RandomPropertyRule rule : propertyRules) {
                 if (rule.doesEntityMeetConditionsOfThisCase(entityToBeTested, false, entityCanUpdate)) {
+                    onMeetsRule.accept(entityToBeTested,rule);
                     foundSuffix = rule.getVariantSuffixFromThisCase(entityRandomSeedFunction.toInt(entityToBeTested));
                     break;
                 }
@@ -187,7 +191,7 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
                     rule.cacheEntityInitialResultsOfNonUpdatingProperties(entityToBeTested);
                 }
             }
-            return foundSuffix == -1 ? 0 : foundSuffix;
+            return foundSuffix;
         }
         return 0;
     }
