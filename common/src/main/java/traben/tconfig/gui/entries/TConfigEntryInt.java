@@ -1,4 +1,4 @@
-package traben.entity_features.config.gui.options;
+package traben.tconfig.gui.entries;
 
 import com.demonwav.mcdev.annotations.Translatable;
 import net.minecraft.client.gui.Drawable;
@@ -13,30 +13,28 @@ import net.minecraft.util.math.MathHelper;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import static traben.entity_features.config.gui.options.EFOption.Empty.CHANGED_COLOR;
-
-public class EFOptionInt extends EFOptionValue<Integer> {
+public class TConfigEntryInt extends TConfigEntryValue<Integer> {
 
 
     private final IntSliderWidget widget;
 
-    public EFOptionInt(@Translatable String text, @Translatable String tooltip, Supplier<Integer> getter, Consumer<Integer> setter, int defaultValue, int min, int max, boolean isMinOff, boolean isMaxOff) {
+    public TConfigEntryInt(@Translatable String text, @Translatable String tooltip, Supplier<Integer> getter, Consumer<Integer> setter, int defaultValue, int min, int max, boolean isMinOff, boolean isMaxOff) {
         super(text, tooltip, getter, setter, defaultValue);
         widget = new IntSliderWidget(getText(), getter.get(), getTooltip(), min, max, isMinOff, isMaxOff);
     }
 
-    public EFOptionInt(@Translatable String text, @Translatable String tooltip, Supplier<Integer> getter, Consumer<Integer> setter, int defaultValue, int min, int max) {
+    public TConfigEntryInt(@Translatable String text, @Translatable String tooltip, Supplier<Integer> getter, Consumer<Integer> setter, int defaultValue, int min, int max) {
         super(text, tooltip, getter, setter, defaultValue);
         widget = new IntSliderWidget(getText(), getter.get(), getTooltip(), min, max, false, false);
     }
 
     @SuppressWarnings("unused")
-    public EFOptionInt(@Translatable String text, Supplier<Integer> getter, Consumer<Integer> setter, int defaultValue, int min, int max, boolean isMinOff, boolean isMaxOff) {
+    public TConfigEntryInt(@Translatable String text, Supplier<Integer> getter, Consumer<Integer> setter, int defaultValue, int min, int max, boolean isMinOff, boolean isMaxOff) {
         this(text, null, getter, setter, defaultValue, min, max, isMinOff, isMaxOff);
     }
 
     @SuppressWarnings("unused")
-    public EFOptionInt(@Translatable String text, Supplier<Integer> getter, Consumer<Integer> setter, int defaultValue, int min, int max) {
+    public TConfigEntryInt(@Translatable String text, Supplier<Integer> getter, Consumer<Integer> setter, int defaultValue, int min, int max) {
         this(text, null, getter, setter, defaultValue, min, max, false, false);
     }
 
@@ -101,7 +99,7 @@ public class EFOptionInt extends EFOptionValue<Integer> {
         @Override
         protected void updateMessage() {
             snapValueToNearestIndex();
-            setMessage(Text.of(title + (value != getter.get() ? CHANGED_COLOR : "") + (isOff() ? ScreenTexts.OFF.getString() : getValueRoundedToIntBetweenMinMax())));
+            setMessage(Text.of(title + (value != getter.get() ? Empty.CHANGED_COLOR : "") + (isOff() ? ScreenTexts.OFF.getString() : getValueRoundedToIntBetweenMinMax())));
         }
 
         @Override

@@ -4,7 +4,7 @@ import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import traben.entity_features.config.gui.EFConfigScreenMain;
+import traben.entity_texture_features.ETF;
 
 @Environment(EnvType.CLIENT)
 public class ETFModMenu implements ModMenuApi {
@@ -12,7 +12,7 @@ public class ETFModMenu implements ModMenuApi {
 
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return EFConfigScreenMain::new;
+        return ETF::getConfigScreen;
     }
 
 }

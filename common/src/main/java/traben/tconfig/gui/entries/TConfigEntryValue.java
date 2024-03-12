@@ -1,11 +1,11 @@
-package traben.entity_features.config.gui.options;
+package traben.tconfig.gui.entries;
 
 import com.demonwav.mcdev.annotations.Translatable;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public abstract class EFOptionValue<V> extends EFOption {
+public abstract class TConfigEntryValue<V> extends TConfigEntry {
 
 
     protected final Supplier<V> getter;
@@ -13,7 +13,7 @@ public abstract class EFOptionValue<V> extends EFOption {
     protected final V defaultValue;
 
 
-    protected EFOptionValue(@Translatable String translationKey, @Translatable String tooltip, Supplier<V> getter, Consumer<V> setter, V defaultValue) {
+    protected TConfigEntryValue(@Translatable String translationKey, @Translatable String tooltip, Supplier<V> getter, Consumer<V> setter, V defaultValue) {
         super(translationKey, tooltip);
         this.getter = getter;
         this.setter = setter;
@@ -21,7 +21,7 @@ public abstract class EFOptionValue<V> extends EFOption {
     }
 
     @SuppressWarnings("unused")
-    protected EFOptionValue(@Translatable String translationKey, Supplier<V> getter, Consumer<V> setter, V defaultValue) {
+    protected TConfigEntryValue(@Translatable String translationKey, Supplier<V> getter, Consumer<V> setter, V defaultValue) {
         super(translationKey, null);
         this.getter = getter;
         this.setter = setter;

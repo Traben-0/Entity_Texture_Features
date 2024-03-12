@@ -17,8 +17,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import traben.entity_features.config.EFConfigWarning;
-import traben.entity_features.config.EFConfigWarnings;
+import traben.entity_texture_features.config.ETFConfigWarning;
+import traben.entity_texture_features.config.ETFConfigWarnings;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.features.ETFManager;
@@ -327,8 +327,8 @@ public abstract class ETFUtils2 {
     }
 
     public static void checkModCompatibility() {
-        for (EFConfigWarning warning :
-                EFConfigWarnings.getRegisteredWarnings()) {
+        for (ETFConfigWarning warning :
+                ETFConfigWarnings.getRegisteredWarnings()) {
             warning.testWarningAndApplyFixIfEnabled();
         }
     }

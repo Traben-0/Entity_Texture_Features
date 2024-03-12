@@ -1,4 +1,4 @@
-package traben.entity_features.config.gui.options;
+package traben.tconfig.gui.entries;
 
 import com.demonwav.mcdev.annotations.Translatable;
 import net.minecraft.client.gui.Drawable;
@@ -6,18 +6,18 @@ import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.widget.ButtonWidget;
 
-public class EFOptionCustomButton extends EFOption {
+public class TConfigEntryCustomButton extends TConfigEntry {
 
 
     private final ButtonWidget.PressAction button;
 
-    public EFOptionCustomButton(@Translatable final String text, @Translatable final String tooltip, ButtonWidget.PressAction button) {
+    public TConfigEntryCustomButton(@Translatable final String text, @Translatable final String tooltip, ButtonWidget.PressAction button) {
         super(text, tooltip);
         this.button = button;
     }
 
     @SuppressWarnings("unused")
-    public EFOptionCustomButton(@Translatable final String text, ButtonWidget.PressAction button) {
+    public TConfigEntryCustomButton(@Translatable final String text, ButtonWidget.PressAction button) {
         this(text, null, button);
     }
 

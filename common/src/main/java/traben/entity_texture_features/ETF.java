@@ -1,15 +1,21 @@
 package traben.entity_texture_features;
 
+import it.unimi.dsi.fastutil.objects.ObjectArraySet;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.LightmapTextureManager;
 import org.slf4j.Logger;
-import traben.entity_features.config.EFConfigHandler;
-import traben.entity_features.config.EFConfigWarning;
-import traben.entity_features.config.EFConfigWarnings;
+import traben.entity_texture_features.config.screens.ETFConfigScreenWarnings;
+import traben.tconfig.TConfigHandler;
+import traben.entity_texture_features.config.ETFConfigWarning;
+import traben.entity_texture_features.config.ETFConfigWarnings;
+import traben.entity_texture_features.config.screens.ETFConfigScreenMain;
 import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.io.File;
 import java.util.Random;
+import java.util.Set;
 
 
 public class ETF {
@@ -21,16 +27,19 @@ public class ETF {
 
 
     public static final int EMISSIVE_FEATURE_LIGHT_VALUE = LightmapTextureManager.MAX_LIGHT_COORDINATE + 2;
+    public static TConfigHandler<ETFConfigScreenWarnings.WarningConfig> warningConfigHandler = null;
     public static boolean IRIS_DETECTED = false;
 
 
     public static boolean SKIN_LAYERS_DETECTED = false;
 
-    private static EFConfigHandler<ETFConfig> CONFIG = null;
+    private static TConfigHandler<ETFConfig> CONFIG = null;
+    public static Set<TConfigHandler<?>> configHandlers = null;
 
-    public static EFConfigHandler<ETFConfig> config() {
+    public static TConfigHandler<ETFConfig> config() {
         if (CONFIG == null) {
-            CONFIG = new EFConfigHandler<>(ETFConfig::new, MOD_ID, "ETF");
+            CONFIG = new TConfigHandler<>(ETFConfig::new, MOD_ID, "ETF");
+            registerConfigHandler(CONFIG);
         }
         return CONFIG;
     }
@@ -43,12 +52,14 @@ public class ETF {
 
         LOGGER.info("Loading Entity Texture Features, " + randomQuip());
 
+        warningConfigHandler = new TConfigHandler<>(ETFConfigScreenWarnings.WarningConfig::new, "ef_warnings.json", "EF");
+        registerConfigHandler(warningConfigHandler);
 
         ETFUtils2.checkModCompatibility();
 
-        EFConfigWarnings.registerConfigWarning(
+        ETFConfigWarnings.registerConfigWarning(
                 //figura
-                new EFConfigWarning.Simple(
+                new ETFConfigWarning.Simple(
                         "figura",
                         "figura",
                         "config." + ETF.MOD_ID + ".warn.figura.text.1",
@@ -58,28 +69,28 @@ public class ETF {
                             CONFIG.saveToFile();
                         }),
                 //EBE
-                new EFConfigWarning.Simple(
+                new ETFConfigWarning.Simple(
                         "enhancedblockentities",
                         "enhancedblockentities",
                         "config." + ETF.MOD_ID + ".warn.ebe.text.1",
                         "config." + ETF.MOD_ID + ".warn.ebe.text.2",
                         null),
                 //quark
-                new EFConfigWarning.Simple(
+                new ETFConfigWarning.Simple(
                         "quark",
                         "quark",
                         "config." + ETF.MOD_ID + ".warn.quark.text.3",
                         "config." + ETF.MOD_ID + ".warn.quark.text.4",
                         null),
                 //iris and 3d skin layers trim warning
-                new EFConfigWarning.Simple(
+                new ETFConfigWarning.Simple(
                         "iris & 3d skin layers",
                         () -> ETF.IRIS_DETECTED && ETF.SKIN_LAYERS_DETECTED,
                         "config." + ETF.MOD_ID + ".warn.iris_3d.text.1",
                         "config." + ETF.MOD_ID + ".warn.iris_3d.text.2",
                         null),
                 //no CEM mod, recommend EMF
-                new EFConfigWarning.Simple(
+                new ETFConfigWarning.Simple(
                         "emf",
                         () -> !ETFVersionDifferenceHandler.isThisModLoaded("entity_model_features") && !ETFVersionDifferenceHandler.isThisModLoaded("cem"),
                         "config." + ETF.MOD_ID + ".warn.no_emf.text.1",
@@ -122,6 +133,24 @@ public class ETF {
                 "Paranormal ResourcePacktivity.",
                 "Has Anyone Really Been Far Even as Decided to Use Even Go Want to do Look More Like?"
         };
+    }
+
+    public static void registerConfigHandler(TConfigHandler<?> configHandler) {
+        if (configHandlers == null) configHandlers = new ObjectArraySet<>();
+        configHandlers.add(configHandler);
+    }
+
+
+    public static Screen getConfigScreen(Screen parent) {
+        try {
+            return new ETFConfigScreenMain(parent);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static Screen getConfigScreen(MinecraftClient ignored, Screen parent) {
+        return getConfigScreen(parent);
     }
 
 

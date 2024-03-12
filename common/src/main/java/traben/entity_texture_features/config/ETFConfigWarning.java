@@ -1,15 +1,15 @@
-package traben.entity_features.config;
+package traben.entity_texture_features.config;
 
 import com.demonwav.mcdev.annotations.Translatable;
 import org.jetbrains.annotations.Nullable;
-import traben.entity_features.config.gui.EFConfigScreenWarnings;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
+import traben.entity_texture_features.config.screens.ETFConfigScreenWarnings;
 
 import java.util.function.Supplier;
 
 
 /**
- * An object pertaining to an ETF config screen warning used in {@link EFConfigScreenWarnings}
+ * An object pertaining to an ETF config screen warning used in {@link ETFConfigScreenWarnings}
  * <p>
  * In summary, it holds:
  * <p>- a test to see if the warning should display
@@ -17,7 +17,7 @@ import java.util.function.Supplier;
  * <p>- a Runnable fix that can be applied to ETF to allow compatibility
  * <p>- functionality to disable/hide the warning/fix
  */
-public abstract class EFConfigWarning {
+public abstract class ETFConfigWarning {
 
     /**
      * Condition that must be met to display this warning.
@@ -43,14 +43,14 @@ public abstract class EFConfigWarning {
     public abstract void testWarningAndApplyFixIfEnabled();
 
     protected boolean isEnabled() {
-        return isConditionMet() && !EFConfigScreenWarnings.getIgnoredWarnings().contains(getID());
+        return isConditionMet() && !ETFConfigScreenWarnings.getIgnoredWarnings().contains(getID());
     }
 
     public abstract boolean doesShowDisableButton();
 
 
     @SuppressWarnings("SameParameterValue")
-    public static class Simple extends EFConfigWarning {
+    public static class Simple extends ETFConfigWarning {
         final public String TITLE_TRANSLATION_KEY;
         final public String SUB_TITLE_TRANSLATION_KEY;
         final public String ID;

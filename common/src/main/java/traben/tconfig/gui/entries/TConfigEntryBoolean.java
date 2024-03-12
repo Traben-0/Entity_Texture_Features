@@ -1,4 +1,4 @@
-package traben.entity_features.config.gui.options;
+package traben.tconfig.gui.entries;
 
 import com.demonwav.mcdev.annotations.Translatable;
 import net.minecraft.client.gui.Drawable;
@@ -13,25 +13,23 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import static traben.entity_features.config.gui.options.EFOption.Empty.CHANGED_COLOR;
-
-public class EFOptionBoolean extends EFOptionValue<Boolean> {
+public class TConfigEntryBoolean extends TConfigEntryValue<Boolean> {
 
     private final BooleanButtonWidget widget;
 
 
-    public EFOptionBoolean(@Translatable String translationKey, @Translatable @Nullable String tooltip, Supplier<Boolean> getter, Consumer<Boolean> setter, boolean defaultValue) {
+    public TConfigEntryBoolean(@Translatable String translationKey, @Translatable @Nullable String tooltip, Supplier<Boolean> getter, Consumer<Boolean> setter, boolean defaultValue) {
         super(translationKey, tooltip, getter, setter, defaultValue);
         widget = new BooleanButtonWidget(0, 0, 20, 20, getText().getString(), getter.get(), getTooltip());
     }
 
     @SuppressWarnings("unused")
-    public EFOptionBoolean(@Translatable String translationKey, Supplier<Boolean> getter, Consumer<Boolean> setter, boolean defaultValue) {
+    public TConfigEntryBoolean(@Translatable String translationKey, Supplier<Boolean> getter, Consumer<Boolean> setter, boolean defaultValue) {
         this(translationKey, null, getter, setter, defaultValue);
     }
 
     @SuppressWarnings("unused")
-    public EFOptionBoolean setType(Type type) {
+    public TConfigEntryBoolean setType(Type type) {
         widget.type = type;
         return this;
     }
@@ -48,6 +46,8 @@ public class EFOptionBoolean extends EFOptionValue<Boolean> {
         //noinspection unchecked
         return (T) widget;
     }
+
+
 
     @Override
     void setWidgetToDefaultValue() {
@@ -95,7 +95,7 @@ public class EFOptionBoolean extends EFOptionValue<Boolean> {
         }
 
         private void updateMessage() {
-            setMessage(Text.of(title + (value != getter.get() ? CHANGED_COLOR : "") + type.get(value)));
+            setMessage(Text.of(title + (value != getter.get() ? Empty.CHANGED_COLOR : "") + type.get(value)));
         }
 
         @Override

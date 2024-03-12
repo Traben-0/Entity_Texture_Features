@@ -6,7 +6,6 @@ import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-import traben.entity_features.config.gui.EFConfigScreenMain;
 import traben.entity_texture_features.ETF;
 
 @Mod("entity_texture_features")
@@ -22,14 +21,7 @@ public class ETFClientForge {
             try {
                 ModLoadingContext.get().registerExtensionPoint(
                         ConfigScreenHandler.ConfigScreenFactory.class,
-                        () -> new ConfigScreenHandler.ConfigScreenFactory((minecraftClient, screen) -> {
-                            try {
-                                return new EFConfigScreenMain(screen);}
-                            catch (Exception e) {
-                                System.out.println("[Entity Texture Features]: Mod config broken: " + e.getMessage());
-                                return null;
-                            }
-                        }));
+                        () -> new ConfigScreenHandler.ConfigScreenFactory(ETF::getConfigScreen));
             } catch (NoClassDefFoundError e) {
                 System.out.println("[Entity Texture Features]: Mod config broken, download latest forge version");
             }

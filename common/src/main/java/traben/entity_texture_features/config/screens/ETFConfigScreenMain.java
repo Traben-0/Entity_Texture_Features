@@ -1,7 +1,6 @@
-package traben.entity_features.config.gui;
+package traben.entity_texture_features.config.screens;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -24,23 +23,20 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
-import traben.entity_features.config.EFConfig;
-import traben.entity_features.config.EFConfigHandler;
-import traben.entity_features.config.EFConfigWarning;
-import traben.entity_features.config.EFConfigWarnings;
-import traben.entity_features.config.gui.options.EFOption;
-import traben.entity_features.config.gui.options.EFOptionCategory;
-import traben.entity_texture_features.ETFVersionDifferenceHandler;
+import traben.tconfig.gui.TConfigScreenMain;
+import traben.tconfig.gui.entries.TConfigEntryCategory;
+import traben.entity_texture_features.ETF;
+import traben.entity_texture_features.config.ETFConfigWarning;
+import traben.entity_texture_features.config.ETFConfigWarnings;
 
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Random;
 
-public class EFConfigScreenMain extends EFScreen {
+public class ETFConfigScreenMain extends TConfigScreenMain {
 
-    private static Set<EFConfigHandler<?>> configHandlers = null;
-    final ObjectOpenHashSet<EFConfigWarning> warningsFound = new ObjectOpenHashSet<>();
-    private final EFOptionCategory mainCategories;
+    final ObjectOpenHashSet<ETFConfigWarning> warningsFound = new ObjectOpenHashSet<>();
 
-    private final List<Identifier> modIcons;
     private final Random rand = new Random();
     private final LogoCreeperRenderer LOGO_CREEPER = new LogoCreeperRenderer();
     private final Identifier BLUE = new Identifier("entity_features", "textures/gui/entity/e.png");
@@ -51,41 +47,61 @@ public class EFConfigScreenMain extends EFScreen {
     private long timer = 0;
     private LivingEntity livingEntity = null;
 
-    public EFConfigScreenMain(Screen parent) {
-        super("config.entity_features", parent, true);
-        mainCategories = new EFOptionCategory.Empty().add(
-                new EFOptionCategory("config.entity_features.textures_main"),
-                new EFOptionCategory("config.entity_features.models_main").setEmptyTooltip("config.entity_features.empty_emf"),
-                new EFOptionCategory("config.entity_features.sounds_main").setEmptyTooltip("config.entity_features.empty_esf"),
-                new EFOptionCategory("config.entity_features.general_settings.title")
-
-        );
-
-
-        modIcons = new ArrayList<>();
-        for (EFConfigHandler<?> configHandler : configHandlers) {
-            EFConfig config = configHandler.getConfig();
-            for (EFOption value : config.getGUIOptions().getOptions().values()) {
-                mainCategories.add(value);
-            }
-            modIcons.add(config.getModIcon());
-        }
+    public ETFConfigScreenMain(Screen parent) {
+        super("config.entity_features", parent, ETF.configHandlers, List.of(
+                new TConfigEntryCategory("config.entity_features.textures_main"),
+                new TConfigEntryCategory("config.entity_features.models_main").setEmptyTooltip("config.entity_features.empty_emf"),
+                new TConfigEntryCategory("config.entity_features.sounds_main").setEmptyTooltip("config.entity_features.empty_esf"),
+                new TConfigEntryCategory("config.entity_features.general_settings.title"),
+                new TConfigEntryCategory("config.entity_features.general_settings.per_entity_settings")
+        ));
 
 
-        for (EFConfigWarning warning :
-                EFConfigWarnings.getRegisteredWarnings()) {
+        for (ETFConfigWarning warning :
+                ETFConfigWarnings.getRegisteredWarnings()) {
             if (warning.isConditionMet()) {
                 shownWarning = true;
                 warningCount++;
                 warningsFound.add(warning);
             }
         }
-
     }
 
-    public static void registerConfigHandler(EFConfigHandler<?> configHandler) {
-        if (configHandlers == null) configHandlers = new ObjectArraySet<>();
-        configHandlers.add(configHandler);
+    @Override
+    protected void init() {
+        super.init();
+        if (shownWarning) {
+            this.addDrawableChild(ButtonWidget.builder(Text.translatable("config.entity_features.warnings_main"),
+                            (button) -> Objects.requireNonNull(client).setScreen(new ETFConfigScreenWarnings(this, warningsFound)))
+                    .dimensions((int) (this.width * 0.1), (int) (this.height * 0.1) - 15, (int) (this.width * 0.2), 20
+                    ).build());
+        }
+    }
+
+    @Override
+    public void render(final DrawContext context, final int mouseX, final int mouseY, final float delta) {
+        super.render(context, mouseX, mouseY, delta);
+        //get a random entity and display for 5 seconds
+        if (timer + 5000 < System.currentTimeMillis() && MinecraftClient.getInstance().player != null && MinecraftClient.getInstance().player.getWorld() != null) {
+            List<Entity> entityList = MinecraftClient.getInstance().player.getWorld().getOtherEntities(null, MinecraftClient.getInstance().player.getBoundingBox().expand(128));
+            Entity entity = null;
+            for (int i = 0; i < Math.min(entityList.size(), 24); i++) {
+                entity = entityList.get(rand.nextInt(entityList.size()));
+                if (entity instanceof LivingEntity) break;
+            }
+            if (entity instanceof LivingEntity) {
+                livingEntity = (LivingEntity) entity;
+                timer = System.currentTimeMillis();
+            }
+        }
+
+        //draw the entity else ETF logo creepers
+        if (livingEntity != null && !livingEntity.isRemoved()) {
+            renderEntitySample(context, mouseY);
+        } else {
+            renderETFLogoCreepers(context, mouseX, mouseY);
+        }
+        context.getMatrices().pop();
     }
 
     public static void drawEntity(DrawContext context, float x, float y, int size, Quaternionf quaternionf, @Nullable Quaternionf quaternionf2, LivingEntity entity) {
@@ -108,91 +124,6 @@ public class EFConfigScreenMain extends EFScreen {
         entityRenderDispatcher.setRenderShadows(true);
         context.getMatrices().pop();
         DiffuseLighting.enableGuiDepthLighting();
-    }
-
-    @Override
-    public void close() {
-        if (mainCategories.saveValuesToConfig()) {
-            for (EFConfigHandler<?> configHandler : configHandlers) {
-                configHandler.saveToFile();
-            }
-            MinecraftClient.getInstance().reloadResources();
-        }
-        super.close();
-    }
-
-    @Override
-    protected void init() {
-        super.init();
-        setupButtons((int) (this.width * 0.6), (int) (this.height * 0.2), (int) (this.width * 0.3));
-
-        if (shownWarning) {
-            this.addDrawableChild(ButtonWidget.builder(Text.translatable("config.entity_features.warnings_main"),
-                            (button) -> Objects.requireNonNull(client).setScreen(new EFConfigScreenWarnings(this, warningsFound)))
-                    .dimensions((int) (this.width * 0.1), (int) (this.height * 0.1) - 15, (int) (this.width * 0.2), 20
-                    ).build());
-        }
-
-        this.addDrawableChild(ButtonWidget.builder(
-                ETFVersionDifferenceHandler.getTextFromTranslation("dataPack.validation.reset"),
-                (button) -> {
-                    mainCategories.setValuesToDefault();
-                    clearAndInit();
-                }).dimensions((int) (this.width * 0.4), (int) (this.height * 0.9), (int) (this.width * 0.22), 20).build());
-        this.addDrawableChild(ButtonWidget.builder(
-                Text.translatable("config.entity_features.undo"),
-                (button) -> {
-                    mainCategories.resetValuesToInitial();
-                    clearAndInit();
-                }).dimensions((int) (this.width * 0.1), (int) (this.height * 0.9), (int) (this.width * 0.2), 20).build());
-
-    }
-
-    private void setupButtons(int x, int y, int width) {
-        EFOption[] options = mainCategories.getOptions().values().toArray(new EFOption[0]);
-        for (int i = 0; i < options.length; i++) {
-            EFOption option = options[i];
-            var widget = option.getWidget(x, y + (i * 24), width, 20);
-            if (widget != null)
-                this.addDrawableChild(widget);
-        }
-    }
-
-    @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        super.render(context, mouseX, mouseY, delta);
-
-        //draw mod icons in the top right corner of the screen
-        // from left to right
-        if (!modIcons.isEmpty()) {
-            int ix = this.width - (modIcons.size() * 34);
-            for (Identifier modIcon : modIcons) {
-                context.drawTexture(modIcon, ix, 2, 0, 0, 32, 32, 32, 32);
-                ix += 34;
-            }
-        }
-
-        //get a random entity and display for 5 seconds
-        if (timer + 5000 < System.currentTimeMillis() && MinecraftClient.getInstance().player != null && MinecraftClient.getInstance().player.getWorld() != null) {
-            List<Entity> entityList = MinecraftClient.getInstance().player.getWorld().getOtherEntities(null, MinecraftClient.getInstance().player.getBoundingBox().expand(128));
-            Entity entity = null;
-            for (int i = 0; i < Math.min(entityList.size(), 24); i++) {
-                entity = entityList.get(rand.nextInt(entityList.size()));
-                if (entity instanceof LivingEntity) break;
-            }
-            if (entity instanceof LivingEntity) {
-                livingEntity = (LivingEntity) entity;
-                timer = System.currentTimeMillis();
-            }
-        }
-
-        //draw the entity else ETF logo creepers
-        if (livingEntity != null && !livingEntity.isRemoved()) {
-            renderEntitySample(context, mouseY);
-        } else {
-            renderETFLogoCreepers(context, mouseX, mouseY);
-        }
-        context.getMatrices().pop();
     }
 
     private void renderETFLogoCreepers(final DrawContext context, final int mouseX, final int mouseY) {

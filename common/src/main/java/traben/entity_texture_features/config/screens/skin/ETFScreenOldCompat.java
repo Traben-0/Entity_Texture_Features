@@ -9,14 +9,14 @@ import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import traben.entity_features.config.gui.EFScreen;
+import traben.tconfig.gui.TConfigScreen;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.mixin.accessor.TooltipAccessor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ETFScreenOldCompat extends EFScreen {
+public abstract class ETFScreenOldCompat extends TConfigScreen {
 
     @SuppressWarnings("SameParameterValue")
     protected ETFScreenOldCompat(final String title, final Screen parent, @SuppressWarnings("SameParameterValue") final boolean showBackButton) {

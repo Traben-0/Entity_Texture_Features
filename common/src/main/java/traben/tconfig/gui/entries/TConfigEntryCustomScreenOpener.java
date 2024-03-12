@@ -1,4 +1,4 @@
-package traben.entity_features.config.gui.options;
+package traben.tconfig.gui.entries;
 
 import com.demonwav.mcdev.annotations.Translatable;
 import net.minecraft.client.MinecraftClient;
@@ -10,7 +10,7 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 
 import java.util.function.Supplier;
 
-public class EFOptionCustomScreenOpener extends EFOption {
+public class TConfigEntryCustomScreenOpener extends TConfigEntry {
 
 
     private final Supplier<Screen> screenSupplier;
@@ -20,7 +20,7 @@ public class EFOptionCustomScreenOpener extends EFOption {
     private final boolean screenIsSingleton;
     private Screen screen = null;
 
-    public EFOptionCustomScreenOpener(@Translatable final String text, @Translatable final String tooltip, Supplier<Screen> screenSupplier, Supplier<Boolean> savedSupplier, Runnable setValuesDefault, Runnable resetValuesToInitial, boolean screenIsSingleton) {
+    public TConfigEntryCustomScreenOpener(@Translatable final String text, @Translatable final String tooltip, Supplier<Screen> screenSupplier, Supplier<Boolean> savedSupplier, Runnable setValuesDefault, Runnable resetValuesToInitial, boolean screenIsSingleton) {
         super(text, tooltip);
         this.screenSupplier = screenSupplier;
         this.savedSupplier = savedSupplier;
@@ -30,18 +30,18 @@ public class EFOptionCustomScreenOpener extends EFOption {
     }
 
     @SuppressWarnings("unused")
-    public EFOptionCustomScreenOpener(@Translatable final String text, Supplier<Screen> screenSupplier, Supplier<Boolean> savedSupplier, Runnable setValuesDefault, Runnable resetValuesToInitial, boolean screenIsSingleton) {
+    public TConfigEntryCustomScreenOpener(@Translatable final String text, Supplier<Screen> screenSupplier, Supplier<Boolean> savedSupplier, Runnable setValuesDefault, Runnable resetValuesToInitial, boolean screenIsSingleton) {
         this(text, null, screenSupplier, savedSupplier, setValuesDefault, resetValuesToInitial, screenIsSingleton);
     }
 
-    public EFOptionCustomScreenOpener(@Translatable final String text, @Translatable final String tooltip, Supplier<Screen> screenSupplier, boolean screenIsSingleton) {
+    public TConfigEntryCustomScreenOpener(@Translatable final String text, @Translatable final String tooltip, Supplier<Screen> screenSupplier, boolean screenIsSingleton) {
         this(text, tooltip, screenSupplier, () -> false, () -> {
         }, () -> {
         }, screenIsSingleton);
     }
 
     @SuppressWarnings("unused")
-    public EFOptionCustomScreenOpener(@Translatable final String text, Supplier<Screen> screenSupplier, boolean screenIsSingleton) {
+    public TConfigEntryCustomScreenOpener(@Translatable final String text, Supplier<Screen> screenSupplier, boolean screenIsSingleton) {
         this(text, null, screenSupplier, screenIsSingleton);
     }
 

@@ -1,4 +1,4 @@
-package traben.entity_features.config.gui.options;
+package traben.tconfig.gui.entries;
 
 import com.demonwav.mcdev.annotations.Translatable;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
@@ -10,37 +10,38 @@ import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
-import traben.entity_features.config.gui.EFOptionsScreen;
+import traben.tconfig.gui.TConfigScreenList;
 
+import java.util.Collection;
 import java.util.function.Supplier;
 
-import static traben.entity_features.config.gui.options.EFOption.Empty.CHANGED_COLOR;
+import static traben.tconfig.gui.entries.TConfigEntry.Empty.CHANGED_COLOR;
 
-public class EFOptionCategory extends EFOption {
+public class TConfigEntryCategory extends TConfigEntry {
 
-    private final Object2ObjectLinkedOpenHashMap<String, EFOption> options = new Object2ObjectLinkedOpenHashMap<>();
+    private final Object2ObjectLinkedOpenHashMap<String, TConfigEntry> options = new Object2ObjectLinkedOpenHashMap<>();
     private final String translationKey;
-    private EFOptionsScreen screen = null;
+    private TConfigScreenList screen = null;
     private Tooltip emptyTooltip = Tooltip.of(Text.translatable("config.entity_features.empty"));
 
-    public EFOptionCategory(@Translatable final String text, @Translatable final String tooltip) {
+    public TConfigEntryCategory(@Translatable final String text, @Translatable final String tooltip) {
         super(text, tooltip);
         translationKey = text;
     }
 
-    public EFOptionCategory(@Translatable final String text) {
+    public TConfigEntryCategory(@Translatable final String text) {
         super(text, null);
         translationKey = text;
     }
 
-    public Object2ObjectLinkedOpenHashMap<String, EFOption> getOptions() {
+    public Object2ObjectLinkedOpenHashMap<String, TConfigEntry> getOptions() {
         return options;
     }
 
     //don't need to init screen each time
-    public EFOptionsScreen getScreen() {
+    public TConfigScreenList getScreen() {
         if (screen == null) {
-            screen = new EFOptionsScreen(translationKey, MinecraftClient.getInstance().currentScreen, options.values().toArray(new EFOption[0]), this::setValuesToDefault, this::resetValuesToInitial);
+            screen = new TConfigScreenList(translationKey, MinecraftClient.getInstance().currentScreen, options.values().toArray(new TConfigEntry[0]), this::setValuesToDefault, this::resetValuesToInitial);
         }
         return screen;
     }
@@ -55,7 +56,7 @@ public class EFOptionCategory extends EFOption {
     @Override
     public boolean saveValuesToConfig() {
         boolean found = false;
-        for (EFOption option : options.values()) {
+        for (TConfigEntry option : options.values()) {
             found |= option.saveValuesToConfig();
         }
         return found;
@@ -63,40 +64,48 @@ public class EFOptionCategory extends EFOption {
 
     @Override
     public void setValuesToDefault() {
-        for (EFOption option : options.values()) {
+        for (TConfigEntry option : options.values()) {
             option.setValuesToDefault();
         }
     }
 
     @Override
     public void resetValuesToInitial() {
-        for (EFOption option : options.values()) {
+        for (TConfigEntry option : options.values()) {
             option.resetValuesToInitial();
         }
     }
 
-    public EFOptionCategory add(final EFOption... option) {
-        for (EFOption efOption : option) {
-            add(efOption);
+    public TConfigEntryCategory add(final TConfigEntry... option) {
+        for (TConfigEntry tConfigEntry : option) {
+            add(tConfigEntry);
         }
         return this;
     }
 
-    public EFOptionCategory add(final EFOption option) {
+    public TConfigEntryCategory addAll(final Collection<TConfigEntry> option) {
+        if (option == null) return this;
+        for (TConfigEntry tConfigEntry : option) {
+            add(tConfigEntry);
+        }
+        return this;
+    }
+
+    public TConfigEntryCategory add(final TConfigEntry option) {
         if (option == null) {
             return this;
         }
-        if (option instanceof EFOptionCategory category) {
+        if (option instanceof TConfigEntryCategory category) {
             return addOrMerge(category);
         }
         options.put(option.getText().getString(), option);
         return this;
     }
 
-    private EFOptionCategory addOrMerge(final EFOptionCategory category) {
+    private TConfigEntryCategory addOrMerge(final TConfigEntryCategory category) {
         if (options.containsKey(category.getText().getString())
-                && options.get(category.getText().getString()) instanceof EFOptionCategory existingCategory) {
-            for (EFOption option : category.options.values()) {
+                && options.get(category.getText().getString()) instanceof TConfigEntryCategory existingCategory) {
+            for (TConfigEntry option : category.options.values()) {
                 existingCategory.add(option);
             }
         } else {
@@ -108,7 +117,7 @@ public class EFOptionCategory extends EFOption {
     @Override
     boolean hasChangedFromInitial() {
         boolean changed = false;
-        for (EFOption value : options.values()) {
+        for (TConfigEntry value : options.values()) {
             if (value.hasChangedFromInitial()) {
                 changed = true;
                 break;
@@ -117,12 +126,12 @@ public class EFOptionCategory extends EFOption {
         return changed;
     }
 
-    public EFOptionCategory setEmptyTooltip(@NotNull @Translatable final String emptyTooltipKey) {
+    public TConfigEntryCategory setEmptyTooltip(@NotNull @Translatable final String emptyTooltipKey) {
         this.emptyTooltip = Tooltip.of(Text.translatable(emptyTooltipKey));
         return this;
     }
 
-    public static class Empty extends EFOptionCategory {
+    public static class Empty extends TConfigEntryCategory {
         public Empty() {
             //noinspection NoTranslation
             super("", null);

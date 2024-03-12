@@ -1,4 +1,4 @@
-package traben.entity_features.config.gui;
+package traben.entity_texture_features.config.screens;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.client.gui.DrawContext;
@@ -7,10 +7,10 @@ import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
-import traben.entity_features.config.EFConfig;
-import traben.entity_features.config.EFConfigHandler;
-import traben.entity_features.config.EFConfigWarning;
-import traben.entity_features.config.EFConfigWarnings;
+import traben.tconfig.TConfig;
+import traben.tconfig.gui.TConfigScreen;
+import traben.entity_texture_features.config.ETFConfigWarning;
+import traben.entity_texture_features.config.ETFConfigWarnings;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 
@@ -18,23 +18,22 @@ import java.util.HashSet;
 import java.util.Set;
 
 //inspired by puzzles custom gui code
-public class EFConfigScreenWarnings extends EFScreen {
-    public static final EFConfigHandler<WarningConfig> warningConfigHandler = new EFConfigHandler<>(WarningConfig::new, "ef_warnings.json", "EF");
-    final ObjectOpenHashSet<EFConfigWarning> warningsFound;
+public class ETFConfigScreenWarnings extends TConfigScreen {
+    final ObjectOpenHashSet<ETFConfigWarning> warningsFound;
 
-    public EFConfigScreenWarnings(Screen parent, ObjectOpenHashSet<EFConfigWarning> warningsFound) {
+    public ETFConfigScreenWarnings(Screen parent, ObjectOpenHashSet<ETFConfigWarning> warningsFound) {
         super("config." + ETF.MOD_ID + ".warnings.title", parent, true);
         this.warningsFound = warningsFound;
 
     }
 
     public static Set<String> getIgnoredWarnings() {
-        return warningConfigHandler.getConfig().ignoredConfigIds;
+        return ETF.warningConfigHandler.getConfig().ignoredConfigIds;
     }
 
     @Override
     public void close() {
-        warningConfigHandler.saveToFile();
+        ETF.warningConfigHandler.saveToFile();
         super.close();
     }
 
@@ -44,8 +43,8 @@ public class EFConfigScreenWarnings extends EFScreen {
         this.addDrawableChild(ButtonWidget.builder(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETF.MOD_ID + ".ignore_all"),
                 (button) -> {
                     //temporaryETFConfig = new ETFConfig();
-                    for (EFConfigWarning warn :
-                            EFConfigWarnings.getRegisteredWarnings()) {
+                    for (ETFConfigWarning warn :
+                            ETFConfigWarnings.getRegisteredWarnings()) {
                         getIgnoredWarnings().add(warn.getID());
                     }
                     this.clearAndInit();
@@ -54,7 +53,7 @@ public class EFConfigScreenWarnings extends EFScreen {
 
         double offset = 0.0;
 
-        for (EFConfigWarning warning :
+        for (ETFConfigWarning warning :
                 warningsFound) {
             if (warning.doesShowDisableButton()) {
                 ButtonWidget butt = ButtonWidget.builder(Text.of(ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.warn.ignore").getString() +
@@ -87,7 +86,7 @@ public class EFConfigScreenWarnings extends EFScreen {
         context.drawCenteredTextWithShadow(textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETF.MOD_ID + ".warn_instruction"), (int) (width * 0.5), (int) (height * 0.18), 0xFFFFFF);
         double offset = 0.0;
 
-        for (EFConfigWarning warning :
+        for (ETFConfigWarning warning :
                 warningsFound) {
             context.drawTextWithShadow(textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation(warning.getTitle()), (int) (this.width * 0.05), (int) (this.height * (0.25 + offset)), 0xFFFFFF);
             context.drawTextWithShadow(textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation(warning.getSubTitle()), (int) (this.width * 0.05), (int) (this.height * (0.29 + offset)), 0x888888);
@@ -99,7 +98,7 @@ public class EFConfigScreenWarnings extends EFScreen {
     }
 
     @SuppressWarnings("CanBeFinal")
-    public static class WarningConfig extends EFConfig.NoGUI {
+    public static class WarningConfig extends TConfig.NoGUI {
         public Set<String> ignoredConfigIds = new HashSet<>();
     }
 

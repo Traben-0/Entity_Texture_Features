@@ -1,9 +1,9 @@
-package traben.entity_features;
+package traben.tconfig;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EFCommon {
+public class TConfigLog {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("Entity Features");
     //sets whether to display config load warning in gui
