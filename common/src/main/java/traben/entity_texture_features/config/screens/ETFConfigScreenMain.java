@@ -53,7 +53,7 @@ public class ETFConfigScreenMain extends TConfigScreenMain {
                 new TConfigEntryCategory("config.entity_features.models_main").setEmptyTooltip("config.entity_features.empty_emf"),
                 new TConfigEntryCategory("config.entity_features.sounds_main").setEmptyTooltip("config.entity_features.empty_esf"),
                 new TConfigEntryCategory("config.entity_features.general_settings.title"),
-                new TConfigEntryCategory("config.entity_features.general_settings.per_entity_settings")
+                new TConfigEntryCategory("Per entity overrides")
         ));
 
 

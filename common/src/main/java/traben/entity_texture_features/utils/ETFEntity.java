@@ -10,6 +10,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -20,6 +21,7 @@ public interface ETFEntity {
 
     boolean etf$isBlockEntity();
 
+    @Nullable
     EntityType<?> etf$getType();
 
     UUID etf$getUuid();

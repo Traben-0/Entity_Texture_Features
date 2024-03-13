@@ -5,13 +5,13 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.LightmapTextureManager;
 import org.slf4j.Logger;
-import traben.entity_texture_features.config.screens.ETFConfigScreenWarnings;
-import traben.tconfig.TConfigHandler;
+import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.config.ETFConfigWarning;
 import traben.entity_texture_features.config.ETFConfigWarnings;
 import traben.entity_texture_features.config.screens.ETFConfigScreenMain;
-import traben.entity_texture_features.config.ETFConfig;
+import traben.entity_texture_features.config.screens.ETFConfigScreenWarnings;
 import traben.entity_texture_features.utils.ETFUtils2;
+import traben.tconfig.TConfigHandler;
 
 import java.io.File;
 import java.util.Random;
@@ -45,6 +45,8 @@ public class ETF {
     }
 
 
+
+
     public static void start() {
         //check only once
         SKIN_LAYERS_DETECTED = ETFVersionDifferenceHandler.isThisModLoaded("skinlayers3d");
@@ -52,7 +54,7 @@ public class ETF {
 
         LOGGER.info("Loading Entity Texture Features, " + randomQuip());
 
-        warningConfigHandler = new TConfigHandler<>(ETFConfigScreenWarnings.WarningConfig::new, "ef_warnings.json", "EF");
+        warningConfigHandler = new TConfigHandler<>(ETFConfigScreenWarnings.WarningConfig::new, "etf_warnings.json", "ETF");
         registerConfigHandler(warningConfigHandler);
 
         ETFUtils2.checkModCompatibility();

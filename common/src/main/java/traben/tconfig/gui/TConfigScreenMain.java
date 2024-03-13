@@ -10,23 +10,37 @@ import traben.tconfig.gui.entries.TConfigEntry;
 import traben.tconfig.gui.entries.TConfigEntryCategory;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public abstract class TConfigScreenMain extends TConfigScreen {
     protected final TConfigEntryCategory entries;
     protected final List<Identifier> modIcons;
-    protected final Set<TConfigHandler<?>> configHandlers = new HashSet<>();
+    protected final Set<TConfigHandler<?>> configHandlers;
 
     public TConfigScreenMain(final String title, final Screen parent, Set<TConfigHandler<?>> inputHandlers, List<TConfigEntry> defaultEntries) {
         super(title, parent, true);
-        entries = new TConfigEntryCategory.Empty().addAll(defaultEntries);
+        this.entries = new TConfigEntryCategory.Empty().addAll(defaultEntries);
+        this.modIcons = new ArrayList<>();
+        this.configHandlers = inputHandlers;
+
+        this.resetDefaultValuesRunnable = entries::setValuesToDefault;
+        this.undoChangesRunnable = entries::resetValuesToInitial;
+    }
+
+    boolean haveInitConfigs = false;
 
 
-        modIcons = new ArrayList<>();
-
-        for (TConfigHandler<?> configHandler : inputHandlers) {
+    /**
+     * This method reads the config handlers and adds their entries to the screen
+     * It also adds the mod icons to the top right corner of the screen
+     * This method is called in the init method, not the actual initializer to not lag out mod menu with a big config load
+     * and will only run once
+     */
+    private void initConfigs(){
+        if (haveInitConfigs) return;
+        haveInitConfigs = true;
+        for (TConfigHandler<?> configHandler : configHandlers) {
             this.configHandlers.add(configHandler);
             if (configHandler.doesGUI()){
                 TConfig config = configHandler.getConfig();
@@ -39,9 +53,6 @@ public abstract class TConfigScreenMain extends TConfigScreen {
                 }
             }
         }
-
-        this.resetDefaultValuesRunnable = entries::setValuesToDefault;
-        this.undoChangesRunnable = entries::resetValuesToInitial;
     }
 
     @Override
@@ -57,16 +68,18 @@ public abstract class TConfigScreenMain extends TConfigScreen {
 
     @Override
     protected void init() {
-        super.init();
 
-        this.addDrawableChild(
-                new TConfigEntryListWidget(
+        initConfigs();
+        super.init();
+        var child = new TConfigEntryListWidget(
                         (int) (this.width * 0.3),
                         (int) (this.height * 0.7),
                         (int) (this.height * 0.15),
+                        (int) (this.width * 0.6),
                         24,
-                        entries.getOptions().values().toArray(new TConfigEntry[0])
-        )).setX((int) (this.width * 0.6));
+                        entries.getOptions().values().toArray(new TConfigEntry[0]));
+
+        this.addDrawableChild(child);
     }
 
     @Override

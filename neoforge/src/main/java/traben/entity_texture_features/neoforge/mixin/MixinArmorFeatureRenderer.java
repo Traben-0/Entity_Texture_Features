@@ -77,7 +77,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
             at = @At(value = "TAIL"))
     private void etf$applyEmissive(MatrixStack arg, VertexConsumerProvider arg2, int i, ArmorItem arg3, Model arg4, boolean bl, float f, float g, float h, Identifier armorResource, CallbackInfo ci) {
         //UUID id = livingEntity.getUuid();
-        if (thisETF$Texture != null && ETF.config().getConfig().enableEmissiveTextures) {
+        if (thisETF$Texture != null && ETF.config().getConfig().canDoEmissiveTextures()) {
             Identifier emissive = thisETF$Texture.getEmissiveIdentifierOfCurrentState();
             if (emissive != null) {
                 VertexConsumer textureVert;// = ItemRenderer.getArmorGlintConsumer(vertexConsumers, RenderLayer.getBeaconBeam(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString), true), false, usesSecondLayer);

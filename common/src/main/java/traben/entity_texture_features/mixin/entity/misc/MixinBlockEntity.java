@@ -40,7 +40,7 @@ public abstract class MixinBlockEntity implements ETFEntity {
 
     @Override
     public EntityType<?> etf$getType() {
-        return EntityType.MARKER;
+        return null;
     }
 
     @Override

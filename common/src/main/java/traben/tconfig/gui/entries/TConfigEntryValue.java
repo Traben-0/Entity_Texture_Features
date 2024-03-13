@@ -29,11 +29,12 @@ public abstract class TConfigEntryValue<V> extends TConfigEntry {
     }
 
     public boolean saveValuesToConfig() {
-        V value = getValueFromWidget();
-        boolean changed = !value.equals(getter.get());
-        if (hasChangedFromInitial())
-            setter.accept(value);
-        return changed;
+        if (hasChangedFromInitial()) {
+            setter.accept(getValueFromWidget());
+            return true;
+        } else {
+            return false;
+        }
     }
 
     protected abstract V getValueFromWidget();

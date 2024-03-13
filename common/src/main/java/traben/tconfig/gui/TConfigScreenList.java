@@ -26,6 +26,7 @@ public class TConfigScreenList extends TConfigScreen {
                          this.width,
                         (int) (this.height * 0.7),
                         (int) (this.height * 0.15),
+                        0,
                         24,
                         options)
         );

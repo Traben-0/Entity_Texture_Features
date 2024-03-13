@@ -1,12 +1,18 @@
 package traben.entity_texture_features.config;
 
 import com.demonwav.mcdev.annotations.Translatable;
+import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.EntityType;
+import net.minecraft.registry.Registries;
+import net.minecraft.screen.ScreenTexts;
 import net.minecraft.util.Identifier;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.screens.skin.ETFConfigScreenSkinTool;
 import traben.entity_texture_features.features.ETFManager;
+import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.player.ETFPlayerTexture;
 import traben.tconfig.TConfig;
 import traben.tconfig.gui.entries.*;
@@ -29,6 +35,20 @@ public final class ETFConfig extends TConfig {
     public boolean restrictDayTime = true;
     public boolean restrictMoonPhase = true;
     public boolean allowUnknownRestrictions = true;
+
+    public boolean canDoEmissiveTextures(EntityType<?> type) {
+        if (type != null && EntityEmissiveOverrides.containsKey(type.getTranslationKey())) {
+            return EntityEmissiveOverrides.getBoolean(type.getTranslationKey());
+        }
+        return enableEmissiveTextures;
+    }
+
+    public boolean canDoEmissiveTextures() {
+        if (ETFRenderContext.getCurrentEntity() == null)
+            return enableEmissiveTextures;
+        return canDoEmissiveTextures(ETFRenderContext.getCurrentEntity().etf$getType());
+    }
+
     public boolean enableEmissiveTextures = true;
 
     public boolean enableEnchantedTextures = true;
@@ -73,7 +93,7 @@ public final class ETFConfig extends TConfig {
                         new TConfigEntryCategory("config.entity_texture_features.random_settings.title").add(
                                 new TConfigEntryBoolean("config.entity_texture_features.enable_custom_textures.title", "config.entity_texture_features.enable_custom_textures.tooltip",
                                         () -> enableCustomTextures, aBoolean -> enableCustomTextures = aBoolean, true),
-                                new TConfigEntryEnum<>("config.entity_texture_features.texture_update_frequency.title", "config.entity_texture_features.texture_update_frequency.tooltip",
+                                new TConfigEntryEnumSlider<>("config.entity_texture_features.texture_update_frequency.title", "config.entity_texture_features.texture_update_frequency.tooltip",
                                         () -> textureUpdateFrequency_V2, updateFrequency -> textureUpdateFrequency_V2 = updateFrequency,
                                         UpdateFrequency.Fast),
                                 new TConfigEntryBoolean("config.entity_texture_features.custom_block_entity.title", "config.entity_texture_features.custom_block_entity.tooltip",
@@ -101,7 +121,7 @@ public final class ETFConfig extends TConfig {
                                         () -> enableEmissiveTextures, aBoolean -> enableEmissiveTextures = aBoolean, true),
                                 new TConfigEntryBoolean("config.entity_texture_features.emissive_block_entity.title", "config.entity_texture_features.emissive_block_entity.tooltip",
                                         () -> enableEmissiveBlockEntities, aBoolean -> enableEmissiveBlockEntities = aBoolean, true),
-                                new TConfigEntryEnum<>("config.entity_texture_features.emissive_mode.title", "config.entity_texture_features.emissive_mode.tooltip",
+                                new TConfigEntryEnumButton<>("config.entity_texture_features.emissive_mode.title", "config.entity_texture_features.emissive_mode.tooltip",
                                         () -> emissiveRenderMode, renderMode -> emissiveRenderMode = renderMode, EmissiveRenderModes.DULL),
                                 new TConfigEntryBoolean("config.entity_texture_features.always_check_vanilla_emissive_suffix.title", "config.entity_texture_features.always_check_vanilla_emissive_suffix.tooltip",
                                         () -> alwaysCheckVanillaEmissiveSuffix, aBoolean -> alwaysCheckVanillaEmissiveSuffix = aBoolean, true),
@@ -133,7 +153,7 @@ public final class ETFConfig extends TConfig {
                                         () -> blinkLength, aInt -> blinkLength = aInt, 1, 1, 2)
 
                         ), new TConfigEntryCategory("config.entity_texture_features.debug_screen.title").add(
-                                new TConfigEntryEnum<>("config.entity_texture_features.debug_logging_mode.title", "config.entity_texture_features.debug_logging_mode.tooltip",
+                                new TConfigEntryEnumButton<>("config.entity_texture_features.debug_logging_mode.title", "config.entity_texture_features.debug_logging_mode.tooltip",
                                         () -> debugLoggingMode, debugLogMode -> debugLoggingMode = debugLogMode, DebugLogMode.None),
                                 new TConfigEntryBoolean("config.entity_texture_features.log_creation", "config.entity_texture_features.log_creation.tooltip",
                                         () -> logTextureDataInitialization, aBoolean -> logTextureDataInitialization = aBoolean, false),
@@ -145,15 +165,130 @@ public final class ETFConfig extends TConfig {
                                         })
                         )
                 ), new TConfigEntryCategory("config.entity_features.general_settings.title").add(
-                        new TConfigEntryEnum<>("config.entity_texture_features.allow_illegal_texture_paths.title", "config.entity_texture_features.allow_illegal_texture_paths.tooltip",
+                        new TConfigEntryEnumButton<>("config.entity_texture_features.allow_illegal_texture_paths.title", "config.entity_texture_features.allow_illegal_texture_paths.tooltip",
                                 () -> illegalPathSupportMode, illegalPathMode -> illegalPathSupportMode = illegalPathMode, IllegalPathMode.None),
                         new TConfigEntryBoolean("config.entity_texture_features.warden.title", "config.entity_texture_features.warden.tooltip",
                                 () -> enableFullBodyWardenTextures, aBoolean -> enableFullBodyWardenTextures = aBoolean, true),
                         new TConfigEntryBoolean("config.entity_features.hide_button", "config.entity_features.hide_button.tooltip",
                                 () -> hideConfigButton, aBoolean -> hideConfigButton = aBoolean, false)
-                )
+                ), getEntitySettings()
         );
     }
+
+    private TConfigEntryCategory getEntitySettings() {
+        var category = new TConfigEntryCategory("Per entity overrides");
+        try {
+            Registries.ENTITY_TYPE.forEach(entityType -> {
+                if (entityType == EntityType.PLAYER) return;
+                String translationKey = entityType.getTranslationKey();
+                var entityCategory = new TConfigEntryCategory(translationKey);
+                entityCategory.add(
+                        new TConfigEntryEnumButton<>("emissive textures", "tooltip",
+                                () -> EntityEmissiveOverrides.getNullable(translationKey), overrideBooleanType -> EntityEmissiveOverrides.putNullable(translationKey,overrideBooleanType), null,OverrideBooleanType.class),
+                        new TConfigEntryEnumButton<>("random textures", "tooltip",
+                                () -> EntityRandomOverrides.getNullable(translationKey), overrideBooleanType -> EntityRandomOverrides.putNullable(translationKey,overrideBooleanType), null,OverrideBooleanType.class),
+                        new TConfigEntryEnumButton<>("property restrictions", "tooltip",
+                                () -> EntityRestrictOverrides.getNullable(translationKey), overrideBooleanType -> EntityRestrictOverrides.putNullable(translationKey,overrideBooleanType), null,OverrideBooleanType.class),
+                        new TConfigEntryEnumButton<>("emissive mode override", "tooltip",
+                                () -> EntityEmissiveBrightOverrides.getNullable(translationKey),
+                                mode -> EntityEmissiveBrightOverrides.putNullable(translationKey,  mode),
+                                null,EmissiveRenderModes.class)
+                        );
+                category.add(entityCategory);
+            });
+        }catch (Exception e){e.printStackTrace();}
+        return category;
+    }
+
+    public Entity2BooleanNullMap EntityEmissiveOverrides = new Entity2BooleanNullMap();
+    public Entity2BooleanNullMap EntityRandomOverrides = new Entity2BooleanNullMap();
+    public Entity2BooleanNullMap EntityRestrictOverrides = new Entity2BooleanNullMap();
+    public Entity2EnumNullMap<EmissiveRenderModes> EntityEmissiveBrightOverrides = new Entity2EnumNullMap<>();
+
+    public static class Entity2BooleanNullMap extends  Object2BooleanOpenHashMap<String>{
+        public Entity2BooleanNullMap(){
+            super();
+            defaultReturnValue(false);
+        }
+
+
+        public void putNullable(final String s, final OverrideBooleanType v) {
+            if (v == null) {
+                removeBoolean(s);
+                return;
+            }
+            super.put(s, v == OverrideBooleanType.TRUE);
+        }
+
+        public OverrideBooleanType getNullable(final String s){
+            if (getBoolean(s)) {
+                return OverrideBooleanType.TRUE;
+            } else {
+                if (containsKey(s)) {
+                    return OverrideBooleanType.FALSE;
+                } else {
+                    return null;
+                }
+            }
+
+        }
+    }
+
+    public static class Entity2EnumNullMap<E extends Enum<E>> extends Object2ObjectOpenHashMap<String,E> {
+
+
+        public void putNullable(final String s, final E v) {
+            if (v == null) {
+                remove(s);
+                return;
+            }
+            super.put(s, v);
+        }
+
+        public E getNullable(final String s){
+            if (containsKey(s)) {
+                return get(s);
+            } else {
+                return null;
+            }
+        }
+    }
+    public enum OverrideBooleanType{
+        TRUE,FALSE;
+
+        public static void setInMap(OverrideBooleanType type, String key, Object2BooleanOpenHashMap<String> map){
+            if (type == null) {
+                map.removeBoolean(key);
+                return;
+            }
+            switch (type){
+                case TRUE -> map.put(key, true);
+                case FALSE -> map.put(key, false);
+            }
+        }
+
+        public static OverrideBooleanType getFromMap(String key, Object2BooleanOpenHashMap<String> map){
+            if (map.getBoolean(key)) {
+                return TRUE;
+            } else {
+                if (map.containsKey(key)) {
+                    return FALSE;
+                } else {
+                    return null;
+                }
+            }
+        }
+
+        @Override
+        public String toString() {
+            return switch (this){
+                case TRUE -> ScreenTexts.ON.getString();
+                case FALSE -> ScreenTexts.OFF.getString();
+            };
+        }
+    }
+
+
 
     private TConfigEntry getPlayerSkinEditorButton() {
         boolean condition1 = ETF.config().getConfig().skinFeaturesEnabled;

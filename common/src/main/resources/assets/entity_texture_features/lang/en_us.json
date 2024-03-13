@@ -5,6 +5,7 @@
   "config.entity_features.empty_emf": "No settings available\nThe Entity Model Features mod is needed if you want OptiFine format Custom Entity Models.",
   "config.entity_features.empty_esf": "No settings available\nThe Entity Sound Features mod is needed if you want Varied Entity Sounds.",
   "config.entity_features.general_settings.title": "Misc settings",
+  "config.entity_features.per_entity_settings": "Per entity settings",
   "config.entity_features.hide_button": "Hide settings button",
   "config.entity_features.hide_button.tooltip": "Prevents this settings button from appearing in the resource pack menu",
   "config.entity_features.models_main": "Models",
