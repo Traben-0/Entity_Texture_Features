@@ -25,7 +25,7 @@ public abstract class MixinGlowSquidEntity extends SquidEntity {
             index = 2
     )
     private double mixin(double x) {
-        if (ETF.config().getConfig().enableCustomTextures
+        if (ETF.config().getConfig().canDoCustomTextures()
                 && ETFManager.getInstance().ENTITY_TYPE_IGNORE_PARTICLES.contains(this.getType())) {
             return -500;
         }

@@ -16,9 +16,9 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import traben.entity_texture_features.config.screens.ETFConfigScreenMain;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
+import traben.entity_texture_features.config.screens.ETFConfigScreenMain;
 
 import java.nio.file.Path;
 import java.util.Objects;

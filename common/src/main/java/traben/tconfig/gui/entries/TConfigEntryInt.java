@@ -60,6 +60,13 @@ public class TConfigEntryInt extends TConfigEntryValue<Integer> {
         widget.setValue(getter.get());
     }
 
+    private boolean modifiesOffMaxToMin = true;
+    @SuppressWarnings("unused")
+    public TConfigEntryInt dontModifyOffMaxValues() {
+        modifiesOffMaxToMin = false;
+        return this;
+    }
+
     public class IntSliderWidget extends SliderWidget {
         private final int max;
         private final int min;
@@ -67,19 +74,20 @@ public class TConfigEntryInt extends TConfigEntryValue<Integer> {
 
         private final boolean isMinOff;
         private final boolean isMaxOff;
+        private final int difference;
 
 
         public IntSliderWidget(final Text text,
                                final int initialValue, final Tooltip tooltip, int min, int max, boolean isMinOff, boolean isMaxOff) {
-            super(0, 0, 20, 20, text, 0);
+            super(0, 0, 20, 20, text,  0);
             this.min = min;
             this.max = max;
             this.isMinOff = isMinOff;
             this.isMaxOff = isMaxOff;
+            this.difference = max - min;
 
             this.title = text.getString() + ": ";
             setValue(initialValue);
-            updateMessage();
             setTooltip(tooltip);
         }
 
@@ -91,15 +99,15 @@ public class TConfigEntryInt extends TConfigEntryValue<Integer> {
         }
 
         private void setValue(int intIndex) {
-            this.value = (MathHelper.clamp(intIndex, min, max) - min) / (double) (max - min);
-            //snapValueToNearestIndex();
+            this.value = (MathHelper.clamp(intIndex, min, max) - min) / (double) difference;
+//            snapValueToNearestIndex();
             updateMessage();
         }
 
         @Override
         protected void updateMessage() {
             snapValueToNearestIndex();
-            setMessage(Text.of(title + (value != getter.get() ? Empty.CHANGED_COLOR : "") + (isOff() ? ScreenTexts.OFF.getString() : getValueRoundedToIntBetweenMinMax())));
+            setMessage(Text.of(title + (getValueRoundedToIntBetweenMinMax() != getter.get() ? Empty.CHANGED_COLOR : "") + (isOff() ? ScreenTexts.OFF.getString() : getValueRoundedToIntBetweenMinMax())));
         }
 
         @Override
@@ -108,15 +116,15 @@ public class TConfigEntryInt extends TConfigEntryValue<Integer> {
         }
 
         private void snapValueToNearestIndex() {
-            value = (int) Math.round(value * (max - min)) / (double) (max - min);
+            value = (int) Math.round(value * difference) / (double) difference;
         }
 
         //snaps the double value to the nearest index
         public int getValueRoundedToIntBetweenMinMax() {
-            if (isOff()) {
-                return 0;
+            if (isOff() && modifiesOffMaxToMin) {
+                return min;
             }
-            return (int) Math.round(value * (max - min)) + min;
+            return (int) Math.round(value * difference) + min;
         }
 
 

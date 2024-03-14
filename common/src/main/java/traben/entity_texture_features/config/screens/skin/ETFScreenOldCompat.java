@@ -9,9 +9,9 @@ import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import traben.tconfig.gui.TConfigScreen;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.mixin.accessor.TooltipAccessor;
+import traben.tconfig.gui.TConfigScreen;
 
 import java.util.ArrayList;
 import java.util.List;

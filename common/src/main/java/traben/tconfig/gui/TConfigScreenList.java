@@ -23,7 +23,7 @@ public class TConfigScreenList extends TConfigScreen {
 
         this.addDrawableChild(
                 new TConfigEntryListWidget(
-                         this.width,
+                        this.width,
                         (int) (this.height * 0.7),
                         (int) (this.height * 0.15),
                         0,

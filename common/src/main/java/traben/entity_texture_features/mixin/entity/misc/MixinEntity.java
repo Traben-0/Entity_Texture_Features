@@ -155,4 +155,9 @@ public abstract class MixinEntity implements ETFEntity {
     public boolean etf$isBlockEntity() {
         return false;
     }
+
+    @Override
+    public String etf$getEntityKey() {
+        return getType().getTranslationKey();
+    }
 }

@@ -7,12 +7,12 @@ import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
-import traben.tconfig.TConfig;
-import traben.tconfig.gui.TConfigScreen;
-import traben.entity_texture_features.config.ETFConfigWarning;
-import traben.entity_texture_features.config.ETFConfigWarnings;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
+import traben.entity_texture_features.config.ETFConfigWarning;
+import traben.entity_texture_features.config.ETFConfigWarnings;
+import traben.tconfig.TConfig;
+import traben.tconfig.gui.TConfigScreen;
 
 import java.util.HashSet;
 import java.util.Set;

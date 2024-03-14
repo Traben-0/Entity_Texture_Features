@@ -23,11 +23,11 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
-import traben.tconfig.gui.TConfigScreenMain;
-import traben.tconfig.gui.entries.TConfigEntryCategory;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.config.ETFConfigWarning;
 import traben.entity_texture_features.config.ETFConfigWarnings;
+import traben.tconfig.gui.TConfigScreenMain;
+import traben.tconfig.gui.entries.TConfigEntryCategory;
 
 import java.util.List;
 import java.util.Objects;
@@ -53,7 +53,7 @@ public class ETFConfigScreenMain extends TConfigScreenMain {
                 new TConfigEntryCategory("config.entity_features.models_main").setEmptyTooltip("config.entity_features.empty_emf"),
                 new TConfigEntryCategory("config.entity_features.sounds_main").setEmptyTooltip("config.entity_features.empty_esf"),
                 new TConfigEntryCategory("config.entity_features.general_settings.title"),
-                new TConfigEntryCategory("Per entity overrides")
+                new TConfigEntryCategory("config.entity_features.per_entity_settings")
         ));
 
 
@@ -65,6 +65,28 @@ public class ETFConfigScreenMain extends TConfigScreenMain {
                 warningsFound.add(warning);
             }
         }
+    }
+
+    public static void drawEntity(DrawContext context, float x, float y, int size, Quaternionf quaternionf, @Nullable Quaternionf quaternionf2, LivingEntity entity) {
+        context.getMatrices().push();
+        context.getMatrices().translate(x, y, 150.0);
+        context.getMatrices().multiplyPositionMatrix((new Matrix4f()).scaling((float) size, (float) size, (float) (-size)));
+        context.getMatrices().multiply(quaternionf);
+        DiffuseLighting.method_34742();
+        EntityRenderDispatcher entityRenderDispatcher = MinecraftClient.getInstance().getEntityRenderDispatcher();
+        if (quaternionf2 != null) {
+            quaternionf2.conjugate();
+            entityRenderDispatcher.setRotation(quaternionf2);
+        }
+
+        entityRenderDispatcher.setRenderShadows(false);
+        //noinspection deprecation
+        RenderSystem.runAsFancy(() ->
+                entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, context.getMatrices(), context.getVertexConsumers(), 15728880));
+        context.draw();
+        entityRenderDispatcher.setRenderShadows(true);
+        context.getMatrices().pop();
+        DiffuseLighting.enableGuiDepthLighting();
     }
 
     @Override
@@ -104,28 +126,6 @@ public class ETFConfigScreenMain extends TConfigScreenMain {
         context.getMatrices().pop();
     }
 
-    public static void drawEntity(DrawContext context, float x, float y, int size, Quaternionf quaternionf, @Nullable Quaternionf quaternionf2, LivingEntity entity) {
-        context.getMatrices().push();
-        context.getMatrices().translate(x, y, 150.0);
-        context.getMatrices().multiplyPositionMatrix((new Matrix4f()).scaling((float) size, (float) size, (float) (-size)));
-        context.getMatrices().multiply(quaternionf);
-        DiffuseLighting.method_34742();
-        EntityRenderDispatcher entityRenderDispatcher = MinecraftClient.getInstance().getEntityRenderDispatcher();
-        if (quaternionf2 != null) {
-            quaternionf2.conjugate();
-            entityRenderDispatcher.setRotation(quaternionf2);
-        }
-
-        entityRenderDispatcher.setRenderShadows(false);
-        //noinspection deprecation
-        RenderSystem.runAsFancy(() ->
-                entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, context.getMatrices(), context.getVertexConsumers(), 15728880));
-        context.draw();
-        entityRenderDispatcher.setRenderShadows(true);
-        context.getMatrices().pop();
-        DiffuseLighting.enableGuiDepthLighting();
-    }
-
     private void renderETFLogoCreepers(final DrawContext context, final int mouseX, final int mouseY) {
         int y = (int) (this.height * 0.75);
         int x = (int) (this.width * 0.33);
@@ -149,19 +149,19 @@ public class ETFConfigScreenMain extends TConfigScreenMain {
         MatrixStack matrixStack = context.getMatrices();
 
         matrixStack.push();
-            matrixStack.translate(-0.6,  -sin1,0);
-            matrixStack.scale( 1+sin1,  1+sin1,  1+sin1);
-            LOGO_CREEPER.renderSimple(matrixStack, context.getVertexConsumers(), YELLOW);
+        matrixStack.translate(-0.6, -sin1, 0);
+        matrixStack.scale(1 + sin1, 1 + sin1, 1 + sin1);
+        LOGO_CREEPER.renderSimple(matrixStack, context.getVertexConsumers(), YELLOW);
         matrixStack.pop();
         matrixStack.push();
-        matrixStack.translate(0,  -sin2,0);
-            matrixStack.scale( 1+sin2,  1+sin2,  1+sin2);
-            LOGO_CREEPER.renderSimple(matrixStack, context.getVertexConsumers(), RED);
+        matrixStack.translate(0, -sin2, 0);
+        matrixStack.scale(1 + sin2, 1 + sin2, 1 + sin2);
+        LOGO_CREEPER.renderSimple(matrixStack, context.getVertexConsumers(), RED);
         matrixStack.pop();
         matrixStack.push();
-            matrixStack.translate(0.6,  -sin3,0);
-            matrixStack.scale( 1+sin3,  1+sin3,  1+sin3);
-            LOGO_CREEPER.renderSimple(matrixStack, context.getVertexConsumers(), BLUE);
+        matrixStack.translate(0.6, -sin3, 0);
+        matrixStack.scale(1 + sin3, 1 + sin3, 1 + sin3);
+        LOGO_CREEPER.renderSimple(matrixStack, context.getVertexConsumers(), BLUE);
         matrixStack.pop();
 
         DiffuseLighting.enableGuiDepthLighting();

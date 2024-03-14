@@ -1,6 +1,7 @@
 package traben.entity_texture_features.mixin.entity.misc;
 
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
@@ -22,6 +23,8 @@ import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.UUID;
 
+import static traben.entity_texture_features.ETFApi.getBlockEntityTypeToTranslationKey;
+
 @Mixin(BlockEntity.class)
 public abstract class MixinBlockEntity implements ETFEntity {
 
@@ -37,6 +40,9 @@ public abstract class MixinBlockEntity implements ETFEntity {
 
     @Shadow
     public abstract NbtCompound createNbt();
+
+    @Shadow
+    public abstract BlockEntityType<?> getType();
 
     @Override
     public EntityType<?> etf$getType() {
@@ -126,5 +132,10 @@ public abstract class MixinBlockEntity implements ETFEntity {
     @Override
     public boolean etf$isBlockEntity() {
         return true;
+    }
+
+    @Override
+    public String etf$getEntityKey() {
+        return getBlockEntityTypeToTranslationKey(getType());
     }
 }

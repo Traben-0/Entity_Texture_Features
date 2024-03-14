@@ -41,7 +41,6 @@ public class TConfigEntryEnumButton<E extends Enum<E>> extends TConfigEntryNullS
     }
 
 
-
     @Override
     public TConfigEntryNullSafe<E> allowNullValue() {
         appendNullValue = true;
@@ -75,16 +74,12 @@ public class TConfigEntryEnumButton<E extends Enum<E>> extends TConfigEntryNullS
     public class EnumButtonWidget<T extends Enum<?>> extends ButtonWidget {
         private final T[] enumValues;
         private final String title;
-
-        public int getIndex() {
-            return index;
-        }
-
         private int index;
 
         public EnumButtonWidget(final Text text, final T initialValue, final Tooltip tooltip, Class<T> enumClass) {
             //super(0, 0, 20, 20, text, initialValue.ordinal() / (double) (initialValue.getDeclaringClass().getEnumConstants().length - 1));
-            super(0, 0, 20, 20, text, (button) -> {},ButtonWidget.DEFAULT_NARRATION_SUPPLIER);
+            super(0, 0, 20, 20, text, (button) -> {
+            }, ButtonWidget.DEFAULT_NARRATION_SUPPLIER);
 
             this.enumValues = enumClass.getEnumConstants();
             this.title = text.getString() + ": ";
@@ -92,21 +87,24 @@ public class TConfigEntryEnumButton<E extends Enum<E>> extends TConfigEntryNullS
             setValue(initialValue);
         }
 
+        public int getIndex() {
+            return index;
+        }
+
         private int getChoiceCount() {
             return enumValues.length - (appendNullValue ? 0 : 1);
+        }
+
+        @Nullable
+        private T getValue() {
+            if (index >= enumValues.length) return null;
+            return enumValues[index];
         }
 
         private void setValue(T value) {
             this.index = value == null ? enumValues.length : value.ordinal();
             updateMessage();
         }
-
-        @Nullable
-        private T getValue(){
-            if (index >= enumValues.length) return null;
-            return enumValues[index];
-        }
-
 
         protected void updateMessage() {
             T value = getValue();

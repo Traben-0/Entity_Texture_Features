@@ -26,10 +26,9 @@ public class TConfigHandler<T extends TConfig> {
         this.newConfigSupplier = newConfigSupplier;
         this.logID = logID;
         this.configFileName = configFileName.endsWith(".json") ? configFileName : configFileName + ".json";
-
-        CONFIG = newConfigSupplier.get();
         //noinspection unchecked
-        this.configClass = (Class<T>) CONFIG.getClass();
+        this.configClass = Objects.requireNonNull((Class<T>) newConfigSupplier.get().getClass());
+        //needs class set above
         this.loadFromFile();
 
     }
@@ -89,38 +88,37 @@ public class TConfigHandler<T extends TConfig> {
     }
 
     public void loadFromFile() {
-        T loaded;
         try {
             File config = new File(CONFIG_DIR, configFileName);
             if (config.exists()) {
                 try {
                     FileReader fileReader = new FileReader(config);
-                    loaded = (fromJson(fileReader));
+                    CONFIG = fromJson(fileReader);
                     fileReader.close();
                     saveToFile();
                 } catch (IOException e) {
                     TConfigLog.log(logID, "Config could not be loaded, using defaults");
-                    loaded = newConfigSupplier.get();
+                    CONFIG = newConfigSupplier.get();
                     saveToFile();
 //                    EFCommon.configHadLoadError = true;
                 }
             } else {
-                loaded = newConfigSupplier.get();
+                CONFIG = newConfigSupplier.get();
                 saveToFile();
             }
-            if (loaded == null) {
+            if (CONFIG == null) {
                 TConfigLog.log(logID, "Config was null, using defaults");
-                loaded = newConfigSupplier.get();
+                CONFIG = newConfigSupplier.get();
                 saveToFile();
 //                EFCommon.configHadLoadError = true;
             }
         } catch (Exception e) {
             TConfigLog.logError(logID, "Config was corrupt or broken, using defaults");
-            loaded = newConfigSupplier.get();
+            e.printStackTrace();
+            CONFIG = newConfigSupplier.get();
             saveToFile();
 //            EFCommon.configHadLoadError = true;
         }
-        CONFIG = loaded;
     }
 
     public T fromJson(String json) {
@@ -137,7 +135,7 @@ public class TConfigHandler<T extends TConfig> {
         return fromJson(toJson());
     }
 
-    public boolean doesGUI(){
+    public boolean doesGUI() {
         return getConfig().doesGUI();
     }
 

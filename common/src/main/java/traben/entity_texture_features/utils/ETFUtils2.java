@@ -17,10 +17,10 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import traben.entity_texture_features.config.ETFConfigWarning;
-import traben.entity_texture_features.config.ETFConfigWarnings;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
+import traben.entity_texture_features.config.ETFConfigWarning;
+import traben.entity_texture_features.config.ETFConfigWarnings;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
@@ -54,6 +54,7 @@ public abstract class ETFUtils2 {
     }
 
     public static boolean renderEmissive(ETFTexture texture, VertexConsumerProvider provider, RenderMethodForOverlay renderer) {
+        if (!ETF.config().getConfig().canDoEmissiveTextures()) return false;
         Identifier emissive = texture.getEmissiveIdentifierOfCurrentState();
         if (emissive != null) {
             boolean wasAllowed = ETFRenderContext.isAllowedToRenderLayerTextureModify();

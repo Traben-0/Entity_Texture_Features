@@ -4,7 +4,6 @@
 - player usernames in name property
 - creative teammate variant client properties
 
-
 [5.2.1]
 
 - fixed `Image is not allocated.` crash related to armor rendering

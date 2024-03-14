@@ -68,7 +68,7 @@ public class NameProperty extends StringArrayOrRegexProperty {
 
     @Override
     public @Nullable String getValueFromEntity(ETFEntity etfEntity) {
-        if (etfEntity instanceof PlayerEntity player && player.getName() != null){
+        if (etfEntity instanceof PlayerEntity player && player.getName() != null) {
             return player.getName().getString();
         }
         if (etfEntity.etf$hasCustomName()) {

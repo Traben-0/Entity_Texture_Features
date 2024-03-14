@@ -2,6 +2,7 @@ package traben.entity_texture_features;
 
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -10,9 +11,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.config.ETFConfigWarning;
 import traben.entity_texture_features.config.ETFConfigWarnings;
-import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.property_reading.PropertiesRandomProvider;
 import traben.entity_texture_features.features.property_reading.TrueRandomProvider;
@@ -126,6 +127,18 @@ public final class ETFApi {
      */
     public static ETFConfig getDefaultETFConfigObject() {
         return new ETFConfig();
+    }
+
+    /**
+     * gets the translation key for a block entity type
+     *
+     * @param type the block entity type
+     * @return the translation key
+     */
+    public static String getBlockEntityTypeToTranslationKey(BlockEntityType<?> type) {
+        var id = BlockEntityType.getId(type);
+        if (id == null) return null;
+        return "block." + id.getNamespace() + '.' + id.getPath();
     }
 
     /**

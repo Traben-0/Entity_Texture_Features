@@ -53,5 +53,10 @@ public interface ETFEntity {
 
     Vec3d etf$getVelocity();
 
+    @Deprecated
     EntityPose etf$getPose();
+
+    @Nullable
+    String etf$getEntityKey();
+
 }

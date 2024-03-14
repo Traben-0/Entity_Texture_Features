@@ -317,59 +317,59 @@ public class ETFTexture {
 
     private void setupEmissives() {
 
-        if (ETF.config().getConfig().enableEmissiveTextures) {
-            ResourceManager resourceManager = MinecraftClient.getInstance().getResourceManager();
+        //if (ETF.config().getConfig().enableEmissiveTextures) {
+        ResourceManager resourceManager = MinecraftClient.getInstance().getResourceManager();
 
-            for (String possibleEmissiveSuffix :
-                    ETFManager.getInstance().EMISSIVE_SUFFIX_LIST) {
-                var vanillaR1 = getResourceOrModifyForTrims(resourceManager);
-                if (vanillaR1.isPresent()) {
-                    Identifier possibleEmissiveIdentifier = ETFUtils2.replaceIdentifier(thisIdentifier, ".png", possibleEmissiveSuffix + ".png");
-                    Optional<Resource> emissiveR1 = resourceManager.getResource(possibleEmissiveIdentifier);
-                    if (emissiveR1.isPresent()) {
+        for (String possibleEmissiveSuffix :
+                ETFManager.getInstance().EMISSIVE_SUFFIX_LIST) {
+            var vanillaR1 = getResourceOrModifyForTrims(resourceManager);
+            if (vanillaR1.isPresent()) {
+                Identifier possibleEmissiveIdentifier = ETFUtils2.replaceIdentifier(thisIdentifier, ".png", possibleEmissiveSuffix + ".png");
+                Optional<Resource> emissiveR1 = resourceManager.getResource(possibleEmissiveIdentifier);
+                if (emissiveR1.isPresent()) {
 
-                        String emissivePackName = emissiveR1.get().getResourcePackName();
+                    String emissivePackName = emissiveR1.get().getResourcePackName();
 //                        ObjectSet<String> packs = new ObjectOpenHashSet<>();
 //                        packs.add(emissivePackName);
 //                        packs.add(vanillaR1.get().getResourcePackName());
-                        if (emissivePackName.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(emissivePackName, vanillaR1.get().getResourcePackName()))) {
-                            //is higher or same pack
-                            emissiveIdentifier = possibleEmissiveIdentifier;
-                            Identifier possibleEmissiveBlinkIdentifier = ETFUtils2.replaceIdentifier(thisIdentifier, ".png", "_blink" + possibleEmissiveSuffix + ".png");
-                            Optional<Resource> emissiveBlinkR1 = resourceManager.getResource(possibleEmissiveBlinkIdentifier);
-                            if (emissiveBlinkR1.isPresent()) {
+                    if (emissivePackName.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(emissivePackName, vanillaR1.get().getResourcePackName()))) {
+                        //is higher or same pack
+                        emissiveIdentifier = possibleEmissiveIdentifier;
+                        Identifier possibleEmissiveBlinkIdentifier = ETFUtils2.replaceIdentifier(thisIdentifier, ".png", "_blink" + possibleEmissiveSuffix + ".png");
+                        Optional<Resource> emissiveBlinkR1 = resourceManager.getResource(possibleEmissiveBlinkIdentifier);
+                        if (emissiveBlinkR1.isPresent()) {
 
-                                String emissiveBlinkPackName = emissiveBlinkR1.get().getResourcePackName();
-                                //packs.clear();
-                                //packs.add(emissiveBlinkPackName);
-                                //packs.add(vanillaR1.get().getResourcePackName());
-                                if (emissiveBlinkPackName.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(emissiveBlinkPackName, vanillaR1.get().getResourcePackName()))) {
-                                    //is higher or same pack
-                                    emissiveBlinkIdentifier = possibleEmissiveBlinkIdentifier;
-                                    Identifier possibleEmissiveBlink2Identifier = ETFUtils2.replaceIdentifier(thisIdentifier, ".png", "_blink2" + possibleEmissiveSuffix + ".png");
-                                    Optional<Resource> emissiveBlink2R1 = resourceManager.getResource(possibleEmissiveBlink2Identifier);
-                                    if (emissiveBlink2R1.isPresent()) {
-                                        String emissiveBlink2PackName = emissiveBlink2R1.get().getResourcePackName();
-                                        // packs.clear();
-                                        // packs.add(emissiveBlink2PackName);
-                                        // packs.add(vanillaR1.get().getResourcePackName());
-                                        if (emissiveBlink2PackName.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(emissiveBlink2PackName, vanillaR1.get().getResourcePackName()))) {
-                                            //is higher or same pack
-                                            emissiveBlink2Identifier = possibleEmissiveBlink2Identifier;
-                                        }
+                            String emissiveBlinkPackName = emissiveBlinkR1.get().getResourcePackName();
+                            //packs.clear();
+                            //packs.add(emissiveBlinkPackName);
+                            //packs.add(vanillaR1.get().getResourcePackName());
+                            if (emissiveBlinkPackName.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(emissiveBlinkPackName, vanillaR1.get().getResourcePackName()))) {
+                                //is higher or same pack
+                                emissiveBlinkIdentifier = possibleEmissiveBlinkIdentifier;
+                                Identifier possibleEmissiveBlink2Identifier = ETFUtils2.replaceIdentifier(thisIdentifier, ".png", "_blink2" + possibleEmissiveSuffix + ".png");
+                                Optional<Resource> emissiveBlink2R1 = resourceManager.getResource(possibleEmissiveBlink2Identifier);
+                                if (emissiveBlink2R1.isPresent()) {
+                                    String emissiveBlink2PackName = emissiveBlink2R1.get().getResourcePackName();
+                                    // packs.clear();
+                                    // packs.add(emissiveBlink2PackName);
+                                    // packs.add(vanillaR1.get().getResourcePackName());
+                                    if (emissiveBlink2PackName.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(emissiveBlink2PackName, vanillaR1.get().getResourcePackName()))) {
+                                        //is higher or same pack
+                                        emissiveBlink2Identifier = possibleEmissiveBlink2Identifier;
                                     }
                                 }
                             }
-                            //emissive found and is valid
-                            eSuffix = possibleEmissiveSuffix;
-                            break;
                         }
+                        //emissive found and is valid
+                        eSuffix = possibleEmissiveSuffix;
+                        break;
                     }
                 }
             }
+        }
 //            if (isEmissive())
 //                createPatchedTextures();
-        }
+        //}
     }
 
     private void setupEnchants() {
@@ -702,7 +702,7 @@ public class ETFTexture {
         boolean didPatch = false;
 
         //patch out emissive textures for shader z fighting fix
-        if (this.emissiveIdentifier != null && ETF.config().getConfig().enableEmissiveTextures) {
+        if (this.emissiveIdentifier != null) {// && ETF.config().getConfig().enableEmissiveTextures) {
             //create patched texture
             NativeImage emissiveImage = ETFUtils2.getNativeImageElseNull(emissiveIdentifier);
             try {

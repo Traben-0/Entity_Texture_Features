@@ -35,7 +35,7 @@ public class ETFRenderContext {
     }
 
     public static boolean isAllowedToRenderLayerTextureModify() {
-        return allowRenderLayerTextureModify && ETF.config().getConfig().enableCustomTextures;
+        return allowRenderLayerTextureModify && ETF.config().getConfig().canDoCustomTextures();
     }
 
     public static void preventRenderLayerTextureModify() {
@@ -130,23 +130,26 @@ public class ETFRenderContext {
     public static RenderLayer modifyRenderLayerIfRequired(RenderLayer value) {
 
         if (isCurrentlyRenderingEntity()
-                && isAllowedToRenderLayerTextureModify()
-                && ETFManager.getInstance().ENTITY_TYPE_RENDER_LAYER.containsKey(currentEntity.etf$getType())
-                && !value.isOutline()
-                && value instanceof ETFRenderLayerWithTexture multiphase) {
+                && isAllowedToRenderLayerTextureModify()) {
+            var layer = ETF.config().getConfig().getRenderLayerOverride();
+            if (layer != null
+                    && !value.isOutline()
+                    && value instanceof ETFRenderLayerWithTexture multiphase) {
 
-            Optional<Identifier> texture = multiphase.etf$getId();
-            if (texture.isPresent()) {
-                preventRenderLayerTextureModify();
-                RenderLayer forReturn = switch (ETFManager.getInstance().ENTITY_TYPE_RENDER_LAYER.getInt(currentEntity.etf$getType())) {
-                    case 1 -> RenderLayer.getEntityTranslucent(texture.get());
-                    case 2 -> RenderLayer.getEntityTranslucentCull(texture.get());
-                    case 3 -> RenderLayer.getEndGateway();
-                    case 4 -> RenderLayer.getOutline(texture.get());
-                    default -> value;
-                };
-                allowRenderLayerTextureModify();
-                return forReturn;
+                Optional<Identifier> texture = multiphase.etf$getId();
+                if (texture.isPresent()) {
+                    preventRenderLayerTextureModify();
+
+                    RenderLayer forReturn = switch (layer) {
+                        case TRANSLUCENT -> RenderLayer.getEntityTranslucent(texture.get());
+                        case TRANSLUCENT_CULL -> RenderLayer.getEntityTranslucentCull(texture.get());
+                        case END -> RenderLayer.getEndGateway();
+                        case OUTLINE -> RenderLayer.getOutline(texture.get());
+                    };
+                    allowRenderLayerTextureModify();
+                    return forReturn;
+
+                }
             }
         }
         return value;

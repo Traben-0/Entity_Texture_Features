@@ -70,7 +70,7 @@ public abstract class RandomProperty {
      * which can get overridden by separate property settings.
      */
     public boolean canPropertyUpdate() {
-        return isPropertyUpdatable() || !ETF.config().getConfig().allowUnknownRestrictions;
+        return ETF.config().getConfig().canRestrict() && (isPropertyUpdatable() || !ETF.config().getConfig().allowUnknownRestrictions);
     }
 
     /**

@@ -26,8 +26,18 @@ public class TConfigEntryEnumSlider<E extends Enum<E>> extends TConfigEntryNullS
         widget = new EnumSliderWidget<>(getText(), getter.get(), getTooltip(), enumClass);
     }
 
-    public TConfigEntryEnumSlider(@Translatable String text, @Translatable String tooltip, Supplier<E> getter, Consumer<E> setter,@NotNull E defaultValue) {
+    public TConfigEntryEnumSlider(@Translatable String text, @Translatable String tooltip, Supplier<E> getter, Consumer<E> setter, @NotNull E defaultValue) {
         this(text, tooltip, getter, setter, defaultValue, defaultValue.getDeclaringClass());
+    }
+
+    @SuppressWarnings("unused")
+    public TConfigEntryEnumSlider(@Translatable String text, Supplier<E> getter, Consumer<E> setter, @NotNull E defaultValue) {
+        this(text, null, getter, setter, defaultValue, defaultValue.getDeclaringClass());
+    }
+
+    @SuppressWarnings("unused")
+    public TConfigEntryEnumSlider(@Translatable String text, Supplier<E> getter, Consumer<E> setter, E defaultValue, Class<E> enumClass) {
+        this(text, null, getter, setter, defaultValue, enumClass);
     }
 
     @Override
@@ -35,17 +45,6 @@ public class TConfigEntryEnumSlider<E extends Enum<E>> extends TConfigEntryNullS
         appendNullValue = true;
         return this;
     }
-
-    @SuppressWarnings("unused")
-    public TConfigEntryEnumSlider(@Translatable String text, Supplier<E> getter, Consumer<E> setter,@NotNull  E defaultValue) {
-        this(text, null, getter, setter, defaultValue, defaultValue.getDeclaringClass());
-    }
-    @SuppressWarnings("unused")
-    public TConfigEntryEnumSlider(@Translatable String text, Supplier<E> getter, Consumer<E> setter, E defaultValue, Class<E> enumClass) {
-        this(text, null, getter, setter, defaultValue, enumClass);
-    }
-
-
 
     @Override
     protected E getValueFromWidget() {
@@ -84,15 +83,15 @@ public class TConfigEntryEnumSlider<E extends Enum<E>> extends TConfigEntryNullS
             setValue(initialValue);
         }
 
+        @Nullable
+        private T getValue() {
+            if (getIndex() >= enumValues.length) return null;
+            return enumValues[getIndex()];
+        }
+
         private void setValue(T value) {
             this.value = value == null ? 1 : (double) value.ordinal() / getChoiceCount();
             updateMessage();
-        }
-
-        @Nullable
-        private T getValue(){
-            if (getIndex() >= enumValues.length) return null;
-            return enumValues[getIndex()];
         }
 
         @Override

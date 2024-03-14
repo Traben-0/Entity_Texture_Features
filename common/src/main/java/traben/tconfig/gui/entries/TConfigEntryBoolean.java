@@ -48,7 +48,6 @@ public class TConfigEntryBoolean extends TConfigEntryValue<Boolean> {
     }
 
 
-
     @Override
     void setWidgetToDefaultValue() {
         widget.value = defaultValue;

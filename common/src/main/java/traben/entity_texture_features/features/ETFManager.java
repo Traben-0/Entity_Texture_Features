@@ -1,6 +1,5 @@
 package traben.entity_texture_features.features;
 
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -42,9 +41,9 @@ public class ETFManager {
     public final ObjectOpenHashSet<String> EMISSIVE_SUFFIX_LIST = new ObjectOpenHashSet<>();
     public final ETFLruCache<UUID, ETFPlayerTexture> PLAYER_TEXTURE_MAP = new ETFLruCache<>();
     public final ArrayList<String> KNOWN_RESOURCEPACK_ORDER = new ArrayList<>();
-    public final Object2IntOpenHashMap<EntityType<?>> ENTITY_TYPE_VANILLA_BRIGHTNESS_OVERRIDE_VALUE = new Object2IntOpenHashMap<>();
+
     public final ObjectOpenHashSet<EntityType<?>> ENTITY_TYPE_IGNORE_PARTICLES = new ObjectOpenHashSet<>();
-    public final Object2IntOpenHashMap<EntityType<?>> ENTITY_TYPE_RENDER_LAYER = new Object2IntOpenHashMap<>();
+
     //this is a cache of all known ETFTexture versions of any existing resource-pack texture, used to prevent remaking objects
     public final Object2ReferenceOpenHashMap<@NotNull Identifier, @Nullable ETFTexture> ETF_TEXTURE_CACHE = new Object2ReferenceOpenHashMap<>();
     public final EntityIntLRU LAST_SUFFIX_OF_ENTITY = new EntityIntLRU();
@@ -101,8 +100,8 @@ public class ETFManager {
             ETFUtils2.logError("emissive suffixes could not be read: default emissive suffix '_e' used");
             EMISSIVE_SUFFIX_LIST.add("_e");
         }
-        ENTITY_TYPE_VANILLA_BRIGHTNESS_OVERRIDE_VALUE.defaultReturnValue(0);
-        ENTITY_TYPE_RENDER_LAYER.defaultReturnValue(0);
+
+
     }
 
     public static ETFManager getInstance() {
@@ -125,12 +124,13 @@ public class ETFManager {
     }
 
     public static ETFConfig.EmissiveRenderModes getEmissiveMode() {
-        if (ETF.config().getConfig().emissiveRenderMode == ETFConfig.EmissiveRenderModes.BRIGHT
+        var mode = ETF.config().getConfig().getEmissiveRenderMode();
+        if (mode == ETFConfig.EmissiveRenderModes.BRIGHT
                 && ETFRenderContext.getCurrentEntity() != null
                 && !ETFRenderContext.getCurrentEntity().etf$canBeBright()) {
             return ETFConfig.EmissiveRenderModes.DULL;
         }
-        return ETF.config().getConfig().emissiveRenderMode;
+        return mode;
     }
 
     public String getGeneralPrintout() {
@@ -200,15 +200,13 @@ public class ETFManager {
 
         if (props.containsKey("vanillaBrightnessOverride")) {
             String value = props.getProperty("vanillaBrightnessOverride").trim();
-            int tryNumber;
+
             try {
-                tryNumber = Integer.parseInt(value.replaceAll("\\D", ""));
-            } catch (NumberFormatException e) {
-                tryNumber = 0;
-            }
-            if (tryNumber >= 16) tryNumber = 15;
-            if (tryNumber < 0) tryNumber = 0;
-            ENTITY_TYPE_VANILLA_BRIGHTNESS_OVERRIDE_VALUE.put(entity.etf$getType(), tryNumber);
+                int tryNumber = Integer.parseInt(value.replaceAll("\\D", ""));
+                if (tryNumber >= 16) tryNumber = 15;
+                if (tryNumber < 0) tryNumber = 0;
+                ETF.config().getConfig().EntityLightOverrides.put(entity.etf$getEntityKey(), tryNumber);
+            } catch (NumberFormatException ignored) {}
         }
 
         if (props.containsKey("suppressParticles")
@@ -220,16 +218,16 @@ public class ETFManager {
             String layer = props.getProperty("entityRenderLayerOverride");
             switch (layer) {
                 case "translucent":
-                    ENTITY_TYPE_RENDER_LAYER.put(entity.etf$getType(), 1);
+                    ETF.config().getConfig().EntityRenderLayerOverrides.put(entity.etf$getEntityKey(), ETFConfig.RenderLayerOverride.TRANSLUCENT);
                     break;
                 case "translucent_cull":
-                    ENTITY_TYPE_RENDER_LAYER.put(entity.etf$getType(), 2);
+                    ETF.config().getConfig().EntityRenderLayerOverrides.put(entity.etf$getEntityKey(), ETFConfig.RenderLayerOverride.TRANSLUCENT_CULL);
                     break;
                 case "end_portal":
-                    ENTITY_TYPE_RENDER_LAYER.put(entity.etf$getType(), 3);
+                    ETF.config().getConfig().EntityRenderLayerOverrides.put(entity.etf$getEntityKey(), ETFConfig.RenderLayerOverride.END);
                     break;
                 case "outline":
-                    ENTITY_TYPE_RENDER_LAYER.put(entity.etf$getType(), 4);
+                    ETF.config().getConfig().EntityRenderLayerOverrides.put(entity.etf$getEntityKey(), ETFConfig.RenderLayerOverride.OUTLINE);
                     break;
             }
         }

@@ -3,6 +3,8 @@ package traben.tconfig.gui;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.screen.ScreenTexts;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import traben.tconfig.TConfig;
 import traben.tconfig.TConfigHandler;
@@ -17,6 +19,7 @@ public abstract class TConfigScreenMain extends TConfigScreen {
     protected final TConfigEntryCategory entries;
     protected final List<Identifier> modIcons;
     protected final Set<TConfigHandler<?>> configHandlers;
+    boolean haveInitConfigs = false;
 
     public TConfigScreenMain(final String title, final Screen parent, Set<TConfigHandler<?>> inputHandlers, List<TConfigEntry> defaultEntries) {
         super(title, parent, true);
@@ -28,8 +31,10 @@ public abstract class TConfigScreenMain extends TConfigScreen {
         this.undoChangesRunnable = entries::resetValuesToInitial;
     }
 
-    boolean haveInitConfigs = false;
-
+    @Override
+    protected Text getBackButtonText() {
+        return ScreenTexts.DONE;
+    }
 
     /**
      * This method reads the config handlers and adds their entries to the screen
@@ -37,12 +42,11 @@ public abstract class TConfigScreenMain extends TConfigScreen {
      * This method is called in the init method, not the actual initializer to not lag out mod menu with a big config load
      * and will only run once
      */
-    private void initConfigs(){
+    private void initConfigs() {
         if (haveInitConfigs) return;
         haveInitConfigs = true;
         for (TConfigHandler<?> configHandler : configHandlers) {
-            this.configHandlers.add(configHandler);
-            if (configHandler.doesGUI()){
+            if (configHandler.doesGUI()) {
                 TConfig config = configHandler.getConfig();
                 for (TConfigEntry value : config.getGUIOptions().getOptions().values()) {
                     entries.add(value);
@@ -72,12 +76,12 @@ public abstract class TConfigScreenMain extends TConfigScreen {
         initConfigs();
         super.init();
         var child = new TConfigEntryListWidget(
-                        (int) (this.width * 0.3),
-                        (int) (this.height * 0.7),
-                        (int) (this.height * 0.15),
-                        (int) (this.width * 0.6),
-                        24,
-                        entries.getOptions().values().toArray(new TConfigEntry[0]));
+                (int) (this.width * 0.3),
+                (int) (this.height * 0.7),
+                (int) (this.height * 0.15),
+                (int) (this.width * 0.6),
+                24,
+                entries.getOptions().values().toArray(new TConfigEntry[0]));
 
         this.addDrawableChild(child);
     }

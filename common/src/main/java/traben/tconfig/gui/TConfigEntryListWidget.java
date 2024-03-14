@@ -15,7 +15,7 @@ public class TConfigEntryListWidget extends EntryListWidget<TConfigEntryListWidg
                                   TConfigEntry... entries) {
         super(MinecraftClient.getInstance(), width, height, y, itemHeight);
         for (TConfigEntry option : entries) {
-            if (option == null || option.getWidget(0,0,0,0) == null) continue;
+            if (option == null || option.getWidget(0, 0, 0, 0) == null) continue;
             addEntry(option);
         }
         setRenderBackground(false);
@@ -35,7 +35,8 @@ public class TConfigEntryListWidget extends EntryListWidget<TConfigEntryListWidg
 
 
     @Override
-    protected void appendClickableNarrations(final NarrationMessageBuilder builder) {}
+    protected void appendClickableNarrations(final NarrationMessageBuilder builder) {
+    }
 
     @Override
     protected boolean isSelectButton(final int button) {
@@ -48,14 +49,13 @@ public class TConfigEntryListWidget extends EntryListWidget<TConfigEntryListWidg
     }
 
 
+    public abstract static class TConfigEntryForList extends Entry<TConfigEntryForList> {
 
+        private int lastx = 0;
+        private int lasty = 0;
+        private int lastwidth = 0;
+        private int lastheight = 0;
 
-    public abstract static class TConfigEntryForList extends Entry<TConfigEntryForList>{
-
-        private int lastx =0;
-        private int lasty =0;
-        private int lastwidth =0;
-        private int lastheight =0;
         @Override
         public void render(final DrawContext context, final int index, final int y, final int x, final int entryWidth, final int entryHeight, final int mouseX, final int mouseY, final boolean hovered, final float tickDelta) {
             Drawable widget = getWidget(x, y, entryWidth, entryHeight);
@@ -69,11 +69,10 @@ public class TConfigEntryListWidget extends EntryListWidget<TConfigEntryListWidg
         public abstract <T extends Element & Drawable & Selectable> T getWidget(int x, int y, int width, int height);
 
 
-
         @Override
         public boolean mouseClicked(final double mouseX, final double mouseY, final int button) {
             var widget = getWidget(lastx, lasty, lastwidth, lastheight);
-            if (widget == null || !widget.isMouseOver(mouseX,mouseY)) return false;
+            if (widget == null || !widget.isMouseOver(mouseX, mouseY)) return false;
             return widget.mouseClicked(mouseX, mouseY, button);
         }
     }

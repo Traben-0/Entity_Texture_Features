@@ -32,9 +32,8 @@ public class ETF {
 
 
     public static boolean SKIN_LAYERS_DETECTED = false;
-
-    private static TConfigHandler<ETFConfig> CONFIG = null;
     public static Set<TConfigHandler<?>> configHandlers = null;
+    private static TConfigHandler<ETFConfig> CONFIG = null;
 
     public static TConfigHandler<ETFConfig> config() {
         if (CONFIG == null) {
@@ -43,8 +42,6 @@ public class ETF {
         }
         return CONFIG;
     }
-
-
 
 
     public static void start() {

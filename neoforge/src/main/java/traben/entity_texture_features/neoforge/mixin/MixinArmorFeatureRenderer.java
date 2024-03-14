@@ -120,7 +120,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
 
             //if it is emmissive we need to create an identifier of the trim to render separately in iris
             if (!thisETF$TrimTexture.exists()
-                    && ETF.config().getConfig().enableEmissiveTextures
+                    && ETF.config().getConfig().canDoEmissiveTextures()
                     && thisETF$TrimTexture.isEmissive()
                     && ETF.IRIS_DETECTED) {
                 thisETF$TrimTexture.buildTrimTexture(trim, leggings);
@@ -140,7 +140,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
                 && etfVertexConsumer.etf$getProvider() != null){
             if(thisETF$TrimTexture.exists()){
                 return Objects.requireNonNull(etfVertexConsumer.etf$getProvider()).getBuffer(RenderLayer.getArmorCutoutNoCull(thisETF$TrimTexture.getTextureIdentifier(null)));
-            }else if (ETF.config().getConfig().enableEmissiveTextures && thisETF$TrimTexture.isEmissive() && ETF.IRIS_DETECTED){
+            }else if (ETF.config().getConfig().canDoEmissiveTextures() && thisETF$TrimTexture.isEmissive() && ETF.IRIS_DETECTED){
                 //iris is weird and will always render the armor trim atlas over everything else
                 // if for some reason no trim texture is present then just dont render it at all
                 // this is to favour packs with fully emissive trims :/
@@ -153,7 +153,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
     @Inject(method = "Lnet/minecraft/client/render/entity/feature/ArmorFeatureRenderer;renderTrim(Lnet/minecraft/item/ArmorMaterial;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/item/trim/ArmorTrim;Lnet/minecraft/client/model/Model;Z)V",
             at = @At(value = "TAIL"))
     private void etf$trimEmissive(ArmorMaterial arg, MatrixStack arg2, VertexConsumerProvider arg3, int i, ArmorTrim arg4, Model arg5, boolean bl, CallbackInfo ci) {
-        if(ETF.config().getConfig().enableEmissiveTextures && thisETF$TrimTexture != null){
+        if(ETF.config().getConfig().canDoEmissiveTextures() && thisETF$TrimTexture != null){
             //trimTexture.renderEmissive(matrices,vertexConsumers,model);
             Identifier emissive = thisETF$TrimTexture.getEmissiveIdentifierOfCurrentState();
             if (emissive != null) {

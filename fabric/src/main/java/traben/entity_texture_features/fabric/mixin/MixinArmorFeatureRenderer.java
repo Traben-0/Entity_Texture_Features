@@ -75,7 +75,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
             at = @At(value = "TAIL"))
     private void etf$applyEmissive(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ArmorItem item, A model, boolean secondTextureLayer, float red, float green, float blue, String overlay, CallbackInfo ci) {
         //UUID id = livingEntity.getUuid();
-        if (thisETFTexture != null && ETF.config().getConfig().enableEmissiveTextures) {
+        if (thisETFTexture != null && ETF.config().getConfig().canDoEmissiveTextures()) {
             Identifier emissive = thisETFTexture.getEmissiveIdentifierOfCurrentState();
             if (emissive != null) {
                 VertexConsumer textureVert;// = ItemRenderer.getArmorGlintConsumer(vertexConsumers, RenderLayer.getBeaconBeam(PATH_EMISSIVE_TEXTURE_IDENTIFIER.get(fileString), true), false, usesSecondLayer);
@@ -115,7 +115,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
 
             //if it is emmissive we need to create an identifier of the trim to render separately in iris
             if (!thisETFTrimTexture.exists()
-                    && ETF.config().getConfig().enableEmissiveTextures
+                    && ETF.config().getConfig().canDoEmissiveTextures()
                     && thisETFTrimTexture.isEmissive()
                     && ETF.IRIS_DETECTED) {
                 thisETFTrimTexture.buildTrimTexture(trim, leggings);
@@ -134,7 +134,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
                 && etfVertexConsumer.etf$getProvider() != null){
             if(thisETFTrimTexture.exists()){
                 return Objects.requireNonNull(etfVertexConsumer.etf$getProvider()).getBuffer(RenderLayer.getArmorCutoutNoCull(thisETFTrimTexture.getTextureIdentifier(null)));
-            }else if (thisETFTrimTexture.isEmissive() && ETF.config().getConfig().enableEmissiveTextures && ETF.IRIS_DETECTED){
+            }else if (thisETFTrimTexture.isEmissive() && ETF.config().getConfig().canDoEmissiveTextures() && ETF.IRIS_DETECTED){
                 //iris is weird and will always render the armor trim atlas over everything else
                 // if for some reason no trim texture is present then just dont render it at all
                 // this is to favour packs with fully emissive trims :/
@@ -147,7 +147,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
     @Inject(method = "renderTrim",
             at = @At(value = "TAIL"))
     private void etf$trimEmissive(ArmorMaterial material, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ArmorTrim trim, A model, boolean leggings, CallbackInfo ci) {
-        if(thisETFTrimTexture != null && ETF.config().getConfig().enableEmissiveTextures){
+        if(thisETFTrimTexture != null && ETF.config().getConfig().canDoEmissiveTextures()){
             //trimTexture.renderEmissive(matrices,vertexConsumers,model);
             Identifier emissive = thisETFTrimTexture.getEmissiveIdentifierOfCurrentState();
             if (emissive != null) {

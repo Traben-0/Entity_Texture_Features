@@ -23,11 +23,15 @@ public class TConfigScreen extends Screen {
         this.showBackButton = showBackButton;
     }
 
+    protected Text getBackButtonText() {
+        return ScreenTexts.BACK;
+    }
+
 
     @Override
     protected void init() {
         if (showBackButton) this.addDrawableChild(ButtonWidget.builder(
-                        ScreenTexts.BACK,
+                        getBackButtonText(),
                         (button) -> close())
                 .dimensions((int) (this.width * 0.7), (int) (this.height * 0.9), (int) (this.width * 0.2), 20)
                 .build());
@@ -83,7 +87,7 @@ public class TConfigScreen extends Screen {
     public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
         context.getMatrices().push();
 
-        int topy =(int) (height * 0.15);
+        int topy = (int) (height * 0.15);
         int bottomy = (int) (height * 0.85);
 
         context.getMatrices().translate(0, 0, -100);

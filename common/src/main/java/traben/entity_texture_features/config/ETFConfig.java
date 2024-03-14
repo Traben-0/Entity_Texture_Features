@@ -2,12 +2,16 @@ package traben.entity_texture_features.config;
 
 import com.demonwav.mcdev.annotations.Translatable;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.LightmapTextureManager;
+import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.entity.EntityType;
 import net.minecraft.registry.Registries;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.screens.skin.ETFConfigScreenSkinTool;
@@ -18,13 +22,13 @@ import traben.tconfig.TConfig;
 import traben.tconfig.gui.entries.*;
 
 import static traben.entity_texture_features.ETF.MOD_ID;
+import static traben.entity_texture_features.ETFApi.getBlockEntityTypeToTranslationKey;
 
 
 @SuppressWarnings("CanBeFinal")
 public final class ETFConfig extends TConfig {
 
     public IllegalPathMode illegalPathSupportMode = IllegalPathMode.None;
-
     public boolean enableCustomTextures = true;
     public boolean enableCustomBlockEntities = true;
     public UpdateFrequency textureUpdateFrequency_V2 = UpdateFrequency.Fast;
@@ -35,55 +39,99 @@ public final class ETFConfig extends TConfig {
     public boolean restrictDayTime = true;
     public boolean restrictMoonPhase = true;
     public boolean allowUnknownRestrictions = true;
-
-    public boolean canDoEmissiveTextures(EntityType<?> type) {
-        if (type != null && EntityEmissiveOverrides.containsKey(type.getTranslationKey())) {
-            return EntityEmissiveOverrides.getBoolean(type.getTranslationKey());
-        }
-        return enableEmissiveTextures;
-    }
-
-    public boolean canDoEmissiveTextures() {
-        if (ETFRenderContext.getCurrentEntity() == null)
-            return enableEmissiveTextures;
-        return canDoEmissiveTextures(ETFRenderContext.getCurrentEntity().etf$getType());
-    }
-
     public boolean enableEmissiveTextures = true;
-
     public boolean enableEnchantedTextures = true;
     public boolean enableEmissiveBlockEntities = true;
-
     public EmissiveRenderModes emissiveRenderMode = EmissiveRenderModes.DULL;
-
-
     public boolean alwaysCheckVanillaEmissiveSuffix = true;
-
     public boolean enableArmorAndTrims = true;
-
     public boolean skinFeaturesEnabled = true;
     public boolean skinFeaturesEnableTransparency = true;
     public boolean skinFeaturesEnableFullTransparency = false;
-
     public boolean tryETFTransparencyForAllSkins = false;
     public boolean enableEnemyTeamPlayersSkinFeatures = true;
     public boolean enableBlinking = true;
     public int blinkFrequency = 150;
     public int blinkLength = 1;
-
     public double advanced_IncreaseCacheSizeModifier = 1.0;
-
     public DebugLogMode debugLoggingMode = DebugLogMode.None;
     public boolean logTextureDataInitialization = false;
-
-
     public boolean hideConfigButton = false;
-
     public boolean disableVanillaDirectoryVariantTextures = false;
-
     public boolean use3DSkinLayerPatch = true;
-
     public boolean enableFullBodyWardenTextures = true;
+    public Entity2BooleanNullMap EntityEmissiveOverrides = new Entity2BooleanNullMap();
+    public Entity2BooleanNullMap EntityRandomOverrides = new Entity2BooleanNullMap();
+    public Entity2BooleanNullMap EntityRestrictOverrides = new Entity2BooleanNullMap();
+    public Entity2EnumNullMap<EmissiveRenderModes> EntityEmissiveBrightOverrides = new Entity2EnumNullMap<>();
+    public Entity2EnumNullMap<RenderLayerOverride> EntityRenderLayerOverrides = new Entity2EnumNullMap<>();
+
+    public Object2IntOpenHashMap<String> EntityLightOverrides = new Object2IntOpenHashMap<>();
+
+    public boolean canDoCustomTextures() {
+        if (EntityRandomOverrides.isEmpty() || ETFRenderContext.getCurrentEntity() == null)
+            return enableCustomTextures;
+        var key = ETFRenderContext.getCurrentEntity().etf$getEntityKey();
+        if (key != null && EntityRandomOverrides.containsKey(key)) {
+            return EntityRandomOverrides.getBoolean(key);
+        }
+        return enableCustomTextures;
+    }
+
+    public boolean canRestrict() {
+        if (EntityRestrictOverrides.isEmpty() || ETFRenderContext.getCurrentEntity() == null)
+            return true;
+        var key = ETFRenderContext.getCurrentEntity().etf$getEntityKey();
+        if (key != null && EntityRestrictOverrides.containsKey(key)) {
+            return EntityRestrictOverrides.getBoolean(key);
+        }
+        return true;
+    }
+
+    public boolean canDoEmissiveTextures() {
+        if (EntityEmissiveOverrides.isEmpty() || ETFRenderContext.getCurrentEntity() == null)
+            return enableEmissiveTextures;
+        var key = ETFRenderContext.getCurrentEntity().etf$getEntityKey();
+        if (key != null && EntityEmissiveOverrides.containsKey(key)) {
+            return EntityEmissiveOverrides.getBoolean(key);
+        }
+        return enableEmissiveTextures;
+    }
+
+    public EmissiveRenderModes getEmissiveRenderMode() {
+        if (EntityEmissiveBrightOverrides.isEmpty() || ETFRenderContext.getCurrentEntity() == null)
+            return emissiveRenderMode;
+        var key = ETFRenderContext.getCurrentEntity().etf$getEntityKey();
+        if (key != null && EntityEmissiveBrightOverrides.containsKey(key)) {
+            return EntityEmissiveBrightOverrides.get(key);
+        }
+        return emissiveRenderMode;
+    }
+
+    public RenderLayerOverride getRenderLayerOverride() {
+        if (EntityRenderLayerOverrides.isEmpty() || ETFRenderContext.getCurrentEntity() == null)
+            return null;
+        var key = ETFRenderContext.getCurrentEntity().etf$getEntityKey();
+        if (key != null && EntityRenderLayerOverrides.containsKey(key)) {
+            return EntityRenderLayerOverrides.get(key);
+        }
+        return null;
+    }
+
+    public int getLightOverride(int light) {
+        if (EntityLightOverrides.isEmpty() || ETFRenderContext.getCurrentEntity() == null)
+            return light;
+        var key = ETFRenderContext.getCurrentEntity().etf$getEntityKey();
+        if (key != null && EntityLightOverrides.containsKey(key)) {
+            //noinspection deprecation
+            int lightETF = MathHelper.clamp(EntityLightOverrides.get(key),0,15) ;
+            int block = LightmapTextureManager.getBlockLightCoordinates(light);
+            int sky = LightmapTextureManager.getSkyLightCoordinates(light);
+            return LightmapTextureManager.pack(Math.max(block,sky), lightETF);
+        }
+        return light;
+    }
+
 
 
     @Override
@@ -127,7 +175,7 @@ public final class ETFConfig extends TConfig {
                                         () -> alwaysCheckVanillaEmissiveSuffix, aBoolean -> alwaysCheckVanillaEmissiveSuffix = aBoolean, true),
                                 new TConfigEntryBoolean("config.entity_texture_features.armor_enable", "config.entity_texture_features.armor_enable.tooltip",
                                         () -> enableArmorAndTrims, aBoolean -> enableArmorAndTrims = aBoolean, true),
-                                new TConfigEntryBoolean( "config.entity_texture_features.enchanted_enable", "config.entity_texture_features.enchanted_enable.tooltip",
+                                new TConfigEntryBoolean("config.entity_texture_features.enchanted_enable", "config.entity_texture_features.enchanted_enable.tooltip",
                                         () -> enableEnchantedTextures, aBoolean -> enableEnchantedTextures = aBoolean, true)
                         ), new TConfigEntryCategory("config.entity_texture_features.player_skin_settings.title").add(
                                 new TConfigEntryBoolean("config.entity_texture_features.player_skin_features.title", "config.entity_texture_features.player_skin_features.tooltip",
@@ -176,119 +224,59 @@ public final class ETFConfig extends TConfig {
     }
 
     private TConfigEntryCategory getEntitySettings() {
-        var category = new TConfigEntryCategory("Per entity overrides");
+        var category = new TConfigEntryCategory("config.entity_features.per_entity_settings");
         try {
             Registries.ENTITY_TYPE.forEach(entityType -> {
                 if (entityType == EntityType.PLAYER) return;
                 String translationKey = entityType.getTranslationKey();
                 var entityCategory = new TConfigEntryCategory(translationKey);
-                entityCategory.add(
-                        new TConfigEntryEnumButton<>("emissive textures", "tooltip",
-                                () -> EntityEmissiveOverrides.getNullable(translationKey), overrideBooleanType -> EntityEmissiveOverrides.putNullable(translationKey,overrideBooleanType), null,OverrideBooleanType.class),
-                        new TConfigEntryEnumButton<>("random textures", "tooltip",
-                                () -> EntityRandomOverrides.getNullable(translationKey), overrideBooleanType -> EntityRandomOverrides.putNullable(translationKey,overrideBooleanType), null,OverrideBooleanType.class),
-                        new TConfigEntryEnumButton<>("property restrictions", "tooltip",
-                                () -> EntityRestrictOverrides.getNullable(translationKey), overrideBooleanType -> EntityRestrictOverrides.putNullable(translationKey,overrideBooleanType), null,OverrideBooleanType.class),
-                        new TConfigEntryEnumButton<>("emissive mode override", "tooltip",
-                                () -> EntityEmissiveBrightOverrides.getNullable(translationKey),
-                                mode -> EntityEmissiveBrightOverrides.putNullable(translationKey,  mode),
-                                null,EmissiveRenderModes.class)
-                        );
+                addEntityConfigs(entityCategory, translationKey);
                 category.add(entityCategory);
             });
-        }catch (Exception e){e.printStackTrace();}
+            var warn = new TConfigEntryText("config.entity_features.per_entity_settings.blocks");
+            var warn2 = new TConfigEntryText("config.entity_features.per_entity_settings.blocks2");
+            category.add(warn, warn2);
+            BlockEntityRendererFactories.FACTORIES.keySet().forEach(entityType -> {
+                String translationKey = getBlockEntityTypeToTranslationKey(entityType);
+                var entityCategory = new TConfigEntryCategory(translationKey).add(warn, warn2);
+                addEntityConfigs(entityCategory, translationKey);
+                category.add(entityCategory);
+            });
+        } catch (Exception e) {
+            //noinspection CallToPrintStackTrace
+            e.printStackTrace();
+        }
         return category;
     }
 
-    public Entity2BooleanNullMap EntityEmissiveOverrides = new Entity2BooleanNullMap();
-    public Entity2BooleanNullMap EntityRandomOverrides = new Entity2BooleanNullMap();
-    public Entity2BooleanNullMap EntityRestrictOverrides = new Entity2BooleanNullMap();
-    public Entity2EnumNullMap<EmissiveRenderModes> EntityEmissiveBrightOverrides = new Entity2EnumNullMap<>();
-
-    public static class Entity2BooleanNullMap extends  Object2BooleanOpenHashMap<String>{
-        public Entity2BooleanNullMap(){
-            super();
-            defaultReturnValue(false);
-        }
-
-
-        public void putNullable(final String s, final OverrideBooleanType v) {
-            if (v == null) {
-                removeBoolean(s);
-                return;
-            }
-            super.put(s, v == OverrideBooleanType.TRUE);
-        }
-
-        public OverrideBooleanType getNullable(final String s){
-            if (getBoolean(s)) {
-                return OverrideBooleanType.TRUE;
-            } else {
-                if (containsKey(s)) {
-                    return OverrideBooleanType.FALSE;
-                } else {
-                    return null;
-                }
-            }
-
-        }
+    private void addEntityConfigs(final TConfigEntryCategory entityCategory, final String translationKey) {
+        entityCategory.add(
+                new TConfigEntryEnumButton<>("config.entity_texture_features.enable_emissive_textures.title", "config.entity_texture_features.enable_emissive_textures.tooltip",
+                        () -> EntityEmissiveOverrides.getNullable(translationKey), overrideBooleanType -> EntityEmissiveOverrides.putNullable(translationKey, overrideBooleanType), null, OverrideBooleanType.class),
+                new TConfigEntryEnumButton<>("config.entity_texture_features.enable_custom_textures.title", "config.entity_texture_features.enable_custom_textures.tooltip",
+                        () -> EntityRandomOverrides.getNullable(translationKey), overrideBooleanType -> EntityRandomOverrides.putNullable(translationKey, overrideBooleanType), null, OverrideBooleanType.class),
+                new TConfigEntryEnumButton<>("config.entity_features.per_entity_settings.restrict", "config.entity_features.per_entity_settings.restrict.tooltip",
+                        () -> EntityRestrictOverrides.getNullable(translationKey), overrideBooleanType -> EntityRestrictOverrides.putNullable(translationKey, overrideBooleanType), null, OverrideBooleanType.class),
+                new TConfigEntryEnumButton<>("config.entity_texture_features.emissive_mode.title", "config.entity_texture_features.emissive_mode.tooltip",
+                        () -> EntityEmissiveBrightOverrides.getNullable(translationKey),
+                        mode -> EntityEmissiveBrightOverrides.putNullable(translationKey, mode),
+                        null, EmissiveRenderModes.class),
+                new TConfigEntryEnumButton<>("config.entity_features.per_entity_settings.layer", "config.entity_features.per_entity_settings.layer.tooltip",
+                        () -> EntityRenderLayerOverrides.getNullable(translationKey),
+                        layer -> EntityRenderLayerOverrides.putNullable(translationKey, layer),
+                        null, RenderLayerOverride.class),
+                new TConfigEntryInt("config.entity_features.per_entity_settings.light", "config.entity_features.per_entity_settings.light.tooltip",
+                        () -> EntityLightOverrides.getOrDefault(translationKey,-1),
+                        light -> {
+                            if (light == -1){
+                                EntityLightOverrides.removeInt(translationKey);
+                                return;
+                            }
+                            //noinspection deprecation
+                            EntityLightOverrides.put(translationKey, light);
+                        },-1, -1, 15,true,false)
+        );
     }
-
-    public static class Entity2EnumNullMap<E extends Enum<E>> extends Object2ObjectOpenHashMap<String,E> {
-
-
-        public void putNullable(final String s, final E v) {
-            if (v == null) {
-                remove(s);
-                return;
-            }
-            super.put(s, v);
-        }
-
-        public E getNullable(final String s){
-            if (containsKey(s)) {
-                return get(s);
-            } else {
-                return null;
-            }
-        }
-    }
-    public enum OverrideBooleanType{
-        TRUE,FALSE;
-
-        public static void setInMap(OverrideBooleanType type, String key, Object2BooleanOpenHashMap<String> map){
-            if (type == null) {
-                map.removeBoolean(key);
-                return;
-            }
-            switch (type){
-                case TRUE -> map.put(key, true);
-                case FALSE -> map.put(key, false);
-            }
-        }
-
-        public static OverrideBooleanType getFromMap(String key, Object2BooleanOpenHashMap<String> map){
-            if (map.getBoolean(key)) {
-                return TRUE;
-            } else {
-                if (map.containsKey(key)) {
-                    return FALSE;
-                } else {
-                    return null;
-                }
-            }
-        }
-
-        @Override
-        public String toString() {
-            return switch (this){
-                case TRUE -> ScreenTexts.ON.getString();
-                case FALSE -> ScreenTexts.OFF.getString();
-            };
-        }
-    }
-
-
 
     private TConfigEntry getPlayerSkinEditorButton() {
         boolean condition1 = ETF.config().getConfig().skinFeaturesEnabled;
@@ -327,6 +315,19 @@ public final class ETFConfig extends TConfig {
     public Identifier getModIcon() {
         return new Identifier(MOD_ID, "textures/gui/icon.png");
     }
+
+    public enum OverrideBooleanType {
+        TRUE, FALSE;
+
+        @Override
+        public String toString() {
+            return switch (this) {
+                case TRUE -> ScreenTexts.ON.getString();
+                case FALSE -> ScreenTexts.OFF.getString();
+            };
+        }
+    }
+
 
     @SuppressWarnings({"unused"})
     public enum UpdateFrequency {
@@ -410,4 +411,75 @@ public final class ETFConfig extends TConfig {
         }
 
     }
+
+    public enum RenderLayerOverride {
+        TRANSLUCENT("config.entity_texture_features.render_layer.translucent"),
+        TRANSLUCENT_CULL("config.entity_texture_features.render_layer.translucent_cull"),
+        END("config.entity_texture_features.render_layer.end"),
+        OUTLINE("config.entity_texture_features.render_layer.outline"),
+        ;
+
+        private final String key;
+
+        RenderLayerOverride(@Translatable String key) {
+            this.key = key;
+        }
+
+        @Override
+        public String toString() {
+            return ETFVersionDifferenceHandler.getTextFromTranslation(key).getString();
+        }
+
+    }
+
+    public static class Entity2BooleanNullMap extends Object2BooleanOpenHashMap<String> {
+        public Entity2BooleanNullMap() {
+            super();
+            defaultReturnValue(false);
+        }
+
+
+        public void putNullable(final String s, final OverrideBooleanType v) {
+            if (v == null) {
+                removeBoolean(s);
+                return;
+            }
+            super.put(s, v == OverrideBooleanType.TRUE);
+        }
+
+        public OverrideBooleanType getNullable(final String s) {
+            if (getBoolean(s)) {
+                return OverrideBooleanType.TRUE;
+            } else {
+                if (containsKey(s)) {
+                    return OverrideBooleanType.FALSE;
+                } else {
+                    return null;
+                }
+            }
+
+        }
+    }
+
+    public static class Entity2EnumNullMap<E extends Enum<E>> extends Object2ObjectOpenHashMap<String, E> {
+
+
+        public void putNullable(final String s, final E v) {
+            if (v == null) {
+                remove(s);
+                return;
+            }
+            super.put(s, v);
+        }
+
+        public E getNullable(final String s) {
+            if (containsKey(s)) {
+                return get(s);
+            } else {
+                return null;
+            }
+        }
+    }
+
+
 }

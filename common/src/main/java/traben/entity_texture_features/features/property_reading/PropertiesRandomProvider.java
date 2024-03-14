@@ -29,11 +29,8 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
 
     protected final String packname;
     protected EntityRandomSeedFunction entityRandomSeedFunction = (entity) -> entity.etf$getUuid().hashCode();
-    protected BiConsumer<ETFEntity,RandomPropertyRule> onMeetsRule = (entity,rule) -> {};
-    public void setOnMeetsRuleHook(BiConsumer<ETFEntity,RandomPropertyRule> onMeetsRule) {
-        if (onMeetsRule != null)
-            this.onMeetsRule = onMeetsRule;
-    }
+    protected BiConsumer<ETFEntity, RandomPropertyRule> onMeetsRule = (entity, rule) -> {
+    };
 
     private PropertiesRandomProvider(Identifier propertiesFileIdentifier, List<RandomPropertyRule> propertyRules) {
         this.propertyRules = propertyRules;
@@ -141,6 +138,12 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
         return SimpleIntegerArrayProperty.getGenericIntegerSplitWithRanges(props, num, "weights");
     }
 
+    @SuppressWarnings("unused")
+    public void setOnMeetsRuleHook(BiConsumer<ETFEntity, RandomPropertyRule> onMeetsRule) {
+        if (onMeetsRule != null)
+            this.onMeetsRule = onMeetsRule;
+    }
+
     public String getPackName() {
         return packname;
     }
@@ -175,7 +178,7 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
             //return andNothingElse
             for (RandomPropertyRule rule : propertyRules) {
                 if (rule.doesEntityMeetConditionsOfThisCase(entityToBeTested, true, entityCanUpdate)) {
-                    onMeetsRule.accept(entityToBeTested,rule);
+                    onMeetsRule.accept(entityToBeTested, rule);
                     return rule.getVariantSuffixFromThisCase(entityRandomSeedFunction.toInt(entityToBeTested));
                 }
             }
@@ -184,7 +187,7 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
             int foundSuffix = 0;
             for (RandomPropertyRule rule : propertyRules) {
                 if (rule.doesEntityMeetConditionsOfThisCase(entityToBeTested, false, entityCanUpdate)) {
-                    onMeetsRule.accept(entityToBeTested,rule);
+                    onMeetsRule.accept(entityToBeTested, rule);
                     foundSuffix = rule.getVariantSuffixFromThisCase(entityRandomSeedFunction.toInt(entityToBeTested));
                     break;
                 }

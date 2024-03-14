@@ -34,7 +34,6 @@ public abstract class TConfigEntry extends TConfigEntryListWidget.TConfigEntryFo
     }
 
 
-
     public TConfigEntry setEnabled(boolean enabled) {
         var widget = getWidget(0, 0, 0, 0);
         if (widget instanceof ClickableWidget w) {

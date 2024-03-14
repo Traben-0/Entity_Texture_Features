@@ -21,16 +21,16 @@ public abstract class ETFTextureVariator {
 
 
     public static @NotNull ETFTextureVariator of(@NotNull Identifier vanillaIdentifier) {
-        if (ETF.config().getConfig().enableCustomTextures) {
-            ETFApi.ETFVariantSuffixProvider variantProvider = ETFApi.ETFVariantSuffixProvider.getVariantProviderOrNull(
-                    ETFUtils2.replaceIdentifier(vanillaIdentifier, ".png", ".properties"),
-                    vanillaIdentifier,
-                    "skins", "textures"
-            );
-            if (variantProvider != null) {
-                return new ETFTextureMultiple(vanillaIdentifier, variantProvider);
-            }
+        //if (ETF.config().getConfig().enableCustomTextures) {
+        ETFApi.ETFVariantSuffixProvider variantProvider = ETFApi.ETFVariantSuffixProvider.getVariantProviderOrNull(
+                ETFUtils2.replaceIdentifier(vanillaIdentifier, ".png", ".properties"),
+                vanillaIdentifier,
+                "skins", "textures"
+        );
+        if (variantProvider != null) {
+            return new ETFTextureMultiple(vanillaIdentifier, variantProvider);
         }
+        //}
         return new ETFTextureSingleton(vanillaIdentifier);
     }
 
@@ -48,7 +48,7 @@ public abstract class ETFTextureVariator {
                     "\n§e-----------ETF Debug Printout-------------§r" +
                             "\n" + ETFManager.getInstance().getGeneralPrintout() +
                             "\n§eEntity:§r" +
-                            "\n§6 - type:§r " + (entity.etf$getType() != null ? entity.etf$getType(). getTranslationKey() : null) +
+                            "\n§6 - type:§r " + (entity.etf$getType() != null ? entity.etf$getType().getTranslationKey() : null) +
                             "\n§6 - texture:§r " + output +
                             "\n§6 - can_update_variant:§r " + (this instanceof ETFTextureMultiple multi && multi.suffixProvider.entityCanUpdate(entity.etf$getUuid())) +
 //                            "\n§6 - last matching rule:§r " + ETFManager.getInstance().LAST_MET_RULE_INDEX.getInt(entity.etf$getUuid()) +
