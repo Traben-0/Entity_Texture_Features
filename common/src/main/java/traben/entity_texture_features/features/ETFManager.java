@@ -205,7 +205,7 @@ public class ETFManager {
                 int tryNumber = Integer.parseInt(value.replaceAll("\\D", ""));
                 if (tryNumber >= 16) tryNumber = 15;
                 if (tryNumber < 0) tryNumber = 0;
-                ETF.config().getConfig().EntityLightOverrides.put(entity.etf$getEntityKey(), tryNumber);
+                ETF.config().getConfig().entityLightOverrides.put(entity.etf$getEntityKey(), tryNumber);
             } catch (NumberFormatException ignored) {}
         }
 
@@ -218,16 +218,16 @@ public class ETFManager {
             String layer = props.getProperty("entityRenderLayerOverride");
             switch (layer) {
                 case "translucent":
-                    ETF.config().getConfig().EntityRenderLayerOverrides.put(entity.etf$getEntityKey(), ETFConfig.RenderLayerOverride.TRANSLUCENT);
+                    ETF.config().getConfig().entityRenderLayerOverrides.put(entity.etf$getEntityKey(), ETFConfig.RenderLayerOverride.TRANSLUCENT);
                     break;
                 case "translucent_cull":
-                    ETF.config().getConfig().EntityRenderLayerOverrides.put(entity.etf$getEntityKey(), ETFConfig.RenderLayerOverride.TRANSLUCENT_CULL);
+                    ETF.config().getConfig().entityRenderLayerOverrides.put(entity.etf$getEntityKey(), ETFConfig.RenderLayerOverride.TRANSLUCENT_CULL);
                     break;
                 case "end_portal":
-                    ETF.config().getConfig().EntityRenderLayerOverrides.put(entity.etf$getEntityKey(), ETFConfig.RenderLayerOverride.END);
+                    ETF.config().getConfig().entityRenderLayerOverrides.put(entity.etf$getEntityKey(), ETFConfig.RenderLayerOverride.END);
                     break;
                 case "outline":
-                    ETF.config().getConfig().EntityRenderLayerOverrides.put(entity.etf$getEntityKey(), ETFConfig.RenderLayerOverride.OUTLINE);
+                    ETF.config().getConfig().entityRenderLayerOverrides.put(entity.etf$getEntityKey(), ETFConfig.RenderLayerOverride.OUTLINE);
                     break;
             }
         }
@@ -312,7 +312,7 @@ public class ETFManager {
             //ETFRenderContext.preventRenderLayerTextureModify();
             return etfPlayerTexture;
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             return null;
         }
     }

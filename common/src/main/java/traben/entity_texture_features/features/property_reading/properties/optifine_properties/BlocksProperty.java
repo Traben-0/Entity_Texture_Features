@@ -9,7 +9,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFApi;
 import traben.entity_texture_features.features.property_reading.properties.generic_properties.StringArrayOrRegexProperty;
 import traben.entity_texture_features.utils.ETFEntity;
@@ -133,15 +132,9 @@ public class BlocksProperty extends StringArrayOrRegexProperty {
         return null;
     }
 
-    @Override
-    public boolean canPropertyUpdate() {
-        return isPropertyUpdatable();
-    }
 
-    @Override
-    public boolean isPropertyUpdatable() {
-        return !ETF.config().getConfig().restrictBlock;
-    }
+
+ 
 
     @Override
     public @NotNull String[] getPropertyIds() {

@@ -205,10 +205,7 @@ public class NBTProperty extends RandomProperty {
         return false;
     }
 
-    @Override
-    public boolean isPropertyUpdatable() {
-        return true;
-    }
+ 
 
     @Override
     public @NotNull String[] getPropertyIds() {

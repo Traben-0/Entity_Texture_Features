@@ -24,10 +24,7 @@ public class SecondProperty extends SimpleIntegerArrayProperty {
         }
     }
 
-    @Override
-    public boolean isPropertyUpdatable() {
-        return true;
-    }
+ 
 
     @Override
     public @NotNull String[] getPropertyIds() {

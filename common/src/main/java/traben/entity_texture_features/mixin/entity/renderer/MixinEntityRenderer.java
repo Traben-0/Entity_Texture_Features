@@ -15,6 +15,9 @@ public abstract class MixinEntityRenderer<T extends Entity> {
     private void etf$vanillaLightOverrideCancel(T entity, float tickDelta, CallbackInfoReturnable<Integer> cir) {
         //if need to override vanilla brightness behaviour
         //change return with overridden light value still respecting higher block and sky lights
-        cir.setReturnValue(ETF.config().getConfig().getLightOverride(cir.getReturnValue()));
+        cir.setReturnValue(ETF.config().getConfig().getLightOverride(
+                entity,
+                tickDelta,
+                cir.getReturnValue()));
     }
 }

@@ -60,10 +60,7 @@ public class DimensionProperty extends StringArrayOrRegexProperty {
         return output;
     }
 
-    @Override
-    public boolean isPropertyUpdatable() {
-        return true;
-    }
+ 
 
     @Override
     public @NotNull String[] getPropertyIds() {

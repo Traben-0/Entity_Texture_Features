@@ -1,7 +1,6 @@
 package traben.entity_texture_features.features.property_reading.properties;
 
 import org.jetbrains.annotations.NotNull;
-import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.utils.ETFEntity;
 import traben.entity_texture_features.utils.EntityBooleanLRU;
 
@@ -69,17 +68,17 @@ public abstract class RandomProperty {
      * @return true if this property can be considered to update over time. factoring in the unknown restriction setting
      * which can get overridden by separate property settings.
      */
-    public boolean canPropertyUpdate() {
-        return ETF.config().getConfig().canRestrict() && (isPropertyUpdatable() || !ETF.config().getConfig().allowUnknownRestrictions);
+    public final boolean canPropertyUpdate() {
+        return canUpdate;
     }
 
-    /**
-     * Flags whether this property can be considered to update over time.
-     * If not then we can optimize checks for each entity after the first.
-     *
-     * @return the boolean
-     */
-    protected abstract boolean isPropertyUpdatable();
+    public void setCanUpdate(final boolean canUpdate) {
+        this.canUpdate = canUpdate;
+    }
+
+    private boolean canUpdate = true;
+
+
 
     /**
      * Returns a String[] of all valid property id's these will be the text before the first full stop in the properties file.

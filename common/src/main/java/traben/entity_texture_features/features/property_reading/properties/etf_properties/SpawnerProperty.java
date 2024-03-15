@@ -34,10 +34,7 @@ public class SpawnerProperty extends BooleanProperty {
     }
 
 
-    @Override
-    public boolean isPropertyUpdatable() {
-        return false;
-    }
+ 
 
     @Override
     public @NotNull String[] getPropertyIds() {

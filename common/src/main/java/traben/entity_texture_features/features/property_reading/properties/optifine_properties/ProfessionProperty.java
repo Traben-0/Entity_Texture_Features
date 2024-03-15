@@ -92,10 +92,7 @@ public class ProfessionProperty extends StringArrayOrRegexProperty {
     }
 
 
-    @Override
-    public boolean isPropertyUpdatable() {
-        return true;
-    }
+ 
 
     @Override
     public @NotNull String[] getPropertyIds() {

@@ -12,7 +12,7 @@ public class WeekDayProperty extends SimpleIntegerArrayProperty {
 
 
     protected WeekDayProperty(Properties properties, int propertyNum) throws RandomPropertyException {
-        super(getGenericIntegerSplitWithRanges(properties, propertyNum, "weekDay"));
+        super(getGenericIntegerSplitWithRanges(properties, propertyNum, "weekDay","dayWeek"));
     }
 
 
@@ -24,14 +24,11 @@ public class WeekDayProperty extends SimpleIntegerArrayProperty {
         }
     }
 
-    @Override
-    public boolean isPropertyUpdatable() {
-        return false;
-    }
+ 
 
     @Override
     public @NotNull String[] getPropertyIds() {
-        return new String[]{"weekDay"};
+        return new String[]{"weekDay","dayWeek"};
     }
 
     @Override

@@ -32,10 +32,7 @@ public class ClientPlayerProperty extends BooleanProperty {
                 && entity.getUuid().equals(MinecraftClient.getInstance().player.getUuid());
     }
 
-    @Override
-    public boolean isPropertyUpdatable() {
-        return false;
-    }
+ 
 
     @Override
     public @NotNull String[] getPropertyIds() {

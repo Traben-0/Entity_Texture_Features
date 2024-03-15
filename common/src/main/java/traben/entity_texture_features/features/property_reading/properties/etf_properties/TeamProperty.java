@@ -1,4 +1,4 @@
-package traben.entity_texture_features.features.property_reading.properties.optifine_properties;
+package traben.entity_texture_features.features.property_reading.properties.etf_properties;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,10 +32,7 @@ public class TeamProperty extends StringArrayOrRegexProperty {
         return null;
     }
 
-    @Override
-    public boolean isPropertyUpdatable() {
-        return true;
-    }
+ 
 
     @Override
     public @NotNull String[] getPropertyIds() {

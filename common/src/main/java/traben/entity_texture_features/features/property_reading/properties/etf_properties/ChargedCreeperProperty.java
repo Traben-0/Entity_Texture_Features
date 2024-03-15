@@ -31,10 +31,7 @@ public class ChargedCreeperProperty extends BooleanProperty {
         return null;
     }
 
-    @Override
-    public boolean isPropertyUpdatable() {
-        return true;
-    }
+ 
 
     @Override
     public @NotNull String[] getPropertyIds() {

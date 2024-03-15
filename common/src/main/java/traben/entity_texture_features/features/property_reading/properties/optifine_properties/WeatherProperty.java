@@ -2,7 +2,6 @@ package traben.entity_texture_features.features.property_reading.properties.opti
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.features.property_reading.properties.generic_properties.StringArrayOrRegexProperty;
 import traben.entity_texture_features.utils.ETFEntity;
 
@@ -40,15 +39,8 @@ public class WeatherProperty extends StringArrayOrRegexProperty {
         return null;
     }
 
-    @Override
-    public boolean canPropertyUpdate() {
-        return isPropertyUpdatable();
-    }
 
-    @Override
-    public boolean isPropertyUpdatable() {
-        return !ETF.config().getConfig().restrictWeather;
-    }
+
 
     @Override
     public @NotNull String[] getPropertyIds() {

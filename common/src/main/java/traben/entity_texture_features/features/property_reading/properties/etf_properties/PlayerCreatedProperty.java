@@ -33,10 +33,7 @@ public class PlayerCreatedProperty extends BooleanProperty {
     }
 
 
-    @Override
-    public boolean isPropertyUpdatable() {
-        return false;
-    }
+ 
 
     @Override
     public @NotNull String[] getPropertyIds() {
