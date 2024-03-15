@@ -211,7 +211,7 @@ public final class ETFConfig extends TConfig {
                                 new TConfigEntryInt("config.entity_texture_features.blink_frequency.title", "config.entity_texture_features.blink_frequency.tooltip",
                                         () -> blinkFrequency, aInt -> blinkFrequency = aInt, 150, 1, 1024),
                                 new TConfigEntryInt("config.entity_texture_features.blink_length.title", "config.entity_texture_features.blink_length.tooltip",
-                                        () -> blinkLength, aInt -> blinkLength = aInt, 1, 1, 2)
+                                        () -> blinkLength, aInt -> blinkLength = aInt, 1, 1, 20)
 
                         ), new TConfigEntryCategory("config.entity_texture_features.debug_screen.title").add(
                                 new TConfigEntryEnumButton<>("config.entity_texture_features.debug_logging_mode.title", "config.entity_texture_features.debug_logging_mode.tooltip",

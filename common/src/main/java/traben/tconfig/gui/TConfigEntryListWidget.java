@@ -7,7 +7,6 @@ import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.EntryListWidget;
-import org.jetbrains.annotations.Nullable;
 import traben.tconfig.gui.entries.TConfigEntry;
 
 public class TConfigEntryListWidget extends EntryListWidget<TConfigEntryListWidget.TConfigEntryForList> {
@@ -43,11 +42,20 @@ public class TConfigEntryListWidget extends EntryListWidget<TConfigEntryListWidg
         return true;
     }
 
-    @Override
-    public void setSelected(@Nullable final TConfigEntryListWidget.TConfigEntryForList entry) {
 
-    }
 
+
+
+
+//    @Override
+//    public boolean mouseDragged(final double mouseX, final double mouseY, final int button, final double deltaX, final double deltaY) {
+//        System.out.println("drag1");
+//        var hovered = getHoveredEntry();
+//        if (hovered != null) {
+//            return hovered.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+//        }
+//        return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+//    }
 
     public abstract static class TConfigEntryForList extends Entry<TConfigEntryForList> {
 
@@ -74,6 +82,27 @@ public class TConfigEntryListWidget extends EntryListWidget<TConfigEntryListWidg
             var widget = getWidget(lastx, lasty, lastwidth, lastheight);
             if (widget == null || !widget.isMouseOver(mouseX, mouseY)) return false;
             return widget.mouseClicked(mouseX, mouseY, button);
+        }
+
+        @Override
+        public boolean mouseDragged(final double mouseX, final double mouseY, final int button, final double deltaX, final double deltaY) {
+            var widget = getWidget(lastx, lasty, lastwidth, lastheight);
+            if (widget == null || !widget.isMouseOver(mouseX, mouseY)) return false;
+            return widget.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+        }
+
+        @Override
+        public void setFocused(final boolean focused) {
+            var widget = getWidget(lastx, lasty, lastwidth, lastheight);
+            if (widget == null) return;
+            widget.setFocused(focused);
+        }
+
+        @Override
+        public boolean mouseReleased(final double mouseX, final double mouseY, final int button) {
+            var widget = getWidget(lastx, lasty, lastwidth, lastheight);
+            if (widget == null || !widget.isMouseOver(mouseX, mouseY)) return false;
+            return widget.mouseReleased(mouseX, mouseY, button);
         }
     }
 }
