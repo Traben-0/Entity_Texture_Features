@@ -3,11 +3,9 @@ package traben.tconfig.gui.entries;
 import com.demonwav.mcdev.annotations.Translatable;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.Drawable;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 import traben.tconfig.gui.TConfigScreenList;
@@ -47,9 +45,9 @@ public class TConfigEntryCategory extends TConfigEntry {
     }
 
     @Override
-    public <T extends Element & Drawable & Selectable> T getWidget(final int x, final int y, final int width, final int height) {
+    public ClickableWidget getWidget(final int x, final int y, final int width, final int height) {
         //noinspection unchecked
-        return (T) new CategoryButton(x, y, width, height, getText(),
+        return new CategoryButton(x, y, width, height, getText(),
                 (button) -> MinecraftClient.getInstance().setScreen(getScreen()));
     }
 
@@ -138,7 +136,7 @@ public class TConfigEntryCategory extends TConfigEntry {
         }
 
         @Override
-        public <T extends Element & Drawable & Selectable> T getWidget(int x, int y, int width, int height) {
+        public ClickableWidget getWidget(int x, int y, int width, int height) {
             return null;
         }
 

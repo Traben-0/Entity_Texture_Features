@@ -1,11 +1,9 @@
 package traben.tconfig.gui.entries;
 
 import com.demonwav.mcdev.annotations.Translatable;
-import net.minecraft.client.gui.Drawable;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
@@ -41,10 +39,10 @@ public class TConfigEntryBoolean extends TConfigEntryValue<Boolean> {
     }
 
     @Override
-    public <T extends Element & Drawable & Selectable> T getWidget(final int x, final int y, final int width, final int height) {
+    public ClickableWidget getWidget(final int x, final int y, final int width, final int height) {
         widget.setDimensionsAndPosition(width, height, x, y);
         //noinspection unchecked
-        return (T) widget;
+        return  widget;
     }
 
 

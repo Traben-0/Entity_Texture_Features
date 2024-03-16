@@ -1,9 +1,7 @@
 package traben.tconfig.gui.entries;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.Drawable;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.Selectable;
+import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.TextWidget;
 
 public class TConfigEntryText extends TConfigEntry {
@@ -16,10 +14,9 @@ public class TConfigEntryText extends TConfigEntry {
     }
 
     @Override
-    public <T extends Element & Drawable & Selectable> T getWidget(final int x, final int y, final int width, final int height) {
+    public ClickableWidget getWidget(final int x, final int y, final int width, final int height) {
         widget.setDimensionsAndPosition(width, height, x, y);
-        //noinspection unchecked
-        return (T) widget;
+        return widget;
     }
 
     @Override

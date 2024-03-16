@@ -2,11 +2,9 @@ package traben.tconfig.gui.entries;
 
 import com.demonwav.mcdev.annotations.Translatable;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.Drawable;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.ClickableWidget;
 
 import java.util.function.Supplier;
 
@@ -20,6 +18,8 @@ public class TConfigEntryCustomScreenOpener extends TConfigEntry {
     private final boolean screenIsSingleton;
     private Screen screen = null;
 
+    private final ButtonWidget button;
+
     public TConfigEntryCustomScreenOpener(@Translatable final String text, @Translatable final String tooltip, Supplier<Screen> screenSupplier, Supplier<Boolean> savedSupplier, Runnable setValuesDefault, Runnable resetValuesToInitial, boolean screenIsSingleton) {
         super(text, tooltip);
         this.screenSupplier = screenSupplier;
@@ -27,6 +27,8 @@ public class TConfigEntryCustomScreenOpener extends TConfigEntry {
         this.screenIsSingleton = screenIsSingleton;
         this.setValuesDefault = setValuesDefault;
         this.resetValuesToInitial = resetValuesToInitial;
+        button = ButtonWidget.builder(getText(), (button) -> MinecraftClient.getInstance().setScreen(getScreen())
+        ).dimensions(0,0,0,0).tooltip(getTooltip()).build();
     }
 
     @SuppressWarnings("unused")
@@ -55,10 +57,9 @@ public class TConfigEntryCustomScreenOpener extends TConfigEntry {
     }
 
     @Override
-    public <T extends Element & Drawable & Selectable> T getWidget(final int x, final int y, final int width, final int height) {
-        //noinspection unchecked
-        return (T) ButtonWidget.builder(getText(), (button) -> MinecraftClient.getInstance().setScreen(getScreen())
-        ).dimensions(x, y, width, height).tooltip(getTooltip()).build();
+    public ClickableWidget getWidget(final int x, final int y, final int width, final int height) {
+        button.setDimensionsAndPosition(width, height, x, y);
+        return button;
     }
 
     @Override

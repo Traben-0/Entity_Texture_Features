@@ -1,9 +1,6 @@
 package traben.tconfig.gui.entries;
 
 import com.demonwav.mcdev.annotations.Translatable;
-import net.minecraft.client.gui.Drawable;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
@@ -36,9 +33,7 @@ public abstract class TConfigEntry extends TConfigEntryListWidget.TConfigEntryFo
 
     public TConfigEntry setEnabled(boolean enabled) {
         var widget = getWidget(0, 0, 0, 0);
-        if (widget instanceof ClickableWidget w) {
-            w.active = enabled;
-        }
+        widget.active = enabled;
         return this;
     }
 
@@ -60,7 +55,7 @@ public abstract class TConfigEntry extends TConfigEntryListWidget.TConfigEntryFo
         }
 
         @Override
-        public <T extends Element & Drawable & Selectable> T getWidget(int x, int y, int width, int height) {
+        public ClickableWidget getWidget(int x, int y, int width, int height) {
             return null;
         }
 
