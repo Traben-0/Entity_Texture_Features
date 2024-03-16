@@ -48,7 +48,7 @@ public class TConfigEntryEnumSlider<E extends Enum<E>> extends TConfigEntryNullS
 
     @Override
     protected E getValueFromWidget() {
-        return widget.enumValues[widget.getIndex()];
+        return widget.getValue();
     }
 
     @Override

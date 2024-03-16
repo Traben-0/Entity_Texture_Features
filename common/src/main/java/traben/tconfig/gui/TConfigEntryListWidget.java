@@ -7,6 +7,7 @@ import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.EntryListWidget;
+import org.jetbrains.annotations.Nullable;
 import traben.tconfig.gui.entries.TConfigEntry;
 
 public class TConfigEntryListWidget extends EntryListWidget<TConfigEntryListWidget.TConfigEntryForList> {
@@ -43,19 +44,10 @@ public class TConfigEntryListWidget extends EntryListWidget<TConfigEntryListWidg
     }
 
 
+    @Override
+    public void setSelected(@Nullable final TConfigEntryListWidget.TConfigEntryForList entry) {
 
-
-
-
-//    @Override
-//    public boolean mouseDragged(final double mouseX, final double mouseY, final int button, final double deltaX, final double deltaY) {
-//        System.out.println("drag1");
-//        var hovered = getHoveredEntry();
-//        if (hovered != null) {
-//            return hovered.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
-//        }
-//        return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
-//    }
+    }
 
     public abstract static class TConfigEntryForList extends Entry<TConfigEntryForList> {
 

@@ -268,18 +268,20 @@ public final class ETFConfig extends TConfig {
 
     private void addEntityConfigs(final TConfigEntryCategory entityCategory, final String translationKey) {
         entityCategory.add(
-                new TConfigEntryEnumButton<>("config.entity_texture_features.enable_emissive_textures.title", "config.entity_texture_features.enable_emissive_textures.tooltip",
-                        () -> entityEmissiveOverrides.getNullable(translationKey), overrideBooleanType -> entityEmissiveOverrides.putNullable(translationKey, overrideBooleanType), null, OverrideBooleanType.class),
-                new TConfigEntryEnumButton<>("config.entity_texture_features.enable_custom_textures.title", "config.entity_texture_features.enable_custom_textures.tooltip",
-                        () -> entityRandomOverrides.getNullable(translationKey), overrideBooleanType -> entityRandomOverrides.putNullable(translationKey, overrideBooleanType), null, OverrideBooleanType.class),
-                new TConfigEntryEnumButton<>("config.entity_texture_features.emissive_mode.title", "config.entity_texture_features.emissive_mode.tooltip",
-                        () -> entityEmissiveBrightOverrides.getNullable(translationKey),
-                        mode -> entityEmissiveBrightOverrides.putNullable(translationKey, mode),
-                        null, EmissiveRenderModes.class),
-                new TConfigEntryEnumButton<>("config.entity_features.per_entity_settings.layer", "config.entity_features.per_entity_settings.layer.tooltip",
-                        () -> entityRenderLayerOverrides.getNullable(translationKey),
-                        layer -> entityRenderLayerOverrides.putNullable(translationKey, layer),
-                        null, RenderLayerOverride.class),
+                new TConfigEntryCategory("config.entity_features.textures_main").add(
+                        new TConfigEntryEnumButton<>("config.entity_texture_features.enable_emissive_textures.title", "config.entity_texture_features.enable_emissive_textures.tooltip",
+                                () -> entityEmissiveOverrides.getNullable(translationKey), overrideBooleanType -> entityEmissiveOverrides.putNullable(translationKey, overrideBooleanType), null, OverrideBooleanType.class),
+                        new TConfigEntryEnumButton<>("config.entity_texture_features.enable_custom_textures.title", "config.entity_texture_features.enable_custom_textures.tooltip",
+                                () -> entityRandomOverrides.getNullable(translationKey), overrideBooleanType -> entityRandomOverrides.putNullable(translationKey, overrideBooleanType), null, OverrideBooleanType.class),
+                        new TConfigEntryEnumButton<>("config.entity_texture_features.emissive_mode.title", "config.entity_texture_features.emissive_mode.tooltip",
+                                () -> entityEmissiveBrightOverrides.getNullable(translationKey),
+                                mode -> entityEmissiveBrightOverrides.putNullable(translationKey, mode),
+                                null, EmissiveRenderModes.class),
+                        new TConfigEntryEnumButton<>("config.entity_features.per_entity_settings.layer", "config.entity_features.per_entity_settings.layer.tooltip",
+                                () -> entityRenderLayerOverrides.getNullable(translationKey),
+                                layer -> entityRenderLayerOverrides.putNullable(translationKey, layer),
+                                null, RenderLayerOverride.class)
+                ),
                 new TConfigEntryInt("config.entity_features.per_entity_settings.light", "config.entity_features.per_entity_settings.light.tooltip",
                         () -> entityLightOverrides.getOrDefault(translationKey,-1),
                         light -> {
