@@ -9,6 +9,7 @@ import traben.tconfig.gui.TConfigEntryListWidget;
 
 public abstract class TConfigEntry extends TConfigEntryListWidget.TConfigEntryForList {
 
+    public final static String CHANGED_COLOR = "§a";
     private final Text text;
     private final Tooltip tooltip;
 
@@ -46,7 +47,6 @@ public abstract class TConfigEntry extends TConfigEntryListWidget.TConfigEntryFo
     abstract void resetValuesToInitial();
 
     public static class Empty extends TConfigEntry {
-        public final static String CHANGED_COLOR = "§a";
 
         @SuppressWarnings("unused")
         public Empty() {

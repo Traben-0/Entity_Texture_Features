@@ -1,5 +1,6 @@
 package traben.entity_texture_features.features.property_reading.properties;
 
+import com.demonwav.mcdev.annotations.Translatable;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,52 +24,52 @@ public class RandomProperties {
     static {
         register(
                 //ETF properties
-                RandomPropertyFactory.of("angry",AngryProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("creeperCharged",ChargedCreeperProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("distance",DistanceToPlayerProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("items",ItemProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("jumpStrength",true,JumpProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("llamaInventory",true,LlamaInventoryProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("maxHealth",true,MaxHealthProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("moving",MovingProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("hiddenGene",true,PandaGeneProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("playerCreated",true,PlayerCreatedProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("screamingGoat",true,ScreamingGoatProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("maxSpeed",true,SpeedProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("isSpawner",true,SpawnerProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("dimension",true,DimensionProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("light",LightProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("variant",true,VariantProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("isCreative",CreativeProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("isTeammate",TeammateProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("isClientPlayer",true,ClientPlayerProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("teams",TeamProperty::getPropertyOrNull),
+                RandomPropertyFactory.of("angry","config.entity_texture_features.property_explanation.angry",AngryProperty::getPropertyOrNull),
+                RandomPropertyFactory.of("creeperCharged","config.entity_texture_features.property_explanation.creeper",ChargedCreeperProperty::getPropertyOrNull),
+                RandomPropertyFactory.of("distance","config.entity_texture_features.property_explanation.distance",DistanceToPlayerProperty::getPropertyOrNull),
+                RandomPropertyFactory.of("items","config.entity_texture_features.property_explanation.items",ItemProperty::getPropertyOrNull),
+                RandomPropertyFactory.of("jumpStrength","config.entity_texture_features.property_explanation.jump",JumpProperty::getPropertyOrNull,true),
+                RandomPropertyFactory.of("llamaInventory","config.entity_texture_features.property_explanation.llama",LlamaInventoryProperty::getPropertyOrNull,true),
+                RandomPropertyFactory.of("maxHealth","config.entity_texture_features.property_explanation.max_health",MaxHealthProperty::getPropertyOrNull,true),
+                RandomPropertyFactory.of("moving","config.entity_texture_features.property_explanation.moving",MovingProperty::getPropertyOrNull),
+                RandomPropertyFactory.of("hiddenGene","config.entity_texture_features.property_explanation.gene",PandaGeneProperty::getPropertyOrNull,true),
+                RandomPropertyFactory.of("playerCreated","config.entity_texture_features.property_explanation.created",PlayerCreatedProperty::getPropertyOrNull,true),
+                RandomPropertyFactory.of("screamingGoat","config.entity_texture_features.property_explanation.goat",ScreamingGoatProperty::getPropertyOrNull,true),
+                RandomPropertyFactory.of("maxSpeed","config.entity_texture_features.property_explanation.speed",SpeedProperty::getPropertyOrNull,true),
+                RandomPropertyFactory.of("isSpawner","config.entity_texture_features.property_explanation.spawner",SpawnerProperty::getPropertyOrNull,true),
+                RandomPropertyFactory.of("dimension","config.entity_texture_features.property_explanation.dimension",DimensionProperty::getPropertyOrNull,true),
+                RandomPropertyFactory.of("light","config.entity_texture_features.property_explanation.light",LightProperty::getPropertyOrNull),
+                RandomPropertyFactory.of("variant","config.entity_texture_features.property_explanation.variant",VariantProperty::getPropertyOrNull,true),
+                RandomPropertyFactory.of("isCreative","config.entity_texture_features.property_explanation.creative",CreativeProperty::getPropertyOrNull),
+                RandomPropertyFactory.of("isTeammate","config.entity_texture_features.property_explanation.teammate",TeammateProperty::getPropertyOrNull),
+                RandomPropertyFactory.of("isClientPlayer","config.entity_texture_features.property_explanation.client",ClientPlayerProperty::getPropertyOrNull,true),
+                RandomPropertyFactory.of("teams","config.entity_texture_features.property_explanation.team",TeamProperty::getPropertyOrNull),
 
                 //etf externals
-                RandomPropertyFactory.of("hour",HourProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("minute",MinuteProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("monthDay",true,MonthDayProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("month",true,MonthProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("second",SecondProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("weekDay",true,WeekDayProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("yearDay",true,YearDayProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("year",true,YearProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("language",true,LanguageProperty::getPropertyOrNull),
+                RandomPropertyFactory.of("hour","config.entity_texture_features.property_explanation.hour",HourProperty::getPropertyOrNull),
+                RandomPropertyFactory.of("minute","config.entity_texture_features.property_explanation.min",MinuteProperty::getPropertyOrNull),
+                RandomPropertyFactory.of("monthDay","config.entity_texture_features.property_explanation.month_day",MonthDayProperty::getPropertyOrNull,true),
+                RandomPropertyFactory.of("month","config.entity_texture_features.property_explanation.month",MonthProperty::getPropertyOrNull,true),
+                RandomPropertyFactory.of("second","config.entity_texture_features.property_explanation.sec",SecondProperty::getPropertyOrNull),
+                RandomPropertyFactory.of("weekDay","config.entity_texture_features.property_explanation.week_day",WeekDayProperty::getPropertyOrNull,true),
+                RandomPropertyFactory.of("yearDay","config.entity_texture_features.property_explanation.year_day",YearDayProperty::getPropertyOrNull,true),
+                RandomPropertyFactory.of("year","config.entity_texture_features.property_explanation.year",YearProperty::getPropertyOrNull,true),
+                RandomPropertyFactory.of("language","config.entity_texture_features.property_explanation.lang",LanguageProperty::getPropertyOrNull,true),
 
                 //OptiFine properties
-                RandomPropertyFactory.of("baby",BabyProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("biomes",true,BiomeProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("blocks",true,BlocksProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("colors",ColorProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("health",HealthProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("heights",true,HeightProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("moonPhase",true,MoonPhaseProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("name",NameProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("nbt",NBTProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("professions",ProfessionProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("sizes",SizeProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("dayTime",true,TimeOfDayProperty::getPropertyOrNull),
-                RandomPropertyFactory.of("weather",true,WeatherProperty::getPropertyOrNull)
+                RandomPropertyFactory.of("baby","config.entity_texture_features.property_explanation.baby",BabyProperty::getPropertyOrNull),
+                RandomPropertyFactory.of("biomes","config.entity_texture_features.property_explanation.biome", BiomeProperty::getPropertyOrNull,true),
+                RandomPropertyFactory.of("blocks","config.entity_texture_features.property_explanation.block",BlocksProperty::getPropertyOrNull,true),
+                RandomPropertyFactory.of("colors","config.entity_texture_features.property_explanation.color",ColorProperty::getPropertyOrNull),
+                RandomPropertyFactory.of("health","config.entity_texture_features.property_explanation.health",HealthProperty::getPropertyOrNull),
+                RandomPropertyFactory.of("heights","config.entity_texture_features.property_explanation.height",HeightProperty::getPropertyOrNull,true),
+                RandomPropertyFactory.of("moonPhase","config.entity_texture_features.property_explanation.moon",MoonPhaseProperty::getPropertyOrNull,true),
+                RandomPropertyFactory.of("name","config.entity_texture_features.property_explanation.name",NameProperty::getPropertyOrNull),
+                RandomPropertyFactory.of("nbt","config.entity_texture_features.property_explanation.nbt",NBTProperty::getPropertyOrNull),
+                RandomPropertyFactory.of("professions","config.entity_texture_features.property_explanation.profession",ProfessionProperty::getPropertyOrNull),
+                RandomPropertyFactory.of("sizes","config.entity_texture_features.property_explanation.size",SizeProperty::getPropertyOrNull),
+                RandomPropertyFactory.of("dayTime","config.entity_texture_features.property_explanation.day_time",TimeOfDayProperty::getPropertyOrNull,true),
+                RandomPropertyFactory.of("weather","config.entity_texture_features.property_explanation.weather",WeatherProperty::getPropertyOrNull,true)
         );
     }
 
@@ -110,12 +111,14 @@ public class RandomProperties {
     public interface RandomPropertyFactory {
 
         static @NotNull RandomPropertyFactory of(@NotNull String id,
+                                                 @NotNull @Translatable String explanationKey,
                                                  @NotNull BiFunction <Properties, Integer, RandomProperty> factory) {
-            return of(id, false, factory);
+            return of(id,explanationKey, factory, false);
         }
         static @NotNull RandomPropertyFactory of(@NotNull String id,
-                                                 boolean isSpawnLocked,
-                                                 @NotNull BiFunction <Properties, Integer, RandomProperty> factory) {
+                                                 @NotNull @Translatable String explanationKey,
+                                                 @NotNull BiFunction <Properties, Integer, RandomProperty> factory,
+                                                 boolean isSpawnLocked) {
             return new RandomPropertyFactory() {
                 @Override
                 public RandomProperty getPropertyOrNull(Properties properties, int propertyNum) {
@@ -145,6 +148,11 @@ public class RandomProperties {
                 public boolean updatesOverTime() {
                     return !isSpawnLocked;
                 }
+
+                @Override
+                public @NotNull String getExplanationTranslationKey() {
+                    return explanationKey;
+                }
             };
         }
         @Nullable RandomProperty getPropertyOrNull(@SuppressWarnings("unused") Properties properties, @SuppressWarnings("unused") int propertyNum);
@@ -152,6 +160,8 @@ public class RandomProperties {
         @NotNull String getPropertyId();
 
         boolean updatesOverTime();
+
+        @NotNull String getExplanationTranslationKey();
 
     }
 

@@ -318,7 +318,7 @@ public final class ETFConfig extends TConfig {
                             },
                             defaultNoUpdate)
 
-            );
+            ).addAll(TConfigEntryText.fromMultipleLines(propertySettings.getExplanationTranslationKey(), 200, TConfigEntryText.TextAlignment.LEFT));
         });
         return list;
     }

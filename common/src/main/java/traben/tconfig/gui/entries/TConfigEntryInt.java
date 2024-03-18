@@ -105,7 +105,7 @@ public class TConfigEntryInt extends TConfigEntryValue<Integer> {
         @Override
         protected void updateMessage() {
             snapValueToNearestIndex();
-            setMessage(Text.of(title + (getValueRoundedToIntBetweenMinMax() != getter.get() ? Empty.CHANGED_COLOR : "") + (isOff() ? ScreenTexts.OFF.getString() : getValueRoundedToIntBetweenMinMax())));
+            setMessage(Text.of(title + (getValueRoundedToIntBetweenMinMax() != getter.get() ? TConfigEntry.CHANGED_COLOR : "") + (isOff() ? ScreenTexts.OFF.getString() : getValueRoundedToIntBetweenMinMax())));
         }
 
         @Override

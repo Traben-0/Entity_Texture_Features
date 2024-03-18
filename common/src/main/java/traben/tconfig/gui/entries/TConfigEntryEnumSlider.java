@@ -97,7 +97,7 @@ public class TConfigEntryEnumSlider<E extends Enum<E>> extends TConfigEntryNullS
             value = getIndex() / (double) getChoiceCount();
 
             T value2 = getValue();
-            setMessage(Text.of(title + (value2 != getter.get() ? Empty.CHANGED_COLOR : "") + (value2 == null ? "---" : value2)));
+            setMessage(Text.of(title + (value2 != getter.get() ? TConfigEntry.CHANGED_COLOR : "") + (value2 == null ? "---" : value2)));
         }
 
         @Override

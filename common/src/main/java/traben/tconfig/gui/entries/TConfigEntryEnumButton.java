@@ -106,7 +106,7 @@ public class TConfigEntryEnumButton<E extends Enum<E>> extends TConfigEntryNullS
 
         protected void updateMessage() {
             T value = getValue();
-            setMessage(Text.of(title + (value != getter.get() ? Empty.CHANGED_COLOR : "") +
+            setMessage(Text.of(title + (value != getter.get() ? TConfigEntry.CHANGED_COLOR : "") +
                     (value == null ? "---" : value)));
 
         }

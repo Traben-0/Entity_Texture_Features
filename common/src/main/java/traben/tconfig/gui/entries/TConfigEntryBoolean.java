@@ -92,7 +92,7 @@ public class TConfigEntryBoolean extends TConfigEntryValue<Boolean> {
         }
 
         private void updateMessage() {
-            setMessage(Text.of(title + (value != getter.get() ? Empty.CHANGED_COLOR : "") + type.get(value)));
+            setMessage(Text.of(title + (value != getter.get() ? TConfigEntry.CHANGED_COLOR : "") + type.get(value)));
         }
 
         @Override

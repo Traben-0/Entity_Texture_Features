@@ -13,8 +13,6 @@ import traben.tconfig.gui.TConfigScreenList;
 import java.util.Collection;
 import java.util.function.Supplier;
 
-import static traben.tconfig.gui.entries.TConfigEntry.Empty.CHANGED_COLOR;
-
 public class TConfigEntryCategory extends TConfigEntry {
 
     private final Object2ObjectLinkedOpenHashMap<String, TConfigEntry> options = new Object2ObjectLinkedOpenHashMap<>();
