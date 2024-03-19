@@ -15,7 +15,7 @@ import java.util.List;
 
 public class TConfigEntryText extends TConfigEntry {
 
-    private final TextWidget widget;
+    protected final TextWidget widget;
 
     public TConfigEntryText(final String text, TextAlignment alignment) {
         super(text, null);
@@ -53,10 +53,11 @@ public class TConfigEntryText extends TConfigEntry {
         }
     }
 
-    public static Collection<TConfigEntry> fromMultipleLines(@Translatable String translationKey, int width) {
-        return fromMultipleLines(translationKey, width, TextAlignment.CENTER);
+    @SuppressWarnings("unused")
+    public static Collection<TConfigEntry> fromLongOrMultilineTranslation(@Translatable String translationKey, int width) {
+        return fromLongOrMultilineTranslation(translationKey, width, TextAlignment.CENTER);
     }
-    public static List<TConfigEntry> fromMultipleLines(@Translatable String translationKey, int width, TextAlignment alignment) {
+    public static List<TConfigEntry> fromLongOrMultilineTranslation(@Translatable String translationKey, int width, TextAlignment alignment) {
 
         var translated = ETFVersionDifferenceHandler.getTextFromTranslation(translationKey);
         var lines = MinecraftClient.getInstance().textRenderer.getTextHandler().wrapLines(translated, width, Style.EMPTY);
@@ -99,19 +100,18 @@ public class TConfigEntryText extends TConfigEntry {
 
     }
 
-    public static class TwoLines extends TConfigEntry {
-        private final TextWidget widget1;
-        private final TextWidget widget2;
+    public static class TwoLines extends TConfigEntryText {
 
+        protected final TextWidget widget2;
+
+        @SuppressWarnings("unused")
         public TwoLines(final String text1, final String text2) {
             this(text1, text2, TextAlignment.CENTER);
         }
 
         public TwoLines(final String text1, final String text2, TextAlignment alignment) {
-            super(text1, null);
-            widget1 = new TextWidget(getText(), MinecraftClient.getInstance().textRenderer);
+            super(text1, alignment);
             widget2 = new TextWidget(ETFVersionDifferenceHandler.getTextFromTranslation(text2), MinecraftClient.getInstance().textRenderer);
-            alignment.align(widget1);
             alignment.align(widget2);
             if (!widget2.getMessage().getString().contains("§"))
                 widget2.setTextColor(0xCCCCCC);//off-white for better visual separation
@@ -119,37 +119,16 @@ public class TConfigEntryText extends TConfigEntry {
 
         @Override
         public ClickableWidget getWidget(final int x, final int y, final int width, final int height) {
-            widget1.setDimensionsAndPosition(width, height/2, x, y);
+            widget.setDimensionsAndPosition(width, height/2, x, y);
             widget2.setDimensionsAndPosition(width, height/2, x, y + height/2+2);
-            return widget1;
+            return widget;
         }
 
         @Override
         public void render(final DrawContext context, final int index, final int y, final int x, final int entryWidth, final int entryHeight, final int mouseX, final int mouseY, final boolean hovered, final float tickDelta) {
             lastWidgetRendered = getWidget(x, y, entryWidth, entryHeight);
-            widget1.render(context, mouseX, mouseY, tickDelta);
+            widget.render(context, mouseX, mouseY, tickDelta);
             widget2.render(context, mouseX, mouseY, tickDelta);
-
-        }
-
-        @Override
-        boolean hasChangedFromInitial() {
-            return false;
-        }
-
-        @Override
-        boolean saveValuesToConfig() {
-            return false;
-        }
-
-        @Override
-        void setValuesToDefault() {
-
-        }
-
-        @Override
-        void resetValuesToInitial() {
-
         }
     }
 }

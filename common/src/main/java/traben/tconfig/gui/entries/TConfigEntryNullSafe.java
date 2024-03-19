@@ -13,5 +13,6 @@ public abstract class TConfigEntryNullSafe<E extends Enum<E>> extends TConfigEnt
         return getValueFromWidget() != (getter.get());
     }
 
+    @SuppressWarnings("unused")
     public abstract TConfigEntryNullSafe<E> allowNullValue();
 }
