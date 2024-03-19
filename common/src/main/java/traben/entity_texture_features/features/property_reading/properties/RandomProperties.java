@@ -117,14 +117,17 @@ public class RandomProperties {
         }
         static @NotNull RandomPropertyFactory of(@NotNull String id,
                                                  @NotNull @Translatable String explanationKey,
-                                                 @NotNull BiFunction <Properties, Integer, RandomProperty> factory,
+                                                 @NotNull BiFunction <Properties, Integer, @Nullable RandomProperty> factory,
                                                  boolean isSpawnLocked) {
             return new RandomPropertyFactory() {
                 @Override
                 public RandomProperty getPropertyOrNull(Properties properties, int propertyNum) {
                     if (ETF.config().getConfig().isPropertyDisabled(this)) return null;
                     if (properties == null ) return null;
-                    var property = factory.apply(properties, propertyNum);
+
+                    RandomProperty property = factory.apply(properties, propertyNum);
+                    if (property == null) return null;
+
                     property.setCanUpdate(ETF.config().getConfig().canPropertyUpdate(this));
                     return property;
                 }
