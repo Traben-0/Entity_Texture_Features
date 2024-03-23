@@ -59,7 +59,7 @@ public class RandomProperties {
                 //OptiFine properties
                 RandomPropertyFactory.of("baby","config.entity_texture_features.property_explanation.baby",BabyProperty::getPropertyOrNull),
                 RandomPropertyFactory.of("biomes","config.entity_texture_features.property_explanation.biome", BiomeProperty::getPropertyOrNull,true),
-                RandomPropertyFactory.of("blocks","config.entity_texture_features.property_explanation.block",BlocksProperty::getPropertyOrNull,true),
+                RandomPropertyFactory.of("blocks","config.entity_texture_features.property_explanation.block",BlocksProperty::getPropertyOrNull),
                 RandomPropertyFactory.of("colors","config.entity_texture_features.property_explanation.color",ColorProperty::getPropertyOrNull),
                 RandomPropertyFactory.of("health","config.entity_texture_features.property_explanation.health",HealthProperty::getPropertyOrNull),
                 RandomPropertyFactory.of("heights","config.entity_texture_features.property_explanation.height",HeightProperty::getPropertyOrNull,true),

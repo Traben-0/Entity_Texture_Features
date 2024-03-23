@@ -29,7 +29,7 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
 
     protected final String packname;
     protected EntityRandomSeedFunction entityRandomSeedFunction = (entity) -> entity.etf$getUuid().hashCode();
-    protected BiConsumer<ETFEntity, RandomPropertyRule> onMeetsRule = (entity, rule) -> {
+    protected BiConsumer<ETFEntity, @Nullable RandomPropertyRule> onMeetsRule = (entity, rule) -> {
     };
 
     private PropertiesRandomProvider(Identifier propertiesFileIdentifier, List<RandomPropertyRule> propertyRules) {
@@ -200,6 +200,7 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
             }
             return foundSuffix;
         }
+        onMeetsRule.accept(entityToBeTested, null);
         return 0;
     }
 
