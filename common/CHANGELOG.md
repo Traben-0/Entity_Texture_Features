@@ -1,8 +1,17 @@
 [**ETF Changelog:**]
 
-- config
-- player usernames in name property
-- creative teammate variant client properties
+- completely redid the config gui to be data driven and more user-friendly
+  - ETF, EMF, and ESF will now share the same config gui collectively called "Entity Features settings"
+  - added a new `per entity` settings screen that allows you to override the settings for specific entity types
+  - added a `Random properties` settings screen that allows you to enable/disable, modify, and read the documentation of specific random properties. This will also list any properties added via ETF's API.
+  - improved many gui elements adding sliders, changed setting highlighting, and text displays for more user-friendly settings
+- fixed the `name` property not reading player usernames
+- added the following random properties: (primarily for use in player EMF packs)
+  - `isCreative` - true if the entity is in creative mode
+  - `isTeammate` - true if the entity is a teammate
+  - `isClientPlayer` - true if the entity is the client player
+  - `variant` - moved from EMF into ETF
+- the `blocks` property now updates over time by default (OptiFine parity)
 
 [5.2.1]
 
