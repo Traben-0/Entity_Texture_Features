@@ -17,13 +17,13 @@ public class TConfigEntryText extends TConfigEntry {
 
     protected final TextWidget widget;
 
-    public TConfigEntryText(final String text, TextAlignment alignment) {
+    public TConfigEntryText(@Translatable final String text, TextAlignment alignment) {
         super(text, null);
         widget = new TextWidget(getText(), MinecraftClient.getInstance().textRenderer);
         alignment.align(widget);
     }
 
-    public TConfigEntryText(final String text) {
+    public TConfigEntryText(@Translatable final String text) {
         this(text, TextAlignment.CENTER);
     }
 
@@ -105,11 +105,11 @@ public class TConfigEntryText extends TConfigEntry {
         protected final TextWidget widget2;
 
         @SuppressWarnings("unused")
-        public TwoLines(final String text1, final String text2) {
+        public TwoLines(@Translatable final String text1, @Translatable  final String text2) {
             this(text1, text2, TextAlignment.CENTER);
         }
 
-        public TwoLines(final String text1, final String text2, TextAlignment alignment) {
+        public TwoLines(@Translatable final String text1,@Translatable  final String text2, TextAlignment alignment) {
             super(text1, alignment);
             widget2 = new TextWidget(ETFVersionDifferenceHandler.getTextFromTranslation(text2), MinecraftClient.getInstance().textRenderer);
             alignment.align(widget2);

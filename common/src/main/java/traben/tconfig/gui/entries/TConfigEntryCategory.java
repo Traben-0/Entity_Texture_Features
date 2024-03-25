@@ -20,6 +20,14 @@ public class TConfigEntryCategory extends TConfigEntry {
     private TConfigScreenList screen = null;
     private Tooltip emptyTooltip = Tooltip.of(Text.translatable("config.entity_features.empty"));
 
+    public void setAlign(final TConfigScreenList.Align align) {
+        this.align = align;
+    }
+
+    private TConfigScreenList.Align align = TConfigScreenList.Align.CENTER;
+
+    private TConfigScreenList.Renderable renderFeature = null;
+
     public TConfigEntryCategory(@Translatable final String text, @Translatable final String tooltip) {
         super(text, tooltip);
         translationKey = text;
@@ -37,14 +45,14 @@ public class TConfigEntryCategory extends TConfigEntry {
     //don't need to init screen each time
     public TConfigScreenList getScreen() {
         if (screen == null) {
-            screen = new TConfigScreenList(translationKey, MinecraftClient.getInstance().currentScreen, options.values().toArray(new TConfigEntry[0]), this::setValuesToDefault, this::resetValuesToInitial);
+            screen = new TConfigScreenList(translationKey, MinecraftClient.getInstance().currentScreen, options.values().toArray(new TConfigEntry[0]), this::setValuesToDefault, this::resetValuesToInitial,align);
+            screen.setRenderFeature(renderFeature);
         }
         return screen;
     }
 
     @Override
     public ClickableWidget getWidget(final int x, final int y, final int width, final int height) {
-        //noinspection unchecked
         return new CategoryButton(x, y, width, height, getText(),
                 (button) -> MinecraftClient.getInstance().setScreen(getScreen()));
     }
@@ -125,6 +133,10 @@ public class TConfigEntryCategory extends TConfigEntry {
     public TConfigEntryCategory setEmptyTooltip(@NotNull @Translatable final String emptyTooltipKey) {
         this.emptyTooltip = Tooltip.of(Text.translatable(emptyTooltipKey));
         return this;
+    }
+
+    public void setRenderFeature(final TConfigScreenList.Renderable renderFeature) {
+        this.renderFeature = renderFeature;
     }
 
     public static class Empty extends TConfigEntryCategory {
