@@ -55,6 +55,9 @@ public class RandomProperties {
                 RandomPropertyFactory.of("yearDay","config.entity_texture_features.property_explanation.year_day",YearDayProperty::getPropertyOrNull,true),
                 RandomPropertyFactory.of("year","config.entity_texture_features.property_explanation.year",YearProperty::getPropertyOrNull,true),
                 RandomPropertyFactory.of("language","config.entity_texture_features.property_explanation.lang",LanguageProperty::getPropertyOrNull,true),
+                RandomPropertyFactory.of("textureSuffix","config.entity_texture_features.property_explanation.texture_suffix",TextureSuffixProperty::getPropertyOrNull),
+                RandomPropertyFactory.of("textureRule","config.entity_texture_features.property_explanation.texture_rule",TextureRuleIndexProperty::getPropertyOrNull),
+
 
                 //OptiFine properties
                 RandomPropertyFactory.of("baby","config.entity_texture_features.property_explanation.baby",BabyProperty::getPropertyOrNull),

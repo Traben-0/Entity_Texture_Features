@@ -268,5 +268,7 @@
   "config.entity_texture_features.property_explanation.year": "Year \nSelect which year it must be from 0 - 9999\nExample: year.1=2020-2022\n§ayear.<n>=<list>",
   "config.entity_texture_features.property_explanation.week_day": "Week day \nSelect which day of the week it must be from 1 - 7 with 1 being Sunday and 7 being Saturday\nExample: weekDay.1=1-4\n§aweekDay.<n>=<list>",
   "config.entity_texture_features.property_explanation.month_day": "Month Day \nSelect which day of the month it must be from 1 - 31\nExample: monthDay.1=1-15\n§amonthDay.<n>=<list>",
-  "config.entity_texture_features.property_explanation.year_day": "Year Day \nSelect which day of the year it must be from 1 - 366\nExample: yearDay.1=1-100\n§ayearDay.<n>=<list>"
+  "config.entity_texture_features.property_explanation.year_day": "Year Day \nSelect which day of the year it must be from 1 - 366\nExample: yearDay.1=1-100\n§ayearDay.<n>=<list>",
+  "config.entity_texture_features.property_explanation.texture_rule": "Texture Rule (Optional)\nmatches the last random texture rule number that the entities texture matched against\ndefaults to 0\nExample: textureRule.1= 2 4 6\n§atextureRule.<n>=<list>",
+  "config.entity_texture_features.property_explanation.texture_suffix": "Texture Suffix (Optional)\nmatches the last random texture suffix number that the entities texture was set to\ndefaults to 0\nExample: textureSuffix.1= 2 4 6\n§atextureSuffix.<n>=<list>"
 }
