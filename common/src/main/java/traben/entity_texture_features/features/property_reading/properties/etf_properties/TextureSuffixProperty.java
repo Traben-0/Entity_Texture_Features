@@ -25,8 +25,6 @@ public class TextureSuffixProperty extends SimpleIntegerArrayProperty {
     }
 
 
- 
-
     @Override
     public @NotNull String[] getPropertyIds() {
         return new String[]{"textureSuffix", "texture_suffix"};

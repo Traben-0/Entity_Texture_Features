@@ -25,8 +25,6 @@ public class TextureRuleIndexProperty extends SimpleIntegerArrayProperty {
     }
 
 
- 
-
     @Override
     public @NotNull String[] getPropertyIds() {
         return new String[]{"textureRule", "texture_rule"};

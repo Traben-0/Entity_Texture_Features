@@ -32,7 +32,6 @@ public class TeamProperty extends StringArrayOrRegexProperty {
         return null;
     }
 
- 
 
     @Override
     public @NotNull String[] getPropertyIds() {

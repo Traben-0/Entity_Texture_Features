@@ -30,7 +30,6 @@ public class LanguageProperty extends StringArrayOrRegexProperty {
         return MinecraftClient.getInstance().options.language;
     }
 
- 
 
     @Override
     public @NotNull String[] getPropertyIds() {

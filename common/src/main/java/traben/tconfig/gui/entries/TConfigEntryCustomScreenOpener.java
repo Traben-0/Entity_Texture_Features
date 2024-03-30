@@ -16,9 +16,8 @@ public class TConfigEntryCustomScreenOpener extends TConfigEntry {
     private final Runnable setValuesDefault;
     private final Runnable resetValuesToInitial;
     private final boolean screenIsSingleton;
-    private Screen screen = null;
-
     private final ButtonWidget button;
+    private Screen screen = null;
 
     public TConfigEntryCustomScreenOpener(@Translatable final String text, @Translatable final String tooltip, Supplier<Screen> screenSupplier, Supplier<Boolean> savedSupplier, Runnable setValuesDefault, Runnable resetValuesToInitial, boolean screenIsSingleton) {
         super(text, tooltip);
@@ -28,7 +27,7 @@ public class TConfigEntryCustomScreenOpener extends TConfigEntry {
         this.setValuesDefault = setValuesDefault;
         this.resetValuesToInitial = resetValuesToInitial;
         button = ButtonWidget.builder(getText(), (button) -> MinecraftClient.getInstance().setScreen(getScreen())
-        ).dimensions(0,0,0,0).tooltip(getTooltip()).build();
+        ).dimensions(0, 0, 0, 0).tooltip(getTooltip()).build();
     }
 
     @SuppressWarnings("unused")

@@ -41,8 +41,6 @@ public class PandaGeneProperty extends StringArrayOrRegexProperty {
     }
 
 
- 
-
     @Override
     public @NotNull String[] getPropertyIds() {
         return new String[]{"hiddenGene", "gene"};

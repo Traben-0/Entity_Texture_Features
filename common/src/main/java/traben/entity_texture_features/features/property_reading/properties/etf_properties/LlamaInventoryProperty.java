@@ -22,7 +22,6 @@ public class LlamaInventoryProperty extends SimpleIntegerArrayProperty {
         }
     }
 
- 
 
     @Override
     public @NotNull String[] getPropertyIds() {

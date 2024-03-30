@@ -180,13 +180,11 @@
   "config.entity_texture_features.player_skin_transparent_sub.tooltip": "",
   "config.entity_texture_features.random_settings.title": "Random / Custom mobs settings",
   "config.entity_texture_features.remove_pixels.info": "ETF removes pixels underneath\n emissive textures to prevent Z-fighting\nwith shaders.\n \nDisabling these settings may:\n\n- Cause Z-fighting emissives with\nsome shaders.\n\n- Fix Iris PBR textures not working\nfor mobs with emissive textures.\n\n- Fix animated textures having missing\npixels with animation mods.\n\n- Break armour legging emissives when\n a chestplate is equipped.",
-
   "config.entity_texture_features.restrict_update_properties2": "Property settings",
   "config.entity_texture_features.restrict_update_properties.allow": "Enable random property",
   "config.entity_texture_features.restrict_update_properties.allow.tooltip": "Enables the property to be used\ndisabled ones will be ignored in resource packs",
   "config.entity_texture_features.restrict_update_properties.lock": "Locked to Spawn Conditions",
   "config.entity_texture_features.restrict_update_properties.lock.tooltip": "Sets whether this property is locked to the\nspawn conditions of the entity\nIf locked, the property will only apply to the entities initial spawn conditions\nIf not locked, the property will apply to the entities current conditions",
-
   "config.entity_texture_features.settings.button": "Settings",
   "config.entity_texture_features.skin_feature_print.title": "Save a copy of your skin with the skin feature template applied",
   "config.entity_texture_features.skin_feature_print.tooltip": "To help you setup your skin for skin features\nThis setting will save a copy of your skin with\nthe skin feature template applied onto it\nto the minecraft directory.\nAfter enabling this setting open a game, enter third person & press F3+T.\nYou will get a message in chat telling you when it is finished.",
@@ -226,7 +224,6 @@
   "config.entity_texture_features.warn_config_load": "The ETF config file was either corrupt or could not be loaded! Default settings are being used...",
   "config.entity_texture_features.warn_instruction": "Some warnings disable the conflicting ETF settings, unless ignored",
   "config.entity_texture_features.warnings.title": "Mod conflicts / warnings",
-
   "config.entity_texture_features.property_explanation.biome": "List of biomes\nThe vanilla biome names are listed here: https://minecraft.gamepedia.com/Biome#Biome_IDs\nBiomes added by mods can also be used but require \"modID:biomeName\", whereas vanilla biomes can be either \"minecraft:plains\" or just \"plains\".\nWith ETF only, you can also use regex: iregex: pattern: and ipattern: like the Name property\n§abiomes.<n>=<biome_list>",
   "config.entity_texture_features.property_explanation.block": "Blocks\nsets the texture for the entity based on the block it spawned on or first appeared on\nthis also checks the block it spawned inside allowing things like water, cave_air, flowers, etc. to be used\nBlocks added by mods can also be used but require \"modID:blockName\", whereas vanilla blocks can be either \"minecraft:stone\" or just \"stone\".\nas of v4.4 this property also allows comparing additional block properties as per the OptiFine spec here https://optifine.readthedocs.io/syntax.html#blocks-and-items\n§ablocks.<n>=<block_list>",
   "config.entity_texture_features.property_explanation.height": "Height ranges\nReplaces legacy minHeight and maxHeight properties.\nSince 1.18 negative values may be specified for height. When used in a range they can be put in brackets for Optifine but will function as written for ETF.\nETF supports:             1 2-4   -65-2  -65--2   1-4   (-65)-2  (-65)-(-2)\nOptifine supports only:   1 2-4                   1-4   (-65)-2  (-65)-(-2)\n§aheights.<n>=<height_ranges>\n\nHeight legacy\nETF also supports the legacy minHeight and maxHeight properties.\nthey can be a single number from -64 to 319\n§aminHeight.<n>=<height>\n§amaxHeight.<n>=<height>",
@@ -269,6 +266,7 @@
   "config.entity_texture_features.property_explanation.week_day": "Week day \nSelect which day of the week it must be from 1 - 7 with 1 being Sunday and 7 being Saturday\nExample: weekDay.1=1-4\n§aweekDay.<n>=<list>",
   "config.entity_texture_features.property_explanation.month_day": "Month Day \nSelect which day of the month it must be from 1 - 31\nExample: monthDay.1=1-15\n§amonthDay.<n>=<list>",
   "config.entity_texture_features.property_explanation.year_day": "Year Day \nSelect which day of the year it must be from 1 - 366\nExample: yearDay.1=1-100\n§ayearDay.<n>=<list>",
+  "config.entity_texture_features.property_explanation.mod_rule": "Mods Loaded \nSelect what mods must be loaded\nfor instance if you need to disable or modify certain textures or animations for certain mod compatibilites\nExample: modLoaded.1=sodium iris\n§amodLoaded.<n>=<list>",
   "config.entity_texture_features.property_explanation.texture_rule": "Texture Rule (Optional)\nmatches the last random texture rule number that the entities texture matched against\ndefaults to 0\nExample: textureRule.1= 2 4 6\n§atextureRule.<n>=<list>",
   "config.entity_texture_features.property_explanation.texture_suffix": "Texture Suffix (Optional)\nmatches the last random texture suffix number that the entities texture was set to\ndefaults to 0\nExample: textureSuffix.1= 2 4 6\n§atextureSuffix.<n>=<list>"
 }

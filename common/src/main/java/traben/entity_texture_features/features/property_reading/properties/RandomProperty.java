@@ -13,6 +13,7 @@ import java.util.Properties;
 public abstract class RandomProperty {
 
     protected final EntityBooleanLRU entityCachedInitialResult = new EntityBooleanLRU();
+    private boolean canUpdate = true;
 
     /**
      * Reads the given property data from the properties file, allowing for multiple property names and throws an
@@ -75,10 +76,6 @@ public abstract class RandomProperty {
     public void setCanUpdate(final boolean canUpdate) {
         this.canUpdate = canUpdate;
     }
-
-    private boolean canUpdate = true;
-
-
 
     /**
      * Returns a String[] of all valid property id's these will be the text before the first full stop in the properties file.

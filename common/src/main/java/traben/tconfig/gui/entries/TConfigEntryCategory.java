@@ -19,13 +19,7 @@ public class TConfigEntryCategory extends TConfigEntry {
     private final String translationKey;
     private TConfigScreenList screen = null;
     private Tooltip emptyTooltip = Tooltip.of(Text.translatable("config.entity_features.empty"));
-
-    public void setAlign(final TConfigScreenList.Align align) {
-        this.align = align;
-    }
-
     private TConfigScreenList.Align align = TConfigScreenList.Align.CENTER;
-
     private TConfigScreenList.Renderable renderFeature = null;
 
     public TConfigEntryCategory(@Translatable final String text, @Translatable final String tooltip) {
@@ -38,6 +32,11 @@ public class TConfigEntryCategory extends TConfigEntry {
         translationKey = text;
     }
 
+    @SuppressWarnings("unused")
+    public void setAlign(final TConfigScreenList.Align align) {
+        this.align = align;
+    }
+
     public Object2ObjectLinkedOpenHashMap<String, TConfigEntry> getOptions() {
         return options;
     }
@@ -45,7 +44,7 @@ public class TConfigEntryCategory extends TConfigEntry {
     //don't need to init screen each time
     public TConfigScreenList getScreen() {
         if (screen == null) {
-            screen = new TConfigScreenList(translationKey, MinecraftClient.getInstance().currentScreen, options.values().toArray(new TConfigEntry[0]), this::setValuesToDefault, this::resetValuesToInitial,align);
+            screen = new TConfigScreenList(translationKey, MinecraftClient.getInstance().currentScreen, options.values().toArray(new TConfigEntry[0]), this::setValuesToDefault, this::resetValuesToInitial, align);
             screen.setRenderFeature(renderFeature);
         }
         return screen;
@@ -135,6 +134,7 @@ public class TConfigEntryCategory extends TConfigEntry {
         return this;
     }
 
+    @SuppressWarnings("unused")
     public void setRenderFeature(final TConfigScreenList.Renderable renderFeature) {
         this.renderFeature = renderFeature;
     }

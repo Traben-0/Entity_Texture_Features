@@ -24,7 +24,6 @@ public class MonthProperty extends SimpleIntegerArrayProperty {
         }
     }
 
- 
 
     @Override
     public @NotNull String[] getPropertyIds() {

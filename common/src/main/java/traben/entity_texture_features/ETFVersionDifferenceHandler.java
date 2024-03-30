@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.List;
 
 @SuppressWarnings({"SameReturnValue", "unused"})
 public class ETFVersionDifferenceHandler {
@@ -18,6 +19,11 @@ public class ETFVersionDifferenceHandler {
     @ExpectPlatform
     public static boolean isThisModLoaded(String modId) {
         return false;
+    }
+
+    @ExpectPlatform
+    public static List<String> modsLoaded() {
+        return null;
     }
 
     @ExpectPlatform

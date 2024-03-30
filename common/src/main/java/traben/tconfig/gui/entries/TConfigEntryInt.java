@@ -15,6 +15,7 @@ public class TConfigEntryInt extends TConfigEntryValue<Integer> {
 
 
     private final IntSliderWidget widget;
+    private boolean modifiesOffMaxToMin = true;
 
     public TConfigEntryInt(@Translatable String text, @Translatable String tooltip, Supplier<Integer> getter, Consumer<Integer> setter, int defaultValue, int min, int max, boolean isMinOff, boolean isMaxOff) {
         super(text, tooltip, getter, setter, defaultValue);
@@ -44,7 +45,6 @@ public class TConfigEntryInt extends TConfigEntryValue<Integer> {
     @Override
     public ClickableWidget getWidget(final int x, final int y, final int width, final int height) {
         widget.setDimensionsAndPosition(width, height, x, y);
-        //noinspection unchecked
         return widget;
     }
 
@@ -58,7 +58,6 @@ public class TConfigEntryInt extends TConfigEntryValue<Integer> {
         widget.setValue(getter.get());
     }
 
-    private boolean modifiesOffMaxToMin = true;
     @SuppressWarnings("unused")
     public TConfigEntryInt dontModifyOffMaxValues() {
         modifiesOffMaxToMin = false;
@@ -77,7 +76,7 @@ public class TConfigEntryInt extends TConfigEntryValue<Integer> {
 
         public IntSliderWidget(final Text text,
                                final int initialValue, final Tooltip tooltip, int min, int max, boolean isMinOff, boolean isMaxOff) {
-            super(0, 0, 20, 20, text,  0);
+            super(0, 0, 20, 20, text, 0);
             this.min = min;
             this.max = max;
             this.isMinOff = isMinOff;

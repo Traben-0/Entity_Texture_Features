@@ -24,7 +24,6 @@ public class SecondProperty extends SimpleIntegerArrayProperty {
         }
     }
 
- 
 
     @Override
     public @NotNull String[] getPropertyIds() {

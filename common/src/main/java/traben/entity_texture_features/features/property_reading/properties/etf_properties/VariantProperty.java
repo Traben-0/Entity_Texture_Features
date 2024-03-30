@@ -123,7 +123,6 @@ public class VariantProperty extends StringArrayOrRegexProperty {
         return null;
     }
 
- 
 
     @Override
     public @NotNull String[] getPropertyIds() {

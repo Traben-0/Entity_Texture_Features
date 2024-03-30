@@ -24,7 +24,6 @@ public class YearProperty extends SimpleIntegerArrayProperty {
         }
     }
 
- 
 
     @Override
     public @NotNull String[] getPropertyIds() {

@@ -32,7 +32,6 @@ public class ClientPlayerProperty extends BooleanProperty {
                 && entity.getUuid().equals(MinecraftClient.getInstance().player.getUuid());
     }
 
- 
 
     @Override
     public @NotNull String[] getPropertyIds() {

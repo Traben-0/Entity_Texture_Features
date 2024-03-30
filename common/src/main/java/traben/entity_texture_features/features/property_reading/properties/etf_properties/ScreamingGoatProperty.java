@@ -30,7 +30,6 @@ public class ScreamingGoatProperty extends BooleanProperty {
         return null;
     }
 
- 
 
     @Override
     public @NotNull String[] getPropertyIds() {

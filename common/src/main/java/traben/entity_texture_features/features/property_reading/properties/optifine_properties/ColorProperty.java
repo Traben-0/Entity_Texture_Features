@@ -76,8 +76,6 @@ public class ColorProperty extends StringArrayOrRegexProperty {
     }
 
 
- 
-
     @Override
     public @NotNull String[] getPropertyIds() {
         return new String[]{"colors", "collarColors"};

@@ -36,8 +36,6 @@ public class BabyProperty extends BooleanProperty {
     }
 
 
- 
-
     @Override
     public @NotNull String[] getPropertyIds() {
         return new String[]{"baby"};

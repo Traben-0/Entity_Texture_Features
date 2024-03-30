@@ -36,8 +36,6 @@ public class HeightProperty extends SimpleIntegerArrayProperty {
     }
 
 
- 
-
     @Override
     public @NotNull String[] getPropertyIds() {
         return new String[]{"heights", "height"};

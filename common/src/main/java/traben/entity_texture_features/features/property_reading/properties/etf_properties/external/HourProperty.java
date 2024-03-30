@@ -24,7 +24,6 @@ public class HourProperty extends SimpleIntegerArrayProperty {
         }
     }
 
- 
 
     @Override
     public @NotNull String[] getPropertyIds() {

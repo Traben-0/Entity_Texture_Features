@@ -60,7 +60,6 @@ public class DimensionProperty extends StringArrayOrRegexProperty {
         return output;
     }
 
- 
 
     @Override
     public @NotNull String[] getPropertyIds() {

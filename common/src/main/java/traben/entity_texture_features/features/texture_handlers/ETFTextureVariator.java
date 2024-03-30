@@ -132,13 +132,13 @@ public abstract class ETFTextureVariator {
             this.vanillaId = vanillaId;
             entitySuffixMap.defaultReturnValue(-1);
             this.suffixProvider = suffixProvider;
-            if(suffixProvider instanceof PropertiesRandomProvider) {
+            if (suffixProvider instanceof PropertiesRandomProvider) {
                 ((PropertiesRandomProvider) suffixProvider).setOnMeetsRuleHook((entity, rule) -> {
-                        if (rule == null) {
-                            ETFManager.getInstance().LAST_RULE_INDEX_OF_ENTITY.removeInt(entity.etf$getUuid());
-                        }else {
-                            ETFManager.getInstance().LAST_RULE_INDEX_OF_ENTITY.put(entity.etf$getUuid(), rule.RULE_NUMBER);
-                        }
+                    if (rule == null) {
+                        ETFManager.getInstance().LAST_RULE_INDEX_OF_ENTITY.removeInt(entity.etf$getUuid());
+                    } else {
+                        ETFManager.getInstance().LAST_RULE_INDEX_OF_ENTITY.put(entity.etf$getUuid(), rule.RULE_NUMBER);
+                    }
                 });
             }
             Identifier directorized = ETFDirectory.getDirectoryVersionOf(vanillaId);

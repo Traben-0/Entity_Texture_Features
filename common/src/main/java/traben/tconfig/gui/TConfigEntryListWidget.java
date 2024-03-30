@@ -59,7 +59,7 @@ public class TConfigEntryListWidget extends EntryListWidget<TConfigEntryListWidg
 
         }
 
-        public abstract  ClickableWidget getWidget(int x, int y, int width, int height);
+        public abstract ClickableWidget getWidget(int x, int y, int width, int height);
 
 
         @Override

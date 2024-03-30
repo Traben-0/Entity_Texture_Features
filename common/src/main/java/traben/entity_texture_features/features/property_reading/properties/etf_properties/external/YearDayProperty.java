@@ -12,7 +12,7 @@ public class YearDayProperty extends SimpleIntegerArrayProperty {
 
 
     protected YearDayProperty(Properties properties, int propertyNum) throws RandomPropertyException {
-        super(getGenericIntegerSplitWithRanges(properties, propertyNum, "yearDay","dayYear"));
+        super(getGenericIntegerSplitWithRanges(properties, propertyNum, "yearDay", "dayYear"));
     }
 
 
@@ -24,11 +24,10 @@ public class YearDayProperty extends SimpleIntegerArrayProperty {
         }
     }
 
- 
 
     @Override
     public @NotNull String[] getPropertyIds() {
-        return new String[]{"yearDay","dayYear"};
+        return new String[]{"yearDay", "dayYear"};
     }
 
     @Override

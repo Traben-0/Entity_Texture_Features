@@ -27,36 +27,11 @@ public class TConfigEntryText extends TConfigEntry {
         this(text, TextAlignment.CENTER);
     }
 
-    @Override
-    public ClickableWidget getWidget(final int x, final int y, final int width, final int height) {
-        widget.setDimensionsAndPosition(width, height, x, y);
-        return widget;
-    }
-
-
-
-    public enum TextAlignment {
-        LEFT, CENTER, RIGHT;
-
-        private void align(TextWidget widget) {
-            switch (this) {
-                case LEFT:
-                    widget.alignLeft();
-                    break;
-                case CENTER:
-                    widget.alignCenter();
-                    break;
-                case RIGHT:
-                    widget.alignRight();
-                    break;
-            }
-        }
-    }
-
     @SuppressWarnings("unused")
     public static Collection<TConfigEntry> fromLongOrMultilineTranslation(@Translatable String translationKey, int width) {
         return fromLongOrMultilineTranslation(translationKey, width, TextAlignment.CENTER);
     }
+
     public static List<TConfigEntry> fromLongOrMultilineTranslation(@Translatable String translationKey, int width, TextAlignment alignment) {
 
         var translated = ETFVersionDifferenceHandler.getTextFromTranslation(translationKey);
@@ -67,18 +42,23 @@ public class TConfigEntryText extends TConfigEntry {
             if (lastLine != null) {
                 list.add(new TwoLines(lastLine, line.getString(), alignment));
                 lastLine = null;
-            }else{
+            } else {
                 lastLine = line.getString();
             }
 
         }
         if (lastLine != null) {
-            list.add(new TwoLines(lastLine,"", alignment));
+            //noinspection NoTranslation
+            list.add(new TwoLines(lastLine, "", alignment));
         }
         return list;
     }
 
-
+    @Override
+    public ClickableWidget getWidget(final int x, final int y, final int width, final int height) {
+        widget.setDimensionsAndPosition(width, height, x, y);
+        return widget;
+    }
 
     @Override
     boolean hasChangedFromInitial() {
@@ -100,16 +80,34 @@ public class TConfigEntryText extends TConfigEntry {
 
     }
 
+    public enum TextAlignment {
+        LEFT, CENTER, RIGHT;
+
+        private void align(TextWidget widget) {
+            switch (this) {
+                case LEFT:
+                    widget.alignLeft();
+                    break;
+                case CENTER:
+                    widget.alignCenter();
+                    break;
+                case RIGHT:
+                    widget.alignRight();
+                    break;
+            }
+        }
+    }
+
     public static class TwoLines extends TConfigEntryText {
 
         protected final TextWidget widget2;
 
         @SuppressWarnings("unused")
-        public TwoLines(@Translatable final String text1, @Translatable  final String text2) {
+        public TwoLines(@Translatable final String text1, @Translatable final String text2) {
             this(text1, text2, TextAlignment.CENTER);
         }
 
-        public TwoLines(@Translatable final String text1,@Translatable  final String text2, TextAlignment alignment) {
+        public TwoLines(@Translatable final String text1, @Translatable final String text2, TextAlignment alignment) {
             super(text1, alignment);
             widget2 = new TextWidget(ETFVersionDifferenceHandler.getTextFromTranslation(text2), MinecraftClient.getInstance().textRenderer);
             alignment.align(widget2);
@@ -119,8 +117,8 @@ public class TConfigEntryText extends TConfigEntry {
 
         @Override
         public ClickableWidget getWidget(final int x, final int y, final int width, final int height) {
-            widget.setDimensionsAndPosition(width, height/2, x, y);
-            widget2.setDimensionsAndPosition(width, height/2, x, y + height/2+2);
+            widget.setDimensionsAndPosition(width, height / 2, x, y);
+            widget2.setDimensionsAndPosition(width, height / 2, x, y + height / 2 + 2);
             return widget;
         }
 

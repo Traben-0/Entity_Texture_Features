@@ -2,7 +2,10 @@ package traben.entity_texture_features.features.property_reading.properties.opti
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import net.minecraft.entity.Entity;
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.AbstractNbtList;
+import net.minecraft.nbt.AbstractNbtNumber;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.predicate.NbtPredicate;
 import org.jetbrains.annotations.NotNull;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperty;
@@ -175,7 +178,7 @@ public class NBTProperty extends RandomProperty {
                     } else if (finalNBTElementOrNullIfFailed instanceof AbstractNbtNumber) {
                         //strip non digit chars
                         StringArrayOrRegexProperty.RegexAndPatternPropertyMatcher matcher = getStringMatcher_Regex_Pattern_List_Single(nbtTestInstruction);
-                        doesTestPass = matcher != null && matcher.testString(finalNBTElementOrNullIfFailed.asString().replaceAll("[^\\d.]",""));
+                        doesTestPass = matcher != null && matcher.testString(finalNBTElementOrNullIfFailed.asString().replaceAll("[^\\d.]", ""));
                     } else {
                         StringArrayOrRegexProperty.RegexAndPatternPropertyMatcher matcher = getStringMatcher_Regex_Pattern_List_Single(nbtTestInstruction);
                         doesTestPass = matcher != null && matcher.testString(finalNBTElementOrNullIfFailed.asString());
@@ -206,7 +209,6 @@ public class NBTProperty extends RandomProperty {
         return false;
     }
 
- 
 
     @Override
     public @NotNull String[] getPropertyIds() {

@@ -207,7 +207,8 @@ public class ETFManager {
                 if (tryNumber >= 16) tryNumber = 15;
                 if (tryNumber < 0) tryNumber = 0;
                 ETF.config().getConfig().entityLightOverrides.put(entity.etf$getEntityKey(), tryNumber);
-            } catch (NumberFormatException ignored) {}
+            } catch (NumberFormatException ignored) {
+            }
         }
 
         if (props.containsKey("suppressParticles")

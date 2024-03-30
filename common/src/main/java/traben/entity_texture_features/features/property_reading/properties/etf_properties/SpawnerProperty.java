@@ -34,8 +34,6 @@ public class SpawnerProperty extends BooleanProperty {
     }
 
 
- 
-
     @Override
     public @NotNull String[] getPropertyIds() {
         return new String[]{"isSpawner", "spawner"};

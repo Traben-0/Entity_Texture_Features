@@ -28,7 +28,6 @@ public class MovingProperty extends BooleanProperty {
         return etfEntity.etf$getVelocity().horizontalLength() != 0;
     }
 
- 
 
     @Override
     public @NotNull String[] getPropertyIds() {

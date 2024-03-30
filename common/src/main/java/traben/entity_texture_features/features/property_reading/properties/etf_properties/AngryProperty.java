@@ -47,8 +47,6 @@ public class AngryProperty extends BooleanProperty {
     }
 
 
- 
-
     @Override
     public @NotNull String[] getPropertyIds() {
         return new String[]{"angry", "isAngry", "is_angry", "aggressive", "is_aggressive"};

@@ -12,7 +12,7 @@ public class MonthDayProperty extends SimpleIntegerArrayProperty {
 
 
     protected MonthDayProperty(Properties properties, int propertyNum) throws RandomPropertyException {
-        super(getGenericIntegerSplitWithRanges(properties, propertyNum, "monthDay","dayMonth"));
+        super(getGenericIntegerSplitWithRanges(properties, propertyNum, "monthDay", "dayMonth"));
     }
 
 
@@ -24,11 +24,10 @@ public class MonthDayProperty extends SimpleIntegerArrayProperty {
         }
     }
 
- 
 
     @Override
     public @NotNull String[] getPropertyIds() {
-        return new String[]{"monthDay","dayMonth"};
+        return new String[]{"monthDay", "dayMonth"};
     }
 
     @Override

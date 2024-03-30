@@ -24,8 +24,6 @@ public class MoonPhaseProperty extends SimpleIntegerArrayProperty {
     }
 
 
- 
-
     @Override
     public @NotNull String[] getPropertyIds() {
         return new String[]{"moonPhase"};

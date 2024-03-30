@@ -42,7 +42,7 @@ public final class ETFConfig extends TConfig {
     public boolean enableCustomTextures = true;
     public boolean enableCustomBlockEntities = true;
     public UpdateFrequency textureUpdateFrequency_V2 = UpdateFrequency.Fast;
-//    public boolean restrictBiome = true;
+    //    public boolean restrictBiome = true;
 //    public boolean restrictHeight = true;
 //    public boolean restrictBlock = true;
 //    public boolean restrictWeather = true;
@@ -72,19 +72,19 @@ public final class ETFConfig extends TConfig {
     public boolean enableFullBodyWardenTextures = true;
     public String2BooleanNullMap entityEmissiveOverrides = new String2BooleanNullMap();
     public ObjectOpenHashSet<String> propertiesDisabled = new ObjectOpenHashSet<>();
-
-    public boolean isPropertyDisabled(@NotNull RandomProperties.RandomPropertyFactory property){
-        return propertiesDisabled.contains(property.getPropertyId());
-    }
     public ObjectOpenHashSet<String> propertyInvertUpdatingOverrides = new ObjectOpenHashSet<>();
-    public boolean canPropertyUpdate(@NotNull RandomProperties.RandomPropertyFactory property) {
-        return propertyInvertUpdatingOverrides.contains(property.getPropertyId()) != property.updatesOverTime();
-    }
     public String2BooleanNullMap entityRandomOverrides = new String2BooleanNullMap();
     public String2EnumNullMap<EmissiveRenderModes> entityEmissiveBrightOverrides = new String2EnumNullMap<>();
     public String2EnumNullMap<RenderLayerOverride> entityRenderLayerOverrides = new String2EnumNullMap<>();
-
     public Object2IntOpenHashMap<String> entityLightOverrides = new Object2IntOpenHashMap<>();
+
+    public boolean isPropertyDisabled(@NotNull RandomProperties.RandomPropertyFactory property) {
+        return propertiesDisabled.contains(property.getPropertyId());
+    }
+
+    public boolean canPropertyUpdate(@NotNull RandomProperties.RandomPropertyFactory property) {
+        return propertyInvertUpdatingOverrides.contains(property.getPropertyId()) != property.updatesOverTime();
+    }
 
     public boolean canDoCustomTextures() {
         if (entityRandomOverrides.isEmpty() || ETFRenderContext.getCurrentEntity() == null)
@@ -130,25 +130,26 @@ public final class ETFConfig extends TConfig {
     public int getLightOverride(Entity entity, float tickDelta, int light) {
         if (entityLightOverrides.isEmpty() || entity == null)
             return light;
-        var key = ((ETFEntity)entity).etf$getEntityKey();
+        var key = ((ETFEntity) entity).etf$getEntityKey();
         if (key != null && entityLightOverrides.containsKey(key)) {
             //noinspection deprecation
-            int lightETF = MathHelper.clamp(entityLightOverrides.get(key),0,15) ;
+            int lightETF = MathHelper.clamp(entityLightOverrides.get(key), 0, 15);
             //recalculate to avoid child overrides
             var pos = BlockPos.ofFloored(entity.getClientCameraPosVec(tickDelta));
             int block = entity.getWorld().getLightLevel(LightType.SKY, pos);//LightmapTextureManager.getBlockLightCoordinates(light);
             int sky = entity.isOnFire() ? 15 : entity.getWorld().getLightLevel(LightType.BLOCK, pos);//LightmapTextureManager.getSkyLightCoordinates(light);
-            return LightmapTextureManager.pack(Math.max(block,sky), lightETF);
+            return LightmapTextureManager.pack(Math.max(block, sky), lightETF);
         }
         return light;
     }
+
     public int getLightOverrideBE(int light) {
         if (entityLightOverrides.isEmpty() || ETFRenderContext.getCurrentEntity() == null)
             return light;
         var key = ETFRenderContext.getCurrentEntity().etf$getEntityKey();
         if (key != null && entityLightOverrides.containsKey(key)) {
             //noinspection deprecation
-            int lightETF = MathHelper.clamp(entityLightOverrides.get(key),0,15) ;
+            int lightETF = MathHelper.clamp(entityLightOverrides.get(key), 0, 15);
 
             var world = ETFRenderContext.getCurrentEntity().etf$getWorld();
             var pos = ETFRenderContext.getCurrentEntity().etf$getBlockPos();
@@ -156,11 +157,10 @@ public final class ETFConfig extends TConfig {
 
             int block = world.getLightLevel(LightType.BLOCK, pos);
             int sky = world.getLightLevel(LightType.SKY, pos);
-            return LightmapTextureManager.pack(Math.max(block,sky), lightETF);
+            return LightmapTextureManager.pack(Math.max(block, sky), lightETF);
         }
         return light;
     }
-
 
 
     @Override
@@ -283,21 +283,21 @@ public final class ETFConfig extends TConfig {
                                 null, RenderLayerOverride.class)
                 ),
                 new TConfigEntryInt("config.entity_features.per_entity_settings.light", "config.entity_features.per_entity_settings.light.tooltip",
-                        () -> entityLightOverrides.getOrDefault(translationKey,-1),
+                        () -> entityLightOverrides.getOrDefault(translationKey, -1),
                         light -> {
-                            if (light == -1){
+                            if (light == -1) {
                                 entityLightOverrides.removeInt(translationKey);
                                 return;
                             }
                             //noinspection deprecation
                             entityLightOverrides.put(translationKey, light);
-                        },-1, -1, 15,true,false)
+                        }, -1, -1, 15, true, false)
         );
     }
 
-    private List<TConfigEntry> getPropertySettings(){
+    private List<TConfigEntry> getPropertySettings() {
         var list = new ArrayList<TConfigEntry>();
-        RandomProperties.forEachProperty(propertySettings-> {
+        RandomProperties.forEachProperty(propertySettings -> {
             boolean defaultNoUpdate = !propertySettings.updatesOverTime();
             String id = propertySettings.getPropertyId();
             var category = new TConfigEntryCategory(id);

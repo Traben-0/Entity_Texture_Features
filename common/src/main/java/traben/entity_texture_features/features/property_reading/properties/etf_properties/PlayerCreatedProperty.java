@@ -33,8 +33,6 @@ public class PlayerCreatedProperty extends BooleanProperty {
     }
 
 
- 
-
     @Override
     public @NotNull String[] getPropertyIds() {
         return new String[]{"playerCreated", "player_created"};

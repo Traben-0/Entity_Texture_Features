@@ -31,7 +31,6 @@ public class JumpProperty extends FloatRangeFromStringArrayProperty {
         return null;
     }
 
- 
 
     @Override
     public @NotNull String[] getPropertyIds() {

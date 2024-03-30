@@ -11,7 +11,7 @@ public class TConfigEntryCustomButton extends TConfigEntry {
 
     public TConfigEntryCustomButton(@Translatable final String text, @Translatable final String tooltip, ButtonWidget.PressAction action) {
         super(text, tooltip);
-        this.button = ButtonWidget.builder(getText(), action).dimensions(0,0,0,0).tooltip(getTooltip()).build();
+        this.button = ButtonWidget.builder(getText(), action).dimensions(0, 0, 0, 0).tooltip(getTooltip()).build();
     }
 
     @SuppressWarnings("unused")

@@ -92,8 +92,6 @@ public class ProfessionProperty extends StringArrayOrRegexProperty {
     }
 
 
- 
-
     @Override
     public @NotNull String[] getPropertyIds() {
         return new String[]{"professions"};

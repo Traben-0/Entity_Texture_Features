@@ -86,7 +86,6 @@ public class ItemProperty extends StringArrayOrRegexProperty {
         return null;
     }
 
- 
 
     @Override
     public @NotNull String[] getPropertyIds() {

@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.List;
 
 @SuppressWarnings("SameReturnValue")
 public class ETFVersionDifferenceHandlerImpl {
@@ -47,6 +48,10 @@ public class ETFVersionDifferenceHandlerImpl {
         if(world == null || pos == null) return null;
         //1.19 & 1.18.2 variation
         return world.getBiome(pos).getKey().toString().split(" / ")[1].replaceAll("[^\\da-zA-Z_:-]", "");
+    }
+
+    public static List<String> modsLoaded() {
+        return FabricLoader.getInstance().getAllMods().stream().map(modContainer -> modContainer.getMetadata().getId()).toList();
     }
 
 

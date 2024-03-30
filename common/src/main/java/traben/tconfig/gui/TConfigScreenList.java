@@ -9,13 +9,7 @@ public class TConfigScreenList extends TConfigScreen {
 
     private final TConfigEntry[] options;
     private final Align align;
-
-    public void setRenderFeature(final Renderable renderFeature) {
-        this.renderFeature = renderFeature;
-    }
-
     private Renderable renderFeature = null;
-
 
     public TConfigScreenList(@Translatable final String title, Screen parent, TConfigEntry[] options, Runnable resetValuesToDefault, Runnable undoChanges, Align align) {
         super(title, parent, true);
@@ -26,8 +20,14 @@ public class TConfigScreenList extends TConfigScreen {
         this.align = align;
     }
 
+
+    @SuppressWarnings("unused")
     public TConfigScreenList(@Translatable final String title, Screen parent, TConfigEntry[] options, Runnable resetValuesToDefault, Runnable undoChanges) {
         this(title, parent, options, resetValuesToDefault, undoChanges, Align.CENTER);
+    }
+
+    public void setRenderFeature(final Renderable renderFeature) {
+        this.renderFeature = renderFeature;
     }
 
     @Override
@@ -36,10 +36,6 @@ public class TConfigScreenList extends TConfigScreen {
         if (renderFeature != null) {
             renderFeature.render(context, mouseX, mouseY);
         }
-    }
-
-    public interface Renderable {
-        void render(DrawContext context, int mouseX, int mouseY);
     }
 
     @Override
@@ -53,9 +49,9 @@ public class TConfigScreenList extends TConfigScreen {
                 width = (int) (this.width * 0.3);
                 x = (int) (this.width * 0.1);
             }
-            case RIGHT ->{
-                    width = (int) (this.width * 0.3);
-                    x = (int) (this.width * 0.6);
+            case RIGHT -> {
+                width = (int) (this.width * 0.3);
+                x = (int) (this.width * 0.6);
             }
             default -> {
                 width = this.width;
@@ -73,9 +69,13 @@ public class TConfigScreenList extends TConfigScreen {
         );
     }
 
-    public enum Align{
+    public enum Align {
         LEFT,
         CENTER,
         RIGHT
+    }
+
+    public interface Renderable {
+        void render(DrawContext context, int mouseX, int mouseY);
     }
 }

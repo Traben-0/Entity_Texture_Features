@@ -33,9 +33,6 @@ public class TimeOfDayProperty extends LongRangeFromStringArrayProperty {
     }
 
 
-
- 
-
     @Override
     public @NotNull String[] getPropertyIds() {
         return new String[]{"dayTime"};

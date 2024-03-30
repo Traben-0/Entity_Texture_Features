@@ -32,7 +32,6 @@ public class TeammateProperty extends BooleanProperty {
         return null;
     }
 
- 
 
     @Override
     public @NotNull String[] getPropertyIds() {
