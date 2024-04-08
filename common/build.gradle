@@ -23,6 +23,8 @@ dependencies {
     modImplementation("maven.modrinth:iris:${project.iris_version}") {
         exclude(group: "net.fabricmc.fabric-api")
     }
+    modImplementation files("build/iris-1.7.0-snapshot+mc1.20.4-dfec34d-dirty.jar")
+
 }
 
 publishing {
