@@ -25,6 +25,9 @@ dependencies {
     }
     modImplementation files("build/iris-1.7.0-snapshot+mc1.20.4-dfec34d-dirty.jar")
 
+    modImplementation("maven.modrinth:immediatelyfast:${project.immediatelyfast_version}") {
+        exclude(group: "net.fabricmc.fabric-api")
+    }
 }
 
 publishing {

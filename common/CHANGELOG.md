@@ -1,6 +1,7 @@
 [**ETF Changelog:**]
 
 - added support for the iris distant horizons beta
+- fixed emissive textures breaking in the gui with ImmediatelyFast installed
 - fixed the `blocks` property not correctly reading/expecting block states
 - fixed the `name` property not checking for single names with spaces in them comprised of the entire test string
 - completely redid the config gui to be data driven and more user-friendly
