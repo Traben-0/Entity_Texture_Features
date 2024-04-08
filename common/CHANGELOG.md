@@ -1,5 +1,8 @@
 [**ETF Changelog:**]
 
+- added support for the iris distant horizons beta
+- fixed the `blocks` property not correctly reading/expecting block states
+- fixed the `name` property not checking for single names with spaces in them comprised of the entire test string
 - completely redid the config gui to be data driven and more user-friendly
     - ETF, EMF, and ESF will now share the same config gui collectively called "Entity Features settings"
     - added a new `per entity` settings screen that allows you to override the settings for specific entity types

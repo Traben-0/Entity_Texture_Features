@@ -38,6 +38,10 @@ public abstract class StringArrayOrRegexProperty extends RandomProperty {
                     array) {
                 ARRAY.add(shouldForceLowerCaseCheck() ? str.toLowerCase() : str);
             }
+            //add the entire text as well just incase spaced names were expected
+            if (array.length != 1){
+                ARRAY.add(string.trim());
+            }
             MATCHER = this::testArray;
             usesRegex = false;
         }
