@@ -17,6 +17,7 @@
 - the `blocks` property now updates over time by default (OptiFine parity)
 - fixed the `nbt` property still including the char type when testing nbt numbers i.e `1b` instead of just `1`
 - fixed many minor issues
+- fixed `blocks` property and added `blockSpawned` property to be identical but spawn condition locked by default
 
 [5.2.1]
 

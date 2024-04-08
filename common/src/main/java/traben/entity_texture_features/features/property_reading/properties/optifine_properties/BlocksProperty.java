@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 
 public class BlocksProperty extends StringArrayOrRegexProperty {
 
+    protected final Function<BlockState,Boolean> blockStateMatcher;
 
     private static final Function<Map.Entry<Property<?>, Comparable<?>>, String> PROPERTY_MAP_PRINTER = new Function<>() {
         public String apply(@Nullable Map.Entry<Property<?>, Comparable<?>> entry) {
@@ -39,24 +40,75 @@ public class BlocksProperty extends StringArrayOrRegexProperty {
         }
     };
 
-    protected BlocksProperty(Properties properties, int propertyNum) throws RandomPropertyException {
-        super(readPropertiesOrThrow(properties, propertyNum, "blocks", "block").replaceAll("(?<=(^| ))minecraft:", ""));
+    protected BlocksProperty(Properties properties, int propertyNum, String[] ids) throws RandomPropertyException {
+        super(readPropertiesOrThrow(properties, propertyNum, ids).replaceAll("(?<=(^| ))minecraft:", ""));
+        if (usesRegex) {
+            blockStateMatcher = (blockState) -> {
+                if (MATCHER.testString(getFromStateBlockNameOnly(blockState))) {
+                    return true;
+                } else {
+                    return MATCHER.testString(getFromStateBlockNameWithStateData(blockState));
+                }
+            };
+            botherWithDeepStateCheck = false;
+        } else {
+            blockStateMatcher = this::testBlocks;
+            boolean hasStateNeeds = false;
+            for (String s : ARRAY) {
+                if (s.contains(":")) {
+                    hasStateNeeds = true;
+                    break;
+                }
+            }
+            botherWithDeepStateCheck = hasStateNeeds;
+        }
+    }
+
+    protected final boolean botherWithDeepStateCheck;
+
+    protected boolean testBlocks(BlockState blockState) {
+        //is array only non regex
+        if (MATCHER.testString(getFromStateBlockNameOnly(blockState))) {
+            return true;
+        } else if (botherWithDeepStateCheck) {
+            String fullBlockState = getFromStateBlockNameWithStateData(blockState);
+            for (String string : ARRAY) {
+                if (string.contains(":")){
+                    //block has state requirements
+                    boolean matchesAllStateDataNeeded = true;
+                    for (String split : string.split(":")) {
+                        //check only the declared state data is present so foreach by the declaration
+                        if (!fullBlockState.contains(split)){
+                            matchesAllStateDataNeeded = false;
+                            break;
+                        }
+                    }
+                    //if so loop can continue
+                    if (matchesAllStateDataNeeded) return true;
+                }
+            }
+        }
+        return false;
     }
 
     public static BlocksProperty getPropertyOrNull(Properties properties, int propertyNum) {
         try {
-            return new BlocksProperty(properties, propertyNum);
+            return new BlocksProperty(properties, propertyNum, new String[]{"blocks", "block"});
         } catch (RandomPropertyException e) {
             return null;
         }
     }
 
-    private static String getBlockFormattedFromState(BlockState state) {
-        String block = Registries.BLOCK.getId(state.getBlock()).toString();
+    protected  static String getFromStateBlockNameOnly(BlockState state) {
+        return Registries.BLOCK.getId(state.getBlock()).toString().replaceFirst("minecraft:", "");
+    }
+
+    private static String getFromStateBlockNameWithStateData(BlockState state) {
+
+        String block = getFromStateBlockNameOnly(state);
         if (!state.getEntries().isEmpty())
             block = block + ':' + state.getEntries().entrySet().stream().map(PROPERTY_MAP_PRINTER).collect(Collectors.joining(":"));
-        if (block.startsWith("minecraft:"))
-            return block.replaceFirst("minecraft:", "");
+
         return block;
     }
 
@@ -69,63 +121,34 @@ public class BlocksProperty extends StringArrayOrRegexProperty {
     public boolean testEntityInternal(ETFEntity entity) {
 
 
-        String[] entityBlocks;
+        BlockState[] entityBlocks;
 
         if (entity.etf$getUuid().getLeastSignificantBits() == ETFApi.ETF_SPAWNER_MARKER) {
             // entity is a mini mob spawner entity
             // return a blank mob spawner block state
-            entityBlocks = new String[]{getBlockFormattedFromState(Blocks.SPAWNER.getDefaultState())};
+            entityBlocks = new BlockState[]{Blocks.SPAWNER.getDefaultState()};
         } else if (entity instanceof BlockEntity blockEntity) {
             if (blockEntity.getWorld() == null) {
-                entityBlocks = new String[]{getBlockFormattedFromState(blockEntity.getCachedState())};
+                entityBlocks = new BlockState[]{blockEntity.getCachedState()};
             } else {
-                entityBlocks = new String[]{
-                        getBlockFormattedFromState(blockEntity.getCachedState()),
-                        getBlockFormattedFromState(blockEntity.getWorld().getBlockState(blockEntity.getPos().down()))
-                };
+                entityBlocks = new BlockState[]{blockEntity.getCachedState(), blockEntity.getWorld().getBlockState(blockEntity.getPos().down())};
             }
         } else {
             if (entity.etf$getWorld() == null || entity.etf$getBlockPos() == null) return false;
             World world = entity.etf$getWorld();
             BlockPos pos = entity.etf$getBlockPos();
-            entityBlocks = new String[]{
-                    getBlockFormattedFromState(world.getBlockState(pos)),
-                    getBlockFormattedFromState(world.getBlockState(pos.down()))
-            };
+            entityBlocks = new BlockState[]{world.getBlockState(pos), world.getBlockState(pos.down())};
         }
         // if(entityBlocks.length == 0) return false;
 
-        boolean foundAMatch = false;
-        for (String block :
-                entityBlocks) {
-            if (block != null) {
-                //simple contains check or regex if present
-                foundAMatch = MATCHER.testString(block.toLowerCase());
-                if (!foundAMatch) {
-                    //if no regex or simple contains check match then try each defined property
-                    foundAMatch = tryEach(block);
-                }
-                if (foundAMatch) break;
-            }
+        for (BlockState entityBlock : entityBlocks) {
+            //check each block before returning false
+            if (blockStateMatcher.apply(entityBlock)) return true;
         }
-
-        return foundAMatch;
+        return false;
     }
 
-    private boolean tryEach(final String block) {
-        boolean foundEach = true;
-        for (String definition :
-                ARRAY) {
-            for (String partsToFind :
-                    definition.split(":")) {
-                if (!block.contains(partsToFind)) {
-                    foundEach = false;
-                    break;
-                }
-            }
-        }
-        return foundEach;
-    }
+
 
     @Override
     public @Nullable String getValueFromEntity(ETFEntity etfEntity) {
@@ -138,40 +161,4 @@ public class BlocksProperty extends StringArrayOrRegexProperty {
         return new String[]{"blocks", "block"};
     }
 
-//todo old code, still relevant?
-//
-//    private static boolean doBlockEntriesMatch(List<String> propertyEntries, String blockStateEntries) {
-//        if (propertyEntries.isEmpty()) return true;
-//
-//        String[] fixedStateEntries = blockStateEntries.replaceFirst("\\{", "").replaceFirst("}$", "").split(", ");
-//
-//        HashMap<String, String> stateMap = new HashMap<>();
-//        for (String entry :
-//                fixedStateEntries) {
-//            if (entry.contains("=")) {
-//                String[] set = entry.split("=");
-//                stateMap.put(set[0], set[1]);
-//            } else {
-//                ETFUtils2.logWarn("block state failed in property check");
-//                return false;
-//            }
-//        }
-//
-//        if (stateMap.isEmpty()) return false;
-//
-//        for (String property :
-//                propertyEntries) {
-//            String[] set = property.split("=");
-//            String key = set[0];
-//            if (stateMap.containsKey(key)) {
-//                String stateValue = stateMap.get(key);
-//                List<String> properties = List.of(set[1].split(","));
-//                if (!properties.contains(stateValue)) return false;
-//
-//            } else {
-//                return false;
-//            }
-//        }
-//        return true;
-//    }
 }

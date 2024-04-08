@@ -41,6 +41,9 @@ public class RandomProperties {
                 RandomPropertyFactory.of("isTeammate", "config.entity_texture_features.property_explanation.teammate", TeammateProperty::getPropertyOrNull),
                 RandomPropertyFactory.of("isClientPlayer", "config.entity_texture_features.property_explanation.client", ClientPlayerProperty::getPropertyOrNull, true),
                 RandomPropertyFactory.of("teams", "config.entity_texture_features.property_explanation.team", TeamProperty::getPropertyOrNull),
+                RandomPropertyFactory.of("blockSpawned", "config.entity_texture_features.property_explanation.block_spawned", BlockSpawnedProperty::getPropertyOrNull,true),
+
+
 
                 //etf externals
                 RandomPropertyFactory.of("hour", "config.entity_texture_features.property_explanation.hour", HourProperty::getPropertyOrNull),
