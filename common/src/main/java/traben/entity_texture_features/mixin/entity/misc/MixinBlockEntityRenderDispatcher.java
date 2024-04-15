@@ -5,7 +5,9 @@ import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.utils.ETFEntity;
 
@@ -24,23 +26,15 @@ public class MixinBlockEntityRenderDispatcher {
         ETFRenderContext.reset();
     }
 
-//    @ModifyVariable(
-//            method = "method_23080",
-//            at = @At(value = "HEAD"),
-//            index = 3,
-//            argsOnly = true)
-//    private static VertexConsumerProvider etf$injectIntoGetBuffer(VertexConsumerProvider vertexConsumers) {
-//        ETFRenderContext.setCurrentProvider(vertexConsumers);
-//        return layer -> ETFRenderContext.processVertexConsumer(vertexConsumers, layer);
-//    }
-//
-//    @ModifyVariable(
-//            method = "method_23081",
-//            at = @At(value = "HEAD"),
-//            index = 4,
-//            argsOnly = true)
-//    private static VertexConsumerProvider etf$injectIntoGetBuffer2(VertexConsumerProvider vertexConsumers) {
-//        ETFRenderContext.setCurrentProvider(vertexConsumers);
-//        return layer -> ETFRenderContext.processVertexConsumer(vertexConsumers, layer);
-//    }
+
+    @ModifyArg(method = "render(Lnet/minecraft/client/render/block/entity/BlockEntityRenderer;Lnet/minecraft/block/entity/BlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;)V",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/block/entity/BlockEntityRenderer;render(Lnet/minecraft/block/entity/BlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II)V"),
+            index = 4)
+    private static int etf$vanillaLightOverride(final int light) {
+        //if need to override vanilla brightness behaviour
+        //change return with overridden light value still respecting higher block and sky lights
+        return ETF.config().getConfig().getLightOverrideBE(light);
+    }
+
+
 }

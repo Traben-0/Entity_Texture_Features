@@ -25,10 +25,6 @@ public class SizeProperty extends SimpleIntegerArrayProperty {
         }
     }
 
-    @Override
-    public boolean isPropertyUpdatable() {
-        return true;
-    }
 
     @Override
     public @NotNull String[] getPropertyIds() {

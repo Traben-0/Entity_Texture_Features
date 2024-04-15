@@ -34,11 +34,6 @@ public class PlayerCreatedProperty extends BooleanProperty {
 
 
     @Override
-    public boolean isPropertyUpdatable() {
-        return false;
-    }
-
-    @Override
     public @NotNull String[] getPropertyIds() {
         return new String[]{"playerCreated", "player_created"};
     }

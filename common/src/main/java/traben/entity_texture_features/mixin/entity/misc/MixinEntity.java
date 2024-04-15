@@ -66,7 +66,8 @@ public abstract class MixinEntity implements ETFEntity {
     @Shadow
     public abstract EntityPose getPose();
 
-    @Shadow public abstract boolean isPlayer();
+    @Shadow
+    public abstract boolean isPlayer();
 
     @Override
     public EntityType<?> etf$getType() {
@@ -151,5 +152,10 @@ public abstract class MixinEntity implements ETFEntity {
     @Override
     public boolean etf$isBlockEntity() {
         return false;
+    }
+
+    @Override
+    public String etf$getEntityKey() {
+        return getType().getTranslationKey();
     }
 }

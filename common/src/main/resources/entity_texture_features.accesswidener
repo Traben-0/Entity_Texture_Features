@@ -16,6 +16,12 @@ accessible field net/minecraft/client/render/SpriteTexturedVertexConsumer sprite
 # for alternative texture modification
 accessible class net/minecraft/client/render/RenderPhase$Texture
 
+# for block entity renderers in config
+accessible field net/minecraft/client/render/block/entity/BlockEntityRendererFactories FACTORIES Ljava/util/Map;
+
+# 1.20.1 access height to modify
+accessible field net/minecraft/client/gui/widget/ClickableWidget height I
+
 
 
 

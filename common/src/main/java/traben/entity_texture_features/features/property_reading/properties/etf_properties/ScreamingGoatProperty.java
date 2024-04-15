@@ -30,10 +30,6 @@ public class ScreamingGoatProperty extends BooleanProperty {
         return null;
     }
 
-    @Override
-    public boolean isPropertyUpdatable() {
-        return false;
-    }
 
     @Override
     public @NotNull String[] getPropertyIds() {

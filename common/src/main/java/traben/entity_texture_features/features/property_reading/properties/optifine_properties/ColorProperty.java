@@ -59,7 +59,7 @@ public class ColorProperty extends StringArrayOrRegexProperty {
                 if (str != null) {
                     return str.getName();
                 }
-            } else if (entity instanceof VariantHolder<?> variantHolder){
+            } else if (entity instanceof VariantHolder<?> variantHolder) {
                 try {
                     //who knows what issues modded mobs might have
                     if (variantHolder.getVariant() instanceof DyeColor dye) {
@@ -68,17 +68,13 @@ public class ColorProperty extends StringArrayOrRegexProperty {
                             && optional.isPresent() && optional.get() instanceof DyeColor dye) {
                         return dye.getName();
                     }
-                }catch (Exception ignored){}
+                } catch (Exception ignored) {
+                }
             }
         }
         return null;
     }
 
-
-    @Override
-    public boolean isPropertyUpdatable() {
-        return true;
-    }
 
     @Override
     public @NotNull String[] getPropertyIds() {

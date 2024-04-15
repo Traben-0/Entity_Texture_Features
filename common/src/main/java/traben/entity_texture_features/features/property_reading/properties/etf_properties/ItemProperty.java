@@ -86,10 +86,6 @@ public class ItemProperty extends StringArrayOrRegexProperty {
         return null;
     }
 
-    @Override
-    public boolean isPropertyUpdatable() {
-        return true;
-    }
 
     @Override
     public @NotNull String[] getPropertyIds() {

@@ -22,10 +22,6 @@ public class LlamaInventoryProperty extends SimpleIntegerArrayProperty {
         }
     }
 
-    @Override
-    public boolean isPropertyUpdatable() {
-        return false;
-    }
 
     @Override
     public @NotNull String[] getPropertyIds() {

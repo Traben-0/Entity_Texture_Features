@@ -5,13 +5,15 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.forgespi.language.IModInfo;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.List;
 
-@SuppressWarnings("SameReturnValue")
+@SuppressWarnings({"SameReturnValue", "unused"})
 public class ETFVersionDifferenceHandlerImpl {
 
 
@@ -31,6 +33,9 @@ public class ETFVersionDifferenceHandlerImpl {
         return false;
     }
 
+    public static List<String> modsLoaded() {
+        return ModList.get().getMods().stream().map(IModInfo::getModId).toList();
+    }
 
 
     public static Logger getLogger() {
@@ -49,7 +54,5 @@ public class ETFVersionDifferenceHandlerImpl {
         //1.19 & 1.18.2 variation
         return world.getBiome(pos).getKey().toString().split(" / ")[1].replaceAll("[^\\da-zA-Z_:-]", "");
     }
-
-
 
 }
