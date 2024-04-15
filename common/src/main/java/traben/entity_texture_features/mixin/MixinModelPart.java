@@ -44,7 +44,7 @@ public abstract class MixinModelPart {
                     && vertices instanceof ETFVertexConsumer etfVertexConsumer) {
                 ETFTexture texture = etfVertexConsumer.etf$getETFTexture();
                 //is etf texture not null and does it special render?
-                if(texture != null && (texture.isEmissive() || texture.isEnchanted())) {
+                if (texture != null && (texture.isEmissive() || texture.isEnchanted())) {
                     VertexConsumerProvider provider = etfVertexConsumer.etf$getProvider();
                     //very important this is captured before doing the special renders as they can potentially modify
                     //the same ETFVertexConsumer down stream

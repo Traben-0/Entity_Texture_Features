@@ -4,47 +4,44 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.text.Text;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
-import traben.entity_texture_features.ETFClientCommon;
+import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
-import traben.entity_texture_features.config.ETFConfig;
-import traben.entity_texture_features.config.screens.skin.ETFConfigScreenSkinSettings;
-import traben.entity_texture_features.config.screens.warnings.ETFConfigScreenWarnings;
-import traben.entity_texture_features.config.screens.warnings.ETFConfigWarning;
-import traben.entity_texture_features.config.screens.warnings.ETFConfigWarnings;
-import traben.entity_texture_features.features.ETFManager;
-import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.config.ETFConfigWarning;
+import traben.entity_texture_features.config.ETFConfigWarnings;
+import traben.tconfig.gui.TConfigScreenMain;
+import traben.tconfig.gui.entries.TConfigEntryCategory;
 
+import java.util.List;
 import java.util.Objects;
 
-import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
+import static traben.entity_texture_features.ETF.MOD_ID;
+import static traben.entity_texture_features.config.screens.skin.ETFScreenOldCompat.renderGUITexture;
 
-//inspired by puzzles custom gui code
-public class ETFConfigScreenMain extends ETFConfigScreen {
+public class ETFConfigScreenMain extends TConfigScreenMain {
 
-    public static ETFConfig temporaryETFConfig = null;
     final ObjectOpenHashSet<ETFConfigWarning> warningsFound = new ObjectOpenHashSet<>();
-    final ETFConfigScreenWarnings warningsScreen;
-    final ETFConfigScreenSkinSettings playerSkinSettingsScreen = new ETFConfigScreenSkinSettings(this);
-    final ETFConfigScreenRandomSettings randomSettingsScreen = new ETFConfigScreenRandomSettings(this);
-    final ETFConfigScreenEmissiveSettings emissiveSettingsScreen = new ETFConfigScreenEmissiveSettings(this);
-    final ETFConfigScreenBlinkSettings blinkSettingsScreen = new ETFConfigScreenBlinkSettings(this);
-    final ETFConfigScreenDebugSettings debugSettingsScreen = new ETFConfigScreenDebugSettings(this);
-    final ETFConfigScreenGeneralSettings generalSettingsScreen = new ETFConfigScreenGeneralSettings(this);
+
+//    private final Random rand = new Random();
+////    private final LogoCreeperRenderer LOGO_CREEPER = new LogoCreeperRenderer();
+//    private final Identifier BLUE = new Identifier("entity_features", "textures/gui/entity/e.png");
+//    private final Identifier RED = new Identifier("entity_features", "textures/gui/entity/t.png");
+//    private final Identifier YELLOW = new Identifier("entity_features", "textures/gui/entity/f.png");
     boolean shownWarning = false;
     int warningCount = 0;
+    private long timer = 0;
+    private LivingEntity livingEntity = null;
 
     public ETFConfigScreenMain(Screen parent) {
-        super(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".title"), parent);
-        temporaryETFConfig = ETFConfig.copyFrom(ETFConfig.getInstance());
+        super("config.entity_features", parent, ETF.configHandlers, List.of(
+                new TConfigEntryCategory("config.entity_features.textures_main"),
+                new TConfigEntryCategory("config.entity_features.models_main").setEmptyTooltip("config.entity_features.empty_emf"),
+                new TConfigEntryCategory("config.entity_features.sounds_main").setEmptyTooltip("config.entity_features.empty_esf"),
+                new TConfigEntryCategory("config.entity_features.general_settings.title"),
+                new TConfigEntryCategory("config.entity_features.per_entity_settings")
+        ));
 
-
-        if (ETFClientCommon.configHadLoadError) {
-            shownWarning = true;
-            warningCount++;
-        }
 
         for (ETFConfigWarning warning :
                 ETFConfigWarnings.getRegisteredWarnings()) {
@@ -54,78 +51,39 @@ public class ETFConfigScreenMain extends ETFConfigScreen {
                 warningsFound.add(warning);
             }
         }
-        //warningsFound.addAll(Arrays.asList(ETFConfigScreenWarnings.ConfigWarning.values()));
-        warningsScreen = new ETFConfigScreenWarnings(this, warningsFound);
     }
 
-    @Override
-    public void close() {
-//        if (MinecraftClient.getInstance().player != null) {
-//            ETFManager.getInstance().PLAYER_TEXTURE_MAP.removeEntryOnly(MinecraftClient.getInstance().player.getUuid());
-//            ETFManager.getInstance().ENTITY_BLINK_TIME.put(MinecraftClient.getInstance().player.getUuid(), 0L);
+//    public static void drawEntity(MatrixStack context, float x, float y, int size, Quaternionf quaternionf, @Nullable Quaternionf quaternionf2, LivingEntity entity) {
+//        context.push();
+//        context.translate(x, y, 150.0);
+//        context.multiplyPositionMatrix((new Matrix4f()).scaling((float) size, (float) size, (float) (-size)));
+//        context.multiply(quaternionf);
+//        DiffuseLighting.method_34742();
+//        EntityRenderDispatcher entityRenderDispatcher = MinecraftClient.getInstance().getEntityRenderDispatcher();
+//        if (quaternionf2 != null) {
+//            quaternionf2.conjugate();
+//            entityRenderDispatcher.setRotation(quaternionf2);
 //        }
-        ETFManager.resetInstance();
-        super.close();
-    }
+//
+//        entityRenderDispatcher.setRenderShadows(false);
+//        VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
+//        //noinspection deprecation
+//        RenderSystem.runAsFancy(() ->
+//                entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, context, immediate, 15728880));
+//        immediate.draw();
+//        entityRenderDispatcher.setRenderShadows(true);
+//        context.pop();
+//        DiffuseLighting.enableGuiDepthLighting();
+//    }
 
     @Override
     protected void init() {
         super.init();
-
-
         if (shownWarning) {
             this.addDrawableChild(new ButtonWidget((int) (this.width * 0.1), (int) (this.height * 0.1) - 15, (int) (this.width * 0.2), 20,
-                    Text.of(""),
-                    (button) -> Objects.requireNonNull(client).setScreen(warningsScreen)));
+                    ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_features.warnings_main"),
+                    (button) -> Objects.requireNonNull(client).setScreen(new ETFConfigScreenWarnings(this, warningsFound))));
         }
-
-        this.addDrawableChild(new ButtonWidget((int) (this.width * 0.7), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,
-                ETFVersionDifferenceHandler.getTextFromTranslation("gui.done"),
-                (button) -> {
-                    ETFConfig.setInstance(temporaryETFConfig);
-                    ETFConfig.saveConfig();
-                    ETFUtils2.checkModCompatibility();
-                    ETFManager.resetInstance();
-                    ETFClientCommon.configHadLoadError = false;
-                    Objects.requireNonNull(client).setScreen(parent);
-                }));
-        this.addDrawableChild(new ButtonWidget((int) (this.width * 0.4), (int) (this.height * 0.9), (int) (this.width * 0.22), 20,
-                ETFVersionDifferenceHandler.getTextFromTranslation("dataPack.validation.reset"),
-                (button) -> {
-                    temporaryETFConfig = new ETFConfig();
-                    this.clearAndInit();
-                    //Objects.requireNonNull(client).setScreen(parent);
-                }));
-        this.addDrawableChild(new ButtonWidget((int) (this.width * 0.1), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,
-                ScreenTexts.CANCEL,
-                (button) -> {
-                    temporaryETFConfig = null;
-                    Objects.requireNonNull(client).setScreen(parent);
-                }));
-
-        this.addDrawableChild(new ButtonWidget((int) (this.width * 0.3) + 75, (int) (this.height * 0.5) - 73, 165, 20,
-                ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".random_settings.title"),
-                (button) -> Objects.requireNonNull(client).setScreen(randomSettingsScreen)));
-
-        this.addDrawableChild(new ButtonWidget((int) (this.width * 0.3) + 75, (int) (this.height * 0.5) - 48, 165, 20,
-                ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".emissive_settings.title"),
-                (button) -> Objects.requireNonNull(client).setScreen(emissiveSettingsScreen)));
-
-        this.addDrawableChild(new ButtonWidget((int) (this.width * 0.3) + 75, (int) (this.height * 0.5) - 23, 165, 20,
-                ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_settings.title"),
-                (button) -> Objects.requireNonNull(client).setScreen(playerSkinSettingsScreen)));
-
-        this.addDrawableChild(new ButtonWidget((int) (this.width * 0.3) + 75, (int) (this.height * 0.5) + 3, 165, 20,
-                ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".blinking_mob_settings_sub.title"),
-                (button) -> Objects.requireNonNull(client).setScreen(blinkSettingsScreen)));
-
-        this.addDrawableChild(new ButtonWidget((int) (this.width * 0.3) + 75, (int) (this.height * 0.5) + 28, 165, 20,
-                ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.debug_screen.title"),
-                (button) -> Objects.requireNonNull(client).setScreen(debugSettingsScreen)));
-
-        this.addDrawableChild(new ButtonWidget((int) (this.width * 0.3) + 75, (int) (this.height * 0.5) + 53, 165, 20,
-                ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".general_settings.title"),
-                (button) -> Objects.requireNonNull(client).setScreen(generalSettingsScreen)));
 
     }
 
@@ -134,11 +92,11 @@ public class ETFConfigScreenMain extends ETFConfigScreen {
         super.render(matrices, mouseX, mouseY, delta);
 
         renderGUITexture(new Identifier(MOD_ID + ":textures/gui/icon.png"), (this.width * 0.3) - 64, (this.height * 0.5) - 64, (this.width * 0.3) + 64, (this.height * 0.5) + 64);
-        if (shownWarning) {
-            drawCenteredText(matrices, textRenderer,
-                    Text.of(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".warnings_main").getString() + warningCount),
-                    (int) (width * 0.2), (int) (height * 0.1) - 9, 11546150);
-        }
+//        if (shownWarning) {
+//            drawCenteredText(matrices, textRenderer,
+//                    Text.of(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETF.MOD_ID + ".warnings_main").getString() + warningCount),
+//                    (int) (width * 0.2), (int) (height * 0.1) - 9, 11546150);
+//        }
 
     }
 

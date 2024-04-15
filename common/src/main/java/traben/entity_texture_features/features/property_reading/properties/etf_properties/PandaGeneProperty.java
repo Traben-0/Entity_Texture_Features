@@ -42,11 +42,6 @@ public class PandaGeneProperty extends StringArrayOrRegexProperty {
 
 
     @Override
-    public boolean isPropertyUpdatable() {
-        return false;
-    }
-
-    @Override
     public @NotNull String[] getPropertyIds() {
         return new String[]{"hiddenGene", "gene"};
     }

@@ -17,7 +17,7 @@ public abstract class LongRangeFromStringArrayProperty extends NumberRangeFromSt
                 String[] str = possibleRange.split("(?<!^|-)-");
                 long left = Long.parseLong(str[0].replaceAll("[^0-9-]", ""));
                 long right = Long.parseLong(str[1].replaceAll("[^0-9-]", ""));
-                if(left == right){
+                if (left == right) {
                     return (value) -> value == left;
                 } else if (right > left) {
                     return (value) -> value >= left && value <= right;

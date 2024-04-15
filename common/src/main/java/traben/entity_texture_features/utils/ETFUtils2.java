@@ -17,10 +17,10 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import traben.entity_texture_features.ETFClientCommon;
+import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
-import traben.entity_texture_features.config.screens.warnings.ETFConfigWarning;
-import traben.entity_texture_features.config.screens.warnings.ETFConfigWarnings;
+import traben.entity_texture_features.config.ETFConfigWarning;
+import traben.entity_texture_features.config.ETFConfigWarnings;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
@@ -54,6 +54,7 @@ public abstract class ETFUtils2 {
     }
 
     public static boolean renderEmissive(ETFTexture texture, VertexConsumerProvider provider, RenderMethodForOverlay renderer) {
+        if (!ETF.config().getConfig().canDoEmissiveTextures()) return false;
         Identifier emissive = texture.getEmissiveIdentifierOfCurrentState();
         if (emissive != null) {
             boolean wasAllowed = ETFRenderContext.isAllowedToRenderLayerTextureModify();
@@ -69,7 +70,7 @@ public abstract class ETFUtils2 {
             if (wasAllowed) ETFRenderContext.allowRenderLayerTextureModify();
 
             ETFRenderContext.startSpecialRenderOverlayPhase();
-            renderer.render(emissiveConsumer, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE);
+            renderer.render(emissiveConsumer, ETF.EMISSIVE_FEATURE_LIGHT_VALUE);
             ETFRenderContext.endSpecialRenderOverlayPhase();
             return true;
         }
@@ -224,7 +225,7 @@ public abstract class ETFUtils2 {
                 AbstractTexture texture = MinecraftClient.getInstance().getTextureManager().getTexture(identifier);
                 if (texture instanceof NativeImageBackedTexture nativeImageBackedTexture) {
                     var image2 = nativeImageBackedTexture.getImage();
-                    if(image2 == null) return null;
+                    if (image2 == null) return null;
                     NativeImage image3 = new NativeImage(image2.getWidth(), image2.getHeight(), false);
                     image3.copyFrom(image2);
                     return image3;
@@ -249,10 +250,10 @@ public abstract class ETFUtils2 {
             if (player != null) {
                 player.sendMessage(MutableText.of(new LiteralTextContent("§a[INFO]§r [Entity Texture Features]: " + obj))/*.formatted(Formatting.GRAY, Formatting.ITALIC)*/, false);
             } else {
-                ETFClientCommon.LOGGER.info(obj);
+                ETF.LOGGER.info(obj);
             }
         } else {
-            ETFClientCommon.LOGGER.info(obj);
+            ETF.LOGGER.info(obj);
         }
     }
 
@@ -268,10 +269,10 @@ public abstract class ETFUtils2 {
             if (player != null) {
                 player.sendMessage(MutableText.of(new LiteralTextContent("§e[WARN]§r [Entity Texture Features]: " + obj)).formatted(Formatting.YELLOW), false);
             } else {
-                ETFClientCommon.LOGGER.warn(obj);
+                ETF.LOGGER.warn(obj);
             }
         } else {
-            ETFClientCommon.LOGGER.warn(obj);
+            ETF.LOGGER.warn(obj);
         }
     }
 
@@ -287,10 +288,10 @@ public abstract class ETFUtils2 {
             if (player != null) {
                 player.sendMessage(MutableText.of(new LiteralTextContent("§4[ERROR]§r [Entity Texture Features]: " + obj)).formatted(Formatting.RED, Formatting.BOLD), false);
             } else {
-                ETFClientCommon.LOGGER.error(obj);
+                ETF.LOGGER.error(obj);
             }
         } else {
-            ETFClientCommon.LOGGER.error(obj);
+            ETF.LOGGER.error(obj);
         }
     }
 

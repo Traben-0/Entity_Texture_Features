@@ -7,6 +7,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.utils.ETFUtils2;
@@ -21,15 +22,15 @@ public abstract class MixinIdentifier {
 
     @Inject(method = "isPathValid(Ljava/lang/String;)Z", cancellable = true, at = @At("RETURN"))
     private static void etf$illegalPathOverride(String path, CallbackInfoReturnable<Boolean> cir) {
-//        if (ETFConfig.getInstance() != null) {
-            if (ETFConfig.getInstance().illegalPathSupportMode != ETFConfig.IllegalPathMode.None) {
+        if (ETF.config().getConfig() != null) {
+            if (ETF.config().getConfig().illegalPathSupportMode != ETFConfig.IllegalPathMode.None) {
                 if (!cir.getReturnValue() && path != null) {
 
 
-                    switch (ETFConfig.getInstance().illegalPathSupportMode) {
+                    switch (ETF.config().getConfig().illegalPathSupportMode) {
                         case Entity -> {
-                            if ((path.contains("/entity/") || path.contains("/optifine/") || path.contains("/etf/"))
-                                    && (path.endsWith(".png") || path.endsWith(".properties") || path.endsWith(".mcmeta"))) {
+                            if ((path.contains("/entity/") || path.contains("optifine/") || path.contains("etf/") || path.contains("emf/"))
+                                    && (path.endsWith(".png") || path.endsWith(".properties") || path.endsWith(".mcmeta") || path.endsWith(".jem") || path.endsWith(".jpm"))) {
                                 ETFUtils2.logWarn(ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.illegal_path_warn").getString()
                                         + " [" + path + "]");
 
@@ -50,7 +51,7 @@ public abstract class MixinIdentifier {
                     }
                 }
             }
-//        }
+        }
     }
 }
 

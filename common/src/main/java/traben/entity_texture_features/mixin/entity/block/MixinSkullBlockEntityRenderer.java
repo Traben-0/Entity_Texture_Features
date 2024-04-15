@@ -23,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-import traben.entity_texture_features.config.ETFConfig;
+import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.player.ETFPlayerEntity;
@@ -31,7 +31,6 @@ import traben.entity_texture_features.features.player.ETFPlayerFeatureRenderer;
 import traben.entity_texture_features.features.player.ETFPlayerTexture;
 
 import java.util.Map;
-
 
 
 @Mixin(SkullBlockEntityRenderer.class)
@@ -64,7 +63,7 @@ public abstract class MixinSkullBlockEntityRenderer implements BlockEntityRender
 
         entity_texture_features$thisETFPlayerTexture = null;
 
-        if (skullType == SkullBlock.Type.PLAYER && ETFConfig.getInstance().skinFeaturesEnabled && ETFConfig.getInstance().enableCustomTextures && ETFConfig.getInstance().enableCustomBlockEntities) {
+        if (skullType == SkullBlock.Type.PLAYER && ETF.config().getConfig().skinFeaturesEnabled && ETF.config().getConfig().enableCustomTextures && ETF.config().getConfig().enableCustomBlockEntities) {
             if (skullBlockEntity.getOwner() != null) {
 //                Identifier identifier = MinecraftClient.getInstance()
 //                        .getSkinProvider().getTextures(skullBlockEntity.getOwner()).texture();
@@ -74,7 +73,7 @@ public abstract class MixinSkullBlockEntityRenderer implements BlockEntityRender
 
 
                 entity_texture_features$thisETFPlayerTexture = ETFManager.getInstance().getPlayerTexture((ETFPlayerEntity) skullBlockEntity, identifier);
-                if(entity_texture_features$thisETFPlayerTexture != null){
+                if (entity_texture_features$thisETFPlayerTexture != null) {
                     ETFRenderContext.preventRenderLayerTextureModify();
                 }
             }
@@ -86,7 +85,7 @@ public abstract class MixinSkullBlockEntityRenderer implements BlockEntityRender
             at = @At(value = "TAIL"),
             locals = LocalCapture.CAPTURE_FAILHARD)
     private void etf$renderFeatures(SkullBlockEntity skullBlockEntity, float f, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j, CallbackInfo ci, float g, BlockState blockState, boolean bl, Direction direction, float h, SkullBlock.SkullType skullType, SkullBlockEntityModel skullBlockEntityModel, RenderLayer renderLayer) {
-        if (entity_texture_features$thisETFPlayerTexture != null && ETFConfig.getInstance().enableEmissiveBlockEntities) {
+        if (entity_texture_features$thisETFPlayerTexture != null && ETF.config().getConfig().enableEmissiveBlockEntities) {
             //vanilla positional code copy
             matrixStack.push();
             if (direction == null) {
@@ -98,7 +97,7 @@ public abstract class MixinSkullBlockEntityRenderer implements BlockEntityRender
             skullBlockEntityModel.setHeadRotation(g, h, 0.0F);
             //vanilla end
 
-            ETFPlayerFeatureRenderer.renderSkullFeatures(matrixStack, vertexConsumerProvider, i, skullBlockEntityModel, entity_texture_features$thisETFPlayerTexture,h);
+            ETFPlayerFeatureRenderer.renderSkullFeatures(matrixStack, vertexConsumerProvider, i, skullBlockEntityModel, entity_texture_features$thisETFPlayerTexture, h);
 
             matrixStack.pop();
         }

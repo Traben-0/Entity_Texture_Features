@@ -16,7 +16,9 @@ import java.util.Optional;
 public abstract class MixinMultiPhase implements ETFRenderLayerWithTexture {
 
 
-    @Shadow @Final public RenderLayer.MultiPhaseParameters phases;
+    @Shadow
+    @Final
+    public RenderLayer.MultiPhaseParameters phases;
 
     @Override
     public Optional<Identifier> etf$getId() {

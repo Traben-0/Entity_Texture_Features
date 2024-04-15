@@ -7,7 +7,7 @@ import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
-import traben.entity_texture_features.config.ETFConfig;
+import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.features.ETFManager;
 
 @Mixin(BlazeEntity.class)
@@ -24,7 +24,7 @@ public abstract class MixinBlazeEntity extends HostileEntity {
             index = 2
     )
     private double mixin(double x) {
-        if (ETFConfig.getInstance().enableCustomTextures
+        if (ETF.config().getConfig().canDoCustomTextures()
                 && ETFManager.getInstance().ENTITY_TYPE_IGNORE_PARTICLES.contains(this.getType())) {
             return -500;
         }

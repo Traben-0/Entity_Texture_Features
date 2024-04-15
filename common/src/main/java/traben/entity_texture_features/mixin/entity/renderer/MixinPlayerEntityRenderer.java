@@ -20,9 +20,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import traben.entity_texture_features.ETFClientCommon;
+import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.compat.ETF3DSkinLayersUtil;
-import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.player.ETFPlayerFeatureRenderer;
@@ -49,7 +48,6 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
     }
 
 
-
     /*
      * For some reason cancelling in this way is the only way to get this working
      * */
@@ -63,7 +61,7 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
 //        if (entity_texture_features$timerBeforeTrySkin > 0) {
 //            entity_texture_features$timerBeforeTrySkin--;
 //        } else {
-            if (ETFConfig.getInstance().skinFeaturesEnabled) {
+            if (ETF.config().getConfig().skinFeaturesEnabled) {
                 ETFPlayerTexture thisETFPlayerTexture = ETFManager.getInstance().getPlayerTexture(player, player.getSkinTexture());
                 if (thisETFPlayerTexture != null && thisETFPlayerTexture.hasFeatures) {
                     Identifier etfTexture = thisETFPlayerTexture.getBaseTextureIdentifierOrNullForVanilla(player);
@@ -80,11 +78,11 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
                     Identifier emissive = thisETFPlayerTexture.getBaseTextureEmissiveIdentifierOrNullForNone();
                     if (emissive != null) {
                         VertexConsumer vc2 = vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(emissive));
-                        etf$renderOnce(matrices,vc2,ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE,player,arm,sleeve);
+                        etf$renderOnce(matrices, vc2, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, player, arm, sleeve);
                     }
                     if (thisETFPlayerTexture.baseEnchantIdentifier != null) {
                         VertexConsumer vc3 = ItemRenderer.getArmorGlintConsumer(vertexConsumers, RenderLayer.getArmorCutoutNoCull(thisETFPlayerTexture.baseEnchantIdentifier), false, true);
-                        etf$renderOnce(matrices,vc3,light,player,arm,sleeve);
+                        etf$renderOnce(matrices, vc3, light, player, arm, sleeve);
                     }
                     ETFRenderContext.endSpecialRenderOverlayPhase();
 
@@ -99,10 +97,10 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
 
 
     @Unique
-    private void etf$renderOnce(MatrixStack matrixStack, VertexConsumer consumer, int light, AbstractClientPlayerEntity player, ModelPart arm, ModelPart sleeve){
+    private void etf$renderOnce(MatrixStack matrixStack, VertexConsumer consumer, int light, AbstractClientPlayerEntity player, ModelPart arm, ModelPart sleeve) {
         arm.render(matrixStack, consumer, light, OverlayTexture.DEFAULT_UV);
         sleeve.render(matrixStack, consumer, light, OverlayTexture.DEFAULT_UV);
-        if (ETFClientCommon.SKIN_LAYERS_DETECTED && ETFConfig.getInstance().use3DSkinLayerPatch) {
+        if (ETF.SKIN_LAYERS_DETECTED && ETF.config().getConfig().use3DSkinLayerPatch) {
             try {
                 // handler class is only ever accessed if the mod is present
                 // prevents NoClassDefFoundError
@@ -116,17 +114,16 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
                 ETFUtils2.logError("Error with ETF's 3D skin layers mod hand compatibility: " + error);
                 error.printStackTrace();
                 //prevent further attempts
-                ETFClientCommon.SKIN_LAYERS_DETECTED = false;
+                ETF.SKIN_LAYERS_DETECTED = false;
             }
         }
     }
 
 
-
     @Inject(method = "getTexture(Lnet/minecraft/client/network/AbstractClientPlayerEntity;)Lnet/minecraft/util/Identifier;",
             at = @At(value = "RETURN"), cancellable = true)
     private void etf$getTexture(AbstractClientPlayerEntity abstractClientPlayerEntity, CallbackInfoReturnable<Identifier> cir) {
-        if (ETFConfig.getInstance().skinFeaturesEnabled) {
+        if (ETF.config().getConfig().skinFeaturesEnabled) {
             etf$ETFPlayerTexture = ETFManager.getInstance().getPlayerTexture(abstractClientPlayerEntity, cir.getReturnValue());
             if (etf$ETFPlayerTexture != null && etf$ETFPlayerTexture.hasFeatures) {
                 Identifier texture = etf$ETFPlayerTexture.getBaseTextureIdentifierOrNullForVanilla(abstractClientPlayerEntity);

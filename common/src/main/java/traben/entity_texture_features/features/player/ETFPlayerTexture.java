@@ -7,7 +7,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ColorHelper;
 import org.jetbrains.annotations.Nullable;
-import traben.entity_texture_features.config.ETFConfig;
+import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.config.screens.skin.ETFConfigScreenSkinTool;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
@@ -31,7 +31,7 @@ public class ETFPlayerTexture {
     public Identifier baseEnchantIdentifier = null;
     public Identifier baseEnchantBlinkIdentifier = null;
     public Identifier baseEnchantBlink2Identifier = null;
-//    public Identifier etfCapeIdentifier = null;
+    //    public Identifier etfCapeIdentifier = null;
     public Identifier texturedNoseIdentifier = null;
     public Identifier texturedNoseIdentifierEmissive = null;
     public Identifier texturedNoseIdentifierEnchanted = null;
@@ -43,13 +43,13 @@ public class ETFPlayerTexture {
     public int blinkHeight = 1;
     //public boolean THIS_SKIN_IS_IN_EDITOR = false;
 
-//    public ETFTexture etfCape = null;
+    //    public ETFTexture etfCape = null;
     public boolean hasEmissives = false;
     public boolean hasEnchant = false;
     //provides emissive patching and blinking functionality
     //all ETFPlayerTexture needs to do is build those textures and register them before this ETFTexture is made, and it will auto locate and apply them
     public ETFTexture etfTextureOfFinalBaseSkin;
-//    public ETFConfigScreenSkinTool.CapeType capeType = ETFConfigScreenSkinTool.CapeType.NONE;
+    //    public ETFConfigScreenSkinTool.CapeType capeType = ETFConfigScreenSkinTool.CapeType.NONE;
     public ETFConfigScreenSkinTool.NoseType noseType = ETFConfigScreenSkinTool.NoseType.NONE;
     public ETFPlayerEntity player;
     public boolean wasForcedSolid = false;
@@ -61,7 +61,7 @@ public class ETFPlayerTexture {
     private boolean isTextureReady = false;
     //private boolean hasVanillaCape = false;
     private NativeImage originalSkin;
-//    private NativeImage originalCape;
+    //    private NativeImage originalCape;
 //    private int[] enchantCapeBounds = null;
 //    private int[] emissiveCapeBounds = null;
 //    private Identifier etfCapeEmissiveIdentifier = null;
@@ -303,11 +303,11 @@ public class ETFPlayerTexture {
     }
 
     private static void parseSkinTransparency(NativeImage skin, boolean forceSolidSkin) {
-        if (forceSolidSkin || !ETFConfig.getInstance().skinFeaturesEnableTransparency) {
+        if (forceSolidSkin || !ETF.config().getConfig().skinFeaturesEnableTransparency) {
             forceSolidLowerSkin(skin);
             return;
         }
-        if (!ETFConfig.getInstance().skinFeaturesEnableFullTransparency) {
+        if (!ETF.config().getConfig().skinFeaturesEnableFullTransparency) {
             int countTransparent = 0;
             //map of bottom skin layer
             countTransparent += countTransparentInBox(skin, 8, 0, 23, 15);
@@ -463,7 +463,7 @@ public class ETFPlayerTexture {
     @Nullable
     public Identifier getBaseTextureIdentifierOrNullForVanilla(ETFPlayerEntity player) {
         this.player = player;//refresh player data
-        if (etfTextureOfFinalBaseSkin != null && (canUseFeaturesForThisPlayer() || ETFConfig.getInstance().tryETFTransparencyForAllSkins)) {
+        if (etfTextureOfFinalBaseSkin != null && (canUseFeaturesForThisPlayer() || ETF.config().getConfig().tryETFTransparencyForAllSkins)) {
             return etfTextureOfFinalBaseSkin.getTextureIdentifier(player);
         }
         return null;
@@ -471,7 +471,7 @@ public class ETFPlayerTexture {
 
     @Nullable
     public Identifier getBaseHeadTextureIdentifierOrNullForVanilla() {
-        if (etfTextureOfFinalBaseSkin != null && canUseFeaturesForThisPlayer() && ETFConfig.getInstance().tryETFTransparencyForAllSkins) {
+        if (etfTextureOfFinalBaseSkin != null && canUseFeaturesForThisPlayer() && ETF.config().getConfig().tryETFTransparencyForAllSkins) {
             return etfTextureOfFinalBaseSkin.getTextureIdentifier(null);
         }
         return null;
@@ -525,7 +525,7 @@ public class ETFPlayerTexture {
         return isTextureReady
                 && hasFeatures
                 && (//not on enemy team or doesn't matter
-                ETFConfig.getInstance().enableEnemyTeamPlayersSkinFeatures
+                ETF.config().getConfig().enableEnemyTeamPlayersSkinFeatures
                         || (player.etf$isTeammate(MinecraftClient.getInstance().player)
                         || player.etf$getScoreboardTeam() == null));
     }
@@ -658,7 +658,7 @@ public class ETFPlayerTexture {
                     if (noseChoice == 1 || noseChoice == 7 || noseChoice == 8 || noseChoice == 9) {
                         hasVillagerNose = true;
                         noseType = ETFConfigScreenSkinTool.NoseType.NONE.getByColorId(noseChoice);
-                        if(noseChoice > 7){
+                        if (noseChoice > 7) {
                             removeNosePixels = true;
                             deletePixels(modifiedSkin, 43, 13, 44, 15);
                         }
@@ -766,7 +766,7 @@ public class ETFPlayerTexture {
 
                     //check if lazy blink
                     if (blinkChoice <= 2) {
-                        if(removeNosePixels){
+                        if (removeNosePixels) {
                             deletePixels(modifiedSkin, 35, 5, 36, 7);
                         }
                         //blink 1 frame if either pink or blue optional
@@ -776,7 +776,7 @@ public class ETFPlayerTexture {
 
                         //blink is 2 frames with blue optional
                         if (blinkChoice == 2) {
-                            if(removeNosePixels){
+                            if (removeNosePixels) {
                                 deletePixels(modifiedSkin, 59, 5, 60, 7);
                             }
                             blinkSkinFile2 = returnOptimizedBlinkFace(modifiedSkin, getSkinPixelBounds("face2"), 1, getSkinPixelBounds("face4"));
@@ -1033,7 +1033,6 @@ public class ETFPlayerTexture {
                 }
 
 
-
                 Identifier modifiedSkinIdentifier = new Identifier(SKIN_NAMESPACE, id + ".png");
                 ETFUtils2.registerNativeImageToIdentifier(modifiedSkin, modifiedSkinIdentifier);
 
@@ -1077,7 +1076,7 @@ public class ETFPlayerTexture {
             } else {
 
                 //check if they want to try load transparent skin anyway
-                if (ETFConfig.getInstance().tryETFTransparencyForAllSkins) {
+                if (ETF.config().getConfig().tryETFTransparencyForAllSkins) {
                     //parseSkinTransparency(originalSkin,wasForcedSolid);
                     Identifier skinIdentifier = new Identifier(SKIN_NAMESPACE, id + ".png");
                     ETFUtils2.registerNativeImageToIdentifier(originalSkin, skinIdentifier);

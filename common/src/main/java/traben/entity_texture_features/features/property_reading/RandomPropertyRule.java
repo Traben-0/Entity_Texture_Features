@@ -1,6 +1,5 @@
 package traben.entity_texture_features.features.property_reading;
 
-import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperty;
 import traben.entity_texture_features.utils.ETFEntity;
 import traben.entity_texture_features.utils.ETFUtils2;
@@ -14,6 +13,7 @@ public class RandomPropertyRule {
     private final Integer[] SUFFIX_NUMBERS_WEIGHTED;
     private final RandomProperty[] PROPERTIES_TO_TEST;
     private final boolean RULE_ALWAYS_APPROVED;
+
 
     public RandomPropertyRule(
             String propertiesFile,
@@ -63,15 +63,13 @@ public class RandomPropertyRule {
         if (RULE_ALWAYS_APPROVED) return true;
         if (etfEntity == null) return false;
 
-        UUID id = etfEntity.etf$getUuid();
-
         boolean wasEntityTestedByAnUpdatableProperty = false;
         boolean entityMetRequirements = true;
         try {
             for (RandomProperty property :
                     PROPERTIES_TO_TEST) {
                 if (!entityMetRequirements) break;
-                if (property.isPropertyUpdatable())
+                if (property.canPropertyUpdate())
                     wasEntityTestedByAnUpdatableProperty = true;
                 entityMetRequirements = property.testEntity(etfEntity, isUpdate);
             }
@@ -87,14 +85,12 @@ public class RandomPropertyRule {
             UUID_CaseHasUpdateablesCustom.put(etfEntity.etf$getUuid(), true);
         }
 
-        ETFManager.getInstance().LAST_MET_RULE_INDEX.put(id, entityMetRequirements ? RULE_NUMBER : 0);
 
         return entityMetRequirements;
     }
 
-    public int getVariantSuffixFromThisCase(UUID uuid) {
-        int randomSeededByUUID = Math.abs(uuid.hashCode());
-        return SUFFIX_NUMBERS_WEIGHTED[randomSeededByUUID % SUFFIX_NUMBERS_WEIGHTED.length];
+    public int getVariantSuffixFromThisCase(int seed) {
+        return SUFFIX_NUMBERS_WEIGHTED[Math.abs(seed) % SUFFIX_NUMBERS_WEIGHTED.length];
     }
 
 
@@ -102,7 +98,7 @@ public class RandomPropertyRule {
         try {
             for (RandomProperty property :
                     PROPERTIES_TO_TEST) {
-                if (!property.isPropertyUpdatable()) {
+                if (!property.canPropertyUpdate()) {
                     property.cacheEntityInitialResult(entity);
                 }
             }
