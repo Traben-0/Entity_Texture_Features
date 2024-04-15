@@ -54,7 +54,6 @@ public class TConfigEntryEnumButton<E extends Enum<E>> extends TConfigEntryNullS
     @Override
     public ClickableWidget getWidget(final int x, final int y, final int width, final int height) {
         widget.setDimensionsAndPosition(width, height, x, y);
-        //noinspection unchecked
         return widget;
     }
 

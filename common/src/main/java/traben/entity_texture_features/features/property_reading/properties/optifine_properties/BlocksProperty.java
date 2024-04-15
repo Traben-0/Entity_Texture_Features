@@ -21,8 +21,6 @@ import java.util.stream.Collectors;
 
 public class BlocksProperty extends StringArrayOrRegexProperty {
 
-    protected final Function<BlockState,Boolean> blockStateMatcher;
-
     private static final Function<Map.Entry<Property<?>, Comparable<?>>, String> PROPERTY_MAP_PRINTER = new Function<>() {
         public String apply(@Nullable Map.Entry<Property<?>, Comparable<?>> entry) {
             if (entry == null) {
@@ -39,6 +37,8 @@ public class BlocksProperty extends StringArrayOrRegexProperty {
             return property.name((T) value);
         }
     };
+    protected final Function<BlockState, Boolean> blockStateMatcher;
+    protected final boolean botherWithDeepStateCheck;
 
     protected BlocksProperty(Properties properties, int propertyNum, String[] ids) throws RandomPropertyException {
         super(readPropertiesOrThrow(properties, propertyNum, ids).replaceAll("(?<=(^| ))minecraft:", ""));
@@ -64,33 +64,6 @@ public class BlocksProperty extends StringArrayOrRegexProperty {
         }
     }
 
-    protected final boolean botherWithDeepStateCheck;
-
-    protected boolean testBlocks(BlockState blockState) {
-        //is array only non regex
-        if (MATCHER.testString(getFromStateBlockNameOnly(blockState))) {
-            return true;
-        } else if (botherWithDeepStateCheck) {
-            String fullBlockState = getFromStateBlockNameWithStateData(blockState);
-            for (String string : ARRAY) {
-                if (string.contains(":")){
-                    //block has state requirements
-                    boolean matchesAllStateDataNeeded = true;
-                    for (String split : string.split(":")) {
-                        //check only the declared state data is present so foreach by the declaration
-                        if (!fullBlockState.contains(split)){
-                            matchesAllStateDataNeeded = false;
-                            break;
-                        }
-                    }
-                    //if so loop can continue
-                    if (matchesAllStateDataNeeded) return true;
-                }
-            }
-        }
-        return false;
-    }
-
     public static BlocksProperty getPropertyOrNull(Properties properties, int propertyNum) {
         try {
             return new BlocksProperty(properties, propertyNum, new String[]{"blocks", "block"});
@@ -99,7 +72,7 @@ public class BlocksProperty extends StringArrayOrRegexProperty {
         }
     }
 
-    protected  static String getFromStateBlockNameOnly(BlockState state) {
+    protected static String getFromStateBlockNameOnly(BlockState state) {
         return Registries.BLOCK.getId(state.getBlock()).toString().replaceFirst("minecraft:", "");
     }
 
@@ -110,6 +83,31 @@ public class BlocksProperty extends StringArrayOrRegexProperty {
             block = block + ':' + state.getEntries().entrySet().stream().map(PROPERTY_MAP_PRINTER).collect(Collectors.joining(":"));
 
         return block;
+    }
+
+    protected boolean testBlocks(BlockState blockState) {
+        //is array only non regex
+        if (MATCHER.testString(getFromStateBlockNameOnly(blockState))) {
+            return true;
+        } else if (botherWithDeepStateCheck) {
+            String fullBlockState = getFromStateBlockNameWithStateData(blockState);
+            for (String string : ARRAY) {
+                if (string.contains(":")) {
+                    //block has state requirements
+                    boolean matchesAllStateDataNeeded = true;
+                    for (String split : string.split(":")) {
+                        //check only the declared state data is present so foreach by the declaration
+                        if (!fullBlockState.contains(split)) {
+                            matchesAllStateDataNeeded = false;
+                            break;
+                        }
+                    }
+                    //if so loop can continue
+                    if (matchesAllStateDataNeeded) return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
@@ -147,7 +145,6 @@ public class BlocksProperty extends StringArrayOrRegexProperty {
         }
         return false;
     }
-
 
 
     @Override

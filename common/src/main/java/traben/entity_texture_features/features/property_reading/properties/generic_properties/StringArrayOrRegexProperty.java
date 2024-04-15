@@ -39,29 +39,12 @@ public abstract class StringArrayOrRegexProperty extends RandomProperty {
                 ARRAY.add(shouldForceLowerCaseCheck() ? str.toLowerCase() : str);
             }
             //add the entire text as well just incase spaced names were expected
-            if (array.length != 1){
+            if (array.length != 1) {
                 ARRAY.add(string.trim());
             }
             MATCHER = this::testArray;
             usesRegex = false;
         }
-    }
-
-    private boolean testArray(String fromEntity){
-        boolean matches = false;
-        for (String string : ARRAY) {
-            if (string.startsWith("!")) {
-                matches = true;
-                if (string.substring(1).equals(fromEntity)) {
-                    matches = false;
-                    break;
-                }
-            } else if (string.equals(fromEntity)) {
-                matches = true;
-                break;
-            }
-        }
-        return matches;
     }
 
     @Nullable
@@ -131,6 +114,23 @@ public abstract class StringArrayOrRegexProperty extends RandomProperty {
                 return invert != check;
             };
         }
+    }
+
+    private boolean testArray(String fromEntity) {
+        boolean matches = false;
+        for (String string : ARRAY) {
+            if (string.startsWith("!")) {
+                matches = true;
+                if (string.substring(1).equals(fromEntity)) {
+                    matches = false;
+                    break;
+                }
+            } else if (string.equals(fromEntity)) {
+                matches = true;
+                break;
+            }
+        }
+        return matches;
     }
 
     @Override

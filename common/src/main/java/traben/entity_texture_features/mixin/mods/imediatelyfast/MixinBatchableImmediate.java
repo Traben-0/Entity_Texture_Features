@@ -34,8 +34,8 @@ public class MixinBatchableImmediate {
 
 
     @Unique
-    private boolean etf$notBatchableClass(){
-        if (etf$notBatchableClass == null){
+    private boolean etf$notBatchableClass() {
+        if (etf$notBatchableClass == null) {
             Class<?> cl = getClass();
             etf$notBatchableClass = !cl.equals(BatchableImmediate.class);
         }
