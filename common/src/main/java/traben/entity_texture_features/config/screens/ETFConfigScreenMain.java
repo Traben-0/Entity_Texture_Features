@@ -116,7 +116,7 @@ public class ETFConfigScreenMain extends TConfigScreenMain {
 //        } else {
 //            renderETFLogoCreepers(matrices, mouseX, mouseY);
 //        }
-        matrices.pop();
+        //matrices.pop();
     }
 
 //    private void renderETFLogoCreepers(final MatrixStack context, final int mouseX, final int mouseY) {
