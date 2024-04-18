@@ -51,16 +51,17 @@ public abstract class MixinSkullBlockEntityRenderer implements BlockEntityRender
 
 
     @Inject(method = "render(Lnet/minecraft/block/entity/SkullBlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II)V",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/block/entity/SkullBlockEntityRenderer;getRenderLayer(Lnet/minecraft/block/SkullBlock$SkullType;Lcom/mojang/authlib/GameProfile;)Lnet/minecraft/client/render/RenderLayer;"),
+            at = @At(value = "INVOKE",
+                    target = "Lnet/minecraft/client/render/block/entity/SkullBlockEntityRenderer;getRenderLayer(Lnet/minecraft/block/SkullBlock$SkullType;Lnet/minecraft/component/type/ProfileComponent;)Lnet/minecraft/client/render/RenderLayer;"),
             locals = LocalCapture.CAPTURE_FAILHARD)
-    private void etf$alterTexture(SkullBlockEntity skullBlockEntity, float f, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j, CallbackInfo ci, float g, BlockState blockState, boolean bl, Direction direction, int k, float h, SkullBlock.SkullType skullType, SkullBlockEntityModel skullBlockEntityModel) {
+    private void etf$alterTexture(final SkullBlockEntity skullBlockEntity, final float f, final MatrixStack matrixStack, final VertexConsumerProvider vertexConsumerProvider, final int i, final int j, final CallbackInfo ci, float g, BlockState blockState, boolean bl, Direction direction, int k, float h, SkullBlock.SkullType skullType, SkullBlockEntityModel skullBlockEntityModel) {
 
         entity_texture_features$thisETFPlayerTexture = null;
 
         if (skullType == SkullBlock.Type.PLAYER && ETF.config().getConfig().skinFeaturesEnabled && ETF.config().getConfig().enableCustomTextures && ETF.config().getConfig().enableCustomBlockEntities) {
             if (skullBlockEntity.getOwner() != null) {
                 Identifier identifier = MinecraftClient.getInstance()
-                        .getSkinProvider().getSkinTextures(skullBlockEntity.getOwner()).texture();
+                        .getSkinProvider().getSkinTextures(skullBlockEntity.getOwner().gameProfile()).texture();
 
                 entity_texture_features$thisETFPlayerTexture = ETFManager.getInstance().getPlayerTexture((ETFPlayerEntity) skullBlockEntity, identifier);
                 if (entity_texture_features$thisETFPlayerTexture != null) {

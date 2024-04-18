@@ -35,7 +35,7 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
     private PropertiesRandomProvider(Identifier propertiesFileIdentifier, List<RandomPropertyRule> propertyRules) {
         this.propertyRules = propertyRules;
         this.packname = MinecraftClient.getInstance().getResourceManager().getResource(propertiesFileIdentifier)
-                .map(Resource::getResourcePackName)
+                .map(Resource::getPackId)
                 .orElse("vanilla");
     }
 
@@ -61,8 +61,8 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
             }
 
             ResourceManager resourceManager = MinecraftClient.getInstance().getResourceManager();
-            String properties = resourceManager.getResource(propertiesFileIdentifier).map(Resource::getResourcePackName).orElse(null);
-            String vanillaPack = resourceManager.getResource(vanillaIdentifier).map(Resource::getResourcePackName).orElse(null);
+            String properties = resourceManager.getResource(propertiesFileIdentifier).map(Resource::getPackId).orElse(null);
+            String vanillaPack = resourceManager.getResource(vanillaIdentifier).map(Resource::getPackId).orElse(null);
 
             if (properties != null
                     && properties.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(properties, vanillaPack))) {

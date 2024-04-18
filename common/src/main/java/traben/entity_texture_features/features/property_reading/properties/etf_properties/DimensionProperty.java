@@ -12,6 +12,7 @@ import traben.entity_texture_features.features.property_reading.properties.gener
 import traben.entity_texture_features.utils.ETFEntity;
 import traben.entity_texture_features.utils.ETFUtils2;
 
+import java.util.Optional;
 import java.util.Properties;
 
 public class DimensionProperty extends StringArrayOrRegexProperty {
@@ -39,10 +40,10 @@ public class DimensionProperty extends StringArrayOrRegexProperty {
         World world = etfEntity.etf$getWorld();
         if (world == null) return null;
 
-        RegistryKey<DimensionType> dimKey = etfEntity.etf$getWorld().getDimensionKey();
-        if (dimKey == null) return null;
+        Optional<RegistryKey<DimensionType>> dimKey = etfEntity.etf$getWorld().getDimensionEntry().getKey();
+        if (dimKey.isEmpty()) return null;
 
-        Identifier key = dimKey.getValue();
+        Identifier key = dimKey.get().getValue();
         if (key == null) return null;
 
         String output;

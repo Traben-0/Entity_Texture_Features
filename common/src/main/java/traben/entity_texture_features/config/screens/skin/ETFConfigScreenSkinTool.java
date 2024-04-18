@@ -7,14 +7,13 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.DiffuseLighting;
-import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.texture.NativeImage;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
@@ -424,7 +423,7 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
 
                 int height = (int) (this.height * 0.75);
                 int playerX = (int) (this.width * 0.14);
-                drawEntity(playerX, height, (int) (this.height * 0.3), (float) (-mouseX + playerX), (float) (-mouseY + (this.height * 0.3)), player);
+                drawEntity(context,playerX, height, (int) (this.height * 0.3), (float) (-mouseX + playerX), (float) (-mouseY + (this.height * 0.3)), player);
             } else {
                 context.drawTextWithShadow(textRenderer, Text.of("Player is null for some reason!"), width / 7, (int) (this.height * 0.4), 0xFFFFFF);
                 context.drawTextWithShadow(textRenderer, Text.of("Cannot load player to render!"), width / 7, (int) (this.height * 0.45), 0xFFFFFF);
@@ -480,21 +479,29 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
         return false;
     }
 
-    public void drawEntity(int x, int y, int size, float mouseX, float mouseY, LivingEntity entity) {
+    public void drawEntity(DrawContext context, int x, int y, int size, float mouseX, float mouseY, LivingEntity entity) {
         float f = (float) Math.atan((mouseX / 40.0f));
+
         float g = (float) Math.atan((mouseY / 40.0F));
-        MatrixStack matrixStack = RenderSystem.getModelViewStack();
-        matrixStack.push();
-        matrixStack.translate(x, y, 1050.0);
-        matrixStack.scale(1.0F, 1.0F, -1.0F);
-        RenderSystem.applyModelViewMatrix();
-        MatrixStack matrixStack2 = new MatrixStack();
-        matrixStack2.translate(0.0, 0.0, 1000.0);
-        matrixStack2.scale((float) size, (float) size, (float) size);
+//1.20.5        MatrixStack matrixStack = RenderSystem.getModelViewStack();
+
+//        float j2 = (float) Math.atan(((-mouseY + this.height / 2f) / 40.0F));
         Quaternionf quaternionf = (new Quaternionf()).rotateZ(3.1415927F);
-        Quaternionf quaternionf2 = (new Quaternionf()).rotateX(g * 20.0F * 0.017453292F);
+        Quaternionf quaternionf2 = (new Quaternionf()).rotateX( 0);//j2 * 20.0F * 0.017453292F);
         quaternionf.mul(quaternionf2);
-        matrixStack2.multiply(quaternionf);
+
+        context.getMatrices().push();
+        context.getMatrices().translate(x, y, 150.0);
+        context.getMatrices().multiplyPositionMatrix((new Matrix4f()).scaling((float) size, (float) size, (float) (-size)));
+        context.getMatrices().multiply(quaternionf);
+        DiffuseLighting.method_34742();
+        EntityRenderDispatcher entityRenderDispatcher = MinecraftClient.getInstance().getEntityRenderDispatcher();
+        if (quaternionf2 != null) {
+            quaternionf2.conjugate();
+            entityRenderDispatcher.setRotation(quaternionf2);
+        }
+
+        entityRenderDispatcher.setRenderShadows(false);
         float h = entity.bodyYaw;
         float i = entity.getYaw();
         float j = entity.getPitch();
@@ -505,103 +512,28 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
         entity.setPitch(-g * 20.0F);
         entity.headYaw = entity.getYaw();
         entity.prevHeadYaw = entity.getYaw();
-        DiffuseLighting.method_34742();
-        EntityRenderDispatcher entityRenderDispatcher = MinecraftClient.getInstance().getEntityRenderDispatcher();
-        quaternionf2.conjugate();
-        entityRenderDispatcher.setRotation(quaternionf2);
-        entityRenderDispatcher.setRenderShadows(false);
 
-        VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
+
+//        VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
         //noinspection deprecation
-        RenderSystem.runAsFancy(() -> entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, matrixStack2, immediate, 15728880));
-        immediate.draw();
-
-//        //second render required for iris
-//        VertexConsumerProvider.Immediate immediate2 = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
-//        //noinspection deprecation
-//        RenderSystem.runAsFancy(() -> {
-//            //entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, matrixStack2, immediate2, 15728880);
-//            if (thisETFPlayerTexture != null && thisETFPlayerTexture.etfTextureOfFinalBaseSkin != null && entity instanceof AbstractClientPlayerEntity) {
-//                Identifier emissive = thisETFPlayerTexture.etfTextureOfFinalBaseSkin.getEmissiveIdentifierOfCurrentState();
-//                if (emissive != null) {
-//                    RenderLayer layer = RenderLayer.getEntityTranslucent(emissive);
-//
-//                    VertexConsumer vertexC = immediate.getBuffer(layer);
-//                    if (vertexC != null) {
-//                        EntityRenderer<?> bob = entityRenderDispatcher.getRenderer(entity);
-//                        if (bob instanceof LivingEntityRenderer<?, ?>) {
-//                            //System.out.println("rendered");
-//                            //((LivingEntityRenderer<PlayerEntity, PlayerEntityModel<PlayerEntity>>) bob).render((PlayerEntity) entity, 0, 1, matrixStack2, immediate, 0xE000E0);
-//                            ETFRenderContext.startSpecialRenderOverlayPhase();
-//                            ((LivingEntityRenderer<?, ?>) bob).getModel().render(matrixStack, vertexC, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
-//                            ETFRenderContext.endSpecialRenderOverlayPhase();
-//                        }
-//                    }
-//                }
-//            }
-//        });
-//        immediate2.draw();
+        RenderSystem.runAsFancy(() -> entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, context.getMatrices(), context.getVertexConsumers(), 15728880));
+//        immediate.draw();
+        context.draw();
         entityRenderDispatcher.setRenderShadows(true);
+        context.getMatrices().pop();
+        DiffuseLighting.enableGuiDepthLighting();
+//        entityRenderDispatcher.setRenderShadows(true);
         entity.bodyYaw = h;
         entity.setYaw(i);
         entity.setPitch(j);
         entity.prevHeadYaw = k;
         entity.headYaw = l;
-        matrixStack.pop();
-        RenderSystem.applyModelViewMatrix();
-        DiffuseLighting.enableGuiDepthLighting();
+//        matrixStack.pop();
+//        RenderSystem.applyModelViewMatrix();
+//        DiffuseLighting.enableGuiDepthLighting();
     }
 
-//    @SuppressWarnings("EnhancedSwitchMigration")
-//    public enum CapeType {
-//        OPTIFINE(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.cape.optifine")),
-//        MINECRAFT_CAPES_NET(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.cape.minecraftcapes")),
-//        ETF(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.cape.etf")),
-//        CUSTOM(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.cape.custom")),
-//        NONE(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.cape.none"));
-//
-//        private final Text buttonText;
-//
-//
-//        CapeType(Text buttonText) {
-//            this.buttonText = buttonText;
-//        }
-//
-//        public Text getButtonText() {
-//            return buttonText;
-//        }
-//
-//        public CapeType next() {
-//            switch (this) {
-//                case NONE:
-//                    return ETF;
-//                case ETF:
-//                    return CUSTOM;
-//                case CUSTOM:
-//                    return MINECRAFT_CAPES_NET;
-//                case MINECRAFT_CAPES_NET:
-//                    return OPTIFINE;
-//                default:
-//                    return NONE;
-//            }
-//        }
-//
-//        public int getCapePixelColour() {
-//            switch (this) {
-//                case CUSTOM:
-//                    return getPixelColour(1);
-//                case OPTIFINE:
-//                    return getPixelColour(3);
-//                case MINECRAFT_CAPES_NET:
-//                    return getPixelColour(2);
-//                case ETF:
-//                    return getPixelColour(4);
-//                default:
-//                    return 0;
-//
-//            }
-//        }
-//    }
+
 
     @SuppressWarnings("EnhancedSwitchMigration")
     public enum NoseType {

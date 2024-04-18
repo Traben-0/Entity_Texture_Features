@@ -38,11 +38,12 @@ public abstract class MixinBlockEntity implements ETFEntity {
     @Nullable
     public abstract World getWorld();
 
-    @Shadow
-    public abstract NbtCompound createNbt();
+
 
     @Shadow
     public abstract BlockEntityType<?> getType();
+
+    @Shadow protected abstract void writeIdentifyingData(final NbtCompound nbt);
 
     @Override
     public EntityType<?> etf$getType() {
@@ -72,7 +73,8 @@ public abstract class MixinBlockEntity implements ETFEntity {
 
     @Override
     public NbtCompound etf$writeNbt(NbtCompound compound) {
-        return createNbt();
+        writeIdentifyingData(compound);
+        return compound;
     }
 
     @Override

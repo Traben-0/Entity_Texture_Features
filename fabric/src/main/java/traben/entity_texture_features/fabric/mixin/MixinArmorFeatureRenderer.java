@@ -11,9 +11,9 @@ import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.trim.ArmorTrim;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -71,9 +71,9 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
         return texture;
     }
 
-    @Inject(method = "Lnet/minecraft/client/render/entity/feature/ArmorFeatureRenderer;renderArmorParts(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/item/ArmorItem;Lnet/minecraft/client/render/entity/model/BipedEntityModel;ZFFFLjava/lang/String;)V",
+    @Inject(method = "renderArmorParts",
             at = @At(value = "TAIL"))
-    private void etf$applyEmissive(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ArmorItem item, A model, boolean secondTextureLayer, float red, float green, float blue, String overlay, CallbackInfo ci) {
+    private void etf$applyEmissive(final MatrixStack matrices, final VertexConsumerProvider vertexConsumers, final int light, final A model, final float red, final float green, final float blue, final Identifier overlay, final CallbackInfo ci) {
         //UUID id = livingEntity.getUuid();
         if (thisETFTexture != null && ETF.config().getConfig().canDoEmissiveTextures()) {
             Identifier emissive = thisETFTexture.getEmissiveIdentifierOfCurrentState();
@@ -106,9 +106,9 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
 
     @Inject(method = "renderTrim",
             at = @At(value = "HEAD"))
-    private void etf$trimGet(ArmorMaterial material, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ArmorTrim trim, A model, boolean leggings, CallbackInfo ci) {
+    private void etf$trimGet(final RegistryEntry<ArmorMaterial> armorMaterial, final MatrixStack matrices, final VertexConsumerProvider vertexConsumers, final int light, final ArmorTrim trim, final A model, final boolean leggings, final CallbackInfo ci) {
         if(ETF.config().getConfig().enableArmorAndTrims) {
-            Identifier trimBaseId = leggings ? trim.getLeggingsModelId(material) : trim.getGenericModelId(material);
+            Identifier trimBaseId = leggings ? trim.getLeggingsModelId(armorMaterial) : trim.getGenericModelId(armorMaterial);
             //support modded trims with namespace
             Identifier trimMaterialIdentifier = new Identifier(trimBaseId.getNamespace(), "textures/" + trimBaseId.getPath() + ".png");
             thisETFTrimTexture = ETFManager.getInstance().getETFTextureNoVariation(trimMaterialIdentifier);
@@ -146,7 +146,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
 
     @Inject(method = "renderTrim",
             at = @At(value = "TAIL"))
-    private void etf$trimEmissive(ArmorMaterial material, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ArmorTrim trim, A model, boolean leggings, CallbackInfo ci) {
+    private void etf$trimEmissive(final RegistryEntry<ArmorMaterial> armorMaterial, final MatrixStack matrices, final VertexConsumerProvider vertexConsumers, final int light, final ArmorTrim trim, final A model, final boolean leggings, final CallbackInfo ci) {
         if(thisETFTrimTexture != null && ETF.config().getConfig().canDoEmissiveTextures()){
             //trimTexture.renderEmissive(matrices,vertexConsumers,model);
             Identifier emissive = thisETFTrimTexture.getEmissiveIdentifierOfCurrentState();

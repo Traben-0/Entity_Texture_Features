@@ -16,7 +16,8 @@ public class TConfigEntryListWidget extends EntryListWidget<TConfigEntryListWidg
             if (option == null || option.getWidget(0, 0, 0, 0) == null) continue;
             addEntry(option);
         }
-        setRenderBackground(false);
+//        setRenderBackground(false);
+
         setX(x);
 
     }
@@ -27,9 +28,10 @@ public class TConfigEntryListWidget extends EntryListWidget<TConfigEntryListWidg
     }
 
     @Override
-    protected int getScrollbarPositionX() {
-        return getX() == 0 ? super.getScrollbarPositionX() : getX() + getRowWidth() + 4;
+    protected int getScrollbarX() {
+        return getX() == 0 ? super.getScrollbarX() : getX() + getRowWidth() + 4;
     }
+
 
 
     @Override
@@ -45,6 +47,44 @@ public class TConfigEntryListWidget extends EntryListWidget<TConfigEntryListWidg
     @Override
     public void setSelected(@Nullable final TConfigEntryListWidget.TConfigEntryForList entry) {
 
+    }
+
+    protected boolean fullWidthBackgroundEvenIfSmaller = false;
+
+    public void setWidgetBackgroundToFullWidth() {
+        this.fullWidthBackgroundEvenIfSmaller = true;
+    }
+
+    @Override
+    protected void drawMenuListBackground(final DrawContext context) {
+        if(fullWidthBackgroundEvenIfSmaller){
+            int x = getX();
+            int width = getWidth();
+            setX(0);
+            assert MinecraftClient.getInstance().currentScreen != null;
+            setWidth(MinecraftClient.getInstance().currentScreen.width);
+            super.drawMenuListBackground(context);
+            setX(x);
+            setWidth(width);
+        } else {
+            super.drawMenuListBackground(context);
+        }
+    }
+
+    @Override
+    protected void drawHeaderAndFooterSeparators(final DrawContext context) {
+        if (fullWidthBackgroundEvenIfSmaller) {
+            int x = getX();
+            int width = getWidth();
+            setX(0);
+            assert MinecraftClient.getInstance().currentScreen != null;
+            setWidth(MinecraftClient.getInstance().currentScreen.width);
+            super.drawHeaderAndFooterSeparators(context);
+            setX(x);
+            setWidth(width);
+        } else {
+            super.drawHeaderAndFooterSeparators(context);
+        }
     }
 
     public abstract static class TConfigEntryForList extends Entry<TConfigEntryForList> {

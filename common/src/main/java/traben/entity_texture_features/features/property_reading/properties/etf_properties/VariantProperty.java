@@ -107,11 +107,14 @@ public class VariantProperty extends StringArrayOrRegexProperty {
                 return String.valueOf(bedBlock.getColor());
             }
             if (etfEntity instanceof DecoratedPotBlockEntity pot) {
-                DecoratedPotBlockEntity.Sherds sherds = pot.getSherds();
-                return sherds.back().getTranslationKey() + "," +
-                        sherds.left().getTranslationKey() + "," +
-                        sherds.right().getTranslationKey() + "," +
-                        sherds.front().getTranslationKey();
+                Sherds sherds = pot.getSherds();
+                return (sherds.back().isPresent() ? sherds.back().get().getTranslationKey() : "none")
+                        + "," +
+                        (sherds.left().isPresent() ? sherds.left().get().getTranslationKey() : "none")
+                        + "," +
+                        (sherds.right().isPresent() ? sherds.right().get().getTranslationKey() : "none")
+                        + "," +
+                        (sherds.front().isPresent() ? sherds.front().get().getTranslationKey() : "none");
             }
             String suffix = "";
             if (etfEntity instanceof SkullBlockEntity skull) {

@@ -4,22 +4,19 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.render.*;
+import net.minecraft.client.render.DiffuseLighting;
+import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
-import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.LivingEntityRenderer;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
-import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.ArrayList;
@@ -126,8 +123,8 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFScreenOldCompat {
                 if (integerSet.isEmpty()) {
                     etfParent.currentEditorSkin.setColor(x, y, 0);
                 } else {
-                    etfParent.currentEditorSkin.setColor(x, y, integerSet.get(0));
-                    integerSet.remove(0);
+                    etfParent.currentEditorSkin.setColor(x, y, integerSet.getFirst());
+                    integerSet.removeFirst();
                 }
             }
         }
@@ -148,7 +145,7 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFScreenOldCompat {
 
                 int height = (int) (this.height * 0.75);
                 int playerX = (int) (this.width * 0.14);
-                drawEntity(playerX, height, (int) (this.height * 0.3), (float) (-mouseX + playerX), (float) (-mouseY + (this.height * 0.3)), player);
+                drawEntity(context,playerX, height, (int) (this.height * 0.3), (float) (-mouseX + playerX), (float) (-mouseY + (this.height * 0.3)), player);
             } else {
                 context.drawTextWithShadow(textRenderer, Text.of("Player model only visible while in game!"), width / 7, (int) (this.height * 0.4), 0xFFFFFF);
                 context.drawTextWithShadow(textRenderer, Text.of("load a single-player world and then open this menu."), width / 7, (int) (this.height * 0.45), 0xFFFFFF);
@@ -160,22 +157,29 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFScreenOldCompat {
 
     }
 
-    public void drawEntity(int x, int y, int size, float mouseX, float mouseY, LivingEntity entity) {
-        //InventoryScreen
-        float f = (float) Math.atan((mouseX / 40.0F));
+    public void drawEntity(DrawContext context, int x, int y, int size, float mouseX, float mouseY, LivingEntity entity) {
+        float f = (float) Math.atan((mouseX / 40.0f));
+
         float g = (float) Math.atan((mouseY / 40.0F));
-        MatrixStack matrixStack = RenderSystem.getModelViewStack();
-        matrixStack.push();
-        matrixStack.translate(x, y, 1050.0);
-        matrixStack.scale(1.0F, 1.0F, -1.0F);
-        RenderSystem.applyModelViewMatrix();
-        MatrixStack matrixStack2 = new MatrixStack();
-        matrixStack2.translate(0.0, 0.0, 1000.0);
-        matrixStack2.scale((float) size, (float) size, (float) size);
+//1.20.5        MatrixStack matrixStack = RenderSystem.getModelViewStack();
+
+//        float j2 = (float) Math.atan(((-mouseY + this.height / 2f) / 40.0F));
         Quaternionf quaternionf = (new Quaternionf()).rotateZ(3.1415927F);
-        Quaternionf quaternionf2 = (new Quaternionf()).rotateX(g * 20.0F * 0.017453292F);
+        Quaternionf quaternionf2 = (new Quaternionf()).rotateX( 0);//j2 * 20.0F * 0.017453292F);
         quaternionf.mul(quaternionf2);
-        matrixStack2.multiply(quaternionf);
+
+        context.getMatrices().push();
+        context.getMatrices().translate(x, y, 150.0);
+        context.getMatrices().multiplyPositionMatrix((new Matrix4f()).scaling((float) size, (float) size, (float) (-size)));
+        context.getMatrices().multiply(quaternionf);
+        DiffuseLighting.method_34742();
+        EntityRenderDispatcher entityRenderDispatcher = MinecraftClient.getInstance().getEntityRenderDispatcher();
+        if (quaternionf2 != null) {
+            quaternionf2.conjugate();
+            entityRenderDispatcher.setRotation(quaternionf2);
+        }
+
+        entityRenderDispatcher.setRenderShadows(false);
         float h = entity.bodyYaw;
         float i = entity.getYaw();
         float j = entity.getPitch();
@@ -186,50 +190,25 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFScreenOldCompat {
         entity.setPitch(-g * 20.0F);
         entity.headYaw = entity.getYaw();
         entity.prevHeadYaw = entity.getYaw();
-        DiffuseLighting.method_34742();
-        EntityRenderDispatcher entityRenderDispatcher = MinecraftClient.getInstance().getEntityRenderDispatcher();
-        quaternionf2.conjugate();
-        entityRenderDispatcher.setRotation(quaternionf2);
-        entityRenderDispatcher.setRenderShadows(false);
-        VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
-        //noinspection deprecation
-        RenderSystem.runAsFancy(() -> entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, matrixStack2, immediate, 0x800080 /*15728880*/));
-        immediate.draw();
 
-        //second render required for iris
-        VertexConsumerProvider.Immediate immediate2 = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
-        //noinspection deprecation
-        RenderSystem.runAsFancy(() -> {
-            //entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, matrixStack2, immediate2, 15728880);
-            if (etfParent.thisETFPlayerTexture != null && etfParent.thisETFPlayerTexture.etfTextureOfFinalBaseSkin != null && entity instanceof AbstractClientPlayerEntity) {
-                Identifier emissive = etfParent.thisETFPlayerTexture.etfTextureOfFinalBaseSkin.getEmissiveIdentifierOfCurrentState();
-                if (emissive != null) {
-                    RenderLayer layer = RenderLayer.getEntityTranslucent(emissive);
 
-                    VertexConsumer vertexC = immediate.getBuffer(layer);
-                    if (vertexC != null) {
-                        EntityRenderer<?> bob = entityRenderDispatcher.getRenderer(entity);
-                        if (bob instanceof LivingEntityRenderer<?, ?>) {
-                            // System.out.println("rendered");
-                            //((LivingEntityRenderer<PlayerEntity, PlayerEntityModel<PlayerEntity>>) bob).render((PlayerEntity) entity, 0, 1, matrixStack2, immediate, 0xE000E0);
-                            ETFRenderContext.startSpecialRenderOverlayPhase();
-                            ((LivingEntityRenderer<?, ?>) bob).getModel().render(matrixStack, vertexC, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
-                            ETFRenderContext.endSpecialRenderOverlayPhase();
-                        }
-                    }
-                }
-            }
-        });
-        immediate2.draw();
+//        VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
+        //noinspection deprecation
+        RenderSystem.runAsFancy(() -> entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, context.getMatrices(), context.getVertexConsumers(), LightmapTextureManager.pack(7,7)));
+//        immediate.draw();
+        context.draw();
         entityRenderDispatcher.setRenderShadows(true);
+        context.getMatrices().pop();
+        DiffuseLighting.enableGuiDepthLighting();
+//        entityRenderDispatcher.setRenderShadows(true);
         entity.bodyYaw = h;
         entity.setYaw(i);
         entity.setPitch(j);
         entity.prevHeadYaw = k;
         entity.headYaw = l;
-        matrixStack.pop();
-        RenderSystem.applyModelViewMatrix();
-        DiffuseLighting.enableGuiDepthLighting();
+//        matrixStack.pop();
+//        RenderSystem.applyModelViewMatrix();
+//        DiffuseLighting.enableGuiDepthLighting();
     }
 
     public enum SelectionMode {

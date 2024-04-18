@@ -3,6 +3,7 @@ package traben.entity_texture_features.mixin.entity.misc;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.scoreboard.AbstractTeam;
@@ -14,6 +15,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.UUID;
@@ -46,14 +48,14 @@ public abstract class MixinEntity implements ETFEntity {
     public abstract Text getCustomName();
 
 
-    @Shadow
-    public abstract Iterable<ItemStack> getItemsEquipped();
-
-    @Shadow
-    public abstract Iterable<ItemStack> getHandItems();
-
-    @Shadow
-    public abstract Iterable<ItemStack> getArmorItems();
+//    @Shadow
+//    public abstract Iterable<ItemStack> getItemsEquipped();
+//
+//    @Shadow
+//    public abstract Iterable<ItemStack> getHandItems();
+//
+//    @Shadow
+//    public abstract Iterable<ItemStack> getArmorItems();
 
     @Shadow
     public abstract float distanceTo(Entity entity);
@@ -118,17 +120,38 @@ public abstract class MixinEntity implements ETFEntity {
 
     @Override
     public Iterable<ItemStack> etf$getItemsEquipped() {
-        return getItemsEquipped();
+        var alive = etf$getLivingOrNull();
+        if (alive != null){
+            return alive.getEquippedItems();
+        }
+        return null;
     }
 
     @Override
     public Iterable<ItemStack> etf$getHandItems() {
-        return getHandItems();
+        var alive = etf$getLivingOrNull();
+        if (alive != null){
+            return alive.getHandItems();
+        }
+        return null;
     }
 
     @Override
     public Iterable<ItemStack> etf$getArmorItems() {
-        return getArmorItems();
+        var alive = etf$getLivingOrNull();
+        if (alive != null){
+            return alive.getArmorItems();
+        }
+        return null;
+    }
+
+    @Unique
+    private LivingEntity etf$getLivingOrNull(){
+        Object self = this;
+        if (self instanceof LivingEntity alive){
+            return alive;
+        }
+        return null;
     }
 
     @Override

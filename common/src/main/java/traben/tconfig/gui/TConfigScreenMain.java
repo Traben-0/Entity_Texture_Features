@@ -83,6 +83,8 @@ public abstract class TConfigScreenMain extends TConfigScreen {
                 24,
                 entries.getOptions().values().toArray(new TConfigEntry[0]));
 
+        child.setWidgetBackgroundToFullWidth();
+
         this.addDrawableChild(child);
     }
 
