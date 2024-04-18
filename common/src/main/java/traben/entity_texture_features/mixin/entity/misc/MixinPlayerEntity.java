@@ -14,6 +14,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.player.ETFPlayerEntity;
@@ -42,7 +43,7 @@ public abstract class MixinPlayerEntity extends Entity implements ETFPlayerEntit
 
         //noinspection DataFlowIssue
         if (getWorld().isClient()) {
-            if (ETFConfig.getInstance().debugLoggingMode != ETFConfig.DebugLogMode.None)
+            if (ETF.config().getConfig().debugLoggingMode != ETFConfig.DebugLogMode.None)
 //                UUID_DEBUG_EXPLANATION_MARKER.add(entity.getUuid());
 //            if (!UUID_ENTITY_AWAITING_DATA_CLEARING.containsKey(entity.getUuid())) {
 //                UUID_ENTITY_AWAITING_DATA_CLEARING.put(entity.getUuid(), System.currentTimeMillis());

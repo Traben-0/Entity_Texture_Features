@@ -16,10 +16,8 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3f;
-import traben.entity_texture_features.ETFClientCommon;
+import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
-import traben.entity_texture_features.config.ETFConfig;
-import traben.entity_texture_features.config.screens.ETFConfigScreen;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.player.ETFPlayerTexture;
 import traben.entity_texture_features.utils.ETFUtils2;
@@ -27,12 +25,12 @@ import traben.entity_texture_features.utils.ETFUtils2;
 import java.nio.file.Path;
 import java.util.Objects;
 
-import static traben.entity_texture_features.ETFClientCommon.CONFIG_DIR;
-import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
+import static traben.entity_texture_features.ETF.CONFIG_DIR;
+import static traben.entity_texture_features.ETF.MOD_ID;
 
 //inspired by puzzles custom gui code
 @SuppressWarnings("EnhancedSwitchMigration")
-public class ETFConfigScreenSkinTool extends ETFConfigScreen {
+public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
     public Boolean originalEnableBlinking;
     public ETFPlayerTexture thisETFPlayerTexture = null;
     public NativeImage currentEditorSkin = null;
@@ -47,11 +45,11 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
     ButtonWidget emissiveSelectButton = null;
     ButtonWidget enchantButton = null;
     ButtonWidget enchantSelectButton = null;
-//    ButtonWidget capeButton = null;
+    //    ButtonWidget capeButton = null;
     ButtonWidget transparencyButton = null;
 
-    protected ETFConfigScreenSkinTool(Screen parent) {
-        super(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_features.title"), parent);
+    public ETFConfigScreenSkinTool(Screen parent) {
+        super("config." + MOD_ID + ".player_skin_features.title", parent, false);
 
     }
 
@@ -80,7 +78,7 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
     }
 
     private void onExit() {
-        ETFConfig.getInstance().enableBlinking = originalEnableBlinking;
+        ETF.config().getConfig().enableBlinking = originalEnableBlinking;
         if (MinecraftClient.getInstance().player != null) {
             ETFManager.getInstance().PLAYER_TEXTURE_MAP.removeEntryOnly(MinecraftClient.getInstance().player.getUuid());
         }
@@ -100,8 +98,8 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
 
         //make blinking enabled for skin tool
         if (originalEnableBlinking == null) {
-            originalEnableBlinking = ETFConfig.getInstance().enableBlinking;
-            ETFConfig.getInstance().enableBlinking = true;
+            originalEnableBlinking = ETF.config().getConfig().enableBlinking;
+            ETF.config().getConfig().enableBlinking = true;
         }
 
 
@@ -111,7 +109,7 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
                 ETFPlayerTexture etfPlayerTexture = new ETFPlayerTexture();
                 ETFManager.getInstance().PLAYER_TEXTURE_MAP.put(MinecraftClient.getInstance().player.getUuid(), etfPlayerTexture);
                 thisETFPlayerTexture = etfPlayerTexture;
-            } else if (thisETFPlayerTexture.etfTextureOfFinalBaseSkin != null){
+            } else if (thisETFPlayerTexture.etfTextureOfFinalBaseSkin != null) {
                 thisETFPlayerTexture.etfTextureOfFinalBaseSkin.setGUIBlink();
             }
         }
@@ -475,7 +473,7 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
             Path outputDirectory = Path.of(CONFIG_DIR.getParent(), "\\ETF_player_skin_printout.png");
             try {
                 currentEditorSkin.writeTo(outputDirectory);
-                ETFUtils2.logMessage(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.print_skin.result.success").getString(), false);
+                ETFUtils2.logMessage(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETF.MOD_ID + ".player_skin_editor.print_skin.result.success").getString(), false);
 
                 return true;
             } catch (Exception e) {
@@ -612,27 +610,27 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
 
     @SuppressWarnings("EnhancedSwitchMigration")
     public enum NoseType {
-        VILLAGER(1,ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.villager")),
-        VILLAGER_TEXTURED(7,ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.villager2")),
-        VILLAGER_REMOVE(8,ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.villager3")),
-        VILLAGER_TEXTURED_REMOVE(9,ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.villager4")),
-        TEXTURED_1(2,ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.1")),
-        TEXTURED_2(3,ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.2")),
-        TEXTURED_3(4,ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.3")),
-        TEXTURED_4(5,ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.4")),
-        TEXTURED_5(6,ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.5")),
-        NONE(0,ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.none"));
+        VILLAGER(1, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.villager")),
+        VILLAGER_TEXTURED(7, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.villager2")),
+        VILLAGER_REMOVE(8, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.villager3")),
+        VILLAGER_TEXTURED_REMOVE(9, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.villager4")),
+        TEXTURED_1(2, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.1")),
+        TEXTURED_2(3, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.2")),
+        TEXTURED_3(4, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.3")),
+        TEXTURED_4(5, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.4")),
+        TEXTURED_5(6, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.textured.5")),
+        NONE(0, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.none"));
 
-        private final Text buttonText;
         public final int id;
+        private final Text buttonText;
 
 
-        NoseType(int i,Text buttonText) {
+        NoseType(int i, Text buttonText) {
             this.id = i;
             this.buttonText = buttonText;
         }
 
-        public NoseType getByColorId(int id){
+        public NoseType getByColorId(int id) {
             for (NoseType nose : NoseType.values()) {
                 if (nose.id == id) return nose;
             }
@@ -880,5 +878,6 @@ public class ETFConfigScreenSkinTool extends ETFConfigScreen {
             }
         }
     }
+
 
 }

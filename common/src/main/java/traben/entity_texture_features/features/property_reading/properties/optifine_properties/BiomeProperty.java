@@ -4,13 +4,11 @@ import com.google.common.base.CaseFormat;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
-import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperty;
 import traben.entity_texture_features.features.property_reading.properties.generic_properties.StringArrayOrRegexProperty;
 import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.Properties;
-
 
 
 public class BiomeProperty extends StringArrayOrRegexProperty {
@@ -93,10 +91,6 @@ public class BiomeProperty extends StringArrayOrRegexProperty {
         return null;
     }
 
-    @Override
-    public boolean isPropertyUpdatable() {
-        return !ETFConfig.getInstance().restrictBiome;
-    }
 
     @Override
     public @NotNull String[] getPropertyIds() {

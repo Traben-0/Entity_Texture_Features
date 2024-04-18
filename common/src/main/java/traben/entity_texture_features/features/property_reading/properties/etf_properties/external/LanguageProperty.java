@@ -30,10 +30,6 @@ public class LanguageProperty extends StringArrayOrRegexProperty {
         return MinecraftClient.getInstance().options.language;
     }
 
-    @Override
-    public boolean isPropertyUpdatable() {
-        return true;
-    }
 
     @Override
     public @NotNull String[] getPropertyIds() {

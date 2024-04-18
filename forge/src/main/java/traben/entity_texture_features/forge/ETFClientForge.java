@@ -7,8 +7,7 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.network.NetworkConstants;
-import traben.entity_texture_features.ETFClientCommon;
-import traben.entity_texture_features.config.screens.ETFConfigScreenMain;
+import traben.entity_texture_features.ETF;
 
 @Mod("entity_texture_features")
 public class ETFClientForge {
@@ -39,21 +38,14 @@ public class ETFClientForge {
             //try {
                 ModLoadingContext.get().registerExtensionPoint(
                         ConfigGuiHandler.ConfigGuiFactory.class,
-                        () -> new ConfigGuiHandler.ConfigGuiFactory((minecraftClient, screen) -> {
-                            try {
-                                return new ETFConfigScreenMain(screen);}
-                            catch (Exception e) {
-                                System.out.println("[Entity Texture Features]: Mod config broken: " + e.getMessage());
-                                return null;
-                            }
-                        }));
+                        () -> new ConfigGuiHandler.ConfigGuiFactory(ETF::getConfigScreen));
             //}// catch (NoClassDefFoundError e) {
                // System.out.println("[Entity Texture Features]: Mod settings cannot be edited in GUI without cloth config");
             //}
 
 
             ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));
-            ETFClientCommon.start();
+            ETF.start();
         } else {
 
             throw new UnsupportedOperationException("Attempting to load a clientside only mod on the server, refusing");

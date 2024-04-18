@@ -17,6 +17,7 @@ public class MixinEntityRenderDispatcher {
             at = @At(value = "HEAD"))
     private <E extends Entity> void etf$grabContext(E entity, double x, double y, double z, float yaw, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci) {
         ETFRenderContext.setCurrentEntity((ETFEntity) entity);
+
 //        ETFRenderContext.setCurrentProvider(vertexConsumers);
 
     }

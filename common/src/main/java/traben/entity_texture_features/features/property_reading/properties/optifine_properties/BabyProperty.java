@@ -37,11 +37,6 @@ public class BabyProperty extends BooleanProperty {
 
 
     @Override
-    public boolean isPropertyUpdatable() {
-        return true;
-    }
-
-    @Override
     public @NotNull String[] getPropertyIds() {
         return new String[]{"baby"};
     }

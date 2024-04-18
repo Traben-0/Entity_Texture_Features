@@ -76,11 +76,6 @@ public class ColorProperty extends StringArrayOrRegexProperty {
 
 
     @Override
-    public boolean isPropertyUpdatable() {
-        return true;
-    }
-
-    @Override
     public @NotNull String[] getPropertyIds() {
         return new String[]{"colors", "collarColors"};
     }

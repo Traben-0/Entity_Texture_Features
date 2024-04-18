@@ -2,6 +2,7 @@ package traben.entity_texture_features;
 
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -11,8 +12,8 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.config.ETFConfig;
-import traben.entity_texture_features.config.screens.warnings.ETFConfigWarning;
-import traben.entity_texture_features.config.screens.warnings.ETFConfigWarnings;
+import traben.entity_texture_features.config.ETFConfigWarning;
+import traben.entity_texture_features.config.ETFConfigWarnings;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.property_reading.PropertiesRandomProvider;
 import traben.entity_texture_features.features.property_reading.TrueRandomProvider;
@@ -29,9 +30,8 @@ import java.util.UUID;
 /**
  * ETF's api for external mod access (primarily puzzle and EMF at this time)
  *
- * @constants
- *  {@link ETFApi#ETFApiVersion}
- *  {@link ETFApi#ETF_GENERIC_UUID}<p>
+ * @constants {@link ETFApi#ETFApiVersion}
+ * {@link ETFApi#ETF_GENERIC_UUID}<p>
  * @config_handling These methods allow for retrieving, editing, replacing, and saving ETF's config<p>
  * {@link ETFApi#getETFConfigObject()}<p>
  * {@link ETFApi#getCopyOfETFConfigObject()} <p>
@@ -65,22 +65,17 @@ import java.util.UUID;
  * {@link ETFApi#getVariantSupplierOrNull(Identifier, Identifier, String...)} <p>
  * {@link ETFVariantSuffixProvider}
  */
-@SuppressWarnings({"unused", "ConstantValue"})
+@SuppressWarnings({"unused", "ConstantValue", "JavadocDeclaration"})
 public final class ETFApi {
 
     /**
      * The current ETF API version.
      */
     public static final int ETFApiVersion = 9;
-    @Deprecated
-    public static ETFConfig getETFConfigObject = null;
-
-
     /**
      * This UUID if passed into ETF will tell it to skip looking for variants
      */
     public static final UUID ETF_GENERIC_UUID = UUID.nameUUIDFromBytes(("GENERIC").getBytes());
-
     /**
      * This is the value that is used for mob spawner UUID's least significant bits.
      * <p>
@@ -89,7 +84,8 @@ public final class ETFApi {
      * This is how it appears in NBT as an int list with 4 values "[I;?,?,12345,12345]" making it identifiable there too
      */
     public static final long ETF_SPAWNER_MARKER = (12345L << 32) + 12345L;
-
+    @Deprecated
+    public static ETFConfig getETFConfigObject = null;
 
     /**
      * provides access to the live ETF config object to read AND modify its values
@@ -98,7 +94,7 @@ public final class ETFApi {
      * @return the etf config object
      */
     public static ETFConfig getETFConfigObject() {
-        return ETFConfig.getInstance();
+        return ETF.config().getConfig();
     }
 
     /**
@@ -107,10 +103,10 @@ public final class ETFApi {
      * @param newETFConfig the new ETF config to be saved and used by ETF
      */
     public static void setETFConfigObject(ETFConfig newETFConfig) {
-        if(newETFConfig != null) {
-            ETFConfig.setInstance(newETFConfig);
+        if (newETFConfig != null) {
+            ETF.config().setConfig(newETFConfig);
             saveETFConfigChangesAndResetETF();
-        }else{
+        } else {
             ETFUtils2.logError("new config was null: ignoring.");
         }
     }
@@ -121,7 +117,7 @@ public final class ETFApi {
      * @return the copy of ETF's current config object
      */
     public static ETFConfig getCopyOfETFConfigObject() {
-        return ETFConfig.copyFrom(ETFConfig.getInstance());
+        return ETF.config().copyOfConfig();
     }
 
     /**
@@ -136,10 +132,22 @@ public final class ETFApi {
 
 
     /**
+     * gets the translation key for a block entity type
+     *
+     * @param type the block entity type
+     * @return the translation key
+     */
+    public static String getBlockEntityTypeToTranslationKey(BlockEntityType<?> type) {
+        var id = BlockEntityType.getId(type);
+        if (id == null) return null;
+        return "block." + id.getNamespace() + '.' + id.getPath();
+    }
+
+    /**
      * saves any config changes to the live ETF config to file and resets ETF to function with the new settings
      */
     public static void saveETFConfigChangesAndResetETF() {
-        ETFConfig.saveConfig();
+        ETF.config().saveToFile();
         ETFManager.resetInstance();
     }
 
@@ -374,28 +382,14 @@ public final class ETFApi {
     }
 
 
-    /**
-     * Used by EMF.
-     *
-     * @param entity entity to get the latest rule matching for.
-     * @return Integer index of the most recent random property rule to be matched.<p>
-     * default value = 0
-     */
+    @Deprecated
     public static int getLastMatchingRuleOfEntity(Entity entity) {
-        Integer ruleIndex = ETFManager.getInstance().LAST_MET_RULE_INDEX.getInt(entity.getUuid());
-        return ruleIndex == null ? 0 : ruleIndex;
+        return 0;
     }
 
-    /**
-     * Used by EMF.
-     *
-     * @param entity block entity to get the latest rule matching for.
-     * @return Integer index of the most recent random property rule to be matched.<p>
-     * default value = 0
-     */
+    @Deprecated
     public static int getLastMatchingRuleOfBlockEntity(BlockEntity entity) {
-        Integer ruleIndex = ETFManager.getInstance().LAST_MET_RULE_INDEX.getInt(((ETFEntity) entity).etf$getUuid());
-        return ruleIndex == null ? 0 : ruleIndex;
+        return 0;
     }
 
     /**
@@ -433,8 +427,8 @@ public final class ETFApi {
      * This is used by EMF for random model variations.
      * <p>.<p>
      * provides functionality to input an entity and output a suffix integer as defined in either:<p>
-     *  - a valid OptiFine random entity properties file.<p>
-     *  - non property random variation (E.G. having a *2.png texture and so forth).
+     * - a valid OptiFine random entity properties file.<p>
+     * - non property random variation (E.G. having a *2.png texture and so forth).
      * <p>
      * Should be built via {@link ETFApi#getVariantSupplierOrNull(Identifier, Identifier, String...)}
      */
@@ -528,6 +522,20 @@ public final class ETFApi {
          * @return the suffix number for the block entity
          */
         int getSuffixForETFEntity(ETFEntity entityToBeTested);
+
+        /**
+         * sets the method by which the random number to select a suffix is generated. The default returns
+         * ETFEntity.getUuid().hashCode() which means the same entity returns the same seed each time.
+         * This affects the suffix chosen when multiple are supplied.
+         *
+         * @param entityRandomSeedFunction the function to generate the seed
+         */
+        void setRandomSupplier(EntityRandomSeedFunction entityRandomSeedFunction);
+
+
+        interface EntityRandomSeedFunction {
+            int toInt(ETFEntity entity);
+        }
 
     }
 

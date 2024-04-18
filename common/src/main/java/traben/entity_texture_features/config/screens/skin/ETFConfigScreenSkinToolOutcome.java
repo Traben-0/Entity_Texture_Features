@@ -16,9 +16,8 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import traben.entity_texture_features.ETFClientCommon;
+import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
-import traben.entity_texture_features.config.screens.ETFConfigScreen;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.mixin.accessor.PlayerSkinProviderAccessor;
 import traben.entity_texture_features.mixin.accessor.PlayerSkinTextureAccessor;
@@ -32,15 +31,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static traben.entity_texture_features.ETFClientCommon.CONFIG_DIR;
+import static traben.entity_texture_features.ETF.CONFIG_DIR;
 
 //inspired by puzzles custom gui code
-public class ETFConfigScreenSkinToolOutcome extends ETFConfigScreen {
+public class ETFConfigScreenSkinToolOutcome extends ETFScreenOldCompat {
     private final boolean didSucceed;
     private final NativeImage skin;
 
     protected ETFConfigScreenSkinToolOutcome(Screen parent, boolean success, NativeImage skin) {
-        super(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.print_skin.result"), parent);
+        super("config." + ETF.MOD_ID + ".player_skin_editor.print_skin.result", parent, false);
         didSucceed = success;
         this.skin = skin;
         //this.skin = new PlayerSkinTexture(skin);
@@ -91,7 +90,7 @@ public class ETFConfigScreenSkinToolOutcome extends ETFConfigScreen {
                 (button) -> Objects.requireNonNull(client).setScreen(parent)));
         if (didSucceed) {
             this.addDrawableChild(getETFButton((int) (this.width * 0.15), (int) (this.height * 0.6), (int) (this.width * 0.7), 20,
-                    ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.print_skin.open"),
+                    ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETF.MOD_ID + ".player_skin_editor.print_skin.open"),
                     (button) -> {
                         try {
                             assert CONFIG_DIR != null;
@@ -101,7 +100,7 @@ public class ETFConfigScreenSkinToolOutcome extends ETFConfigScreen {
                         }
                     }));
             this.addDrawableChild(getETFButton((int) (this.width * 0.15), (int) (this.height * 0.4), (int) (this.width * 0.7), 20,
-                    ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.upload_skin"),
+                    ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETF.MOD_ID + ".player_skin_editor.upload_skin"),
                     (button) -> {
                         boolean skinType = true;//true for steve false for alex
                         if (MinecraftClient.getInstance().player != null && MinecraftClient.getInstance().getNetworkHandler() != null) {
@@ -114,7 +113,7 @@ public class ETFConfigScreenSkinToolOutcome extends ETFConfigScreen {
                             }
                         }
                         boolean changeSuccess = uploadSkin(skinType);
-                        button.setMessage(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.upload_skin_v2." +
+                        button.setMessage(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETF.MOD_ID + ".player_skin_editor.upload_skin_v2." +
                                 (changeSuccess ? "success" : "fail")));
                         if (changeSuccess) {
                             //ETFUtils2.logMessage(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.upload_skin.success" ).getString(),true);
@@ -124,7 +123,7 @@ public class ETFConfigScreenSkinToolOutcome extends ETFConfigScreen {
                                 //System.out.println("file was ="+((PlayerSkinTextureAccessor)skinfile).getCacheFile().toString());
                                 skin.writeTo(((PlayerSkinTextureAccessor) skinfile).getCacheFile());
                             } catch (IOException e) {
-                                ETFUtils2.logError(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.upload_skin.success_local_fail").getString(), true);
+                                ETFUtils2.logError(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETF.MOD_ID + ".player_skin_editor.upload_skin.success_local_fail").getString(), true);
                                 //System.out.println("failed to change internal skin");
                             }
                             //clear etf data of skin
@@ -144,7 +143,7 @@ public class ETFConfigScreenSkinToolOutcome extends ETFConfigScreen {
 
         String[] strings =
                 ETFVersionDifferenceHandler.getTextFromTranslation(
-                        "config." + ETFClientCommon.MOD_ID + ".player_skin_editor.print_skin.result." + (didSucceed ? "success" : "fail")
+                        "config." + ETF.MOD_ID + ".player_skin_editor.print_skin.result." + (didSucceed ? "success" : "fail")
                 ).getString().split("\n");
         List<Text> lines = new ArrayList<>();
 
