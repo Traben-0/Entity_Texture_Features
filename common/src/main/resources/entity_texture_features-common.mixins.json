@@ -36,14 +36,18 @@
     "entity.renderer.feature.MixinMooshroomMushroomFeatureRenderer",
     "entity.renderer.feature.MixinShoulderParrotFeatureRenderer",
     "entity.renderer.feature.MixinWardenFeatureRenderer",
+    "mods.imediatelyfast.MixinBatchableImmediate",
     "mods.iris.MixinFullyBufferedMultiBufferSource",
     "mods.iris.MixinInnerWrappedRenderType",
     "mods.iris.MixinOuterWrappedRenderType",
+    "mods.iris.dh_beta.MixinFullyBufferedMultiBufferSource",
+    "mods.iris.dh_beta.MixinInnerWrappedRenderType",
+    "mods.iris.dh_beta.MixinOuterWrappedRenderType",
     "mods.skin_layers.MixinCustomizableModelPart",
     "mods.sodium.MixinModelPartSodium",
+    "mods.sodium.MixinSodiumBufferBuilder",
     "reloading.MixinMinecraftClient",
-    "reloading.MixinResourceReload",
-    "mods.sodium.MixinSodiumBufferBuilder"
+    "reloading.MixinResourceReload"
   ],
   "mixins": [
   ],

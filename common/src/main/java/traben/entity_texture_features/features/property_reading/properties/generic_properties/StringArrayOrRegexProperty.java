@@ -15,6 +15,8 @@ public abstract class StringArrayOrRegexProperty extends RandomProperty {
     protected final ObjectOpenHashSet<String> ARRAY;
     protected final RegexAndPatternPropertyMatcher MATCHER;
 
+    protected final boolean usesRegex;
+
 
     protected StringArrayOrRegexProperty(String string) throws RandomPropertyException {
         ORIGINAL_INPUT = string;
@@ -24,6 +26,7 @@ public abstract class StringArrayOrRegexProperty extends RandomProperty {
                 || string.startsWith("iregex:") || string.startsWith("ipattern:")) {
             MATCHER = getStringMatcher_Regex_Pattern_List_Single(string);
             ARRAY = ObjectOpenHashSet.of(string);
+            usesRegex = true;
         } else {
             String[] array = string.trim().split("\\s+");
 
@@ -35,7 +38,12 @@ public abstract class StringArrayOrRegexProperty extends RandomProperty {
                     array) {
                 ARRAY.add(shouldForceLowerCaseCheck() ? str.toLowerCase() : str);
             }
-            MATCHER = ARRAY::contains;
+            //add the entire text as well just incase spaced names were expected
+            if (array.length != 1) {
+                ARRAY.add(string.trim());
+            }
+            MATCHER = this::testArray;
+            usesRegex = false;
         }
     }
 
@@ -106,6 +114,23 @@ public abstract class StringArrayOrRegexProperty extends RandomProperty {
                 return invert != check;
             };
         }
+    }
+
+    private boolean testArray(String fromEntity) {
+        boolean matches = false;
+        for (String string : ARRAY) {
+            if (string.startsWith("!")) {
+                matches = true;
+                if (string.substring(1).equals(fromEntity)) {
+                    matches = false;
+                    break;
+                }
+            } else if (string.equals(fromEntity)) {
+                matches = true;
+                break;
+            }
+        }
+        return matches;
     }
 
     @Override

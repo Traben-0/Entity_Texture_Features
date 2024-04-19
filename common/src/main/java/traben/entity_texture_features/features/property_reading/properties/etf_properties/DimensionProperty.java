@@ -12,11 +12,13 @@ import traben.entity_texture_features.features.property_reading.properties.gener
 import traben.entity_texture_features.utils.ETFEntity;
 import traben.entity_texture_features.utils.ETFUtils2;
 
+import java.util.Optional;
 import java.util.Properties;
 
 public class DimensionProperty extends StringArrayOrRegexProperty {
 
     private final boolean doPrint;
+
     protected DimensionProperty(String string) throws RandomPropertyException {
         super(string.replace("print:", ""));
         doPrint = string.startsWith("print:");
@@ -33,15 +35,15 @@ public class DimensionProperty extends StringArrayOrRegexProperty {
 
     @Override
     public @Nullable String getValueFromEntity(ETFEntity etfEntity) {
-        if(etfEntity == null) return null;
+        if (etfEntity == null) return null;
 
         World world = etfEntity.etf$getWorld();
-        if(world == null) return null;
+        if (world == null) return null;
 
-        RegistryKey<DimensionType> dimKey = etfEntity.etf$getWorld().getDimensionKey();
-        if(dimKey == null) return null;
+        Optional<RegistryKey<DimensionType>> dimKey = etfEntity.etf$getWorld().getDimensionEntry().getKey();
+        if (dimKey.isEmpty()) return null;
 
-        Identifier key = dimKey.getValue();
+        Identifier key = dimKey.get().getValue();
         if (key == null) return null;
 
         String output;
@@ -55,14 +57,10 @@ public class DimensionProperty extends StringArrayOrRegexProperty {
             //modded
             output = key.toString();
         }
-        if (doPrint) ETFUtils2.logMessage("[Dimension property print]: "+output);
+        if (doPrint) ETFUtils2.logMessage("[Dimension property print]: " + output);
         return output;
     }
 
-    @Override
-    public boolean isPropertyUpdatable() {
-        return true;
-    }
 
     @Override
     public @NotNull String[] getPropertyIds() {

@@ -202,7 +202,5 @@
   "config.entity_texture_features.player_skin_editor.reason_2": "- 找不到 Fabric API。\n它是 Fabric 上的外觀工具運作所需的。\n",
   "config.entity_texture_features.player_skin_editor.reason_3": "- 用戶端玩家資料為空。\n確保你有一個開啟的世界，並在嘗試使用工具之前讓你的外觀載入。\n",
   "config.entity_texture_features.player_skin_editor.reason_4": "- ETF 還沒有機會解析用戶端玩家的外觀，請嘗試開啟一個世界，然後開啟第三人視角或你的背包，再使用該工具之前觀看自己幾秒鐘。\n",
-  "config.entity_texture_features.button_tooltip":"開啟 Entity Texture Features 設定畫面。"
-
-  
+  "config.entity_texture_features.button_tooltip": "開啟 Entity Texture Features 設定畫面。"
 }

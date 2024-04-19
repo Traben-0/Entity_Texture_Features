@@ -1,6 +1,6 @@
 plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
-    id "dev.architectury.loom" version "1.4-SNAPSHOT" apply false
+    id "dev.architectury.loom" version "1.6-SNAPSHOT" apply false
 }
 
 architectury {
@@ -28,6 +28,7 @@ subprojects {
 //        }
 
         implementation group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.10'
+        implementation 'com.demonwav.mcdev:annotations:2.1.0'
     }
 }
 
@@ -50,12 +51,13 @@ allprojects {
         maven {url = "https://www.cursemaven.com/"}
         maven { url "https://maven.shedaniel.me/" }
         maven { url "https://maven.terraformersmc.com/releases/" }
+        maven { url "https://mvnrepository.com/artifact/com.demonwav.mcdev/annotations" }
     }
 
 
     tasks.withType(JavaCompile) {
         options.encoding = "UTF-8"
-        options.release = 17
+        options.release = 21
     }
     //compileJava.options.fork = true
     //compileJava.options.forkOptions.executable = 'C:/Program Files/Java/jdk-17.0.3.1/'
@@ -63,3 +65,5 @@ allprojects {
         withSourcesJar()
     }
 }
+
+

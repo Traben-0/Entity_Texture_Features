@@ -90,7 +90,7 @@ public enum ETFDirectory {
         if (foundDirectories.isEmpty()) {
             return DOES_NOT_EXIST;
         } else if (foundDirectories.size() == 1) {
-            return foundDirectories.get(0);
+            return foundDirectories.getFirst();
         } else {
             //must be multiple
             //find the one in the highest resource-pack
@@ -100,7 +100,7 @@ public enum ETFDirectory {
                     foundDirectories) {
                 //map result already has internal 0123 order of pack directories ironed out only need to check pack order
                 Optional<Resource> resource = resources.getResource(getIdentifierAsDirectory(vanillaIdentifier, directory));
-                resource.ifPresent(value -> resourcePackNames.put(value.getResourcePackName(), directory));
+                resource.ifPresent(value -> resourcePackNames.put(value.getPackId(), directory));
             }
 
             String[] strArray = resourcePackNames.keySet().toArray(new String[0]);

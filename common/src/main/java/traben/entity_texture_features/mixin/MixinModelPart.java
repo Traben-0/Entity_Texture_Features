@@ -47,7 +47,7 @@ public abstract class MixinModelPart {
                     && vertices instanceof ETFVertexConsumer etfVertexConsumer) {
                 ETFTexture texture = etfVertexConsumer.etf$getETFTexture();
                 //is etf texture not null and does it special render?
-                if(texture != null && (texture.isEmissive() || texture.isEnchanted())) {
+                if (texture != null && (texture.isEmissive() || texture.isEnchanted())) {
                     VertexConsumerProvider provider = etfVertexConsumer.etf$getProvider();
                     //very important this is captured before doing the special renders as they can potentially modify
                     //the same ETFVertexConsumer down stream
@@ -55,7 +55,7 @@ public abstract class MixinModelPart {
                     //are these render required objects valid?
                     if (provider != null && layer != null) {
                         //attempt special renders as eager OR checks
-                        ETFUtils2.RenderMethodForOverlay renderer = (a,b)-> render(matrices,a,b, overlay, red, green, blue, alpha);
+                        ETFUtils2.RenderMethodForOverlay renderer = (a, b) -> render(matrices, a, b, overlay, red, green, blue, alpha);
                         if (ETFUtils2.renderEmissive(texture, provider, renderer) |
                                 ETFUtils2.renderEnchanted(texture, provider, light, renderer)) {
                             //reset render layer stuff behind the scenes if special renders occurred

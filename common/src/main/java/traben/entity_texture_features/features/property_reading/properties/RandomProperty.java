@@ -12,7 +12,8 @@ import java.util.Properties;
  */
 public abstract class RandomProperty {
 
-    protected EntityBooleanLRU entityCachedInitialResult = new EntityBooleanLRU();
+    protected final EntityBooleanLRU entityCachedInitialResult = new EntityBooleanLRU();
+    private boolean canUpdate = true;
 
     /**
      * Reads the given property data from the properties file, allowing for multiple property names and throws an
@@ -49,7 +50,7 @@ public abstract class RandomProperty {
      * @return true if the entity meets the requirements of this property
      */
     public boolean testEntity(ETFEntity entity, boolean isUpdate) {
-        if (isUpdate && !isPropertyUpdatable()) {
+        if (isUpdate && !(canPropertyUpdate())) {
             return entityCachedInitialResult.getBoolean(entity.etf$getUuid());//false default value
         }
         try {
@@ -65,12 +66,16 @@ public abstract class RandomProperty {
     protected abstract boolean testEntityInternal(ETFEntity entity);
 
     /**
-     * Flags whether this property can be considered to update over time.
-     * If not then we can optimize checks for each entity after the first.
-     *
-     * @return the boolean
+     * @return true if this property can be considered to update over time. factoring in the unknown restriction setting
+     * which can get overridden by separate property settings.
      */
-    public abstract boolean isPropertyUpdatable();
+    public final boolean canPropertyUpdate() {
+        return canUpdate;
+    }
+
+    public void setCanUpdate(final boolean canUpdate) {
+        this.canUpdate = canUpdate;
+    }
 
     /**
      * Returns a String[] of all valid property id's these will be the text before the first full stop in the properties file.

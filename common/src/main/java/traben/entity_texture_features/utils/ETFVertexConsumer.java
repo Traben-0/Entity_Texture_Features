@@ -16,8 +16,10 @@ public interface ETFVertexConsumer {
 
     @Nullable
     ETFTexture etf$getETFTexture();
+
     @Nullable
     VertexConsumerProvider etf$getProvider();
+
     @Nullable
     RenderLayer etf$getRenderLayer();
 

@@ -17,3 +17,11 @@ accessible field net/minecraft/client/render/SpriteTexturedVertexConsumer sprite
 
 # for alternative texture modification
 accessible class net/minecraft/client/render/RenderPhase$Texture
+
+# for block entity renderers in config
+accessible field net/minecraft/client/render/block/entity/BlockEntityRendererFactories FACTORIES Ljava/util/Map;
+
+accessible field net/minecraft/entity/passive/AbstractHorseEntity jumpStrength F
+
+accessible field net/minecraft/client/gui/widget/EntryListWidget MENU_LIST_BACKGROUND_TEXTURE Lnet/minecraft/util/Identifier;
+accessible field net/minecraft/client/gui/widget/EntryListWidget INWORLD_MENU_LIST_BACKGROUND_TEXTURE Lnet/minecraft/util/Identifier;

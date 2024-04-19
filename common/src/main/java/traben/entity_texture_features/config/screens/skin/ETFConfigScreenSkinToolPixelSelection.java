@@ -4,22 +4,19 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.render.*;
+import net.minecraft.client.render.DiffuseLighting;
+import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
-import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.LivingEntityRenderer;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.NotNull;
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
-import traben.entity_texture_features.ETFClientCommon;
+import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
-import traben.entity_texture_features.config.screens.ETFConfigScreen;
-import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.ArrayList;
@@ -28,10 +25,10 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
+import static traben.entity_texture_features.ETF.MOD_ID;
 
 //inspired by puzzles custom gui code
-public class ETFConfigScreenSkinToolPixelSelection extends ETFConfigScreen {
+public class ETFConfigScreenSkinToolPixelSelection extends ETFScreenOldCompat {
 
     private final SelectionMode MODE;
 
@@ -40,7 +37,7 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFConfigScreen {
     Identifier currentSkinToRender = new Identifier(MOD_ID + ":textures/gui/icon.png");
 
     protected ETFConfigScreenSkinToolPixelSelection(ETFConfigScreenSkinTool parent, SelectionMode mode) {
-        super(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + (mode == SelectionMode.EMISSIVE ? ".emissive_select" : ".enchanted_select") + ".title"), parent);
+        super("config." + ETF.MOD_ID + (mode == SelectionMode.EMISSIVE ? ".emissive_select" : ".enchanted_select") + ".title", parent, false);
         this.MODE = mode;
         etfParent = parent;
 
@@ -80,39 +77,42 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFConfigScreen {
         //simple method to create 4096 buttons instead of extrapolating mouse position
         for (int x = 0; x < 64; x++) {
             for (int y = 0; y < 64; y++) {
-                int finalX = x;
-                int finalY = y;
-
-                ButtonWidget butt = new ButtonWidget((int) ((this.width * 0.35) + (x * pixelSize)), (int) ((this.height * 0.2) + (y * pixelSize)), pixelSize, pixelSize,
-                        Text.of(""),
-                        (button) -> {
-                            int colorAtPixel = etfParent.currentEditorSkin.getColor(finalX, finalY);
-                            if (selectedPixels.contains(colorAtPixel)) {
-                                selectedPixels.remove(colorAtPixel);
-                            } else {
-                                selectedPixels.add(colorAtPixel);
-                            }
-
-                            applyCurrentSelectedPixels();
-                            etfParent.thisETFPlayerTexture.changeSkinToThisForTool(etfParent.currentEditorSkin);
-                            Identifier randomID2 = new Identifier(MOD_ID + "_ignore", "gui_skin_" + System.currentTimeMillis() + ".png");
-                            if (ETFUtils2.registerNativeImageToIdentifier(etfParent.currentEditorSkin, randomID2)) {
-                                currentSkinToRender = randomID2;
-                            }
-                        }, Supplier::get) {
-
-                    @Override
-                    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
-                        //invisible lol
-//                        super.renderWidget(context, mouseX, mouseY, delta);
-                    }
-
-                };
-
+                ButtonWidget butt = getButtonPixels(x, y, pixelSize);
+//todo can do so much better than this
                 this.addDrawableChild(butt);
             }
         }
 
+    }
+
+    @NotNull
+    private ButtonWidget getButtonPixels(final int x, final int y, final int pixelSize) {
+
+        return new ButtonWidget((int) ((ETFConfigScreenSkinToolPixelSelection.this.width * 0.35) + (x * pixelSize)), (int) ((ETFConfigScreenSkinToolPixelSelection.this.height * 0.2) + (y * pixelSize)), pixelSize, pixelSize,
+                Text.of(""),
+                (button) -> {
+                    int colorAtPixel = etfParent.currentEditorSkin.getColor(x, y);
+                    if (selectedPixels.contains(colorAtPixel)) {
+                        selectedPixels.remove(colorAtPixel);
+                    } else {
+                        selectedPixels.add(colorAtPixel);
+                    }
+
+                    applyCurrentSelectedPixels();
+                    etfParent.thisETFPlayerTexture.changeSkinToThisForTool(etfParent.currentEditorSkin);
+                    Identifier randomID2 = new Identifier(MOD_ID + "_ignore", "gui_skin_" + System.currentTimeMillis() + ".png");
+                    if (ETFUtils2.registerNativeImageToIdentifier(etfParent.currentEditorSkin, randomID2)) {
+                        currentSkinToRender = randomID2;
+                    }
+                }, Supplier::get) {
+
+            @Override
+            protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+                //invisible lol
+//                        super.renderWidget(context, mouseX, mouseY, delta);
+            }
+
+        };
     }
 
     private void applyCurrentSelectedPixels() {
@@ -123,8 +123,8 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFConfigScreen {
                 if (integerSet.isEmpty()) {
                     etfParent.currentEditorSkin.setColor(x, y, 0);
                 } else {
-                    etfParent.currentEditorSkin.setColor(x, y, integerSet.get(0));
-                    integerSet.remove(0);
+                    etfParent.currentEditorSkin.setColor(x, y, integerSet.getFirst());
+                    integerSet.removeFirst();
                 }
             }
         }
@@ -135,6 +135,7 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFConfigScreen {
         super.render(context, mouseX, mouseY, delta);
 
         int pixelSize = (int) (this.height * 0.7 / 64);
+
         renderGUITexture(currentSkinToRender, (int) ((this.width * 0.35)), (int) ((this.height * 0.2)), (int) ((this.width * 0.35) + (64 * pixelSize)), (int) ((this.height * 0.2) + (64 * pixelSize)));
         context.drawTextWithShadow(textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".skin_select" + (selectedPixels.size() > 64 ? ".warn" : ".hint")), width / 7, (int) (this.height * 0.8), selectedPixels.size() > 64 ? 0xff1515 : 0xFFFFFF);
 
@@ -144,7 +145,7 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFConfigScreen {
 
                 int height = (int) (this.height * 0.75);
                 int playerX = (int) (this.width * 0.14);
-                drawEntity(playerX, height, (int) (this.height * 0.3), (float) (-mouseX + playerX), (float) (-mouseY + (this.height * 0.3)), player);
+                drawEntity(context,playerX, height, (int) (this.height * 0.3), (float) (-mouseX + playerX), (float) (-mouseY + (this.height * 0.3)), player);
             } else {
                 context.drawTextWithShadow(textRenderer, Text.of("Player model only visible while in game!"), width / 7, (int) (this.height * 0.4), 0xFFFFFF);
                 context.drawTextWithShadow(textRenderer, Text.of("load a single-player world and then open this menu."), width / 7, (int) (this.height * 0.45), 0xFFFFFF);
@@ -156,22 +157,29 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFConfigScreen {
 
     }
 
-    public void drawEntity(int x, int y, int size, float mouseX, float mouseY, LivingEntity entity) {
-        //InventoryScreen
-        float f = (float) Math.atan((mouseX / 40.0F));
+    public void drawEntity(DrawContext context, int x, int y, int size, float mouseX, float mouseY, LivingEntity entity) {
+        float f = (float) Math.atan((mouseX / 40.0f));
+
         float g = (float) Math.atan((mouseY / 40.0F));
-        MatrixStack matrixStack = RenderSystem.getModelViewStack();
-        matrixStack.push();
-        matrixStack.translate(x, y, 1050.0);
-        matrixStack.scale(1.0F, 1.0F, -1.0F);
-        RenderSystem.applyModelViewMatrix();
-        MatrixStack matrixStack2 = new MatrixStack();
-        matrixStack2.translate(0.0, 0.0, 1000.0);
-        matrixStack2.scale((float) size, (float) size, (float) size);
+//1.20.5        MatrixStack matrixStack = RenderSystem.getModelViewStack();
+
+//        float j2 = (float) Math.atan(((-mouseY + this.height / 2f) / 40.0F));
         Quaternionf quaternionf = (new Quaternionf()).rotateZ(3.1415927F);
-        Quaternionf quaternionf2 = (new Quaternionf()).rotateX(g * 20.0F * 0.017453292F);
+        Quaternionf quaternionf2 = (new Quaternionf()).rotateX( 0);//j2 * 20.0F * 0.017453292F);
         quaternionf.mul(quaternionf2);
-        matrixStack2.multiply(quaternionf);
+
+        context.getMatrices().push();
+        context.getMatrices().translate(x, y, 150.0);
+        context.getMatrices().multiplyPositionMatrix((new Matrix4f()).scaling((float) size, (float) size, (float) (-size)));
+        context.getMatrices().multiply(quaternionf);
+        DiffuseLighting.method_34742();
+        EntityRenderDispatcher entityRenderDispatcher = MinecraftClient.getInstance().getEntityRenderDispatcher();
+        if (quaternionf2 != null) {
+            quaternionf2.conjugate();
+            entityRenderDispatcher.setRotation(quaternionf2);
+        }
+
+        entityRenderDispatcher.setRenderShadows(false);
         float h = entity.bodyYaw;
         float i = entity.getYaw();
         float j = entity.getPitch();
@@ -182,50 +190,25 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFConfigScreen {
         entity.setPitch(-g * 20.0F);
         entity.headYaw = entity.getYaw();
         entity.prevHeadYaw = entity.getYaw();
-        DiffuseLighting.method_34742();
-        EntityRenderDispatcher entityRenderDispatcher = MinecraftClient.getInstance().getEntityRenderDispatcher();
-        quaternionf2.conjugate();
-        entityRenderDispatcher.setRotation(quaternionf2);
-        entityRenderDispatcher.setRenderShadows(false);
-        VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
-        //noinspection deprecation
-        RenderSystem.runAsFancy(() -> entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, matrixStack2, immediate, 0x800080 /*15728880*/));
-        immediate.draw();
 
-        //second render required for iris
-        VertexConsumerProvider.Immediate immediate2 = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
-        //noinspection deprecation
-        RenderSystem.runAsFancy(() -> {
-            //entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, matrixStack2, immediate2, 15728880);
-            if (etfParent.thisETFPlayerTexture != null && etfParent.thisETFPlayerTexture.etfTextureOfFinalBaseSkin != null && entity instanceof AbstractClientPlayerEntity) {
-                Identifier emissive = etfParent.thisETFPlayerTexture.etfTextureOfFinalBaseSkin.getEmissiveIdentifierOfCurrentState();
-                if (emissive != null) {
-                    RenderLayer layer = RenderLayer.getEntityTranslucent(emissive);
 
-                    VertexConsumer vertexC = immediate.getBuffer(layer);
-                    if (vertexC != null) {
-                        EntityRenderer<?> bob = entityRenderDispatcher.getRenderer(entity);
-                        if (bob instanceof LivingEntityRenderer<?, ?>) {
-                            // System.out.println("rendered");
-                            //((LivingEntityRenderer<PlayerEntity, PlayerEntityModel<PlayerEntity>>) bob).render((PlayerEntity) entity, 0, 1, matrixStack2, immediate, 0xE000E0);
-                            ETFRenderContext.startSpecialRenderOverlayPhase();
-                            ((LivingEntityRenderer<?, ?>) bob).getModel().render(matrixStack, vertexC, ETFClientCommon.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
-                            ETFRenderContext.endSpecialRenderOverlayPhase();
-                        }
-                    }
-                }
-            }
-        });
-        immediate2.draw();
+//        VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
+        //noinspection deprecation
+        RenderSystem.runAsFancy(() -> entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, context.getMatrices(), context.getVertexConsumers(), LightmapTextureManager.pack(7,7)));
+//        immediate.draw();
+        context.draw();
         entityRenderDispatcher.setRenderShadows(true);
+        context.getMatrices().pop();
+        DiffuseLighting.enableGuiDepthLighting();
+//        entityRenderDispatcher.setRenderShadows(true);
         entity.bodyYaw = h;
         entity.setYaw(i);
         entity.setPitch(j);
         entity.prevHeadYaw = k;
         entity.headYaw = l;
-        matrixStack.pop();
-        RenderSystem.applyModelViewMatrix();
-        DiffuseLighting.enableGuiDepthLighting();
+//        matrixStack.pop();
+//        RenderSystem.applyModelViewMatrix();
+//        DiffuseLighting.enableGuiDepthLighting();
     }
 
     public enum SelectionMode {

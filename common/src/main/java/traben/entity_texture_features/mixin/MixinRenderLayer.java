@@ -13,7 +13,7 @@ public abstract class MixinRenderLayer {
 
 
     @ModifyVariable(
-            method ={
+            method = {
                     "getEntitySolid",
                     "getEyes",
                     "getEnergySwirl",

@@ -11,7 +11,7 @@ import traben.entity_texture_features.utils.ETFRenderLayerWithTexture;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 @Mixin(EyesFeatureRenderer.class)
-public abstract class MixinEyeFeatureRenderer{
+public abstract class MixinEyeFeatureRenderer {
 
     @ModifyArg(
             method = "render",
@@ -20,17 +20,17 @@ public abstract class MixinEyeFeatureRenderer{
     )
     private RenderLayer etf$allowModifiableEyes(RenderLayer layer) {
         //the eye texture render layers are hard coded in vanilla and do not recalculate each time
-        if(layer instanceof ETFRenderLayerWithTexture etf && etf.etf$getId().isPresent()){
+        if (layer instanceof ETFRenderLayerWithTexture etf && etf.etf$getId().isPresent()) {
             Identifier id = etf.etf$getId().get();
             Identifier variant = ETFUtils2.getETFVariantNotNullForInjector(id);
-            if(!id.equals(variant)){
+            if (!id.equals(variant)) {
                 //if there is a variant then lets send a layer with it
                 boolean allowed = ETFRenderContext.isAllowedToRenderLayerTextureModify();
                 ETFRenderContext.preventRenderLayerTextureModify();
 
                 RenderLayer layer2 = RenderLayer.getEyes(variant);
 
-                if(allowed) ETFRenderContext.allowRenderLayerTextureModify();
+                if (allowed) ETFRenderContext.allowRenderLayerTextureModify();
 
                 return layer2;
             }

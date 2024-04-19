@@ -18,6 +18,7 @@ public class TrueRandomProvider implements ETFApi.ETFVariantSuffixProvider {
 
     private final int suffixTotal;
     private final String packname;
+    protected EntityRandomSeedFunction entityRandomSeedFunction = (entity) -> entity.etf$getUuid().hashCode();
 
     private TrueRandomProvider(String secondPack, int suffixes) {
         this.suffixTotal = suffixes;
@@ -32,8 +33,8 @@ public class TrueRandomProvider implements ETFApi.ETFVariantSuffixProvider {
 
         Identifier second = ETFDirectory.getDirectoryVersionOf(ETFUtils2.addVariantNumberSuffix(vanillaIdentifier, 2));
         if (second != null) {
-            String secondPack = resources.getResource(second).map(Resource::getResourcePackName).orElse(null);
-            String vanillaPack = resources.getResource(vanillaIdentifier).map(Resource::getResourcePackName).orElse(null);
+            String secondPack = resources.getResource(second).map(Resource::getPackId).orElse(null);
+            String vanillaPack = resources.getResource(vanillaIdentifier).map(Resource::getPackId).orElse(null);
 
             if (secondPack != null
                     && secondPack.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(secondPack, vanillaPack))) {
@@ -78,9 +79,13 @@ public class TrueRandomProvider implements ETFApi.ETFVariantSuffixProvider {
     @Override
     public int getSuffixForETFEntity(ETFEntity entityToBeTested) {
         if (entityToBeTested == null) return 0;
-        int randomSeededByUUID = Math.abs(entityToBeTested.etf$getUuid().hashCode());
-        return (randomSeededByUUID % suffixTotal) + 1;
+        return (Math.abs(entityRandomSeedFunction.toInt(entityToBeTested)) % suffixTotal) + 1;
     }
 
-
+    @Override
+    public void setRandomSupplier(final EntityRandomSeedFunction entityRandomSeedFunction) {
+        if (entityRandomSeedFunction != null) {
+            this.entityRandomSeedFunction = entityRandomSeedFunction;
+        }
+    }
 }

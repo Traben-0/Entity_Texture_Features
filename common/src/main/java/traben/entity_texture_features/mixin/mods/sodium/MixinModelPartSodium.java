@@ -28,6 +28,7 @@ import traben.entity_texture_features.utils.ETFVertexConsumer;
 @Mixin(value = EntityRenderer.class)
 public abstract class MixinModelPartSodium {
 
+    @SuppressWarnings("EmptyMethod")
     @Shadow
     public static void render(MatrixStack matrixStack, VertexBufferWriter writer, ModelPart part, int light, int overlay, int color) {
     }
@@ -48,17 +49,17 @@ public abstract class MixinModelPartSodium {
             if (ETFRenderContext.isCurrentlyRenderingEntity()
                     && writer instanceof ETFVertexConsumer etfVertexConsumer) {
                 ETFTexture texture = etfVertexConsumer.etf$getETFTexture();
-                if(texture != null && (texture.isEmissive() || texture.isEnchanted())) {
+                if (texture != null && (texture.isEmissive() || texture.isEnchanted())) {
                     VertexConsumerProvider provider = etfVertexConsumer.etf$getProvider();
                     RenderLayer layer = etfVertexConsumer.etf$getRenderLayer();
                     if (provider != null && layer != null) {
                         //attempt special renders as eager OR checks
-                        ETFUtils2.RenderMethodForOverlay renderer = (a, b)->{
+                        ETFUtils2.RenderMethodForOverlay renderer = (a, b) -> {
                             VertexBufferWriter a2 = VertexConsumerUtils.convertOrLog(a);
                             if (a2 == null) {
                                 return;
                             }
-                            render(matrixStack,a2, part,b, overlay, color);
+                            render(matrixStack, a2, part, b, overlay, color);
                         };
                         if (ETFUtils2.renderEmissive(texture, provider, renderer) |
                                 ETFUtils2.renderEnchanted(texture, provider, light, renderer)) {
@@ -72,7 +73,6 @@ public abstract class MixinModelPartSodium {
             ETFRenderContext.resetCurrentModelPartDepth();
         }
     }
-
 
 
 }

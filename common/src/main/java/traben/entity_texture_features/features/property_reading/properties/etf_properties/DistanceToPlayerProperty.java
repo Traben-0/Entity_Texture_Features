@@ -33,11 +33,6 @@ public class DistanceToPlayerProperty extends FloatRangeFromStringArrayProperty 
     }
 
     @Override
-    public boolean isPropertyUpdatable() {
-        return true;
-    }
-
-    @Override
     public @NotNull String[] getPropertyIds() {
         return new String[]{"distance", "distanceFromPlayer"};
     }

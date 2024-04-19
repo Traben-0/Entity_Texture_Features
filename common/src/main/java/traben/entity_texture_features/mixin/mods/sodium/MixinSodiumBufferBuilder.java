@@ -24,6 +24,7 @@ public class MixinSodiumBufferBuilder implements ETFVertexConsumer {
     RenderLayer etf$renderLayer = null;
     @Unique
     ETFTexture etf$ETFTexture = null;
+
     @Override
     public ETFTexture etf$getETFTexture() {
         return etf$ETFTexture;

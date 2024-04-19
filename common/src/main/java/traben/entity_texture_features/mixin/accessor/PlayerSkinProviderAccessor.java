@@ -10,6 +10,4 @@ public interface PlayerSkinProviderAccessor {
     @Accessor
     PlayerSkinProvider.FileCache getSkinCache();
 
-    @Accessor
-    PlayerSkinProvider.FileCache getCapeCache();
 }

@@ -175,6 +175,10 @@ public class NBTProperty extends RandomProperty {
 //                                doesTestPass = doesStringMatch(nbtTestInstruction,nbtNumber.asString());
 //                            }else if(finalNBTElementOrNullIfFailed instanceof NbtString nbtString) {
 //                                doesTestPass = doesStringMatch(nbtTestInstruction,nbtString.asString());
+                    } else if (finalNBTElementOrNullIfFailed instanceof AbstractNbtNumber) {
+                        //strip non digit chars
+                        StringArrayOrRegexProperty.RegexAndPatternPropertyMatcher matcher = getStringMatcher_Regex_Pattern_List_Single(nbtTestInstruction);
+                        doesTestPass = matcher != null && matcher.testString(finalNBTElementOrNullIfFailed.asString().replaceAll("[^\\d.]", ""));
                     } else {
                         StringArrayOrRegexProperty.RegexAndPatternPropertyMatcher matcher = getStringMatcher_Regex_Pattern_List_Single(nbtTestInstruction);
                         doesTestPass = matcher != null && matcher.testString(finalNBTElementOrNullIfFailed.asString());
@@ -205,10 +209,6 @@ public class NBTProperty extends RandomProperty {
         return false;
     }
 
-    @Override
-    public boolean isPropertyUpdatable() {
-        return true;
-    }
 
     @Override
     public @NotNull String[] getPropertyIds() {

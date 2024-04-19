@@ -21,11 +21,12 @@ import java.util.Optional;
 public abstract class MixinInnerWrappedRenderType implements ETFRenderLayerWithTexture {
 
 
-    @Shadow public abstract RenderLayer unwrap();
+    @Shadow
+    public abstract RenderLayer unwrap();
 
     @Override
     public Optional<Identifier> etf$getId() {
-        if(unwrap() instanceof ETFRenderLayerWithTexture etf)
+        if (unwrap() instanceof ETFRenderLayerWithTexture etf)
             return etf.etf$getId();
         return Optional.empty();
     }

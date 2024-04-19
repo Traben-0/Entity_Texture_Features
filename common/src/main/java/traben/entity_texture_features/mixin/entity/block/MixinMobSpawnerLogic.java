@@ -16,12 +16,11 @@ import java.util.UUID;
 public abstract class MixinMobSpawnerLogic {
 
 
-
     @Inject(method = "getRenderedEntity",
             at = @At(value = "RETURN"))
     private void etf$stabiliseMobSpawnerUUID(World world, BlockPos pos, CallbackInfoReturnable<Entity> cir) {
         Entity entity = cir.getReturnValue();
-        if(entity != null){
+        if (entity != null) {
             entity.setUuid(new UUID(pos.asLong(), ETFApi.ETF_SPAWNER_MARKER));
 
             //resulting nbt should be [I;?,?,12345,12345]

@@ -1,6 +1,7 @@
 package traben.entity_texture_features.features.property_reading.properties.optifine_properties;
 
 
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.PlainTextContent;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextContent;
@@ -67,6 +68,9 @@ public class NameProperty extends StringArrayOrRegexProperty {
 
     @Override
     public @Nullable String getValueFromEntity(ETFEntity etfEntity) {
+        if (etfEntity instanceof PlayerEntity player && player.getName() != null) {
+            return player.getName().getString();
+        }
         if (etfEntity.etf$hasCustomName()) {
             Text entityNameText = etfEntity.etf$getCustomName();
             if (entityNameText != null) {
@@ -81,10 +85,6 @@ public class NameProperty extends StringArrayOrRegexProperty {
         return null;
     }
 
-    @Override
-    public boolean isPropertyUpdatable() {
-        return true;
-    }
 
     @Override
     public @NotNull String[] getPropertyIds() {

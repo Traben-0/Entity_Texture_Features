@@ -27,14 +27,10 @@ public class JumpProperty extends FloatRangeFromStringArrayProperty {
     @Override
     protected Float getRangeValueFromEntity(ETFEntity entity) {
         if (entity instanceof AbstractHorseEntity horse)
-            return (float) horse.getJumpStrength();
+            return  horse.jumpStrength;
         return null;
     }
 
-    @Override
-    public boolean isPropertyUpdatable() {
-        return false;
-    }
 
     @Override
     public @NotNull String[] getPropertyIds() {

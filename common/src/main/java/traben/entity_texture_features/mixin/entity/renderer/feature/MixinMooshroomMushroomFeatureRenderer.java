@@ -19,11 +19,10 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import traben.entity_texture_features.config.ETFConfig;
+import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
 import traben.entity_texture_features.utils.ETFUtils2;
-
 
 
 @Mixin(MooshroomMushroomFeatureRenderer.class)
@@ -56,7 +55,7 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
     @Nullable
     private static Boolean entity_texture_features$returnRedTrueBrownFalseVanillaNull(BlockState mushroomState) {
         //enable custom mooshroom mushrooms
-        if (ETFConfig.getInstance().enableCustomTextures) {
+        if (ETF.config().getConfig().enableCustomTextures) {
             if (mushroomState.isOf(Blocks.RED_MUSHROOM)) {
                 if (ETFManager.getInstance().mooshroomRedCustomShroomExists == null) {
                     if (MinecraftClient.getInstance().getResourceManager().getResource(RED_SHROOM).isPresent()) {

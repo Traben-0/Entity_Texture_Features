@@ -16,23 +16,21 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
-import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.config.screens.ETFConfigScreenMain;
 
 import java.nio.file.Path;
 import java.util.Objects;
-
-import static traben.entity_texture_features.ETFClientCommon.MOD_ID;
 
 @Mixin(PackScreen.class)
 public abstract class MixinPackScreen extends Screen {
 
 
     @Unique
-    private static final Identifier etf$FOCUSED = new Identifier(MOD_ID, "textures/gui/settings_focused.png");
+    private static final Identifier etf$FOCUSED = new Identifier("entity_features", "textures/gui/settings_focused.png");
     @Unique
-    private static final Identifier etf$UNFOCUSED = new Identifier(MOD_ID, "textures/gui/settings_unfocused.png");
+    private static final Identifier etf$UNFOCUSED = new Identifier("entity_features", "textures/gui/settings_unfocused.png");
     @Shadow
     @Final
     private Path file;
@@ -46,7 +44,7 @@ public abstract class MixinPackScreen extends Screen {
 
     @Inject(method = "init", at = @At("TAIL"))
     private void etf$etfButton(CallbackInfo ci) {
-        if (!ETFConfig.getInstance().hideConfigButton
+        if (!ETF.config().getConfig().hideConfigButton
                 && this.client != null
                 //ensure this is the resource-pack screen and not the data-pack screen
                 && this.file.equals(this.client.getResourcePackDir())
@@ -73,10 +71,10 @@ public abstract class MixinPackScreen extends Screen {
                     x, y, 24, 20,
                     new ButtonTextures(etf$UNFOCUSED, etf$FOCUSED),
                     (button) -> Objects.requireNonNull(client).setScreen(new ETFConfigScreenMain(this)),
-                    Text.translatable(MOD_ID + ".open_tooltip")) {
+                    Text.of("")) {
                 {
                     setTooltip(Tooltip.of(ETFVersionDifferenceHandler.getTextFromTranslation(
-                            "config.entity_texture_features.button_tooltip")));
+                            "config.entity_features.button_tooltip")));
                 }
 
                 //override required because textured button widget just doesnt work

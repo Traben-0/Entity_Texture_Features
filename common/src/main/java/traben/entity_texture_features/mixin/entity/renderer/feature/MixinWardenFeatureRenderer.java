@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import traben.entity_texture_features.config.ETFConfig;
+import traben.entity_texture_features.ETF;
 
 
 @Mixin(WardenFeatureRenderer.class)
@@ -39,7 +39,7 @@ public abstract class MixinWardenFeatureRenderer<T extends WardenEntity, M exten
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/feature/WardenFeatureRenderer;updateModelPartVisibility()V",
                     shift = At.Shift.AFTER))
     private void etf$preventHiding(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T wardenEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
-        if (ETFConfig.getInstance().enableFullBodyWardenTextures && !VANILLA_TEXTURE.equals(texture)) {
+        if (ETF.config().getConfig().enableFullBodyWardenTextures && !VANILLA_TEXTURE.equals(texture)) {
             unhideAllModelParts();
         }
     }

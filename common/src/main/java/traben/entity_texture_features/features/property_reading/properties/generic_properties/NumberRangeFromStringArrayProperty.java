@@ -60,15 +60,9 @@ public abstract class NumberRangeFromStringArrayProperty<N extends Number> exten
     @Nullable
     protected abstract RangeTester<N> getRangeTesterFromString(String possibleRange);
 
-    @Override
-    public boolean isPropertyUpdatable() {
-        return true;
-    }
 
     @Override
-    public @NotNull String[] getPropertyIds() {
-        return new String[]{"health"};
-    }
+    public abstract @NotNull String[] getPropertyIds();
 
     @Override
     protected String getPrintableRuleInfo() {

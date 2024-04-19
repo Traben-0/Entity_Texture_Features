@@ -5,6 +5,7 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
+import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.utils.ETFEntity;
 import traben.entity_texture_features.utils.ETFRenderLayerWithTexture;
@@ -23,6 +24,7 @@ public class ETFRenderContext {
 
 
     private static boolean isInSpecialRenderOverlayPhase = false;
+    private static boolean allowedToPatch = false;
 
     public static boolean isRenderingFeatures() {
         return renderingFeatures;
@@ -33,7 +35,7 @@ public class ETFRenderContext {
     }
 
     public static boolean isAllowedToRenderLayerTextureModify() {
-        return allowRenderLayerTextureModify && ETFConfig.getInstance().enableCustomTextures;
+        return allowRenderLayerTextureModify && ETF.config().getConfig().canDoCustomTextures();
     }
 
     public static void preventRenderLayerTextureModify() {
@@ -49,12 +51,18 @@ public class ETFRenderContext {
         return currentEntity;
     }
 
-    public static boolean canRenderInBrightMode(){
-        boolean setForBrightMode = ETFManager.getEmissiveMode() == ETFManager.EmissiveRenderModes.BRIGHT;
-        if(setForBrightMode){
-            if(currentEntity != null){
+    public static void setCurrentEntity(ETFEntity currentEntity) {
+        //assert this
+        allowRenderLayerTextureModify = true;
+        ETFRenderContext.currentEntity = currentEntity;
+    }
+
+    public static boolean canRenderInBrightMode() {
+        boolean setForBrightMode = ETFManager.getEmissiveMode() == ETFConfig.EmissiveRenderModes.BRIGHT;
+        if (setForBrightMode) {
+            if (currentEntity != null) {
                 return currentEntity.etf$canBeBright();// && !ETFRenderContext.getCurrentETFTexture().isPatched_CurrentlyOnlyArmor();
-            }else{
+            } else {
                 //establish default rule
                 return true;
             }
@@ -62,19 +70,13 @@ public class ETFRenderContext {
         return false;
     }
 
-    public static boolean shouldEmissiveUseCullingLayer(){
-        if(currentEntity != null){
+    public static boolean shouldEmissiveUseCullingLayer() {
+        if (currentEntity != null) {
             return currentEntity.etf$isBlockEntity();
-        }else{
+        } else {
             //establish default rule
             return true;
         }
-    }
-
-    public static void setCurrentEntity(ETFEntity currentEntity) {
-        //assert this
-        allowRenderLayerTextureModify = true;
-        ETFRenderContext.currentEntity = currentEntity;
     }
 
     public static int getCurrentModelPartDepth() {
@@ -120,45 +122,48 @@ public class ETFRenderContext {
     public static void allowTexturePatching() {
         allowedToPatch = true;
     }
+
     public static void preventTexturePatching() {
         allowedToPatch = false;
     }
-    private static boolean allowedToPatch = false;
 
     public static RenderLayer modifyRenderLayerIfRequired(RenderLayer value) {
 
         if (isCurrentlyRenderingEntity()
-                && isAllowedToRenderLayerTextureModify()
-                && ETFManager.getInstance().ENTITY_TYPE_RENDER_LAYER.containsKey(currentEntity.etf$getType())
-                && !value.isOutline()
-                && value instanceof ETFRenderLayerWithTexture multiphase) {
+                && isAllowedToRenderLayerTextureModify()) {
+            var layer = ETF.config().getConfig().getRenderLayerOverride();
+            if (layer != null
+                    && !value.isOutline()
+                    && value instanceof ETFRenderLayerWithTexture multiphase) {
 
-            Optional<Identifier> texture = multiphase.etf$getId();
-            if (texture.isPresent()) {
-                preventRenderLayerTextureModify();
-                RenderLayer forReturn = switch (ETFManager.getInstance().ENTITY_TYPE_RENDER_LAYER.getInt(currentEntity.etf$getType())) {
-                    case 1 -> RenderLayer.getEntityTranslucent(texture.get());
-                    case 2 -> RenderLayer.getEntityTranslucentCull(texture.get());
-                    case 3 -> RenderLayer.getEndGateway();
-                    case 4 -> RenderLayer.getOutline(texture.get());
-                    default -> value;
-                };
-                allowRenderLayerTextureModify();
-                return forReturn;
+                Optional<Identifier> texture = multiphase.etf$getId();
+                if (texture.isPresent()) {
+                    preventRenderLayerTextureModify();
+
+                    RenderLayer forReturn = switch (layer) {
+                        case TRANSLUCENT -> RenderLayer.getEntityTranslucent(texture.get());
+                        case TRANSLUCENT_CULL -> RenderLayer.getEntityTranslucentCull(texture.get());
+                        case END -> RenderLayer.getEndGateway();
+                        case OUTLINE -> RenderLayer.getOutline(texture.get());
+                    };
+                    allowRenderLayerTextureModify();
+                    return forReturn;
+
+                }
             }
         }
         return value;
     }
 
-    public static void insertETFDataIntoVertexConsumer(VertexConsumerProvider provider, RenderLayer renderLayer, VertexConsumer vertexConsumer){
-        if(isCurrentlyRenderingEntity() && vertexConsumer instanceof ETFVertexConsumer etfVertexConsumer) {
+    public static void insertETFDataIntoVertexConsumer(VertexConsumerProvider provider, RenderLayer renderLayer, VertexConsumer vertexConsumer) {
+        if (isCurrentlyRenderingEntity() && vertexConsumer instanceof ETFVertexConsumer etfVertexConsumer) {
             //need to store etf texture of consumer and original render layer
             //store provider as well for future actions
             etfVertexConsumer.etf$initETFVertexConsumer(provider, renderLayer);
         }
     }
 
-    public static boolean isCurrentlyRenderingEntity(){
+    public static boolean isCurrentlyRenderingEntity() {
         return currentEntity != null;
     }
 }
