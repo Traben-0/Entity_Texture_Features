@@ -38,6 +38,12 @@ public class TConfigScreenList extends TConfigScreen {
         }
     }
 
+    protected boolean fullWidthBackgroundEvenIfSmaller = false;
+
+    public void setWidgetBackgroundToFullWidth() {
+        this.fullWidthBackgroundEvenIfSmaller = true;
+    }
+
     @Override
     protected void init() {
         super.init();
@@ -58,7 +64,7 @@ public class TConfigScreenList extends TConfigScreen {
                 x = 0;
             }
         }
-        this.addDrawableChild(
+        var child = this.addDrawableChild(
                 new TConfigEntryListWidget(
                         width,
                         (int) (this.height * 0.7),
@@ -67,6 +73,9 @@ public class TConfigScreenList extends TConfigScreen {
                         24,
                         options)
         );
+        if (fullWidthBackgroundEvenIfSmaller) {
+            child.setWidgetBackgroundToFullWidth();
+        }
     }
 
     public enum Align {

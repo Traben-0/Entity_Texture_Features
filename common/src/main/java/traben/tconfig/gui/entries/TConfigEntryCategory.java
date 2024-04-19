@@ -46,6 +46,9 @@ public class TConfigEntryCategory extends TConfigEntry {
         if (screen == null) {
             screen = new TConfigScreenList(translationKey, MinecraftClient.getInstance().currentScreen, options.values().toArray(new TConfigEntry[0]), this::setValuesToDefault, this::resetValuesToInitial, align);
             screen.setRenderFeature(renderFeature);
+            if (fullWidthBackgroundEvenIfSmaller) {
+                screen.setWidgetBackgroundToFullWidth();
+            }
         }
         return screen;
     }
@@ -63,6 +66,12 @@ public class TConfigEntryCategory extends TConfigEntry {
             found |= option.saveValuesToConfig();
         }
         return found;
+    }
+
+    protected boolean fullWidthBackgroundEvenIfSmaller = false;
+
+    public void setWidgetBackgroundToFullWidth() {
+        this.fullWidthBackgroundEvenIfSmaller = true;
     }
 
     @Override
