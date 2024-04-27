@@ -48,6 +48,12 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
     //    ButtonWidget capeButton = null;
     ButtonWidget transparencyButton = null;
 
+    private static final Identifier APPLY_OVERLAY = new Identifier(MOD_ID + ":textures/skin_feature_printout.png");
+    private static final Identifier REMOVE_OVERLAY = new Identifier(MOD_ID + ":textures/skin_feature_remove.png");
+    private static final Identifier WHOLE_FACE_OVERLAY = new Identifier(MOD_ID + ":textures/skin_feature_whole_face.png");
+    private static final Identifier SMALL_EYE_OVERLAY = new Identifier(MOD_ID + ":textures/skin_feature_small_eyes.png");
+    private static final Identifier BOXES_OVERLAY = new Identifier(MOD_ID + ":textures/skin_feature_orange_areas.png");
+
     public ETFConfigScreenSkinTool(Screen parent) {
         super("config." + MOD_ID + ".player_skin_features.title", parent, false);
 
@@ -91,6 +97,8 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
         onExit();
         super.close();
     }
+
+    private ButtonWidget overridesButton = null;
 
     @Override
     protected void init() {
@@ -159,9 +167,9 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
                             ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.add_features"),
                     (button) -> {
                         if (thisETFPlayerTexture.hasFeatures) {
-                            applyExistingOverlayToSkin(new Identifier(MOD_ID + ":textures/skin_feature_remove.png"));
+                            applyExistingOverlayToSkin(REMOVE_OVERLAY);
                         } else {
-                            applyExistingOverlayToSkin(new Identifier(MOD_ID + ":textures/skin_feature_printout.png"));
+                            applyExistingOverlayToSkin(APPLY_OVERLAY);
                         }
                         thisETFPlayerTexture.changeSkinToThisForTool(currentEditorSkin);
                         button.setMessage(thisETFPlayerTexture.hasFeatures ?
@@ -170,6 +178,14 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
                         updateButtons();
                     }));
 
+            overridesButton = this.addDrawableChild(getETFButton((int) (this.width * 0.695), (int) (this.height * 0.2), (int) (this.width * 0.275), 20,
+                    ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.player_skin_editor.allow_examples"),
+                    (button) -> {
+                        allowOverrides = false;
+                        button.active = false;
+                        button.setMessage(ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.player_skin_editor.allow_examples.off"));
+                    },ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.player_skin_editor.allow_examples.tooltip")));
+
             villagerNoseButton = getETFButton((int) (this.width * 0.25), (int) (this.height * 0.7), (int) (this.width * 0.2), 20,
                     Text.of(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.button").getString() +
                             thisETFPlayerTexture.noseType.getButtonText().getString()),
@@ -177,6 +193,9 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
                         int colour = thisETFPlayerTexture.noseType.next().getNosePixelColour();
 
                         currentEditorSkin.setColor(53, 17, colour);
+                        if (thisETFPlayerTexture.noseType.next().appliesTextureOverlay()){
+                            applyExistingOverlayToSkin(BOXES_OVERLAY);
+                        }
                         thisETFPlayerTexture.changeSkinToThisForTool(currentEditorSkin);
 
                         button.setMessage(Text.of(ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.button").getString() +
@@ -261,6 +280,11 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
                         } else if (currentEditorSkin.getColor(52, 19) > blink.getMaxEyePixelHeight()) {
                             //set height choice to the highest possible if too big for new type choice
                             currentEditorSkin.setColor(52, 19, getPixelColour(blink.getMaxEyePixelHeight()));
+                        }
+
+                        var overlay = blink.getExampleOverlay();
+                        if (overlay != null){
+                            applyExistingOverlayToSkin(overlay);
                         }
 
                         currentEditorSkin.setColor(52, 16, blink.getBlinkPixelColour());
@@ -442,15 +466,47 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
 //            drawTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.iris_message"), width / 8, (int) (this.height * 0.15), 0xFF5555);
     }
 
+    private Boolean allowOverrides = null;
+
     public void applyExistingOverlayToSkin(Identifier overlayTexture) {
-        if ((ETFVersionDifferenceHandler.isFabric() == ETFVersionDifferenceHandler.isThisModLoaded("fabric"))) {
-            NativeImage skinFeatureImage = ETFUtils2.getNativeImageElseNull(overlayTexture);
+        if ((ETFVersionDifferenceHandler.isFabric() == ETFVersionDifferenceHandler.isThisModLoaded("fabric"))) {//todo still needed? might be implicit now
+
+
+            NativeImage overlayImage = ETFUtils2.getNativeImageElseNull(overlayTexture);
+            assert overlayImage != null;
+            //first check if the overlay will overwrite any pixels and prevent doing so if this is the case
+            //ignore this if doing the apply/remove overlay
+            if (!(overlayTexture.equals(REMOVE_OVERLAY) || overlayTexture.equals(APPLY_OVERLAY))){
+                for (int x = 0; x < currentEditorSkin.getWidth(); x++) {
+                    for (int y = 0; y < currentEditorSkin.getHeight(); y++) {
+
+                        int overlay = overlayImage.getColor(x, y);
+                        boolean skinTransparent = currentEditorSkin.getOpacity(x, y) == 0;
+                        boolean conflictDetected = overlay != 0 && !skinTransparent;
+
+                        if (conflictDetected) {
+                            int skin = currentEditorSkin.getColor(x, y);
+                            //ignore an already applied overlay texture with identical pixels
+                            if (skin != overlay) {
+                                if (allowOverrides == null) {
+                                    MinecraftClient.getInstance().setScreen(new ConfirmScreen(Text.of(""), this));
+                                    if (allowOverrides == null) allowOverrides = false;
+                                }
+                                if (!allowOverrides) {
+                                    ETFUtils2.logMessage("Skin example overlay would have overridden pixels in the skin, ETF will not apply the [" + overlayTexture + "] texture overlay.", false);
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             try {
                 for (int x = 0; x < currentEditorSkin.getWidth(); x++) {
                     for (int y = 0; y < currentEditorSkin.getHeight(); y++) {
-                        assert skinFeatureImage != null;
-                        if (skinFeatureImage.getColor(x, y) != 0) {
-                            currentEditorSkin.setColor(x, y, skinFeatureImage.getColor(x, y));
+                        if (overlayImage.getColor(x, y) != 0) {
+                            currentEditorSkin.setColor(x, y, overlayImage.getColor(x, y));
                         }
                     }
                 }
@@ -637,6 +693,10 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
             return NONE;
         }
 
+        public boolean appliesTextureOverlay(){
+            return this == TEXTURED_1 || this == TEXTURED_2 || this == TEXTURED_3 || this == TEXTURED_4 || this == TEXTURED_5;
+        }
+
         public Text getButtonText() {
             return buttonText;
         }
@@ -810,6 +870,14 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
             }
         }
 
+        public Identifier getExampleOverlay(){
+            return switch (this){
+                case WHOLE_FACE, WHOLE_FACE_TWO -> WHOLE_FACE_OVERLAY;
+                case NONE -> null;
+                default -> SMALL_EYE_OVERLAY;
+            };
+        }
+
         public Text getTitle() {
             //no enhanced switch for back compat
             switch (this) {
@@ -879,5 +947,50 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
         }
     }
 
+    private class ConfirmScreen extends Screen{
+
+        Screen parent;
+        protected ConfirmScreen(final Text title, Screen parent) {
+            super(title);
+            this.parent = parent;
+        }
+
+        @Override
+        public void close() {
+            if (overridesButton == null) {
+                allowOverrides = false;
+            }else {
+                overridesButton.onPress();
+            }
+            MinecraftClient.getInstance().setScreen(this.parent);
+        }
+
+        @Override
+        public boolean shouldCloseOnEsc() {
+            return true;
+        }
+
+        @Override
+        protected void init() {
+            super.init();
+
+            addDrawableChild(new ButtonWidget(width/ 2 - 210, height / 2 + 50, 200, 20,ScreenTexts.YES,(button)-> {
+                allowOverrides = true;
+                MinecraftClient.getInstance().setScreen(this.parent);
+            }));
+
+            addDrawableChild(new ButtonWidget(width/ 2 + 10, height / 2 + 50, 200, 20,ScreenTexts.NO,(button)-> close()));
+        }
+
+
+        @Override
+        public void render(final MatrixStack matrices, final int mouseX, final int mouseY, final float delta) {
+            super.render(matrices, mouseX, mouseY, delta);
+
+            drawCenteredTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.skin_editor.overlays.1").asOrderedText(), width / 2, height / 2, 0xFFFFFF);
+            drawCenteredTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.skin_editor.overlays.2").asOrderedText(), width / 2, height / 2+11, 0xFFFFFF);
+            drawCenteredTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.skin_editor.overlays.3").asOrderedText(), width / 2, height / 2+22, 0xFFFFFF);
+        }
+    }
 
 }
