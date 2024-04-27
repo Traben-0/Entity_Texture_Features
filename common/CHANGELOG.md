@@ -7,7 +7,8 @@
 - the ETF skin feature tool now has a setting to prevent ETF from adding the example template to your skin, thus no longer overwriting any extraneous pixels in your skin
   - the skin tool now prompts users to set this setting when the skin tool first tries to apply one of the templates in a way that would override any extraneous skin pixels 
   - the templates have been broken up into several smaller partial templates to only try and apply to skins explicitly using them
-
+- added gaps into the jacket options text for readability
+- fixed coat length setting not being bound between 1 and 8
 
 [6.0]
 

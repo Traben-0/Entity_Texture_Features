@@ -267,22 +267,22 @@ public class ETFPlayerTexture {
         return texture;
     }
 
-    private static int countTransparentInBox(NativeImage img, int x1, int y1, int x2, int y2) {
-        int counter = 0;
-        for (int x = x1; x <= x2; x++) {
-            for (int y = y1; y <= y2; y++) {
-                //ranges from  0 to 127  then wraps around negatively -127 to -1  totalling 0 to 255
-                int i = img.getOpacity(x, y);
-                if (i < 0) {
-                    i += 256;
-                }
-                //adjusted to 0 to 256
-                counter += i;
-
-            }
-        }
-        return counter;
-    }
+//    private static int countTransparentInBox(NativeImage img, int x1, int y1, int x2, int y2) {
+//        int counter = 0;
+//        for (int x = x1; x <= x2; x++) {
+//            for (int y = y1; y <= y2; y++) {
+//                //ranges from  0 to 127  then wraps around negatively -127 to -1  totalling 0 to 255
+//                int i = img.getOpacity(x, y);
+//                if (i < 0) {
+//                    i += 256;
+//                }
+//                //adjusted to 0 to 256
+//                counter += i;
+//
+//            }
+//        }
+//        return counter;
+//    }
 
 //    private static void setNotTransparentInBox(NativeImage img, int x1, int y1, int x2, int y2) {
 //        for (int x = x1; x <= x2; x++) {
@@ -727,6 +727,9 @@ public class ETFPlayerTexture {
 //                        getSkinPixelColourToNumber(originalSkin.getColor(55, 18)),
 //                        getSkinPixelColourToNumber(originalSkin.getColor(55, 19))
                 };
+                if(choiceBoxChoices[2] < 1 || choiceBoxChoices[2] > 8){
+                    choiceBoxChoices[2] = 1;
+                }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //deprecated old villager nose method
                 boolean noseUpper = (getSkinPixelColourToNumber(originalSkin.getColor(43, 13)) == 666 && getSkinPixelColourToNumber(originalSkin.getColor(44, 13)) == 666 &&
