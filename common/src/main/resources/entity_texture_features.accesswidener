@@ -20,6 +20,8 @@ accessible class net/minecraft/client/render/RenderPhase$Texture
 # for block entity renderers in config
 accessible field net/minecraft/client/render/block/entity/BlockEntityRendererFactories FACTORIES Ljava/util/Map;
 
+accessible method net/minecraft/client/texture/PlayerSkinTexture remapTexture (Lnet/minecraft/client/texture/NativeImage;)Lnet/minecraft/client/texture/NativeImage;
+
 # 1.20.1 access height to modify
 accessible field net/minecraft/client/gui/widget/ClickableWidget height I
 
