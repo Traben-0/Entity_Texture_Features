@@ -56,8 +56,16 @@ public final class ETFConfig extends TConfig {
     public boolean alwaysCheckVanillaEmissiveSuffix = true;
     public boolean enableArmorAndTrims = true;
     public boolean skinFeaturesEnabled = true;
+
+    public SkinTransparencyMode skinTransparencyMode = SkinTransparencyMode.ETF_SKINS_ONLY;
+
+    @Deprecated
     public boolean skinFeaturesEnableTransparency = true;
+
+    @Deprecated
     public boolean skinFeaturesEnableFullTransparency = false;
+
+    @Deprecated
     public boolean tryETFTransparencyForAllSkins = false;
     public boolean enableEnemyTeamPlayersSkinFeatures = true;
     public boolean enableBlinking = true;
@@ -193,12 +201,14 @@ public final class ETFConfig extends TConfig {
                         ), new TConfigEntryCategory("config.entity_texture_features.player_skin_settings.title").add(
                                 new TConfigEntryBoolean("config.entity_texture_features.player_skin_features.title", "config.entity_texture_features.player_skin_features.tooltip",
                                         () -> skinFeaturesEnabled, aBoolean -> skinFeaturesEnabled = aBoolean, true),
-                                new TConfigEntryBoolean("config.entity_texture_features.skin_features_enable_transparency.title", "config.entity_texture_features.skin_features_enable_transparency.tooltip",
-                                        () -> skinFeaturesEnableTransparency, aBoolean -> skinFeaturesEnableTransparency = aBoolean, true),
-                                new TConfigEntryBoolean("config.entity_texture_features.skin_features_enable_full_transparency.title", "config.entity_texture_features.skin_features_enable_full_transparency.tooltip",
-                                        () -> skinFeaturesEnableFullTransparency, aBoolean -> skinFeaturesEnableFullTransparency = aBoolean, false),
-                                new TConfigEntryBoolean("config.entity_texture_features.skin_features_try_transparency_for_all.title", "config.entity_texture_features.skin_features_try_transparency_for_all.tooltip",
-                                        () -> tryETFTransparencyForAllSkins, aBoolean -> tryETFTransparencyForAllSkins = aBoolean, false),
+//                                new TConfigEntryBoolean("config.entity_texture_features.skin_features_enable_transparency.title", "config.entity_texture_features.skin_features_enable_transparency.tooltip",
+//                                        () -> skinFeaturesEnableTransparency, aBoolean -> skinFeaturesEnableTransparency = aBoolean, true),
+//                                new TConfigEntryBoolean("config.entity_texture_features.skin_features_enable_full_transparency.title", "config.entity_texture_features.skin_features_enable_full_transparency.tooltip",
+//                                        () -> skinFeaturesEnableFullTransparency, aBoolean -> skinFeaturesEnableFullTransparency = aBoolean, false),
+//                                new TConfigEntryBoolean("config.entity_texture_features.skin_features_try_transparency_for_all.title", "config.entity_texture_features.skin_features_try_transparency_for_all.tooltip",
+//                                        () -> tryETFTransparencyForAllSkins, aBoolean -> tryETFTransparencyForAllSkins = aBoolean, false),
+                                new TConfigEntryEnumButton<>("config.entity_texture_features.transparent_skins.title", "config.entity_texture_features.transparent_skins.tooltip",
+                                        () -> skinTransparencyMode, mode -> skinTransparencyMode = mode, SkinTransparencyMode.ETF_SKINS_ONLY),
                                 new TConfigEntryBoolean("config.entity_texture_features.enable_enemy_team_players_skin_features.title", "config.entity_texture_features.enable_enemy_team_players_skin_features.tooltip",
                                         () -> enableEnemyTeamPlayersSkinFeatures, aBoolean -> enableEnemyTeamPlayersSkinFeatures = aBoolean, true),
                                 ETF.SKIN_LAYERS_DETECTED ?
@@ -467,6 +477,25 @@ public final class ETFConfig extends TConfig {
         private final String key;
 
         RenderLayerOverride(@Translatable String key) {
+            this.key = key;
+        }
+
+        @Override
+        public String toString() {
+            return ETFVersionDifferenceHandler.getTextFromTranslation(key).getString();
+        }
+
+    }
+
+    public enum SkinTransparencyMode{
+        @SuppressWarnings("unused") VANILLA("config.entity_texture_features.transparent_skins.vanilla"),
+        ETF_SKINS_ONLY("config.entity_texture_features.transparent_skins.etf"),
+        ALL("config.entity_texture_features.transparent_skins.all")
+        ;
+
+        private final String key;
+
+        SkinTransparencyMode(@Translatable String key) {
             this.key = key;
         }
 

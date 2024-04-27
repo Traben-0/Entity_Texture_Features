@@ -9,6 +9,7 @@
     "MixinModelPart",
     "MixinMultiPhase",
     "MixinPackScreen",
+    "MixinPlayerSkinTexture",
     "MixinRenderLayer",
     "MixinSpriteIdentifier",
     "MixinVertexConsumerProvider$Immediate",

@@ -25,3 +25,5 @@ accessible field net/minecraft/entity/passive/AbstractHorseEntity jumpStrength F
 
 accessible field net/minecraft/client/gui/widget/EntryListWidget MENU_LIST_BACKGROUND_TEXTURE Lnet/minecraft/util/Identifier;
 accessible field net/minecraft/client/gui/widget/EntryListWidget INWORLD_MENU_LIST_BACKGROUND_TEXTURE Lnet/minecraft/util/Identifier;
+
+accessible method net/minecraft/client/texture/PlayerSkinTexture remapTexture (Lnet/minecraft/client/texture/NativeImage;)Lnet/minecraft/client/texture/NativeImage;

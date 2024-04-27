@@ -12,9 +12,9 @@ import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.trim.ArmorTrim;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -33,7 +33,7 @@ import java.util.Objects;
 
 
 @Mixin(ArmorFeatureRenderer.class)
-public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extends BipedEntityModel<T>> extends FeatureRenderer<T, M> {
+public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extends BipedEntityModel<T>, A extends BipedEntityModel<T>> extends FeatureRenderer<T, M> {
     @Unique
     private ETFTexture thisETF$Texture = null;
 
@@ -59,7 +59,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
         ETFRenderContext.preventTexturePatching();
     }
 
-    @ModifyArg(method = "Lnet/minecraft/client/render/entity/feature/ArmorFeatureRenderer;renderModel(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/item/ArmorItem;Lnet/minecraft/client/model/Model;ZFFFLnet/minecraft/util/Identifier;)V",
+    @ModifyArg(method = "renderModel",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/RenderLayer;getArmorCutoutNoCull(Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/RenderLayer;"))
     private Identifier etf$changeTexture(Identifier texture) {
         if(ETF.config().getConfig().enableArmorAndTrims) {
@@ -73,9 +73,9 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
         return texture;
     }
 
-    @Inject(method = "Lnet/minecraft/client/render/entity/feature/ArmorFeatureRenderer;renderModel(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/item/ArmorItem;Lnet/minecraft/client/model/Model;ZFFFLnet/minecraft/util/Identifier;)V",
+    @Inject(method = "renderModel",
             at = @At(value = "TAIL"))
-    private void etf$applyEmissive(MatrixStack arg, VertexConsumerProvider arg2, int i, ArmorItem arg3, Model arg4, boolean bl, float f, float g, float h, Identifier armorResource, CallbackInfo ci) {
+    private void etf$applyEmissive(final MatrixStack arg, final VertexConsumerProvider arg2, final int i, final Model arg3, final float f, final float g, final float h, final Identifier arg4, final CallbackInfo ci) {
         //UUID id = livingEntity.getUuid();
         if (thisETF$Texture != null && ETF.config().getConfig().canDoEmissiveTextures()) {
             Identifier emissive = thisETF$Texture.getEmissiveIdentifierOfCurrentState();
@@ -87,7 +87,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
                 textureVert = arg2.getBuffer(RenderLayer.getArmorCutoutNoCull(emissive));
                 //}
                 ETFRenderContext.startSpecialRenderOverlayPhase();
-                arg4.render(arg, textureVert, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, f, g, h, 1.0F);
+                arg3.render(arg, textureVert, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.DEFAULT_UV, f, g, h, 1.0F);
                 ETFRenderContext.endSpecialRenderOverlayPhase();
             }
         }
@@ -107,12 +107,12 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
 
 
 
-    @Inject(method = "Lnet/minecraft/client/render/entity/feature/ArmorFeatureRenderer;renderTrim(Lnet/minecraft/item/ArmorMaterial;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/item/trim/ArmorTrim;Lnet/minecraft/client/model/Model;Z)V",
+    @Inject(method = "renderTrim(Lnet/minecraft/registry/entry/RegistryEntry;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/item/trim/ArmorTrim;Lnet/minecraft/client/model/Model;Z)V",
             at = @At(value = "HEAD"))
-    private void etf$trimGet(ArmorMaterial material, MatrixStack arg2, VertexConsumerProvider vertexConsumers, int i, ArmorTrim trim, Model arg5, boolean leggings, CallbackInfo ci) {
+    private void etf$trimGet(final RegistryEntry<ArmorMaterial> arg, final MatrixStack arg2, final VertexConsumerProvider arg3, final int i, final ArmorTrim arg4, final Model arg5, final boolean bl, final CallbackInfo ci) {
 
         if(ETF.config().getConfig().enableArmorAndTrims) {
-            Identifier trimBaseId = leggings ? trim.getLeggingsModelId(material) : trim.getGenericModelId(material);
+            Identifier trimBaseId = bl ? arg4.getLeggingsModelId(arg) : arg4.getGenericModelId(arg);
             //support modded trims with namespace
             Identifier trimMaterialIdentifier = new Identifier(trimBaseId.getNamespace(), "textures/" + trimBaseId.getPath() + ".png");
             thisETF$TrimTexture = ETFManager.getInstance().getETFTextureNoVariation(trimMaterialIdentifier);
@@ -123,13 +123,13 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
                     && ETF.config().getConfig().canDoEmissiveTextures()
                     && thisETF$TrimTexture.isEmissive()
                     && ETF.IRIS_DETECTED) {
-                thisETF$TrimTexture.buildTrimTexture(trim, leggings);
+                thisETF$TrimTexture.buildTrimTexture(arg4, bl);
             }
         }
 
     }
 
-    @ModifyArg(method = "Lnet/minecraft/client/render/entity/feature/ArmorFeatureRenderer;renderTrim(Lnet/minecraft/item/ArmorMaterial;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/item/trim/ArmorTrim;Lnet/minecraft/client/model/Model;Z)V",
+    @ModifyArg(method = "renderTrim(Lnet/minecraft/registry/entry/RegistryEntry;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/item/trim/ArmorTrim;Lnet/minecraft/client/model/Model;Z)V",
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/client/model/Model;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V"),
             index = 1)
@@ -150,9 +150,9 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
         return par2;
     }
 
-    @Inject(method = "Lnet/minecraft/client/render/entity/feature/ArmorFeatureRenderer;renderTrim(Lnet/minecraft/item/ArmorMaterial;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/item/trim/ArmorTrim;Lnet/minecraft/client/model/Model;Z)V",
+    @Inject(method = "renderTrim(Lnet/minecraft/registry/entry/RegistryEntry;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/item/trim/ArmorTrim;Lnet/minecraft/client/model/Model;Z)V",
             at = @At(value = "TAIL"))
-    private void etf$trimEmissive(ArmorMaterial arg, MatrixStack arg2, VertexConsumerProvider arg3, int i, ArmorTrim arg4, Model arg5, boolean bl, CallbackInfo ci) {
+    private void etf$trimEmissive(final RegistryEntry<ArmorMaterial> arg, final MatrixStack arg2, final VertexConsumerProvider arg3, final int i, final ArmorTrim arg4, final Model arg5, final boolean bl, final CallbackInfo ci) {
         if(ETF.config().getConfig().canDoEmissiveTextures() && thisETF$TrimTexture != null){
             //trimTexture.renderEmissive(matrices,vertexConsumers,model);
             Identifier emissive = thisETF$TrimTexture.getEmissiveIdentifierOfCurrentState();

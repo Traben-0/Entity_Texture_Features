@@ -1,5 +1,16 @@
 [**ETF Changelog:**]
 
+[6.0.1]
+- fixed the transparent skin settings
+- changed the transparent skin settings into a single option, it is set to only allow for skins using ETF features by default, but can be enabled for all skins.
+- ETF player skin features now support legacy format skins and will auto convert them to the new format when saved
+- the ETF skin feature tool now has a setting to prevent ETF from adding the example template to your skin, thus no longer overwriting any extraneous pixels in your skin
+  - the skin tool now prompts users to set this setting when the skin tool first tries to apply one of the templates in a way that would override any extraneous skin pixels 
+  - the templates have been broken up into several smaller partial templates to only try and apply to skins explicitly using them
+
+
+[6.0]
+
 - added support for the iris distant horizons beta
 - fixed emissive textures breaking in the gui with ImmediatelyFast installed
 - fixed the `blocks` property not correctly reading/expecting block states
