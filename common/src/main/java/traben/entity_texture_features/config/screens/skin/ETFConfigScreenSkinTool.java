@@ -476,29 +476,29 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
             //first check if the overlay will overwrite any pixels and prevent doing so if this is the case
             //ignore this if doing the apply/remove overlay
             if (!(overlayTexture.equals(REMOVE_OVERLAY) || overlayTexture.equals(APPLY_OVERLAY))){
-                for (int x = 0; x < currentEditorSkin.getWidth(); x++) {
-                    for (int y = 0; y < currentEditorSkin.getHeight(); y++) {
-
-                        int overlay = overlayImage.getColor(x, y);
-                        boolean skinTransparent = currentEditorSkin.getOpacity(x, y) == 0;
-                        boolean conflictDetected = overlay != 0 && !skinTransparent;
-
-                        if (conflictDetected) {
-                            int skin = currentEditorSkin.getColor(x, y);
-                            //ignore an already applied overlay texture with identical pixels
-                            if (skin != overlay) {
+//                for (int x = 0; x < currentEditorSkin.getWidth(); x++) {
+//                    for (int y = 0; y < currentEditorSkin.getHeight(); y++) {
+//
+//                        int overlay = overlayImage.getColor(x, y);
+//                        boolean skinTransparent = currentEditorSkin.getOpacity(x, y) == 0;
+//                        boolean conflictDetected = overlay != 0 && !skinTransparent;
+//
+//                        if (conflictDetected) {
+//                            int skin = currentEditorSkin.getColor(x, y);
+//                            //ignore an already applied overlay texture with identical pixels
+//                            if (skin != overlay) {
                                 if (allowOverrides == null) {
                                     MinecraftClient.getInstance().setScreen(new ConfirmScreen(Text.of(""), this));
                                     if (allowOverrides == null) allowOverrides = false;
                                 }
                                 if (!allowOverrides) {
-                                    ETFUtils2.logMessage("Skin example overlay would have overridden pixels in the skin, ETF will not apply the [" + overlayTexture + "] texture overlay.", false);
+                                    ETFUtils2.logMessage("Skin example overlay [" + overlayTexture + "] not applied.", false);
                                     return;
                                 }
-                            }
-                        }
-                    }
-                }
+//                            }
+//                        }
+//                    }
+//                }
             }
 
             try {
