@@ -43,37 +43,47 @@ public class ColorProperty extends StringArrayOrRegexProperty {
     @Nullable
     protected String getValueFromEntity(ETFEntity entity) {
         if (entity != null) {
-            if (entity instanceof Wolf wolf) {
-                return wolf.getCollarColor().getName();
-            } else if (entity instanceof Sheep sheep) {
-                return sheep.getColor().getName();
-            } else if (entity instanceof Llama llama) {
-                DyeColor str = llama.getSwag();
-                if (str != null) {
-                    return str.getName();
+            switch (entity) {
+                case Wolf wolf -> {
+                    return wolf.getCollarColor().getName();
                 }
-            } else if (entity instanceof Cat cat) {
-                return cat.getCollarColor().getName();
-            } else if (entity instanceof Shulker shulker) {
-                DyeColor str = shulker.getColor();
-                if (str != null) {
-                    return str.getName();
+                case Sheep sheep -> {
+                    return sheep.getColor().getName();
                 }
-            } else if (entity instanceof TropicalFish fishy) {
-                DyeColor str = TropicalFish.getBaseColor(fishy.getVariant().getPackedId());
-                if (str != null) {
-                    return str.getName();
-                }
-            } else if (entity instanceof VariantHolder<?> variantHolder) {
-                try {
-                    //who knows what issues modded mobs might have
-                    if (variantHolder.getVariant() instanceof DyeColor dye) {
-                        return dye.getName();
-                    } else if (variantHolder.getVariant() instanceof Optional<?> optional
-                            && optional.isPresent() && optional.get() instanceof DyeColor dye) {
-                        return dye.getName();
+                case Llama llama -> {
+                    DyeColor str = llama.getSwag();
+                    if (str != null) {
+                        return str.getName();
                     }
-                } catch (Exception ignored) {
+                }
+                case Cat cat -> {
+                    return cat.getCollarColor().getName();
+                }
+                case Shulker shulker -> {
+                    DyeColor str = shulker.getColor();
+                    if (str != null) {
+                        return str.getName();
+                    }
+                }
+                case TropicalFish fishy -> {
+                    DyeColor str = TropicalFish.getBaseColor(fishy.getVariant().getPackedId());
+                    if (str != null) {
+                        return str.getName();
+                    }
+                }
+                case VariantHolder<?> variantHolder -> {
+                    try {
+                        //who knows what issues modded mobs might have
+                        if (variantHolder.getVariant() instanceof DyeColor dye) {
+                            return dye.getName();
+                        } else if (variantHolder.getVariant() instanceof Optional<?> optional
+                                && optional.isPresent() && optional.get() instanceof DyeColor dye) {
+                            return dye.getName();
+                        }
+                    } catch (Exception ignored) {
+                    }
+                }
+                default -> {
                 }
             }
         }

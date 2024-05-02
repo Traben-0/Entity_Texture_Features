@@ -9,6 +9,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.PlayerModelPart;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -34,7 +35,7 @@ public abstract class MixinPlayerEntity extends Entity implements ETFPlayerEntit
 
 
     @Shadow
-    public abstract Component getName();
+    public abstract @NotNull Component getName();
 
     @Shadow public abstract boolean isModelPartShown(final PlayerModelPart playerModelPart);
 

@@ -32,7 +32,7 @@ import java.util.Objects;
 
 
 @Mixin(HumanoidArmorLayer.class)
-public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extends HumanoidModel<T>, A extends HumanoidModel<T>> extends RenderLayer<T, M> {
+public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extends HumanoidModel<T>> extends RenderLayer<T, M> {
     @Unique
     private ETFTexture thisETF$Texture = null;
 
@@ -73,7 +73,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
         return texture;
     }
 
-    @Inject(method = "renderModel",
+    @Inject(method = "renderModel(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/model/Model;FFFLnet/minecraft/resources/ResourceLocation;)V",
             at = @At(value = "TAIL"))
     private void etf$applyEmissive(final PoseStack arg, final MultiBufferSource arg2, final int i, final Model arg3, final float f, final float g, final float h, final ResourceLocation arg4, final CallbackInfo ci) {
         //UUID id = livingEntity.getUuid();
