@@ -1,7 +1,11 @@
 package traben.entity_texture_features;
 
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.LightTexture;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.config.ETFConfigWarning;
 import traben.entity_texture_features.config.ETFConfigWarnings;
@@ -13,9 +17,6 @@ import traben.tconfig.TConfigHandler;
 import java.io.File;
 import java.util.Random;
 import java.util.Set;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.LightTexture;
 
 
 public class ETF {
@@ -23,7 +24,7 @@ public class ETF {
     public static final File CONFIG_DIR = ETFVersionDifferenceHandler.getConfigDir();
     public static final String MOD_ID = "entity_texture_features";
     //logging object
-    public final static Logger LOGGER = ETFVersionDifferenceHandler.getLogger();
+    public final static Logger LOGGER = LoggerFactory.getLogger("Entity Texture Features");
 
 
     public static final int EMISSIVE_FEATURE_LIGHT_VALUE = LightTexture.FULL_BRIGHT + 2;
