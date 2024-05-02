@@ -1,6 +1,5 @@
 package traben.entity_texture_features.features.property_reading.properties.etf_properties.external;
 
-import net.minecraft.client.MinecraftClient;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperty;
@@ -8,6 +7,7 @@ import traben.entity_texture_features.features.property_reading.properties.gener
 import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.Properties;
+import net.minecraft.client.Minecraft;
 
 public class LanguageProperty extends StringArrayOrRegexProperty {
 
@@ -27,7 +27,7 @@ public class LanguageProperty extends StringArrayOrRegexProperty {
 
     @Override
     public @Nullable String getValueFromEntity(ETFEntity etfEntity) {
-        return MinecraftClient.getInstance().options.language;
+        return Minecraft.getInstance().options.languageCode;
     }
 
 

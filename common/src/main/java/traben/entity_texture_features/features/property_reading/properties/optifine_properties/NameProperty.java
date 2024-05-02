@@ -1,10 +1,6 @@
 package traben.entity_texture_features.features.property_reading.properties.optifine_properties;
 
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.PlainTextContent;
-import net.minecraft.text.Text;
-import net.minecraft.text.TextContent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.features.property_reading.properties.generic_properties.StringArrayOrRegexProperty;
@@ -14,6 +10,10 @@ import java.util.ArrayList;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentContents;
+import net.minecraft.network.chat.contents.PlainTextContents;
+import net.minecraft.world.entity.player.Player;
 
 public class NameProperty extends StringArrayOrRegexProperty {
 
@@ -68,15 +68,15 @@ public class NameProperty extends StringArrayOrRegexProperty {
 
     @Override
     public @Nullable String getValueFromEntity(ETFEntity etfEntity) {
-        if (etfEntity instanceof PlayerEntity player && player.getName() != null) {
+        if (etfEntity instanceof Player player && player.getName() != null) {
             return player.getName().getString();
         }
         if (etfEntity.etf$hasCustomName()) {
-            Text entityNameText = etfEntity.etf$getCustomName();
+            Component entityNameText = etfEntity.etf$getCustomName();
             if (entityNameText != null) {
-                TextContent content = entityNameText.getContent();
-                if (content instanceof PlainTextContent.Literal literal) {
-                    return literal.string();
+                ComponentContents content = entityNameText.getContents();
+                if (content instanceof PlainTextContents.LiteralContents literal) {
+                    return literal.text();
                 } else {
                     return entityNameText.getString();
                 }

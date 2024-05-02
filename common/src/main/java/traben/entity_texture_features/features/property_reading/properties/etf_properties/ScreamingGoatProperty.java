@@ -1,12 +1,12 @@
 package traben.entity_texture_features.features.property_reading.properties.etf_properties;
 
-import net.minecraft.entity.passive.GoatEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.features.property_reading.properties.generic_properties.BooleanProperty;
 import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.Properties;
+import net.minecraft.world.entity.animal.goat.Goat;
 
 public class ScreamingGoatProperty extends BooleanProperty {
 
@@ -26,7 +26,7 @@ public class ScreamingGoatProperty extends BooleanProperty {
     @Override
     @Nullable
     protected Boolean getValueFromEntity(ETFEntity etfEntity) {
-        if (etfEntity instanceof GoatEntity goat) return goat.isScreaming();
+        if (etfEntity instanceof Goat goat) return goat.isScreamingGoat();
         return null;
     }
 

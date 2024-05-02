@@ -13,9 +13,6 @@
     "MixinRenderLayer",
     "MixinSpriteIdentifier",
     "MixinVertexConsumerProvider$Immediate",
-    "accessor.FileCacheAccessor",
-    "accessor.PlayerSkinProviderAccessor",
-    "accessor.PlayerSkinTextureAccessor",
     "accessor.TooltipAccessor",
     "entity.block.MixinMobSpawnerLogic",
     "entity.block.MixinSkullBlockEntityRenderer",
@@ -48,7 +45,8 @@
     "mods.sodium.MixinModelPartSodium",
     "mods.sodium.MixinSodiumBufferBuilder",
     "reloading.MixinMinecraftClient",
-    "reloading.MixinResourceReload"
+    "reloading.MixinResourceReload",
+    "entity.misc.MixinPhantomEntity"
   ],
   "mixins": [
   ],

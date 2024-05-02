@@ -1,12 +1,12 @@
 package traben.tconfig.gui;
 
 import com.demonwav.mcdev.annotations.Translatable;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 
 public class TConfigScreen extends Screen {
@@ -17,47 +17,47 @@ public class TConfigScreen extends Screen {
     protected Runnable undoChangesRunnable = null;
 
     protected TConfigScreen(@Translatable final String title, Screen parent, boolean showBackButton) {
-        super(Text.translatable(title));
+        super(Component.translatable(title));
         this.parent = parent;
         this.showBackButton = showBackButton;
     }
 
-    protected Text getBackButtonText() {
-        return ScreenTexts.BACK;
+    protected Component getBackButtonText() {
+        return CommonComponents.GUI_BACK;
     }
 
 
     @Override
     protected void init() {
-        if (showBackButton) this.addDrawableChild(ButtonWidget.builder(
+        if (showBackButton) this.addRenderableWidget(Button.builder(
                         getBackButtonText(),
-                        (button) -> close())
-                .dimensions((int) (this.width * 0.7), (int) (this.height * 0.9), (int) (this.width * 0.2), 20)
+                        (button) -> onClose())
+                .bounds((int) (this.width * 0.7), (int) (this.height * 0.9), (int) (this.width * 0.2), 20)
                 .build());
 
         if (resetDefaultValuesRunnable != null) {
-            this.addDrawableChild(ButtonWidget.builder(
+            this.addRenderableWidget(Button.builder(
                     ETFVersionDifferenceHandler.getTextFromTranslation("dataPack.validation.reset"),
                     (button) -> {
                         resetDefaultValuesRunnable.run();
-                        clearAndInit();
-                    }).dimensions((int) (this.width * 0.4), (int) (this.height * 0.9), (int) (this.width * 0.22), 20).build());
+                        rebuildWidgets();
+                    }).bounds((int) (this.width * 0.4), (int) (this.height * 0.9), (int) (this.width * 0.22), 20).build());
         }
         if (undoChangesRunnable != null) {
-            this.addDrawableChild(ButtonWidget.builder(
-                    Text.of("Undo changes"),
+            this.addRenderableWidget(Button.builder(
+                    Component.nullToEmpty("Undo changes"),
                     (button) -> {
                         undoChangesRunnable.run();
-                        clearAndInit();
-                    }).dimensions((int) (this.width * 0.1), (int) (this.height * 0.9), (int) (this.width * 0.2), 20).build());
+                        rebuildWidgets();
+                    }).bounds((int) (this.width * 0.1), (int) (this.height * 0.9), (int) (this.width * 0.2), 20).build());
         }
 
     }
 
     @Override
-    public void render(final DrawContext context, final int mouseX, final int mouseY, final float delta) {
+    public void render(final GuiGraphics context, final int mouseX, final int mouseY, final float delta) {
         super.render(context, mouseX, mouseY, delta);
-        context.drawCenteredTextWithShadow(textRenderer, title, width / 2, 15, 0xFFFFFF);
+        context.drawCenteredString(font, title, width / 2, 15, 0xFFFFFF);
 
     }
 
@@ -67,7 +67,7 @@ public class TConfigScreen extends Screen {
     }
 
     @Override
-    public void close() {
-        MinecraftClient.getInstance().setScreen(parent);
+    public void onClose() {
+        Minecraft.getInstance().setScreen(parent);
     }
 }

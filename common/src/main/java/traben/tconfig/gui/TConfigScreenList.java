@@ -1,8 +1,8 @@
 package traben.tconfig.gui;
 
 import com.demonwav.mcdev.annotations.Translatable;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
 import traben.tconfig.gui.entries.TConfigEntry;
 
 public class TConfigScreenList extends TConfigScreen {
@@ -31,7 +31,7 @@ public class TConfigScreenList extends TConfigScreen {
     }
 
     @Override
-    public void render(final DrawContext context, final int mouseX, final int mouseY, final float delta) {
+    public void render(final GuiGraphics context, final int mouseX, final int mouseY, final float delta) {
         super.render(context, mouseX, mouseY, delta);
         if (renderFeature != null) {
             renderFeature.render(context, mouseX, mouseY);
@@ -64,7 +64,7 @@ public class TConfigScreenList extends TConfigScreen {
                 x = 0;
             }
         }
-        var child = this.addDrawableChild(
+        var child = this.addRenderableWidget(
                 new TConfigEntryListWidget(
                         width,
                         (int) (this.height * 0.7),
@@ -85,6 +85,6 @@ public class TConfigScreenList extends TConfigScreen {
     }
 
     public interface Renderable {
-        void render(DrawContext context, int mouseX, int mouseY);
+        void render(GuiGraphics context, int mouseX, int mouseY);
     }
 }

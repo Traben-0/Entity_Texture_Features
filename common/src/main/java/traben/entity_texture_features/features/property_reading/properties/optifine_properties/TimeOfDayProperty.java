@@ -28,7 +28,7 @@ public class TimeOfDayProperty extends LongRangeFromStringArrayProperty {
     @Override
     protected Long getRangeValueFromEntity(ETFEntity entity) {
         if (entity.etf$getWorld() != null)
-            return entity.etf$getWorld().getTimeOfDay();
+            return entity.etf$getWorld().getDayTime();
         return null;
     }
 

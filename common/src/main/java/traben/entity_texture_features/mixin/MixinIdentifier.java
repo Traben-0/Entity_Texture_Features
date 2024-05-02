@@ -1,6 +1,6 @@
 package traben.entity_texture_features.mixin;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -11,11 +11,11 @@ import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 
-@Mixin(Identifier.class)
+@Mixin(ResourceLocation.class)
 public abstract class MixinIdentifier {
 
 
-    @Inject(method = "isPathValid(Ljava/lang/String;)Z", cancellable = true, at = @At("RETURN"))
+    @Inject(method = "isValidPath", cancellable = true, at = @At("RETURN"))
     private static void etf$illegalPathOverride(String path, CallbackInfoReturnable<Boolean> cir) {
         if (ETF.config().getConfig() != null) {
             if (ETF.config().getConfig().illegalPathSupportMode != ETFConfig.IllegalPathMode.None) {

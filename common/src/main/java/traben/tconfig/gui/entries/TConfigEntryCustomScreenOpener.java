@@ -1,12 +1,11 @@
 package traben.tconfig.gui.entries;
 
 import com.demonwav.mcdev.annotations.Translatable;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-
 import java.util.function.Supplier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
 
 public class TConfigEntryCustomScreenOpener extends TConfigEntry {
 
@@ -16,7 +15,7 @@ public class TConfigEntryCustomScreenOpener extends TConfigEntry {
     private final Runnable setValuesDefault;
     private final Runnable resetValuesToInitial;
     private final boolean screenIsSingleton;
-    private final ButtonWidget button;
+    private final Button button;
     private Screen screen = null;
 
     public TConfigEntryCustomScreenOpener(@Translatable final String text, @Translatable final String tooltip, Supplier<Screen> screenSupplier, Supplier<Boolean> savedSupplier, Runnable setValuesDefault, Runnable resetValuesToInitial, boolean screenIsSingleton) {
@@ -26,8 +25,8 @@ public class TConfigEntryCustomScreenOpener extends TConfigEntry {
         this.screenIsSingleton = screenIsSingleton;
         this.setValuesDefault = setValuesDefault;
         this.resetValuesToInitial = resetValuesToInitial;
-        button = ButtonWidget.builder(getText(), (button) -> MinecraftClient.getInstance().setScreen(getScreen())
-        ).dimensions(0, 0, 0, 0).tooltip(getTooltip()).build();
+        button = Button.builder(getText(), (button) -> Minecraft.getInstance().setScreen(getScreen())
+        ).bounds(0, 0, 0, 0).tooltip(getTooltip()).build();
     }
 
     @SuppressWarnings("unused")
@@ -56,8 +55,8 @@ public class TConfigEntryCustomScreenOpener extends TConfigEntry {
     }
 
     @Override
-    public ClickableWidget getWidget(final int x, final int y, final int width, final int height) {
-        button.setDimensionsAndPosition(width, height, x, y);
+    public AbstractWidget getWidget(final int x, final int y, final int width, final int height) {
+        button.setRectangle(width, height, x, y);
         return button;
     }
 

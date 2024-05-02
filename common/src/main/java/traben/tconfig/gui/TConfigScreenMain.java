@@ -1,11 +1,5 @@
 package traben.tconfig.gui;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import traben.tconfig.TConfig;
 import traben.tconfig.TConfigHandler;
 import traben.tconfig.gui.entries.TConfigEntry;
@@ -14,10 +8,16 @@ import traben.tconfig.gui.entries.TConfigEntryCategory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 
 public abstract class TConfigScreenMain extends TConfigScreen {
     protected final TConfigEntryCategory entries;
-    protected final List<Identifier> modIcons;
+    protected final List<ResourceLocation> modIcons;
     protected final Set<TConfigHandler<?>> configHandlers;
     boolean haveInitConfigs = false;
 
@@ -32,8 +32,8 @@ public abstract class TConfigScreenMain extends TConfigScreen {
     }
 
     @Override
-    protected Text getBackButtonText() {
-        return ScreenTexts.DONE;
+    protected Component getBackButtonText() {
+        return CommonComponents.GUI_DONE;
     }
 
     /**
@@ -60,14 +60,14 @@ public abstract class TConfigScreenMain extends TConfigScreen {
     }
 
     @Override
-    public void close() {
+    public void onClose() {
         if (entries.saveValuesToConfig()) {
             for (TConfigHandler<?> configHandler : configHandlers) {
                 configHandler.saveToFile();
             }
-            MinecraftClient.getInstance().reloadResources();
+            Minecraft.getInstance().reloadResourcePacks();
         }
-        super.close();
+        super.onClose();
     }
 
     @Override
@@ -85,19 +85,19 @@ public abstract class TConfigScreenMain extends TConfigScreen {
 
         child.setWidgetBackgroundToFullWidth();
 
-        this.addDrawableChild(child);
+        this.addRenderableWidget(child);
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
 
         //draw mod icons in the top right corner of the screen
         // from left to right
         if (!modIcons.isEmpty()) {
             int ix = this.width - (modIcons.size() * 34);
-            for (Identifier modIcon : modIcons) {
-                context.drawTexture(modIcon, ix, 2, 0, 0, 32, 32, 32, 32);
+            for (ResourceLocation modIcon : modIcons) {
+                context.blit(modIcon, ix, 2, 0, 0, 32, 32, 32, 32);
                 ix += 34;
             }
         }

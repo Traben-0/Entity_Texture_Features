@@ -1,8 +1,8 @@
 package traben.entity_texture_features.mixin.mods.imediatelyfast;
 
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.raphimc.immediatelyfast.feature.core.BatchableImmediate;
 import net.raphimc.immediatelyfast.feature.core.ImmediateAdapter;
 import org.spongepowered.asm.mixin.Mixin;
@@ -27,7 +27,7 @@ public class MixinBatchableImmediate {
             method = "getBuffer",
             at = @At(value = "HEAD"),
             index = 1, argsOnly = true)
-    private RenderLayer etf$modifyRenderLayer(RenderLayer value) {
+    private RenderType etf$modifyRenderLayer(RenderType value) {
         if (etf$notBatchableClass()) return value;
         return ETFRenderContext.modifyRenderLayerIfRequired(value);
     }
@@ -45,15 +45,15 @@ public class MixinBatchableImmediate {
     @Inject(
             method = "getBuffer",
             at = @At(value = "RETURN"))
-    private void etf$injectIntoGetBufferReturn(RenderLayer renderLayer, CallbackInfoReturnable<VertexConsumer> cir) {
+    private void etf$injectIntoGetBufferReturn(RenderType renderLayer, CallbackInfoReturnable<VertexConsumer> cir) {
         if (etf$notBatchableClass()) return;
 
         var returned = cir.getReturnValue();
-        ETFRenderContext.insertETFDataIntoVertexConsumer((VertexConsumerProvider) this, renderLayer, returned);
+        ETFRenderContext.insertETFDataIntoVertexConsumer((MultiBufferSource) this, renderLayer, returned);
 
         //quarantined class to contain all sodium interaction
         //sodium ExtendedBufferBuilder classes contain a delegate that must instead have the above data passed into
-        SodiumGetBufferInjector.inject((VertexConsumerProvider) this, renderLayer, returned);
+        SodiumGetBufferInjector.inject((MultiBufferSource) this, renderLayer, returned);
     }
 
 }

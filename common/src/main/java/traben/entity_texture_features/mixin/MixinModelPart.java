@@ -1,10 +1,10 @@
 package traben.entity_texture_features.mixin;
 
-import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.util.math.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -27,17 +27,17 @@ import traben.entity_texture_features.utils.ETFVertexConsumer;
 @Mixin(value = ModelPart.class, priority = 2000)
 public abstract class MixinModelPart {
     @Shadow
-    public abstract void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha);
+    public abstract void render(PoseStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha);
 
-    @Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V",
+    @Inject(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;IIFFFF)V",
             at = @At(value = "HEAD"))
-    private void etf$findOutIfInitialModelPart(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha, CallbackInfo ci) {
+    private void etf$findOutIfInitialModelPart(PoseStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha, CallbackInfo ci) {
         ETFRenderContext.incrementCurrentModelPartDepth();
     }
 
-    @Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V",
+    @Inject(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;IIFFFF)V",
             at = @At(value = "RETURN"))
-    private void etf$doEmissiveIfInitialPart(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha, CallbackInfo ci) {
+    private void etf$doEmissiveIfInitialPart(PoseStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha, CallbackInfo ci) {
         //run code if this is the initial topmost rendered part
         if (ETFRenderContext.getCurrentModelPartDepth() != 1) {
             ETFRenderContext.decrementCurrentModelPartDepth();
@@ -48,10 +48,10 @@ public abstract class MixinModelPart {
                 ETFTexture texture = etfVertexConsumer.etf$getETFTexture();
                 //is etf texture not null and does it special render?
                 if (texture != null && (texture.isEmissive() || texture.isEnchanted())) {
-                    VertexConsumerProvider provider = etfVertexConsumer.etf$getProvider();
+                    MultiBufferSource provider = etfVertexConsumer.etf$getProvider();
                     //very important this is captured before doing the special renders as they can potentially modify
                     //the same ETFVertexConsumer down stream
-                    RenderLayer layer = etfVertexConsumer.etf$getRenderLayer();
+                    RenderType layer = etfVertexConsumer.etf$getRenderLayer();
                     //are these render required objects valid?
                     if (provider != null && layer != null) {
                         //attempt special renders as eager OR checks

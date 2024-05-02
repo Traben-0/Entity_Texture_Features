@@ -1,21 +1,21 @@
 package traben.tconfig.gui.entries;
 
 import com.demonwav.mcdev.annotations.Translatable;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.network.chat.Component;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.tconfig.gui.TConfigEntryListWidget;
 
 public abstract class TConfigEntry extends TConfigEntryListWidget.TConfigEntryForList {
 
     public final static String CHANGED_COLOR = "§a";
-    private final Text text;
+    private final Component text;
     private final Tooltip tooltip;
 
     public TConfigEntry(@Translatable String text, @Translatable String tooltip) {
         this.text = ETFVersionDifferenceHandler.getTextFromTranslation(text);
-        this.tooltip = tooltip == null || tooltip.isBlank() ? null : Tooltip.of(ETFVersionDifferenceHandler.getTextFromTranslation(tooltip));
+        this.tooltip = tooltip == null || tooltip.isBlank() ? null : Tooltip.create(ETFVersionDifferenceHandler.getTextFromTranslation(tooltip));
     }
 
     @SuppressWarnings("unused")
@@ -23,7 +23,7 @@ public abstract class TConfigEntry extends TConfigEntryListWidget.TConfigEntryFo
         this(text, null);
     }
 
-    public Text getText() {
+    public Component getText() {
         return text;
     }
 
@@ -55,7 +55,7 @@ public abstract class TConfigEntry extends TConfigEntryListWidget.TConfigEntryFo
         }
 
         @Override
-        public ClickableWidget getWidget(int x, int y, int width, int height) {
+        public AbstractWidget getWidget(int x, int y, int width, int height) {
             return null;
         }
 

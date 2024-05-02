@@ -1,16 +1,16 @@
 package traben.entity_texture_features.mixin.entity.renderer.feature;
 
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.feature.FeatureRenderer;
-import net.minecraft.client.render.entity.feature.FeatureRendererContext;
-import net.minecraft.client.render.entity.feature.ShoulderParrotFeatureRenderer;
-import net.minecraft.client.render.entity.model.PlayerEntityModel;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.passive.ParrotEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.model.PlayerModel;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.RenderLayerParent;
+import net.minecraft.client.renderer.entity.layers.ParrotOnShoulderLayer;
+import net.minecraft.client.renderer.entity.layers.RenderLayer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.animal.Parrot;
+import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,38 +21,38 @@ import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.Optional;
 
-@Mixin(ShoulderParrotFeatureRenderer.class)
-public abstract class MixinShoulderParrotFeatureRenderer<T extends PlayerEntity> extends FeatureRenderer<T, PlayerEntityModel<T>> {
+@Mixin(ParrotOnShoulderLayer.class)
+public abstract class MixinShoulderParrotFeatureRenderer<T extends Player> extends RenderLayer<T, PlayerModel<T>> {
 
 
     @Unique
-    private NbtCompound entity_texture_features$parrotNBT = null;
+    private CompoundTag entity_texture_features$parrotNBT = null;
     @Unique
     private ETFEntity etf$heldEntity = null;
 
     @SuppressWarnings("unused")
-    public MixinShoulderParrotFeatureRenderer(FeatureRendererContext<T, PlayerEntityModel<T>> context) {
+    public MixinShoulderParrotFeatureRenderer(RenderLayerParent<T, PlayerModel<T>> context) {
         super(context);
     }
 
-    @Inject(method = "method_17958(Lnet/minecraft/client/util/math/MatrixStack;ZLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/nbt/NbtCompound;Lnet/minecraft/client/render/VertexConsumerProvider;IFFFFLnet/minecraft/entity/EntityType;)V",
+    @Inject(method = "method_17958",
             at = @At(value = "HEAD"))
-    private void etf$alterEntity(MatrixStack matrixStack, boolean bl, PlayerEntity playerEntity, NbtCompound nbtCompound, VertexConsumerProvider vertexConsumerProvider, int i, float f, float g, float h, float j, EntityType<?> type, CallbackInfo ci) {
+    private void etf$alterEntity(PoseStack matrixStack, boolean bl, Player playerEntity, CompoundTag nbtCompound, MultiBufferSource vertexConsumerProvider, int i, float f, float g, float h, float j, EntityType<?> type, CallbackInfo ci) {
         if (entity_texture_features$parrotNBT != null) {
 
             etf$heldEntity = ETFRenderContext.getCurrentEntity();
 
-            EntityType.getEntityFromNbt(entity_texture_features$parrotNBT, playerEntity.getWorld());
-            Optional<Entity> optionalEntity = EntityType.getEntityFromNbt(entity_texture_features$parrotNBT, playerEntity.getWorld());
-            if (optionalEntity.isPresent() && optionalEntity.get() instanceof ParrotEntity parrot) {
+            EntityType.create(entity_texture_features$parrotNBT, playerEntity.level());
+            Optional<Entity> optionalEntity = EntityType.create(entity_texture_features$parrotNBT, playerEntity.level());
+            if (optionalEntity.isPresent() && optionalEntity.get() instanceof Parrot parrot) {
                 ETFRenderContext.setCurrentEntity((ETFEntity) parrot);
             }
         }
     }
 
-    @Inject(method = "method_17958(Lnet/minecraft/client/util/math/MatrixStack;ZLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/nbt/NbtCompound;Lnet/minecraft/client/render/VertexConsumerProvider;IFFFFLnet/minecraft/entity/EntityType;)V",
+    @Inject(method = "method_17958",
             at = @At(value = "RETURN"))
-    private void etf$resetEntity(MatrixStack matrixStack, boolean bl, PlayerEntity playerEntity, NbtCompound nbtCompound, VertexConsumerProvider vertexConsumerProvider, int i, float f, float g, float h, float j, EntityType<?> type, CallbackInfo ci) {
+    private void etf$resetEntity(PoseStack matrixStack, boolean bl, Player playerEntity, CompoundTag nbtCompound, MultiBufferSource vertexConsumerProvider, int i, float f, float g, float h, float j, EntityType<?> type, CallbackInfo ci) {
         if (entity_texture_features$parrotNBT != null && etf$heldEntity != null) {
             ETFRenderContext.setCurrentEntity(etf$heldEntity);
         }
@@ -60,9 +60,9 @@ public abstract class MixinShoulderParrotFeatureRenderer<T extends PlayerEntity>
         etf$heldEntity = null;
     }
 
-    @Inject(method = "method_17958(Lnet/minecraft/client/util/math/MatrixStack;ZLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/nbt/NbtCompound;Lnet/minecraft/client/render/VertexConsumerProvider;IFFFFLnet/minecraft/entity/EntityType;)V",
+    @Inject(method = "method_17958",
             at = @At(value = "HEAD"))
-    private <M extends Entity> void etf$getNBT(MatrixStack matrixStack, boolean bl, PlayerEntity playerEntity, NbtCompound nbtCompound, VertexConsumerProvider vertexConsumerProvider, int i, float f, float g, float h, float j, EntityType<M> type, CallbackInfo ci) {
+    private <M extends Entity> void etf$getNBT(PoseStack matrixStack, boolean bl, Player playerEntity, CompoundTag nbtCompound, MultiBufferSource vertexConsumerProvider, int i, float f, float g, float h, float j, EntityType<M> type, CallbackInfo ci) {
         entity_texture_features$parrotNBT = nbtCompound;
     }
 }

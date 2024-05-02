@@ -1,15 +1,14 @@
 package traben.tconfig.gui.entries;
 
 import com.demonwav.mcdev.annotations.Translatable;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.SliderWidget;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.MathHelper;
-
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import net.minecraft.client.gui.components.AbstractSliderButton;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 
 public class TConfigEntryInt extends TConfigEntryValue<Integer> {
 
@@ -43,8 +42,8 @@ public class TConfigEntryInt extends TConfigEntryValue<Integer> {
     }
 
     @Override
-    public ClickableWidget getWidget(final int x, final int y, final int width, final int height) {
-        widget.setDimensionsAndPosition(width, height, x, y);
+    public AbstractWidget getWidget(final int x, final int y, final int width, final int height) {
+        widget.setRectangle(width, height, x, y);
         return widget;
     }
 
@@ -64,7 +63,7 @@ public class TConfigEntryInt extends TConfigEntryValue<Integer> {
         return this;
     }
 
-    public class IntSliderWidget extends SliderWidget {
+    public class IntSliderWidget extends AbstractSliderButton {
         private final int max;
         private final int min;
         private final String title;
@@ -74,7 +73,7 @@ public class TConfigEntryInt extends TConfigEntryValue<Integer> {
         private final int difference;
 
 
-        public IntSliderWidget(final Text text,
+        public IntSliderWidget(final Component text,
                                final int initialValue, final Tooltip tooltip, int min, int max, boolean isMinOff, boolean isMaxOff) {
             super(0, 0, 20, 20, text, 0);
             this.min = min;
@@ -96,7 +95,7 @@ public class TConfigEntryInt extends TConfigEntryValue<Integer> {
         }
 
         private void setValue(int intIndex) {
-            this.value = (MathHelper.clamp(intIndex, min, max) - min) / (double) difference;
+            this.value = (Mth.clamp(intIndex, min, max) - min) / (double) difference;
 //            snapValueToNearestIndex();
             updateMessage();
         }
@@ -104,7 +103,7 @@ public class TConfigEntryInt extends TConfigEntryValue<Integer> {
         @Override
         protected void updateMessage() {
             snapValueToNearestIndex();
-            setMessage(Text.of(title + (getValueRoundedToIntBetweenMinMax() != getter.get() ? TConfigEntry.CHANGED_COLOR : "") + (isOff() ? ScreenTexts.OFF.getString() : getValueRoundedToIntBetweenMinMax())));
+            setMessage(Component.nullToEmpty(title + (getValueRoundedToIntBetweenMinMax() != getter.get() ? TConfigEntry.CHANGED_COLOR : "") + (isOff() ? CommonComponents.OPTION_OFF.getString() : getValueRoundedToIntBetweenMinMax())));
         }
 
         @Override

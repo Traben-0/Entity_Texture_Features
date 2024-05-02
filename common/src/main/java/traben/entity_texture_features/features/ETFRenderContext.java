@@ -1,17 +1,17 @@
 package traben.entity_texture_features.features;
 
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.config.ETFConfig;
+import traben.entity_texture_features.config.ETFConfig.RenderLayerOverride;
 import traben.entity_texture_features.utils.ETFEntity;
 import traben.entity_texture_features.utils.ETFRenderLayerWithTexture;
 import traben.entity_texture_features.utils.ETFVertexConsumer;
-
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.util.Optional;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 
 public class ETFRenderContext {
 
@@ -127,7 +127,7 @@ public class ETFRenderContext {
         allowedToPatch = false;
     }
 
-    public static RenderLayer modifyRenderLayerIfRequired(RenderLayer value) {
+    public static RenderType modifyRenderLayerIfRequired(RenderType value) {
 
         if (isCurrentlyRenderingEntity()
                 && isAllowedToRenderLayerTextureModify()) {
@@ -136,15 +136,15 @@ public class ETFRenderContext {
                     && !value.isOutline()
                     && value instanceof ETFRenderLayerWithTexture multiphase) {
 
-                Optional<Identifier> texture = multiphase.etf$getId();
+                Optional<ResourceLocation> texture = multiphase.etf$getId();
                 if (texture.isPresent()) {
                     preventRenderLayerTextureModify();
 
-                    RenderLayer forReturn = switch (layer) {
-                        case TRANSLUCENT -> RenderLayer.getEntityTranslucent(texture.get());
-                        case TRANSLUCENT_CULL -> RenderLayer.getEntityTranslucentCull(texture.get());
-                        case END -> RenderLayer.getEndGateway();
-                        case OUTLINE -> RenderLayer.getOutline(texture.get());
+                    RenderType forReturn = switch (layer) {
+                        case TRANSLUCENT -> RenderType.entityTranslucent(texture.get());
+                        case TRANSLUCENT_CULL -> RenderType.entityTranslucentCull(texture.get());
+                        case END -> RenderType.endGateway();
+                        case OUTLINE -> RenderType.outline(texture.get());
                     };
                     allowRenderLayerTextureModify();
                     return forReturn;
@@ -155,7 +155,7 @@ public class ETFRenderContext {
         return value;
     }
 
-    public static void insertETFDataIntoVertexConsumer(VertexConsumerProvider provider, RenderLayer renderLayer, VertexConsumer vertexConsumer) {
+    public static void insertETFDataIntoVertexConsumer(MultiBufferSource provider, RenderType renderLayer, VertexConsumer vertexConsumer) {
         if (isCurrentlyRenderingEntity() && vertexConsumer instanceof ETFVertexConsumer etfVertexConsumer) {
             //need to store etf texture of consumer and original render layer
             //store provider as well for future actions

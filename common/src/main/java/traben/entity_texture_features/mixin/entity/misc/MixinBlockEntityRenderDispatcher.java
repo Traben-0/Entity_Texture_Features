@@ -1,7 +1,7 @@
 package traben.entity_texture_features.mixin.entity.misc;
 
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -13,22 +13,22 @@ import traben.entity_texture_features.utils.ETFEntity;
 
 @Mixin(BlockEntityRenderDispatcher.class)
 public class MixinBlockEntityRenderDispatcher {
-    @Inject(method = "runReported",
+    @Inject(method = "tryRender",
             at = @At(value = "HEAD"))
     private static void etf$grabContext(BlockEntity blockEntity, Runnable runnable, CallbackInfo ci) {
         ETFRenderContext.setCurrentEntity((ETFEntity) blockEntity);
 
     }
 
-    @Inject(method = "runReported",
+    @Inject(method = "tryRender",
             at = @At(value = "RETURN"))
     private static void etf$clearContext(BlockEntity blockEntity, Runnable runnable, CallbackInfo ci) {
         ETFRenderContext.reset();
     }
 
 
-    @ModifyArg(method = "render(Lnet/minecraft/client/render/block/entity/BlockEntityRenderer;Lnet/minecraft/block/entity/BlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;)V",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/block/entity/BlockEntityRenderer;render(Lnet/minecraft/block/entity/BlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II)V"),
+    @ModifyArg(method = "setupAndRender",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/blockentity/BlockEntityRenderer;render(Lnet/minecraft/world/level/block/entity/BlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V"),
             index = 4)
     private static int etf$vanillaLightOverride(final int light) {
         //if need to override vanilla brightness behaviour

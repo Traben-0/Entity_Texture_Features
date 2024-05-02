@@ -1,39 +1,39 @@
 package traben.entity_texture_features.mixin;
 
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 
-@Mixin(RenderLayer.class)
+@Mixin(RenderType.class)
 public abstract class MixinRenderLayer {
 
 
     @ModifyVariable(
             method = {
-                    "getEntitySolid",
-                    "getEyes",
-                    "getEnergySwirl",
-                    "getEntityAlpha",
-                    "getItemEntityTranslucentCull",
-                    "getEntityCutout",
-                    "getEntityCutoutNoCull(Lnet/minecraft/util/Identifier;Z)Lnet/minecraft/client/render/RenderLayer;",
-                    "getEntityCutoutNoCullZOffset(Lnet/minecraft/util/Identifier;Z)Lnet/minecraft/client/render/RenderLayer;",
-                    "getEntityDecal",
-                    "getEntityNoOutline",
-                    "getEntitySmoothCutout",
-                    "getEntityTranslucent(Lnet/minecraft/util/Identifier;Z)Lnet/minecraft/client/render/RenderLayer;",
-                    "getEntityTranslucentCull",
-                    "getEntityTranslucentEmissive(Lnet/minecraft/util/Identifier;Z)Lnet/minecraft/client/render/RenderLayer;",
-                    "getArmorCutoutNoCull",
-                    "getEntityShadow"
+                    "entitySolid",
+                    "eyes",
+                    "energySwirl",
+                    "entitySmoothCutout",
+                    "itemEntityTranslucentCull",
+                    "entityCutout",
+                    "entityCutoutNoCull(Lnet/minecraft/resources/ResourceLocation;Z)Lnet/minecraft/client/renderer/RenderType;",
+                    "entityCutoutNoCullZOffset(Lnet/minecraft/resources/ResourceLocation;Z)Lnet/minecraft/client/renderer/RenderType;",
+                    "entityDecal",
+                    "entityNoOutline",
+                    "entitySmoothCutout",
+                    "entityTranslucent(Lnet/minecraft/resources/ResourceLocation;Z)Lnet/minecraft/client/renderer/RenderType;",
+                    "entityTranslucentCull",
+                    "entityTranslucentEmissive(Lnet/minecraft/resources/ResourceLocation;Z)Lnet/minecraft/client/renderer/RenderType;",
+                    "armorCutoutNoCull",
+                    "entityShadow"
             },
             at = @At(value = "HEAD"),
             index = 0, argsOnly = true)
-    private static Identifier etf$mixinAllEntityLayers(Identifier value) {
+    private static ResourceLocation etf$mixinAllEntityLayers(ResourceLocation value) {
         return ETFUtils2.getETFVariantNotNullForInjector(value);
     }
 

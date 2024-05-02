@@ -1,13 +1,13 @@
 package traben.entity_texture_features.features.property_reading.properties.etf_properties;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.features.property_reading.properties.generic_properties.BooleanProperty;
 import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.Properties;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.Entity;
 
 public class TeammateProperty extends BooleanProperty {
 
@@ -27,8 +27,8 @@ public class TeammateProperty extends BooleanProperty {
     @Override
     @Nullable
     protected Boolean getValueFromEntity(ETFEntity etfEntity) {
-        if (etfEntity instanceof Entity entity && MinecraftClient.getInstance().player != null)
-            return entity.isTeammate(MinecraftClient.getInstance().player);
+        if (etfEntity instanceof Entity entity && Minecraft.getInstance().player != null)
+            return entity.isAlliedTo(Minecraft.getInstance().player);
         return null;
     }
 

@@ -1,12 +1,12 @@
 package traben.entity_texture_features.mixin.mods.sodium;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import me.jellysquid.mods.sodium.client.render.immediate.model.EntityRenderer;
 import me.jellysquid.mods.sodium.client.render.vertex.VertexConsumerUtils;
 import net.caffeinemc.mods.sodium.api.vertex.buffer.VertexBufferWriter;
-import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Shadow;
@@ -30,18 +30,18 @@ public abstract class MixinModelPartSodium {
 
     @SuppressWarnings("EmptyMethod")
     @Shadow
-    public static void render(MatrixStack matrixStack, VertexBufferWriter writer, ModelPart part, int light, int overlay, int color) {
+    public static void render(PoseStack matrixStack, VertexBufferWriter writer, ModelPart part, int light, int overlay, int color) {
     }
 
     @Inject(method = "render",
             at = @At(value = "HEAD"))
-    private static void etf$findOutIfInitialModelPart(MatrixStack matrixStack, VertexBufferWriter writer, ModelPart part, int light, int overlay, int color, CallbackInfo ci) {
+    private static void etf$findOutIfInitialModelPart(PoseStack matrixStack, VertexBufferWriter writer, ModelPart part, int light, int overlay, int color, CallbackInfo ci) {
         ETFRenderContext.incrementCurrentModelPartDepth();
     }
 
     @Inject(method = "render",
             at = @At(value = "RETURN"))
-    private static void etf$doEmissiveIfInitialPart(MatrixStack matrixStack, VertexBufferWriter writer, ModelPart part, int light, int overlay, int color, CallbackInfo ci) {
+    private static void etf$doEmissiveIfInitialPart(PoseStack matrixStack, VertexBufferWriter writer, ModelPart part, int light, int overlay, int color, CallbackInfo ci) {
         //run code if this is the initial topmost rendered part
         if (ETFRenderContext.getCurrentModelPartDepth() != 1) {
             ETFRenderContext.decrementCurrentModelPartDepth();
@@ -50,8 +50,8 @@ public abstract class MixinModelPartSodium {
                     && writer instanceof ETFVertexConsumer etfVertexConsumer) {
                 ETFTexture texture = etfVertexConsumer.etf$getETFTexture();
                 if (texture != null && (texture.isEmissive() || texture.isEnchanted())) {
-                    VertexConsumerProvider provider = etfVertexConsumer.etf$getProvider();
-                    RenderLayer layer = etfVertexConsumer.etf$getRenderLayer();
+                    MultiBufferSource provider = etfVertexConsumer.etf$getProvider();
+                    RenderType layer = etfVertexConsumer.etf$getRenderLayer();
                     if (provider != null && layer != null) {
                         //attempt special renders as eager OR checks
                         ETFUtils2.RenderMethodForOverlay renderer = (a, b) -> {

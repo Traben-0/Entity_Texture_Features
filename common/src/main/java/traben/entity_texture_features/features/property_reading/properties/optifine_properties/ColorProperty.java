@@ -1,9 +1,14 @@
 package traben.entity_texture_features.features.property_reading.properties.optifine_properties;
 
-import net.minecraft.entity.VariantHolder;
-import net.minecraft.entity.mob.ShulkerEntity;
-import net.minecraft.entity.passive.*;
-import net.minecraft.util.DyeColor;
+
+import net.minecraft.world.entity.VariantHolder;
+import net.minecraft.world.entity.animal.Cat;
+import net.minecraft.world.entity.animal.Sheep;
+import net.minecraft.world.entity.animal.TropicalFish;
+import net.minecraft.world.entity.animal.Wolf;
+import net.minecraft.world.entity.animal.horse.Llama;
+import net.minecraft.world.entity.monster.Shulker;
+import net.minecraft.world.item.DyeColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperty;
@@ -38,24 +43,24 @@ public class ColorProperty extends StringArrayOrRegexProperty {
     @Nullable
     protected String getValueFromEntity(ETFEntity entity) {
         if (entity != null) {
-            if (entity instanceof WolfEntity wolf) {
+            if (entity instanceof Wolf wolf) {
                 return wolf.getCollarColor().getName();
-            } else if (entity instanceof SheepEntity sheep) {
+            } else if (entity instanceof Sheep sheep) {
                 return sheep.getColor().getName();
-            } else if (entity instanceof LlamaEntity llama) {
-                DyeColor str = llama.getCarpetColor();
+            } else if (entity instanceof Llama llama) {
+                DyeColor str = llama.getSwag();
                 if (str != null) {
                     return str.getName();
                 }
-            } else if (entity instanceof CatEntity cat) {
+            } else if (entity instanceof Cat cat) {
                 return cat.getCollarColor().getName();
-            } else if (entity instanceof ShulkerEntity shulker) {
+            } else if (entity instanceof Shulker shulker) {
                 DyeColor str = shulker.getColor();
                 if (str != null) {
                     return str.getName();
                 }
-            } else if (entity instanceof TropicalFishEntity fishy) {
-                DyeColor str = TropicalFishEntity.getBaseDyeColor(fishy.getVariant().getId());
+            } else if (entity instanceof TropicalFish fishy) {
+                DyeColor str = TropicalFish.getBaseColor(fishy.getVariant().getPackedId());
                 if (str != null) {
                     return str.getName();
                 }

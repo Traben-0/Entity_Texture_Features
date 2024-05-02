@@ -1,14 +1,14 @@
 package traben.entity_texture_features.mixin.entity.misc;
 
-import net.minecraft.client.render.entity.PlayerModelPart;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.PlayerModelPart;
+import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,30 +19,31 @@ import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.player.ETFPlayerEntity;
 
-@Mixin(PlayerEntity.class)
+@Mixin(Player.class)
 public abstract class MixinPlayerEntity extends Entity implements ETFPlayerEntity {
 
 
     @SuppressWarnings("unused")
-    public MixinPlayerEntity(EntityType<?> type, World world) {
+    public MixinPlayerEntity(EntityType<?> type, Level world) {
         super(type, world);
     }
 
     @Shadow
-    public abstract PlayerInventory getInventory();
+    public abstract Inventory getInventory();
+
+
 
     @Shadow
-    public abstract boolean isPartVisible(PlayerModelPart modelPart);
+    public abstract Component getName();
 
-    @Shadow
-    public abstract Text getName();
+    @Shadow public abstract boolean isModelPartShown(final PlayerModelPart playerModelPart);
 
     //will force update entity texture at any player interaction useful for debugging
-    @Inject(method = "interact", at = @At("HEAD"))
-    private void etf$injected(Entity entity, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
-        if (getWorld().isClient()) {
+    @Inject(method = "interactOn", at = @At("HEAD"))
+    private void etf$injected(Entity entity, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
+        if (level().isClientSide()) {
             if (ETF.config().getConfig().debugLoggingMode != ETFConfig.DebugLogMode.None)
-                ETFManager.getInstance().markEntityForDebugPrint(entity.getUuid());
+                ETFManager.getInstance().markEntityForDebugPrint(entity.getUUID());
         }
     }
 
@@ -52,28 +53,28 @@ public abstract class MixinPlayerEntity extends Entity implements ETFPlayerEntit
     }
 
     @Override
-    public boolean etf$isTeammate(PlayerEntity player) {
-        return isTeammate(player);
+    public boolean etf$isTeammate(Player player) {
+        return isAlliedTo(player);
     }
 
     @Override
-    public PlayerInventory etf$getInventory() {
+    public Inventory etf$getInventory() {
         return getInventory();
     }
 
     @Override
     public boolean etf$isPartVisible(PlayerModelPart part) {
-        return isPartVisible(part);
+        return isModelPartShown(part);
     }
 
     @Override
-    public Text etf$getName() {
+    public Component etf$getName() {
         return getName();
     }
 
     @Override
     public String etf$getUuidAsString() {
-        return getUuidAsString();
+        return getStringUUID();
     }
 }
 

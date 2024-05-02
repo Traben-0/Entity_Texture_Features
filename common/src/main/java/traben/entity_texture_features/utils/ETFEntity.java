@@ -1,18 +1,18 @@
 package traben.entity_texture_features.utils;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityPose;
-import net.minecraft.entity.EntityType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.scoreboard.AbstractTeam;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.scores.Team;
 
 public interface ETFEntity {
 
@@ -27,19 +27,19 @@ public interface ETFEntity {
     UUID etf$getUuid();
 
 
-    World etf$getWorld();
+    Level etf$getWorld();
 
     BlockPos etf$getBlockPos();
 
     int etf$getBlockY();
 
-    NbtCompound etf$writeNbt(NbtCompound compound);
+    CompoundTag etf$writeNbt(CompoundTag compound);
 
     boolean etf$hasCustomName();
 
-    Text etf$getCustomName();
+    Component etf$getCustomName();
 
-    AbstractTeam etf$getScoreboardTeam();
+    Team etf$getScoreboardTeam();
 
     //boolean isOnFire();
 
@@ -51,10 +51,10 @@ public interface ETFEntity {
 
     float etf$distanceTo(Entity entity);
 
-    Vec3d etf$getVelocity();
+    Vec3 etf$getVelocity();
 
     @Deprecated
-    EntityPose etf$getPose();
+    Pose etf$getPose();
 
     @Nullable
     String etf$getEntityKey();

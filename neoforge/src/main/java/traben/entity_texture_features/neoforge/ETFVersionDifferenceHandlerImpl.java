@@ -1,8 +1,8 @@
 package traben.entity_texture_features.neoforge;
 
-import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.Level;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforgespi.language.IModInfo;
@@ -40,16 +40,16 @@ public class ETFVersionDifferenceHandlerImpl {
         return LoggerFactory.getLogger("Entity Texture Features");
     }
 
-    public static Text getTextFromTranslation(String translationKey) {
+    public static Component getTextFromTranslation(String translationKey) {
         //1.19.84 version
-        return Text.translatable(translationKey);
+        return Component.translatable(translationKey);
     }
 
     @Nullable
-    public static String getBiomeString(World world, BlockPos pos) {
+    public static String getBiomeString(Level world, BlockPos pos) {
         if(world == null || pos == null) return null;
         //1.19 & 1.18.2 variation
-        return world.getBiome(pos).getKey().toString().split(" / ")[1].replaceAll("[^\\da-zA-Z_:-]", "");
+        return world.getBiome(pos).unwrapKey().toString().split(" / ")[1].replaceAll("[^\\da-zA-Z_:-]", "");
     }
 
     public static List<String> modsLoaded() {

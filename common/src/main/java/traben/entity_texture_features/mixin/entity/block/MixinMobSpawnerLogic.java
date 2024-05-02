@@ -1,9 +1,9 @@
 package traben.entity_texture_features.mixin.entity.block;
 
-import net.minecraft.block.spawner.MobSpawnerLogic;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.BaseSpawner;
+import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -12,16 +12,16 @@ import traben.entity_texture_features.ETFApi;
 
 import java.util.UUID;
 
-@Mixin(MobSpawnerLogic.class)
+@Mixin(BaseSpawner.class)
 public abstract class MixinMobSpawnerLogic {
 
 
-    @Inject(method = "getRenderedEntity",
+    @Inject(method = "getOrCreateDisplayEntity",
             at = @At(value = "RETURN"))
-    private void etf$stabiliseMobSpawnerUUID(World world, BlockPos pos, CallbackInfoReturnable<Entity> cir) {
+    private void etf$stabiliseMobSpawnerUUID(Level world, BlockPos pos, CallbackInfoReturnable<Entity> cir) {
         Entity entity = cir.getReturnValue();
         if (entity != null) {
-            entity.setUuid(new UUID(pos.asLong(), ETFApi.ETF_SPAWNER_MARKER));
+            entity.setUUID(new UUID(pos.asLong(), ETFApi.ETF_SPAWNER_MARKER));
 
             //resulting nbt should be [I;?,?,12345,12345]
         }

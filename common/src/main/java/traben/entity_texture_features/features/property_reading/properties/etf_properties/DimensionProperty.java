@@ -1,10 +1,5 @@
 package traben.entity_texture_features.features.property_reading.properties.etf_properties;
 
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.util.Identifier;
-import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.dimension.DimensionTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperty;
@@ -14,6 +9,11 @@ import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.Optional;
 import java.util.Properties;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
+import net.minecraft.world.level.dimension.DimensionType;
 
 public class DimensionProperty extends StringArrayOrRegexProperty {
 
@@ -37,21 +37,21 @@ public class DimensionProperty extends StringArrayOrRegexProperty {
     public @Nullable String getValueFromEntity(ETFEntity etfEntity) {
         if (etfEntity == null) return null;
 
-        World world = etfEntity.etf$getWorld();
+        Level world = etfEntity.etf$getWorld();
         if (world == null) return null;
 
-        Optional<RegistryKey<DimensionType>> dimKey = etfEntity.etf$getWorld().getDimensionEntry().getKey();
+        Optional<ResourceKey<DimensionType>> dimKey = etfEntity.etf$getWorld().dimensionTypeRegistration().unwrapKey();
         if (dimKey.isEmpty()) return null;
 
-        Identifier key = dimKey.get().getValue();
+        ResourceLocation key = dimKey.get().location();
         if (key == null) return null;
 
         String output;
-        if (key.equals(DimensionTypes.OVERWORLD_ID) || key.getPath().equals("overworld_caves")) {
+        if (key.equals(BuiltinDimensionTypes.OVERWORLD_EFFECTS) || key.getPath().equals("overworld_caves")) {
             output = "overworld";
-        } else if (key.equals(DimensionTypes.THE_NETHER_ID)) {
+        } else if (key.equals(BuiltinDimensionTypes.NETHER_EFFECTS)) {
             output = "the_nether";
-        } else if (key.equals(DimensionTypes.THE_END_ID)) {
+        } else if (key.equals(BuiltinDimensionTypes.END_EFFECTS)) {
             output = "the_end";
         } else {
             //modded

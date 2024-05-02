@@ -1,11 +1,11 @@
 package traben.entity_texture_features.mixin.entity.renderer;
 
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.entity.EnderDragonEntityRenderer;
-import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.entity.boss.dragon.EnderDragonEntity;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.EnderDragonRenderer;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -15,42 +15,42 @@ import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 
-@Mixin(EnderDragonEntityRenderer.class)
-public abstract class MixinEnderDragonEntityRenderer extends EntityRenderer<EnderDragonEntity> {
+@Mixin(EnderDragonRenderer.class)
+public abstract class MixinEnderDragonEntityRenderer extends EntityRenderer<EnderDragon> {
 
     @Final
     @Shadow
-    private static Identifier TEXTURE;          // = new Identifier("textures/entity/enderdragon/dragon.png");
+    private static ResourceLocation DRAGON_LOCATION;          // = new Identifier("textures/entity/enderdragon/dragon.png");
     @Final
     @Shadow
-    private static Identifier EYE_TEXTURE;      // = new Identifier("textures/entity/enderdragon/dragon_eyes.png");
+    private static ResourceLocation DRAGON_EYES_LOCATION;      // = new Identifier("textures/entity/enderdragon/dragon_eyes.png");
     @Final
     @Shadow
-    private static RenderLayer DRAGON_CUTOUT;   //= RenderLayer.getEntityCutoutNoCull(TEXTURE);
+    private static RenderType RENDER_TYPE;   //= RenderLayer.getEntityCutoutNoCull(TEXTURE);
     @Final
     @Shadow
-    private static RenderLayer DRAGON_DECAL;    //= RenderLayer.getEntityDecal(TEXTURE);
+    private static RenderType DECAL;    //= RenderLayer.getEntityDecal(TEXTURE);
     @Final
     @Shadow
-    private static RenderLayer DRAGON_EYES;     //= RenderLayer.getEyes(EYE_TEXTURE);
+    private static RenderType EYES;     //= RenderLayer.getEyes(EYE_TEXTURE);
 
     @SuppressWarnings("unused")
-    protected MixinEnderDragonEntityRenderer(EntityRendererFactory.Context ctx) {
+    protected MixinEnderDragonEntityRenderer(EntityRendererProvider.Context ctx) {
         super(ctx);
     }
 
     @ModifyArg(
-            method = "render(Lnet/minecraft/entity/boss/dragon/EnderDragonEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/VertexConsumerProvider;getBuffer(Lnet/minecraft/client/render/RenderLayer;)Lnet/minecraft/client/render/VertexConsumer;"))
-    private RenderLayer etf$returnAlteredTexture(RenderLayer texturedRenderLayer) {
+            method = "render(Lnet/minecraft/world/entity/boss/enderdragon/EnderDragon;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/MultiBufferSource;getBuffer(Lnet/minecraft/client/renderer/RenderType;)Lcom/mojang/blaze3d/vertex/VertexConsumer;"))
+    private RenderType etf$returnAlteredTexture(RenderType texturedRenderLayer) {
         if (ETF.config().getConfig().canDoCustomTextures()) {
             try {
-                if (DRAGON_DECAL.equals(texturedRenderLayer)) {
-                    return RenderLayer.getEntityDecal(TEXTURE);
-                } else if (DRAGON_CUTOUT.equals(texturedRenderLayer)) {
-                    return RenderLayer.getEntityCutoutNoCull(TEXTURE);
-                } else if (DRAGON_EYES.equals(texturedRenderLayer)) {
-                    return RenderLayer.getEyes(EYE_TEXTURE);
+                if (DECAL.equals(texturedRenderLayer)) {
+                    return RenderType.entityDecal(DRAGON_LOCATION);
+                } else if (RENDER_TYPE.equals(texturedRenderLayer)) {
+                    return RenderType.entityCutoutNoCull(DRAGON_LOCATION);
+                } else if (EYES.equals(texturedRenderLayer)) {
+                    return RenderType.eyes(DRAGON_EYES_LOCATION);
                 }
             } catch (Exception e) {
                 ETFUtils2.logError(e.toString(), false);

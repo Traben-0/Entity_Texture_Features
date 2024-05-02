@@ -1,18 +1,18 @@
 package traben.entity_texture_features.mixin.entity.block;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.SkullBlock;
-import net.minecraft.block.entity.BedBlockEntity;
-import net.minecraft.block.entity.SkullBlockEntity;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.block.entity.BlockEntityRenderer;
-import net.minecraft.client.render.block.entity.SkullBlockEntityModel;
-import net.minecraft.client.render.block.entity.SkullBlockEntityRenderer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Direction;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.SkullModelBase;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.SkullBlockRenderer;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.SkullBlock;
+import net.minecraft.world.level.block.entity.BedBlockEntity;
+import net.minecraft.world.level.block.entity.SkullBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -28,7 +28,7 @@ import traben.entity_texture_features.features.player.ETFPlayerFeatureRenderer;
 import traben.entity_texture_features.features.player.ETFPlayerTexture;
 
 
-@Mixin(SkullBlockEntityRenderer.class)
+@Mixin(SkullBlockRenderer.class)
 public abstract class MixinSkullBlockEntityRenderer implements BlockEntityRenderer<BedBlockEntity> {
 
 
@@ -36,32 +36,32 @@ public abstract class MixinSkullBlockEntityRenderer implements BlockEntityRender
     private ETFPlayerTexture entity_texture_features$thisETFPlayerTexture = null;
 
 
-    @Inject(method = "render(Lnet/minecraft/block/entity/SkullBlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II)V",
+    @Inject(method = "render(Lnet/minecraft/world/level/block/entity/SkullBlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V",
             at = @At(value = "HEAD"))
-    private void etf$markNotToChange(SkullBlockEntity skullBlockEntity, float f, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j, CallbackInfo ci) {
+    private void etf$markNotToChange(SkullBlockEntity skullBlockEntity, float f, PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, int i, int j, CallbackInfo ci) {
         ETFRenderContext.allowTexturePatching();
     }
 
-    @Inject(method = "render(Lnet/minecraft/block/entity/SkullBlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II)V",
+    @Inject(method = "render(Lnet/minecraft/world/level/block/entity/SkullBlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V",
             at = @At(value = "RETURN"))
-    private void etf$markAllowedToChange(SkullBlockEntity skullBlockEntity, float f, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j, CallbackInfo ci) {
+    private void etf$markAllowedToChange(SkullBlockEntity skullBlockEntity, float f, PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, int i, int j, CallbackInfo ci) {
         ETFRenderContext.allowRenderLayerTextureModify();
         ETFRenderContext.preventTexturePatching();
     }
 
 
-    @Inject(method = "render(Lnet/minecraft/block/entity/SkullBlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II)V",
+    @Inject(method = "render(Lnet/minecraft/world/level/block/entity/SkullBlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V",
             at = @At(value = "INVOKE",
-                    target = "Lnet/minecraft/client/render/block/entity/SkullBlockEntityRenderer;getRenderLayer(Lnet/minecraft/block/SkullBlock$SkullType;Lnet/minecraft/component/type/ProfileComponent;)Lnet/minecraft/client/render/RenderLayer;"),
+                    target = "Lnet/minecraft/client/renderer/blockentity/SkullBlockRenderer;getRenderType(Lnet/minecraft/world/level/block/SkullBlock$Type;Lnet/minecraft/world/item/component/ResolvableProfile;)Lnet/minecraft/client/renderer/RenderType;"),
             locals = LocalCapture.CAPTURE_FAILHARD)
-    private void etf$alterTexture(final SkullBlockEntity skullBlockEntity, final float f, final MatrixStack matrixStack, final VertexConsumerProvider vertexConsumerProvider, final int i, final int j, final CallbackInfo ci, float g, BlockState blockState, boolean bl, Direction direction, int k, float h, SkullBlock.SkullType skullType, SkullBlockEntityModel skullBlockEntityModel) {
+    private void etf$alterTexture(final SkullBlockEntity skullBlockEntity, final float f, final PoseStack matrixStack, final MultiBufferSource vertexConsumerProvider, final int i, final int j, final CallbackInfo ci, float g, BlockState blockState, boolean bl, Direction direction, int k, float h, SkullBlock.Type skullType, SkullModelBase skullBlockEntityModel) {
 
         entity_texture_features$thisETFPlayerTexture = null;
 
-        if (skullType == SkullBlock.Type.PLAYER && ETF.config().getConfig().skinFeaturesEnabled && ETF.config().getConfig().enableCustomTextures && ETF.config().getConfig().enableCustomBlockEntities) {
-            if (skullBlockEntity.getOwner() != null) {
-                Identifier identifier = MinecraftClient.getInstance()
-                        .getSkinProvider().getSkinTextures(skullBlockEntity.getOwner().gameProfile()).texture();
+        if (skullType == SkullBlock.Types.PLAYER && ETF.config().getConfig().skinFeaturesEnabled && ETF.config().getConfig().enableCustomTextures && ETF.config().getConfig().enableCustomBlockEntities) {
+            if (skullBlockEntity.getOwnerProfile() != null) {
+                ResourceLocation identifier = Minecraft.getInstance()
+                        .getSkinManager().getInsecureSkin(skullBlockEntity.getOwnerProfile().gameProfile()).texture();
 
                 entity_texture_features$thisETFPlayerTexture = ETFManager.getInstance().getPlayerTexture((ETFPlayerEntity) skullBlockEntity, identifier);
                 if (entity_texture_features$thisETFPlayerTexture != null) {
@@ -71,38 +71,38 @@ public abstract class MixinSkullBlockEntityRenderer implements BlockEntityRender
         }
     }
 
-    @Inject(method = "render(Lnet/minecraft/block/entity/SkullBlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II)V",
+    @Inject(method = "render(Lnet/minecraft/world/level/block/entity/SkullBlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V",
             at = @At(value = "TAIL"),
             locals = LocalCapture.CAPTURE_FAILHARD)
-    private void etf$renderFeatures(SkullBlockEntity skullBlockEntity, float f, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j, CallbackInfo ci, float g, BlockState blockState, boolean bl, Direction direction, int k, float h, SkullBlock.SkullType skullType, SkullBlockEntityModel skullBlockEntityModel, RenderLayer renderLayer) {
+    private void etf$renderFeatures(SkullBlockEntity skullBlockEntity, float f, PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, int i, int j, CallbackInfo ci, float g, BlockState blockState, boolean bl, Direction direction, int k, float h, SkullBlock.Type skullType, SkullModelBase skullBlockEntityModel, RenderType renderLayer) {
         if (entity_texture_features$thisETFPlayerTexture != null && ETF.config().getConfig().enableEmissiveBlockEntities) {
             //vanilla positional code copy
-            matrixStack.push();
+            matrixStack.pushPose();
             if (direction == null) {
                 matrixStack.translate(0.5F, 0.0F, 0.5F);
             } else {
-                matrixStack.translate(0.5F - (float) direction.getOffsetX() * 0.25F, 0.25F, 0.5F - (float) direction.getOffsetZ() * 0.25F);
+                matrixStack.translate(0.5F - (float) direction.getStepX() * 0.25F, 0.25F, 0.5F - (float) direction.getStepZ() * 0.25F);
             }
             matrixStack.scale(-1.0F, -1.0F, 1.0F);
-            skullBlockEntityModel.setHeadRotation(g, h, 0.0F);
+            skullBlockEntityModel.setupAnim(g, h, 0.0F);
             //vanilla end
 
             ETFPlayerFeatureRenderer.renderSkullFeatures(matrixStack, vertexConsumerProvider, i, skullBlockEntityModel, entity_texture_features$thisETFPlayerTexture, h);
 
-            matrixStack.pop();
+            matrixStack.popPose();
         }
 
     }
 
-    @ModifyArg(method = "render(Lnet/minecraft/block/entity/SkullBlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II)V",
+    @ModifyArg(method = "render(Lnet/minecraft/world/level/block/entity/SkullBlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V",
             at = @At(value = "INVOKE",
-                    target = "Lnet/minecraft/client/render/block/entity/SkullBlockEntityRenderer;renderSkull(Lnet/minecraft/util/math/Direction;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/client/render/block/entity/SkullBlockEntityModel;Lnet/minecraft/client/render/RenderLayer;)V")
+                    target = "Lnet/minecraft/client/renderer/blockentity/SkullBlockRenderer;renderSkull(Lnet/minecraft/core/Direction;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/model/SkullModelBase;Lnet/minecraft/client/renderer/RenderType;)V")
             , index = 7)
-    private RenderLayer etf$modifyRenderLayer(RenderLayer renderLayer) {
+    private RenderType etf$modifyRenderLayer(RenderType renderLayer) {
         if (entity_texture_features$thisETFPlayerTexture != null) {
-            Identifier skin = entity_texture_features$thisETFPlayerTexture.getBaseHeadTextureIdentifierOrNullForVanilla();
+            ResourceLocation skin = entity_texture_features$thisETFPlayerTexture.getBaseHeadTextureIdentifierOrNullForVanilla();
             if (skin != null) {
-                return RenderLayer.getEntityTranslucent(skin);
+                return RenderType.entityTranslucent(skin);
             }
         }
         return renderLayer;

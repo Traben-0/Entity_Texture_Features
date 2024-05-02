@@ -1,12 +1,6 @@
 package traben.entity_texture_features.features.property_reading.properties.optifine_properties;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
-import net.minecraft.entity.Entity;
-import net.minecraft.nbt.AbstractNbtList;
-import net.minecraft.nbt.AbstractNbtNumber;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.predicate.NbtPredicate;
 import org.jetbrains.annotations.NotNull;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperty;
 import traben.entity_texture_features.features.property_reading.properties.generic_properties.SimpleIntegerArrayProperty;
@@ -18,6 +12,12 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+import net.minecraft.advancements.critereon.NbtPredicate;
+import net.minecraft.nbt.CollectionTag;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NumericTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.world.entity.Entity;
 
 import static traben.entity_texture_features.features.property_reading.properties.generic_properties.StringArrayOrRegexProperty.getStringMatcher_Regex_Pattern_List_Single;
 
@@ -61,11 +61,11 @@ public class NBTProperty extends RandomProperty {
     @Override
     protected boolean testEntityInternal(ETFEntity entity) {
 
-        NbtCompound entityNBT;
+        CompoundTag entityNBT;
         if (entity instanceof Entity internal) {
-            entityNBT = NbtPredicate.entityToNbt(internal);
+            entityNBT = NbtPredicate.getEntityTagToCompare(internal);
         } else {
-            entityNBT = entity.etf$writeNbt(new NbtCompound());
+            entityNBT = entity.etf$writeNbt(new CompoundTag());
         }
 
         boolean doesEntityMeetThisCaseTest = true;
@@ -79,14 +79,14 @@ public class NBTProperty extends RandomProperty {
                 nbtTestInstruction = nbtTestInstruction.replaceFirst("!", "");
 
                 if (nbtTestInstruction.startsWith("print:")) {
-                    ETFUtils2.logMessage("NBT entity data print: \n" + entityNBT.asString());
+                    ETFUtils2.logMessage("NBT entity data print: \n" + entityNBT.getAsString());
                     nbtTestInstruction = nbtTestInstruction.replaceFirst("print:", "");
                 }
 
                 //first find the required nbt data
-                NbtElement finalNBTElementOrNullIfFailed = null;
+                Tag finalNBTElementOrNullIfFailed = null;
                 boolean listIndexInstructionWasWildCard = false;
-                NbtElement lastIterationNBTElement = entityNBT;
+                Tag lastIterationNBTElement = entityNBT;
                 Iterator<String> nbtPathInstructionIterator = Arrays.stream(nbtIdentifier.split("\\.")).iterator();
                 while (nbtPathInstructionIterator.hasNext()) {
                     if (lastIterationNBTElement == null) {
@@ -96,14 +96,14 @@ public class NBTProperty extends RandomProperty {
                     String nextPathInstruction = nbtPathInstructionIterator.next();
 
                     //find out how to handle this instruction based on what element we have
-                    if (lastIterationNBTElement instanceof NbtCompound nbtCompound) {
+                    if (lastIterationNBTElement instanceof CompoundTag nbtCompound) {
                         if (nbtCompound.contains(nextPathInstruction)) {
                             lastIterationNBTElement = nbtCompound.get(nextPathInstruction);
                         } else {
                             //not found so break
                             break;
                         }
-                    } else if (lastIterationNBTElement instanceof AbstractNbtList<?> nbtList) {
+                    } else if (lastIterationNBTElement instanceof CollectionTag<?> nbtList) {
                         if ("*".equals(nextPathInstruction)) {
                             listIndexInstructionWasWildCard = true;
                         } else if (isStringValidInt(nextPathInstruction)) {
@@ -137,14 +137,14 @@ public class NBTProperty extends RandomProperty {
                 //test if was found
                 if (finalNBTElementOrNullIfFailed != null) {
                     if (nbtTestInstruction.startsWith("print_raw:")) {
-                        String rawStringFromNBT = finalNBTElementOrNullIfFailed.asString();
+                        String rawStringFromNBT = finalNBTElementOrNullIfFailed.getAsString();
                         String rawMatchString = nbtTestInstruction.replaceFirst("print_raw:", "");
                         ETFUtils2.logMessage("NBT RAW data of: " + nbtIdentifier + "=" + rawStringFromNBT);
                         StringArrayOrRegexProperty.RegexAndPatternPropertyMatcher matcher = getStringMatcher_Regex_Pattern_List_Single(rawMatchString);
                         doesTestPass = matcher != null && matcher.testString(rawStringFromNBT);
                         //doesTestPass = rawMatchString.equals(rawStringFromNBT);
                     } else if (nbtTestInstruction.startsWith("raw:")) {
-                        String rawStringFromNBT = finalNBTElementOrNullIfFailed.asString();
+                        String rawStringFromNBT = finalNBTElementOrNullIfFailed.getAsString();
                         String rawMatchString = nbtTestInstruction.replaceFirst("raw:", "");
                         StringArrayOrRegexProperty.RegexAndPatternPropertyMatcher matcher = getStringMatcher_Regex_Pattern_List_Single(rawMatchString);
                         doesTestPass = matcher != null && matcher.testString(rawStringFromNBT);
@@ -152,20 +152,20 @@ public class NBTProperty extends RandomProperty {
                     } else if (nbtTestInstruction.startsWith("exists:")) {
                         doesTestPass = nbtTestInstruction.contains("exists:true");
                     } else if (nbtTestInstruction.startsWith("range:")) {
-                        if (finalNBTElementOrNullIfFailed instanceof AbstractNbtNumber nbtNumber) {
+                        if (finalNBTElementOrNullIfFailed instanceof NumericTag nbtNumber) {
                             String rawRangeString = nbtTestInstruction.replaceFirst("range:", "");
                             SimpleIntegerArrayProperty.IntRange range = SimpleIntegerArrayProperty.getIntRange(rawRangeString);
-                            doesTestPass = range.isWithinRange(nbtNumber.numberValue().intValue());
+                            doesTestPass = range.isWithinRange(nbtNumber.getAsNumber().intValue());
                         } else {
                             ETFUtils2.logWarn("NBT range is not valid for non number nbt types: " + nbtIdentifier + "=" + nbtTestInstruction);
                         }
                         // }else  if (finalNBTElementOrNullIfFailed instanceof NbtCompound nbtCompound) {
-                    } else if (finalNBTElementOrNullIfFailed instanceof AbstractNbtList<?> nbtList) {
+                    } else if (finalNBTElementOrNullIfFailed instanceof CollectionTag<?> nbtList) {
                         if (listIndexInstructionWasWildCard) {
-                            for (NbtElement element :
+                            for (Tag element :
                                     nbtList) {
                                 StringArrayOrRegexProperty.RegexAndPatternPropertyMatcher matcher = getStringMatcher_Regex_Pattern_List_Single(nbtTestInstruction);
-                                doesTestPass = matcher != null && matcher.testString(element.asString());
+                                doesTestPass = matcher != null && matcher.testString(element.getAsString());
                                 if (doesTestPass) break;
                             }
                         } else {
@@ -175,13 +175,13 @@ public class NBTProperty extends RandomProperty {
 //                                doesTestPass = doesStringMatch(nbtTestInstruction,nbtNumber.asString());
 //                            }else if(finalNBTElementOrNullIfFailed instanceof NbtString nbtString) {
 //                                doesTestPass = doesStringMatch(nbtTestInstruction,nbtString.asString());
-                    } else if (finalNBTElementOrNullIfFailed instanceof AbstractNbtNumber) {
+                    } else if (finalNBTElementOrNullIfFailed instanceof NumericTag) {
                         //strip non digit chars
                         StringArrayOrRegexProperty.RegexAndPatternPropertyMatcher matcher = getStringMatcher_Regex_Pattern_List_Single(nbtTestInstruction);
-                        doesTestPass = matcher != null && matcher.testString(finalNBTElementOrNullIfFailed.asString().replaceAll("[^\\d.]", ""));
+                        doesTestPass = matcher != null && matcher.testString(finalNBTElementOrNullIfFailed.getAsString().replaceAll("[^\\d.]", ""));
                     } else {
                         StringArrayOrRegexProperty.RegexAndPatternPropertyMatcher matcher = getStringMatcher_Regex_Pattern_List_Single(nbtTestInstruction);
-                        doesTestPass = matcher != null && matcher.testString(finalNBTElementOrNullIfFailed.asString());
+                        doesTestPass = matcher != null && matcher.testString(finalNBTElementOrNullIfFailed.getAsString());
                     }
                 } else {
                     //did not find

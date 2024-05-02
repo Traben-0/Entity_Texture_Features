@@ -1,6 +1,5 @@
 package traben.entity_texture_features.features.property_reading.properties.optifine_properties;
 
-import net.minecraft.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperty;
@@ -8,6 +7,7 @@ import traben.entity_texture_features.features.property_reading.properties.gener
 import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.Properties;
+import net.minecraft.world.entity.LivingEntity;
 
 
 public class BabyProperty extends BooleanProperty {

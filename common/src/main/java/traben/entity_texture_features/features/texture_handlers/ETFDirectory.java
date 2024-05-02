@@ -2,16 +2,16 @@ package traben.entity_texture_features.features.texture_handlers;
 
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.resource.Resource;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.Optional;
+import net.minecraft.client.Minecraft;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceManager;
 
 public enum ETFDirectory {
     DOES_NOT_EXIST(null),
@@ -27,13 +27,13 @@ public enum ETFDirectory {
     }
 
 
-    public static Object2ReferenceOpenHashMap<@NotNull Identifier, @NotNull ETFDirectory> getCache() {
+    public static Object2ReferenceOpenHashMap<@NotNull ResourceLocation, @NotNull ETFDirectory> getCache() {
         return ETFManager.getInstance().ETF_DIRECTORY_CACHE;
     }
 
     @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
     @Nullable
-    public static Identifier getDirectoryVersionOf(Identifier vanillaIdentifier) {
+    public static ResourceLocation getDirectoryVersionOf(ResourceLocation vanillaIdentifier) {
         ETFDirectory directory = getDirectoryOf(vanillaIdentifier);
         return switch (directory) {
             case DOES_NOT_EXIST -> null;
@@ -44,8 +44,8 @@ public enum ETFDirectory {
     }
 
     @NotNull
-    public static ETFDirectory getDirectoryOf(Identifier vanillaIdentifier) {
-        Object2ReferenceOpenHashMap<@NotNull Identifier, @NotNull ETFDirectory> cache = getCache();
+    public static ETFDirectory getDirectoryOf(ResourceLocation vanillaIdentifier) {
+        Object2ReferenceOpenHashMap<@NotNull ResourceLocation, @NotNull ETFDirectory> cache = getCache();
         if (!cache.containsKey(vanillaIdentifier)) {
             cache.put(vanillaIdentifier, findDirectoryOf(vanillaIdentifier));
         }
@@ -53,20 +53,20 @@ public enum ETFDirectory {
     }
 
     @NotNull
-    private static ETFDirectory findDirectoryOf(Identifier vanillaIdentifier) {
+    private static ETFDirectory findDirectoryOf(ResourceLocation vanillaIdentifier) {
         //check already directory'd textures
         if (vanillaIdentifier.getPath().contains("etf/random/entity")) {
-            Optional<Resource> resource = MinecraftClient.getInstance().getResourceManager().getResource(vanillaIdentifier);
+            Optional<Resource> resource = Minecraft.getInstance().getResourceManager().getResource(vanillaIdentifier);
             if (resource.isPresent()) {
                 return ETF;
             }
         } else if (vanillaIdentifier.getPath().contains("optifine/random/entity")) {
-            Optional<Resource> resource = MinecraftClient.getInstance().getResourceManager().getResource(vanillaIdentifier);
+            Optional<Resource> resource = Minecraft.getInstance().getResourceManager().getResource(vanillaIdentifier);
             if (resource.isPresent()) {
                 return OPTIFINE;
             }
         } else if (vanillaIdentifier.getPath().contains("optifine/mob")) {
-            Optional<Resource> resource = MinecraftClient.getInstance().getResourceManager().getResource(vanillaIdentifier);
+            Optional<Resource> resource = Minecraft.getInstance().getResourceManager().getResource(vanillaIdentifier);
             if (resource.isPresent()) {
                 return OLD_OPTIFINE;
             }
@@ -75,7 +75,7 @@ public enum ETFDirectory {
         //it is not cached and does not need to be
         //may either be properties or image
         ObjectArrayList<ETFDirectory> foundDirectories = new ObjectArrayList<>();
-        ResourceManager resources = MinecraftClient.getInstance().getResourceManager();
+        ResourceManager resources = Minecraft.getInstance().getResourceManager();
 
         if (resources.getResource(getIdentifierAsDirectory(vanillaIdentifier, VANILLA)).isPresent())
             foundDirectories.add(VANILLA);
@@ -100,7 +100,7 @@ public enum ETFDirectory {
                     foundDirectories) {
                 //map result already has internal 0123 order of pack directories ironed out only need to check pack order
                 Optional<Resource> resource = resources.getResource(getIdentifierAsDirectory(vanillaIdentifier, directory));
-                resource.ifPresent(value -> resourcePackNames.put(value.getPackId(), directory));
+                resource.ifPresent(value -> resourcePackNames.put(value.sourcePackId(), directory));
             }
 
             String[] strArray = resourcePackNames.keySet().toArray(new String[0]);
@@ -115,9 +115,9 @@ public enum ETFDirectory {
     }
 
     @NotNull
-    public static Identifier getIdentifierAsDirectory(Identifier identifier, ETFDirectory directory) {
+    public static ResourceLocation getIdentifierAsDirectory(ResourceLocation identifier, ETFDirectory directory) {
         if (directory.doesReplace()) {
-            return new Identifier(identifier.getNamespace(), identifier.getPath().replace(directory.replaceStrings[0], directory.replaceStrings[1]));
+            return new ResourceLocation(identifier.getNamespace(), identifier.getPath().replace(directory.replaceStrings[0], directory.replaceStrings[1]));
         } else {
             return identifier;
         }

@@ -1,7 +1,7 @@
 package traben.entity_texture_features.utils;
 
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
 
@@ -18,10 +18,10 @@ public interface ETFVertexConsumer {
     ETFTexture etf$getETFTexture();
 
     @Nullable
-    VertexConsumerProvider etf$getProvider();
+    MultiBufferSource etf$getProvider();
 
     @Nullable
-    RenderLayer etf$getRenderLayer();
+    RenderType etf$getRenderLayer();
 
-    void etf$initETFVertexConsumer(VertexConsumerProvider provider, RenderLayer renderLayer);
+    void etf$initETFVertexConsumer(MultiBufferSource provider, RenderType renderLayer);
 }

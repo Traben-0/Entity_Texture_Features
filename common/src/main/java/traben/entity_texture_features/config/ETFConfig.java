@@ -5,17 +5,6 @@ import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.LightmapTextureManager;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.registry.Registries;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.LightType;
 import org.jetbrains.annotations.NotNull;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
@@ -30,6 +19,18 @@ import traben.tconfig.gui.entries.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LightLayer;
 
 import static traben.entity_texture_features.ETF.MOD_ID;
 import static traben.entity_texture_features.ETFApi.getBlockEntityTypeToTranslationKey;
@@ -141,12 +142,12 @@ public final class ETFConfig extends TConfig {
         var key = ((ETFEntity) entity).etf$getEntityKey();
         if (key != null && entityLightOverrides.containsKey(key)) {
             //noinspection deprecation
-            int lightETF = MathHelper.clamp(entityLightOverrides.get(key), 0, 15);
+            int lightETF = Mth.clamp(entityLightOverrides.get(key), 0, 15);
             //recalculate to avoid child overrides
-            var pos = BlockPos.ofFloored(entity.getClientCameraPosVec(tickDelta));
-            int block = entity.getWorld().getLightLevel(LightType.SKY, pos);//LightmapTextureManager.getBlockLightCoordinates(light);
-            int sky = entity.isOnFire() ? 15 : entity.getWorld().getLightLevel(LightType.BLOCK, pos);//LightmapTextureManager.getSkyLightCoordinates(light);
-            return LightmapTextureManager.pack(Math.max(block, sky), lightETF);
+            var pos = BlockPos.containing(entity.getLightProbePosition(tickDelta));
+            int block = entity.level().getBrightness(LightLayer.SKY, pos);//LightmapTextureManager.getBlockLightCoordinates(light);
+            int sky = entity.isOnFire() ? 15 : entity.level().getBrightness(LightLayer.BLOCK, pos);//LightmapTextureManager.getSkyLightCoordinates(light);
+            return LightTexture.pack(Math.max(block, sky), lightETF);
         }
         return light;
     }
@@ -157,15 +158,15 @@ public final class ETFConfig extends TConfig {
         var key = ETFRenderContext.getCurrentEntity().etf$getEntityKey();
         if (key != null && entityLightOverrides.containsKey(key)) {
             //noinspection deprecation
-            int lightETF = MathHelper.clamp(entityLightOverrides.get(key), 0, 15);
+            int lightETF = Mth.clamp(entityLightOverrides.get(key), 0, 15);
 
             var world = ETFRenderContext.getCurrentEntity().etf$getWorld();
             var pos = ETFRenderContext.getCurrentEntity().etf$getBlockPos();
             if (world == null || pos == null) return light;
 
-            int block = world.getLightLevel(LightType.BLOCK, pos);
-            int sky = world.getLightLevel(LightType.SKY, pos);
-            return LightmapTextureManager.pack(Math.max(block, sky), lightETF);
+            int block = world.getBrightness(LightLayer.BLOCK, pos);
+            int sky = world.getBrightness(LightLayer.SKY, pos);
+            return LightTexture.pack(Math.max(block, sky), lightETF);
         }
         return light;
     }
@@ -253,9 +254,9 @@ public final class ETFConfig extends TConfig {
     private TConfigEntryCategory getEntitySettings() {
         var category = new TConfigEntryCategory("config.entity_features.per_entity_settings");
         try {
-            Registries.ENTITY_TYPE.forEach(entityType -> {
+            BuiltInRegistries.ENTITY_TYPE.forEach(entityType -> {
                 if (entityType == EntityType.PLAYER) return;
-                String translationKey = entityType.getTranslationKey();
+                String translationKey = entityType.getDescriptionId();
                 var entityCategory = new TConfigEntryCategory(translationKey);
                 addEntityConfigs(entityCategory, translationKey);
                 category.add(entityCategory);
@@ -263,7 +264,7 @@ public final class ETFConfig extends TConfig {
             var warn = new TConfigEntryText("config.entity_features.per_entity_settings.blocks");
             var warn2 = new TConfigEntryText("config.entity_features.per_entity_settings.blocks2");
             category.add(warn, warn2);
-            BlockEntityRendererFactories.FACTORIES.keySet().forEach(entityType -> {
+            BlockEntityRenderers.PROVIDERS.keySet().forEach(entityType -> {
                 String translationKey = getBlockEntityTypeToTranslationKey(entityType);
                 var entityCategory = new TConfigEntryCategory(translationKey).add(warn, warn2);
                 addEntityConfigs(entityCategory, translationKey);
@@ -336,7 +337,7 @@ public final class ETFConfig extends TConfig {
     private TConfigEntry getPlayerSkinEditorButton() {
         boolean condition1 = ETF.config().getConfig().skinFeaturesEnabled;
         boolean condition2 = !ETFVersionDifferenceHandler.isFabric() || ETFVersionDifferenceHandler.isThisModLoaded("fabric");
-        boolean condition3 = MinecraftClient.getInstance().player != null;
+        boolean condition3 = Minecraft.getInstance().player != null;
         boolean condition4 = ETFPlayerTexture.clientPlayerOriginalSkinImageForTool != null;
         boolean canLaunchSkinTool = condition1 && condition2 && condition3 && condition4;
 
@@ -361,14 +362,14 @@ public final class ETFConfig extends TConfig {
 
         return canLaunchSkinTool ?
                 new TConfigEntryCustomScreenOpener("config.entity_texture_features.player_skin_editor.button.enabled", reasonText.toString(),
-                        () -> new ETFConfigScreenSkinTool(MinecraftClient.getInstance().currentScreen), false) :
+                        () -> new ETFConfigScreenSkinTool(Minecraft.getInstance().screen), false) :
                 new TConfigEntryCustomScreenOpener("config.entity_texture_features.player_skin_editor.button.disabled", reasonText.toString(),
-                        () -> new ETFConfigScreenSkinTool(MinecraftClient.getInstance().currentScreen), false).setEnabled(false);
+                        () -> new ETFConfigScreenSkinTool(Minecraft.getInstance().screen), false).setEnabled(false);
     }
 
     @Override
-    public Identifier getModIcon() {
-        return new Identifier(MOD_ID, "textures/gui/icon.png");
+    public ResourceLocation getModIcon() {
+        return new ResourceLocation(MOD_ID, "textures/gui/icon.png");
     }
 
     public enum OverrideBooleanType {
@@ -377,8 +378,8 @@ public final class ETFConfig extends TConfig {
         @Override
         public String toString() {
             return switch (this) {
-                case TRUE -> ScreenTexts.ON.getString();
-                case FALSE -> ScreenTexts.OFF.getString();
+                case TRUE -> CommonComponents.OPTION_ON.getString();
+                case FALSE -> CommonComponents.OPTION_OFF.getString();
             };
         }
     }

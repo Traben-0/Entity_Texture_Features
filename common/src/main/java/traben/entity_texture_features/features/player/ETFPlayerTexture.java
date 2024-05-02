@@ -1,25 +1,21 @@
 package traben.entity_texture_features.features.player;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.texture.NativeImage;
-import net.minecraft.client.texture.PlayerSkinTexture;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.config.screens.skin.ETFConfigScreenSkinTool;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
-import traben.entity_texture_features.mixin.accessor.FileCacheAccessor;
-import traben.entity_texture_features.mixin.accessor.PlayerSkinProviderAccessor;
-import traben.entity_texture_features.mixin.accessor.PlayerSkinTextureAccessor;
 import traben.entity_texture_features.utils.ETFUtils2;
-
+import com.mojang.blaze3d.platform.NativeImage;
 import java.io.FileInputStream;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.HttpTexture;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 
 
 @SuppressWarnings("EnhancedSwitchMigration")
@@ -28,13 +24,13 @@ public class ETFPlayerTexture {
     public static final String SKIN_NAMESPACE = "etf_skin";
 
     public static NativeImage clientPlayerOriginalSkinImageForTool = null;
-    public Identifier baseEnchantIdentifier = null;
-    public Identifier baseEnchantBlinkIdentifier = null;
-    public Identifier baseEnchantBlink2Identifier = null;
+    public ResourceLocation baseEnchantIdentifier = null;
+    public ResourceLocation baseEnchantBlinkIdentifier = null;
+    public ResourceLocation baseEnchantBlink2Identifier = null;
     //    public Identifier etfCapeIdentifier = null;
-    public Identifier texturedNoseIdentifier = null;
-    public Identifier texturedNoseIdentifierEmissive = null;
-    public Identifier texturedNoseIdentifierEnchanted = null;
+    public ResourceLocation texturedNoseIdentifier = null;
+    public ResourceLocation texturedNoseIdentifierEmissive = null;
+    public ResourceLocation texturedNoseIdentifierEnchanted = null;
     public boolean hasVillagerNose = false;
     public boolean hasFeatures = false;
     public int coatStyle = 0;
@@ -54,9 +50,9 @@ public class ETFPlayerTexture {
     public ETFPlayerEntity player;
     public boolean wasForcedSolid = false;
     //private boolean allowThisETFBaseSkin = true;
-    Identifier coatIdentifier = null;
-    Identifier coatEmissiveIdentifier = null;
-    Identifier coatEnchantedIdentifier = null;
+    ResourceLocation coatIdentifier = null;
+    ResourceLocation coatEmissiveIdentifier = null;
+    ResourceLocation coatEnchantedIdentifier = null;
     boolean hasFatCoat = false;
     private boolean isTextureReady = false;
     //private boolean hasVanillaCape = false;
@@ -66,15 +62,15 @@ public class ETFPlayerTexture {
 //    private int[] emissiveCapeBounds = null;
 //    private Identifier etfCapeEmissiveIdentifier = null;
 //    private Identifier etfCapeEnchantedIdentifier = null;
-    private Identifier normalVanillaSkinIdentifier = null;
+    private ResourceLocation normalVanillaSkinIdentifier = null;
 
 
-    public ETFPlayerTexture(ETFPlayerEntity player, Identifier rendererGivenSkin) {
+    public ETFPlayerTexture(ETFPlayerEntity player, ResourceLocation rendererGivenSkin) {
         //initiate texture download as we need unprocessed texture from the skin server
         this.player = player;
         this.normalVanillaSkinIdentifier = rendererGivenSkin;
         //triggerSkinDownload();
-        if (player instanceof PlayerEntity) {
+        if (player instanceof Player) {
             //normal player entity
             checkTexture(false);
         } else {
@@ -83,8 +79,9 @@ public class ETFPlayerTexture {
             //use the historic skin resource and ensure we do not bother to load a current skin for the player
             try {
 
-                PlayerSkinTexture skin = (PlayerSkinTexture) ((FileCacheAccessor) ((PlayerSkinProviderAccessor) MinecraftClient.getInstance().getSkinProvider()).getSkinCache()).getTextureManager().getOrDefault(rendererGivenSkin, null);
-                FileInputStream fileInputStream = new FileInputStream(((PlayerSkinTextureAccessor) skin).getCacheFile());
+                HttpTexture skin = (HttpTexture)   Minecraft.getInstance().getSkinManager().skinTextures.textureManager.getTexture(rendererGivenSkin, null);
+                assert skin.file != null;
+                FileInputStream fileInputStream = new FileInputStream(skin.file);
                 NativeImage vanilla = NativeImage.read(fileInputStream);
                 //System.out.println((vanilla != null) +" skin");
                 fileInputStream.close();
@@ -103,7 +100,7 @@ public class ETFPlayerTexture {
 
     //THIS REPRESENTS A NON FEATURED SKIN
     // must still create an object as the identifier is important to detect skin changes from other mods
-    private ETFPlayerTexture(Identifier rendererGivenSkin) {
+    private ETFPlayerTexture(ResourceLocation rendererGivenSkin) {
         this.player = null;
         this.normalVanillaSkinIdentifier = rendererGivenSkin;
     }
@@ -111,11 +108,11 @@ public class ETFPlayerTexture {
     public ETFPlayerTexture() {
         //THIS_SKIN_IS_IN_EDITOR = true;
         //exists only for tool
-        this.player = (ETFPlayerEntity) MinecraftClient.getInstance().player;
+        this.player = (ETFPlayerEntity) Minecraft.getInstance().player;
         assert player != null;
         if (player.etf$getEntity() != null) {
-            assert MinecraftClient.getInstance().player != null;
-            NativeImage skin = ETFUtils2.getNativeImageElseNull(MinecraftClient.getInstance().player.getSkinTextures().texture());
+            assert Minecraft.getInstance().player != null;
+            NativeImage skin = ETFUtils2.getNativeImageElseNull(Minecraft.getInstance().player.getSkin().texture());
             if (skin != null) {
                 clientPlayerOriginalSkinImageForTool = skin;
                 changeSkinToThisForTool(skin);
@@ -142,8 +139,8 @@ public class ETFPlayerTexture {
         Set<Integer> matchColors = new HashSet<>();
         for (int x = boundsToCheck[0]; x <= boundsToCheck[2]; x++) {
             for (int y = boundsToCheck[1]; y <= boundsToCheck[3]; y++) {
-                if (baseSkin.getOpacity(x, y) != 0) {
-                    matchColors.add(baseSkin.getColor(x, y));
+                if (baseSkin.getLuminanceOrAlpha(x, y) != 0) {
+                    matchColors.add(baseSkin.getPixelRGBA(x, y));
                 }
             }
         }
@@ -160,8 +157,8 @@ public class ETFPlayerTexture {
             }
             for (int x = 0; x < texture.getWidth(); x++) {
                 for (int y = 0; y < texture.getHeight(); y++) {
-                    if (!matchColors.contains(texture.getColor(x, y))) {
-                        texture.setColor(x, y, 0);
+                    if (!matchColors.contains(texture.getPixelRGBA(x, y))) {
+                        texture.setPixelRGBA(x, y, 0);
                     }
                 }
             }
@@ -176,7 +173,7 @@ public class ETFPlayerTexture {
         upper:
         for (int x = 0; x < imageToCheck.getWidth(); x++) {
             for (int y = 0; y < imageToCheck.getHeight(); y++) {
-                if (imageToCheck.getColor(x, y) != 0) {
+                if (imageToCheck.getPixelRGBA(x, y) != 0) {
                     foundAPixel = true;
                     break upper;
                 }
@@ -399,7 +396,7 @@ public class ETFPlayerTexture {
         int copyToYRelative = copyToY - y1;
         for (int x = x1; x <= x2; x++) {
             for (int y = y1; y <= y2; y++) {
-                dest.setColor(x + copyToXRelative, y + copyToYRelative, source.getColor(x, y));
+                dest.setPixelRGBA(x + copyToXRelative, y + copyToYRelative, source.getPixelRGBA(x, y));
             }
         }
     }
@@ -407,7 +404,7 @@ public class ETFPlayerTexture {
     private static void deletePixels(NativeImage source, int x1, int y1, int x2, int y2) {
         for (int x = x1; x <= x2; x++) {
             for (int y = y1; y <= y2; y++) {
-                source.setColor(x, y, 0);
+                source.setPixelRGBA(x, y, 0);
             }
         }
     }
@@ -447,7 +444,7 @@ public class ETFPlayerTexture {
     }
 
 
-    public boolean isCorrectObjectForThisSkin(Identifier check) {
+    public boolean isCorrectObjectForThisSkin(ResourceLocation check) {
         return check.equals(normalVanillaSkinIdentifier);
     }
 
@@ -456,12 +453,12 @@ public class ETFPlayerTexture {
 //    }
 
     @Nullable
-    public Identifier getBaseTextureIdentifierOrNullForVanilla(PlayerEntity player) {
+    public ResourceLocation getBaseTextureIdentifierOrNullForVanilla(Player player) {
         return getBaseTextureIdentifierOrNullForVanilla((ETFPlayerEntity) player);
     }
 
     @Nullable
-    public Identifier getBaseTextureIdentifierOrNullForVanilla(ETFPlayerEntity player) {
+    public ResourceLocation getBaseTextureIdentifierOrNullForVanilla(ETFPlayerEntity player) {
         this.player = player;//refresh player data
         if (etfTextureOfFinalBaseSkin != null && (canUseFeaturesForThisPlayer())) {
             return etfTextureOfFinalBaseSkin.getTextureIdentifier(player);
@@ -470,7 +467,7 @@ public class ETFPlayerTexture {
     }
 
     @Nullable
-    public Identifier getBaseHeadTextureIdentifierOrNullForVanilla() {
+    public ResourceLocation getBaseHeadTextureIdentifierOrNullForVanilla() {
         if (etfTextureOfFinalBaseSkin != null && (canUseFeaturesForThisPlayer())) {
             return etfTextureOfFinalBaseSkin.getTextureIdentifier(null);
         }
@@ -478,7 +475,7 @@ public class ETFPlayerTexture {
     }
 
     @Nullable
-    public Identifier getBaseTextureEmissiveIdentifierOrNullForNone() {
+    public ResourceLocation getBaseTextureEmissiveIdentifierOrNullForNone() {
         if (hasEmissives && canUseFeaturesForThisPlayer() && etfTextureOfFinalBaseSkin != null) {
             return etfTextureOfFinalBaseSkin.getEmissiveIdentifierOfCurrentState();
         }
@@ -526,7 +523,7 @@ public class ETFPlayerTexture {
                 && hasFeatures
                 && (//not on enemy team or doesn't matter
                 ETF.config().getConfig().enableEnemyTeamPlayersSkinFeatures
-                        || (player.etf$isTeammate(MinecraftClient.getInstance().player)
+                        || (player.etf$isTeammate(Minecraft.getInstance().player)
                         || player.etf$getScoreboardTeam() == null));
     }
 
@@ -620,7 +617,7 @@ public class ETFPlayerTexture {
 //    }
 
     private void skinFailed() {
-        if (!(MinecraftClient.getInstance().currentScreen instanceof ETFConfigScreenSkinTool)) {
+        if (!(Minecraft.getInstance().screen instanceof ETFConfigScreenSkinTool)) {
             ETFManager.getInstance().PLAYER_TEXTURE_MAP.put(player.etf$getUuid(), new ETFPlayerTexture(normalVanillaSkinIdentifier));
         } else {
             ETFUtils2.logError("something went wrong applying skin in tool, or skin features are not added");
@@ -633,17 +630,18 @@ public class ETFPlayerTexture {
     public void checkTexture(boolean skipSkinLoad) {
         if (!skipSkinLoad) {
             try {
-                PlayerSkinTexture skin = (PlayerSkinTexture) ((FileCacheAccessor) ((PlayerSkinProviderAccessor) MinecraftClient.getInstance().getSkinProvider()).getSkinCache()).getTextureManager().getOrDefault(normalVanillaSkinIdentifier, null);
+                HttpTexture skin = (HttpTexture) Minecraft.getInstance().getSkinManager().skinTextures.textureManager.getTexture(normalVanillaSkinIdentifier, null);
 
-                FileInputStream fileInputStream = new FileInputStream(((PlayerSkinTextureAccessor) skin).getCacheFile());
+                assert skin.file != null;
+                FileInputStream fileInputStream = new FileInputStream(skin.file);
                 remappingETFSkin = true;
-                originalSkin = skin.remapTexture(NativeImage.read(fileInputStream));
+                originalSkin = skin.processLegacySkin(NativeImage.read(fileInputStream));
                 remappingETFSkin = false;
                 //System.out.println((vanilla != null) +" skin");
                 fileInputStream.close();
                 //originalSkin = //ETFUtils2.emptyNativeImage(64, 64);
                 //originalSkin.copyFrom(vanilla);
-                if (MinecraftClient.getInstance().player != null && player.etf$getUuid().equals(MinecraftClient.getInstance().player.getUuid())) {
+                if (Minecraft.getInstance().player != null && player.etf$getUuid().equals(Minecraft.getInstance().player.getUUID())) {
                     clientPlayerOriginalSkinImageForTool = originalSkin;
                 }
                 //vanilla.close();
@@ -689,18 +687,18 @@ public class ETFPlayerTexture {
 //            ETFUtils2.saveConfig();
 //        }
         if (originalSkin != null) {
-            if (originalSkin.getColor(1, 16) == -16776961 &&
-                    originalSkin.getColor(0, 16) == -16777089 &&
-                    originalSkin.getColor(0, 17) == -16776961 &&
-                    originalSkin.getColor(2, 16) == -16711936 &&
-                    originalSkin.getColor(3, 16) == -16744704 &&
-                    originalSkin.getColor(3, 17) == -16711936 &&
-                    originalSkin.getColor(0, 18) == -65536 &&
-                    originalSkin.getColor(0, 19) == -8454144 &&
-                    originalSkin.getColor(1, 19) == -65536 &&
-                    originalSkin.getColor(3, 18) == -1 &&
-                    originalSkin.getColor(2, 19) == -1 &&
-                    originalSkin.getColor(3, 18) == -1
+            if (originalSkin.getPixelRGBA(1, 16) == -16776961 &&
+                    originalSkin.getPixelRGBA(0, 16) == -16777089 &&
+                    originalSkin.getPixelRGBA(0, 17) == -16776961 &&
+                    originalSkin.getPixelRGBA(2, 16) == -16711936 &&
+                    originalSkin.getPixelRGBA(3, 16) == -16744704 &&
+                    originalSkin.getPixelRGBA(3, 17) == -16711936 &&
+                    originalSkin.getPixelRGBA(0, 18) == -65536 &&
+                    originalSkin.getPixelRGBA(0, 19) == -8454144 &&
+                    originalSkin.getPixelRGBA(1, 19) == -65536 &&
+                    originalSkin.getPixelRGBA(3, 18) == -1 &&
+                    originalSkin.getPixelRGBA(2, 19) == -1 &&
+                    originalSkin.getPixelRGBA(3, 18) == -1
             ) {
 
 
@@ -709,13 +707,13 @@ public class ETFPlayerTexture {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //locate and convert choices to ints
                 int[] choiceBoxChoices = {
-                        getSkinPixelColourToNumber(originalSkin.getColor(52, 16)),//blink
-                        getSkinPixelColourToNumber(originalSkin.getColor(52, 17)),//jacket choice
-                        getSkinPixelColourToNumber(originalSkin.getColor(52, 18)),//jacket height
-                        getSkinPixelColourToNumber(originalSkin.getColor(52, 19)),//blink height
-                        getSkinPixelColourToNumber(originalSkin.getColor(53, 16)),//cape choice
-                        getSkinPixelColourToNumber(originalSkin.getColor(53, 17)),//nose choice
-                        getSkinPixelColourToNumber(originalSkin.getColor(53, 18)),//no transparency choice
+                        getSkinPixelColourToNumber(originalSkin.getPixelRGBA(52, 16)),//blink
+                        getSkinPixelColourToNumber(originalSkin.getPixelRGBA(52, 17)),//jacket choice
+                        getSkinPixelColourToNumber(originalSkin.getPixelRGBA(52, 18)),//jacket height
+                        getSkinPixelColourToNumber(originalSkin.getPixelRGBA(52, 19)),//blink height
+                        getSkinPixelColourToNumber(originalSkin.getPixelRGBA(53, 16)),//cape choice
+                        getSkinPixelColourToNumber(originalSkin.getPixelRGBA(53, 17)),//nose choice
+                        getSkinPixelColourToNumber(originalSkin.getPixelRGBA(53, 18)),//no transparency choice
 //                        getSkinPixelColourToNumber(originalSkin.getColor(53, 18)),
 //                        getSkinPixelColourToNumber(originalSkin.getColor(53, 19)),
 //                        getSkinPixelColourToNumber(originalSkin.getColor(54, 16)),
@@ -732,12 +730,12 @@ public class ETFPlayerTexture {
                 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //deprecated old villager nose method
-                boolean noseUpper = (getSkinPixelColourToNumber(originalSkin.getColor(43, 13)) == 666 && getSkinPixelColourToNumber(originalSkin.getColor(44, 13)) == 666 &&
-                        getSkinPixelColourToNumber(originalSkin.getColor(43, 14)) == 666 && getSkinPixelColourToNumber(originalSkin.getColor(44, 14)) == 666 &&
-                        getSkinPixelColourToNumber(originalSkin.getColor(43, 15)) == 666 && getSkinPixelColourToNumber(originalSkin.getColor(44, 15)) == 666);
-                boolean noseLower = (getSkinPixelColourToNumber(originalSkin.getColor(11, 13)) == 666 && getSkinPixelColourToNumber(originalSkin.getColor(12, 13)) == 666 &&
-                        getSkinPixelColourToNumber(originalSkin.getColor(11, 14)) == 666 && getSkinPixelColourToNumber(originalSkin.getColor(12, 14)) == 666 &&
-                        getSkinPixelColourToNumber(originalSkin.getColor(11, 15)) == 666 && getSkinPixelColourToNumber(originalSkin.getColor(12, 15)) == 666);
+                boolean noseUpper = (getSkinPixelColourToNumber(originalSkin.getPixelRGBA(43, 13)) == 666 && getSkinPixelColourToNumber(originalSkin.getPixelRGBA(44, 13)) == 666 &&
+                        getSkinPixelColourToNumber(originalSkin.getPixelRGBA(43, 14)) == 666 && getSkinPixelColourToNumber(originalSkin.getPixelRGBA(44, 14)) == 666 &&
+                        getSkinPixelColourToNumber(originalSkin.getPixelRGBA(43, 15)) == 666 && getSkinPixelColourToNumber(originalSkin.getPixelRGBA(44, 15)) == 666);
+                boolean noseLower = (getSkinPixelColourToNumber(originalSkin.getPixelRGBA(11, 13)) == 666 && getSkinPixelColourToNumber(originalSkin.getPixelRGBA(12, 13)) == 666 &&
+                        getSkinPixelColourToNumber(originalSkin.getPixelRGBA(11, 14)) == 666 && getSkinPixelColourToNumber(originalSkin.getPixelRGBA(12, 14)) == 666 &&
+                        getSkinPixelColourToNumber(originalSkin.getPixelRGBA(11, 15)) == 666 && getSkinPixelColourToNumber(originalSkin.getPixelRGBA(12, 15)) == 666);
                 hasVillagerNose = noseLower || noseUpper;
                 boolean removeNosePixels = noseUpper;
                 if (noseUpper) {
@@ -784,7 +782,7 @@ public class ETFPlayerTexture {
                         for (int x = bounds[0]; x <= bounds[2]; x++) {
                             int noseX = 0;
                             for (int y = bounds[1]; y <= bounds[3]; y++) {
-                                noseTexture.setColor(noseX, noseY, originalSkin.getColor(x, y));
+                                noseTexture.setPixelRGBA(noseX, noseY, originalSkin.getPixelRGBA(x, y));
                                 noseX++;
                             }
                             noseY++;
@@ -792,19 +790,19 @@ public class ETFPlayerTexture {
                         //copy flip to other side
                         for (int x = 4; x < 8; x++) {
                             for (int y = 0; y < 8; y++) {
-                                noseTexture.setColor(x, y, noseTexture.getColor(7 - x, y));
+                                noseTexture.setPixelRGBA(x, y, noseTexture.getPixelRGBA(7 - x, y));
                             }
                         }
                         //correct vertical alignment
                         for (int x = 0; x < 8; x++) {
                             for (int y = 0; y < 4; y++) {
-                                int lowerColour = noseTexture.getColor(x, y + 4);
-                                noseTexture.setColor(x, y + 4, noseTexture.getColor(x, y));
-                                noseTexture.setColor(x, y, lowerColour);
+                                int lowerColour = noseTexture.getPixelRGBA(x, y + 4);
+                                noseTexture.setPixelRGBA(x, y + 4, noseTexture.getPixelRGBA(x, y));
+                                noseTexture.setPixelRGBA(x, y, lowerColour);
                             }
                         }
 
-                        texturedNoseIdentifier = new Identifier(SKIN_NAMESPACE, id + "_nose.png");
+                        texturedNoseIdentifier = new ResourceLocation(SKIN_NAMESPACE, id + "_nose.png");
                         ETFUtils2.registerNativeImageToIdentifier(noseTexture, texturedNoseIdentifier);
                     }
                 }
@@ -819,7 +817,7 @@ public class ETFPlayerTexture {
                     coatStyle = controllerCoat;
                     int lengthOfCoat = choiceBoxChoices[2] - 1;
                     coatLength = lengthOfCoat + 1;
-                    coatIdentifier = new Identifier(SKIN_NAMESPACE, id + "_coat.png");
+                    coatIdentifier = new ResourceLocation(SKIN_NAMESPACE, id + "_coat.png");
                     coatSkin = getCoatTexture(originalSkin, lengthOfCoat, controllerCoat >= 5);
                     ETFUtils2.registerNativeImageToIdentifier(coatSkin, coatIdentifier);
                     //UUID_PLAYER_HAS_COAT.put(id, true);
@@ -853,8 +851,8 @@ public class ETFPlayerTexture {
                 //create and register blink textures this will allow the ETFTexture to build these automatically
                 NativeImage blinkSkinFile = null;
                 NativeImage blinkSkinFile2 = null;
-                Identifier blinkIdentifier = new Identifier(SKIN_NAMESPACE, id + "_blink.png");
-                Identifier blink2Identifier = new Identifier(SKIN_NAMESPACE, id + "_blink2.png");
+                ResourceLocation blinkIdentifier = new ResourceLocation(SKIN_NAMESPACE, id + "_blink.png");
+                ResourceLocation blink2Identifier = new ResourceLocation(SKIN_NAMESPACE, id + "_blink2.png");
 
                 int blinkChoice = choiceBoxChoices[0];
                 this.blinkType = blinkChoice;
@@ -967,18 +965,18 @@ public class ETFPlayerTexture {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //check for marker choices
                 //  1 = Emissives,  2 = Enchanted
-                List<Integer> markerChoices = List.of(getSkinPixelColourToNumber(originalSkin.getColor(1, 17)),
-                        getSkinPixelColourToNumber(originalSkin.getColor(1, 18)),
-                        getSkinPixelColourToNumber(originalSkin.getColor(2, 17)),
-                        getSkinPixelColourToNumber(originalSkin.getColor(2, 18)));
+                List<Integer> markerChoices = List.of(getSkinPixelColourToNumber(originalSkin.getPixelRGBA(1, 17)),
+                        getSkinPixelColourToNumber(originalSkin.getPixelRGBA(1, 18)),
+                        getSkinPixelColourToNumber(originalSkin.getPixelRGBA(2, 17)),
+                        getSkinPixelColourToNumber(originalSkin.getPixelRGBA(2, 18)));
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //emissives
                 NativeImage emissiveImage = null;
                 NativeImage emissiveBlinkImage = null;
                 NativeImage emissiveBlink2Image = null;
-                Identifier emissiveIdentifier = null;
-                Identifier blinkEmissiveIdentifier = null;//new Identifier( SKIN_NAMESPACE , id + "_blink_e.png");
-                Identifier blink2EmissiveIdentifier = null;//new Identifier( SKIN_NAMESPACE , id + "_blink2_e.png");
+                ResourceLocation emissiveIdentifier = null;
+                ResourceLocation blinkEmissiveIdentifier = null;//new Identifier( SKIN_NAMESPACE , id + "_blink_e.png");
+                ResourceLocation blink2EmissiveIdentifier = null;//new Identifier( SKIN_NAMESPACE , id + "_blink2_e.png");
 //                NativeImage emissiveCape = null;
                 hasEmissives = markerChoices.contains(1);
                 if (hasEmissives) {
@@ -987,12 +985,12 @@ public class ETFPlayerTexture {
                     emissiveImage = returnMatchPixels(modifiedSkin, boxChosenBounds);
 
                     if (emissiveImage != null) {
-                        emissiveIdentifier = new Identifier(SKIN_NAMESPACE, id + "_e.png");
+                        emissiveIdentifier = new ResourceLocation(SKIN_NAMESPACE, id + "_e.png");
                         ETFUtils2.registerNativeImageToIdentifier(emissiveImage, emissiveIdentifier);
                         if (blinkSkinFile != null) {
                             emissiveBlinkImage = returnMatchPixels(blinkSkinFile, boxChosenBounds);
                             if (emissiveBlinkImage != null) {
-                                blinkEmissiveIdentifier = new Identifier(SKIN_NAMESPACE, id + "_blink_e.png");
+                                blinkEmissiveIdentifier = new ResourceLocation(SKIN_NAMESPACE, id + "_blink_e.png");
                                 ETFUtils2.registerNativeImageToIdentifier(emissiveBlinkImage, blinkEmissiveIdentifier);
                             }
                             //registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkBlink, ETFUtils2::emptyNativeImage), SKIN_NAMESPACE + id + "_blink_e.png");
@@ -1000,7 +998,7 @@ public class ETFPlayerTexture {
                         if (blinkSkinFile2 != null) {
                             emissiveBlink2Image = returnMatchPixels(blinkSkinFile2, boxChosenBounds);
                             if (emissiveBlink2Image != null) {
-                                blink2EmissiveIdentifier = new Identifier(SKIN_NAMESPACE, id + "_blink2_e.png");
+                                blink2EmissiveIdentifier = new ResourceLocation(SKIN_NAMESPACE, id + "_blink2_e.png");
                                 ETFUtils2.registerNativeImageToIdentifier(emissiveBlink2Image, blink2EmissiveIdentifier);
                             }
                             //registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkBlink, ETFUtils2::emptyNativeImage), SKIN_NAMESPACE + id + "_blink2_e.png");
@@ -1010,7 +1008,7 @@ public class ETFPlayerTexture {
 
                             //UUID_PLAYER_HAS_EMISSIVE_COAT.put(id, checkCoat != null);
                             if (checkCoat != null) {
-                                coatEmissiveIdentifier = new Identifier(SKIN_NAMESPACE, id + "_coat_e.png");
+                                coatEmissiveIdentifier = new ResourceLocation(SKIN_NAMESPACE, id + "_coat_e.png");
                                 ETFUtils2.registerNativeImageToIdentifier(checkCoat, coatEmissiveIdentifier);
                             }
                         }
@@ -1027,7 +1025,7 @@ public class ETFPlayerTexture {
                             NativeImage checkNose = returnMatchPixels(modifiedSkin, boxChosenBounds, noseTexture);
                             //UUID_PLAYER_HAS_EMISSIVE_CAPE.put(id, checkCape != null);
                             if (checkNose != null) {
-                                texturedNoseIdentifierEmissive = new Identifier(SKIN_NAMESPACE, id + "_nose_e.png");
+                                texturedNoseIdentifierEmissive = new ResourceLocation(SKIN_NAMESPACE, id + "_nose_e.png");
                                 ETFUtils2.registerNativeImageToIdentifier(checkNose, texturedNoseIdentifierEmissive);
                             }
                         }
@@ -1046,12 +1044,12 @@ public class ETFPlayerTexture {
 //                    enchantCapeBounds = boxChosenBounds;
                     NativeImage check = returnMatchPixels(modifiedSkin, boxChosenBounds);
                     if (check != null) {
-                        baseEnchantIdentifier = new Identifier(SKIN_NAMESPACE, id + "_enchant.png");
+                        baseEnchantIdentifier = new ResourceLocation(SKIN_NAMESPACE, id + "_enchant.png");
                         ETFUtils2.registerNativeImageToIdentifier(check, baseEnchantIdentifier);
                         if (blinkSkinFile != null) {
                             NativeImage checkBlink = returnMatchPixels(blinkSkinFile, boxChosenBounds);
                             if (checkBlink != null) {
-                                baseEnchantBlinkIdentifier = new Identifier(SKIN_NAMESPACE, id + "_blink_enchant.png");
+                                baseEnchantBlinkIdentifier = new ResourceLocation(SKIN_NAMESPACE, id + "_blink_enchant.png");
                                 ETFUtils2.registerNativeImageToIdentifier(checkBlink, baseEnchantBlinkIdentifier);
                             }
                             //registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkBlink, ETFUtils2::emptyNativeImage), SKIN_NAMESPACE + id + "_blink_e.png");
@@ -1059,7 +1057,7 @@ public class ETFPlayerTexture {
                         if (blinkSkinFile2 != null) {
                             NativeImage checkBlink = returnMatchPixels(blinkSkinFile2, boxChosenBounds);
                             if (checkBlink != null) {
-                                baseEnchantBlink2Identifier = new Identifier(SKIN_NAMESPACE, id + "_blink2_enchant.png");
+                                baseEnchantBlink2Identifier = new ResourceLocation(SKIN_NAMESPACE, id + "_blink2_enchant.png");
                                 ETFUtils2.registerNativeImageToIdentifier(checkBlink, baseEnchantBlink2Identifier);
                             }
                             //registerNativeImageToIdentifier(Objects.requireNonNullElseGet(checkBlink, ETFUtils2::emptyNativeImage), SKIN_NAMESPACE + id + "_blink2_e.png");
@@ -1069,7 +1067,7 @@ public class ETFPlayerTexture {
 
                             //UUID_PLAYER_HAS_EMISSIVE_COAT.put(id, checkCoat != null);
                             if (checkCoat != null) {
-                                coatEnchantedIdentifier = new Identifier(SKIN_NAMESPACE, id + "_coat_enchant.png");
+                                coatEnchantedIdentifier = new ResourceLocation(SKIN_NAMESPACE, id + "_coat_enchant.png");
                                 ETFUtils2.registerNativeImageToIdentifier(checkCoat, coatEnchantedIdentifier);
                             }
                         }
@@ -1087,7 +1085,7 @@ public class ETFPlayerTexture {
                             NativeImage checkNose = returnMatchPixels(modifiedSkin, boxChosenBounds, noseTexture);
                             //UUID_PLAYER_HAS_EMISSIVE_CAPE.put(id, checkCape != null);
                             if (checkNose != null) {
-                                texturedNoseIdentifierEnchanted = new Identifier(SKIN_NAMESPACE, id + "_nose_enchant.png");
+                                texturedNoseIdentifierEnchanted = new ResourceLocation(SKIN_NAMESPACE, id + "_nose_enchant.png");
                                 ETFUtils2.registerNativeImageToIdentifier(checkNose, texturedNoseIdentifierEnchanted);
                             }
                         }
@@ -1099,24 +1097,24 @@ public class ETFPlayerTexture {
 //                parseSkinTransparency(modifiedSkin, wasForcedSolid);
 
 
-                Identifier modifiedSkinBlinkPatchedIdentifier = null;
-                Identifier modifiedSkinPatchedIdentifier = null;
-                Identifier modifiedSkinBlink2PatchedIdentifier = null;
+                ResourceLocation modifiedSkinBlinkPatchedIdentifier = null;
+                ResourceLocation modifiedSkinPatchedIdentifier = null;
+                ResourceLocation modifiedSkinBlink2PatchedIdentifier = null;
 
 //                Identifier modifiedCapePatchedIdentifier = etfCapeIdentifier;
                 if (hasEmissives) {
                     if (emissiveImage != null) {
-                        modifiedSkinPatchedIdentifier = new Identifier(SKIN_NAMESPACE, id + "_e_patched.png");
+                        modifiedSkinPatchedIdentifier = new ResourceLocation(SKIN_NAMESPACE, id + "_e_patched.png");
                         ETFTexture.patchTextureToRemoveZFightingWithOtherTexture(modifiedSkin, emissiveImage);
 
                         ETFUtils2.registerNativeImageToIdentifier(modifiedSkin, modifiedSkinPatchedIdentifier);
                         if (blinkSkinFile != null) {
-                            modifiedSkinBlinkPatchedIdentifier = new Identifier(SKIN_NAMESPACE, id + "_blink_e_patched.png");
+                            modifiedSkinBlinkPatchedIdentifier = new ResourceLocation(SKIN_NAMESPACE, id + "_blink_e_patched.png");
                             ETFTexture.patchTextureToRemoveZFightingWithOtherTexture(blinkSkinFile, emissiveBlinkImage);
                             ETFUtils2.registerNativeImageToIdentifier(blinkSkinFile, modifiedSkinBlinkPatchedIdentifier);
                         }
                         if (blinkSkinFile2 != null) {
-                            modifiedSkinBlink2PatchedIdentifier = new Identifier(SKIN_NAMESPACE, id + "_blink2_e_patched.png");
+                            modifiedSkinBlink2PatchedIdentifier = new ResourceLocation(SKIN_NAMESPACE, id + "_blink2_e_patched.png");
                             ETFTexture.patchTextureToRemoveZFightingWithOtherTexture(blinkSkinFile2, emissiveBlink2Image);
                             ETFUtils2.registerNativeImageToIdentifier(blinkSkinFile2, modifiedSkinBlink2PatchedIdentifier);
                         }
@@ -1129,7 +1127,7 @@ public class ETFPlayerTexture {
                 }
 
 
-                Identifier modifiedSkinIdentifier = new Identifier(SKIN_NAMESPACE, id + ".png");
+                ResourceLocation modifiedSkinIdentifier = new ResourceLocation(SKIN_NAMESPACE, id + ".png");
                 ETFUtils2.registerNativeImageToIdentifier(modifiedSkin, modifiedSkinIdentifier);
 
                 //create etf texture with player initiator
@@ -1231,7 +1229,7 @@ public class ETFPlayerTexture {
     private static void stripAlpha(NativeImage image, int x1, int y1, int x2, int y2) {
         for(int i = x1; i < x2; ++i) {
             for(int j = y1; j < y2; ++j) {
-                image.setColor(i, j, image.getColor(i, j) | -16777216);
+                image.setPixelRGBA(i, j, image.getPixelRGBA(i, j) | -16777216);
             }
         }
 

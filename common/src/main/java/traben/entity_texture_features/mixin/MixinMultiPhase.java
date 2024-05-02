@@ -1,7 +1,7 @@
 package traben.entity_texture_features.mixin;
 
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
@@ -12,16 +12,16 @@ import java.util.Optional;
 
 
 @Pseudo
-@Mixin(value = RenderLayer.MultiPhase.class)
+@Mixin(value = RenderType.CompositeRenderType.class)
 public abstract class MixinMultiPhase implements ETFRenderLayerWithTexture {
 
 
     @Shadow
     @Final
-    public RenderLayer.MultiPhaseParameters phases;
+    public RenderType.CompositeState state;
 
     @Override
-    public Optional<Identifier> etf$getId() {
-        return phases.texture.getId();
+    public Optional<ResourceLocation> etf$getId() {
+        return state.textureState.cutoutTexture();
     }
 }

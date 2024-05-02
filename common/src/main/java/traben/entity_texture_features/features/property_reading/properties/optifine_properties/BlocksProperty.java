@@ -1,12 +1,5 @@
 package traben.entity_texture_features.features.property_reading.properties.optifine_properties;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.registry.Registries;
-import net.minecraft.state.property.Property;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFApi;
@@ -17,6 +10,13 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.Property;
 
 
 public class BlocksProperty extends StringArrayOrRegexProperty {
@@ -34,7 +34,7 @@ public class BlocksProperty extends StringArrayOrRegexProperty {
 
         private <T extends Comparable<T>> String nameValue(Property<T> property, Comparable<?> value) {
             //noinspection unchecked
-            return property.name((T) value);
+            return property.getName((T) value);
         }
     };
     protected final Function<BlockState, Boolean> blockStateMatcher;
@@ -73,14 +73,14 @@ public class BlocksProperty extends StringArrayOrRegexProperty {
     }
 
     protected static String getFromStateBlockNameOnly(BlockState state) {
-        return Registries.BLOCK.getId(state.getBlock()).toString().replaceFirst("minecraft:", "");
+        return BuiltInRegistries.BLOCK.getKey(state.getBlock()).toString().replaceFirst("minecraft:", "");
     }
 
     private static String getFromStateBlockNameWithStateData(BlockState state) {
 
         String block = getFromStateBlockNameOnly(state);
-        if (!state.getEntries().isEmpty())
-            block = block + ':' + state.getEntries().entrySet().stream().map(PROPERTY_MAP_PRINTER).collect(Collectors.joining(":"));
+        if (!state.getValues().isEmpty())
+            block = block + ':' + state.getValues().entrySet().stream().map(PROPERTY_MAP_PRINTER).collect(Collectors.joining(":"));
 
         return block;
     }
@@ -124,18 +124,18 @@ public class BlocksProperty extends StringArrayOrRegexProperty {
         if (entity.etf$getUuid().getLeastSignificantBits() == ETFApi.ETF_SPAWNER_MARKER) {
             // entity is a mini mob spawner entity
             // return a blank mob spawner block state
-            entityBlocks = new BlockState[]{Blocks.SPAWNER.getDefaultState()};
+            entityBlocks = new BlockState[]{Blocks.SPAWNER.defaultBlockState()};
         } else if (entity instanceof BlockEntity blockEntity) {
-            if (blockEntity.getWorld() == null) {
-                entityBlocks = new BlockState[]{blockEntity.getCachedState()};
+            if (blockEntity.getLevel() == null) {
+                entityBlocks = new BlockState[]{blockEntity.getBlockState()};
             } else {
-                entityBlocks = new BlockState[]{blockEntity.getCachedState(), blockEntity.getWorld().getBlockState(blockEntity.getPos().down())};
+                entityBlocks = new BlockState[]{blockEntity.getBlockState(), blockEntity.getLevel().getBlockState(blockEntity.getBlockPos().below())};
             }
         } else {
             if (entity.etf$getWorld() == null || entity.etf$getBlockPos() == null) return false;
-            World world = entity.etf$getWorld();
+            Level world = entity.etf$getWorld();
             BlockPos pos = entity.etf$getBlockPos();
-            entityBlocks = new BlockState[]{world.getBlockState(pos), world.getBlockState(pos.down())};
+            entityBlocks = new BlockState[]{world.getBlockState(pos), world.getBlockState(pos.below())};
         }
         // if(entityBlocks.length == 0) return false;
 

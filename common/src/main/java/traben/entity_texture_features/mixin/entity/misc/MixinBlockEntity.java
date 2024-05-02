@@ -1,19 +1,19 @@
 package traben.entity_texture_features.mixin.entity.misc;
 
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityPose;
-import net.minecraft.entity.EntityType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.scoreboard.AbstractTeam;
-import net.minecraft.text.Text;
-import net.minecraft.util.Nameable;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
+import net.minecraft.world.Nameable;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.scores.Team;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -31,19 +31,19 @@ public abstract class MixinBlockEntity implements ETFEntity {
     @Unique
     private UUID etf$id = null;
 
-    @Shadow
-    public abstract BlockPos getPos();
 
-    @Shadow
-    @Nullable
-    public abstract World getWorld();
 
 
 
     @Shadow
     public abstract BlockEntityType<?> getType();
 
-    @Shadow protected abstract void writeIdentifyingData(final NbtCompound nbt);
+
+    @Shadow public abstract BlockPos getBlockPos();
+
+    @Shadow @Nullable public abstract Level getLevel();
+
+    @Shadow protected abstract void saveMetadata(final CompoundTag compoundTag);
 
     @Override
     public EntityType<?> etf$getType() {
@@ -57,23 +57,23 @@ public abstract class MixinBlockEntity implements ETFEntity {
     }
 
     @Override
-    public World etf$getWorld() {
-        return getWorld();
+    public Level etf$getWorld() {
+        return getLevel();
     }
 
     @Override
     public BlockPos etf$getBlockPos() {
-        return getPos();
+        return getBlockPos();
     }
 
     @Override
     public int etf$getBlockY() {
-        return getPos().getY();
+        return getBlockPos().getY();
     }
 
     @Override
-    public NbtCompound etf$writeNbt(NbtCompound compound) {
-        writeIdentifyingData(compound);
+    public CompoundTag etf$writeNbt(CompoundTag compound) {
+        saveMetadata(compound);
         return compound;
     }
 
@@ -83,12 +83,12 @@ public abstract class MixinBlockEntity implements ETFEntity {
     }
 
     @Override
-    public Text etf$getCustomName() {
-        return this instanceof Nameable name && name.hasCustomName() ? name.getCustomName() : Text.of("null");
+    public Component etf$getCustomName() {
+        return this instanceof Nameable name && name.hasCustomName() ? name.getCustomName() : Component.nullToEmpty("null");
     }
 
     @Override
-    public AbstractTeam etf$getScoreboardTeam() {
+    public Team etf$getScoreboardTeam() {
         return null;
     }
 
@@ -109,21 +109,21 @@ public abstract class MixinBlockEntity implements ETFEntity {
 
     @Override
     public float etf$distanceTo(Entity entity) {
-        BlockPos pos = getPos();
+        BlockPos pos = getBlockPos();
         float f = (float) (pos.getX() - entity.getX());
         float g = (float) (pos.getY() - entity.getY());
         float h = (float) (pos.getZ() - entity.getZ());
-        return MathHelper.sqrt(f * f + g * g + h * h);
+        return Mth.sqrt(f * f + g * g + h * h);
     }
 
     @Override
-    public Vec3d etf$getVelocity() {
-        return Vec3d.ZERO;
+    public Vec3 etf$getVelocity() {
+        return Vec3.ZERO;
     }
 
     @Override
-    public EntityPose etf$getPose() {
-        return EntityPose.STANDING;
+    public Pose etf$getPose() {
+        return Pose.STANDING;
     }
 
     @Override

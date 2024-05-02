@@ -1,7 +1,7 @@
 package traben.entity_texture_features.mixin;
 
-import net.minecraft.client.texture.NativeImage;
-import net.minecraft.client.texture.PlayerSkinTexture;
+import com.mojang.blaze3d.platform.NativeImage;
+import net.minecraft.client.renderer.texture.HttpTexture;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -11,11 +11,11 @@ import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.features.player.ETFPlayerTexture;
 
 
-@Mixin(PlayerSkinTexture.class)
+@Mixin(HttpTexture.class)
 public abstract class MixinPlayerSkinTexture {
 
 
-    @Inject(method = "stripAlpha", cancellable = true, at = @At("HEAD"))
+    @Inject(method = "setNoAlpha", cancellable = true, at = @At("HEAD"))
     private static void etf$cancelling(final NativeImage image, final int x1, final int y1, final int x2, final int y2, final CallbackInfo ci) {
         if (ETF.config().getConfig() != null) {
             var mode = ETF.config().getConfig().skinTransparencyMode;

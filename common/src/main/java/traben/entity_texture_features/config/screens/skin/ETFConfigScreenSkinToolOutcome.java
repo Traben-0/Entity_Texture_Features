@@ -1,15 +1,15 @@
 package traben.entity_texture_features.config.screens.skin;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.network.PlayerListEntry;
-import net.minecraft.client.texture.NativeImage;
-import net.minecraft.client.texture.PlayerSkinTexture;
-import net.minecraft.client.util.SkinTextures;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.text.Text;
-import net.minecraft.util.Util;
+import com.mojang.blaze3d.platform.NativeImage;
+import net.minecraft.Util;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.multiplayer.PlayerInfo;
+import net.minecraft.client.renderer.texture.HttpTexture;
+import net.minecraft.client.resources.PlayerSkin;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
@@ -19,9 +19,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.features.ETFManager;
-import traben.entity_texture_features.mixin.accessor.FileCacheAccessor;
-import traben.entity_texture_features.mixin.accessor.PlayerSkinProviderAccessor;
-import traben.entity_texture_features.mixin.accessor.PlayerSkinTextureAccessor;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.io.FileInputStream;
@@ -54,7 +51,7 @@ public class ETFConfigScreenSkinToolOutcome extends ETFScreenOldCompat {
                 return false;
             }
 
-            String auth = MinecraftClient.getInstance().getSession().getAccessToken();
+            String auth = Minecraft.getInstance().getUser().getAccessToken();
 
             //uploads skin
             HttpPost http = new HttpPost("https://api.minecraftservices.com/minecraft/profile/skins");
@@ -86,28 +83,28 @@ public class ETFConfigScreenSkinToolOutcome extends ETFScreenOldCompat {
         super.init();
 
 
-        this.addDrawableChild(getETFButton((int) (this.width * 0.55), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,
-                ScreenTexts.DONE,
-                (button) -> Objects.requireNonNull(client).setScreen(parent)));
+        this.addRenderableWidget(getETFButton((int) (this.width * 0.55), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,
+                CommonComponents.GUI_DONE,
+                (button) -> Objects.requireNonNull(minecraft).setScreen(parent)));
         if (didSucceed) {
-            this.addDrawableChild(getETFButton((int) (this.width * 0.15), (int) (this.height * 0.6), (int) (this.width * 0.7), 20,
+            this.addRenderableWidget(getETFButton((int) (this.width * 0.15), (int) (this.height * 0.6), (int) (this.width * 0.7), 20,
                     ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETF.MOD_ID + ".player_skin_editor.print_skin.open"),
                     (button) -> {
                         try {
                             assert CONFIG_DIR != null;
                             Path outputDirectory = Path.of(CONFIG_DIR.getParent());
-                            Util.getOperatingSystem().open(outputDirectory.toFile());
+                            Util.getPlatform().openFile(outputDirectory.toFile());
                         } catch (Exception ignored) {
                         }
                     }));
-            this.addDrawableChild(getETFButton((int) (this.width * 0.15), (int) (this.height * 0.4), (int) (this.width * 0.7), 20,
+            this.addRenderableWidget(getETFButton((int) (this.width * 0.15), (int) (this.height * 0.4), (int) (this.width * 0.7), 20,
                     ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETF.MOD_ID + ".player_skin_editor.upload_skin"),
                     (button) -> {
                         boolean skinType = true;//true for steve false for alex
-                        if (MinecraftClient.getInstance().player != null && MinecraftClient.getInstance().getNetworkHandler() != null) {
-                            PlayerListEntry playerListEntry = MinecraftClient.getInstance().getNetworkHandler().getPlayerListEntry(MinecraftClient.getInstance().player.getUuid());
+                        if (Minecraft.getInstance().player != null && Minecraft.getInstance().getConnection() != null) {
+                            PlayerInfo playerListEntry = Minecraft.getInstance().getConnection().getPlayerInfo(Minecraft.getInstance().player.getUUID());
                             if (playerListEntry != null) {
-                                skinType = MinecraftClient.getInstance().getSkinProvider().getSkinTextures(playerListEntry.getProfile()).model() == SkinTextures.Model.WIDE;
+                                skinType = Minecraft.getInstance().getSkinManager().getInsecureSkin(playerListEntry.getProfile()).model() == PlayerSkin.Model.WIDE;
                             }
                         }
                         boolean changeSuccess = uploadSkin(skinType);
@@ -116,17 +113,18 @@ public class ETFConfigScreenSkinToolOutcome extends ETFScreenOldCompat {
                         if (changeSuccess) {
                             //ETFUtils2.logMessage(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.upload_skin.success" ).getString(),true);
                             //change internally cached skin
-                            PlayerSkinTexture skinfile = (PlayerSkinTexture) ((FileCacheAccessor) ((PlayerSkinProviderAccessor) MinecraftClient.getInstance().getSkinProvider()).getSkinCache()).getTextureManager().getOrDefault((MinecraftClient.getInstance().player).getSkinTextures().texture(), null);
+                            HttpTexture skinfile = (HttpTexture)  Minecraft.getInstance().getSkinManager().skinTextures.textureManager.getTexture((Minecraft.getInstance().player).getSkin().texture(), null);
                             try {
                                 //System.out.println("file was ="+((PlayerSkinTextureAccessor)skinfile).getCacheFile().toString());
-                                skin.writeTo(((PlayerSkinTextureAccessor) skinfile).getCacheFile());
+                                assert skinfile.file != null;
+                                skin.writeToFile(skinfile.file);
                             } catch (IOException e) {
                                 ETFUtils2.logError(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETF.MOD_ID + ".player_skin_editor.upload_skin.success_local_fail").getString(), true);
                                 //System.out.println("failed to change internal skin");
                             }
                             //clear etf data of skin
-                            if (MinecraftClient.getInstance().player != null) {
-                                ETFManager.getInstance().PLAYER_TEXTURE_MAP.removeEntryOnly(MinecraftClient.getInstance().player.getUuid());
+                            if (Minecraft.getInstance().player != null) {
+                                ETFManager.getInstance().PLAYER_TEXTURE_MAP.removeEntryOnly(Minecraft.getInstance().player.getUUID());
                             }
                         }
                         button.active = false;
@@ -135,23 +133,23 @@ public class ETFConfigScreenSkinToolOutcome extends ETFScreenOldCompat {
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
 
         String[] strings =
                 ETFVersionDifferenceHandler.getTextFromTranslation(
                         "config." + ETF.MOD_ID + ".player_skin_editor.print_skin.result." + (didSucceed ? "success" : "fail")
                 ).getString().split("\n");
-        List<Text> lines = new ArrayList<>();
+        List<Component> lines = new ArrayList<>();
 
         for (String str :
                 strings) {
-            lines.add(Text.of(str.strip()));
+            lines.add(Component.nullToEmpty(str.strip()));
         }
         int i = 0;
-        for (Text txt :
+        for (Component txt :
                 lines) {
-            context.drawCenteredTextWithShadow(textRenderer, txt.asOrderedText(), (int) (width * 0.5), (int) (height * 0.3) + i, 0xFFFFFF);
+            context.drawCenteredString(font, txt.getVisualOrderText(), (int) (width * 0.5), (int) (height * 0.3) + i, 0xFFFFFF);
             i += txt.getString().isBlank() ? 5 : 10;
         }
 

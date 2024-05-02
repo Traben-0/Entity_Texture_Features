@@ -1,25 +1,24 @@
 package traben.entity_texture_features.mixin;
 
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
 import traben.entity_texture_features.utils.ETFRenderLayerWithTexture;
 import traben.entity_texture_features.utils.ETFVertexConsumer;
-
+import com.mojang.blaze3d.vertex.BufferBuilder;
 import java.util.Optional;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 
 @Mixin(BufferBuilder.class)
 public class MixinBufferBuilder implements ETFVertexConsumer {
 
     @Unique
-    VertexConsumerProvider etf$provider = null;
+    MultiBufferSource etf$provider = null;
     @Unique
-    RenderLayer etf$renderLayer = null;
+    RenderType etf$renderLayer = null;
     @Unique
     ETFTexture etf$ETFTexture = null;
 
@@ -29,24 +28,24 @@ public class MixinBufferBuilder implements ETFVertexConsumer {
     }
 
     @Override
-    public VertexConsumerProvider etf$getProvider() {
+    public MultiBufferSource etf$getProvider() {
         return etf$provider;
     }
 
     @Override
-    public RenderLayer etf$getRenderLayer() {
+    public RenderType etf$getRenderLayer() {
         return etf$renderLayer;
     }
 
     @Override
-    public void etf$initETFVertexConsumer(VertexConsumerProvider provider, RenderLayer renderLayer) {
+    public void etf$initETFVertexConsumer(MultiBufferSource provider, RenderType renderLayer) {
         etf$provider = provider;
 
         etf$renderLayer = renderLayer;
 
         //todo sprites give atlas texture here
         if (renderLayer instanceof ETFRenderLayerWithTexture etfRenderLayerWithTexture) {
-            Optional<Identifier> possibleId = etfRenderLayerWithTexture.etf$getId();
+            Optional<ResourceLocation> possibleId = etfRenderLayerWithTexture.etf$getId();
             possibleId.ifPresent(identifier -> etf$ETFTexture = ETFManager.getInstance().getETFTextureNoVariation(identifier));
         }
 //        else {

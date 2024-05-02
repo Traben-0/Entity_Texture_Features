@@ -1,10 +1,9 @@
 package traben.entity_texture_features.utils;
 
-import net.minecraft.util.Identifier;
-
 import java.util.Optional;
+import net.minecraft.resources.ResourceLocation;
 
 public interface ETFRenderLayerWithTexture {
 
-    Optional<Identifier> etf$getId();
+    Optional<ResourceLocation> etf$getId();
 }

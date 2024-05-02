@@ -1,25 +1,26 @@
 package traben.tconfig.gui.entries;
 
 import com.demonwav.mcdev.annotations.Translatable;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.TextWidget;
-import net.minecraft.text.StringVisitable;
-import net.minecraft.text.Style;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.Style;
 
 public class TConfigEntryText extends TConfigEntry {
 
-    protected final TextWidget widget;
+    protected final StringWidget widget;
 
     public TConfigEntryText(@Translatable final String text, TextAlignment alignment) {
         super(text, null);
-        widget = new TextWidget(getText(), MinecraftClient.getInstance().textRenderer);
+        widget = new StringWidget(getText(), Minecraft.getInstance().font);
         alignment.align(widget);
     }
 
@@ -35,10 +36,10 @@ public class TConfigEntryText extends TConfigEntry {
     public static List<TConfigEntry> fromLongOrMultilineTranslation(@Translatable String translationKey, int width, TextAlignment alignment) {
 
         var translated = ETFVersionDifferenceHandler.getTextFromTranslation(translationKey);
-        var lines = MinecraftClient.getInstance().textRenderer.getTextHandler().wrapLines(translated, width, Style.EMPTY);
+        var lines = Minecraft.getInstance().font.getSplitter().splitLines(translated, width, Style.EMPTY);
         List<TConfigEntry> list = new ArrayList<>();
         String lastLine = null;
-        for (StringVisitable line : lines) {
+        for (FormattedText line : lines) {
             if (lastLine != null) {
                 list.add(new TwoLines(lastLine, line.getString(), alignment));
                 lastLine = null;
@@ -55,8 +56,8 @@ public class TConfigEntryText extends TConfigEntry {
     }
 
     @Override
-    public ClickableWidget getWidget(final int x, final int y, final int width, final int height) {
-        widget.setDimensionsAndPosition(width, height, x, y);
+    public AbstractWidget getWidget(final int x, final int y, final int width, final int height) {
+        widget.setRectangle(width, height, x, y);
         return widget;
     }
 
@@ -83,7 +84,7 @@ public class TConfigEntryText extends TConfigEntry {
     public enum TextAlignment {
         LEFT, CENTER, RIGHT;
 
-        private void align(TextWidget widget) {
+        private void align(StringWidget widget) {
             switch (this) {
                 case LEFT:
                     widget.alignLeft();
@@ -100,7 +101,7 @@ public class TConfigEntryText extends TConfigEntry {
 
     public static class TwoLines extends TConfigEntryText {
 
-        protected final TextWidget widget2;
+        protected final StringWidget widget2;
 
         @SuppressWarnings("unused")
         public TwoLines(@Translatable final String text1, @Translatable final String text2) {
@@ -109,21 +110,21 @@ public class TConfigEntryText extends TConfigEntry {
 
         public TwoLines(@Translatable final String text1, @Translatable final String text2, TextAlignment alignment) {
             super(text1, alignment);
-            widget2 = new TextWidget(ETFVersionDifferenceHandler.getTextFromTranslation(text2), MinecraftClient.getInstance().textRenderer);
+            widget2 = new StringWidget(ETFVersionDifferenceHandler.getTextFromTranslation(text2), Minecraft.getInstance().font);
             alignment.align(widget2);
             if (!widget2.getMessage().getString().contains("§"))
-                widget2.setTextColor(0xCCCCCC);//off-white for better visual separation
+                widget2.setColor(0xCCCCCC);//off-white for better visual separation
         }
 
         @Override
-        public ClickableWidget getWidget(final int x, final int y, final int width, final int height) {
-            widget.setDimensionsAndPosition(width, height / 2, x, y);
-            widget2.setDimensionsAndPosition(width, height / 2, x, y + height / 2 + 2);
+        public AbstractWidget getWidget(final int x, final int y, final int width, final int height) {
+            widget.setRectangle(width, height / 2, x, y);
+            widget2.setRectangle(width, height / 2, x, y + height / 2 + 2);
             return widget;
         }
 
         @Override
-        public void render(final DrawContext context, final int index, final int y, final int x, final int entryWidth, final int entryHeight, final int mouseX, final int mouseY, final boolean hovered, final float tickDelta) {
+        public void render(final GuiGraphics context, final int index, final int y, final int x, final int entryWidth, final int entryHeight, final int mouseX, final int mouseY, final boolean hovered, final float tickDelta) {
             lastWidgetRendered = getWidget(x, y, entryWidth, entryHeight);
             widget.render(context, mouseX, mouseY, tickDelta);
             widget2.render(context, mouseX, mouseY, tickDelta);

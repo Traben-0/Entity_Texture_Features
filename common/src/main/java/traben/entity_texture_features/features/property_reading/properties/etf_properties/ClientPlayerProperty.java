@@ -1,13 +1,13 @@
 package traben.entity_texture_features.features.property_reading.properties.etf_properties;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.player.PlayerEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.features.property_reading.properties.generic_properties.BooleanProperty;
 import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.Properties;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.player.Player;
 
 public class ClientPlayerProperty extends BooleanProperty {
 
@@ -27,9 +27,9 @@ public class ClientPlayerProperty extends BooleanProperty {
     @Override
     @Nullable
     protected Boolean getValueFromEntity(ETFEntity etfEntity) {
-        return etfEntity instanceof PlayerEntity entity
-                && MinecraftClient.getInstance().player != null
-                && entity.getUuid().equals(MinecraftClient.getInstance().player.getUuid());
+        return etfEntity instanceof Player entity
+                && Minecraft.getInstance().player != null
+                && entity.getUUID().equals(Minecraft.getInstance().player.getUUID());
     }
 
 

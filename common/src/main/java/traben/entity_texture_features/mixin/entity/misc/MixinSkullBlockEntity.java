@@ -1,15 +1,15 @@
 package traben.entity_texture_features.mixin.entity.misc;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.block.entity.SkullBlockEntity;
-import net.minecraft.client.render.entity.PlayerModelPart;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.PlayerModelPart;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.SkullBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import traben.entity_texture_features.features.player.ETFPlayerEntity;
 
@@ -27,12 +27,12 @@ public abstract class MixinSkullBlockEntity extends BlockEntity implements ETFPl
     }
 
     @Override
-    public boolean etf$isTeammate(PlayerEntity player) {
+    public boolean etf$isTeammate(Player player) {
         return false;
     }
 
     @Override
-    public PlayerInventory etf$getInventory() {
+    public Inventory etf$getInventory() {
         return null;
     }
 
@@ -42,8 +42,8 @@ public abstract class MixinSkullBlockEntity extends BlockEntity implements ETFPl
     }
 
     @Override
-    public Text etf$getName() {
-        return Text.of("player_skull # " + etf$getUuidAsString());
+    public Component etf$getName() {
+        return Component.nullToEmpty("player_skull # " + etf$getUuidAsString());
     }
 
     @Override

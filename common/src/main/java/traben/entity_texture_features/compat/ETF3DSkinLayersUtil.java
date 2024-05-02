@@ -1,17 +1,17 @@
 package traben.entity_texture_features.compat;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.tr7zw.skinlayers.SkinLayersModBase;
 import dev.tr7zw.skinlayers.SkinUtil;
 import dev.tr7zw.skinlayers.accessor.PlayerEntityModelAccessor;
 import dev.tr7zw.skinlayers.accessor.PlayerSettings;
 import dev.tr7zw.skinlayers.api.Mesh;
-import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.entity.PlayerEntityRenderer;
-import net.minecraft.client.render.entity.PlayerModelPart;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.entity.player.PlayerRenderer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.world.entity.player.PlayerModelPart;
 
 // compatibility class for the wonderful 3D skin layers mod by @tr9zw to utilise ETF skin features
 public abstract class ETF3DSkinLayersUtil {
@@ -19,7 +19,7 @@ public abstract class ETF3DSkinLayersUtil {
 
     // todo ensure rendering method is kept up to date with how 3D skin layers mod does it
     // copy of 3D skin layers hand rendering code as ETF needs to be able to render it at will with a custom VertexConsumer
-    public static void renderHand(PlayerEntityRenderer instance, MatrixStack poseStack, VertexConsumer vertexConsumer, int i, AbstractClientPlayerEntity abstractClientPlayer, ModelPart arm, ModelPart sleeve)
+    public static void renderHand(PlayerRenderer instance, PoseStack poseStack, VertexConsumer vertexConsumer, int i, AbstractClientPlayer abstractClientPlayer, ModelPart arm, ModelPart sleeve)
             throws NoClassDefFoundError {
         boolean rightSleeve;
         label59:
@@ -37,14 +37,14 @@ public abstract class ETF3DSkinLayersUtil {
         }
 
         sleeve.visible = false;
-        if (abstractClientPlayer.isPartVisible(rightSleeve ? PlayerModelPart.RIGHT_SLEEVE : PlayerModelPart.LEFT_SLEEVE)) {
+        if (abstractClientPlayer.isModelPartShown(rightSleeve ? PlayerModelPart.RIGHT_SLEEVE : PlayerModelPart.LEFT_SLEEVE)) {
             PlayerSettings settings = (PlayerSettings) abstractClientPlayer;
             float armHeightScaling = 1.1F;
             boolean thinArms = ((PlayerEntityModelAccessor) instance.getModel()).hasThinArms();
             if (SkinUtil.setup3dLayers(abstractClientPlayer, settings, thinArms, instance.getModel())) {
                 Mesh part = sleeve == (instance.getModel()).leftSleeve ? settings.getLeftArmMesh() : settings.getRightArmMesh();
                 part.copyFrom(arm);
-                poseStack.push();
+                poseStack.pushPose();
                 poseStack.scale(SkinLayersModBase.config.firstPersonPixelScaling, armHeightScaling, SkinLayersModBase.config.firstPersonPixelScaling);
                 boolean left = sleeve == (instance.getModel()).leftSleeve;
                 float x = left ? 5.0F : -5.0F;
@@ -65,10 +65,10 @@ public abstract class ETF3DSkinLayersUtil {
                 }
 
                 part.setPosition(x, y, 0.0F);
-                part.render(poseStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV);
+                part.render(poseStack, vertexConsumer, i, OverlayTexture.NO_OVERLAY);
                 part.setPosition(0.0F, 0.0F, 0.0F);
                 part.setRotation(0.0F, 0.0F, 0.0F);
-                poseStack.pop();
+                poseStack.popPose();
             }
         }
     }

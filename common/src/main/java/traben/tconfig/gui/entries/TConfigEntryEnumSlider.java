@@ -1,15 +1,15 @@
 package traben.tconfig.gui.entries;
 
 import com.demonwav.mcdev.annotations.Translatable;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.SliderWidget;
-import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import net.minecraft.client.gui.components.AbstractSliderButton;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.network.chat.Component;
 
 public class TConfigEntryEnumSlider<E extends Enum<E>> extends TConfigEntryNullSafe<E> {
 
@@ -50,8 +50,8 @@ public class TConfigEntryEnumSlider<E extends Enum<E>> extends TConfigEntryNullS
     }
 
     @Override
-    public ClickableWidget getWidget(final int x, final int y, final int width, final int height) {
-        widget.setDimensionsAndPosition(width, height, x, y);
+    public AbstractWidget getWidget(final int x, final int y, final int width, final int height) {
+        widget.setRectangle(width, height, x, y);
         return widget;
     }
 
@@ -66,11 +66,11 @@ public class TConfigEntryEnumSlider<E extends Enum<E>> extends TConfigEntryNullS
     }
 
 
-    public class EnumSliderWidget<T extends Enum<?>> extends SliderWidget {
+    public class EnumSliderWidget<T extends Enum<?>> extends AbstractSliderButton {
         private final T[] enumValues;
         private final String title;
 
-        public EnumSliderWidget(final Text text, final T initialValue, final Tooltip tooltip, Class<T> enumClass) {
+        public EnumSliderWidget(final Component text, final T initialValue, final Tooltip tooltip, Class<T> enumClass) {
             super(0, 0, 20, 20, text,
                     1);
 
@@ -96,7 +96,7 @@ public class TConfigEntryEnumSlider<E extends Enum<E>> extends TConfigEntryNullS
             value = getIndex() / (double) getChoiceCount();
 
             T value2 = getValue();
-            setMessage(Text.of(title + (value2 != getter.get() ? TConfigEntry.CHANGED_COLOR : "") + (value2 == null ? "---" : value2)));
+            setMessage(Component.nullToEmpty(title + (value2 != getter.get() ? TConfigEntry.CHANGED_COLOR : "") + (value2 == null ? "---" : value2)));
         }
 
         @Override

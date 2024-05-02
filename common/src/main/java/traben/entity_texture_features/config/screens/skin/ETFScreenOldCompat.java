@@ -1,14 +1,18 @@
 package traben.entity_texture_features.config.screens.skin;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.render.*;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.text.OrderedText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
 import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.mixin.accessor.TooltipAccessor;
 import traben.tconfig.gui.TConfigScreen;
@@ -23,31 +27,31 @@ public abstract class ETFScreenOldCompat extends TConfigScreen {
         super(title, parent, showBackButton);
     }
 
-    public static void renderGUITexture(Identifier texture, double x1, double y1, double x2, double y2) {
+    public static void renderGUITexture(ResourceLocation texture, double x1, double y1, double x2, double y2) {
 
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder bufferBuilder = tessellator.getBuffer();
-        RenderSystem.setShader(GameRenderer::getPositionTexColorProgram);
+        Tesselator tessellator = Tesselator.getInstance();
+        BufferBuilder bufferBuilder = tessellator.getBuilder();
+        RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
         RenderSystem.setShaderTexture(0, texture);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
-        bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
-        bufferBuilder.vertex(x1, y2, 0.0).texture(0, 1/*(float)x1, (float)y2*heightYValue*/).color(255, 255, 255, 255).next();
-        bufferBuilder.vertex(x2, y2, 0.0).texture(1, 1/*(float)x2*widthXValue, (float)y2*heightYValue*/).color(255, 255, 255, 255).next();
-        bufferBuilder.vertex(x2, y1, 0.0).texture(1, 0/*(float)x2*widthXValue, (float)y1*/).color(255, 255, 255, 255).next();
-        bufferBuilder.vertex(x1, y1, 0.0).texture(0, 0/*(float)x1, (float)y1*/).color(255, 255, 255, 255).next();
-        tessellator.draw();
+        bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+        bufferBuilder.vertex(x1, y2, 0.0).uv(0, 1/*(float)x1, (float)y2*heightYValue*/).color(255, 255, 255, 255).endVertex();
+        bufferBuilder.vertex(x2, y2, 0.0).uv(1, 1/*(float)x2*widthXValue, (float)y2*heightYValue*/).color(255, 255, 255, 255).endVertex();
+        bufferBuilder.vertex(x2, y1, 0.0).uv(1, 0/*(float)x2*widthXValue, (float)y1*/).color(255, 255, 255, 255).endVertex();
+        bufferBuilder.vertex(x1, y1, 0.0).uv(0, 0/*(float)x1, (float)y1*/).color(255, 255, 255, 255).endVertex();
+        tessellator.end();
     }
 
     public static String booleanAsOnOff(boolean bool) {
-        return ScreenTexts.onOrOff(bool).getString();
+        return CommonComponents.optionStatus(bool).getString();
     }
 
-    public ButtonWidget getETFButton(int x, int y, int width, @SuppressWarnings("SameParameterValue") int height, Text buttonText, ButtonWidget.PressAction onPress) {
-        return getETFButton(x, y, width, height, buttonText, onPress, Text.of(""));
+    public Button getETFButton(int x, int y, int width, @SuppressWarnings("SameParameterValue") int height, Component buttonText, Button.OnPress onPress) {
+        return getETFButton(x, y, width, height, buttonText, onPress, Component.nullToEmpty(""));
     }
 
-    public ButtonWidget getETFButton(int x, int y, int width, int height, Text buttonText, ButtonWidget.PressAction onPress, Text toolTipText) {
+    public Button getETFButton(int x, int y, int width, int height, Component buttonText, Button.OnPress onPress, Component toolTipText) {
         int nudgeLeftEdge;
         if (width > 384) {
             nudgeLeftEdge = (width - 384) / 2;
@@ -69,29 +73,29 @@ public abstract class ETFScreenOldCompat extends TConfigScreen {
 
         if (tooltipIsEmpty) {
             //button with no tooltip
-            return ButtonWidget.builder(buttonText, onPress).dimensions(x + nudgeLeftEdge, y, width, height).build();
+            return Button.builder(buttonText, onPress).bounds(x + nudgeLeftEdge, y, width, height).build();
         } else {
             //return ButtonWidget.builder(buttonText,onPress).dimensions(x+nudgeLeftEdge, y, width, height).tooltip(Tooltip.of(toolTipText)).build();
             //1.19.3 required only
             ///////////////////////////////////////
 
-            Tooltip bob = Tooltip.of(toolTipText);
+            Tooltip bob = Tooltip.create(toolTipText);
             if (!ETFVersionDifferenceHandler.isThisModLoaded("adaptive-tooltips")) {
                 //split tooltip by our rules
                 String[] strings = toolTipText.getString().split("\n");
-                List<OrderedText> texts = new ArrayList<>();
+                List<FormattedCharSequence> texts = new ArrayList<>();
                 for (String str :
                         strings) {
-                    texts.add(Text.of(str).asOrderedText());
+                    texts.add(Component.nullToEmpty(str).getVisualOrderText());
                 }
 
                 //apply to tooltip object
 
-                ((TooltipAccessor) bob).setLines(texts);
+                ((TooltipAccessor) bob).setCachedTooltip(texts);
             }
             ////////////////////////////////////////
             //create button
-            return ButtonWidget.builder(buttonText, onPress).dimensions(x + nudgeLeftEdge, y, width, height).tooltip(bob).build();
+            return Button.builder(buttonText, onPress).bounds(x + nudgeLeftEdge, y, width, height).tooltip(bob).build();
 
 
         }

@@ -1,17 +1,17 @@
 package traben.tconfig.gui;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.EntryListWidget;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractSelectionList;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import org.jetbrains.annotations.Nullable;
 import traben.tconfig.gui.entries.TConfigEntry;
 
-public class TConfigEntryListWidget extends EntryListWidget<TConfigEntryListWidget.TConfigEntryForList> {
+public class TConfigEntryListWidget extends AbstractSelectionList<TConfigEntryListWidget.TConfigEntryForList> {
     public TConfigEntryListWidget(final int width, final int height, final int y, final int x, final int itemHeight,
                                   TConfigEntry... entries) {
-        super(MinecraftClient.getInstance(), width, height, y, itemHeight);
+        super(Minecraft.getInstance(), width, height, y, itemHeight);
         for (TConfigEntry option : entries) {
             if (option == null || option.getWidget(0, 0, 0, 0) == null) continue;
             addEntry(option);
@@ -28,18 +28,18 @@ public class TConfigEntryListWidget extends EntryListWidget<TConfigEntryListWidg
     }
 
     @Override
-    protected int getScrollbarX() {
-        return getX() == 0 ? super.getScrollbarX() : getX() + getRowWidth() + 4;
+    protected int getScrollbarPosition() {
+        return getX() == 0 ? super.getScrollbarPosition() : getX() + getRowWidth() + 4;
     }
 
 
 
     @Override
-    protected void appendClickableNarrations(final NarrationMessageBuilder builder) {
+    protected void updateWidgetNarration(final NarrationElementOutput builder) {
     }
 
     @Override
-    protected boolean isSelectButton(final int button) {
+    protected boolean isValidMouseClick(final int button) {
         return true;
     }
 
@@ -56,50 +56,50 @@ public class TConfigEntryListWidget extends EntryListWidget<TConfigEntryListWidg
     }
 
     @Override
-    protected void drawMenuListBackground(final DrawContext context) {
+    protected void renderListBackground(final GuiGraphics context) {
         if(fullWidthBackgroundEvenIfSmaller){
             int x = getX();
             int width = getWidth();
             setX(0);
-            assert MinecraftClient.getInstance().currentScreen != null;
-            setWidth(MinecraftClient.getInstance().currentScreen.width);
-            super.drawMenuListBackground(context);
+            assert Minecraft.getInstance().screen != null;
+            setWidth(Minecraft.getInstance().screen.width);
+            super.renderListBackground(context);
             setX(x);
             setWidth(width);
         } else {
-            super.drawMenuListBackground(context);
+            super.renderListBackground(context);
         }
     }
 
     @Override
-    protected void drawHeaderAndFooterSeparators(final DrawContext context) {
+    protected void renderListSeparators(final GuiGraphics context) {
         if (fullWidthBackgroundEvenIfSmaller) {
             int x = getX();
             int width = getWidth();
             setX(0);
-            assert MinecraftClient.getInstance().currentScreen != null;
-            setWidth(MinecraftClient.getInstance().currentScreen.width);
-            super.drawHeaderAndFooterSeparators(context);
+            assert Minecraft.getInstance().screen != null;
+            setWidth(Minecraft.getInstance().screen.width);
+            super.renderListSeparators(context);
             setX(x);
             setWidth(width);
         } else {
-            super.drawHeaderAndFooterSeparators(context);
+            super.renderListSeparators(context);
         }
     }
 
     public abstract static class TConfigEntryForList extends Entry<TConfigEntryForList> {
 
 
-        protected @Nullable ClickableWidget lastWidgetRendered = null;
+        protected @Nullable AbstractWidget lastWidgetRendered = null;
 
         @Override
-        public void render(final DrawContext context, final int index, final int y, final int x, final int entryWidth, final int entryHeight, final int mouseX, final int mouseY, final boolean hovered, final float tickDelta) {
+        public void render(final GuiGraphics context, final int index, final int y, final int x, final int entryWidth, final int entryHeight, final int mouseX, final int mouseY, final boolean hovered, final float tickDelta) {
             lastWidgetRendered = getWidget(x, y, entryWidth, entryHeight);
             if (lastWidgetRendered != null) lastWidgetRendered.render(context, mouseX, mouseY, tickDelta);
 
         }
 
-        public abstract ClickableWidget getWidget(int x, int y, int width, int height);
+        public abstract AbstractWidget getWidget(int x, int y, int width, int height);
 
 
         @Override

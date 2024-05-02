@@ -3,17 +3,12 @@ package traben.entity_texture_features.features;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.resource.ResourcePack;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Vec3i;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFApi;
 import traben.entity_texture_features.config.ETFConfig;
+import traben.entity_texture_features.config.ETFConfig.EmissiveRenderModes;
 import traben.entity_texture_features.config.screens.skin.ETFConfigScreenSkinTool;
 import traben.entity_texture_features.features.player.ETFPlayerEntity;
 import traben.entity_texture_features.features.player.ETFPlayerTexture;
@@ -29,6 +24,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.Vec3i;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackResources;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
 
 import static traben.entity_texture_features.ETF.MOD_ID;
 import static traben.entity_texture_features.features.player.ETFPlayerTexture.SKIN_NAMESPACE;
@@ -45,12 +46,12 @@ public class ETFManager {
     public final ObjectOpenHashSet<EntityType<?>> ENTITY_TYPE_IGNORE_PARTICLES = new ObjectOpenHashSet<>();
 
     //this is a cache of all known ETFTexture versions of any existing resource-pack texture, used to prevent remaking objects
-    public final Object2ReferenceOpenHashMap<@NotNull Identifier, @Nullable ETFTexture> ETF_TEXTURE_CACHE = new Object2ReferenceOpenHashMap<>();
+    public final Object2ReferenceOpenHashMap<@NotNull ResourceLocation, @Nullable ETFTexture> ETF_TEXTURE_CACHE = new Object2ReferenceOpenHashMap<>();
     public final EntityIntLRU LAST_SUFFIX_OF_ENTITY = new EntityIntLRU();
     public final EntityIntLRU LAST_RULE_INDEX_OF_ENTITY = new EntityIntLRU();
-    public final Object2ReferenceOpenHashMap<@NotNull Identifier, @NotNull ETFDirectory> ETF_DIRECTORY_CACHE = new Object2ReferenceOpenHashMap<>();// = new Object2ReferenceOpenHashMap<>();
+    public final Object2ReferenceOpenHashMap<@NotNull ResourceLocation, @NotNull ETFDirectory> ETF_DIRECTORY_CACHE = new Object2ReferenceOpenHashMap<>();// = new Object2ReferenceOpenHashMap<>();
     //    public final ETFLruCache<Identifier, NativeImage> KNOWN_NATIVE_IMAGES = new ETFLruCache<>();
-    private final Object2ObjectOpenHashMap<Identifier, ETFTextureVariator> VARIATOR_MAP = new Object2ObjectOpenHashMap<>();
+    private final Object2ObjectOpenHashMap<ResourceLocation, ETFTextureVariator> VARIATOR_MAP = new Object2ObjectOpenHashMap<>();
     public UUID ENTITY_DEBUG = null;
     public Boolean mooshroomBrownCustomShroomExists = null;
     //marks whether mooshroom mushroom overrides exist
@@ -61,9 +62,9 @@ public class ETFManager {
     private ETFManager() {
 
 
-        for (ResourcePack pack :
-                MinecraftClient.getInstance().getResourceManager().streamResourcePacks().toList()) {
-            KNOWN_RESOURCEPACK_ORDER.add(pack.getId());
+        for (PackResources pack :
+                Minecraft.getInstance().getResourceManager().listPacks().toList()) {
+            KNOWN_RESOURCEPACK_ORDER.add(pack.packId());
         }
 
         try {
@@ -71,7 +72,7 @@ public class ETFManager {
             String[] paths = {"optifine/emissive.properties", "textures/emissive.properties", "etf/emissive.properties"};
             for (String path :
                     paths) {
-                Properties prop = ETFUtils2.readAndReturnPropertiesElseNull(new Identifier(path));
+                Properties prop = ETFUtils2.readAndReturnPropertiesElseNull(new ResourceLocation(path));
                 if (prop != null)
                     props.add(prop);
             }
@@ -120,8 +121,8 @@ public class ETFManager {
     }
 
     public static ETFTexture getErrorETFTexture() {
-        ETFUtils2.registerNativeImageToIdentifier(ETFUtils2.emptyNativeImage(), new Identifier(MOD_ID, "error.png"));
-        return new ETFTexture(new Identifier(MOD_ID, "error.png")/*, false*/);//, ETFTexture.TextureSource.GENERIC_DEBUG);
+        ETFUtils2.registerNativeImageToIdentifier(ETFUtils2.emptyNativeImage(), new ResourceLocation(MOD_ID, "error.png"));
+        return new ETFTexture(new ResourceLocation(MOD_ID, "error.png")/*, false*/);//, ETFTexture.TextureSource.GENERIC_DEBUG);
     }
 
     public static ETFConfig.EmissiveRenderModes getEmissiveMode() {
@@ -243,12 +244,12 @@ public class ETFManager {
     }
 
     @NotNull
-    public ETFTexture getETFTextureNoVariation(Identifier vanillaIdentifier) {
+    public ETFTexture getETFTextureNoVariation(ResourceLocation vanillaIdentifier) {
         return getOrCreateETFTexture(vanillaIdentifier);
     }
 
     @NotNull
-    public ETFTexture getETFTextureVariant(@NotNull Identifier vanillaIdentifier, @Nullable ETFEntity entity) {
+    public ETFTexture getETFTextureVariant(@NotNull ResourceLocation vanillaIdentifier, @Nullable ETFEntity entity) {
         if (entity == null
                 || entity.etf$getUuid() == ETFApi.ETF_GENERIC_UUID
                 || (entity.etf$getBlockPos().equals(Vec3i.ZERO) && entity.etf$getUuid().getLeastSignificantBits() != ETFApi.ETF_SPAWNER_MARKER)) {
@@ -270,7 +271,7 @@ public class ETFManager {
 
 
     @NotNull
-    private ETFTexture getOrCreateETFTexture(Identifier ofIdentifier) {
+    private ETFTexture getOrCreateETFTexture(ResourceLocation ofIdentifier) {
         if (ETF_TEXTURE_CACHE.containsKey(ofIdentifier)) {
             //use cached ETFTexture
             ETFTexture cached = ETF_TEXTURE_CACHE.get(ofIdentifier);
@@ -288,12 +289,12 @@ public class ETFManager {
     }
 
     @Nullable
-    public ETFPlayerTexture getPlayerTexture(PlayerEntity player, Identifier rendererGivenSkin) {
+    public ETFPlayerTexture getPlayerTexture(Player player, ResourceLocation rendererGivenSkin) {
         return getPlayerTexture((ETFPlayerEntity) player, rendererGivenSkin);
     }
 
     @Nullable
-    public ETFPlayerTexture getPlayerTexture(ETFPlayerEntity player, Identifier rendererGivenSkin) {
+    public ETFPlayerTexture getPlayerTexture(ETFPlayerEntity player, ResourceLocation rendererGivenSkin) {
         try {
             UUID id = player.etf$getUuid();
             if (PLAYER_TEXTURE_MAP.containsKey(id)) {
@@ -302,7 +303,7 @@ public class ETFManager {
                         (possibleSkin.player == null && possibleSkin.isCorrectObjectForThisSkin(rendererGivenSkin))) {
                     return null;
                 } else if (possibleSkin.isCorrectObjectForThisSkin(rendererGivenSkin)
-                        || MinecraftClient.getInstance().currentScreen instanceof ETFConfigScreenSkinTool) {
+                        || Minecraft.getInstance().screen instanceof ETFConfigScreenSkinTool) {
                     //ETFRenderContext.preventRenderLayerTextureModify();
                     return possibleSkin;
                 }

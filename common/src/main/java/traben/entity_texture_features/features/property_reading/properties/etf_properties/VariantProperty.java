@@ -1,18 +1,25 @@
 package traben.entity_texture_features.features.property_reading.properties.etf_properties;
 
-import net.minecraft.block.AbstractSignBlock;
-import net.minecraft.block.BedBlock;
-import net.minecraft.block.ShulkerBoxBlock;
-import net.minecraft.block.SkullBlock;
-import net.minecraft.block.entity.*;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.VariantHolder;
-import net.minecraft.entity.passive.CatVariant;
-import net.minecraft.entity.passive.FrogVariant;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.util.StringIdentifiable;
-import net.minecraft.village.VillagerType;
+
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.VariantHolder;
+import net.minecraft.world.entity.animal.CatVariant;
+import net.minecraft.world.entity.animal.FrogVariant;
+import net.minecraft.world.entity.npc.VillagerType;
+import net.minecraft.world.level.block.BedBlock;
+import net.minecraft.world.level.block.ShulkerBoxBlock;
+import net.minecraft.world.level.block.SignBlock;
+import net.minecraft.world.level.block.SkullBlock;
+import net.minecraft.world.level.block.entity.BedBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.DecoratedPotBlockEntity;
+import net.minecraft.world.level.block.entity.PotDecorations;
+import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
+import net.minecraft.world.level.block.entity.SignBlockEntity;
+import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperty;
@@ -57,28 +64,28 @@ public class VariantProperty extends StringArrayOrRegexProperty {
     private @Nullable String getValueFromEntityInternal(ETFEntity etfEntity) {
         if (etfEntity instanceof Entity) {
             if (etfEntity instanceof VariantHolder<?> variableEntity) {
-                if (variableEntity.getVariant() instanceof StringIdentifiable stringIdentifiable) {
-                    return stringIdentifiable.asString();
+                if (variableEntity.getVariant() instanceof StringRepresentable stringIdentifiable) {
+                    return stringIdentifiable.getSerializedName();
                 }
 
                 if (variableEntity.getVariant() instanceof CatVariant catVariant) {
-                    return Registries.CAT_VARIANT.getKey(
-                            catVariant).map(catVariantRegistryKey -> catVariantRegistryKey.getValue().getPath()
+                    return BuiltInRegistries.CAT_VARIANT.getResourceKey(
+                            catVariant).map(catVariantRegistryKey -> catVariantRegistryKey.location().getPath()
                     ).orElse(null);
                 }
                 if (variableEntity.getVariant() instanceof FrogVariant frogVariant) {
-                    return Registries.FROG_VARIANT.getKey(
-                            frogVariant).map(frogVariantRegistryKey -> frogVariantRegistryKey.getValue().getPath()
+                    return BuiltInRegistries.FROG_VARIANT.getResourceKey(
+                            frogVariant).map(frogVariantRegistryKey -> frogVariantRegistryKey.location().getPath()
                     ).orElse(null);
                 }
                 //e.g. painting entity
-                if (variableEntity.getVariant() instanceof RegistryEntry<?> registryEntry) {
-                    return registryEntry.getKey().isPresent() ? registryEntry.getKey().get().getValue().getPath() : null;
+                if (variableEntity.getVariant() instanceof Holder<?> registryEntry) {
+                    return registryEntry.unwrapKey().isPresent() ? registryEntry.unwrapKey().get().location().getPath() : null;
                 }
                 //shulker variants
                 if (variableEntity.getVariant() instanceof Optional<?> possibleStringIdentifiable) {
-                    if (possibleStringIdentifiable.isPresent() && possibleStringIdentifiable.get() instanceof StringIdentifiable stringIdentifiable) {
-                        return stringIdentifiable.asString();
+                    if (possibleStringIdentifiable.isPresent() && possibleStringIdentifiable.get() instanceof StringRepresentable stringIdentifiable) {
+                        return stringIdentifiable.getSerializedName();
                     }
                     return null;
                 }
@@ -89,39 +96,39 @@ public class VariantProperty extends StringArrayOrRegexProperty {
                 return variableEntity.getVariant().toString();
             }
 
-            return Registries.ENTITY_TYPE.getKey(((Entity) etfEntity).getType()).map(key -> key.getValue().getPath()).orElse(null);
+            return BuiltInRegistries.ENTITY_TYPE.getResourceKey(((Entity) etfEntity).getType()).map(key -> key.location().getPath()).orElse(null);
 
         } else if (etfEntity instanceof BlockEntity) {
             if (etfEntity instanceof SignBlockEntity signBlockEntity
-                    && signBlockEntity.getCachedState().getBlock() instanceof AbstractSignBlock abstractSignBlock) {
-                return abstractSignBlock.getWoodType().name();
+                    && signBlockEntity.getBlockState().getBlock() instanceof SignBlock abstractSignBlock) {
+                return abstractSignBlock.type().name();
             }
             //todo move colors to color property in etf maybe?
             //it is actually useless in etf though, as they can already derive colour
             if (etfEntity instanceof ShulkerBoxBlockEntity shulkerBoxBlockEntity
-                    && shulkerBoxBlockEntity.getCachedState().getBlock() instanceof ShulkerBoxBlock shulkerBoxBlock) {
+                    && shulkerBoxBlockEntity.getBlockState().getBlock() instanceof ShulkerBoxBlock shulkerBoxBlock) {
                 return String.valueOf(shulkerBoxBlock.getColor());
             }
             if (etfEntity instanceof BedBlockEntity bedBlockEntity
-                    && bedBlockEntity.getCachedState().getBlock() instanceof BedBlock bedBlock) {
+                    && bedBlockEntity.getBlockState().getBlock() instanceof BedBlock bedBlock) {
                 return String.valueOf(bedBlock.getColor());
             }
             if (etfEntity instanceof DecoratedPotBlockEntity pot) {
-                Sherds sherds = pot.getSherds();
-                return (sherds.back().isPresent() ? sherds.back().get().getTranslationKey() : "none")
+                PotDecorations sherds = pot.getDecorations();
+                return (sherds.back().isPresent() ? sherds.back().get().getDescriptionId() : "none")
                         + "," +
-                        (sherds.left().isPresent() ? sherds.left().get().getTranslationKey() : "none")
+                        (sherds.left().isPresent() ? sherds.left().get().getDescriptionId() : "none")
                         + "," +
-                        (sherds.right().isPresent() ? sherds.right().get().getTranslationKey() : "none")
+                        (sherds.right().isPresent() ? sherds.right().get().getDescriptionId() : "none")
                         + "," +
-                        (sherds.front().isPresent() ? sherds.front().get().getTranslationKey() : "none");
+                        (sherds.front().isPresent() ? sherds.front().get().getDescriptionId() : "none");
             }
             String suffix = "";
             if (etfEntity instanceof SkullBlockEntity skull) {
-                suffix = "_direction_" + skull.getCachedState().get(SkullBlock.ROTATION).toString();
+                suffix = "_direction_" + skull.getBlockState().getValue(SkullBlock.ROTATION).toString();
             }
 
-            return Registries.BLOCK_ENTITY_TYPE.getKey(((BlockEntity) etfEntity).getType()).map(key -> key.getValue().getPath()).orElse(null) + suffix;
+            return BuiltInRegistries.BLOCK_ENTITY_TYPE.getResourceKey(((BlockEntity) etfEntity).getType()).map(key -> key.location().getPath()).orElse(null) + suffix;
         }
         return null;
     }

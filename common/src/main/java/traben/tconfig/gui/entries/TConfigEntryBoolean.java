@@ -1,15 +1,15 @@
 package traben.tconfig.gui.entries;
 
 import com.demonwav.mcdev.annotations.Translatable;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
 
 public class TConfigEntryBoolean extends TConfigEntryValue<Boolean> {
 
@@ -39,8 +39,8 @@ public class TConfigEntryBoolean extends TConfigEntryValue<Boolean> {
     }
 
     @Override
-    public ClickableWidget getWidget(final int x, final int y, final int width, final int height) {
-        widget.setDimensionsAndPosition(width, height, x, y);
+    public AbstractWidget getWidget(final int x, final int y, final int width, final int height) {
+        widget.setRectangle(width, height, x, y);
         return widget;
     }
 
@@ -58,13 +58,13 @@ public class TConfigEntryBoolean extends TConfigEntryValue<Boolean> {
     }
 
     public enum Type {
-        ON_OFF(ScreenTexts.ON, ScreenTexts.OFF),
-        @SuppressWarnings("unused") YES_NO(ScreenTexts.YES, ScreenTexts.NO);
+        ON_OFF(CommonComponents.OPTION_ON, CommonComponents.OPTION_OFF),
+        @SuppressWarnings("unused") YES_NO(CommonComponents.GUI_YES, CommonComponents.GUI_NO);
 
         private final String t;
         private final String f;
 
-        Type(Text t, Text f) {
+        Type(Component t, Component f) {
             this.t = t.getString();
             this.f = f.getString();
         }
@@ -74,7 +74,7 @@ public class TConfigEntryBoolean extends TConfigEntryValue<Boolean> {
         }
     }
 
-    private class BooleanButtonWidget extends ButtonWidget {
+    private class BooleanButtonWidget extends Button {
         private final String title;
         private boolean value;
 
@@ -83,7 +83,7 @@ public class TConfigEntryBoolean extends TConfigEntryValue<Boolean> {
 
         public BooleanButtonWidget(final int x, final int y, final int width, final int height, final String text,
                                    final boolean initialValue, final Tooltip tooltip) {
-            super(x, y, width, height, Text.of(""), null, DEFAULT_NARRATION_SUPPLIER);
+            super(x, y, width, height, Component.nullToEmpty(""), null, DEFAULT_NARRATION);
             this.value = initialValue;
             this.title = text + ": ";
             updateMessage();
@@ -91,7 +91,7 @@ public class TConfigEntryBoolean extends TConfigEntryValue<Boolean> {
         }
 
         private void updateMessage() {
-            setMessage(Text.of(title + (value != getter.get() ? TConfigEntry.CHANGED_COLOR : "") + type.get(value)));
+            setMessage(Component.nullToEmpty(title + (value != getter.get() ? TConfigEntry.CHANGED_COLOR : "") + type.get(value)));
         }
 
         @Override

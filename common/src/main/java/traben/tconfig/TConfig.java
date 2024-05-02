@@ -1,13 +1,13 @@
 package traben.tconfig;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import traben.tconfig.gui.entries.TConfigEntryCategory;
 
 public abstract class TConfig {
 
     public abstract TConfigEntryCategory getGUIOptions();
 
-    public abstract Identifier getModIcon();
+    public abstract ResourceLocation getModIcon();
 
     public boolean doesGUI() {
         return true;
@@ -21,7 +21,7 @@ public abstract class TConfig {
         }
 
         @Override
-        public Identifier getModIcon() {
+        public ResourceLocation getModIcon() {
             return null;
         }
 

@@ -1,18 +1,18 @@
 package traben.entity_texture_features.mixin.entity.renderer;
 
-import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.client.render.entity.LivingEntityRenderer;
-import net.minecraft.client.render.entity.PlayerEntityRenderer;
-import net.minecraft.client.render.entity.model.PlayerEntityModel;
-import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Identifier;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.model.PlayerModel;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.player.PlayerRenderer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -29,54 +29,54 @@ import traben.entity_texture_features.features.player.ETFPlayerSkinHolder;
 import traben.entity_texture_features.features.player.ETFPlayerTexture;
 import traben.entity_texture_features.utils.ETFUtils2;
 
-@Mixin(PlayerEntityRenderer.class)
-public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> implements ETFPlayerSkinHolder {
+@Mixin(PlayerRenderer.class)
+public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> implements ETFPlayerSkinHolder {
 
 
     @Unique
     ETFPlayerTexture etf$ETFPlayerTexture = null;
 
     @SuppressWarnings("unused")
-    public MixinPlayerEntityRenderer(EntityRendererFactory.Context ctx, PlayerEntityModel<AbstractClientPlayerEntity> model, float shadowRadius) {
+    public MixinPlayerEntityRenderer(EntityRendererProvider.Context ctx, PlayerModel<AbstractClientPlayer> model, float shadowRadius) {
         super(ctx, model, shadowRadius);
     }
 
     @Inject(method = "<init>",
             at = @At(value = "TAIL"))
-    private void etf$addFeatures(EntityRendererFactory.Context ctx, boolean slim, CallbackInfo ci) {
-        PlayerEntityRenderer self = (PlayerEntityRenderer) ((Object) this);
-        this.addFeature(new ETFPlayerFeatureRenderer<>(self));
+    private void etf$addFeatures(EntityRendererProvider.Context ctx, boolean slim, CallbackInfo ci) {
+        PlayerRenderer self = (PlayerRenderer) ((Object) this);
+        this.addLayer(new ETFPlayerFeatureRenderer<>(self));
     }
 
 
     /*
      * For some reason cancelling in this way is the only way to get this working
      * */
-    @Inject(method = "renderArm",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/PlayerEntityModel;setAngles(Lnet/minecraft/entity/LivingEntity;FFFFF)V",
+    @Inject(method = "renderHand",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/PlayerModel;setupAnim(Lnet/minecraft/world/entity/LivingEntity;FFFFF)V",
                     shift = At.Shift.AFTER), cancellable = true)
-    private void etf$redirectNicely(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, AbstractClientPlayerEntity player, ModelPart arm, ModelPart sleeve, CallbackInfo ci) {
+    private void etf$redirectNicely(PoseStack matrices, MultiBufferSource vertexConsumers, int light, AbstractClientPlayer player, ModelPart arm, ModelPart sleeve, CallbackInfo ci) {
         if (ETF.config().getConfig().skinFeaturesEnabled) {
-            ETFPlayerTexture thisETFPlayerTexture = ETFManager.getInstance().getPlayerTexture(player, player.getSkinTextures().texture());
+            ETFPlayerTexture thisETFPlayerTexture = ETFManager.getInstance().getPlayerTexture(player, player.getSkin().texture());
             if (thisETFPlayerTexture != null && thisETFPlayerTexture.hasFeatures) {
-                Identifier etfTexture = thisETFPlayerTexture.getBaseTextureIdentifierOrNullForVanilla(player);
+                ResourceLocation etfTexture = thisETFPlayerTexture.getBaseTextureIdentifierOrNullForVanilla(player);
                 if (etfTexture != null) {
                     ETFRenderContext.preventRenderLayerTextureModify();
 
-                    arm.pitch = 0.0F;
-                    sleeve.pitch = 0.0F;
+                    arm.xRot = 0.0F;
+                    sleeve.xRot = 0.0F;
 
-                    VertexConsumer vc1 = vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(etfTexture));
+                    VertexConsumer vc1 = vertexConsumers.getBuffer(RenderType.entityTranslucent(etfTexture));
                     etf$renderOnce(matrices, vc1, light, player, arm, sleeve);
 
                     ETFRenderContext.startSpecialRenderOverlayPhase();
-                    Identifier emissive = thisETFPlayerTexture.getBaseTextureEmissiveIdentifierOrNullForNone();
+                    ResourceLocation emissive = thisETFPlayerTexture.getBaseTextureEmissiveIdentifierOrNullForNone();
                     if (emissive != null) {
-                        VertexConsumer vc2 = vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(emissive));
+                        VertexConsumer vc2 = vertexConsumers.getBuffer(RenderType.entityTranslucent(emissive));
                         etf$renderOnce(matrices, vc2, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, player, arm, sleeve);
                     }
                     if (thisETFPlayerTexture.baseEnchantIdentifier != null) {
-                        VertexConsumer vc3 = ItemRenderer.getArmorGlintConsumer(vertexConsumers, RenderLayer.getArmorCutoutNoCull(thisETFPlayerTexture.baseEnchantIdentifier), false, true);
+                        VertexConsumer vc3 = ItemRenderer.getArmorFoilBuffer(vertexConsumers, RenderType.armorCutoutNoCull(thisETFPlayerTexture.baseEnchantIdentifier), false, true);
                         etf$renderOnce(matrices, vc3, light, player, arm, sleeve);
                     }
                     ETFRenderContext.endSpecialRenderOverlayPhase();
@@ -92,15 +92,15 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
 
 
     @Unique
-    private void etf$renderOnce(MatrixStack matrixStack, VertexConsumer consumer, int light, AbstractClientPlayerEntity player, ModelPart arm, ModelPart sleeve) {
-        arm.render(matrixStack, consumer, light, OverlayTexture.DEFAULT_UV);
-        sleeve.render(matrixStack, consumer, light, OverlayTexture.DEFAULT_UV);
+    private void etf$renderOnce(PoseStack matrixStack, VertexConsumer consumer, int light, AbstractClientPlayer player, ModelPart arm, ModelPart sleeve) {
+        arm.render(matrixStack, consumer, light, OverlayTexture.NO_OVERLAY);
+        sleeve.render(matrixStack, consumer, light, OverlayTexture.NO_OVERLAY);
         if (ETF.SKIN_LAYERS_DETECTED && ETF.config().getConfig().use3DSkinLayerPatch) {
             try {
                 // handler class is only ever accessed if the mod is present
                 // prevents NoClassDefFoundError
                 //noinspection DataFlowIssue
-                ETF3DSkinLayersUtil.renderHand((PlayerEntityRenderer) ((Object) this), matrixStack, consumer, light, player, arm, sleeve);
+                ETF3DSkinLayersUtil.renderHand((PlayerRenderer) ((Object) this), matrixStack, consumer, light, player, arm, sleeve);
             } catch (Exception e) {
                 //ETFUtils2.logWarn("Exception with ETF's 3D skin layers mod compatibility: " + e);
             } catch (NoClassDefFoundError error) {
@@ -115,13 +115,13 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
     }
 
 
-    @Inject(method = "getTexture(Lnet/minecraft/client/network/AbstractClientPlayerEntity;)Lnet/minecraft/util/Identifier;",
+    @Inject(method = "getTextureLocation(Lnet/minecraft/client/player/AbstractClientPlayer;)Lnet/minecraft/resources/ResourceLocation;",
             at = @At(value = "RETURN"), cancellable = true)
-    private void etf$getTexture(AbstractClientPlayerEntity abstractClientPlayerEntity, CallbackInfoReturnable<Identifier> cir) {
+    private void etf$getTexture(AbstractClientPlayer abstractClientPlayerEntity, CallbackInfoReturnable<ResourceLocation> cir) {
         if (ETF.config().getConfig().skinFeaturesEnabled) {
             etf$ETFPlayerTexture = ETFManager.getInstance().getPlayerTexture(abstractClientPlayerEntity, cir.getReturnValue());
             if (etf$ETFPlayerTexture != null && etf$ETFPlayerTexture.hasFeatures) {
-                Identifier texture = etf$ETFPlayerTexture.getBaseTextureIdentifierOrNullForVanilla(abstractClientPlayerEntity);
+                ResourceLocation texture = etf$ETFPlayerTexture.getBaseTextureIdentifierOrNullForVanilla(abstractClientPlayerEntity);
                 if (texture != null) {
 //                    System.out.println(etf$ETFPlayerTexture.etfTextureOfFinalBaseSkin);
                     cir.setReturnValue(texture);

@@ -1,12 +1,12 @@
 package traben.entity_texture_features.features.property_reading.properties.etf_properties;
 
-import net.minecraft.entity.passive.PandaEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.features.property_reading.properties.generic_properties.StringArrayOrRegexProperty;
 import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.Properties;
+import net.minecraft.world.entity.animal.Panda;
 
 public class PandaGeneProperty extends StringArrayOrRegexProperty {
 
@@ -33,8 +33,8 @@ public class PandaGeneProperty extends StringArrayOrRegexProperty {
     @Nullable
     protected String getValueFromEntity(ETFEntity entityETF) {
         if (entityETF != null) {
-            if (entityETF instanceof PandaEntity panda) {
-                return panda.getHiddenGene().asString();
+            if (entityETF instanceof Panda panda) {
+                return panda.getHiddenGene().getSerializedName();
             }
         }
         return null;

@@ -8,11 +8,9 @@ import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import traben.entity_texture_features.ETF;
 
 @Mod("entity_texture_features")
-public class ETFClientForge {
+public class ETFClientNeoForge {
 
-
-
-    public ETFClientForge() {
+    public ETFClientNeoForge() {
 
         // Submit our event bus to let architectury register our content on the right time
         //EventBuses.registerModEventBus(ExampleMod.MOD_ID, FMLJavaModLoadingContext.get().getModEventBus());

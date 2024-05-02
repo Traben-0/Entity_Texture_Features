@@ -2,7 +2,6 @@ package traben.entity_texture_features.features.texture_handlers;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFApi;
@@ -16,11 +15,12 @@ import traben.entity_texture_features.utils.EntityIntLRU;
 
 import java.util.Objects;
 import java.util.UUID;
+import net.minecraft.resources.ResourceLocation;
 
 public abstract class ETFTextureVariator {
 
 
-    public static @NotNull ETFTextureVariator of(@NotNull Identifier vanillaIdentifier) {
+    public static @NotNull ETFTextureVariator of(@NotNull ResourceLocation vanillaIdentifier) {
         //if (ETF.config().getConfig().enableCustomTextures) {
         ETFApi.ETFVariantSuffixProvider variantProvider = ETFApi.ETFVariantSuffixProvider.getVariantProviderOrNull(
                 ETFUtils2.replaceIdentifier(vanillaIdentifier, ".png", ".properties"),
@@ -48,7 +48,7 @@ public abstract class ETFTextureVariator {
                     "\n§e-----------ETF Debug Printout-------------§r" +
                             "\n" + ETFManager.getInstance().getGeneralPrintout() +
                             "\n§eEntity:§r" +
-                            "\n§6 - type:§r " + (entity.etf$getType() != null ? entity.etf$getType().getTranslationKey() : null) +
+                            "\n§6 - type:§r " + (entity.etf$getType() != null ? entity.etf$getType().getDescriptionId() : null) +
                             "\n§6 - texture:§r " + output +
                             "\n§6 - can_update_variant:§r " + (this instanceof ETFTextureMultiple multi && multi.suffixProvider.entityCanUpdate(entity.etf$getUuid())) +
 //                            "\n§6 - last matching rule:§r " + ETFManager.getInstance().LAST_MET_RULE_INDEX.getInt(entity.etf$getUuid()) +
@@ -64,14 +64,14 @@ public abstract class ETFTextureVariator {
     }
 
     private String getVanillaVariantDetails() {
-        Identifier vanilla = getVanillaIdentifier();
+        ResourceLocation vanilla = getVanillaIdentifier();
         if (vanilla == null) return "§aProperty locations: NULL§r";
-        Identifier property = ETFUtils2.replaceIdentifier(vanilla, ".png", ".properties");
+        ResourceLocation property = ETFUtils2.replaceIdentifier(vanilla, ".png", ".properties");
         if (property == null) return "§aProperty locations: NULL§r";
 
-        Identifier optifine = ETFDirectory.getIdentifierAsDirectory(property, ETFDirectory.OPTIFINE);
-        Identifier optifineOld = ETFDirectory.getIdentifierAsDirectory(property, ETFDirectory.OLD_OPTIFINE);
-        Identifier etf = ETFDirectory.getIdentifierAsDirectory(property, ETFDirectory.ETF);
+        ResourceLocation optifine = ETFDirectory.getIdentifierAsDirectory(property, ETFDirectory.OPTIFINE);
+        ResourceLocation optifineOld = ETFDirectory.getIdentifierAsDirectory(property, ETFDirectory.OLD_OPTIFINE);
+        ResourceLocation etf = ETFDirectory.getIdentifierAsDirectory(property, ETFDirectory.ETF);
 
         return "§aProperty locations:§r" +
                 "\n§2 - regular:§r " + property +
@@ -85,13 +85,13 @@ public abstract class ETFTextureVariator {
 
     protected abstract @NotNull ETFTexture getVariantOfInternal(@NotNull ETFEntity entity);
 
-    protected abstract Identifier getVanillaIdentifier();
+    protected abstract ResourceLocation getVanillaIdentifier();
 
     public static class ETFTextureSingleton extends ETFTextureVariator {
         private final ETFTexture self;
-        private final Identifier vanilla;
+        private final ResourceLocation vanilla;
 
-        public ETFTextureSingleton(Identifier singletonId) {
+        public ETFTextureSingleton(ResourceLocation singletonId) {
             vanilla = singletonId;
             self = ETFManager.getInstance().getETFTextureNoVariation(singletonId);
 
@@ -109,7 +109,7 @@ public abstract class ETFTextureVariator {
         }
 
         @Override
-        protected Identifier getVanillaIdentifier() {
+        protected ResourceLocation getVanillaIdentifier() {
             return vanilla;
         }
 
@@ -126,9 +126,9 @@ public abstract class ETFTextureVariator {
         public final @NotNull EntityIntLRU entitySuffixMap = new EntityIntLRU(500);
         final @NotNull ETFApi.ETFVariantSuffixProvider suffixProvider;
         private final @NotNull Int2ObjectArrayMap<ETFTexture> variantMap = new Int2ObjectArrayMap<>();
-        private final @NotNull Identifier vanillaId;
+        private final @NotNull ResourceLocation vanillaId;
 
-        ETFTextureMultiple(@NotNull Identifier vanillaId, @NotNull ETFApi.ETFVariantSuffixProvider suffixProvider) {
+        ETFTextureMultiple(@NotNull ResourceLocation vanillaId, @NotNull ETFApi.ETFVariantSuffixProvider suffixProvider) {
             this.vanillaId = vanillaId;
             entitySuffixMap.defaultReturnValue(-1);
             this.suffixProvider = suffixProvider;
@@ -141,7 +141,7 @@ public abstract class ETFTextureVariator {
                     }
                 });
             }
-            Identifier directorized = ETFDirectory.getDirectoryVersionOf(vanillaId);
+            ResourceLocation directorized = ETFDirectory.getDirectoryVersionOf(vanillaId);
 
             ETFTexture vanilla = ETFManager.getInstance().getETFTextureNoVariation(directorized == null ? vanillaId : directorized);
 
@@ -157,7 +157,7 @@ public abstract class ETFTextureVariator {
             suffixes.remove(1);
             for (int suffix :
                     suffixes) {
-                Identifier variant = ETFDirectory.getDirectoryVersionOf(ETFUtils2.addVariantNumberSuffix(vanillaId, suffix));
+                ResourceLocation variant = ETFDirectory.getDirectoryVersionOf(ETFUtils2.addVariantNumberSuffix(vanillaId, suffix));
                 if (logging) ETFUtils2.logMessage(" - looked for variant: " + variant);
                 if (variant != null) {
                     variantMap.put(suffix, ETFManager.getInstance().getETFTextureNoVariation(variant));
@@ -204,7 +204,7 @@ public abstract class ETFTextureVariator {
                     default -> {
                         int delay = ETF.config().getConfig().textureUpdateFrequency_V2.getDelay();
                         assert ETFRenderContext.getCurrentEntity() != null;
-                        int time = (int) (ETFRenderContext.getCurrentEntity().etf$getWorld().getTime() % delay);
+                        int time = (int) (ETFRenderContext.getCurrentEntity().etf$getWorld().getGameTime() % delay);
                         if (time == Math.abs(id.hashCode()) % delay) {
                             this.entitySuffixMap.removeInt(id);
                         }
@@ -261,7 +261,7 @@ public abstract class ETFTextureVariator {
         }
 
         @Override
-        protected Identifier getVanillaIdentifier() {
+        protected ResourceLocation getVanillaIdentifier() {
             return vanillaId;
         }
     }

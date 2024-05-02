@@ -1,9 +1,6 @@
 package traben.entity_texture_features;
 
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.render.LightmapTextureManager;
 import org.slf4j.Logger;
 import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.config.ETFConfigWarning;
@@ -16,6 +13,9 @@ import traben.tconfig.TConfigHandler;
 import java.io.File;
 import java.util.Random;
 import java.util.Set;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.LightTexture;
 
 
 public class ETF {
@@ -26,7 +26,7 @@ public class ETF {
     public final static Logger LOGGER = ETFVersionDifferenceHandler.getLogger();
 
 
-    public static final int EMISSIVE_FEATURE_LIGHT_VALUE = LightmapTextureManager.MAX_LIGHT_COORDINATE + 2;
+    public static final int EMISSIVE_FEATURE_LIGHT_VALUE = LightTexture.FULL_BRIGHT + 2;
     public static TConfigHandler<ETFConfigScreenWarnings.WarningConfig> warningConfigHandler = null;
     public static boolean IRIS_DETECTED = false;
 
@@ -148,7 +148,7 @@ public class ETF {
         }
     }
 
-    public static Screen getConfigScreen(MinecraftClient ignored, Screen parent) {
+    public static Screen getConfigScreen(Minecraft ignored, Screen parent) {
         return getConfigScreen(parent);
     }
 

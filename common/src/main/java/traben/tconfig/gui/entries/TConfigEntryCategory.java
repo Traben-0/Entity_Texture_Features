@@ -2,23 +2,23 @@ package traben.tconfig.gui.entries;
 
 import com.demonwav.mcdev.annotations.Translatable;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 import traben.tconfig.gui.TConfigScreenList;
 
 import java.util.Collection;
 import java.util.function.Supplier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.network.chat.Component;
 
 public class TConfigEntryCategory extends TConfigEntry {
 
     private final Object2ObjectLinkedOpenHashMap<String, TConfigEntry> options = new Object2ObjectLinkedOpenHashMap<>();
     private final String translationKey;
     private TConfigScreenList screen = null;
-    private Tooltip emptyTooltip = Tooltip.of(Text.translatable("config.entity_features.empty"));
+    private Tooltip emptyTooltip = Tooltip.create(Component.translatable("config.entity_features.empty"));
     private TConfigScreenList.Align align = TConfigScreenList.Align.CENTER;
     private TConfigScreenList.Renderable renderFeature = null;
 
@@ -44,7 +44,7 @@ public class TConfigEntryCategory extends TConfigEntry {
     //don't need to init screen each time
     public TConfigScreenList getScreen() {
         if (screen == null) {
-            screen = new TConfigScreenList(translationKey, MinecraftClient.getInstance().currentScreen, options.values().toArray(new TConfigEntry[0]), this::setValuesToDefault, this::resetValuesToInitial, align);
+            screen = new TConfigScreenList(translationKey, Minecraft.getInstance().screen, options.values().toArray(new TConfigEntry[0]), this::setValuesToDefault, this::resetValuesToInitial, align);
             screen.setRenderFeature(renderFeature);
             if (fullWidthBackgroundEvenIfSmaller) {
                 screen.setWidgetBackgroundToFullWidth();
@@ -54,9 +54,9 @@ public class TConfigEntryCategory extends TConfigEntry {
     }
 
     @Override
-    public ClickableWidget getWidget(final int x, final int y, final int width, final int height) {
+    public AbstractWidget getWidget(final int x, final int y, final int width, final int height) {
         return new CategoryButton(x, y, width, height, getText(),
-                (button) -> MinecraftClient.getInstance().setScreen(getScreen()));
+                (button) -> Minecraft.getInstance().setScreen(getScreen()));
     }
 
     @Override
@@ -139,7 +139,7 @@ public class TConfigEntryCategory extends TConfigEntry {
     }
 
     public TConfigEntryCategory setEmptyTooltip(@NotNull @Translatable final String emptyTooltipKey) {
-        this.emptyTooltip = Tooltip.of(Text.translatable(emptyTooltipKey));
+        this.emptyTooltip = Tooltip.create(Component.translatable(emptyTooltipKey));
         return this;
     }
 
@@ -155,16 +155,16 @@ public class TConfigEntryCategory extends TConfigEntry {
         }
 
         @Override
-        public ClickableWidget getWidget(int x, int y, int width, int height) {
+        public AbstractWidget getWidget(int x, int y, int width, int height) {
             return null;
         }
 
 
     }
 
-    private class CategoryButton extends ButtonWidget {
+    private class CategoryButton extends Button {
 
-        protected CategoryButton(final int x, final int y, final int width, final int height, final Text message, final PressAction onPress) {
+        protected CategoryButton(final int x, final int y, final int width, final int height, final Component message, final OnPress onPress) {
             super(x, y, width, height, message, onPress, Supplier::get);
             active = !options.isEmpty();
             if (!active) {
@@ -173,8 +173,8 @@ public class TConfigEntryCategory extends TConfigEntry {
         }
 
         @Override
-        public Text getMessage() {
-            return hasChangedFromInitial() ? Text.of(CHANGED_COLOR + super.getMessage().getString()) : super.getMessage();
+        public Component getMessage() {
+            return hasChangedFromInitial() ? Component.nullToEmpty(CHANGED_COLOR + super.getMessage().getString()) : super.getMessage();
         }
     }
 

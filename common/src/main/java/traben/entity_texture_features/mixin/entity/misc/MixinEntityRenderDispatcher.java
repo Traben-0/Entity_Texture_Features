@@ -1,9 +1,9 @@
 package traben.entity_texture_features.mixin.entity.misc;
 
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -15,7 +15,7 @@ import traben.entity_texture_features.utils.ETFEntity;
 public class MixinEntityRenderDispatcher {
     @Inject(method = "render",
             at = @At(value = "HEAD"))
-    private <E extends Entity> void etf$grabContext(E entity, double x, double y, double z, float yaw, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci) {
+    private <E extends Entity> void etf$grabContext(E entity, double x, double y, double z, float yaw, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light, CallbackInfo ci) {
         ETFRenderContext.setCurrentEntity((ETFEntity) entity);
 
 //        ETFRenderContext.setCurrentProvider(vertexConsumers);
@@ -24,7 +24,7 @@ public class MixinEntityRenderDispatcher {
 
     @Inject(method = "render",
             at = @At(value = "RETURN"))
-    private <E extends Entity> void etf$clearContext(E entity, double x, double y, double z, float yaw, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci) {
+    private <E extends Entity> void etf$clearContext(E entity, double x, double y, double z, float yaw, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light, CallbackInfo ci) {
         ETFRenderContext.reset();
 
     }

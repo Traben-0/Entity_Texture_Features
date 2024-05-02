@@ -1,8 +1,8 @@
 package traben.entity_texture_features.mixin.mods.iris;
 
 import net.coderbot.iris.layer.InnerWrappedRenderType;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Shadow;
@@ -22,10 +22,10 @@ public abstract class MixinInnerWrappedRenderType implements ETFRenderLayerWithT
 
 
     @Shadow
-    public abstract RenderLayer unwrap();
+    public abstract RenderType unwrap();
 
     @Override
-    public Optional<Identifier> etf$getId() {
+    public Optional<ResourceLocation> etf$getId() {
         if (unwrap() instanceof ETFRenderLayerWithTexture etf)
             return etf.etf$getId();
         return Optional.empty();

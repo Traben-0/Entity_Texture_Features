@@ -1,15 +1,15 @@
 package traben.tconfig.gui.entries;
 
 import com.demonwav.mcdev.annotations.Translatable;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.network.chat.Component;
 
 public class TConfigEntryEnumButton<E extends Enum<E>> extends TConfigEntryNullSafe<E> {
 
@@ -52,8 +52,8 @@ public class TConfigEntryEnumButton<E extends Enum<E>> extends TConfigEntryNullS
     }
 
     @Override
-    public ClickableWidget getWidget(final int x, final int y, final int width, final int height) {
-        widget.setDimensionsAndPosition(width, height, x, y);
+    public AbstractWidget getWidget(final int x, final int y, final int width, final int height) {
+        widget.setRectangle(width, height, x, y);
         return widget;
     }
 
@@ -68,15 +68,15 @@ public class TConfigEntryEnumButton<E extends Enum<E>> extends TConfigEntryNullS
     }
 
 
-    public class EnumButtonWidget<T extends Enum<?>> extends ButtonWidget {
+    public class EnumButtonWidget<T extends Enum<?>> extends Button {
         private final T[] enumValues;
         private final String title;
         private int index;
 
-        public EnumButtonWidget(final Text text, final T initialValue, final Tooltip tooltip, Class<T> enumClass) {
+        public EnumButtonWidget(final Component text, final T initialValue, final Tooltip tooltip, Class<T> enumClass) {
             //super(0, 0, 20, 20, text, initialValue.ordinal() / (double) (initialValue.getDeclaringClass().getEnumConstants().length - 1));
             super(0, 0, 20, 20, text, (button) -> {
-            }, ButtonWidget.DEFAULT_NARRATION_SUPPLIER);
+            }, Button.DEFAULT_NARRATION);
 
             this.enumValues = enumClass.getEnumConstants();
             this.title = text.getString() + ": ";
@@ -105,7 +105,7 @@ public class TConfigEntryEnumButton<E extends Enum<E>> extends TConfigEntryNullS
 
         protected void updateMessage() {
             T value = getValue();
-            setMessage(Text.of(title + (value != getter.get() ? TConfigEntry.CHANGED_COLOR : "") +
+            setMessage(Component.nullToEmpty(title + (value != getter.get() ? TConfigEntry.CHANGED_COLOR : "") +
                     (value == null ? "---" : value)));
 
         }

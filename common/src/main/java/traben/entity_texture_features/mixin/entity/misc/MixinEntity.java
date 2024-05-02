@@ -1,17 +1,18 @@
 package traben.entity_texture_features.mixin.entity.misc;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityPose;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.scoreboard.AbstractTeam;
-import net.minecraft.scoreboard.Team;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.scores.PlayerTeam;
+import net.minecraft.world.scores.Team;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -25,27 +26,19 @@ public abstract class MixinEntity implements ETFEntity {
     @Shadow
     public abstract EntityType<?> getType();
 
-    @Shadow
-    public abstract UUID getUuid();
 
-    @Shadow
-    public abstract World getWorld();
-
-    @Shadow
-    public abstract BlockPos getBlockPos();
 
     @Shadow
     public abstract int getBlockY();
 
-    @Shadow
-    public abstract NbtCompound writeNbt(NbtCompound nbt);
+
 
     @Shadow
     public abstract boolean hasCustomName();
 
     @Shadow
     @Nullable
-    public abstract Text getCustomName();
+    public abstract Component getCustomName();
 
 
 //    @Shadow
@@ -60,18 +53,25 @@ public abstract class MixinEntity implements ETFEntity {
     @Shadow
     public abstract float distanceTo(Entity entity);
 
-    @Shadow
-    public abstract Vec3d getVelocity();
+
 
     @Shadow
-    public abstract EntityPose getPose();
+    public abstract Pose getPose();
 
-    @Shadow
-    @Nullable
-    public abstract Team getScoreboardTeam();
 
-    @Shadow
-    public abstract boolean isPlayer();
+    @Shadow public abstract UUID getUUID();
+
+    @Shadow public abstract Level level();
+
+    @Shadow public abstract BlockPos blockPosition();
+
+    @Shadow @Nullable public abstract PlayerTeam getTeam();
+
+    @Shadow public abstract Vec3 getDeltaMovement();
+
+    @Shadow public abstract boolean saveAsPassenger(final CompoundTag compoundTag);
+
+    @Shadow public abstract CompoundTag saveWithoutId(final CompoundTag compoundTag);
 
     @Override
     public EntityType<?> etf$getType() {
@@ -80,17 +80,17 @@ public abstract class MixinEntity implements ETFEntity {
 
     @Override
     public UUID etf$getUuid() {
-        return getUuid();
+        return getUUID();
     }
 
     @Override
-    public World etf$getWorld() {
-        return getWorld();
+    public Level etf$getWorld() {
+        return level();
     }
 
     @Override
     public BlockPos etf$getBlockPos() {
-        return getBlockPos();
+        return blockPosition();
     }
 
     @Override
@@ -99,8 +99,13 @@ public abstract class MixinEntity implements ETFEntity {
     }
 
     @Override
-    public NbtCompound etf$writeNbt(NbtCompound compound) {
-        return writeNbt(compound);
+    public CompoundTag etf$writeNbt(CompoundTag compound) {
+        //try include id
+        if (saveAsPassenger(compound)) {
+            return compound;
+        }
+        //else
+        return saveWithoutId(compound);
     }
 
     @Override
@@ -109,20 +114,20 @@ public abstract class MixinEntity implements ETFEntity {
     }
 
     @Override
-    public Text etf$getCustomName() {
+    public Component etf$getCustomName() {
         return getCustomName();
     }
 
     @Override
-    public AbstractTeam etf$getScoreboardTeam() {
-        return getScoreboardTeam();
+    public Team etf$getScoreboardTeam() {
+        return getTeam();
     }
 
     @Override
     public Iterable<ItemStack> etf$getItemsEquipped() {
         var alive = etf$getLivingOrNull();
         if (alive != null){
-            return alive.getEquippedItems();
+            return alive.getAllSlots();
         }
         return null;
     }
@@ -131,7 +136,7 @@ public abstract class MixinEntity implements ETFEntity {
     public Iterable<ItemStack> etf$getHandItems() {
         var alive = etf$getLivingOrNull();
         if (alive != null){
-            return alive.getHandItems();
+            return alive.getHandSlots();
         }
         return null;
     }
@@ -140,7 +145,7 @@ public abstract class MixinEntity implements ETFEntity {
     public Iterable<ItemStack> etf$getArmorItems() {
         var alive = etf$getLivingOrNull();
         if (alive != null){
-            return alive.getArmorItems();
+            return alive.getArmorSlots();
         }
         return null;
     }
@@ -160,18 +165,19 @@ public abstract class MixinEntity implements ETFEntity {
     }
 
     @Override
-    public Vec3d etf$getVelocity() {
-        return getVelocity();
+    public Vec3 etf$getVelocity() {
+        return getDeltaMovement();
     }
 
     @Override
-    public EntityPose etf$getPose() {
+    public Pose etf$getPose() {
         return getPose();
     }
 
     @Override
     public boolean etf$canBeBright() {
-        return !isPlayer();
+        Object self = this;
+        return self instanceof Player;
     }
 
     @Override
@@ -181,6 +187,6 @@ public abstract class MixinEntity implements ETFEntity {
 
     @Override
     public String etf$getEntityKey() {
-        return getType().getTranslationKey();
+        return getType().getDescriptionId();
     }
 }
