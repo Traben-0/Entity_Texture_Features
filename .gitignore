@@ -37,3 +37,5 @@ classes/
 .metadata
 .vscode
 .settings
+/Merged/merged-test.jar
+/Merged/out.jar
