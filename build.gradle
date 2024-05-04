@@ -1,7 +1,149 @@
+import java.util.function.Consumer
+import java.util.jar.JarEntry
+import java.util.jar.JarOutputStream
+import java.util.zip.ZipFile
+
 plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
     id "dev.architectury.loom" version "1.6-SNAPSHOT" apply false
+    id "io.github.pacifistmc.forgix" version "1.2.7"
+
 }
+
+forgix {
+    group = "traben"
+    mergedJarName = "merged-test.jar"
+
+    forge {
+    projectName = "forge"
+    jarLocation = "build/libs/entity_texture_features_forge_${minecraft_version}-${mod_version}.jar"
+//
+////        additionalRelocate "org.my.lib" "forge.org.my.lib"
+////        additionalRelocate "org.my.lib.another" "forge.org.my.lib.another"
+//
+////        mixin "forge.mixins.json"
+////        mixin "forge.mixins.another.json"
+    }
+
+    neoforge {
+        projectName = "neoforge"
+        jarLocation = "build/libs/entity_texture_features_neoforge_${minecraft_version}-${mod_version}.jar"
+
+//        additionalRelocate "org.my.lib" "neoforge.org.my.lib"
+//        additionalRelocate "org.my.lib.another" "neoforge.org.my.lib.another"
+
+//        mixin "neoforge.mixins.json"
+//        mixin "neoforge.mixins.another.json"
+    }
+//
+    fabric {
+        projectName = "fabric"
+//        jarLocation = "build/libs/${archives_base_name}_fabric_1.20.5-${version}.jar"
+        jarLocation = "build/libs/entity_texture_features_fabric_${minecraft_version}-${mod_version}.jar"
+
+//        additionalRelocate "org.my.lib" "fabric.org.my.lib"
+//        additionalRelocate "org.my.lib.another" "fabric.org.my.lib.another"
+    }
+
+
+    removeDuplicate "traben.entity_texture_features"
+}
+
+task modifyJar(type: Jar) {
+    dependsOn 'build'
+
+    // Define input and output paths
+    def jarFile = "${projectDir}/Merged/merged-test.jar"
+    def modifiedJarFile = "${projectDir}/Merged/out.jar"
+    def tempDir = "${projectDir}/temp-rename"
+
+    // Create temporary directory
+    doLast {
+        file(tempDir).mkdirs()
+
+        // Extract contents of original JAR
+        ZipFile jar = new ZipFile(jarFile)
+        jar.entries().each { entry ->
+            def entryInputStream = jar.getInputStream(entry)
+            var file2 = new File(tempDir, entry.name)
+            file2.parentFile.mkdirs()
+            def entryOutputStream = new FileOutputStream(file2)
+            entryOutputStream << entryInputStream.bytes
+            entryInputStream.close()
+            entryOutputStream.close()
+        }
+        jar.close()
+
+
+
+        // Modify merged jar
+
+        File fileToModify = new File(tempDir, "fabric.mod.json")
+        fileToModify.text = fileToModify.text.replaceAll("fabric/", "fabric.")
+//        fileToModify.text = fileToModify.text.replaceAll("fabric-httpmime", "httpmime")
+        fileToModify = new File(tempDir, "fabric-entity_texture_features-fabric.mixins.json")
+        fileToModify.text = fileToModify.text.replaceAll("fabric/", "fabric.")
+        fileToModify = new File(tempDir, "fabric-entity_texture_features-common.mixins.json")
+        fileToModify.text = fileToModify.text.replaceAll("fabric/", "fabric.")
+
+        fileToModify = new File(tempDir, "META-INF\\jarjar\\metadata.json")
+        fileToModify.text = fileToModify.text.replaceAll("neoforge-httpmime", "fabric-httpmime")
+
+        new File(tempDir, "META-INF\\jars\\neoforge-httpmime-4.5.10.jar").delete()
+
+        fileToModify = new File(tempDir, "neoforge-entity_texture_features-forge.mixins.json")
+        fileToModify.text = fileToModify.text.replaceAll("neoforge/", "neoforge.")
+        fileToModify = new File(tempDir, "neoforge-entity_texture_features-common.mixins.json")
+        fileToModify.text = fileToModify.text.replaceAll("neoforge/", "neoforge.")
+
+
+
+
+        // Package modified files into new JAR
+//        Manifest manifest = new Manifest()
+//
+//        manifest.getMainAttributes().putValue("Manifest-Version", "1.0");
+//        manifest.getMainAttributes().putValue("Created-By", "My Application");
+
+
+        def jarOutputStream = new JarOutputStream(new FileOutputStream(modifiedJarFile))
+
+        Consumer<File[]> dir;
+        //noinspection GroovyVariableNotAssigned
+        dir=(files)-> files.each { file ->
+            // MUST BE / AND NOT \  I AM SO F@%$ING MAD
+            // LITERAL HOURS WASTED
+            def relative =relativePath(file).replace("temp-rename\\", "").replaceAll("\\\\", "/")
+            println relative
+            if (file.path.startsWith("/")) file.path = file.path.substring(1)
+            if (file.path.isEmpty()) return // Skip root directory
+
+            if (file.isDirectory()) {
+                jarOutputStream.putNextEntry(new JarEntry(relative + "/"))
+                jarOutputStream.closeEntry()
+                dir.accept(file.listFiles())
+            } else {
+                def zipEntry = new JarEntry(relative)
+                jarOutputStream.putNextEntry(zipEntry)
+                jarOutputStream.write(file.bytes)
+                jarOutputStream.closeEntry()
+            }
+        }
+        def files = file(tempDir).listFiles()
+        dir.accept(files)
+
+
+        jarOutputStream.close()
+
+
+
+
+        // Clean up temporary directory
+        file(tempDir).deleteDir()
+    }
+}
+
+
 
 architectury {
     minecraft = rootProject.minecraft_version
@@ -34,6 +176,12 @@ subprojects {
         implementation group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.10'
         implementation 'com.demonwav.mcdev:annotations:2.1.0'
     }
+
+    build.finalizedBy(mergeJars)
+    assemble.finalizedBy(mergeJars)
+    build.finalizedBy(modifyJar)
+    assemble.finalizedBy(modifyJar)
+
 }
 
 allprojects {

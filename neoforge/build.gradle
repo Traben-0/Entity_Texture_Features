@@ -2,7 +2,7 @@ plugins {
     id "com.github.johnrengelman.shadow" version "8.1.1"
 }
 
-archivesBaseName = rootProject.archives_base_name + "_neoforge_1.20.5"
+archivesBaseName = rootProject.archives_base_name + "_neoforge_${minecraft_version}"
 
 architectury {
     platformSetupLoomIde()

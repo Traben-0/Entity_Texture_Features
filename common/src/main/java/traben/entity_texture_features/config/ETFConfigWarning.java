@@ -2,7 +2,7 @@ package traben.entity_texture_features.config;
 
 import com.demonwav.mcdev.annotations.Translatable;
 import org.jetbrains.annotations.Nullable;
-import traben.entity_texture_features.ETFVersionDifferenceHandler;
+import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.config.screens.ETFConfigScreenWarnings;
 
 import java.util.function.Supplier;
@@ -87,7 +87,7 @@ public abstract class ETFConfigWarning {
          */
         public Simple(String id, String modName, @Translatable String title_translation_key, @Translatable String sub_title_translation_key, @Nullable Runnable fix) {
             this.ID = id;
-            this.CONDITION = () -> ETFVersionDifferenceHandler.isThisModLoaded(modName);
+            this.CONDITION = () -> ETF.isThisModLoaded(modName);
             this.TITLE_TRANSLATION_KEY = title_translation_key;
             this.SUB_TITLE_TRANSLATION_KEY = sub_title_translation_key;
             this.FIX = fix;

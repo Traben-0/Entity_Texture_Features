@@ -2,7 +2,7 @@ package traben.entity_texture_features.features.property_reading.properties.etf_
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import traben.entity_texture_features.ETFVersionDifferenceHandler;
+import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperty;
 import traben.entity_texture_features.features.property_reading.properties.generic_properties.StringArrayOrRegexProperty;
 import traben.entity_texture_features.utils.ETFEntity;
@@ -18,8 +18,8 @@ public class ModLoadedProperty extends StringArrayOrRegexProperty {
         super(RandomProperty.readPropertiesOrThrow(properties, propertyNum, "modLoaded", "modsLoaded"));
 
         boolean matches = false;
-        assert ETFVersionDifferenceHandler.modsLoaded() != null;
-        for (String modId : ETFVersionDifferenceHandler.modsLoaded()) {
+        assert ETF.modsLoaded() != null;
+        for (String modId : ETF.modsLoaded()) {
             if (MATCHER.testString(modId)) {
                 matches = true;
                 break;

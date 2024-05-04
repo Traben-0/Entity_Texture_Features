@@ -7,15 +7,14 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 import traben.entity_texture_features.ETF;
-import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.screens.skin.ETFConfigScreenSkinTool;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.player.ETFPlayerTexture;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperties;
+import traben.entity_texture_features.common_config.gui.entries.*;
 import traben.entity_texture_features.utils.ETFEntity;
-import traben.tconfig.TConfig;
-import traben.tconfig.gui.entries.*;
+import traben.entity_texture_features.common_config.TConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +28,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 
 import static traben.entity_texture_features.ETF.MOD_ID;
@@ -232,7 +230,7 @@ public final class ETFConfig extends TConfig {
                                 new TConfigEntryCustomButton("config.entity_texture_features.debug_screen.mass_log", "config.entity_texture_features.debug_screen.mass_log.tooltip",
                                         (button) -> {
                                             ETFManager.getInstance().doTheBigBoyPrintoutKronk();
-                                            button.setMessage(ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.debug_screen.mass_log.done"));
+                                            button.setMessage(ETF.getTextFromTranslation("config.entity_texture_features.debug_screen.mass_log.done"));
                                             button.active = false;
                                         })
                         )
@@ -336,7 +334,7 @@ public final class ETFConfig extends TConfig {
 
     private TConfigEntry getPlayerSkinEditorButton() {
         boolean condition1 = ETF.config().getConfig().skinFeaturesEnabled;
-        boolean condition2 = !ETFVersionDifferenceHandler.isFabric() || ETFVersionDifferenceHandler.isThisModLoaded("fabric");
+        boolean condition2 = !ETF.isFabric() || ETF.isThisModLoaded("fabric");
         boolean condition3 = Minecraft.getInstance().player != null;
         boolean condition4 = ETFPlayerTexture.clientPlayerOriginalSkinImageForTool != null;
         boolean canLaunchSkinTool = condition1 && condition2 && condition3 && condition4;
@@ -344,18 +342,18 @@ public final class ETFConfig extends TConfig {
         StringBuilder reasonText = new StringBuilder();
         if (!canLaunchSkinTool) {
             //log reason
-            reasonText.append(ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.player_skin_editor.reason_0").getString());
+            reasonText.append(ETF.getTextFromTranslation("config.entity_texture_features.player_skin_editor.reason_0").getString());
             if (!condition1) {
-                reasonText.append(ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.player_skin_editor.reason_1").getString());
+                reasonText.append(ETF.getTextFromTranslation("config.entity_texture_features.player_skin_editor.reason_1").getString());
             }
             if (!condition2) {
-                reasonText.append(ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.player_skin_editor.reason_2").getString());
+                reasonText.append(ETF.getTextFromTranslation("config.entity_texture_features.player_skin_editor.reason_2").getString());
             }
             if (!condition3) {
-                reasonText.append(ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.player_skin_editor.reason_3").getString());
+                reasonText.append(ETF.getTextFromTranslation("config.entity_texture_features.player_skin_editor.reason_3").getString());
             }
             if (!condition4) {
-                reasonText.append(ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.player_skin_editor.reason_4").getString());
+                reasonText.append(ETF.getTextFromTranslation("config.entity_texture_features.player_skin_editor.reason_4").getString());
             }
             //ETFUtils2.logWarn(reasonText.toString());
         }
@@ -407,7 +405,7 @@ public final class ETFConfig extends TConfig {
 
         @Override
         public String toString() {
-            return ETFVersionDifferenceHandler.getTextFromTranslation(key).getString();
+            return ETF.getTextFromTranslation(key).getString();
         }
 
 
@@ -427,7 +425,7 @@ public final class ETFConfig extends TConfig {
 
         @Override
         public String toString() {
-            return ETFVersionDifferenceHandler.getTextFromTranslation(key).getString();
+            return ETF.getTextFromTranslation(key).getString();
         }
 
     }
@@ -446,7 +444,7 @@ public final class ETFConfig extends TConfig {
 
         @Override
         public String toString() {
-            return ETFVersionDifferenceHandler.getTextFromTranslation(key).getString();
+            return ETF.getTextFromTranslation(key).getString();
         }
 
     }
@@ -459,9 +457,9 @@ public final class ETFConfig extends TConfig {
         @Override
         public String toString() {
             return switch (this) {
-                case DULL -> ETFVersionDifferenceHandler.getTextFromTranslation(
+                case DULL -> ETF.getTextFromTranslation(
                         "config.entity_texture_features.emissive_mode.dull").getString();
-                case BRIGHT -> ETFVersionDifferenceHandler.getTextFromTranslation(
+                case BRIGHT -> ETF.getTextFromTranslation(
                         "config.entity_texture_features.emissive_mode.bright").getString();
             };
         }
@@ -483,7 +481,7 @@ public final class ETFConfig extends TConfig {
 
         @Override
         public String toString() {
-            return ETFVersionDifferenceHandler.getTextFromTranslation(key).getString();
+            return ETF.getTextFromTranslation(key).getString();
         }
 
     }
@@ -502,7 +500,7 @@ public final class ETFConfig extends TConfig {
 
         @Override
         public String toString() {
-            return ETFVersionDifferenceHandler.getTextFromTranslation(key).getString();
+            return ETF.getTextFromTranslation(key).getString();
         }
 
     }

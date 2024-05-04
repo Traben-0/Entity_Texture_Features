@@ -30,8 +30,8 @@ import org.joml.Quaternionf;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.config.ETFConfigWarning;
 import traben.entity_texture_features.config.ETFConfigWarnings;
-import traben.tconfig.gui.TConfigScreenMain;
-import traben.tconfig.gui.entries.TConfigEntryCategory;
+import traben.entity_texture_features.common_config.gui.TConfigScreenMain;
+import traben.entity_texture_features.common_config.gui.entries.TConfigEntryCategory;
 
 import java.util.List;
 import java.util.Objects;

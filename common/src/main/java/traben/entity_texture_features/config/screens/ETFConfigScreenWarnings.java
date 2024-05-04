@@ -2,11 +2,10 @@ package traben.entity_texture_features.config.screens;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import traben.entity_texture_features.ETF;
-import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.ETFConfigWarning;
 import traben.entity_texture_features.config.ETFConfigWarnings;
-import traben.tconfig.TConfig;
-import traben.tconfig.gui.TConfigScreen;
+import traben.entity_texture_features.common_config.TConfig;
+import traben.entity_texture_features.common_config.gui.TConfigScreen;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -40,7 +39,7 @@ public class ETFConfigScreenWarnings extends TConfigScreen {
     @Override
     protected void init() {
         super.init();
-        this.addRenderableWidget(Button.builder(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETF.MOD_ID + ".ignore_all"),
+        this.addRenderableWidget(Button.builder(ETF.getTextFromTranslation("config." + ETF.MOD_ID + ".ignore_all"),
                 (button) -> {
                     //temporaryETFConfig = new ETFConfig();
                     for (ETFConfigWarning warn :
@@ -56,7 +55,7 @@ public class ETFConfigScreenWarnings extends TConfigScreen {
         for (ETFConfigWarning warning :
                 warningsFound) {
             if (warning.doesShowDisableButton()) {
-                Button butt = Button.builder(Component.nullToEmpty(ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.warn.ignore").getString() +
+                Button butt = Button.builder(Component.nullToEmpty(ETF.getTextFromTranslation("config.entity_texture_features.warn.ignore").getString() +
                                         (getIgnoredWarnings().contains(warning.getID()) ? CommonComponents.GUI_YES : CommonComponents.GUI_NO).getString()),
                                 (button) -> {
                                     //button.active = false;
@@ -65,10 +64,10 @@ public class ETFConfigScreenWarnings extends TConfigScreen {
                                     } else {
                                         getIgnoredWarnings().add(warning.getID());
                                     }
-                                    button.setMessage(Component.nullToEmpty(ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.warn.ignore").getString() +
+                                    button.setMessage(Component.nullToEmpty(ETF.getTextFromTranslation("config.entity_texture_features.warn.ignore").getString() +
                                             (getIgnoredWarnings().contains(warning.getID()) ? CommonComponents.GUI_YES : CommonComponents.GUI_NO).getString()));
                                 }).bounds((int) (this.width * 0.75), (int) (this.height * (0.25 + offset)), (int) (this.width * 0.17), 20)
-                        .tooltip(Tooltip.create(ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.ignore_description"))).build();
+                        .tooltip(Tooltip.create(ETF.getTextFromTranslation("config.entity_texture_features.ignore_description"))).build();
 
 
                 this.addRenderableWidget(butt);
@@ -83,13 +82,13 @@ public class ETFConfigScreenWarnings extends TConfigScreen {
     public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
 
-        context.drawCenteredString(font, ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETF.MOD_ID + ".warn_instruction"), (int) (width * 0.5), (int) (height * 0.18), 0xFFFFFF);
+        context.drawCenteredString(font, ETF.getTextFromTranslation("config." + ETF.MOD_ID + ".warn_instruction"), (int) (width * 0.5), (int) (height * 0.18), 0xFFFFFF);
         double offset = 0.0;
 
         for (ETFConfigWarning warning :
                 warningsFound) {
-            context.drawString(font, ETFVersionDifferenceHandler.getTextFromTranslation(warning.getTitle()), (int) (this.width * 0.05), (int) (this.height * (0.25 + offset)), 0xFFFFFF);
-            context.drawString(font, ETFVersionDifferenceHandler.getTextFromTranslation(warning.getSubTitle()), (int) (this.width * 0.05), (int) (this.height * (0.29 + offset)), 0x888888);
+            context.drawString(font, ETF.getTextFromTranslation(warning.getTitle()), (int) (this.width * 0.05), (int) (this.height * (0.25 + offset)), 0xFFFFFF);
+            context.drawString(font, ETF.getTextFromTranslation(warning.getSubTitle()), (int) (this.width * 0.05), (int) (this.height * (0.29 + offset)), 0x888888);
             offset += 0.1;
             //todo offset method only good for about 6 warnings, return here if adding more than 7 in future
         }

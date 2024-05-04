@@ -13,9 +13,9 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
-import traben.entity_texture_features.ETFVersionDifferenceHandler;
-import traben.entity_texture_features.mixin.accessor.TooltipAccessor;
-import traben.tconfig.gui.TConfigScreen;
+import traben.entity_texture_features.ETF;
+import traben.mixin.entity_texture_features.accessor.TooltipAccessor;
+import traben.entity_texture_features.common_config.gui.TConfigScreen;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,7 +80,7 @@ public abstract class ETFScreenOldCompat extends TConfigScreen {
             ///////////////////////////////////////
 
             Tooltip bob = Tooltip.create(toolTipText);
-            if (!ETFVersionDifferenceHandler.isThisModLoaded("adaptive-tooltips")) {
+            if (!ETF.isThisModLoaded("adaptive-tooltips")) {
                 //split tooltip by our rules
                 String[] strings = toolTipText.getString().split("\n");
                 List<FormattedCharSequence> texts = new ArrayList<>();

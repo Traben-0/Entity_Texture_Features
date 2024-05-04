@@ -1,9 +1,15 @@
 package traben.entity_texture_features;
 
+import com.demonwav.mcdev.annotations.Translatable;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import traben.entity_texture_features.config.ETFConfig;
@@ -11,17 +17,20 @@ import traben.entity_texture_features.config.ETFConfigWarning;
 import traben.entity_texture_features.config.ETFConfigWarnings;
 import traben.entity_texture_features.config.screens.ETFConfigScreenMain;
 import traben.entity_texture_features.config.screens.ETFConfigScreenWarnings;
+import traben.entity_texture_features.common_config.TConfigHandler;
 import traben.entity_texture_features.utils.ETFUtils2;
-import traben.tconfig.TConfigHandler;
 
 import java.io.File;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 
 public class ETF {
 
-    public static final File CONFIG_DIR = ETFVersionDifferenceHandler.getConfigDir();
+    public static File CONFIG_DIR = null;
     public static final String MOD_ID = "entity_texture_features";
     //logging object
     public final static Logger LOGGER = LoggerFactory.getLogger("Entity Texture Features");
@@ -38,19 +47,41 @@ public class ETF {
 
     public static TConfigHandler<ETFConfig> config() {
         if (CONFIG == null) {
-            CONFIG = new TConfigHandler<>(ETFConfig::new, MOD_ID, "ETF");
-            registerConfigHandler(CONFIG);
+            CONFIG = new TConfigHandler<>(ETFConfig::new, MOD_ID, "ETF_load");
         }
         return CONFIG;
     }
 
 
-    public static void start() {
+    public static void start(Function<String,Boolean> isThisModLoadedFunction,
+                             Supplier<List<String>> modsLoadedFunction,
+                             Supplier<File> getConfigDirFunction,
+                             Supplier<Boolean> isForgeFunction,
+                             Supplier<Boolean> isFabricFunction) {
+
+        ETF.isThisModLoadedFunction = isThisModLoadedFunction;
+        ETF.modsLoadedFunction = modsLoadedFunction;
+        ETF.isForgeFunction = isForgeFunction;
+        ETF.isFabricFunction = isFabricFunction;
+
+        //allows config modification
+        CONFIG_DIR = getConfigDirFunction.get();
+
+        //set true config and load from file
+        CONFIG = new TConfigHandler<>(ETFConfig::new, MOD_ID, "ETF");
+        registerConfigHandler(CONFIG);
+
         //check only once
-        SKIN_LAYERS_DETECTED = ETFVersionDifferenceHandler.isThisModLoaded("skinlayers3d");
-        IRIS_DETECTED = ETFVersionDifferenceHandler.isThisModLoaded("iris") || ETFVersionDifferenceHandler.isThisModLoaded("oculus");
+        SKIN_LAYERS_DETECTED = isThisModLoaded("skinlayers3d");
+        IRIS_DETECTED = isThisModLoaded("iris") || isThisModLoaded("oculus");
+
 
         LOGGER.info("Loading Entity Texture Features, " + randomQuip());
+
+        //initialise ETF with config settings
+//        ETFManager.resetInstance();
+
+
 
         warningConfigHandler = new TConfigHandler<>(ETFConfigScreenWarnings.WarningConfig::new, "etf_warnings.json", "ETF");
         registerConfigHandler(warningConfigHandler);
@@ -92,7 +123,7 @@ public class ETF {
                 //no CEM mod, recommend EMF
                 new ETFConfigWarning.Simple(
                         "emf",
-                        () -> !ETFVersionDifferenceHandler.isThisModLoaded("entity_model_features") && !ETFVersionDifferenceHandler.isThisModLoaded("cem"),
+                        () -> !isThisModLoaded("entity_model_features") && !isThisModLoaded("cem"),
                         "config." + ETF.MOD_ID + ".warn.no_emf.text.1",
                         "config." + ETF.MOD_ID + ".warn.no_emf.text.2",
                         null)
@@ -154,9 +185,46 @@ public class ETF {
     }
 
 
-    // config code based on bedrockify & actually unbreaking fabric config code
-    // https://github.com/juancarloscp52/BedrockIfy/blob/1.17.x/src/main/java/me/juancarloscp52/bedrockify/Bedrockify.java
-    // https://github.com/wutdahack/ActuallyUnbreakingFabric/blob/1.18.1/src/main/java/wutdahack/actuallyunbreaking/ActuallyUnbreaking.java
+
+    //the below methods are used to handle version differences between forge and fabric
+    private static Function<String,Boolean> isThisModLoadedFunction = (str)->false;
+    private static Supplier<List<String>> modsLoadedFunction = ()->null;
+    private static Supplier<Boolean> isForgeFunction = ()->false;
+    private static Supplier<Boolean> isFabricFunction = ()->false;
+
+    public static boolean isThisModLoaded(String modId) {
+        return isThisModLoadedFunction.apply(modId);
+    }
+
+    public static List<String> modsLoaded() {
+        return modsLoadedFunction.get();
+    }
+
+
+    public static boolean isForge() {
+        return isForgeFunction.get();
+    }
+
+    public static boolean isFabric() {
+        return isFabricFunction.get();
+    }
+
+    //the below act as handlers for minecraft version differences that have come up during development
+    //for instance biome code changed in 1.18.2
+    @Nullable
+    public static String getBiomeString(Level world, BlockPos pos) {
+        if(world == null || pos == null) return null;
+        //1.19 & 1.18.2 variation
+        return world.getBiome(pos).unwrapKey().toString().split(" / ")[1].replaceAll("[^\\da-zA-Z_:-]", "");
+    }
+
+    @NotNull
+    public static Component getTextFromTranslation(@Translatable(foldMethod = true) String translationKey) {
+        return Component.translatable(translationKey);
+    }
+
+
+
 
 
 }

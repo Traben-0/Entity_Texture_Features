@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import traben.entity_texture_features.ETF;
-import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.ArrayList;
@@ -137,7 +136,7 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFScreenOldCompat {
         int pixelSize = (int) (this.height * 0.7 / 64);
 
         renderGUITexture(currentSkinToRender, (int) ((this.width * 0.35)), (int) ((this.height * 0.2)), (int) ((this.width * 0.35) + (64 * pixelSize)), (int) ((this.height * 0.2) + (64 * pixelSize)));
-        context.drawString(font, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".skin_select" + (selectedPixels.size() > 64 ? ".warn" : ".hint")), width / 7, (int) (this.height * 0.8), selectedPixels.size() > 64 ? 0xff1515 : 0xFFFFFF);
+        context.drawString(font, ETF.getTextFromTranslation("config." + MOD_ID + ".skin_select" + (selectedPixels.size() > 64 ? ".warn" : ".hint")), width / 7, (int) (this.height * 0.8), selectedPixels.size() > 64 ? 0xff1515 : 0xFFFFFF);
 
         if (Minecraft.getInstance() != null) {
             LocalPlayer player = Minecraft.getInstance().player;

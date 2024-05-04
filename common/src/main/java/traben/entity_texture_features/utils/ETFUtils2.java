@@ -3,7 +3,6 @@ package traben.entity_texture_features.utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETF;
-import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.ETFConfigWarning;
 import traben.entity_texture_features.config.ETFConfigWarnings;
 import traben.entity_texture_features.features.ETFManager;
@@ -122,7 +121,7 @@ public abstract class ETFUtils2 {
         try {
             forReturn = new ResourceLocation(id.getNamespace(), id.getPath().replaceFirst(regex, replace));
         } catch (ResourceLocationException idFail) {
-            ETFUtils2.logError(ETFVersionDifferenceHandler.getTextFromTranslation("config.entity_texture_features.illegal_path_recommendation").getString() + "\n" + idFail);
+            ETFUtils2.logError(ETF.getTextFromTranslation("config.entity_texture_features.illegal_path_recommendation").getString() + "\n" + idFail);
             forReturn = null;
         } catch (Exception e) {
             forReturn = null;

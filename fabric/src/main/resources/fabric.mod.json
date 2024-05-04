@@ -26,10 +26,10 @@
   "environment": "client",
   "entrypoints": {
     "client": [
-      "traben.entity_texture_features.fabric.ETFClientFabric"
+      "traben.fabric.entity_texture_features.ETFClientFabric"
     ],
     "modmenu": [
-      "traben.entity_texture_features.fabric.config.ETFModMenu"
+      "traben.fabric.entity_texture_features.config.ETFModMenu"
     ]
   },
   "mixins": [

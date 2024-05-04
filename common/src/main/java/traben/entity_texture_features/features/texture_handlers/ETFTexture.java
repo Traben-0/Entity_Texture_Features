@@ -22,7 +22,6 @@ import net.minecraft.world.item.armortrim.ArmorTrim;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETF;
-import traben.entity_texture_features.ETFVersionDifferenceHandler;
 import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
@@ -670,7 +669,7 @@ public class ETFTexture {
 
         ResourceManager files = Minecraft.getInstance().getResourceManager();
         //should this process cancel itself due to presence of PBR textures
-        if ((ETFVersionDifferenceHandler.isThisModLoaded("iris") || ETFVersionDifferenceHandler.isThisModLoaded("oculus")) &&
+        if ((ETF.isThisModLoaded("iris") || ETF.isThisModLoaded("oculus")) &&
                 //do pbr files exist?
                 (files.getResource(ETFUtils2.replaceIdentifier(thisIdentifier, ".png", "_s.png")).isPresent() ||
                         files.getResource(ETFUtils2.replaceIdentifier(thisIdentifier, ".png", "_n.png")).isPresent())
@@ -680,10 +679,10 @@ public class ETFTexture {
         }
 
         //should patching cancel due to presence of animation mods and animated textures
-        if (((ETFVersionDifferenceHandler.isThisModLoaded("animatica")) && (
+        if (((ETF.isThisModLoaded("animatica")) && (
                 doesAnimaticaVersionExist(thisIdentifier)
                         || doesAnimaticaVersionExist(emissiveIdentifier)
-        ) || (ETFVersionDifferenceHandler.isThisModLoaded("moremcmeta") &&
+        ) || (ETF.isThisModLoaded("moremcmeta") &&
                 (files.getResource(ETFUtils2.replaceIdentifier(thisIdentifier, ".png", ".png.mcmeta")).isPresent() ||
                         files.getResource(ETFUtils2.replaceIdentifier(thisIdentifier, ".png", ".png.moremcmeta")).isPresent())
         )
