@@ -1,4 +1,4 @@
-package traben.entity_texture_features.common_config;
+package traben.entity_texture_features.tconfig;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

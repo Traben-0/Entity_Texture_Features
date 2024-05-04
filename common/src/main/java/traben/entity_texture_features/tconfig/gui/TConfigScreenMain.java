@@ -1,9 +1,9 @@
-package traben.entity_texture_features.common_config.gui;
+package traben.entity_texture_features.tconfig.gui;
 
-import traben.entity_texture_features.common_config.gui.entries.TConfigEntry;
-import traben.entity_texture_features.common_config.gui.entries.TConfigEntryCategory;
-import traben.entity_texture_features.common_config.TConfig;
-import traben.entity_texture_features.common_config.TConfigHandler;
+import traben.entity_texture_features.tconfig.gui.entries.TConfigEntry;
+import traben.entity_texture_features.tconfig.gui.entries.TConfigEntryCategory;
+import traben.entity_texture_features.tconfig.TConfig;
+import traben.entity_texture_features.tconfig.TConfigHandler;
 
 import java.util.ArrayList;
 import java.util.List;

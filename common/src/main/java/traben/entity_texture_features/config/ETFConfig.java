@@ -12,9 +12,9 @@ import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.player.ETFPlayerTexture;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperties;
-import traben.entity_texture_features.common_config.gui.entries.*;
+import traben.entity_texture_features.tconfig.gui.entries.*;
 import traben.entity_texture_features.utils.ETFEntity;
-import traben.entity_texture_features.common_config.TConfig;
+import traben.entity_texture_features.tconfig.TConfig;
 
 import java.util.ArrayList;
 import java.util.List;

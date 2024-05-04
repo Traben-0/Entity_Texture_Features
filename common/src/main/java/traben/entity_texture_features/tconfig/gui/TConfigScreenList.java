@@ -1,9 +1,9 @@
-package traben.entity_texture_features.common_config.gui;
+package traben.entity_texture_features.tconfig.gui;
 
 import com.demonwav.mcdev.annotations.Translatable;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import traben.entity_texture_features.common_config.gui.entries.TConfigEntry;
+import traben.entity_texture_features.tconfig.gui.entries.TConfigEntry;
 
 public class TConfigScreenList extends TConfigScreen {
 

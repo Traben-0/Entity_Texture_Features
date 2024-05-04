@@ -1,9 +1,9 @@
-package traben.entity_texture_features.common_config.gui.entries;
+package traben.entity_texture_features.tconfig.gui.entries;
 
 import com.demonwav.mcdev.annotations.Translatable;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import org.jetbrains.annotations.NotNull;
-import traben.entity_texture_features.common_config.gui.TConfigScreenList;
+import traben.entity_texture_features.tconfig.gui.TConfigScreenList;
 
 import java.util.Collection;
 import java.util.function.Supplier;

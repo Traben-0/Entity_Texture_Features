@@ -1,4 +1,4 @@
-package traben.entity_texture_features.common_config.gui.entries;
+package traben.entity_texture_features.tconfig.gui.entries;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;

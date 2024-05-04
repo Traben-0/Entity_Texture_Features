@@ -1,11 +1,11 @@
-package traben.entity_texture_features.common_config.gui.entries;
+package traben.entity_texture_features.tconfig.gui.entries;
 
 import com.demonwav.mcdev.annotations.Translatable;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 import traben.entity_texture_features.ETF;
-import traben.entity_texture_features.common_config.gui.TConfigEntryListWidget;
+import traben.entity_texture_features.tconfig.gui.TConfigEntryListWidget;
 
 public abstract class TConfigEntry extends TConfigEntryListWidget.TConfigEntryForList {
 

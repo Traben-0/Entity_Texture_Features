@@ -1,7 +1,7 @@
-package traben.entity_texture_features.common_config;
+package traben.entity_texture_features.tconfig;
 
 import net.minecraft.resources.ResourceLocation;
-import traben.entity_texture_features.common_config.gui.entries.TConfigEntryCategory;
+import traben.entity_texture_features.tconfig.gui.entries.TConfigEntryCategory;
 
 public abstract class TConfig {
 

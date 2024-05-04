@@ -12,7 +12,7 @@ plugins {
 
 forgix {
     group = "traben"
-    mergedJarName = "merged-test.jar"
+    mergedJarName = "merged_${minecraft_version}-${mod_version}.jar"
 
     forge {
     projectName = "forge"
@@ -53,8 +53,8 @@ task modifyJar(type: Jar) {
     dependsOn 'build'
 
     // Define input and output paths
-    def jarFile = "${projectDir}/Merged/merged-test.jar"
-    def modifiedJarFile = "${projectDir}/Merged/out.jar"
+    def jarFile = "${projectDir}/Merged/merged_${minecraft_version}-${mod_version}.jar"
+    def modifiedJarFile = "${projectDir}/Merged/entity_texture_features_${minecraft_version}-${mod_version}.jar"
     def tempDir = "${projectDir}/temp-rename"
 
     // Create temporary directory

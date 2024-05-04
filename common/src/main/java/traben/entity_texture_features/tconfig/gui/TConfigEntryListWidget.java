@@ -1,4 +1,4 @@
-package traben.entity_texture_features.common_config.gui;
+package traben.entity_texture_features.tconfig.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -6,7 +6,7 @@ import net.minecraft.client.gui.components.AbstractSelectionList;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import org.jetbrains.annotations.Nullable;
-import traben.entity_texture_features.common_config.gui.entries.TConfigEntry;
+import traben.entity_texture_features.tconfig.gui.entries.TConfigEntry;
 
 public class TConfigEntryListWidget extends AbstractSelectionList<TConfigEntryListWidget.TConfigEntryForList> {
     public TConfigEntryListWidget(final int width, final int height, final int y, final int x, final int itemHeight,

@@ -1,4 +1,4 @@
-package traben.entity_texture_features.common_config;
+package traben.entity_texture_features.tconfig;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

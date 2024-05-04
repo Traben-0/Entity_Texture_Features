@@ -10,7 +10,6 @@ import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforgespi.language.IModInfo;
 import traben.entity_texture_features.ETF;
 
-import java.io.File;
 import java.util.List;
 
 @Mod("entity_texture_features")
@@ -32,9 +31,8 @@ public class ETFClientNeoForge {
             ETF.start(
                     ETFClientNeoForge::isThisModLoaded,
                     ETFClientNeoForge::modsLoaded,
-                    ETFClientNeoForge::getConfigDir,
-                    ETFClientNeoForge::isForge,
-                    ETFClientNeoForge::isFabric);
+                    FMLPaths.GAMEDIR.get().resolve(FMLPaths.CONFIGDIR.get()).toFile(),
+                    true);
 
         } else {
             throw new UnsupportedOperationException("Attempting to load a clientside only mod on the server, refusing");
@@ -43,18 +41,6 @@ public class ETFClientNeoForge {
 
     public static boolean isThisModLoaded(String modId) {
         return ModList.get().isLoaded(modId);
-    }
-
-    public static File getConfigDir() {
-        return FMLPaths.GAMEDIR.get().resolve(FMLPaths.CONFIGDIR.get()).toFile();
-    }
-
-    public static boolean isForge() {
-        return true;
-    }
-
-    public static boolean isFabric() {
-        return false;
     }
 
     public static List<String> modsLoaded() {

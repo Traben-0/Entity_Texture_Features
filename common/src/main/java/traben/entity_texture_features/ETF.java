@@ -17,7 +17,7 @@ import traben.entity_texture_features.config.ETFConfigWarning;
 import traben.entity_texture_features.config.ETFConfigWarnings;
 import traben.entity_texture_features.config.screens.ETFConfigScreenMain;
 import traben.entity_texture_features.config.screens.ETFConfigScreenWarnings;
-import traben.entity_texture_features.common_config.TConfigHandler;
+import traben.entity_texture_features.tconfig.TConfigHandler;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.io.File;
@@ -55,17 +55,16 @@ public class ETF {
 
     public static void start(Function<String,Boolean> isThisModLoadedFunction,
                              Supplier<List<String>> modsLoadedFunction,
-                             Supplier<File> getConfigDirFunction,
-                             Supplier<Boolean> isForgeFunction,
-                             Supplier<Boolean> isFabricFunction) {
+                             File configDir,
+                             boolean isForge) {
 
         ETF.isThisModLoadedFunction = isThisModLoadedFunction;
         ETF.modsLoadedFunction = modsLoadedFunction;
-        ETF.isForgeFunction = isForgeFunction;
-        ETF.isFabricFunction = isFabricFunction;
+        ETF.isForgeFunction = ()->isForge;
+        ETF.isFabricFunction = ()->!isForge;
 
         //allows config modification
-        CONFIG_DIR = getConfigDirFunction.get();
+        CONFIG_DIR = configDir;
 
         //set true config and load from file
         CONFIG = new TConfigHandler<>(ETFConfig::new, MOD_ID, "ETF");
