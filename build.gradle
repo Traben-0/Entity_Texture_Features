@@ -114,7 +114,7 @@ task modifyJar(type: Jar) {
             // MUST BE / AND NOT \  I AM SO F@%$ING MAD
             // LITERAL HOURS WASTED
             def relative =relativePath(file).replace("temp-rename\\", "").replaceAll("\\\\", "/")
-            println relative
+            //println relative
             if (file.path.startsWith("/")) file.path = file.path.substring(1)
             if (file.path.isEmpty()) return // Skip root directory
 
