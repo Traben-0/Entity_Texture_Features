@@ -165,6 +165,10 @@ task modifyJar(type: Jar) {
 
         // Clean up temporary directory
         file(tempDir).deleteDir()
+        //delete original merged jar
+        try {
+            new File(jarFile).delete()
+        } catch (e) {println e}
     }
 }
 
