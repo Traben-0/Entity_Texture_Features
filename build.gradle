@@ -65,7 +65,9 @@ forgix {
 }
 
 task modifyJar(type: Jar) {
-    dependsOn 'build'
+    dependsOn  'build'
+    dependsOn  'mergeJars'
+
 
     // Define input and output paths
     def jarFile = "${projectDir}/Merged/merged_${rootProject.minecraft_version}-${rootProject.mod_version}.jar"
@@ -205,11 +207,8 @@ subprojects {
 
     }
 
-    build.finalizedBy(mergeJars)
-    assemble.finalizedBy(mergeJars)
     build.finalizedBy(modifyJar)
     assemble.finalizedBy(modifyJar)
-
 }
 
 

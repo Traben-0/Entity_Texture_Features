@@ -11,9 +11,13 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+#if MC >= MC_20_6
+import net.minecraft.core.Holder;
+#else
+import net.minecraft.world.item.ArmorItem;
+#endif
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.armortrim.ArmorTrim;
 import org.spongepowered.asm.mixin.Mixin;
