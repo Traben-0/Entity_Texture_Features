@@ -8,6 +8,7 @@ pluginManagement {
 }
 
 File indexProps = new File("${rootDir}/property_variants/${mc_build}.properties")
+println indexProps.path
 Properties properties = new Properties()
 properties.load(indexProps.newDataInputStream())
 def enabled=properties.getProperty("enabled_platforms")
@@ -16,7 +17,7 @@ println enabled
 include("common")
 if(enabled.contains("fabric"))
     include("fabric")
-if(enabled.matches("\\b(?!neoforge\\b)forge\\b"))
+if(enabled.matches(".*\\b(?!neoforge\\b)forge\\b.*"))
  include("forge")
 if(enabled.contains("neoforge"))
     include("neoforge")
