@@ -70,6 +70,7 @@ public class TConfigEntryCategory extends TConfigEntry {
 
     protected boolean fullWidthBackgroundEvenIfSmaller = false;
 
+    @SuppressWarnings("unused")
     public void setWidgetBackgroundToFullWidth() {
         this.fullWidthBackgroundEvenIfSmaller = true;
     }
@@ -173,7 +174,7 @@ public class TConfigEntryCategory extends TConfigEntry {
         }
 
         @Override
-        public Component getMessage() {
+        public @NotNull Component getMessage() {
             return hasChangedFromInitial() ? Component.nullToEmpty(CHANGED_COLOR + super.getMessage().getString()) : super.getMessage();
         }
     }

@@ -117,7 +117,6 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
         ETFRenderContext.allowRenderLayerTextureModify();
     }
 
-    @SuppressWarnings("SuspiciousNameCombination")
     @Unique
     private void etf$renderETFPaintingFront(PoseStack matrices, VertexConsumer vertexConsumerFront, Painting entity, int width, int height, TextureAtlasSprite paintingSprite, boolean emissive) {
 
@@ -180,7 +179,6 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
 
     }
 
-    @SuppressWarnings("SuspiciousNameCombination")
     @Unique
     private void etf$renderETFPaintingBack(PoseStack matrices, VertexConsumer vertexConsumerBack, Painting entity, int width, int height, TextureAtlasSprite backSprite, boolean emissive) {
 

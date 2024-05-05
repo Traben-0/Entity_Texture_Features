@@ -120,7 +120,7 @@ public class ETFManager {
         instance = new ETFManager();
     }
 
-    public static ETFTexture getErrorETFTexture() {
+    public static @NotNull ETFTexture getErrorETFTexture() {
         ETFUtils2.registerNativeImageToIdentifier(ETFUtils2.emptyNativeImage(), new ResourceLocation(MOD_ID, "error.png"));
         return new ETFTexture(new ResourceLocation(MOD_ID, "error.png")/*, false*/);//, ETFTexture.TextureSource.GENERIC_DEBUG);
     }

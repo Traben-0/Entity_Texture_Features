@@ -167,7 +167,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, A extend
                 //iris is weird and will always render the armor trim atlas over everything else
                 // if for some reason no trim texture is present then just dont render it at all
                 // this is to favour packs with fully emissive trims :/
-                return Objects.requireNonNull(etfVertexConsumer.etf$getProvider()).getBuffer(RenderType.armorCutoutNoCull(ETFManager.getErrorETFTexture().thisIdentifier));
+                return Objects.requireNonNull(etfVertexConsumer.etf$getProvider()).getBuffer(RenderType.armorCutoutNoCull(Objects.requireNonNull(ETFManager.getErrorETFTexture().thisIdentifier)));
             }
         }
         return par2;

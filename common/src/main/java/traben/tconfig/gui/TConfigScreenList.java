@@ -64,7 +64,9 @@ public class TConfigScreenList extends TConfigScreen {
                 x = 0;
             }
         }
-        var child = this.addRenderableWidget(
+
+        #if MC >= MC_20_6 var child = #endif
+        this.addRenderableWidget(
                 new TConfigEntryListWidget(
                         width,
                         (int) (this.height * 0.7),

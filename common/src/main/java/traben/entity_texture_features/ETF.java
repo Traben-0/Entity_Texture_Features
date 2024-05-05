@@ -200,6 +200,7 @@ public class ETF {
     }
 
 
+    @SuppressWarnings("unused")
     public static boolean isForge() {
         return isForgeFunction.get();
     }
