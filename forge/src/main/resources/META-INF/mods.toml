@@ -20,12 +20,13 @@ With more features such as:
  '''
 logoFile = "icon.png"
 
-[[dependencies.entity_texture_features]]
-modId = "forge"
-mandatory = true
-versionRange = "[#loaderVersion_forge#)"
-ordering = "NONE"
-side = "CLIENT"
+#test if allows multiloader neoforge
+#[[dependencies.entity_texture_features]]
+#modId = "forge"
+#mandatory = true
+#versionRange = "[#loaderVersion_forge#)"
+#ordering = "NONE"
+#side = "CLIENT"
 
 [[dependencies.entity_texture_features]]
 modId = "minecraft"

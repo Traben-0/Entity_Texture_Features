@@ -81,11 +81,6 @@ public class ETF {
         //initialise ETF with config settings
 //        ETFManager.resetInstance();
 
-    #if MC > MC_20_4
-        System.out.println("MC_BUILD > MC_20_4");
-    #else
-        System.out.println("MC_BUILD <= MC_20_4");
-    #endif
 
         warningConfigHandler = new TConfigHandler<>(ETFConfigScreenWarnings.WarningConfig::new, "etf_warnings.json", "ETF");
         registerConfigHandler(warningConfigHandler);

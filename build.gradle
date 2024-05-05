@@ -10,6 +10,7 @@ plugins {
     id "systems.manifold.manifold-gradle-plugin" version "0.0.2-alpha"
 }
 
+
 private void setupPreProcess(def index){
     def keys ="""
     MC_18 = 0
@@ -118,8 +119,8 @@ task modifyJar(type: Jar) {
         try {
             //neoforge
             fileToModify = new File(tempDir, "META-INF\\neoforge.mods.toml")
-            fileToModify.text = fileToModify.text.replaceAll("#loaderVersion_neoforge#", rootProject.loaderVersion_forge)
-                    .replaceAll("#compatible_mc_neoforge#", rootProject.compatible_mc_forge)
+            fileToModify.text = fileToModify.text.replaceAll("#loaderVersion_neoforge#", rootProject.loaderVersion_neoforge)
+                    .replaceAll("#compatible_mc_neoforge#", rootProject.compatible_mc_neoforge)
                     .replaceAll("#compatible_neoforge#", rootProject.compatible_neoforge)
             fileToModify = new File(tempDir, "neoforge-entity_texture_features-forge.mixins.json")
             fileToModify.text = fileToModify.text.replaceAll("neoforge/", "neoforge.")
