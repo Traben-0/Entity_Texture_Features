@@ -1,19 +1,19 @@
 package traben.entity_texture_features.tconfig.gui;
 
-import traben.entity_texture_features.tconfig.gui.entries.TConfigEntry;
-import traben.entity_texture_features.tconfig.gui.entries.TConfigEntryCategory;
-import traben.entity_texture_features.tconfig.TConfig;
-import traben.entity_texture_features.tconfig.TConfigHandler;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import traben.entity_texture_features.tconfig.TConfig;
+import traben.entity_texture_features.tconfig.TConfigHandler;
+import traben.entity_texture_features.tconfig.gui.entries.TConfigEntry;
+import traben.entity_texture_features.tconfig.gui.entries.TConfigEntryCategory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public abstract class TConfigScreenMain extends TConfigScreen {
     protected final TConfigEntryCategory entries;
@@ -82,9 +82,9 @@ public abstract class TConfigScreenMain extends TConfigScreen {
                 (int) (this.width * 0.6),
                 24,
                 entries.getOptions().values().toArray(new TConfigEntry[0]));
-
+#if MC >= MC_20_6
         child.setWidgetBackgroundToFullWidth();
-
+#endif
         this.addRenderableWidget(child);
     }
 

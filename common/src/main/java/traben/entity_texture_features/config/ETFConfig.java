@@ -5,19 +5,6 @@ import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import org.jetbrains.annotations.NotNull;
-import traben.entity_texture_features.ETF;
-import traben.entity_texture_features.config.screens.skin.ETFConfigScreenSkinTool;
-import traben.entity_texture_features.features.ETFManager;
-import traben.entity_texture_features.features.ETFRenderContext;
-import traben.entity_texture_features.features.player.ETFPlayerTexture;
-import traben.entity_texture_features.features.property_reading.properties.RandomProperties;
-import traben.entity_texture_features.tconfig.gui.entries.*;
-import traben.entity_texture_features.utils.ETFEntity;
-import traben.entity_texture_features.tconfig.TConfig;
-
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
@@ -29,6 +16,19 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.LightLayer;
+import org.jetbrains.annotations.NotNull;
+import traben.entity_texture_features.ETF;
+import traben.entity_texture_features.config.screens.skin.ETFConfigScreenSkinTool;
+import traben.entity_texture_features.features.ETFManager;
+import traben.entity_texture_features.features.ETFRenderContext;
+import traben.entity_texture_features.features.player.ETFPlayerTexture;
+import traben.entity_texture_features.features.property_reading.properties.RandomProperties;
+import traben.entity_texture_features.tconfig.TConfig;
+import traben.entity_texture_features.tconfig.gui.entries.*;
+import traben.entity_texture_features.utils.ETFEntity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static traben.entity_texture_features.ETF.MOD_ID;
 import static traben.entity_texture_features.ETFApi.getBlockEntityTypeToTranslationKey;
@@ -41,13 +41,7 @@ public final class ETFConfig extends TConfig {
     public boolean enableCustomTextures = true;
     public boolean enableCustomBlockEntities = true;
     public UpdateFrequency textureUpdateFrequency_V2 = UpdateFrequency.Fast;
-    //    public boolean restrictBiome = true;
-//    public boolean restrictHeight = true;
-//    public boolean restrictBlock = true;
-//    public boolean restrictWeather = true;
-//    public boolean restrictDayTime = true;
-//    public boolean restrictMoonPhase = true;
-//    public boolean allowUnknownRestrictions = true;
+
     public boolean enableEmissiveTextures = true;
     public boolean enableEnchantedTextures = true;
     public boolean enableEmissiveBlockEntities = true;

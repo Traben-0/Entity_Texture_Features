@@ -33,30 +33,13 @@ public class AngryProperty extends BooleanProperty {
     @Override
     @Nullable
     protected Boolean getValueFromEntity(ETFEntity etfEntity) {
-
         if (etfEntity != null) {
-            switch (etfEntity) {
-                case EnderMan enderman -> {
-                    return enderman.isCreepy();
-                }
-                case Blaze blaze -> {
-                    return blaze.isOnFire();
-                }
-                case Guardian guardian -> {
-                    return guardian.getActiveAttackTarget() != null;
-                }
-                case Vindicator vindicator -> {
-                    return vindicator.isAggressive();
-                }
-                case SpellcasterIllager caster -> {
-                    return caster.isCastingSpell();
-                }
-                case NeutralMob angry -> {
-                    return angry.isAngry();
-                }
-                default -> {
-                }
-            }
+            if (etfEntity instanceof EnderMan enderman)         return enderman.isCreepy();
+            if (etfEntity instanceof Blaze blaze)               return blaze.isOnFire();
+            if (etfEntity instanceof Guardian guardian)         return guardian.getActiveAttackTarget() != null;
+            if (etfEntity instanceof Vindicator vindicator)     return vindicator.isAggressive();
+            if (etfEntity instanceof SpellcasterIllager caster) return caster.isCastingSpell();
+            if (etfEntity instanceof NeutralMob angry)          return angry.isAngry();
         }
         return null;
     }

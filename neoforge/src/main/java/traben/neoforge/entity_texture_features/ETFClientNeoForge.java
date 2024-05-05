@@ -6,7 +6,7 @@ import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.FMLPaths;
-import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import net.neoforged.neoforge.client.ConfigScreenHandler;
 import net.neoforged.neoforgespi.language.IModInfo;
 import traben.entity_texture_features.ETF;
 
@@ -22,8 +22,8 @@ public class ETFClientNeoForge {
         if (FMLEnvironment.dist.isClient()) {
             try {
                 ModLoadingContext.get().registerExtensionPoint(
-                        IConfigScreenFactory.class,
-                        ()-> ETF::getConfigScreen);
+                        ConfigScreenHandler.ConfigScreenFactory.class,
+                        ()-> new ConfigScreenHandler.ConfigScreenFactory(ETF::getConfigScreen));
                        // () -> new ConfigScreenHandler.ConfigScreenFactory(ETF::getConfigScreen));
             } catch (NoClassDefFoundError e) {
                 System.out.println("[Entity Texture Features]: Mod config broken, download latest forge version");

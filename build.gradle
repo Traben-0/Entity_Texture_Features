@@ -7,42 +7,57 @@ plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
     id "dev.architectury.loom" version "1.6-SNAPSHOT" apply false
     id "io.github.pacifistmc.forgix" version "1.2.7"
+    id "systems.manifold.manifold-gradle-plugin" version "0.0.2-alpha"
+}
+
+private void setupPreProcess(def index){
+    def keys ="""
+    MC_18 = 0
+    MC_19_2 = 1
+    MC_19_4 = 2
+    MC_20_1 = 3
+    MC_20_2 = 4
+    MC_20_4 = 5
+    MC_20_6 = 6
+    MC = ${index}
+    """
+    File props = new File(projectDir,"build.properties")
+    println props.path
+    props.text = keys
+
+    File indexProps = new File(projectDir,"property_variants/${index}.properties")
+    Properties properties = new Properties()
+    properties.load(indexProps.newDataInputStream())
+    properties.forEach { key, value ->
+        gradle.rootProject.setProperty(key as String, value)
+    }
 
 }
+//move to settings for include logic
+
+
+setupPreProcess(rootProject.mc_build)
 
 forgix {
     group = "traben"
-    mergedJarName = "merged_${minecraft_version}-${mod_version}.jar"
-
-    forge {
-    projectName = "forge"
-    jarLocation = "build/libs/entity_texture_features_forge_${minecraft_version}-${mod_version}.jar"
-//
-////        additionalRelocate "org.my.lib" "forge.org.my.lib"
-////        additionalRelocate "org.my.lib.another" "forge.org.my.lib.another"
-//
-////        mixin "forge.mixins.json"
-////        mixin "forge.mixins.another.json"
+    mergedJarName = "merged_${rootProject.minecraft_version}-${rootProject.mod_version}.jar"
+    if (rootProject.merge_platforms.contains("forge")) {
+        forge {
+            projectName = "forge"
+            jarLocation = "build/libs/entity_texture_features_forge_${rootProject.minecraft_version}-${rootProject.mod_version}.jar"
+        }
     }
-
-    neoforge {
-        projectName = "neoforge"
-        jarLocation = "build/libs/entity_texture_features_neoforge_${minecraft_version}-${mod_version}.jar"
-
-//        additionalRelocate "org.my.lib" "neoforge.org.my.lib"
-//        additionalRelocate "org.my.lib.another" "neoforge.org.my.lib.another"
-
-//        mixin "neoforge.mixins.json"
-//        mixin "neoforge.mixins.another.json"
+    if (rootProject.merge_platforms.contains("neoforge")) {
+        neoforge {
+            projectName = "neoforge"
+            jarLocation = "build/libs/entity_texture_features_neoforge_${rootProject.minecraft_version}-${rootProject.mod_version}.jar"
+        }
     }
-//
-    fabric {
-        projectName = "fabric"
-//        jarLocation = "build/libs/${archives_base_name}_fabric_1.20.5-${version}.jar"
-        jarLocation = "build/libs/entity_texture_features_fabric_${minecraft_version}-${mod_version}.jar"
-
-//        additionalRelocate "org.my.lib" "fabric.org.my.lib"
-//        additionalRelocate "org.my.lib.another" "fabric.org.my.lib.another"
+    if (rootProject.merge_platforms.contains("fabric")) {
+        fabric {
+            projectName = "fabric"
+            jarLocation = "build/libs/entity_texture_features_fabric_${rootProject.minecraft_version}-${rootProject.mod_version}.jar"
+        }
     }
 
 
@@ -53,8 +68,8 @@ task modifyJar(type: Jar) {
     dependsOn 'build'
 
     // Define input and output paths
-    def jarFile = "${projectDir}/Merged/merged_${minecraft_version}-${mod_version}.jar"
-    def modifiedJarFile = "${projectDir}/Merged/entity_texture_features_${minecraft_version}-${mod_version}.jar"
+    def jarFile = "${projectDir}/Merged/merged_${rootProject.minecraft_version}-${rootProject.mod_version}.jar"
+    def modifiedJarFile = "${projectDir}/Merged/entity_texture_features_${rootProject.minecraft_version}-${rootProject.mod_version}.jar"
     def tempDir = "${projectDir}/temp-rename"
 
     // Create temporary directory
@@ -75,36 +90,49 @@ task modifyJar(type: Jar) {
         jar.close()
 
 
-
         // Modify merged jar
+        try {
+            //fabric
+            File fileToModify = new File(tempDir, "fabric.mod.json")
+            fileToModify.text = fileToModify.text.replaceAll("fabric/", "fabric.")
+                    .replaceAll("#compatible_mc_fabric#", rootProject.compatible_mc_fabric)
+            fileToModify = new File(tempDir, "fabric-entity_texture_features-fabric.mixins.json")
+            fileToModify.text = fileToModify.text.replaceAll("fabric/", "fabric.")
+            fileToModify = new File(tempDir, "fabric-entity_texture_features-common.mixins.json")
+            fileToModify.text = fileToModify.text.replaceAll("fabric/", "fabric.")
+        } catch (e) {println e}
 
-        File fileToModify = new File(tempDir, "fabric.mod.json")
-        fileToModify.text = fileToModify.text.replaceAll("fabric/", "fabric.")
-//        fileToModify.text = fileToModify.text.replaceAll("fabric-httpmime", "httpmime")
-        fileToModify = new File(tempDir, "fabric-entity_texture_features-fabric.mixins.json")
-        fileToModify.text = fileToModify.text.replaceAll("fabric/", "fabric.")
-        fileToModify = new File(tempDir, "fabric-entity_texture_features-common.mixins.json")
-        fileToModify.text = fileToModify.text.replaceAll("fabric/", "fabric.")
+        //jar in jar duplicate removal
+        try {
+            fileToModify = new File(tempDir, "META-INF\\jarjar\\metadata.json")
+            fileToModify.text = fileToModify.text.replaceAll("neoforge-httpmime", "fabric-httpmime")
+        } catch (e) {println e}
+        try {
+            new File(tempDir, "META-INF\\jars\\neoforge-httpmime-4.5.10.jar").delete()
+            new File(tempDir, "META-INF\\jars\\forge-httpmime-4.5.10.jar").delete()
+        } catch (e) {println e}
 
-        fileToModify = new File(tempDir, "META-INF\\jarjar\\metadata.json")
-        fileToModify.text = fileToModify.text.replaceAll("neoforge-httpmime", "fabric-httpmime")
-
-        new File(tempDir, "META-INF\\jars\\neoforge-httpmime-4.5.10.jar").delete()
-
-        fileToModify = new File(tempDir, "neoforge-entity_texture_features-forge.mixins.json")
-        fileToModify.text = fileToModify.text.replaceAll("neoforge/", "neoforge.")
-        fileToModify = new File(tempDir, "neoforge-entity_texture_features-common.mixins.json")
-        fileToModify.text = fileToModify.text.replaceAll("neoforge/", "neoforge.")
-
-
-
-
-        // Package modified files into new JAR
-//        Manifest manifest = new Manifest()
-//
-//        manifest.getMainAttributes().putValue("Manifest-Version", "1.0");
-//        manifest.getMainAttributes().putValue("Created-By", "My Application");
-
+        try {
+            //neoforge
+            fileToModify = new File(tempDir, "META-INF\\neoforge.mods.toml")
+            fileToModify.text = fileToModify.text.replaceAll("#loaderVersion_neoforge#", rootProject.loaderVersion_forge)
+                    .replaceAll("#compatible_mc_neoforge#", rootProject.compatible_mc_forge)
+            fileToModify = new File(tempDir, "neoforge-entity_texture_features-forge.mixins.json")
+            fileToModify.text = fileToModify.text.replaceAll("neoforge/", "neoforge.")
+            fileToModify = new File(tempDir, "neoforge-entity_texture_features-common.mixins.json")
+            fileToModify.text = fileToModify.text.replaceAll("neoforge/", "neoforge.")
+        } catch (e) {println e}
+        try {
+            //forge
+            fileToModify = new File(tempDir, "META-INF\\mods.toml")
+            fileToModify.text = fileToModify.text.replaceAll("#loaderVersion_forge#", rootProject.loaderVersion_forge)
+                    .replaceAll("#compatible_mc_forge#", rootProject.compatible_mc_forge)
+                    .replaceAll("#compatible_neoforge#", rootProject.compatible_neoforge)
+            fileToModify = new File(tempDir, "forge-entity_texture_features-forge.mixins.json")
+            fileToModify.text = fileToModify.text.replaceAll("forge/", "forge.")
+            fileToModify = new File(tempDir, "forge-entity_texture_features-common.mixins.json")
+            fileToModify.text = fileToModify.text.replaceAll("forge/", "forge.")
+        } catch (e) {println e}
 
         def jarOutputStream = new JarOutputStream(new FileOutputStream(modifiedJarFile))
 
@@ -112,7 +140,6 @@ task modifyJar(type: Jar) {
         //noinspection GroovyVariableNotAssigned
         dir=(files)-> files.each { file ->
             // MUST BE / AND NOT \  I AM SO F@%$ING MAD
-            // LITERAL HOURS WASTED
             def relative =relativePath(file).replace("temp-rename\\", "").replaceAll("\\\\", "/")
             //println relative
             if (file.path.startsWith("/")) file.path = file.path.substring(1)
@@ -132,18 +159,12 @@ task modifyJar(type: Jar) {
         def files = file(tempDir).listFiles()
         dir.accept(files)
 
-
         jarOutputStream.close()
-
-
-
 
         // Clean up temporary directory
         file(tempDir).deleteDir()
     }
 }
-
-
 
 architectury {
     minecraft = rootProject.minecraft_version
@@ -151,6 +172,7 @@ architectury {
 
 subprojects {
     apply plugin: "dev.architectury.loom"
+    apply plugin: "systems.manifold.manifold-gradle-plugin"
 
     loom {
         silentMojangMappingsLicense()
@@ -158,23 +180,29 @@ subprojects {
 
     dependencies {
         minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
-        // The following line declares the mojmap mappings, you may use other mappings as well
-         mappings loom.officialMojangMappings()
-        // The following line declares the yarn mappings you may select this one as well.
-        //mappings "net.fabricmc:yarn:1.19+build.4:v2"
 
-//        mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-//        mappings loom.layered {
-//            it.mappings("net.fabricmc:yarn:1.20.5+build.1:v2")
-//            it.mappings("dev.architectury:yarn-mappings-patch-neoforge:1.20.5+build.3")
-//        }
-//        mappings loom.layered {
-//            //it.mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-//            it.mappings "dev.architectury:yarn-mappings-patch-forge:1.20.4+build.1"
-//        }
+
+
+
+
+        if(rootProject.parchment_version != "no") {
+            mappings loom.layered() {
+                officialMojangMappings()
+                parchment("org.parchmentmc.data:parchment-${parchment_version}@zip")
+            }
+        }else{
+            mappings loom.officialMojangMappings()
+        }
+
+
 
         implementation group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.10'
         implementation 'com.demonwav.mcdev:annotations:2.1.0'
+
+        //https://github.com/manifold-systems/manifold/tree/master/manifold-deps-parent/manifold-preprocessor#setup
+        annotationProcessor 'systems.manifold:manifold-preprocessor:2023.1.17'
+        testAnnotationProcessor 'systems.manifold:manifold-preprocessor:2023.1.17'
+
     }
 
     build.finalizedBy(mergeJars)
@@ -184,14 +212,18 @@ subprojects {
 
 }
 
+
+
 allprojects {
     apply plugin: "java"
     apply plugin: "architectury-plugin"
     apply plugin: "maven-publish"
+    apply plugin: "systems.manifold.manifold-gradle-plugin"
 
     archivesBaseName = rootProject.archives_base_name
     version = rootProject.mod_version
     group = rootProject.maven_group
+
 
     repositories {
         // Add repositories to retrieve artifacts from in here.
@@ -204,18 +236,27 @@ allprojects {
         maven { url "https://maven.shedaniel.me/" }
         maven { url "https://maven.terraformersmc.com/releases/" }
         maven { url "https://mvnrepository.com/artifact/com.demonwav.mcdev/annotations" }
+        maven { url "https://maven.parchmentmc.org" }
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     }
 
 
     tasks.withType(JavaCompile) {
         options.encoding = "UTF-8"
-        options.release = 21
+        options.release = rootProject.java_version as int
+
+        //pre processor args
+        options.compilerArgs += ["-Xplugin:Manifold"]
+
+//        options.compilerArgs += ["-Xlint:deprecation"]
     }
-    //compileJava.options.fork = true
-    //compileJava.options.forkOptions.executable = 'C:/Program Files/Java/jdk-17.0.3.1/'
+//    compileJava.options.fork = true
+//    compileJava.options.forkOptions.executable = 'C:/Program Files/Java/jdk-17.0.3.1/'
     java {
         withSourcesJar()
     }
+
+
 }
 
 

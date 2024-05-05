@@ -49,11 +49,15 @@ public class TConfigEntryListWidget extends AbstractSelectionList<TConfigEntryLi
 
     }
 
+
+#if MC >= MC_20_6
     protected boolean fullWidthBackgroundEvenIfSmaller = false;
 
     public void setWidgetBackgroundToFullWidth() {
         this.fullWidthBackgroundEvenIfSmaller = true;
     }
+
+
 
     @Override
     protected void renderListBackground(final GuiGraphics context) {
@@ -86,6 +90,7 @@ public class TConfigEntryListWidget extends AbstractSelectionList<TConfigEntryLi
             super.renderListSeparators(context);
         }
     }
+#endif
 
     public abstract static class TConfigEntryForList extends Entry<TConfigEntryForList> {
 

@@ -10,9 +10,9 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.armortrim.ArmorTrim;
 import org.spongepowered.asm.mixin.Mixin;
@@ -73,7 +73,12 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
 
     @Inject(method = "renderModel",
             at = @At(value = "TAIL"))
+    #if MC >= MC_20_6
     private void etf$applyEmissive(final PoseStack matrices, final MultiBufferSource vertexConsumers, final int light, final A model, final float red, final float green, final float blue, final ResourceLocation overlay, final CallbackInfo ci) {
+    #else
+    private void etf$applyEmissive(final PoseStack matrices, final MultiBufferSource vertexConsumers, final int light, final ArmorItem armorItem, final A model, final boolean bl, final float red, final float green, final float blue, final String string, final CallbackInfo ci) {
+    #endif
+
         //UUID id = livingEntity.getUuid();
         if (thisETFTexture != null && ETF.config().getConfig().canDoEmissiveTextures()) {
             ResourceLocation emissive = thisETFTexture.getEmissiveIdentifierOfCurrentState();
@@ -106,7 +111,11 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
 
     @Inject(method = "renderTrim",
             at = @At(value = "HEAD"))
+    #if MC >= MC_20_6
     private void etf$trimGet(final Holder<ArmorMaterial> armorMaterial, final PoseStack matrices, final MultiBufferSource vertexConsumers, final int light, final ArmorTrim trim, final A model, final boolean leggings, final CallbackInfo ci) {
+    #else
+    private void etf$trimGet(final ArmorMaterial armorMaterial, final PoseStack matrices, final MultiBufferSource vertexConsumers, final int i, final ArmorTrim trim, final A model, final boolean leggings, final CallbackInfo ci) {
+    #endif
         if(ETF.config().getConfig().enableArmorAndTrims) {
             ResourceLocation trimBaseId = leggings ? trim.innerTexture(armorMaterial) : trim.outerTexture(armorMaterial);
             //support modded trims with namespace
@@ -146,7 +155,11 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
 
     @Inject(method = "renderTrim",
             at = @At(value = "TAIL"))
+    #if MC >= MC_20_6
     private void etf$trimEmissive(final Holder<ArmorMaterial> armorMaterial, final PoseStack matrices, final MultiBufferSource vertexConsumers, final int light, final ArmorTrim trim, final A model, final boolean leggings, final CallbackInfo ci) {
+    #else
+    private void etf$trimEmissive(final ArmorMaterial armorMaterial, final PoseStack matrices, final MultiBufferSource vertexConsumers, final int i, final ArmorTrim trim, final A model, final boolean bl, final CallbackInfo ci) {
+    #endif
         if(thisETFTrimTexture != null && ETF.config().getConfig().canDoEmissiveTextures()){
             //trimTexture.renderEmissive(matrices,vertexConsumers,model);
             ResourceLocation emissive = thisETFTrimTexture.getEmissiveIdentifierOfCurrentState();

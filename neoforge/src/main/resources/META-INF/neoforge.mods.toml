@@ -1,5 +1,5 @@
 modLoader = "javafml"
-loaderVersion = "[1,)"
+loaderVersion = "[#loaderVersion_neoforge#)"
 issueTrackerURL = "https://github.com/Traben-0/EmissiveMod/issues"
 license = "LGPL-3.0"
 showAsResourcePack = false
@@ -27,14 +27,14 @@ logoFile = "icon.png"
 [[dependencies.entity_texture_features]]
 modId = "neoforge"
 mandatory = true
-versionRange = "[20.3,)"
+versionRange = "[#compatible_neoforge#)"
 ordering = "NONE"
 side = "CLIENT"
 
 [[dependencies.entity_texture_features]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.20.5,)"
+versionRange = "[#compatible_mc_neoforge#)"
 ordering = "NONE"
 side = "CLIENT"
 

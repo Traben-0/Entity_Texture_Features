@@ -17,6 +17,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.decoration.Painting;
 import net.minecraft.world.entity.decoration.PaintingVariant;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -34,8 +36,12 @@ import traben.entity_texture_features.utils.ETFEntity;
 public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Painting> {
 
 
-    @Shadow protected abstract void vertex(final PoseStack.Pose matrix, final VertexConsumer vertexConsumer, final float x, final float y, final float u, final float v, final float z, final int normalX, final int normalY, final int normalZ, final int light);
 
+    #if MC >= MC_20_6
+    @Shadow protected abstract void vertex(final PoseStack.Pose matrix, final VertexConsumer vertexConsumer, final float x, final float y, final float u, final float v, final float z, final int normalX, final int normalY, final int normalZ, final int light);
+    #else
+    @Shadow protected abstract void vertex(final Matrix4f matrix4f, final Matrix3f matrix3f, final VertexConsumer vertexConsumer, final float f, final float g, final float h, final float i, final float j, final int k, final int l, final int m, final int n);
+    #endif
     @Unique
     private static final ResourceLocation etf$BACK_SPRITE_ID = new ResourceLocation("textures/painting/back.png");
 
@@ -164,10 +170,10 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
                 float ah = paintingSprite.getU((float) (d * (double) (u - (w + 1))));
                 float ai = paintingSprite.getV((float) (e * (double) (v - x)));
                 float aj = paintingSprite.getV((float) (e * (double) (v - (x + 1))));
-                this.vertex(entry, vertexConsumerFront, y, ab, ah, ai, -0.5F, 0, 0, -1, light);
-                this.vertex(entry, vertexConsumerFront, z, ab, ag, ai, -0.5F, 0, 0, -1, light);
-                this.vertex(entry, vertexConsumerFront, z, aa, ag, aj, -0.5F, 0, 0, -1, light);
-                this.vertex(entry, vertexConsumerFront, y, aa, ah, aj, -0.5F, 0, 0, -1, light);
+                this.vertex(#if MC >= MC_20_6 entry #else entry.pose(),entry.normal() #endif, vertexConsumerFront, y, ab, ah, ai, -0.5F, 0, 0, -1, light);
+                this.vertex(#if MC >= MC_20_6 entry #else entry.pose(),entry.normal() #endif, vertexConsumerFront, z, ab, ag, ai, -0.5F, 0, 0, -1, light);
+                this.vertex(#if MC >= MC_20_6 entry #else entry.pose(),entry.normal() #endif, vertexConsumerFront, z, aa, ag, aj, -0.5F, 0, 0, -1, light);
+                this.vertex(#if MC >= MC_20_6 entry #else entry.pose(),entry.normal() #endif, vertexConsumerFront, y, aa, ah, aj, -0.5F, 0, 0, -1, light);
 
             }
         }
@@ -235,26 +241,27 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
                     light = LevelRenderer.getLightColor(entity.level(), new BlockPos(ac, ad, ae));
                 }
 
-                this.vertex(entry, vertexConsumerBack, y, aa, j, k, 0.5F, 0, 0, 1, light);
-                this.vertex(entry, vertexConsumerBack, z, aa, i, k, 0.5F, 0, 0, 1, light);
-                this.vertex(entry, vertexConsumerBack, z, ab, i, l, 0.5F, 0, 0, 1, light);
-                this.vertex(entry, vertexConsumerBack, y, ab, j, l, 0.5F, 0, 0, 1, light);
-                this.vertex(entry, vertexConsumerBack, y, aa, m, o, -0.5F, 0, 1, 0, light);
-                this.vertex(entry, vertexConsumerBack, z, aa, n, o, -0.5F, 0, 1, 0, light);
-                this.vertex(entry, vertexConsumerBack, z, aa, n, p, 0.5F, 0, 1, 0, light);
-                this.vertex(entry, vertexConsumerBack, y, aa, m, p, 0.5F, 0, 1, 0, light);
-                this.vertex(entry, vertexConsumerBack, y, ab, m, o, 0.5F, 0, -1, 0, light);
-                this.vertex(entry, vertexConsumerBack, z, ab, n, o, 0.5F, 0, -1, 0, light);
-                this.vertex(entry, vertexConsumerBack, z, ab, n, p, -0.5F, 0, -1, 0, light);
-                this.vertex(entry, vertexConsumerBack, y, ab, m, p, -0.5F, 0, -1, 0, light);
-                this.vertex(entry, vertexConsumerBack, y, aa, r, s, 0.5F, -1, 0, 0, light);
-                this.vertex(entry, vertexConsumerBack, y, ab, r, t, 0.5F, -1, 0, 0, light);
-                this.vertex(entry, vertexConsumerBack, y, ab, q, t, -0.5F, -1, 0, 0, light);
-                this.vertex(entry, vertexConsumerBack, y, aa, q, s, -0.5F, -1, 0, 0, light);
-                this.vertex(entry, vertexConsumerBack, z, aa, r, s, -0.5F, 1, 0, 0, light);
-                this.vertex(entry, vertexConsumerBack, z, ab, r, t, -0.5F, 1, 0, 0, light);
-                this.vertex(entry, vertexConsumerBack, z, ab, q, t, 0.5F, 1, 0, 0, light);
-                this.vertex(entry, vertexConsumerBack, z, aa, q, s, 0.5F, 1, 0, 0, light);
+
+                this.vertex(#if MC >= MC_20_6 entry #else entry.pose(),entry.normal() #endif, vertexConsumerBack, y, aa, j, k, 0.5F, 0, 0, 1, light);
+                this.vertex(#if MC >= MC_20_6 entry #else entry.pose(),entry.normal() #endif, vertexConsumerBack, z, aa, i, k, 0.5F, 0, 0, 1, light);
+                this.vertex(#if MC >= MC_20_6 entry #else entry.pose(),entry.normal() #endif, vertexConsumerBack, z, ab, i, l, 0.5F, 0, 0, 1, light);
+                this.vertex(#if MC >= MC_20_6 entry #else entry.pose(),entry.normal() #endif, vertexConsumerBack, y, ab, j, l, 0.5F, 0, 0, 1, light);
+                this.vertex(#if MC >= MC_20_6 entry #else entry.pose(),entry.normal() #endif, vertexConsumerBack, y, aa, m, o, -0.5F, 0, 1, 0, light);
+                this.vertex(#if MC >= MC_20_6 entry #else entry.pose(),entry.normal() #endif, vertexConsumerBack, z, aa, n, o, -0.5F, 0, 1, 0, light);
+                this.vertex(#if MC >= MC_20_6 entry #else entry.pose(),entry.normal() #endif, vertexConsumerBack, z, aa, n, p, 0.5F, 0, 1, 0, light);
+                this.vertex(#if MC >= MC_20_6 entry #else entry.pose(),entry.normal() #endif, vertexConsumerBack, y, aa, m, p, 0.5F, 0, 1, 0, light);
+                this.vertex(#if MC >= MC_20_6 entry #else entry.pose(),entry.normal() #endif, vertexConsumerBack, y, ab, m, o, 0.5F, 0, -1, 0, light);
+                this.vertex(#if MC >= MC_20_6 entry #else entry.pose(),entry.normal() #endif, vertexConsumerBack, z, ab, n, o, 0.5F, 0, -1, 0, light);
+                this.vertex(#if MC >= MC_20_6 entry #else entry.pose(),entry.normal() #endif, vertexConsumerBack, z, ab, n, p, -0.5F, 0, -1, 0, light);
+                this.vertex(#if MC >= MC_20_6 entry #else entry.pose(),entry.normal() #endif, vertexConsumerBack, y, ab, m, p, -0.5F, 0, -1, 0, light);
+                this.vertex(#if MC >= MC_20_6 entry #else entry.pose(),entry.normal() #endif, vertexConsumerBack, y, aa, r, s, 0.5F, -1, 0, 0, light);
+                this.vertex(#if MC >= MC_20_6 entry #else entry.pose(),entry.normal() #endif, vertexConsumerBack, y, ab, r, t, 0.5F, -1, 0, 0, light);
+                this.vertex(#if MC >= MC_20_6 entry #else entry.pose(),entry.normal() #endif, vertexConsumerBack, y, ab, q, t, -0.5F, -1, 0, 0, light);
+                this.vertex(#if MC >= MC_20_6 entry #else entry.pose(),entry.normal() #endif, vertexConsumerBack, y, aa, q, s, -0.5F, -1, 0, 0, light);
+                this.vertex(#if MC >= MC_20_6 entry #else entry.pose(),entry.normal() #endif, vertexConsumerBack, z, aa, r, s, -0.5F, 1, 0, 0, light);
+                this.vertex(#if MC >= MC_20_6 entry #else entry.pose(),entry.normal() #endif, vertexConsumerBack, z, ab, r, t, -0.5F, 1, 0, 0, light);
+                this.vertex(#if MC >= MC_20_6 entry #else entry.pose(),entry.normal() #endif, vertexConsumerBack, z, ab, q, t, 0.5F, 1, 0, 0, light);
+                this.vertex(#if MC >= MC_20_6 entry #else entry.pose(),entry.normal() #endif, vertexConsumerBack, z, aa, q, s, 0.5F, 1, 0, 0, light);
 
             }
         }

@@ -74,7 +74,11 @@ public class ETFConfigScreenMain extends TConfigScreenMain {
     public static void drawEntity(GuiGraphics context, float x, float y, int size, Quaternionf quaternionf, @Nullable Quaternionf quaternionf2, LivingEntity entity) {
         context.pose().pushPose();
         context.pose().translate(x, y, 150.0);
+        #if MC >= MC_20_6
         context.pose().mulPose((new Matrix4f()).scaling((float) size, (float) size, (float) (-size)));
+        #else
+        context.pose().mulPoseMatrix((new Matrix4f()).scaling((float) size, (float) size, (float) (-size)));
+        #endif
         context.pose().mulPose(quaternionf);
         Lighting.setupForEntityInInventory();
         EntityRenderDispatcher entityRenderDispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
@@ -142,7 +146,11 @@ public class ETFConfigScreenMain extends TConfigScreenMain {
         context.pose().pushPose();
         context.pose().translate(x, y, 150.0);
         float scaling = (float) (this.height * 0.3);
+        #if MC >= MC_20_6
         context.pose().mulPose((new Matrix4f()).scaling(scaling, scaling, -scaling));
+        #else
+        context.pose().mulPoseMatrix((new Matrix4f()).scaling(scaling, scaling, -scaling));
+        #endif
         context.pose().mulPose(quaternionf);
         Lighting.setupForEntityInInventory();
 

@@ -3,15 +3,6 @@ package traben.entity_texture_features.config.screens.skin;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
-import org.joml.Matrix4f;
-import org.joml.Quaternionf;
-import traben.entity_texture_features.ETF;
-import traben.entity_texture_features.features.ETFManager;
-import traben.entity_texture_features.features.player.ETFPlayerTexture;
-import traben.entity_texture_features.utils.ETFUtils2;
-
-import java.nio.file.Path;
-import java.util.Objects;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -22,6 +13,15 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import traben.entity_texture_features.ETF;
+import traben.entity_texture_features.features.ETFManager;
+import traben.entity_texture_features.features.player.ETFPlayerTexture;
+import traben.entity_texture_features.utils.ETFUtils2;
+
+import java.nio.file.Path;
+import java.util.Objects;
 
 import static traben.entity_texture_features.ETF.CONFIG_DIR;
 import static traben.entity_texture_features.ETF.MOD_ID;
@@ -547,7 +547,11 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
 
         context.pose().pushPose();
         context.pose().translate(x, y, 150.0);
+        #if MC >= MC_20_6
         context.pose().mulPose((new Matrix4f()).scaling((float) size, (float) size, (float) (-size)));
+        #else
+        context.pose().mulPoseMatrix((new Matrix4f()).scaling((float) size, (float) size, (float) (-size)));
+        #endif
         context.pose().mulPose(quaternionf);
         Lighting.setupForEntityInInventory();
         EntityRenderDispatcher entityRenderDispatcher = Minecraft.getInstance().getEntityRenderDispatcher();

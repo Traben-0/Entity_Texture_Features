@@ -2,16 +2,16 @@ package traben.entity_texture_features.features.texture_handlers;
 
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.client.Minecraft;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.Optional;
-import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.server.packs.resources.ResourceManager;
 
 public enum ETFDirectory {
     DOES_NOT_EXIST(null),
@@ -90,7 +90,7 @@ public enum ETFDirectory {
         if (foundDirectories.isEmpty()) {
             return DOES_NOT_EXIST;
         } else if (foundDirectories.size() == 1) {
-            return foundDirectories.getFirst();
+            return foundDirectories.get(0);
         } else {
             //must be multiple
             //find the one in the highest resource-pack

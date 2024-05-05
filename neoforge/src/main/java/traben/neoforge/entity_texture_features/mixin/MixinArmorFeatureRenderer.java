@@ -1,5 +1,7 @@
 package traben.neoforge.entity_texture_features.mixin;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
@@ -9,9 +11,9 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.armortrim.ArmorTrim;
 import org.spongepowered.asm.mixin.Mixin;
@@ -26,8 +28,7 @@ import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
 import traben.entity_texture_features.utils.ETFVertexConsumer;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import java.util.Objects;
 
 
@@ -59,8 +60,13 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
     }
 
     //todo this method is duplicated of forge, its possibly the source of the split mixins
+    #if MC >= MC_20_6
     @ModifyArg(method = "Lnet/minecraft/client/renderer/entity/layers/HumanoidArmorLayer;renderModel(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/model/Model;FFFLnet/minecraft/resources/ResourceLocation;)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/RenderType;armorCutoutNoCull(Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/client/renderer/RenderType;"))
+    #else
+    @ModifyArg(method = "renderModel(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/item/ArmorItem;Lnet/minecraft/client/model/Model;ZFFFLnet/minecraft/resources/ResourceLocation;)V",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/RenderType;armorCutoutNoCull(Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/client/renderer/RenderType;"))
+    #endif
     private ResourceLocation etf$changeTexture(ResourceLocation texture) {
         if(ETF.config().getConfig().enableArmorAndTrims) {
             thisETF$Texture = ETFManager.getInstance().getETFTextureNoVariation(texture);
@@ -72,10 +78,17 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
         }
         return texture;
     }
-
+#if MC >= MC_20_6
     @Inject(method = "renderModel(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/model/Model;FFFLnet/minecraft/resources/ResourceLocation;)V",
             at = @At(value = "TAIL"))
-    private void etf$applyEmissive(final PoseStack arg, final MultiBufferSource arg2, final int i, final Model arg3, final float f, final float g, final float h, final ResourceLocation arg4, final CallbackInfo ci) {
+    private void etf$applyEmissive(final PoseStack arg, final MultiBufferSource arg2, final int i, final Model model, final float f, final float g, final float h, final ResourceLocation arg4, final CallbackInfo ci) {
+
+#else
+@Inject(method = "renderModel(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/item/ArmorItem;Lnet/minecraft/client/model/Model;ZFFFLnet/minecraft/resources/ResourceLocation;)V",
+        at = @At(value = "TAIL"))
+    private void etf$applyEmissive(final PoseStack arg, final MultiBufferSource arg2, final int i, final ArmorItem arg3, final Model model, final boolean bl, final float f, final float g, final float h, final ResourceLocation armorResource, final CallbackInfo ci) {
+
+#endif
         //UUID id = livingEntity.getUuid();
         if (thisETF$Texture != null && ETF.config().getConfig().canDoEmissiveTextures()) {
             ResourceLocation emissive = thisETF$Texture.getEmissiveIdentifierOfCurrentState();
@@ -87,7 +100,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
                 textureVert = arg2.getBuffer(RenderType.armorCutoutNoCull(emissive));
                 //}
                 ETFRenderContext.startSpecialRenderOverlayPhase();
-                arg3.renderToBuffer(arg, textureVert, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.NO_OVERLAY, f, g, h, 1.0F);
+                model.renderToBuffer(arg, textureVert, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.NO_OVERLAY, f, g, h, 1.0F);
                 ETFRenderContext.endSpecialRenderOverlayPhase();
             }
         }
@@ -106,11 +119,16 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
     }
 
 
-
+#if MC >= MC_20_6
     @Inject(method = "renderTrim(Lnet/minecraft/core/Holder;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/item/armortrim/ArmorTrim;Lnet/minecraft/client/model/Model;Z)V",
             at = @At(value = "HEAD"))
     private void etf$trimGet(final Holder<ArmorMaterial> arg, final PoseStack arg2, final MultiBufferSource arg3, final int i, final ArmorTrim arg4, final Model arg5, final boolean bl, final CallbackInfo ci) {
 
+#else
+    @Inject(method = "renderTrim(Lnet/minecraft/world/item/ArmorMaterial;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/item/armortrim/ArmorTrim;Lnet/minecraft/client/model/Model;Z)V",
+        at = @At(value = "HEAD"))
+    private void etf$trimGet(final ArmorMaterial arg, final PoseStack arg2, final MultiBufferSource arg3, final int i, final ArmorTrim arg4, final Model arg5, final boolean bl, final CallbackInfo ci) {
+#endif
         if(ETF.config().getConfig().enableArmorAndTrims) {
             ResourceLocation trimBaseId = bl ? arg4.innerTexture(arg) : arg4.outerTexture(arg);
             //support modded trims with namespace
@@ -128,11 +146,17 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
         }
 
     }
-
+#if MC >= MC_20_6
     @ModifyArg(method = "renderTrim(Lnet/minecraft/core/Holder;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/item/armortrim/ArmorTrim;Lnet/minecraft/client/model/Model;Z)V",
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/client/model/Model;renderToBuffer(Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;IIFFFF)V"),
             index = 1)
+#else
+    @ModifyArg(method = "renderTrim(Lnet/minecraft/world/item/ArmorMaterial;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/item/armortrim/ArmorTrim;Lnet/minecraft/client/model/Model;Z)V",
+        at = @At(value = "INVOKE",
+                target = "Lnet/minecraft/client/model/Model;renderToBuffer(Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;IIFFFF)V"),
+        index = 1)
+#endif
     private VertexConsumer etf$changeTrim(VertexConsumer par2) {
         //allow a specified override trim texture if you dont want to be confined by a pallette
         if(thisETF$TrimTexture!= null
@@ -149,11 +173,17 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
         }
         return par2;
     }
-
+#if MC >= MC_20_6
     @Inject(method = "renderTrim(Lnet/minecraft/core/Holder;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/item/armortrim/ArmorTrim;Lnet/minecraft/client/model/Model;Z)V",
             at = @At(value = "TAIL"))
     private void etf$trimEmissive(final Holder<ArmorMaterial> arg, final PoseStack arg2, final MultiBufferSource arg3, final int i, final ArmorTrim arg4, final Model arg5, final boolean bl, final CallbackInfo ci) {
-        if(ETF.config().getConfig().canDoEmissiveTextures() && thisETF$TrimTexture != null){
+#else
+@Inject(method = "renderTrim(Lnet/minecraft/world/item/ArmorMaterial;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/item/armortrim/ArmorTrim;Lnet/minecraft/client/model/Model;Z)V",
+        at = @At(value = "TAIL"))
+
+    private void etf$trimEmissive(final ArmorMaterial arg, final PoseStack arg2, final MultiBufferSource arg3, final int i, final ArmorTrim arg4, final Model arg5, final boolean bl, final CallbackInfo ci) {
+#endif
+    if(ETF.config().getConfig().canDoEmissiveTextures() && thisETF$TrimTexture != null){
             //trimTexture.renderEmissive(matrices,vertexConsumers,model);
             ResourceLocation emissive = thisETF$TrimTexture.getEmissiveIdentifierOfCurrentState();
             if (emissive != null) {

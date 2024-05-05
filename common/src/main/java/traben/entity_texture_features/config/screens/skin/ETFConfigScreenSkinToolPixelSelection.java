@@ -2,6 +2,16 @@ package traben.entity_texture_features.config.screens.skin;
 
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -13,16 +23,6 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
-import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.LivingEntity;
 
 import static traben.entity_texture_features.ETF.MOD_ID;
 
@@ -122,8 +122,8 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFScreenOldCompat {
                 if (integerSet.isEmpty()) {
                     etfParent.currentEditorSkin.setPixelRGBA(x, y, 0);
                 } else {
-                    etfParent.currentEditorSkin.setPixelRGBA(x, y, integerSet.getFirst());
-                    integerSet.removeFirst();
+                    etfParent.currentEditorSkin.setPixelRGBA(x, y, integerSet.get(0));
+                    integerSet.remove(0);
                 }
             }
         }
@@ -169,7 +169,11 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFScreenOldCompat {
 
         context.pose().pushPose();
         context.pose().translate(x, y, 150.0);
+        #if MC >= MC_20_6
         context.pose().mulPose((new Matrix4f()).scaling((float) size, (float) size, (float) (-size)));
+        #else
+        context.pose().mulPoseMatrix((new Matrix4f()).scaling((float) size, (float) size, (float) (-size)));
+        #endif
         context.pose().mulPose(quaternionf);
         Lighting.setupForEntityInInventory();
         EntityRenderDispatcher entityRenderDispatcher = Minecraft.getInstance().getEntityRenderDispatcher();

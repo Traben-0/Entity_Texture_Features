@@ -73,9 +73,11 @@ public class TConfigScreenList extends TConfigScreen {
                         24,
                         options)
         );
+        #if MC >= MC_20_6
         if (fullWidthBackgroundEvenIfSmaller) {
             child.setWidgetBackgroundToFullWidth();
         }
+        #endif
     }
 
     public enum Align {

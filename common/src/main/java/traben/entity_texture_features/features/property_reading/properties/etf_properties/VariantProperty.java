@@ -1,6 +1,10 @@
 package traben.entity_texture_features.features.property_reading.properties.etf_properties;
 
 
+#if MC >= MC_20_6
+import net.minecraft.world.level.block.entity.PotDecorations;
+#endif
+
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.StringRepresentable;
@@ -9,17 +13,12 @@ import net.minecraft.world.entity.VariantHolder;
 import net.minecraft.world.entity.animal.CatVariant;
 import net.minecraft.world.entity.animal.FrogVariant;
 import net.minecraft.world.entity.npc.VillagerType;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.ShulkerBoxBlock;
 import net.minecraft.world.level.block.SignBlock;
 import net.minecraft.world.level.block.SkullBlock;
-import net.minecraft.world.level.block.entity.BedBlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.DecoratedPotBlockEntity;
-import net.minecraft.world.level.block.entity.PotDecorations;
-import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
-import net.minecraft.world.level.block.entity.SignBlockEntity;
-import net.minecraft.world.level.block.entity.SkullBlockEntity;
+import net.minecraft.world.level.block.entity.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperty;
@@ -114,6 +113,7 @@ public class VariantProperty extends StringArrayOrRegexProperty {
                 return String.valueOf(bedBlock.getColor());
             }
             if (etfEntity instanceof DecoratedPotBlockEntity pot) {
+                #if MC >= MC_20_6
                 PotDecorations sherds = pot.getDecorations();
                 return (sherds.back().isPresent() ? sherds.back().get().getDescriptionId() : "none")
                         + "," +
@@ -122,6 +122,16 @@ public class VariantProperty extends StringArrayOrRegexProperty {
                         (sherds.right().isPresent() ? sherds.right().get().getDescriptionId() : "none")
                         + "," +
                         (sherds.front().isPresent() ? sherds.front().get().getDescriptionId() : "none");
+                #else
+                DecoratedPotBlockEntity.Decorations sherds = pot.getDecorations();
+                return (sherds.back().getDefaultInstance() != ItemStack.EMPTY ? sherds.back().getDescriptionId() : "none")
+                        + "," +
+                        (sherds.left().getDefaultInstance() != ItemStack.EMPTY  ? sherds.left().getDescriptionId() : "none")
+                        + "," +
+                        (sherds.right().getDefaultInstance() != ItemStack.EMPTY  ? sherds.right().getDescriptionId() : "none")
+                        + "," +
+                        (sherds.front().getDefaultInstance() != ItemStack.EMPTY  ? sherds.front().getDescriptionId() : "none");
+                #endif
             }
             String suffix = "";
             if (etfEntity instanceof SkullBlockEntity skull) {

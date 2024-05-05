@@ -38,15 +38,15 @@
   ],
 
   "depends": {
-    "fabricloader": ">=0.14.0",
-    "minecraft": ">1.20.4 "
+    "fabricloader": "*",
+    "minecraft": "#compatible_mc_fabric#"
   },
   "suggests": {
-    "fabric": "*",
     "modmenu": "*"
   },
-  "conflicts": {
-    "optifabric": "*"
+  "breaks": {
+    "optifabric": "*",
+    "entity_model_features": "<=2.0.2"
   },
   "custom": {
     "modmenu": {

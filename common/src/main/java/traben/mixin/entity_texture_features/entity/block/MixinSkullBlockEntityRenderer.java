@@ -49,19 +49,29 @@ public abstract class MixinSkullBlockEntityRenderer implements BlockEntityRender
         ETFRenderContext.preventTexturePatching();
     }
 
-
+#if MC >= MC_20_6
     @Inject(method = "render(Lnet/minecraft/world/level/block/entity/SkullBlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V",
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/client/renderer/blockentity/SkullBlockRenderer;getRenderType(Lnet/minecraft/world/level/block/SkullBlock$Type;Lnet/minecraft/world/item/component/ResolvableProfile;)Lnet/minecraft/client/renderer/RenderType;"),
             locals = LocalCapture.CAPTURE_FAILHARD)
     private void etf$alterTexture(final SkullBlockEntity skullBlockEntity, final float f, final PoseStack matrixStack, final MultiBufferSource vertexConsumerProvider, final int i, final int j, final CallbackInfo ci, float g, BlockState blockState, boolean bl, Direction direction, int k, float h, SkullBlock.Type skullType, SkullModelBase skullBlockEntityModel) {
+#else
+    @Inject(method = "render(Lnet/minecraft/world/level/block/entity/SkullBlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/blockentity/SkullBlockRenderer;getRenderType(Lnet/minecraft/world/level/block/SkullBlock$Type;Lcom/mojang/authlib/GameProfile;)Lnet/minecraft/client/renderer/RenderType;"),
+            locals = LocalCapture.CAPTURE_FAILHARD)
+    private void etf$alterTexture(final SkullBlockEntity skullBlockEntity, final float partialTick, final PoseStack poseStack, final MultiBufferSource buffer, final int packedLight, final int packedOverlay, final CallbackInfo ci, final float f, final BlockState blockState, final boolean bl, final Direction direction, final int i, final float g, final SkullBlock.Type skullType, final SkullModelBase skullModelBase) {
+#endif
 
-        entity_texture_features$thisETFPlayerTexture = null;
+    entity_texture_features$thisETFPlayerTexture = null;
 
         if (skullType == SkullBlock.Types.PLAYER && ETF.config().getConfig().skinFeaturesEnabled && ETF.config().getConfig().enableCustomTextures && ETF.config().getConfig().enableCustomBlockEntities) {
             if (skullBlockEntity.getOwnerProfile() != null) {
                 ResourceLocation identifier = Minecraft.getInstance()
-                        .getSkinManager().getInsecureSkin(skullBlockEntity.getOwnerProfile().gameProfile()).texture();
+                        .getSkinManager().getInsecureSkin(skullBlockEntity.getOwnerProfile()
+                                #if MC >= MC_20_6
+                                .gameProfile()
+                                #endif
+                        ).texture();
 
                 entity_texture_features$thisETFPlayerTexture = ETFManager.getInstance().getPlayerTexture((ETFPlayerEntity) skullBlockEntity, identifier);
                 if (entity_texture_features$thisETFPlayerTexture != null) {

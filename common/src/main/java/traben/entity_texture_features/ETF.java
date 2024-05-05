@@ -1,5 +1,6 @@
 package traben.entity_texture_features;
 
+
 import com.demonwav.mcdev.annotations.Translatable;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.minecraft.client.Minecraft;
@@ -80,7 +81,11 @@ public class ETF {
         //initialise ETF with config settings
 //        ETFManager.resetInstance();
 
-
+    #if MC > MC_20_4
+        System.out.println("MC_BUILD > MC_20_4");
+    #else
+        System.out.println("MC_BUILD <= MC_20_4");
+    #endif
 
         warningConfigHandler = new TConfigHandler<>(ETFConfigScreenWarnings.WarningConfig::new, "etf_warnings.json", "ETF");
         registerConfigHandler(warningConfigHandler);
@@ -216,6 +221,9 @@ public class ETF {
         //1.19 & 1.18.2 variation
         return world.getBiome(pos).unwrapKey().toString().split(" / ")[1].replaceAll("[^\\da-zA-Z_:-]", "");
     }
+
+
+
 
     @NotNull
     public static Component getTextFromTranslation(@Translatable(foldMethod = true) String translationKey) {

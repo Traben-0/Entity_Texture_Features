@@ -7,9 +7,18 @@ pluginManagement {
     }
 }
 
+File indexProps = new File("${rootDir}/property_variants/${mc_build}.properties")
+Properties properties = new Properties()
+properties.load(indexProps.newDataInputStream())
+def enabled=properties.getProperty("enabled_platforms")
+
 include("common")
-include("fabric")
-//include("forge")
-include("neoforge")
+if(enabled.contains("fabric"))
+    include("fabric")
+if(enabled.contains("forge"))
+ include("forge")
+if(enabled.contains("neoforge"))
+    include("neoforge")
+
 
 rootProject.name = "entity-texture-features"

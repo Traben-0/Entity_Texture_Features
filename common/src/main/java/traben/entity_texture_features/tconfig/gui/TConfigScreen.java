@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import traben.entity_texture_features.ETF;
@@ -70,4 +71,42 @@ public class TConfigScreen extends Screen {
     public void onClose() {
         Minecraft.getInstance().setScreen(parent);
     }
+
+
+    #if MC < MC_20_6
+
+    @Override
+    public void renderBackground(final GuiGraphics guiGraphics, final int i, final int j, final float f) {
+        guiGraphics.pose().pushPose();
+
+        int topy = (int) (height * 0.15);
+        int bottomy = (int) (height * 0.85);
+
+        guiGraphics.pose().translate(0, 0, -100);
+//        if (MinecraftClient.getInstance().world == null || !allowTransparentBackground()) {
+        guiGraphics.setColor(0.15F, 0.15F, 0.15F, 1.0F);
+        guiGraphics.blit(BACKGROUND_LOCATION, 0, 0, 0, 0.0F, 0.0F, this.width, height, 32, 32);
+//        } else {
+//            guiGraphics.fillGradient(0, 0, this.width, this.height, -1072689136, -804253680);
+//        }
+
+        guiGraphics.fillGradient(RenderType.gui(), 0, topy, this.width, topy + 4, -16777216, 0, 0);
+        guiGraphics.fillGradient(RenderType.gui(), 0, bottomy - 4, this.width, bottomy, 0, -16777216, 0);
+
+        guiGraphics.setColor(0.25F, 0.25F, 0.25F, 1.0F);
+        guiGraphics.blit(BACKGROUND_LOCATION, 0, 0, 0, 0.0F, 0.0F, this.width, topy, 32, 32);
+        guiGraphics.blit(BACKGROUND_LOCATION, 0, bottomy, 0, 0.0F, 0.0F, this.width, topy, 32, 32);
+        guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+        guiGraphics.pose().popPose();
+    }
+
+    @Override
+    public void renderTransparentBackground(final GuiGraphics guiGraphics) {
+    }
+
+    @Override
+    public void renderDirtBackground(final GuiGraphics guiGraphics) {
+    }
+
+    #endif
 }
