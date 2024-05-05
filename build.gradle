@@ -93,9 +93,10 @@ task modifyJar(type: Jar) {
 
 
         // Modify merged jar
+        File fileToModify
         try {
             //fabric
-            File fileToModify = new File(tempDir, "fabric.mod.json")
+            fileToModify = new File(tempDir, "fabric.mod.json")
             fileToModify.text = fileToModify.text.replaceAll("fabric/", "fabric.")
                     .replaceAll("#compatible_mc_fabric#", rootProject.compatible_mc_fabric)
             fileToModify = new File(tempDir, "fabric-entity_texture_features-fabric.mixins.json")
