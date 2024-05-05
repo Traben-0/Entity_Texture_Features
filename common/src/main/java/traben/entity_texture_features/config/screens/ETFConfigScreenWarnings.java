@@ -4,8 +4,8 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.config.ETFConfigWarning;
 import traben.entity_texture_features.config.ETFConfigWarnings;
-import traben.entity_texture_features.tconfig.TConfig;
-import traben.entity_texture_features.tconfig.gui.TConfigScreen;
+import traben.tconfig.TConfig;
+import traben.tconfig.gui.TConfigScreen;
 
 import java.util.HashSet;
 import java.util.Set;

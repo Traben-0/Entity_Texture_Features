@@ -53,13 +53,6 @@ dependencies {
     implementation group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.10'
 }
 
-processResources {
-    inputs.property "version", project.version
-
-    filesMatching("META-INF/mods.toml") {
-        expand "version": project.version
-    }
-}
 
 shadowJar {
     exclude "fabric.mod.json"

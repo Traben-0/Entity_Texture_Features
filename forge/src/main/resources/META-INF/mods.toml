@@ -1,5 +1,5 @@
 modLoader = "javafml"
-loaderVersion = "[#loaderVersion_forge#)"
+loaderVersion = "[1,)"
 issueTrackerURL = "https://github.com/Traben-0/EmissiveMod/issues"
 license = "LGPL-3.0"
 showAsResourcePack = false
@@ -20,7 +20,6 @@ With more features such as:
  '''
 logoFile = "icon.png"
 
-#test if allows multiloader neoforge
 #[[dependencies.entity_texture_features]]
 #modId = "forge"
 #mandatory = true
@@ -31,7 +30,7 @@ logoFile = "icon.png"
 [[dependencies.entity_texture_features]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[#compatible_mc_forge#)"
+versionRange = "[${compatible_mc_forge})"
 ordering = "NONE"
 side = "CLIENT"
 

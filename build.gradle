@@ -6,7 +6,6 @@ import java.util.zip.ZipFile
 plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
     id "dev.architectury.loom" version "1.6-SNAPSHOT" apply false
-    id "io.github.pacifistmc.forgix" version "1.2.7"
     id "systems.manifold.manifold-gradle-plugin" version "0.0.2-alpha"
 }
 
@@ -39,140 +38,6 @@ private void setupPreProcess(def index){
 
 setupPreProcess(rootProject.mc_build)
 
-forgix {
-    group = "traben"
-    mergedJarName = "merged_${rootProject.minecraft_version}-${rootProject.mod_version}.jar"
-    if (rootProject.merge_platforms.contains("forge")) {
-        forge {
-            projectName = "forge"
-            jarLocation = "build/libs/entity_texture_features_forge_${rootProject.minecraft_version}-${rootProject.mod_version}.jar"
-        }
-    }
-    if (rootProject.merge_platforms.contains("neoforge")) {
-        neoforge {
-            projectName = "neoforge"
-            jarLocation = "build/libs/entity_texture_features_neoforge_${rootProject.minecraft_version}-${rootProject.mod_version}.jar"
-        }
-    }
-    if (rootProject.merge_platforms.contains("fabric")) {
-        fabric {
-            projectName = "fabric"
-            jarLocation = "build/libs/entity_texture_features_fabric_${rootProject.minecraft_version}-${rootProject.mod_version}.jar"
-        }
-    }
-
-
-    removeDuplicate "traben.entity_texture_features"
-}
-
-task modifyJar(type: Jar) {
-    dependsOn  'build'
-    dependsOn  'mergeJars'
-
-
-    // Define input and output paths
-    def jarFile = "${projectDir}/Merged/merged_${rootProject.minecraft_version}-${rootProject.mod_version}.jar"
-    def modifiedJarFile = "${projectDir}/Merged/entity_texture_features_${rootProject.minecraft_version}-${rootProject.mod_version}.jar"
-    def tempDir = "${projectDir}/temp-rename"
-
-    // Create temporary directory
-    doLast {
-        file(tempDir).mkdirs()
-
-        // Extract contents of original JAR
-        ZipFile jar = new ZipFile(jarFile)
-        jar.entries().each { entry ->
-            def entryInputStream = jar.getInputStream(entry)
-            var file2 = new File(tempDir, entry.name)
-            file2.parentFile.mkdirs()
-            def entryOutputStream = new FileOutputStream(file2)
-            entryOutputStream << entryInputStream.bytes
-            entryInputStream.close()
-            entryOutputStream.close()
-        }
-        jar.close()
-
-
-        // Modify merged jar
-        File fileToModify
-        try {
-            //fabric
-            fileToModify = new File(tempDir, "fabric.mod.json")
-            fileToModify.text = fileToModify.text.replaceAll("fabric/", "fabric.")
-                    .replaceAll("#compatible_mc_fabric#", rootProject.compatible_mc_fabric)
-            fileToModify = new File(tempDir, "fabric-entity_texture_features-fabric.mixins.json")
-            fileToModify.text = fileToModify.text.replaceAll("fabric/", "fabric.")
-            fileToModify = new File(tempDir, "fabric-entity_texture_features-common.mixins.json")
-            fileToModify.text = fileToModify.text.replaceAll("fabric/", "fabric.")
-        } catch (e) {println e}
-
-        //jar in jar duplicate removal
-        try {
-            fileToModify = new File(tempDir, "META-INF\\jarjar\\metadata.json")
-            fileToModify.text = fileToModify.text.replaceAll("neoforge-httpmime", "fabric-httpmime")
-        } catch (e) {println e}
-        try {
-            new File(tempDir, "META-INF\\jars\\neoforge-httpmime-4.5.10.jar").delete()
-            new File(tempDir, "META-INF\\jars\\forge-httpmime-4.5.10.jar").delete()
-        } catch (e) {println e}
-
-        try {
-            //neoforge
-            fileToModify = new File(tempDir, "META-INF\\neoforge.mods.toml")
-            fileToModify.text = fileToModify.text.replaceAll("#loaderVersion_neoforge#", rootProject.loaderVersion_neoforge)
-                    .replaceAll("#compatible_mc_neoforge#", rootProject.compatible_mc_neoforge)
-                    .replaceAll("#compatible_neoforge#", rootProject.compatible_neoforge)
-            fileToModify = new File(tempDir, "neoforge-entity_texture_features-forge.mixins.json")
-            fileToModify.text = fileToModify.text.replaceAll("neoforge/", "neoforge.")
-            fileToModify = new File(tempDir, "neoforge-entity_texture_features-common.mixins.json")
-            fileToModify.text = fileToModify.text.replaceAll("neoforge/", "neoforge.")
-        } catch (e) {println e}
-        try {
-            //forge
-            fileToModify = new File(tempDir, "META-INF\\mods.toml")
-            fileToModify.text = fileToModify.text.replaceAll("#loaderVersion_forge#", rootProject.loaderVersion_forge)
-                    .replaceAll("#compatible_mc_forge#", rootProject.compatible_mc_forge)
-            fileToModify = new File(tempDir, "forge-entity_texture_features-forge.mixins.json")
-            fileToModify.text = fileToModify.text.replaceAll("forge/", "forge.")
-            fileToModify = new File(tempDir, "forge-entity_texture_features-common.mixins.json")
-            fileToModify.text = fileToModify.text.replaceAll("forge/", "forge.")
-        } catch (e) {println e}
-
-        def jarOutputStream = new JarOutputStream(new FileOutputStream(modifiedJarFile))
-
-        Consumer<File[]> dir;
-        //noinspection GroovyVariableNotAssigned
-        dir=(files)-> files.each { file ->
-            // MUST BE / AND NOT \  I AM SO F@%$ING MAD
-            def relative =relativePath(file).replace("temp-rename\\", "").replaceAll("\\\\", "/")
-            //println relative
-            if (file.path.startsWith("/")) file.path = file.path.substring(1)
-            if (file.path.isEmpty()) return // Skip root directory
-
-            if (file.isDirectory()) {
-                jarOutputStream.putNextEntry(new JarEntry(relative + "/"))
-                jarOutputStream.closeEntry()
-                dir.accept(file.listFiles())
-            } else {
-                def zipEntry = new JarEntry(relative)
-                jarOutputStream.putNextEntry(zipEntry)
-                jarOutputStream.write(file.bytes)
-                jarOutputStream.closeEntry()
-            }
-        }
-        def files = file(tempDir).listFiles()
-        dir.accept(files)
-
-        jarOutputStream.close()
-
-        // Clean up temporary directory
-        file(tempDir).deleteDir()
-        //delete original merged jar
-        try {
-            new File(jarFile).delete()
-        } catch (e) {println e}
-    }
-}
 
 architectury {
     minecraft = rootProject.minecraft_version
@@ -189,32 +54,47 @@ subprojects {
     dependencies {
         minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
 
-
-
-
-
         if(rootProject.parchment_version != "no") {
+            println "Using Parchment mappings"
             mappings loom.layered() {
                 officialMojangMappings()
                 parchment("org.parchmentmc.data:parchment-${parchment_version}@zip")
             }
         }else{
+            println "Not using Parchment mappings"
             mappings loom.officialMojangMappings()
         }
-
-
 
         implementation group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.10'
         implementation 'com.demonwav.mcdev:annotations:2.1.0'
 
         //https://github.com/manifold-systems/manifold/tree/master/manifold-deps-parent/manifold-preprocessor#setup
-        annotationProcessor 'systems.manifold:manifold-preprocessor:2023.1.17'
-        testAnnotationProcessor 'systems.manifold:manifold-preprocessor:2023.1.17'
+        annotationProcessor 'systems.manifold:manifold-preprocessor:2024.1.13'
+        testAnnotationProcessor 'systems.manifold:manifold-preprocessor:2024.1.13'
+
+    }
+    processResources {
+        inputs.property "version", rootProject.mod_version
+        inputs.property "compatible_mc_fabric", rootProject.compatible_mc_fabric
+        inputs.property "compatible_mc_forge", rootProject.compatible_mc_forge
+
+        filesMatching("fabric.mod.json") {
+            expand(["version": rootProject.mod_version,
+                    "compatible_mc_fabric": rootProject.compatible_mc_fabric])
+        }
+
+        filesMatching("META-INF/mods.toml") {
+            expand(["version": rootProject.mod_version,
+                    "compatible_mc_forge": rootProject.compatible_mc_forge])
+        }
+
+        filesMatching("META-INF/neoforge.mods.toml") {
+            expand(["version": rootProject.mod_version,
+                    "compatible_mc_forge": rootProject.compatible_mc_forge])
+        }
 
     }
 
-    build.finalizedBy(modifyJar)
-    assemble.finalizedBy(modifyJar)
 }
 
 

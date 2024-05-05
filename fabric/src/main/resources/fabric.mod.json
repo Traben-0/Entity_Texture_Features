@@ -26,10 +26,10 @@
   "environment": "client",
   "entrypoints": {
     "client": [
-      "traben.fabric.entity_texture_features.ETFClientFabric"
+      "traben.entity_texture_features.fabric.ETFClientFabric"
     ],
     "modmenu": [
-      "traben.fabric.entity_texture_features.config.ETFModMenu"
+      "traben.entity_texture_features.fabric.config.ETFModMenu"
     ]
   },
   "mixins": [
@@ -39,7 +39,7 @@
 
   "depends": {
     "fabricloader": "*",
-    "minecraft": "#compatible_mc_fabric#"
+    "minecraft": "${compatible_mc_fabric}"
   },
   "suggests": {
     "modmenu": "*"

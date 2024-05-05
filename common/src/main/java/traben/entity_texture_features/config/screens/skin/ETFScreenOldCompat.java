@@ -14,8 +14,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import traben.entity_texture_features.ETF;
-import traben.mixin.entity_texture_features.accessor.TooltipAccessor;
-import traben.entity_texture_features.tconfig.gui.TConfigScreen;
+import traben.entity_texture_features.mixin.accessor.TooltipAccessor;
+import traben.tconfig.gui.TConfigScreen;
 
 import java.util.ArrayList;
 import java.util.List;

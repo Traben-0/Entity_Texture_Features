@@ -18,7 +18,7 @@ import traben.entity_texture_features.config.ETFConfigWarning;
 import traben.entity_texture_features.config.ETFConfigWarnings;
 import traben.entity_texture_features.config.screens.ETFConfigScreenMain;
 import traben.entity_texture_features.config.screens.ETFConfigScreenWarnings;
-import traben.entity_texture_features.tconfig.TConfigHandler;
+import traben.tconfig.TConfigHandler;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.io.File;
