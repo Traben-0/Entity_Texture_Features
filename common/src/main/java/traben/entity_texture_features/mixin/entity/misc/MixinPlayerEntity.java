@@ -33,11 +33,11 @@ public abstract class MixinPlayerEntity extends Entity implements ETFPlayerEntit
     public abstract Inventory getInventory();
 
 
-
     @Shadow
     public abstract @NotNull Component getName();
 
-    @Shadow public abstract boolean isModelPartShown(final PlayerModelPart playerModelPart);
+    @Shadow
+    public abstract boolean isModelPartShown(final PlayerModelPart playerModelPart);
 
     //will force update entity texture at any player interaction useful for debugging
     @Inject(method = "interactOn", at = @At("HEAD"))

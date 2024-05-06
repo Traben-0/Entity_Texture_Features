@@ -32,18 +32,19 @@ public abstract class MixinBlockEntity implements ETFEntity {
     private UUID etf$id = null;
 
 
-
-
-
     @Shadow
     public abstract BlockEntityType<?> getType();
 
 
-    @Shadow public abstract BlockPos getBlockPos();
+    @Shadow
+    public abstract BlockPos getBlockPos();
 
-    @Shadow @Nullable public abstract Level getLevel();
+    @Shadow
+    @Nullable
+    public abstract Level getLevel();
 
-    @Shadow protected abstract void saveMetadata(final CompoundTag compoundTag);
+    @Shadow
+    protected abstract void saveMetadata(final CompoundTag compoundTag);
 
     @Override
     public EntityType<?> etf$getType() {

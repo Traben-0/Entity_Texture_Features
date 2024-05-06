@@ -10,11 +10,13 @@ import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Properties;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.client.Minecraft;
@@ -246,7 +248,7 @@ public abstract class ETFUtils2 {
         if (inChat) {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player != null) {
-                player.displayClientMessage(MutableComponent.create(new PlainTextContents.LiteralContents("§a[INFO]§r [Entity Texture Features]: " + obj))/*.formatted(Formatting.GRAY, Formatting.ITALIC)*/, false);
+                player.displayClientMessage(MutableComponent.create(new PlainTextContents.LiteralContents("§a[INFO]§r [Entity Texture Features]: " + obj))/*.formatted(Formatting.GRAY, Formatting.ITALIC)*/ , false);
             } else {
                 ETF.LOGGER.info(obj);
             }

@@ -138,18 +138,18 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFScreenOldCompat {
         renderGUITexture(currentSkinToRender, (int) ((this.width * 0.35)), (int) ((this.height * 0.2)), (int) ((this.width * 0.35) + (64 * pixelSize)), (int) ((this.height * 0.2) + (64 * pixelSize)));
         context.drawString(font, ETF.getTextFromTranslation("config." + MOD_ID + ".skin_select" + (selectedPixels.size() > 64 ? ".warn" : ".hint")), width / 7, (int) (this.height * 0.8), selectedPixels.size() > 64 ? 0xff1515 : 0xFFFFFF);
 
-        if (Minecraft.getInstance() != null) {
-            LocalPlayer player = Minecraft.getInstance().player;
-            if (player != null) {
 
-                int height = (int) (this.height * 0.75);
-                int playerX = (int) (this.width * 0.14);
-                drawEntity(context,playerX, height, (int) (this.height * 0.3), (float) (-mouseX + playerX), (float) (-mouseY + (this.height * 0.3)), player);
-            } else {
-                context.drawString(font, Component.nullToEmpty("Player model only visible while in game!"), width / 7, (int) (this.height * 0.4), 0xFFFFFF);
-                context.drawString(font, Component.nullToEmpty("load a single-player world and then open this menu."), width / 7, (int) (this.height * 0.45), 0xFFFFFF);
-            }
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player != null) {
+
+            int height = (int) (this.height * 0.75);
+            int playerX = (int) (this.width * 0.14);
+            drawEntity(context, playerX, height, (int) (this.height * 0.3), (float) (-mouseX + playerX), (float) (-mouseY + (this.height * 0.3)), player);
+        } else {
+            context.drawString(font, Component.nullToEmpty("Player model only visible while in game!"), width / 7, (int) (this.height * 0.4), 0xFFFFFF);
+            context.drawString(font, Component.nullToEmpty("load a single-player world and then open this menu."), width / 7, (int) (this.height * 0.45), 0xFFFFFF);
         }
+
 
 //        if(MODE == SelectionMode.EMISSIVE && ETFVersionDifferenceHandler.isThisModLoaded("iris"))
 //            drawTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.iris_message"), width / 8, (int) (this.height * 0.15), 0xFF5555);
@@ -164,7 +164,7 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFScreenOldCompat {
 
 //        float j2 = (float) Math.atan(((-mouseY + this.height / 2f) / 40.0F));
         Quaternionf quaternionf = (new Quaternionf()).rotateZ(3.1415927F);
-        Quaternionf quaternionf2 = (new Quaternionf()).rotateX( 0);//j2 * 20.0F * 0.017453292F);
+        Quaternionf quaternionf2 = (new Quaternionf()).rotateX(0);//j2 * 20.0F * 0.017453292F);
         quaternionf.mul(quaternionf2);
 
         context.pose().pushPose();
@@ -197,7 +197,7 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFScreenOldCompat {
 
 //        VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
         //noinspection deprecation
-        RenderSystem.runAsFancy(() -> entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, context.pose(), context.bufferSource(), LightTexture.pack(7,7)));
+        RenderSystem.runAsFancy(() -> entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, context.pose(), context.bufferSource(), LightTexture.pack(7, 7)));
 //        immediate.draw();
         context.flush();
         entityRenderDispatcher.setRenderShadow(true);

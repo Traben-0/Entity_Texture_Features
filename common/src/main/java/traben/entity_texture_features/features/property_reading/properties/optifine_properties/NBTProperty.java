@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+
 import net.minecraft.advancements.critereon.NbtPredicate;
 import net.minecraft.nbt.CollectionTag;
 import net.minecraft.nbt.CompoundTag;

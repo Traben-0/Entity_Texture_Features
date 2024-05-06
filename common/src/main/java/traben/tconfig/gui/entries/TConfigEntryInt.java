@@ -1,8 +1,10 @@
 package traben.tconfig.gui.entries;
 
 import com.demonwav.mcdev.annotations.Translatable;
+
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Tooltip;

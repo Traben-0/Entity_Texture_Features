@@ -3,6 +3,7 @@ package traben.entity_texture_features.utils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;

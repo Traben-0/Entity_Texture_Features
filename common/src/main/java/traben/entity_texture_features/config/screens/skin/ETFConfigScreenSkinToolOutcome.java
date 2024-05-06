@@ -112,7 +112,7 @@ public class ETFConfigScreenSkinToolOutcome extends ETFScreenOldCompat {
                         if (changeSuccess) {
                             //ETFUtils2.logMessage(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.upload_skin.success" ).getString(),true);
                             //change internally cached skin
-                            HttpTexture skinfile = (HttpTexture)  Minecraft.getInstance().getSkinManager().skinTextures.textureManager.getTexture((Minecraft.getInstance().player).getSkin().texture(), null);
+                            HttpTexture skinfile = (HttpTexture) Minecraft.getInstance().getSkinManager().skinTextures.textureManager.getTexture((Minecraft.getInstance().player).getSkin().texture(), null);
                             try {
                                 //System.out.println("file was ="+((PlayerSkinTextureAccessor)skinfile).getCacheFile().toString());
                                 assert skinfile.file != null;

@@ -9,6 +9,7 @@ import traben.tconfig.gui.TConfigScreen;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;

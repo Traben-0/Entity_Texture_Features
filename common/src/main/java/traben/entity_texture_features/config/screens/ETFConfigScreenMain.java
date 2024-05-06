@@ -112,6 +112,7 @@ public class ETFConfigScreenMain extends TConfigScreenMain {
     public void render(final GuiGraphics context, final int mouseX, final int mouseY, final float delta) {
         super.render(context, mouseX, mouseY, delta);
         //get a random entity and display for 5 seconds
+        //noinspection ConstantValue
         if (timer + 5000 < System.currentTimeMillis() && Minecraft.getInstance().player != null && Minecraft.getInstance().player.level() != null) {
             List<Entity> entityList = Minecraft.getInstance().player.level().getEntities(null, Minecraft.getInstance().player.getBoundingBox().inflate(128));
             Entity entity = null;

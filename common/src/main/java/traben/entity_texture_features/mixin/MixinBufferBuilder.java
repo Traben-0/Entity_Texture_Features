@@ -7,7 +7,9 @@ import traben.entity_texture_features.features.texture_handlers.ETFTexture;
 import traben.entity_texture_features.utils.ETFRenderLayerWithTexture;
 import traben.entity_texture_features.utils.ETFVertexConsumer;
 import com.mojang.blaze3d.vertex.BufferBuilder;
+
 import java.util.Optional;
+
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;

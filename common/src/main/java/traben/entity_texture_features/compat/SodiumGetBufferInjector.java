@@ -1,13 +1,14 @@
 package traben.entity_texture_features.compat;
 
 import me.jellysquid.mods.sodium.client.render.vertex.buffer.ExtendedBufferBuilder;
-import me.jellysquid.mods.sodium.client.render.vertex.buffer.SodiumBufferBuilder;
+
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import org.apache.logging.log4j.util.TriConsumer;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.utils.ETFVertexConsumer;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import java.util.Objects;
 
 /**

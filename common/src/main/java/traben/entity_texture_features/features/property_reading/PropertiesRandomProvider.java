@@ -15,6 +15,7 @@ import traben.entity_texture_features.utils.EntityBooleanLRU;
 
 import java.util.*;
 import java.util.function.BiConsumer;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;

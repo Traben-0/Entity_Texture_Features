@@ -1,7 +1,9 @@
 package traben.tconfig.gui.entries;
 
 import com.demonwav.mcdev.annotations.Translatable;
+
 import java.util.function.Supplier;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;

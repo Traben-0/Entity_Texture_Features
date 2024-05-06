@@ -31,13 +31,11 @@ import java.util.function.Supplier;
 
 public class ETF {
 
-    public static File CONFIG_DIR = null;
     public static final String MOD_ID = "entity_texture_features";
     //logging object
     public final static Logger LOGGER = LoggerFactory.getLogger("Entity Texture Features");
-
-
     public static final int EMISSIVE_FEATURE_LIGHT_VALUE = LightTexture.FULL_BRIGHT + 2;
+    public static File CONFIG_DIR = null;
     public static TConfigHandler<ETFConfigScreenWarnings.WarningConfig> warningConfigHandler = null;
     public static boolean IRIS_DETECTED = false;
 
@@ -45,6 +43,11 @@ public class ETF {
     public static boolean SKIN_LAYERS_DETECTED = false;
     public static Set<TConfigHandler<?>> configHandlers = null;
     private static TConfigHandler<ETFConfig> CONFIG = null;
+    //the below methods are used to handle version differences between forge and fabric
+    private static Function<String, Boolean> isThisModLoadedFunction = (str) -> false;
+    private static Supplier<List<String>> modsLoadedFunction = () -> null;
+    private static Supplier<Boolean> isForgeFunction = () -> false;
+    private static Supplier<Boolean> isFabricFunction = () -> false;
 
     public static TConfigHandler<ETFConfig> config() {
         if (CONFIG == null) {
@@ -53,16 +56,15 @@ public class ETF {
         return CONFIG;
     }
 
-
-    public static void start(Function<String,Boolean> isThisModLoadedFunction,
+    public static void start(Function<String, Boolean> isThisModLoadedFunction,
                              Supplier<List<String>> modsLoadedFunction,
                              File configDir,
                              boolean isForge) {
 
         ETF.isThisModLoadedFunction = isThisModLoadedFunction;
         ETF.modsLoadedFunction = modsLoadedFunction;
-        ETF.isForgeFunction = ()->isForge;
-        ETF.isFabricFunction = ()->!isForge;
+        ETF.isForgeFunction = () -> isForge;
+        ETF.isFabricFunction = () -> !isForge;
 
         //allows config modification
         CONFIG_DIR = configDir;
@@ -170,7 +172,6 @@ public class ETF {
         configHandlers.add(configHandler);
     }
 
-
     public static Screen getConfigScreen(Screen parent) {
         try {
             return new ETFConfigScreenMain(parent);
@@ -182,14 +183,6 @@ public class ETF {
     public static Screen getConfigScreen(Minecraft ignored, Screen parent) {
         return getConfigScreen(parent);
     }
-
-
-
-    //the below methods are used to handle version differences between forge and fabric
-    private static Function<String,Boolean> isThisModLoadedFunction = (str)->false;
-    private static Supplier<List<String>> modsLoadedFunction = ()->null;
-    private static Supplier<Boolean> isForgeFunction = ()->false;
-    private static Supplier<Boolean> isFabricFunction = ()->false;
 
     public static boolean isThisModLoaded(String modId) {
         return isThisModLoadedFunction.apply(modId);
@@ -213,21 +206,16 @@ public class ETF {
     //for instance biome code changed in 1.18.2
     @Nullable
     public static String getBiomeString(Level world, BlockPos pos) {
-        if(world == null || pos == null) return null;
+        if (world == null || pos == null) return null;
         //1.19 & 1.18.2 variation
         return world.getBiome(pos).unwrapKey().toString().split(" / ")[1].replaceAll("[^\\da-zA-Z_:-]", "");
     }
-
-
 
 
     @NotNull
     public static Component getTextFromTranslation(@Translatable(foldMethod = true) String translationKey) {
         return Component.translatable(translationKey);
     }
-
-
-
 
 
 }

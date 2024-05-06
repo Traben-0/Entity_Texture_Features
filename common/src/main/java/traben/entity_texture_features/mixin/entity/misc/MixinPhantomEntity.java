@@ -11,7 +11,7 @@ import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.features.ETFManager;
 
 @Mixin(Phantom.class)
-public abstract class MixinPhantomEntity extends FlyingMob{
+public abstract class MixinPhantomEntity extends FlyingMob {
 
 
     protected MixinPhantomEntity(final EntityType<? extends FlyingMob> entityType, final Level level) {

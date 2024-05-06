@@ -1,8 +1,3 @@
-import java.util.function.Consumer
-import java.util.jar.JarEntry
-import java.util.jar.JarOutputStream
-import java.util.zip.ZipFile
-
 plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
     id "dev.architectury.loom" version "1.6-SNAPSHOT" apply false
@@ -11,21 +6,20 @@ plugins {
 
 
 private void setupPreProcess(def index){
-    def keys ="""
-    MC_18 = 0
+    println "Setting up preprocessor for version index $index"
+    new File(projectDir,"build.properties").text = """
+    MC_18   = 0
     MC_19_2 = 1
     MC_19_4 = 2
     MC_20_1 = 3
     MC_20_2 = 4
     MC_20_4 = 5
     MC_20_6 = 6
-    MC = ${index}
+    MC      = ${index}
     """
-    File props = new File(projectDir,"build.properties")
-    println props.path
-    props.text = keys
 
     File indexProps = new File(projectDir,"property_variants/${index}.properties")
+    println "Applying gradle.properties override:\n $indexProps.path"
     Properties properties = new Properties()
     properties.load(indexProps.newDataInputStream())
     properties.forEach { key, value ->
@@ -33,11 +27,7 @@ private void setupPreProcess(def index){
     }
 
 }
-//move to settings for include logic
-
-
 setupPreProcess(rootProject.mc_build)
-
 
 architectury {
     minecraft = rootProject.minecraft_version
@@ -47,9 +37,7 @@ subprojects {
     apply plugin: "dev.architectury.loom"
     apply plugin: "systems.manifold.manifold-gradle-plugin"
 
-    loom {
-        silentMojangMappingsLicense()
-    }
+    loom { silentMojangMappingsLicense() }
 
     dependencies {
         minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
@@ -82,22 +70,16 @@ subprojects {
             expand(["version": rootProject.mod_version,
                     "compatible_mc_fabric": rootProject.compatible_mc_fabric])
         }
-
         filesMatching("META-INF/mods.toml") {
             expand(["version": rootProject.mod_version,
                     "compatible_mc_forge": rootProject.compatible_mc_forge])
         }
-
         filesMatching("META-INF/neoforge.mods.toml") {
             expand(["version": rootProject.mod_version,
                     "compatible_mc_forge": rootProject.compatible_mc_forge])
         }
-
     }
-
 }
-
-
 
 allprojects {
     apply plugin: "java"
@@ -107,24 +89,17 @@ allprojects {
 
     archivesBaseName = rootProject.archives_base_name
     version = rootProject.mod_version
-    group = rootProject.maven_group
-
+    group   = rootProject.maven_group
 
     repositories {
-        // Add repositories to retrieve artifacts from in here.
-        // You should only use this when depending on other mods because
-        // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-        // See https://docs.gradle.org/current/userguide/declaring_repositories.html
-        // for more information about repositories.
-        maven {url = "https://api.modrinth.com/maven"}
-        maven {url = "https://www.cursemaven.com/"}
+        maven { url = "https://api.modrinth.com/maven" }
+        maven { url = "https://www.cursemaven.com/" }
         maven { url "https://maven.shedaniel.me/" }
         maven { url "https://maven.terraformersmc.com/releases/" }
         maven { url "https://mvnrepository.com/artifact/com.demonwav.mcdev/annotations" }
         maven { url "https://maven.parchmentmc.org" }
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     }
-
 
     tasks.withType(JavaCompile).configureEach {
         options.encoding = "UTF-8"

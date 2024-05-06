@@ -13,7 +13,7 @@ public class BlockSpawnedProperty extends BlocksProperty {
 
     public static BlocksProperty getPropertyOrNull(Properties properties, int propertyNum) {
         try {
-            return new BlocksProperty(properties, propertyNum, new String[]{"blockSpawned"});
+            return new BlockSpawnedProperty(properties, propertyNum, new String[]{"blockSpawned"});
         } catch (RandomPropertyException e) {
             return null;
         }

@@ -27,10 +27,8 @@ public abstract class MixinEntity implements ETFEntity {
     public abstract EntityType<?> getType();
 
 
-
     @Shadow
     public abstract int getBlockY();
-
 
 
     @Shadow
@@ -54,24 +52,31 @@ public abstract class MixinEntity implements ETFEntity {
     public abstract float distanceTo(Entity entity);
 
 
-
     @Shadow
     public abstract Pose getPose();
 
 
-    @Shadow public abstract UUID getUUID();
+    @Shadow
+    public abstract UUID getUUID();
 
-    @Shadow public abstract Level level();
+    @Shadow
+    public abstract Level level();
 
-    @Shadow public abstract BlockPos blockPosition();
+    @Shadow
+    public abstract BlockPos blockPosition();
 
-    @Shadow @Nullable public abstract PlayerTeam getTeam();
+    @Shadow
+    @Nullable
+    public abstract PlayerTeam getTeam();
 
-    @Shadow public abstract Vec3 getDeltaMovement();
+    @Shadow
+    public abstract Vec3 getDeltaMovement();
 
-    @Shadow public abstract boolean saveAsPassenger(final CompoundTag compoundTag);
+    @Shadow
+    public abstract boolean saveAsPassenger(final CompoundTag compoundTag);
 
-    @Shadow public abstract CompoundTag saveWithoutId(final CompoundTag compoundTag);
+    @Shadow
+    public abstract CompoundTag saveWithoutId(final CompoundTag compoundTag);
 
     @Override
     public EntityType<?> etf$getType() {
@@ -126,7 +131,7 @@ public abstract class MixinEntity implements ETFEntity {
     @Override
     public Iterable<ItemStack> etf$getItemsEquipped() {
         var alive = etf$getLivingOrNull();
-        if (alive != null){
+        if (alive != null) {
             return alive.getAllSlots();
         }
         return null;
@@ -135,7 +140,7 @@ public abstract class MixinEntity implements ETFEntity {
     @Override
     public Iterable<ItemStack> etf$getHandItems() {
         var alive = etf$getLivingOrNull();
-        if (alive != null){
+        if (alive != null) {
             return alive.getHandSlots();
         }
         return null;
@@ -144,16 +149,16 @@ public abstract class MixinEntity implements ETFEntity {
     @Override
     public Iterable<ItemStack> etf$getArmorItems() {
         var alive = etf$getLivingOrNull();
-        if (alive != null){
+        if (alive != null) {
             return alive.getArmorSlots();
         }
         return null;
     }
 
     @Unique
-    private LivingEntity etf$getLivingOrNull(){
+    private LivingEntity etf$getLivingOrNull() {
         Object self = this;
-        if (self instanceof LivingEntity alive){
+        if (self instanceof LivingEntity alive) {
             return alive;
         }
         return null;

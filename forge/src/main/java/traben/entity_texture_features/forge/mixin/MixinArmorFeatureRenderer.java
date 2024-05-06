@@ -109,11 +109,9 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, A extend
     @Inject(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/entity/LivingEntity;FFFFFF)V",
             at = @At(value = "HEAD"), cancellable = true)
     private void etf$cancelIfUi(PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
-        if (Minecraft.getInstance() != null) {
-            if (Minecraft.getInstance().screen instanceof ETFScreenOldCompat) {
-                //cancel armour rendering
-                ci.cancel();
-            }
+        if (Minecraft.getInstance().screen instanceof ETFScreenOldCompat) {
+            //cancel armour rendering
+            ci.cancel();
         }
     }
 

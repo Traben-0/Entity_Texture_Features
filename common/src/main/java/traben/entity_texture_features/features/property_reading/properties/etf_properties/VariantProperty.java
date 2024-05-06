@@ -126,16 +126,16 @@ public class VariantProperty extends StringArrayOrRegexProperty {
                 DecoratedPotBlockEntity.Decorations sherds = pot.getDecorations();
                 return (sherds.back().getDefaultInstance() != ItemStack.EMPTY ? sherds.back().getDescriptionId() : "none")
                         + "," +
-                        (sherds.left().getDefaultInstance() != ItemStack.EMPTY  ? sherds.left().getDescriptionId() : "none")
+                        (sherds.left().getDefaultInstance() != ItemStack.EMPTY ? sherds.left().getDescriptionId() : "none")
                         + "," +
-                        (sherds.right().getDefaultInstance() != ItemStack.EMPTY  ? sherds.right().getDescriptionId() : "none")
+                        (sherds.right().getDefaultInstance() != ItemStack.EMPTY ? sherds.right().getDescriptionId() : "none")
                         + "," +
-                        (sherds.front().getDefaultInstance() != ItemStack.EMPTY  ? sherds.front().getDescriptionId() : "none");
+                        (sherds.front().getDefaultInstance() != ItemStack.EMPTY ? sherds.front().getDescriptionId() : "none");
                 #endif
             }
             String suffix = "";
             if (etfEntity instanceof SkullBlockEntity skull) {
-                suffix = "_direction_" + skull.getBlockState().getValue(SkullBlock.ROTATION).toString();
+                suffix = "_direction_" + skull.getBlockState().getValue(SkullBlock.ROTATION);
             }
 
             return BuiltInRegistries.BLOCK_ENTITY_TYPE.getResourceKey(((BlockEntity) etfEntity).getType()).map(key -> key.location().getPath()).orElse(null) + suffix;

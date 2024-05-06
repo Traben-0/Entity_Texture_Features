@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.network.chat.contents.PlainTextContents;
@@ -68,7 +69,7 @@ public class NameProperty extends StringArrayOrRegexProperty {
 
     @Override
     public @Nullable String getValueFromEntity(ETFEntity etfEntity) {
-        if (etfEntity instanceof Player player && player.getName() != null) {
+        if (etfEntity instanceof Player player) {
             return player.getName().getString();
         }
         if (etfEntity.etf$hasCustomName()) {

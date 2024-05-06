@@ -8,7 +8,6 @@ import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFApi;
 import traben.entity_texture_features.config.ETFConfig;
-import traben.entity_texture_features.config.ETFConfig.EmissiveRenderModes;
 import traben.entity_texture_features.config.screens.skin.ETFConfigScreenSkinTool;
 import traben.entity_texture_features.features.player.ETFPlayerEntity;
 import traben.entity_texture_features.features.player.ETFPlayerTexture;
@@ -24,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Vec3i;
 import net.minecraft.resources.ResourceLocation;
@@ -122,7 +122,7 @@ public class ETFManager {
 
     public static @NotNull ETFTexture getErrorETFTexture() {
         ETFUtils2.registerNativeImageToIdentifier(ETFUtils2.emptyNativeImage(), new ResourceLocation(MOD_ID, "error.png"));
-        return new ETFTexture(new ResourceLocation(MOD_ID, "error.png")/*, false*/);//, ETFTexture.TextureSource.GENERIC_DEBUG);
+        return new ETFTexture(new ResourceLocation(MOD_ID, "error.png")/*, false*/ );//, ETFTexture.TextureSource.GENERIC_DEBUG);
     }
 
     public static ETFConfig.EmissiveRenderModes getEmissiveMode() {

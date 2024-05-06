@@ -33,7 +33,8 @@ public abstract class MixinWardenFeatureRenderer<T extends Warden, M extends War
     }
 
 
-    @Shadow protected abstract void resetDrawForAllParts();
+    @Shadow
+    protected abstract void resetDrawForAllParts();
 
     @Inject(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/entity/monster/warden/Warden;FFFFFF)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/layers/WardenEmissiveLayer;onlyDrawSelectedParts()V",

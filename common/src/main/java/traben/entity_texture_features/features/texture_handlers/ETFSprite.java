@@ -3,10 +3,12 @@ package traben.entity_texture_features.features.texture_handlers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.mojang.blaze3d.platform.NativeImage;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
 import java.util.Optional;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -88,20 +90,14 @@ public class ETFSprite {
             try {
                 nativeImage = NativeImage.read(inputStream);
             } catch (Throwable var9) {
-                if (inputStream != null) {
-                    try {
-                        inputStream.close();
-                    } catch (Throwable var7) {
-                        var9.addSuppressed(var7);
-                    }
+                try {
+                    inputStream.close();
+                } catch (Throwable var7) {
+                    var9.addSuppressed(var7);
                 }
-
                 throw var9;
             }
-
-            //if (inputStream != null) {
             inputStream.close();
-            //}
         } catch (IOException var10) {
 //            LOGGER.error("Using missing texture, unable to load {}", id, var10);
             return null;

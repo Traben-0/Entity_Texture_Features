@@ -36,10 +36,10 @@ public abstract class ETFScreenOldCompat extends TConfigScreen {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
         bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-        bufferBuilder.vertex(x1, y2, 0.0).uv(0, 1/*(float)x1, (float)y2*heightYValue*/).color(255, 255, 255, 255).endVertex();
-        bufferBuilder.vertex(x2, y2, 0.0).uv(1, 1/*(float)x2*widthXValue, (float)y2*heightYValue*/).color(255, 255, 255, 255).endVertex();
-        bufferBuilder.vertex(x2, y1, 0.0).uv(1, 0/*(float)x2*widthXValue, (float)y1*/).color(255, 255, 255, 255).endVertex();
-        bufferBuilder.vertex(x1, y1, 0.0).uv(0, 0/*(float)x1, (float)y1*/).color(255, 255, 255, 255).endVertex();
+        bufferBuilder.vertex(x1, y2, 0.0).uv(0, 1/*(float)x1, (float)y2*heightYValue*/ ).color(255, 255, 255, 255).endVertex();
+        bufferBuilder.vertex(x2, y2, 0.0).uv(1, 1/*(float)x2*widthXValue, (float)y2*heightYValue*/ ).color(255, 255, 255, 255).endVertex();
+        bufferBuilder.vertex(x2, y1, 0.0).uv(1, 0/*(float)x2*widthXValue, (float)y1*/ ).color(255, 255, 255, 255).endVertex();
+        bufferBuilder.vertex(x1, y1, 0.0).uv(0, 0/*(float)x1, (float)y1*/ ).color(255, 255, 255, 255).endVertex();
         tessellator.end();
     }
 

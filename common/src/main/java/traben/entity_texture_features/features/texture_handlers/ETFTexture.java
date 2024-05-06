@@ -195,6 +195,7 @@ public class ETFTexture {
         //check if its already an anim and animatica has already gotten to replacing it before etf sees it
         if (idString.endsWith("-anim")) return true;
         //check if animatica has registered its animated version of this texture
+        //noinspection ConstantValue
         return Minecraft.getInstance().getTextureManager().getTexture(new ResourceLocation(idString + "-anim"), null) != null;
     }
 
@@ -432,11 +433,8 @@ public class ETFTexture {
             //try get an armor trims base texture just to match what texture pack level it is
             PackResources pack;
             vanillaR1 = resourceManager.getResource(new ResourceLocation(thisIdentifier.getNamespace(), thisIdentifier.getPath().replaceAll("_(.*?)(?=\\.png)", "")));
-            if (vanillaR1.isPresent()) {
-                pack = vanillaR1.get().source();
-            } else {
-                pack = Minecraft.getInstance().getVanillaPackResources();
-            }
+            pack = vanillaR1.map(Resource::source)
+                    .orElseGet(() -> Minecraft.getInstance().getVanillaPackResources());
             //create resource object sufficient for following code
             vanillaR1 = Optional.of(new Resource(pack, null));
         }

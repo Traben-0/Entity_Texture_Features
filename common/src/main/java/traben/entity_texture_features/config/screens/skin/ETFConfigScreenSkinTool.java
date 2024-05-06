@@ -29,6 +29,11 @@ import static traben.entity_texture_features.ETF.MOD_ID;
 //inspired by puzzles custom gui code
 @SuppressWarnings("EnhancedSwitchMigration")
 public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
+    private static final ResourceLocation APPLY_OVERLAY = new ResourceLocation(MOD_ID + ":textures/skin_feature_printout.png");
+    private static final ResourceLocation REMOVE_OVERLAY = new ResourceLocation(MOD_ID + ":textures/skin_feature_remove.png");
+    private static final ResourceLocation WHOLE_FACE_OVERLAY = new ResourceLocation(MOD_ID + ":textures/skin_feature_whole_face.png");
+    private static final ResourceLocation SMALL_EYE_OVERLAY = new ResourceLocation(MOD_ID + ":textures/skin_feature_small_eyes.png");
+    private static final ResourceLocation BOXES_OVERLAY = new ResourceLocation(MOD_ID + ":textures/skin_feature_orange_areas.png");
     public Boolean originalEnableBlinking;
     public ETFPlayerTexture thisETFPlayerTexture = null;
     public NativeImage currentEditorSkin = null;
@@ -45,12 +50,8 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
     Button enchantSelectButton = null;
     //    ButtonWidget capeButton = null;
     Button transparencyButton = null;
-
-    private static final ResourceLocation APPLY_OVERLAY = new ResourceLocation(MOD_ID + ":textures/skin_feature_printout.png");
-    private static final ResourceLocation REMOVE_OVERLAY = new ResourceLocation(MOD_ID + ":textures/skin_feature_remove.png");
-    private static final ResourceLocation WHOLE_FACE_OVERLAY = new ResourceLocation(MOD_ID + ":textures/skin_feature_whole_face.png");
-    private static final ResourceLocation SMALL_EYE_OVERLAY = new ResourceLocation(MOD_ID + ":textures/skin_feature_small_eyes.png");
-    private static final ResourceLocation BOXES_OVERLAY = new ResourceLocation(MOD_ID + ":textures/skin_feature_orange_areas.png");
+    private Button overridesButton = null;
+    private Boolean allowOverrides = null;
 
     public ETFConfigScreenSkinTool(Screen parent) {
         super("config." + MOD_ID + ".player_skin_features.title", parent, false);
@@ -95,8 +96,6 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
         onExit();
         super.onClose();
     }
-
-    private Button overridesButton = null;
 
     @Override
     protected void init() {
@@ -191,7 +190,7 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
                         int colour = thisETFPlayerTexture.noseType.next().getNosePixelColour();
 
                         currentEditorSkin.setPixelRGBA(53, 17, colour);
-                        if (thisETFPlayerTexture.noseType.next().appliesTextureOverlay()){
+                        if (thisETFPlayerTexture.noseType.next().appliesTextureOverlay()) {
                             applyExistingOverlayToSkin(BOXES_OVERLAY);
                         }
                         thisETFPlayerTexture.changeSkinToThisForTool(currentEditorSkin);
@@ -281,7 +280,7 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
                         }
 
                         var overlay = blink.getExampleOverlay();
-                        if (overlay != null){
+                        if (overlay != null) {
                             applyExistingOverlayToSkin(overlay);
                         }
 
@@ -439,27 +438,24 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
         super.render(context, mouseX, mouseY, delta);
 
 
-        if (Minecraft.getInstance() != null) {
-            LocalPlayer player = Minecraft.getInstance().player;
-            if (player != null) {
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player != null) {
 
 
-                int height = (int) (this.height * 0.75);
-                int playerX = (int) (this.width * 0.14);
-                drawEntity(context,playerX, height, (int) (this.height * 0.3), (float) (-mouseX + playerX), (float) (-mouseY + (this.height * 0.3)), player);
-            } else {
-                context.drawString(font, Component.nullToEmpty("Player is null for some reason!"), width / 7, (int) (this.height * 0.4), 0xFFFFFF);
-                context.drawString(font, Component.nullToEmpty("Cannot load player to render!"), width / 7, (int) (this.height * 0.45), 0xFFFFFF);
-            }
+            int height = (int) (this.height * 0.75);
+            int playerX = (int) (this.width * 0.14);
+            drawEntity(context, playerX, height, (int) (this.height * 0.3), (float) (-mouseX + playerX), (float) (-mouseY + (this.height * 0.3)), player);
+        } else {
+            context.drawString(font, Component.nullToEmpty("Player is null for some reason!"), width / 7, (int) (this.height * 0.4), 0xFFFFFF);
+            context.drawString(font, Component.nullToEmpty("Cannot load player to render!"), width / 7, (int) (this.height * 0.45), 0xFFFFFF);
         }
+
 
         context.drawString(font, ETF.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.crouch_message"), width / 40, (int) (this.height * 0.8), 0x555555);
         context.drawString(font, ETF.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.blink_message"), width / 40, (int) (this.height * 0.1), 0x555555);
 //        if(ETFVersionDifferenceHandler.isThisModLoaded("iris"))
 //            drawTextWithShadow(matrices, textRenderer, ETFVersionDifferenceHandler.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.iris_message"), width / 8, (int) (this.height * 0.15), 0xFF5555);
     }
-
-    private Boolean allowOverrides = null;
 
     public void applyExistingOverlayToSkin(ResourceLocation overlayTexture) {
         if ((ETF.isFabric() == ETF.isThisModLoaded("fabric"))) {//todo still needed? might be implicit now
@@ -469,7 +465,7 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
             assert overlayImage != null;
             //first check if the overlay will overwrite any pixels and prevent doing so if this is the case
             //ignore this if doing the apply/remove overlay
-            if (!(overlayTexture.equals(REMOVE_OVERLAY) || overlayTexture.equals(APPLY_OVERLAY))){
+            if (!(overlayTexture.equals(REMOVE_OVERLAY) || overlayTexture.equals(APPLY_OVERLAY))) {
 //                for (int x = 0; x < currentEditorSkin.getWidth(); x++) {
 //                    for (int y = 0; y < currentEditorSkin.getHeight(); y++) {
 //
@@ -481,14 +477,14 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
 //                            int skin = currentEditorSkin.getColor(x, y);
 //                            //ignore an already applied overlay texture with identical pixels
 //                            if (skin != overlay) {
-                                if (allowOverrides == null) {
-                                    Minecraft.getInstance().setScreen(new ConfirmScreen(Component.nullToEmpty(""), this));
-                                    if (allowOverrides == null) allowOverrides = false;
-                                }
-                                if (!allowOverrides) {
-                                    ETFUtils2.logMessage("Skin example overlay [" + overlayTexture + "] not applied.", false);
-                                    return;
-                                }
+                if (allowOverrides == null) {
+                    Minecraft.getInstance().setScreen(new ConfirmScreen(Component.nullToEmpty(""), this));
+                    if (allowOverrides == null) allowOverrides = false;
+                }
+                if (!allowOverrides) {
+                    ETFUtils2.logMessage("Skin example overlay [" + overlayTexture + "] not applied.", false);
+                    return;
+                }
 //                            }
 //                        }
 //                    }
@@ -542,7 +538,7 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
 
 //        float j2 = (float) Math.atan(((-mouseY + this.height / 2f) / 40.0F));
         Quaternionf quaternionf = (new Quaternionf()).rotateZ(3.1415927F);
-        Quaternionf quaternionf2 = (new Quaternionf()).rotateX( 0);//j2 * 20.0F * 0.017453292F);
+        Quaternionf quaternionf2 = (new Quaternionf()).rotateX(0);//j2 * 20.0F * 0.017453292F);
         quaternionf.mul(quaternionf2);
 
         context.pose().pushPose();
@@ -593,7 +589,6 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
     }
 
 
-
     @SuppressWarnings("EnhancedSwitchMigration")
     public enum NoseType {
         VILLAGER(1, ETF.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.nose.villager")),
@@ -623,7 +618,7 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
             return NONE;
         }
 
-        public boolean appliesTextureOverlay(){
+        public boolean appliesTextureOverlay() {
             return this == TEXTURED_1 || this == TEXTURED_2 || this == TEXTURED_3 || this == TEXTURED_4 || this == TEXTURED_5;
         }
 
@@ -800,8 +795,8 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
             }
         }
 
-        public ResourceLocation getExampleOverlay(){
-            return switch (this){
+        public ResourceLocation getExampleOverlay() {
+            return switch (this) {
                 case WHOLE_FACE, WHOLE_FACE_TWO -> WHOLE_FACE_OVERLAY;
                 case NONE -> null;
                 default -> SMALL_EYE_OVERLAY;
@@ -877,9 +872,10 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
         }
     }
 
-    private class ConfirmScreen extends Screen{
+    private class ConfirmScreen extends Screen {
 
-        Screen parent;
+        final Screen parent;
+
         protected ConfirmScreen(final Component title, Screen parent) {
             super(title);
             this.parent = parent;
@@ -889,7 +885,7 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
         public void onClose() {
             if (overridesButton == null) {
                 allowOverrides = false;
-            }else {
+            } else {
                 overridesButton.onPress();
             }
             Minecraft.getInstance().setScreen(this.parent);
@@ -904,12 +900,12 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
         protected void init() {
             super.init();
 
-            addRenderableWidget(Button.builder(CommonComponents.GUI_YES,(button)-> {
+            addRenderableWidget(Button.builder(CommonComponents.GUI_YES, (button) -> {
                 allowOverrides = true;
                 Minecraft.getInstance().setScreen(this.parent);
-            }).bounds(width/ 2 - 210, height / 2 + 50, 200, 20).build());
+            }).bounds(width / 2 - 210, height / 2 + 50, 200, 20).build());
 
-            addRenderableWidget(Button.builder(CommonComponents.GUI_NO,(button)-> onClose()).bounds(width/ 2 + 10, height / 2 + 50, 200, 20).build());
+            addRenderableWidget(Button.builder(CommonComponents.GUI_NO, (button) -> onClose()).bounds(width / 2 + 10, height / 2 + 50, 200, 20).build());
         }
 
         @Override
@@ -917,8 +913,8 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
             super.render(context, mouseX, mouseY, delta);
 
             context.drawCenteredString(font, ETF.getTextFromTranslation("config.entity_texture_features.skin_editor.overlays.1"), width / 2, height / 2, 0xFFFFFF);
-            context.drawCenteredString(font, ETF.getTextFromTranslation("config.entity_texture_features.skin_editor.overlays.2"), width / 2, height / 2+11, 0xFFFFFF);
-            context.drawCenteredString(font, ETF.getTextFromTranslation("config.entity_texture_features.skin_editor.overlays.3"), width / 2, height / 2+22, 0xFFFFFF);
+            context.drawCenteredString(font, ETF.getTextFromTranslation("config.entity_texture_features.skin_editor.overlays.2"), width / 2, height / 2 + 11, 0xFFFFFF);
+            context.drawCenteredString(font, ETF.getTextFromTranslation("config.entity_texture_features.skin_editor.overlays.3"), width / 2, height / 2 + 22, 0xFFFFFF);
         }
     }
 

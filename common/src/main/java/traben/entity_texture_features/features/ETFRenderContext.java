@@ -3,12 +3,13 @@ package traben.entity_texture_features.features;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.config.ETFConfig;
-import traben.entity_texture_features.config.ETFConfig.RenderLayerOverride;
 import traben.entity_texture_features.utils.ETFEntity;
 import traben.entity_texture_features.utils.ETFRenderLayerWithTexture;
 import traben.entity_texture_features.utils.ETFVertexConsumer;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import java.util.Optional;
+
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;

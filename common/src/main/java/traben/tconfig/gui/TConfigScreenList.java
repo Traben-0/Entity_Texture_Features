@@ -9,7 +9,9 @@ public class TConfigScreenList extends TConfigScreen {
 
     private final TConfigEntry[] options;
     private final Align align;
+    protected boolean fullWidthBackgroundEvenIfSmaller = false;
     private Renderable renderFeature = null;
+
 
     public TConfigScreenList(@Translatable final String title, Screen parent, TConfigEntry[] options, Runnable resetValuesToDefault, Runnable undoChanges, Align align) {
         super(title, parent, true);
@@ -19,7 +21,6 @@ public class TConfigScreenList extends TConfigScreen {
         this.undoChangesRunnable = undoChanges;
         this.align = align;
     }
-
 
     @SuppressWarnings("unused")
     public TConfigScreenList(@Translatable final String title, Screen parent, TConfigEntry[] options, Runnable resetValuesToDefault, Runnable undoChanges) {
@@ -37,8 +38,6 @@ public class TConfigScreenList extends TConfigScreen {
             renderFeature.render(context, mouseX, mouseY);
         }
     }
-
-    protected boolean fullWidthBackgroundEvenIfSmaller = false;
 
     public void setWidgetBackgroundToFullWidth() {
         this.fullWidthBackgroundEvenIfSmaller = true;

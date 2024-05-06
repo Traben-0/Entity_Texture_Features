@@ -8,6 +8,7 @@ import traben.entity_texture_features.utils.ETFEntity;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Properties;
+
 import net.minecraft.world.entity.npc.VillagerDataHolder;
 
 public class ProfessionProperty extends StringArrayOrRegexProperty {

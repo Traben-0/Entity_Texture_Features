@@ -451,10 +451,10 @@ public final class ETFApi {
             if (random == null && optifine == null) {
                 //no variation at all
                 return null;
-            } else if (/*only*/optifine == null) {
+            } else if (/*only*/ optifine == null) {
                 //todo why was this there     if (source != ETFManager.TextureSource.ENTITY_FEATURE) {
                 return random;
-            } else if (/*only*/random == null) {
+            } else if (/*only*/ random == null) {
                 //optifine random confirmed
                 return optifine;
             } else {

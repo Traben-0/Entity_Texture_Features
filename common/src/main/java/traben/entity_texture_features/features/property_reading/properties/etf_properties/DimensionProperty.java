@@ -9,6 +9,7 @@ import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.Optional;
 import java.util.Properties;
+
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
@@ -44,6 +45,7 @@ public class DimensionProperty extends StringArrayOrRegexProperty {
         if (dimKey.isEmpty()) return null;
 
         ResourceLocation key = dimKey.get().location();
+        //noinspection ConstantValue
         if (key == null) return null;
 
         String output;

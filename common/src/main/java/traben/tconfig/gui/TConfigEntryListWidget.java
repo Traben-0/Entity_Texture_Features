@@ -33,7 +33,6 @@ public class TConfigEntryListWidget extends AbstractSelectionList<TConfigEntryLi
     }
 
 
-
     @Override
     protected void updateWidgetNarration(final NarrationElementOutput builder) {
     }

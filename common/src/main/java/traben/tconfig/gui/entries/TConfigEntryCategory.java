@@ -7,6 +7,7 @@ import traben.tconfig.gui.TConfigScreenList;
 
 import java.util.Collection;
 import java.util.function.Supplier;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
@@ -17,6 +18,7 @@ public class TConfigEntryCategory extends TConfigEntry {
 
     private final Object2ObjectLinkedOpenHashMap<String, TConfigEntry> options = new Object2ObjectLinkedOpenHashMap<>();
     private final String translationKey;
+    protected boolean fullWidthBackgroundEvenIfSmaller = false;
     private TConfigScreenList screen = null;
     private Tooltip emptyTooltip = Tooltip.create(Component.translatable("config.entity_features.empty"));
     private TConfigScreenList.Align align = TConfigScreenList.Align.CENTER;
@@ -67,8 +69,6 @@ public class TConfigEntryCategory extends TConfigEntry {
         }
         return found;
     }
-
-    protected boolean fullWidthBackgroundEvenIfSmaller = false;
 
     @SuppressWarnings("unused")
     public void setWidgetBackgroundToFullWidth() {

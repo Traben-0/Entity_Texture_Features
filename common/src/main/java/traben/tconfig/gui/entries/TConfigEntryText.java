@@ -6,6 +6,7 @@ import traben.entity_texture_features.ETF;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;

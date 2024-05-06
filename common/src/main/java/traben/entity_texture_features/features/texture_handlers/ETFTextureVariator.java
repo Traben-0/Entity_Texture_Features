@@ -15,6 +15,7 @@ import traben.entity_texture_features.utils.EntityIntLRU;
 
 import java.util.Objects;
 import java.util.UUID;
+
 import net.minecraft.resources.ResourceLocation;
 
 public abstract class ETFTextureVariator {
@@ -43,7 +44,7 @@ public abstract class ETFTextureVariator {
 
             ETFTexture output = getVariantOfInternal(entity);
 
-            //noinspection DataFlowIssue
+            //noinspection DataFlowIssue,TextBlockMigration
             ETFUtils2.logMessage(
                     "\n§e-----------ETF Debug Printout-------------§r" +
                             "\n" + ETFManager.getInstance().getGeneralPrintout() +

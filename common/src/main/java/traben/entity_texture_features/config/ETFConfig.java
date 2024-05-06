@@ -483,11 +483,10 @@ public final class ETFConfig extends TConfig {
 
     }
 
-    public enum SkinTransparencyMode{
+    public enum SkinTransparencyMode {
         @SuppressWarnings("unused") VANILLA("config.entity_texture_features.transparent_skins.vanilla"),
         ETF_SKINS_ONLY("config.entity_texture_features.transparent_skins.etf"),
-        ALL("config.entity_texture_features.transparent_skins.all")
-        ;
+        ALL("config.entity_texture_features.transparent_skins.all");
 
         private final String key;
 

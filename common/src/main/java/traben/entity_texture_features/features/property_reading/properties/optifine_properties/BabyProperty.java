@@ -7,6 +7,7 @@ import traben.entity_texture_features.features.property_reading.properties.gener
 import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.Properties;
+
 import net.minecraft.world.entity.LivingEntity;
 
 
