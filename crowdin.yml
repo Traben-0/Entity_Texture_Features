@@ -3,3 +3,5 @@ auto_approve_imported: true
 files:
   - source: "common/src/main/resources/assets/entity_texture_features/lang/en_us.json"
     translation: "common/src/main/resources/assets/entity_texture_features/lang/%locale_with_underscore%.json"
+    update_strings: true
+    cleanup_mode: true
