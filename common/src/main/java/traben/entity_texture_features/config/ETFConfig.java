@@ -51,6 +51,7 @@ public final class ETFConfig extends TConfig {
     public boolean skinFeaturesEnabled = true;
 
     public SkinTransparencyMode skinTransparencyMode = SkinTransparencyMode.ETF_SKINS_ONLY;
+    public boolean skinTransparencyInExtraPixels = true;
 
     @Deprecated
     public boolean skinFeaturesEnableTransparency = true;
@@ -202,6 +203,8 @@ public final class ETFConfig extends TConfig {
 //                                        () -> tryETFTransparencyForAllSkins, aBoolean -> tryETFTransparencyForAllSkins = aBoolean, false),
                                 new TConfigEntryEnumButton<>("config.entity_texture_features.transparent_skins.title", "config.entity_texture_features.transparent_skins.tooltip",
                                         () -> skinTransparencyMode, mode -> skinTransparencyMode = mode, SkinTransparencyMode.ETF_SKINS_ONLY),
+                                new TConfigEntryBoolean("config.entity_texture_features.transparent_skins_extra.title", "config.entity_texture_features.transparent_skins_extra.tooltip",
+                                        () -> skinTransparencyInExtraPixels, aBoolean -> skinTransparencyInExtraPixels = aBoolean, true),
                                 new TConfigEntryBoolean("config.entity_texture_features.enable_enemy_team_players_skin_features.title", "config.entity_texture_features.enable_enemy_team_players_skin_features.tooltip",
                                         () -> enableEnemyTeamPlayersSkinFeatures, aBoolean -> enableEnemyTeamPlayersSkinFeatures = aBoolean, true),
                                 ETF.SKIN_LAYERS_DETECTED ?

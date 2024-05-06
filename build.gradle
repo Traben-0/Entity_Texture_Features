@@ -55,7 +55,7 @@ subprojects {
         minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
 
         if(rootProject.parchment_version != "no") {
-            println "Using Parchment mappings"
+            println "Using Parchment mappings ${rootProject.parchment_version}"
             mappings loom.layered() {
                 officialMojangMappings()
                 parchment("org.parchmentmc.data:parchment-${parchment_version}@zip")

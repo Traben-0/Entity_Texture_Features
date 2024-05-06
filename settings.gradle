@@ -7,7 +7,6 @@ pluginManagement {
     }
 }
 
-println mc_build
 
 File indexProps = new File("${rootDir}/property_variants/${mc_build}.properties")
 println indexProps.path

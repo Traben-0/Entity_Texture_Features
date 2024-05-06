@@ -82,7 +82,7 @@
   "config.entity_texture_features.enable_emissive_textures.title": "Emissive entity textures",
   "config.entity_texture_features.enable_emissive_textures.tooltip": "Enables emissive entity textures\nWorks with resource packs\nusing the OptiFine format",
   "config.entity_texture_features.enable_enemy_team_players_skin_features.title": "Enemy teams skin features",
-  "config.entity_texture_features.enable_enemy_team_players_skin_features.tooltip": "Allows player skins to be enabled/disabled\nfor players on opposing teams in PvP games,\notherwise they may be harder to see\nand may affect balance\n///THIS SETTING REQUIRES A RESTART\\\\\\",
+  "config.entity_texture_features.enable_enemy_team_players_skin_features.tooltip": "Allows player skin features to be enabled/disabled\nfor players on opposing teams in PvP games,\notherwise they may be harder to see\nand may affect balance\n///THIS SETTING REQUIRES A RESTART\\\\\\",
   "config.entity_texture_features.enable_tridents.title": "Custom tridents",
   "config.entity_texture_features.enable_tridents.tooltip": "Allows tridents to use custom & emissive textures\nThis toggle is here to support possible future CIT mod updates\nThe trident item name will choose the texture file to use\nThe texture 'trident_bobbys_trident.png' will be chosen by the names:\n'Bobby's Trident', ' BoBb%Ys   Trid##en t' & 'bobbys_trident'.\nThe texture 'trident_bobbys_trident_e.png' will be emissive.",
   "config.entity_texture_features.enchanted_enable": "Enchanted entity textures",
@@ -281,5 +281,7 @@
   "config.entity_texture_features.property_explanation.year_day": "Year Day \nSelect which day of the year it must be from 1 - 366\nExample: yearDay.1=1-100\n§ayearDay.<n>=<list>",
   "config.entity_texture_features.property_explanation.mod_rule": "Mods Loaded \nSelect what mods must be loaded\nfor instance if you need to disable or modify certain textures or animations for certain mod compatibilites\nExample: modLoaded.1=sodium iris\n§amodLoaded.<n>=<list>",
   "config.entity_texture_features.property_explanation.texture_rule": "Texture Rule (Optional)\nmatches the last random texture rule number that the entities texture matched against\ndefaults to 0\nExample: textureRule.1= 2 4 6\n§atextureRule.<n>=<list>",
-  "config.entity_texture_features.property_explanation.texture_suffix": "Texture Suffix (Optional)\nmatches the last random texture suffix number that the entities texture was set to\ndefaults to 0\nExample: textureSuffix.1= 2 4 6\n§atextureSuffix.<n>=<list>"
+  "config.entity_texture_features.property_explanation.texture_suffix": "Texture Suffix (Optional)\nmatches the last random texture suffix number that the entities texture was set to\ndefaults to 0\nExample: textureSuffix.1= 2 4 6\n§atextureSuffix.<n>=<list>",
+  "config.entity_texture_features.transparent_skins_extra.title": "Better vanilla skin transparency",
+  "config.entity_texture_features.transparent_skins_extra.tooltip": "Tweaks the vanilla skin transparency code to make it not affect all the extra pixels that aren't actually used in your skin\nThis allows transparency in these extra pixels without affecting the vanilla skin behaviour\nVery useful for custom player models"
 }

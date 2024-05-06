@@ -1,5 +1,10 @@
 [**ETF Changelog:**]
 
+
+- crowdin support
+- multiversion source
+- skin option to preserve transparency if extra skin pixels
+
 [6.0.1]
 - fixed the transparent skin settings
 - changed the transparent skin settings into a single option, it is set to only allow for skins using ETF features by default, but can be enabled for all skins.
