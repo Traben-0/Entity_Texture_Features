@@ -13,6 +13,7 @@
     "MixinRenderLayer",
     "MixinSpriteIdentifier",
     "MixinVertexConsumerProvider$Immediate",
+    "MixinVertexMultiConsumer$Double",
     "accessor.TooltipAccessor",
     "entity.block.MixinMobSpawnerLogic",
     "entity.block.MixinSkullBlockEntityRenderer",
@@ -22,6 +23,7 @@
     "entity.misc.MixinEntity",
     "entity.misc.MixinEntityRenderDispatcher",
     "entity.misc.MixinGlowSquidEntity",
+    "entity.misc.MixinPhantomEntity",
     "entity.misc.MixinPlayerEntity",
     "entity.misc.MixinSkullBlockEntity",
     "entity.renderer.MixinEnderDragonEntityRenderer",
@@ -45,8 +47,7 @@
     "mods.sodium.MixinModelPartSodium",
     "mods.sodium.MixinSodiumBufferBuilder",
     "reloading.MixinMinecraftClient",
-    "reloading.MixinResourceReload",
-    "entity.misc.MixinPhantomEntity"
+    "reloading.MixinResourceReload"
   ],
   "mixins": [
   ],

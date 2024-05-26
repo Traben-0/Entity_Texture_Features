@@ -4,6 +4,7 @@
 - multiversion source
 - skin option to preserve transparency if extra skin pixels
 - fixed #265 crash when block entity state is null
+- fixed enchanted elytra not rendering emissive textures
 
 [6.0.1]
 
