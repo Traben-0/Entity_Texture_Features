@@ -40,8 +40,8 @@ public abstract class MixinPlayerSkinTexture {
     @Inject(method = "processLegacySkin",
             cancellable = true,
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/texture/HttpTexture;setNoAlpha(Lcom/mojang/blaze3d/platform/NativeImage;IIII)V"
-                    , shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILSOFT)
-    private void etf$differentAlpha(final NativeImage image, final CallbackInfoReturnable<NativeImage> cir, final int i, final int j, final boolean bl) {
+                    , shift = At.Shift.BEFORE, ordinal = 0))
+    private void etf$differentAlpha(final NativeImage image, final CallbackInfoReturnable<NativeImage> cir) {
         if (ETF.config().getConfig() != null && ETF.config().getConfig().skinTransparencyInExtraPixels) {
             //limit the alpha regions to the uv specifically mapped to the vanilla model only
 
@@ -50,9 +50,10 @@ public abstract class MixinPlayerSkinTexture {
             setNoAlpha(image, 0, 8, 32, 16);
 
             //needed for the notch hack
-            if (bl) {
-                doNotchTransparencyHack(image, 32, 0, 64, 32);
-            }
+            // only relevant for legacy skins without transparency in the upper head layer at all
+//            if (i==32) {
+//                doNotchTransparencyHack(image, 32, 0, 64, 32);
+//            }
 
             //og body
             setNoAlpha(image, 4, 16, 12, 20);
