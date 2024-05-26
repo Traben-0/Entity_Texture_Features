@@ -3,6 +3,7 @@
 - crowdin support
 - multiversion source
 - skin option to preserve transparency if extra skin pixels
+- fixed #265 crash when block entity state is null
 
 [6.0.1]
 

@@ -164,8 +164,10 @@ public final class ETFApi {
      * @return the UUID ETF recognises for that block Entity
      */
     public static UUID getUUIDForBlockEntity(BlockEntity blockEntity) {
-        long most = blockEntity.getBlockState().hashCode();
-        long least = blockEntity.getBlockPos().hashCode();
+        final var blockEntityState = blockEntity.getBlockState();
+        long most = blockEntityState == null ? Long.MAX_VALUE : blockEntityState.hashCode();
+        final var pos = blockEntity.getBlockPos();
+        long least = pos == null ? 0 : pos.asLong();
         return new UUID(most, least);
     }
 
