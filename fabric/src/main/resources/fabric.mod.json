@@ -46,7 +46,7 @@
   },
   "breaks": {
     "optifabric": "*",
-    "entity_model_features": "<=2.0.2"
+    "entity_model_features": "<=2.0"
   },
   "custom": {
     "modmenu": {

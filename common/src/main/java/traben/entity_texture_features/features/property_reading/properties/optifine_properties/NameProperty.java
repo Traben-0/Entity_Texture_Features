@@ -13,7 +13,11 @@ import java.util.regex.Pattern;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentContents;
+#if MC > MC_20_2
 import net.minecraft.network.chat.contents.PlainTextContents;
+#else
+import net.minecraft.network.chat.contents.LiteralContents;
+#endif
 import net.minecraft.world.entity.player.Player;
 
 public class NameProperty extends StringArrayOrRegexProperty {
@@ -76,7 +80,11 @@ public class NameProperty extends StringArrayOrRegexProperty {
             Component entityNameText = etfEntity.etf$getCustomName();
             if (entityNameText != null) {
                 ComponentContents content = entityNameText.getContents();
+                #if MC > MC_20_2
                 if (content instanceof PlainTextContents.LiteralContents literal) {
+                #else
+                if (content instanceof LiteralContents literal) {
+                #endif
                     return literal.text();
                 } else {
                     return entityNameText.getString();

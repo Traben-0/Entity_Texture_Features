@@ -11,7 +11,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+#if MC > MC_20_2
 import net.minecraft.world.scores.PlayerTeam;
+#endif
 import net.minecraft.world.scores.Team;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -65,9 +67,11 @@ public abstract class MixinEntity implements ETFEntity {
     @Shadow
     public abstract BlockPos blockPosition();
 
+
     @Shadow
     @Nullable
-    public abstract PlayerTeam getTeam();
+    public abstract #if MC > MC_20_2 PlayerTeam #else Team #endif getTeam();
+
 
     @Shadow
     public abstract Vec3 getDeltaMovement();
@@ -77,6 +81,8 @@ public abstract class MixinEntity implements ETFEntity {
 
     @Shadow
     public abstract CompoundTag saveWithoutId(final CompoundTag compoundTag);
+
+
 
     @Override
     public EntityType<?> etf$getType() {

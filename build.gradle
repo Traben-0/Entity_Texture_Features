@@ -1,9 +1,9 @@
+
 plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
     id "dev.architectury.loom" version "1.6-SNAPSHOT" apply false
     id "systems.manifold.manifold-gradle-plugin" version "0.0.2-alpha"
 }
-
 
 private void setupPreProcess(def index){
     println "Setting up preprocessor for version index $index"
@@ -19,15 +19,21 @@ private void setupPreProcess(def index){
     """
 
     File indexProps = new File(projectDir,"property_variants/${index}.properties")
-    println "Applying gradle.properties override:\n $indexProps.path"
+    println "Applying gradle.properties overrides: $indexProps.path"
     Properties properties = new Properties()
     properties.load(indexProps.newDataInputStream())
+
+    def maxKeyLength = properties.keySet().collect { it.toString().length() }.max()
     properties.forEach { key, value ->
         gradle.rootProject.setProperty(key as String, value)
+        println " - ${key.padRight(maxKeyLength)} = $value"
     }
 
 }
 setupPreProcess(rootProject.mc_build)
+
+
+
 
 architectury {
     minecraft = rootProject.minecraft_version
@@ -57,8 +63,14 @@ subprojects {
         implementation 'com.demonwav.mcdev:annotations:2.1.0'
 
         //https://github.com/manifold-systems/manifold/tree/master/manifold-deps-parent/manifold-preprocessor#setup
-        annotationProcessor 'systems.manifold:manifold-preprocessor:2024.1.13'
-        testAnnotationProcessor 'systems.manifold:manifold-preprocessor:2024.1.13'
+
+        //no idea why this breaks with older mc
+        if (rootProject.mc_build as int > 4){
+            annotationProcessor 'systems.manifold:manifold-preprocessor:2024.1.16'
+        }else{
+            annotationProcessor 'systems.manifold:manifold-preprocessor:2023.1.17'
+        }
+       // testAnnotationProcessor 'systems.manifold:manifold-preprocessor:2024.1.16'
 
     }
     processResources {
@@ -90,6 +102,7 @@ allprojects {
     archivesBaseName = rootProject.archives_base_name
     version = rootProject.mod_version
     group   = rootProject.maven_group
+
 
     repositories {
         maven { url = "https://api.modrinth.com/maven" }

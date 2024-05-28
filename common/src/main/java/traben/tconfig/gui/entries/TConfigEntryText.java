@@ -57,7 +57,14 @@ public class TConfigEntryText extends TConfigEntry {
 
     @Override
     public AbstractWidget getWidget(final int x, final int y, final int width, final int height) {
+        #if MC > MC_20_2
         widget.setRectangle(width, height, x, y);
+        #else
+        widget.setX(x);
+        widget.setY(y);
+        widget.setWidth(width);
+        widget.setHeight(height);
+        #endif
         return widget;
     }
 
@@ -118,8 +125,21 @@ public class TConfigEntryText extends TConfigEntry {
 
         @Override
         public AbstractWidget getWidget(final int x, final int y, final int width, final int height) {
+
+            #if MC > MC_20_2
             widget.setRectangle(width, height / 2, x, y);
             widget2.setRectangle(width, height / 2, x, y + height / 2 + 2);
+            #else
+            widget.setX(x);
+            widget.setY(y);
+            widget.setHeight(height / 2);
+            widget.setWidth(width);
+
+            widget2.setX(x);
+            widget2.setY(y + height / 2 + 2);
+            widget2.setHeight(height / 2);
+            widget2.setWidth(width);
+            #endif
             return widget;
         }
 

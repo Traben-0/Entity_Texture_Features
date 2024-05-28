@@ -52,7 +52,14 @@ public class TConfigEntryEnumSlider<E extends Enum<E>> extends TConfigEntryNullS
 
     @Override
     public AbstractWidget getWidget(final int x, final int y, final int width, final int height) {
+        #if MC > MC_20_2
         widget.setRectangle(width, height, x, y);
+        #else
+        widget.setX(x);
+        widget.setY(y);
+        widget.setWidth(width);
+        widget.setHeight(height);
+        #endif
         return widget;
     }
 

@@ -27,7 +27,11 @@ import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.network.chat.MutableComponent;
+#if MC > MC_20_2
 import net.minecraft.network.chat.contents.PlainTextContents;
+#else
+import net.minecraft.network.chat.contents.LiteralContents;
+#endif
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 
@@ -248,7 +252,9 @@ public abstract class ETFUtils2 {
         if (inChat) {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player != null) {
-                player.displayClientMessage(MutableComponent.create(new PlainTextContents.LiteralContents("§a[INFO]§r [Entity Texture Features]: " + obj))/*.formatted(Formatting.GRAY, Formatting.ITALIC)*/ , false);
+                player.displayClientMessage(MutableComponent.create(
+                        new #if MC > MC_20_2 PlainTextContents.LiteralContents #else LiteralContents #endif
+                                ("§a[INFO]§r [Entity Texture Features]: " + obj))/*.formatted(Formatting.GRAY, Formatting.ITALIC)*/ , false);
             } else {
                 ETF.LOGGER.info(obj);
             }
@@ -267,7 +273,9 @@ public abstract class ETFUtils2 {
         if (inChat) {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player != null) {
-                player.displayClientMessage(MutableComponent.create(new PlainTextContents.LiteralContents("§e[WARN]§r [Entity Texture Features]: " + obj)).withStyle(ChatFormatting.YELLOW), false);
+                player.displayClientMessage(MutableComponent.create(
+                        new #if MC > MC_20_2 PlainTextContents.LiteralContents #else LiteralContents #endif
+                                ("§e[WARN]§r [Entity Texture Features]: " + obj)).withStyle(ChatFormatting.YELLOW), false);
             } else {
                 ETF.LOGGER.warn(obj);
             }
@@ -286,7 +294,9 @@ public abstract class ETFUtils2 {
         if (inChat) {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player != null) {
-                player.displayClientMessage(MutableComponent.create(new PlainTextContents.LiteralContents("§4[ERROR]§r [Entity Texture Features]: " + obj)).withStyle(ChatFormatting.RED, ChatFormatting.BOLD), false);
+                player.displayClientMessage(MutableComponent.create(
+                        new #if MC > MC_20_2 PlainTextContents.LiteralContents #else LiteralContents #endif
+                                ("§4[ERROR]§r [Entity Texture Features]: " + obj)).withStyle(ChatFormatting.RED, ChatFormatting.BOLD), false);
             } else {
                 ETF.LOGGER.error(obj);
             }

@@ -11,7 +11,7 @@ import traben.tconfig.gui.entries.TConfigEntry;
 public class TConfigEntryListWidget extends AbstractSelectionList<TConfigEntryListWidget.TConfigEntryForList> {
     public TConfigEntryListWidget(final int width, final int height, final int y, final int x, final int itemHeight,
                                   TConfigEntry... entries) {
-        super(Minecraft.getInstance(), width, height, y, itemHeight);
+        super(Minecraft.getInstance(), width, height, y, #if MC <= MC_20_2 y+height, #endif itemHeight);
         for (TConfigEntry option : entries) {
             if (option == null || option.getWidget(0, 0, 0, 0) == null) continue;
             addEntry(option);
@@ -21,6 +21,18 @@ public class TConfigEntryListWidget extends AbstractSelectionList<TConfigEntryLi
         setX(x);
 
     }
+
+    #if MC <= MC_20_2
+    private int getX() {
+        return this.x0;
+    }
+
+    private void setX(int x) {
+        this.x0 = x;
+        this.x1 = x + this.width;
+    }
+
+    #endif
 
     @Override
     public int getRowWidth() {
@@ -32,11 +44,12 @@ public class TConfigEntryListWidget extends AbstractSelectionList<TConfigEntryLi
         return getX() == 0 ? super.getScrollbarPosition() : getX() + getRowWidth() + 4;
     }
 
-
     @Override
-    protected void updateWidgetNarration(final NarrationElementOutput builder) {
-    }
-
+#if MC > MC_20_2
+    protected void updateWidgetNarration(final NarrationElementOutput builder) {}
+#else
+    public void updateNarration(final NarrationElementOutput narrationElementOutput) {}
+#endif
     @Override
     protected boolean isValidMouseClick(final int button) {
         return true;
@@ -47,6 +60,7 @@ public class TConfigEntryListWidget extends AbstractSelectionList<TConfigEntryLi
     public void setSelected(@Nullable final TConfigEntryListWidget.TConfigEntryForList entry) {
 
     }
+
 
 
 #if MC >= MC_20_6

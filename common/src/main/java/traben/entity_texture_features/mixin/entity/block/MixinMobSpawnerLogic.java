@@ -1,6 +1,7 @@
 package traben.entity_texture_features.mixin.entity.block;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.Level;
@@ -18,7 +19,7 @@ public abstract class MixinMobSpawnerLogic {
 
     @Inject(method = "getOrCreateDisplayEntity",
             at = @At(value = "RETURN"))
-    private void etf$stabiliseMobSpawnerUUID(Level world, BlockPos pos, CallbackInfoReturnable<Entity> cir) {
+    private void etf$stabiliseMobSpawnerUUID(Level world, #if MC <= MC_20_2 RandomSource randomSource, #endif BlockPos pos, CallbackInfoReturnable<Entity> cir) {
         Entity entity = cir.getReturnValue();
         if (entity != null) {
             entity.setUUID(new UUID(pos.asLong(), ETFApi.ETF_SPAWNER_MARKER));

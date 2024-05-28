@@ -13,11 +13,10 @@ import traben.entity_texture_features.utils.ETFUtils2;
 public abstract class MixinResourceReload {
 
 
-    @Inject(method = "onGameLoadFinished", at = @At("HEAD"))
+    @Inject(method = "onResourceLoadFinished", at = @At("HEAD"))
     private void etf$injected(CallbackInfo ci) {
         ETFUtils2.logMessage("reloading ETF data.");
         ETFManager.resetInstance();
-
     }
 }
 

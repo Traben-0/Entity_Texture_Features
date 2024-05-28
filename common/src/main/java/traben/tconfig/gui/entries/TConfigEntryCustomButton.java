@@ -21,7 +21,14 @@ public class TConfigEntryCustomButton extends TConfigEntry {
 
     @Override
     public AbstractWidget getWidget(final int x, final int y, final int width, final int height) {
+        #if MC > MC_20_2
         button.setRectangle(width, height, x, y);
+        #else
+        button.setX(x);
+        button.setY(y);
+        button.setWidth(width);
+        button.setHeight(height);
+        #endif
         return button;
     }
 
