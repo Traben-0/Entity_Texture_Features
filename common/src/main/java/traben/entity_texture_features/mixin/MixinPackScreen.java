@@ -4,7 +4,9 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
+#if MC > MC_20_1
 import net.minecraft.client.gui.components.WidgetSprites;
+#endif
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.packs.PackSelectionScreen;
 import net.minecraft.network.chat.Component;
@@ -68,9 +70,9 @@ public abstract class MixinPackScreen extends Screen {
             //1.20.2 onwards textured button requires these overrides
             this.addRenderableWidget(new ImageButton(
                     x, y, 24, 20,
-                    new WidgetSprites(etf$UNFOCUSED, etf$FOCUSED),
-                    (button) -> Objects.requireNonNull(minecraft).setScreen(new ETFConfigScreenMain(this)),
-                    Component.nullToEmpty("")) {
+                    #if MC > MC_20_1 new WidgetSprites(etf$UNFOCUSED, etf$FOCUSED), #else 0,0,20, etf$UNFOCUSED, #endif
+                    (button) -> Objects.requireNonNull(minecraft).setScreen(new ETFConfigScreenMain(this))
+                    #if MC > MC_20_1 , Component.nullToEmpty("") #endif) {
                 {
                     setTooltip(Tooltip.create(ETF.getTextFromTranslation(
                             "config.entity_features.button_tooltip")));

@@ -80,7 +80,12 @@ public class ETFPlayerTexture {
             //use the historic skin resource and ensure we do not bother to load a current skin for the player
             try {
 
-                HttpTexture skin = (HttpTexture) Minecraft.getInstance().getSkinManager().skinTextures.textureManager.getTexture(rendererGivenSkin, null);
+                HttpTexture skin =
+                #if MC > MC_20_1
+                        (HttpTexture) Minecraft.getInstance().getSkinManager().skinTextures.textureManager.getTexture(rendererGivenSkin, null);
+                #else
+                        (HttpTexture) Minecraft.getInstance().getSkinManager().textureManager.getTexture(rendererGivenSkin, null);
+                #endif
                 assert skin.file != null;
                 FileInputStream fileInputStream = new FileInputStream(skin.file);
                 NativeImage vanilla = NativeImage.read(fileInputStream);
@@ -113,7 +118,12 @@ public class ETFPlayerTexture {
         assert player != null;
         if (player.etf$getEntity() != null) {
             assert Minecraft.getInstance().player != null;
-            NativeImage skin = ETFUtils2.getNativeImageElseNull(Minecraft.getInstance().player.getSkin().texture());
+            NativeImage skin =
+            #if MC > MC_20_1
+                    ETFUtils2.getNativeImageElseNull(Minecraft.getInstance().player.getSkin().texture());
+            #else
+                    ETFUtils2.getNativeImageElseNull(Minecraft.getInstance().player.getSkinTextureLocation());
+            #endif
             if (skin != null) {
                 clientPlayerOriginalSkinImageForTool = skin;
                 changeSkinToThisForTool(skin);
@@ -637,8 +647,12 @@ public class ETFPlayerTexture {
     public void checkTexture(boolean skipSkinLoad) {
         if (!skipSkinLoad) {
             try {
-                HttpTexture skin = (HttpTexture) Minecraft.getInstance().getSkinManager().skinTextures.textureManager.getTexture(normalVanillaSkinIdentifier, null);
-
+                HttpTexture skin =
+                #if MC > MC_20_1
+                        (HttpTexture) Minecraft.getInstance().getSkinManager().skinTextures.textureManager.getTexture(normalVanillaSkinIdentifier, null);
+                #else
+                        (HttpTexture) Minecraft.getInstance().getSkinManager().textureManager.getTexture(normalVanillaSkinIdentifier, null);
+                #endif
                 assert skin.file != null;
                 FileInputStream fileInputStream = new FileInputStream(skin.file);
                 remappingETFSkin = true;

@@ -3,13 +3,13 @@ architectury {
 }
 
 loom {
-    accessWidenerPath = file("src/main/resources/entity_texture_features.accesswidener")
+    accessWidenerPath = file("src/main/resources/entity_texture_features_${project.mc_build}.accesswidener")
 }
 
 dependencies {
     // We depend on fabric loader here to use the fabric @Environment annotations and get the mixin dependencies
     // Do NOT use other classes from fabric loader
-    modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+    modImplementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
     // Remove the next line if you don't want to depend on the API
     //modApi "dev.architectury:architectury:${rootProject.architectury_version}"
     modImplementation("maven.modrinth:3dskinlayers:${project.skinlayers_version}") {
@@ -23,7 +23,7 @@ dependencies {
     modImplementation("maven.modrinth:iris:${project.iris_version}") {
         exclude(group: "net.fabricmc.fabric-api")
     }
-    if (rootProject.mc_build >= 5 || rootProject.mc_build == 3) {
+    if (project.mc_build as int >= 5 || project.mc_build as int == 3) {
         //todo does 1.20.1 build need seperate version just for referencing 3 files?
         //todo future versions wont need seperate dh beta for dual renamed classes support
         modImplementation files("build/iris-1.7.0-snapshot+mc1.20.4-dfec34d-dirty.jar")

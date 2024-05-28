@@ -58,7 +58,7 @@ public class TConfigEntryEnumSlider<E extends Enum<E>> extends TConfigEntryNullS
         widget.setX(x);
         widget.setY(y);
         widget.setWidth(width);
-        widget.setHeight(height);
+        widget.height = height;
         #endif
         return widget;
     }

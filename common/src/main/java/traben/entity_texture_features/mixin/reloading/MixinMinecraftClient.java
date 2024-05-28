@@ -11,7 +11,11 @@ import traben.entity_texture_features.features.ETFManager;
 @Mixin(Minecraft.class)
 public abstract class MixinMinecraftClient {
 
+    #if MC > MC_20_1
     @Inject(method = "disconnect(Lnet/minecraft/client/gui/screens/Screen;)V", at = @At("TAIL"))
+    #else
+    @Inject(method = "clearLevel(Lnet/minecraft/client/gui/screens/Screen;)V", at = @At("TAIL"))
+    #endif
     private void etf$injected(CallbackInfo ci) {
         ETFManager.resetInstance();
     }

@@ -27,7 +27,7 @@ public class TConfigEntryCustomButton extends TConfigEntry {
         button.setX(x);
         button.setY(y);
         button.setWidth(width);
-        button.setHeight(height);
+        button.height = height;
         #endif
         return button;
     }

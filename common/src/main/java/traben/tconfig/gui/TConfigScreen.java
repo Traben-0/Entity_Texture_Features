@@ -72,11 +72,18 @@ public class TConfigScreen extends Screen {
         Minecraft.getInstance().setScreen(parent);
     }
 
-
-    #if MC < MC_20_6
+#if MC < MC_20_2
+    @Override
+    public void renderBackground(final GuiGraphics guiGraphics) {
+#elif MC < MC_20_6
+    @Override
+    public void renderTransparentBackground(final GuiGraphics guiGraphics) {
+    }
 
     @Override
     public void renderBackground(final GuiGraphics guiGraphics, final int i, final int j, final float f) {
+#endif
+
         guiGraphics.pose().pushPose();
 
         int topy = (int) (height * 0.15);
@@ -100,13 +107,9 @@ public class TConfigScreen extends Screen {
         guiGraphics.pose().popPose();
     }
 
-    @Override
-    public void renderTransparentBackground(final GuiGraphics guiGraphics) {
-    }
-
+    #if MC < MC_20_6
     @Override
     public void renderDirtBackground(final GuiGraphics guiGraphics) {
     }
-
     #endif
 }

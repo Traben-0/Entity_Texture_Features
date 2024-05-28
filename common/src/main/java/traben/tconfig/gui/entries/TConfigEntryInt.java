@@ -51,7 +51,7 @@ public class TConfigEntryInt extends TConfigEntryValue<Integer> {
         widget.setX(x);
         widget.setY(y);
         widget.setWidth(width);
-        widget.setHeight(height);
+        widget.height = height;
         #endif
         return widget;
     }

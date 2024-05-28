@@ -1,5 +1,6 @@
 package traben.entity_texture_features.config.screens.skin;
 
+
 import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -7,7 +8,11 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.renderer.texture.HttpTexture;
+#if MC > MC_20_1
 import net.minecraft.client.resources.PlayerSkin;
+#else
+import com.mojang.authlib.minecraft.MinecraftProfileTexture;
+#endif
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import org.apache.http.HttpResponse;
@@ -103,7 +108,14 @@ public class ETFConfigScreenSkinToolOutcome extends ETFScreenOldCompat {
                         if (Minecraft.getInstance().player != null && Minecraft.getInstance().getConnection() != null) {
                             PlayerInfo playerListEntry = Minecraft.getInstance().getConnection().getPlayerInfo(Minecraft.getInstance().player.getUUID());
                             if (playerListEntry != null) {
+                                #if MC > MC_20_1
                                 skinType = Minecraft.getInstance().getSkinManager().getInsecureSkin(playerListEntry.getProfile()).model() == PlayerSkin.Model.WIDE;
+                                #else
+                                String skinTypeData = Minecraft.getInstance().getSkinManager().getInsecureSkinInformation(playerListEntry.getProfile()).get(MinecraftProfileTexture.Type.SKIN).getMetadata("model");
+                                if (skinTypeData != null) {
+                                    skinType = !"slim".equals(skinTypeData);
+                                }
+                                #endif
                             }
                         }
                         boolean changeSuccess = uploadSkin(skinType);
@@ -112,8 +124,13 @@ public class ETFConfigScreenSkinToolOutcome extends ETFScreenOldCompat {
                         if (changeSuccess) {
                             //ETFUtils2.logMessage(ETFVersionDifferenceHandler.getTextFromTranslation("config." + ETFClientCommon.MOD_ID + ".player_skin_editor.upload_skin.success" ).getString(),true);
                             //change internally cached skin
-                            HttpTexture skinfile = (HttpTexture) Minecraft.getInstance().getSkinManager().skinTextures.textureManager.getTexture((Minecraft.getInstance().player).getSkin().texture(), null);
-                            try {
+                            HttpTexture skinfile =
+                                #if MC > MC_20_1
+                                    (HttpTexture) Minecraft.getInstance().getSkinManager().skinTextures.textureManager.getTexture((Minecraft.getInstance().player).getSkin().texture(), null);
+                                #else
+                                    (HttpTexture) Minecraft.getInstance().getSkinManager().textureManager.getTexture(Minecraft.getInstance().player.getSkinTextureLocation(), null);
+                                #endif
+                                try {
                                 //System.out.println("file was ="+((PlayerSkinTextureAccessor)skinfile).getCacheFile().toString());
                                 assert skinfile.file != null;
                                 skin.writeToFile(skinfile.file);

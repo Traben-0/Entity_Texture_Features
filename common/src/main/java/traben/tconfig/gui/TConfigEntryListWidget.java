@@ -50,10 +50,13 @@ public class TConfigEntryListWidget extends AbstractSelectionList<TConfigEntryLi
 #else
     public void updateNarration(final NarrationElementOutput narrationElementOutput) {}
 #endif
+
+#if MC > MC_20_1
     @Override
     protected boolean isValidMouseClick(final int button) {
         return true;
     }
+#endif
 
 
     @Override

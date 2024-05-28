@@ -66,12 +66,14 @@ public abstract class MixinSkullBlockEntityRenderer implements BlockEntityRender
 
         if (skullType == SkullBlock.Types.PLAYER && ETF.config().getConfig().skinFeaturesEnabled && ETF.config().getConfig().enableCustomTextures && ETF.config().getConfig().enableCustomBlockEntities) {
             if (skullBlockEntity.getOwnerProfile() != null) {
-                ResourceLocation identifier = Minecraft.getInstance()
-                        .getSkinManager().getInsecureSkin(skullBlockEntity.getOwnerProfile()
-                                #if MC >= MC_20_6
-                                .gameProfile()
-                                #endif
-                        ).texture();
+                ResourceLocation identifier =
+                        #if MC >= MC_20_6
+                            Minecraft.getInstance().getSkinManager().getInsecureSkin(skullBlockEntity.getOwnerProfile().gameProfile()).texture();
+                        #elif MC > MC_20_1
+                            Minecraft.getInstance().getSkinManager().getInsecureSkin(skullBlockEntity.getOwnerProfile()).texture();
+                        #else
+                            Minecraft.getInstance().getSkinManager().getInsecureSkinLocation(skullBlockEntity.getOwnerProfile());
+                        #endif
 
                 entity_texture_features$thisETFPlayerTexture = ETFManager.getInstance().getPlayerTexture((ETFPlayerEntity) skullBlockEntity, identifier);
                 if (entity_texture_features$thisETFPlayerTexture != null) {

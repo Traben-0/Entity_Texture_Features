@@ -63,7 +63,7 @@ public class TConfigEntryText extends TConfigEntry {
         widget.setX(x);
         widget.setY(y);
         widget.setWidth(width);
-        widget.setHeight(height);
+        widget.height = height;
         #endif
         return widget;
     }
@@ -132,12 +132,12 @@ public class TConfigEntryText extends TConfigEntry {
             #else
             widget.setX(x);
             widget.setY(y);
-            widget.setHeight(height / 2);
+            widget.height = height / 2;
             widget.setWidth(width);
 
             widget2.setX(x);
             widget2.setY(y + height / 2 + 2);
-            widget2.setHeight(height / 2);
+            widget2.height = height / 2;
             widget2.setWidth(width);
             #endif
             return widget;

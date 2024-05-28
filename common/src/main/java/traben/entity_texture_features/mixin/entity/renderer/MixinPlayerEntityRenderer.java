@@ -57,7 +57,13 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
                     shift = At.Shift.AFTER), cancellable = true)
     private void etf$redirectNicely(PoseStack matrices, MultiBufferSource vertexConsumers, int light, AbstractClientPlayer player, ModelPart arm, ModelPart sleeve, CallbackInfo ci) {
         if (ETF.config().getConfig().skinFeaturesEnabled) {
-            ETFPlayerTexture thisETFPlayerTexture = ETFManager.getInstance().getPlayerTexture(player, player.getSkin().texture());
+            ETFPlayerTexture thisETFPlayerTexture = ETFManager.getInstance().getPlayerTexture(player,
+                    #if MC > MC_20_1
+                        player.getSkin().texture()
+                    #else
+                        player.getSkinTextureLocation()
+                    #endif
+            );
             if (thisETFPlayerTexture != null && thisETFPlayerTexture.hasFeatures) {
                 ResourceLocation etfTexture = thisETFPlayerTexture.getBaseTextureIdentifierOrNullForVanilla(player);
                 if (etfTexture != null) {

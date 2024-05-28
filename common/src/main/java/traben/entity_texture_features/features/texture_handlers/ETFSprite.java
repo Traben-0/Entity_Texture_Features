@@ -1,5 +1,6 @@
 package traben.entity_texture_features.features.texture_handlers;
 
+import net.minecraft.client.resources.metadata.animation.AnimationMetadataSection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.mojang.blaze3d.platform.NativeImage;
@@ -74,12 +75,16 @@ public class ETFSprite {
 
     @Nullable
     public static SpriteContents load(ResourceLocation id, Resource resource) {
+        #if MC > MC_20_1
         ResourceMetadata animationResourceMetadata;
         try {
-            //animationResourceMetadata = resource.getMetadata().decode(AnimationResourceMetadata.READER).orElse(AnimationResourceMetadata.EMPTY);
             animationResourceMetadata = resource.metadata();
+        #else
+        AnimationMetadataSection animationResourceMetadata;
+        try {
+            animationResourceMetadata = resource.metadata().getSection(AnimationMetadataSection.SERIALIZER).orElse(AnimationMetadataSection.EMPTY);
+        #endif
         } catch (Exception var8) {
-//            LOGGER.error("Unable to parse metadata from {}", id, var8);
             return null;
         }
 
