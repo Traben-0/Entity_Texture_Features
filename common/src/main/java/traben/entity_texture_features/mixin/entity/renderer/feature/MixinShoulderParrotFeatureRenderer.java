@@ -38,6 +38,7 @@ public abstract class MixinShoulderParrotFeatureRenderer<T extends PlayerEntity>
     @Inject(method = "method_17958(Lnet/minecraft/client/util/math/MatrixStack;ZLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/nbt/NbtCompound;Lnet/minecraft/client/render/VertexConsumerProvider;IFFFFLnet/minecraft/entity/EntityType;)V",
             at = @At(value = "HEAD"))
     private void etf$alterEntity(MatrixStack matrixStack, boolean bl, PlayerEntity playerEntity, NbtCompound nbtCompound, VertexConsumerProvider vertexConsumerProvider, int i, float f, float g, float h, float j, EntityType<?> type, CallbackInfo ci) {
+        entity_texture_features$parrotNBT = nbtCompound;
         if (entity_texture_features$parrotNBT != null) {
 
             etf$heldEntity = ETFRenderContext.getCurrentEntity();
@@ -59,12 +60,4 @@ public abstract class MixinShoulderParrotFeatureRenderer<T extends PlayerEntity>
         entity_texture_features$parrotNBT = null;
         etf$heldEntity = null;
     }
-
-    @Inject(method = "method_17958(Lnet/minecraft/client/util/math/MatrixStack;ZLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/nbt/NbtCompound;Lnet/minecraft/client/render/VertexConsumerProvider;IFFFFLnet/minecraft/entity/EntityType;)V",
-            at = @At(value = "HEAD"))
-    private <M extends Entity> void etf$getNBT(MatrixStack matrixStack, boolean bl, PlayerEntity playerEntity, NbtCompound nbtCompound, VertexConsumerProvider vertexConsumerProvider, int i, float f, float g, float h, float j, EntityType<M> type, CallbackInfo ci) {
-        entity_texture_features$parrotNBT = nbtCompound;
-    }
 }
-
-
