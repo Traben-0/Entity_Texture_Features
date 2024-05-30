@@ -5,6 +5,9 @@
 - skin option to preserve transparency if extra skin pixels
 - fixed #265 crash when block entity state is null
 - fixed enchanted elytra not rendering emissive textures
+- fixed shoulder parrots
+- fixed emissive armor and trims breaking with iris
+- fixed the custom emissive suffix file declaration getting overridden by higher packs *(using `_e` is still highly recommended)*
 
 [6.0.1]
 

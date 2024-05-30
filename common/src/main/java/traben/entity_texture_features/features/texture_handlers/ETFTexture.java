@@ -444,7 +444,7 @@ public class ETFTexture {
     /**
      * Re registers the base texture to a new identifier, this fixes some iris stuff with armor.
      */
-    public void reRegisterBaseTexture() {
+    public void reRegisterBaseTexture() {//todo needed
         if (hasBeenReRegistered) return;
         hasPatched = true;
         hasBeenReRegistered = true;

@@ -82,9 +82,13 @@ public class TConfigScreen extends Screen {
 
     @Override
     public void renderBackground(final GuiGraphics guiGraphics, final int i, final int j, final float f) {
+
+
 #endif
 
-        guiGraphics.pose().pushPose();
+
+#if MC < MC_20_6
+            guiGraphics.pose().pushPose();
 
         int topy = (int) (height * 0.15);
         int bottomy = (int) (height * 0.85);
@@ -107,7 +111,6 @@ public class TConfigScreen extends Screen {
         guiGraphics.pose().popPose();
     }
 
-    #if MC < MC_20_6
     @Override
     public void renderDirtBackground(final GuiGraphics guiGraphics) {
     }

@@ -90,6 +90,7 @@ subprojects {
             expand(["version": rootProject.mod_version,
                     "compatible_mc_forge": rootProject.compatible_mc_forge])
         }
+
     }
 }
 

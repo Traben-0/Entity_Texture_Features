@@ -74,7 +74,7 @@ shadowJar {
 
 remapJar {
 
-    atAccessWideners.add('entity_texture_features.accesswidener')
+    atAccessWideners.add("entity_texture_features_${project.mc_build}.accesswidener")
     input.set shadowJar.archiveFile
     dependsOn shadowJar
 //    classifier null

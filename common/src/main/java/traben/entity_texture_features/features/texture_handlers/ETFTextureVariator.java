@@ -21,7 +21,7 @@ import net.minecraft.resources.ResourceLocation;
 public abstract class ETFTextureVariator {
 
 
-    public static @NotNull ETFTextureVariator of(@NotNull ResourceLocation vanillaIdentifier) {
+    public static @NotNull ETFTextureVariator of(@NotNull final ResourceLocation vanillaIdentifier) {
         //if (ETF.config().getConfig().enableCustomTextures) {
         ETFApi.ETFVariantSuffixProvider variantProvider = ETFApi.ETFVariantSuffixProvider.getVariantProviderOrNull(
                 ETFUtils2.replaceIdentifier(vanillaIdentifier, ".png", ".properties"),
