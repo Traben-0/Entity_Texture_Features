@@ -66,15 +66,15 @@ public class ETFManager {
                 Minecraft.getInstance().getResourceManager().listPacks().toList()) {
             KNOWN_RESOURCEPACK_ORDER.add(pack.packId());
         }
-
         try {
             List<Properties> props = new ArrayList<>();
             String[] paths = {"optifine/emissive.properties", "textures/emissive.properties", "etf/emissive.properties"};
             for (String path :
                     paths) {
-                Properties prop = ETFUtils2.readAndReturnPropertiesElseNull(new ResourceLocation(path));
+                //retrieve all layered resources
+                var prop = ETFUtils2.readAndReturnAllLayeredPropertiesElseNull(new ResourceLocation(path));
                 if (prop != null)
-                    props.add(prop);
+                    props.addAll(prop);
             }
             for (Properties prop :
                     props) {

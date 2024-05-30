@@ -25,8 +25,7 @@ import java.util.Optional;
 public abstract class MixinShoulderParrotFeatureRenderer<T extends Player> extends RenderLayer<T, PlayerModel<T>> {
 
 
-    @Unique
-    private CompoundTag entity_texture_features$parrotNBT = null;
+
     @Unique
     private ETFEntity etf$heldEntity = null;
 
@@ -38,12 +37,12 @@ public abstract class MixinShoulderParrotFeatureRenderer<T extends Player> exten
     @Inject(method = "method_17958",
             at = @At(value = "HEAD"))
     private void etf$alterEntity(PoseStack matrixStack, boolean bl, Player playerEntity, CompoundTag nbtCompound, MultiBufferSource vertexConsumerProvider, int i, float f, float g, float h, float j, EntityType<?> type, CallbackInfo ci) {
-        if (entity_texture_features$parrotNBT != null) {
+        if (nbtCompound != null) {
 
             etf$heldEntity = ETFRenderContext.getCurrentEntity();
 
-            EntityType.create(entity_texture_features$parrotNBT, playerEntity.level());
-            Optional<Entity> optionalEntity = EntityType.create(entity_texture_features$parrotNBT, playerEntity.level());
+            EntityType.create(nbtCompound, playerEntity.level());
+            Optional<Entity> optionalEntity = EntityType.create(nbtCompound, playerEntity.level());
             if (optionalEntity.isPresent() && optionalEntity.get() instanceof Parrot parrot) {
                 ETFRenderContext.setCurrentEntity((ETFEntity) parrot);
             }
@@ -53,18 +52,13 @@ public abstract class MixinShoulderParrotFeatureRenderer<T extends Player> exten
     @Inject(method = "method_17958",
             at = @At(value = "RETURN"))
     private void etf$resetEntity(PoseStack matrixStack, boolean bl, Player playerEntity, CompoundTag nbtCompound, MultiBufferSource vertexConsumerProvider, int i, float f, float g, float h, float j, EntityType<?> type, CallbackInfo ci) {
-        if (entity_texture_features$parrotNBT != null && etf$heldEntity != null) {
+        if (etf$heldEntity != null) {
             ETFRenderContext.setCurrentEntity(etf$heldEntity);
         }
-        entity_texture_features$parrotNBT = null;
         etf$heldEntity = null;
     }
 
-    @Inject(method = "method_17958",
-            at = @At(value = "HEAD"))
-    private <M extends Entity> void etf$getNBT(PoseStack matrixStack, boolean bl, Player playerEntity, CompoundTag nbtCompound, MultiBufferSource vertexConsumerProvider, int i, float f, float g, float h, float j, EntityType<M> type, CallbackInfo ci) {
-        entity_texture_features$parrotNBT = nbtCompound;
-    }
+
 }
 
 

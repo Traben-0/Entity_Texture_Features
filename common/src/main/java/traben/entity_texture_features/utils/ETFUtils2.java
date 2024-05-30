@@ -12,10 +12,7 @@ import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.Properties;
+import java.util.*;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.ResourceLocationException;
@@ -200,6 +197,31 @@ public abstract class ETFUtils2 {
             return null;
         }
 
+    }
+
+    @Nullable
+    public static List<Properties> readAndReturnAllLayeredPropertiesElseNull(ResourceLocation path) {
+        List<Properties> props = new ArrayList<>();
+        try {
+            @SuppressWarnings("OptionalGetWithoutIsPresent") //try catch is intended
+            var resources = Minecraft.getInstance().getResourceManager().getResourceStack(path);
+            for (Resource resource : resources) {
+                if (resource == null) continue;
+                Properties prop = new Properties();
+                try {
+                    InputStream in = resource.open();
+                    prop.load(in);
+                    in.close();
+                    if (!prop.isEmpty()) {
+                        props.add(prop);
+                    }
+                } catch (Exception ignored) {}
+            }
+            if (!props.isEmpty()) {
+                return props;
+            }
+        } catch (Exception ignored) {}
+        return null;
     }
 
     public static NativeImage getNativeImageElseNull(@Nullable ResourceLocation identifier) {
