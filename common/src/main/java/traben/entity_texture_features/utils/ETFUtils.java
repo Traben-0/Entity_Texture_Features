@@ -33,8 +33,23 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 
 
-public abstract class ETFUtils2 {
+public abstract class ETFUtils {
 
+    public static @NotNull ResourceLocation res(String fullPath){
+        #if MC >= MC_21
+        return ResourceLocation.parse(fullPath);
+        #else 
+        return new ResourceLocation(fullPath);
+        #endif
+    }
+
+    public static @NotNull ResourceLocation res(String namespace, String path){
+        #if MC >= MC_21
+        return ResourceLocation.fromNamespaceAndPath(namespace, path);
+        #else 
+        return new ResourceLocation(namespace, path);
+        #endif
+    }
 
     public static ResourceLocation getETFVariantNotNullForInjector(ResourceLocation identifier) {
         //do not modify texture
@@ -84,7 +99,7 @@ public abstract class ETFUtils2 {
         if (enchanted != null) {
             boolean wasAllowed = ETFRenderContext.isAllowedToRenderLayerTextureModify();
             ETFRenderContext.preventRenderLayerTextureModify();
-            VertexConsumer enchantedVertex = ItemRenderer.getArmorFoilBuffer(provider, RenderType.armorCutoutNoCull(enchanted), false, true);
+            VertexConsumer enchantedVertex = ItemRenderer.getArmorFoilBuffer(provider, RenderType.armorCutoutNoCull(enchanted), #if MC < MC_21 false, #endif true);
             if (wasAllowed) ETFRenderContext.allowRenderLayerTextureModify();
 
             ETFRenderContext.startSpecialRenderOverlayPhase();
@@ -97,7 +112,7 @@ public abstract class ETFUtils2 {
 
     @NotNull
     public static ResourceLocation addVariantNumberSuffix(ResourceLocation identifier, int variant) {
-        return new ResourceLocation(addVariantNumberSuffix(identifier.toString(), variant));
+        return ETFUtils.res(addVariantNumberSuffix(identifier.toString(), variant));
     }
 
     @NotNull
@@ -122,9 +137,9 @@ public abstract class ETFUtils2 {
         if (id == null) return null;
         ResourceLocation forReturn;
         try {
-            forReturn = new ResourceLocation(id.getNamespace(), id.getPath().replaceFirst(regex, replace));
+            forReturn = ETFUtils.res(id.getNamespace(), id.getPath().replaceFirst(regex, replace));
         } catch (ResourceLocationException idFail) {
-            ETFUtils2.logError(ETF.getTextFromTranslation("config.entity_texture_features.illegal_path_recommendation").getString() + "\n" + idFail);
+            ETFUtils.logError(ETF.getTextFromTranslation("config.entity_texture_features.illegal_path_recommendation").getString() + "\n" + idFail);
             forReturn = null;
         } catch (Exception e) {
             forReturn = null;

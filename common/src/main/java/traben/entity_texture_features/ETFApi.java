@@ -22,7 +22,7 @@ import traben.entity_texture_features.features.property_reading.properties.Rando
 import traben.entity_texture_features.features.property_reading.properties.optifine_properties.BabyProperty;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
 import traben.entity_texture_features.utils.ETFEntity;
-import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.utils.ETFUtils;
 
 import java.util.Properties;
 import java.util.UUID;
@@ -107,7 +107,7 @@ public final class ETFApi {
             ETF.config().setConfig(newETFConfig);
             saveETFConfigChangesAndResetETF();
         } else {
-            ETFUtils2.logError("new config was null: ignoring.");
+            ETFUtils.logError("new config was null: ignoring.");
         }
     }
 
@@ -405,7 +405,7 @@ public final class ETFApi {
     public static void registerCustomRandomPropertyFactory(String yourModId, RandomProperties.RandomPropertyFactory... factories) {
         if (factories != null && factories.length != 0) {
             RandomProperties.register(factories);
-            ETFUtils2.logMessage(factories.length + " new ETF Random Properties registered by " + yourModId);
+            ETFUtils.logMessage(factories.length + " new ETF Random Properties registered by " + yourModId);
         }
     }
 
@@ -418,7 +418,7 @@ public final class ETFApi {
     public static void registerCustomETFConfigWarning(String yourModId, ETFConfigWarning... warnings) {
         if (warnings != null && warnings.length != 0) {
             ETFConfigWarnings.registerConfigWarning(warnings);
-            ETFUtils2.logMessage(warnings.length + " new ETF Config Warnings registered by " + yourModId);
+            ETFUtils.logMessage(warnings.length + " new ETF Config Warnings registered by " + yourModId);
         }
     }
 
@@ -447,7 +447,7 @@ public final class ETFApi {
                     && "minecraft".equals(vanillaIdentifier.getNamespace())
                     && vanillaIdentifier.getPath().contains("_")) {
                 String vanId = vanillaIdentifier.getPath().replaceAll("_(tame|angry|nectar|shooting|cold)", "");
-                optifine = PropertiesRandomProvider.of(new ResourceLocation(vanId.replace(".png", ".properties")), new ResourceLocation(vanId), suffixKeyName);
+                optifine = PropertiesRandomProvider.of(ETFUtils.res(vanId.replace(".png", ".properties")), ETFUtils.res(vanId), suffixKeyName);
             }
 
             if (random == null && optifine == null) {
@@ -462,7 +462,7 @@ public final class ETFApi {
             } else {
                 //if 2.png is higher it MUST be treated as true random confirmed
                 if (optifine.getPackName() != null
-                        && optifine.getPackName().equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(
+                        && optifine.getPackName().equals(ETFUtils.returnNameOfHighestPackFromTheseTwo(
                         random.getPackName(), optifine.getPackName()))) {
                     return optifine;
                 } else {

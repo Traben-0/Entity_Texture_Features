@@ -2,7 +2,7 @@ package traben.entity_texture_features.features.property_reading;
 
 import traben.entity_texture_features.features.property_reading.properties.RandomProperty;
 import traben.entity_texture_features.utils.ETFEntity;
-import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.utils.ETFUtils;
 import traben.entity_texture_features.utils.EntityBooleanLRU;
 
 import java.util.*;
@@ -48,7 +48,7 @@ public class RandomPropertyRule {
                 }
                 SUFFIX_NUMBERS_WEIGHTED = weightedSuffixArray.toArray(new Integer[0]);
             } else {
-                ETFUtils2.logWarn("random texture weights don't match for [" +
+                ETFUtils.logWarn("random texture weights don't match for [" +
                         PROPERTY_FILE + "] rule # [" + RULE_NUMBER + "] :\n suffixes: " + Arrays.toString(suffixes) + "\n weights: " + Arrays.toString(weights), false);
                 SUFFIX_NUMBERS_WEIGHTED = suffixes;
             }
@@ -74,7 +74,7 @@ public class RandomPropertyRule {
                 entityMetRequirements = property.testEntity(etfEntity, isUpdate);
             }
         } catch (Exception e) {
-            ETFUtils2.logWarn("Random Property file [" +
+            ETFUtils.logWarn("Random Property file [" +
                     PROPERTY_FILE + "] rule # [" + RULE_NUMBER + "] failed with Exception:\n" + e.getMessage());
             //fail this test
             entityMetRequirements = false;

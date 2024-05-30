@@ -18,7 +18,7 @@ import org.joml.Quaternionf;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.player.ETFPlayerTexture;
-import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.utils.ETFUtils;
 
 import java.nio.file.Path;
 import java.util.Objects;
@@ -29,11 +29,11 @@ import static traben.entity_texture_features.ETF.MOD_ID;
 //inspired by puzzles custom gui code
 @SuppressWarnings("EnhancedSwitchMigration")
 public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
-    private static final ResourceLocation APPLY_OVERLAY = new ResourceLocation(MOD_ID + ":textures/skin_feature_printout.png");
-    private static final ResourceLocation REMOVE_OVERLAY = new ResourceLocation(MOD_ID + ":textures/skin_feature_remove.png");
-    private static final ResourceLocation WHOLE_FACE_OVERLAY = new ResourceLocation(MOD_ID + ":textures/skin_feature_whole_face.png");
-    private static final ResourceLocation SMALL_EYE_OVERLAY = new ResourceLocation(MOD_ID + ":textures/skin_feature_small_eyes.png");
-    private static final ResourceLocation BOXES_OVERLAY = new ResourceLocation(MOD_ID + ":textures/skin_feature_orange_areas.png");
+    private static final ResourceLocation APPLY_OVERLAY = ETFUtils.res(MOD_ID + ":textures/skin_feature_printout.png");
+    private static final ResourceLocation REMOVE_OVERLAY = ETFUtils.res(MOD_ID + ":textures/skin_feature_remove.png");
+    private static final ResourceLocation WHOLE_FACE_OVERLAY = ETFUtils.res(MOD_ID + ":textures/skin_feature_whole_face.png");
+    private static final ResourceLocation SMALL_EYE_OVERLAY = ETFUtils.res(MOD_ID + ":textures/skin_feature_small_eyes.png");
+    private static final ResourceLocation BOXES_OVERLAY = ETFUtils.res(MOD_ID + ":textures/skin_feature_orange_areas.png");
     public Boolean originalEnableBlinking;
     public ETFPlayerTexture thisETFPlayerTexture = null;
     public NativeImage currentEditorSkin = null;
@@ -119,14 +119,14 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
             }
         }
         if (currentEditorSkin == null) {
-            currentEditorSkin = ETFUtils2.emptyNativeImage(64, 64);
+            currentEditorSkin = ETFUtils.emptyNativeImage(64, 64);
             NativeImage skin = ETFPlayerTexture.clientPlayerOriginalSkinImageForTool;
             if (skin != null) {
                 currentEditorSkin.copyFrom(ETFPlayerTexture.clientPlayerOriginalSkinImageForTool);
             } else {
 
                 onExit();
-                ETFUtils2.logError("could not load tool as skin could not be loaded");
+                ETFUtils.logError("could not load tool as skin could not be loaded");
                 Objects.requireNonNull(minecraft).setScreen(parent);
 
             }
@@ -461,7 +461,7 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
         if ((ETF.isFabric() == ETF.isThisModLoaded("fabric"))) {//todo still needed? might be implicit now
 
 
-            NativeImage overlayImage = ETFUtils2.getNativeImageElseNull(overlayTexture);
+            NativeImage overlayImage = ETFUtils.getNativeImageElseNull(overlayTexture);
             assert overlayImage != null;
             //first check if the overlay will overwrite any pixels and prevent doing so if this is the case
             //ignore this if doing the apply/remove overlay
@@ -482,7 +482,7 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
                     if (allowOverrides == null) allowOverrides = false;
                 }
                 if (!allowOverrides) {
-                    ETFUtils2.logMessage("Skin example overlay [" + overlayTexture + "] not applied.", false);
+                    ETFUtils.logMessage("Skin example overlay [" + overlayTexture + "] not applied.", false);
                     return;
                 }
 //                            }
@@ -502,13 +502,13 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
 
                 //ETFUtils2.logMessage("Skin feature layout successfully applied to a copy of your skin.", true);
             } catch (Exception e) {
-                ETFUtils2.logMessage("Skin feature layout could not be applied to a copy of your skin. Error written to log.", false);
-                ETFUtils2.logError(e.toString(), false);
+                ETFUtils.logMessage("Skin feature layout could not be applied to a copy of your skin. Error written to log.", false);
+                ETFUtils.logError(e.toString(), false);
             }
 
         } else {
             //requires fab api to read from mod resources
-            ETFUtils2.logError("Fabric API required for skin processing, cancelling.", false);
+            ETFUtils.logError("Fabric API required for skin processing, cancelling.", false);
         }
         //return skinImage;
     }
@@ -518,12 +518,12 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
             Path outputDirectory = Path.of(CONFIG_DIR.getParent(), "\\ETF_player_skin_printout.png");
             try {
                 currentEditorSkin.writeToFile(outputDirectory);
-                ETFUtils2.logMessage(ETF.getTextFromTranslation("config." + ETF.MOD_ID + ".player_skin_editor.print_skin.result.success").getString(), false);
+                ETFUtils.logMessage(ETF.getTextFromTranslation("config." + ETF.MOD_ID + ".player_skin_editor.print_skin.result.success").getString(), false);
 
                 return true;
             } catch (Exception e) {
                 //ETFUtils2.logMessage("Skin feature layout could not be applied to a copy of your skin and has not been saved. Error written to log.", true);
-                ETFUtils2.logError(e.toString(), false);
+                ETFUtils.logError(e.toString(), false);
             }
 
         }

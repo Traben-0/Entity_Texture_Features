@@ -27,16 +27,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
-import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.utils.ETFUtils;
 
 
 @Mixin(MushroomCowMushroomLayer.class)
 public abstract class MixinMooshroomMushroomFeatureRenderer {
 
     @Unique
-    private static final ResourceLocation RED_SHROOM = new ResourceLocation("textures/entity/cow/red_mushroom.png");
+    private static final ResourceLocation RED_SHROOM = ETFUtils.res("textures/entity/cow/red_mushroom.png");
     @Unique
-    private static final ResourceLocation BROWN_SHROOM = new ResourceLocation("textures/entity/cow/brown_mushroom.png");
+    private static final ResourceLocation BROWN_SHROOM = ETFUtils.res("textures/entity/cow/brown_mushroom.png");
     @Unique
     private static final ModelPart[] entity_texture_features$shroomAsEntityModel = entity_texture_features$getModelData();
     @Unique
@@ -102,7 +102,7 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
             boolean found = false;
             for (String str :
                     ETFManager.getInstance().EMISSIVE_SUFFIX_LIST) {
-                ResourceLocation test = new ResourceLocation(idOfOriginal.toString().replace(".png", str + ".png"));
+                ResourceLocation test = ETFUtils.res(idOfOriginal.toString().replace(".png", str + ".png"));
                 //System.out.println("trying "+test.toString());
                 if (Minecraft.getInstance().getResourceManager().getResource(test).isPresent()) {
                     suffix = str;
@@ -116,20 +116,20 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
             }
         }
         //System.out.println("found="+suffix);
-        NativeImage originalImagePreFlip = ETFUtils2.getNativeImageElseNull(idOfOriginal);
+        NativeImage originalImagePreFlip = ETFUtils.getNativeImageElseNull(idOfOriginal);
 
         if (originalImagePreFlip != null) {
             try {
                 //flip vertically
                 NativeImage newImage;
-                try (NativeImage flippedOriginalImage = ETFUtils2.emptyNativeImage(originalImagePreFlip.getWidth(), originalImagePreFlip.getHeight())) {
+                try (NativeImage flippedOriginalImage = ETFUtils.emptyNativeImage(originalImagePreFlip.getWidth(), originalImagePreFlip.getHeight())) {
                     for (int x = 0; x < flippedOriginalImage.getWidth(); x++) {
                         for (int y = 0; y < flippedOriginalImage.getHeight(); y++) {
                             flippedOriginalImage.setPixelRGBA(x, y, originalImagePreFlip.getPixelRGBA(x, originalImagePreFlip.getHeight() - 1 - y));
                         }
                     }
                     //mirror 2x wide texture for entity rendering
-                    newImage = ETFUtils2.emptyNativeImage(flippedOriginalImage.getWidth() * 2, flippedOriginalImage.getHeight());
+                    newImage = ETFUtils.emptyNativeImage(flippedOriginalImage.getWidth() * 2, flippedOriginalImage.getHeight());
                     for (int x = 0; x < newImage.getWidth(); x++) {
                         for (int y = 0; y < newImage.getHeight(); y++) {
                             if (x < flippedOriginalImage.getWidth()) {
@@ -140,17 +140,17 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
                         }
                     }
                 }
-                ResourceLocation idOfNew = isRed ? new ResourceLocation("etf", "red_shroom_alt.png") : new ResourceLocation("etf", "brown_shroom_alt.png");
+                ResourceLocation idOfNew = isRed ? ETFUtils.res("etf", "red_shroom_alt.png") : ETFUtils.res("etf", "brown_shroom_alt.png");
                 if (doingEmissive && suffix != null) {
-                    ResourceLocation emissive = new ResourceLocation(idOfNew.toString().replace(".png", suffix + ".png"));
-                    ETFUtils2.registerNativeImageToIdentifier(newImage, emissive);
+                    ResourceLocation emissive = ETFUtils.res(idOfNew.toString().replace(".png", suffix + ".png"));
+                    ETFUtils.registerNativeImageToIdentifier(newImage, emissive);
                     if (isRed) {
                         entity_texture_features$redEmissive = emissive;
                     } else {
                         entity_texture_features$brownEmissive = emissive;
                     }
                 } else {
-                    ETFUtils2.registerNativeImageToIdentifier(newImage, idOfNew);
+                    ETFUtils.registerNativeImageToIdentifier(newImage, idOfNew);
                 }
                 //System.out.println("id="+idOfNew);
 
@@ -166,7 +166,7 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
                 }
                 return isRed;
             } catch (Exception e) {
-                ETFUtils2.logError("Mooshroom custom mushroom texture could not be loaded. " + e);
+                ETFUtils.logError("Mooshroom custom mushroom texture could not be loaded. " + e);
             }
         }
         return null;
@@ -184,7 +184,7 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
                 for (ModelPart model :
                         entity_texture_features$shroomAsEntityModel) {
                     VertexConsumer texturedConsumer = vertexConsumers.getBuffer(RenderType.entityCutout(thisTexture.thisIdentifier));
-                    model.render(matrices, texturedConsumer, light, overlay, 1, 1, 1, 1);
+                    model.render(matrices, texturedConsumer, light, overlay #if MC < MC_21 , 1F, 1F, 1F, 1F #endif);
 
                     thisTexture.renderEmissive(matrices, vertexConsumers, model);
                     //ETFUtils2.generalEmissiveRenderPart(matrices, vertexConsumers, shroomType ? RED_SHROOM_ALT : BROWN_SHROOM_ALT, model, false);

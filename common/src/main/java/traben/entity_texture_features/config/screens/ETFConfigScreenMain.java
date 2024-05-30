@@ -30,6 +30,7 @@ import org.joml.Quaternionf;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.config.ETFConfigWarning;
 import traben.entity_texture_features.config.ETFConfigWarnings;
+import traben.entity_texture_features.utils.ETFUtils;
 import traben.tconfig.gui.TConfigScreenMain;
 import traben.tconfig.gui.entries.TConfigEntryCategory;
 
@@ -43,9 +44,9 @@ public class ETFConfigScreenMain extends TConfigScreenMain {
 
     private final Random rand = new Random();
     private final LogoCreeperRenderer LOGO_CREEPER = new LogoCreeperRenderer();
-    private final ResourceLocation BLUE = new ResourceLocation("entity_features", "textures/gui/entity/e.png");
-    private final ResourceLocation RED = new ResourceLocation("entity_features", "textures/gui/entity/t.png");
-    private final ResourceLocation YELLOW = new ResourceLocation("entity_features", "textures/gui/entity/f.png");
+    private final ResourceLocation BLUE = ETFUtils.res("entity_features", "textures/gui/entity/e.png");
+    private final ResourceLocation RED = ETFUtils.res("entity_features", "textures/gui/entity/t.png");
+    private final ResourceLocation YELLOW = ETFUtils.res("entity_features", "textures/gui/entity/f.png");
     boolean shownWarning = false;
     int warningCount = 0;
     private long timer = 0;
@@ -236,7 +237,7 @@ public class ETFConfigScreenMain extends TConfigScreenMain {
             //noinspection ConstantValue
             if (rendertype != null) {
                 VertexConsumer vertexconsumer = vcp.getBuffer(rendertype);
-                root.render(matrix, vertexconsumer, 15728880, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+                root.render(matrix, vertexconsumer, 15728880, OverlayTexture.NO_OVERLAY #if MC < MC_21 , 1F, 1F, 1F, 1F #endif);
             }
             matrix.popPose();
         }

@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.features.property_reading.PropertiesRandomProvider;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperty;
 import traben.entity_texture_features.utils.ETFEntity;
-import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.utils.ETFUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,7 +56,7 @@ public abstract class SimpleIntegerArrayProperty extends RandomProperty {
                                 suffixNumbers.add(tryNumber);
                             }
                         } catch (NumberFormatException e) {
-                            ETFUtils2.logWarn("properties files number error in " + propertyName + " category");
+                            ETFUtils.logWarn("properties files number error in " + propertyName + " category");
                         }
                     }
                 }

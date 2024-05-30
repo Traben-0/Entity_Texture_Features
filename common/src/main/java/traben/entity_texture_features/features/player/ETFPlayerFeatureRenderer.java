@@ -25,6 +25,7 @@ import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.config.screens.skin.ETFConfigScreenSkinTool;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
+import traben.entity_texture_features.utils.ETFUtils;
 
 
 public class ETFPlayerFeatureRenderer<T extends Player, M extends PlayerModel<T>> extends RenderLayer<T, M> {
@@ -32,7 +33,7 @@ public class ETFPlayerFeatureRenderer<T extends Player, M extends PlayerModel<T>
     protected static final ModelPart textureNose = getModelData(new CubeDeformation(0)).getRoot().getChild("textureNose").bake(8, 8);
     protected static final ModelPart jacket = getModelData(new CubeDeformation(0)).getRoot().getChild("jacket").bake(64, 64);
     protected static final ModelPart fatJacket = getModelData(new CubeDeformation(0)).getRoot().getChild("fatJacket").bake(64, 64);
-    static private final ResourceLocation VILLAGER_TEXTURE = new ResourceLocation("textures/entity/villager/villager.png");
+    static private final ResourceLocation VILLAGER_TEXTURE = ETFUtils.res("textures/entity/villager/villager.png");
     protected final ETFPlayerSkinHolder skinHolder;
 
     //public boolean sneaking;
@@ -90,8 +91,8 @@ public class ETFPlayerFeatureRenderer<T extends Player, M extends PlayerModel<T>
                         case BLINK, BLINK_PATCHED, APPLY_BLINK -> playerTexture.baseEnchantBlinkIdentifier;
                         case BLINK2, BLINK2_PATCHED, APPLY_BLINK2 -> playerTexture.baseEnchantBlink2Identifier;
                         default -> playerTexture.baseEnchantIdentifier;
-                    }), false, true);
-            model.renderToBuffer(matrixStack, enchantVert, light, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1f);
+                    }), #if MC < MC_21 false, #endif true);
+            model.renderToBuffer(matrixStack, enchantVert, light, OverlayTexture.NO_OVERLAY #if MC < MC_21 , 1F, 1F, 1F, 1F #endif);
         }
     }
 
@@ -100,16 +101,16 @@ public class ETFPlayerFeatureRenderer<T extends Player, M extends PlayerModel<T>
 //            villagerNose.copyTransform(model.head);
             if (playerTexture.noseType == ETFConfigScreenSkinTool.NoseType.VILLAGER_TEXTURED || playerTexture.noseType == ETFConfigScreenSkinTool.NoseType.VILLAGER_TEXTURED_REMOVE) {
                 VertexConsumer villagerVert = vertexConsumerProvider.getBuffer(RenderType.entityTranslucent(playerTexture.etfTextureOfFinalBaseSkin.getTextureIdentifier(null)));
-                villagerNose.render(matrixStack, villagerVert, light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+                villagerNose.render(matrixStack, villagerVert, light, OverlayTexture.NO_OVERLAY #if MC < MC_21 , 1F, 1F, 1F, 1F #endif);
                 playerTexture.etfTextureOfFinalBaseSkin.renderEmissive(matrixStack, vertexConsumerProvider, villagerNose);
             } else {
                 VertexConsumer villagerVert = vertexConsumerProvider.getBuffer(RenderType.entitySolid(VILLAGER_TEXTURE));
-                villagerNose.render(matrixStack, villagerVert, light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+                villagerNose.render(matrixStack, villagerVert, light, OverlayTexture.NO_OVERLAY #if MC < MC_21 , 1F, 1F, 1F, 1F #endif);
             }
         } else if (playerTexture.texturedNoseIdentifier != null) {
 //            textureNose.copyTransform(model.head);
             VertexConsumer noseVertex = vertexConsumerProvider.getBuffer(RenderType.entityTranslucentCull(playerTexture.texturedNoseIdentifier));
-            textureNose.render(matrixStack, noseVertex, light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            textureNose.render(matrixStack, noseVertex, light, OverlayTexture.NO_OVERLAY #if MC < MC_21 , 1F, 1F, 1F, 1F #endif);
             if (playerTexture.texturedNoseIdentifierEmissive != null) {
 //                textureNose.copyTransform(model.head);
                 VertexConsumer noseVertex_e;
@@ -118,12 +119,12 @@ public class ETFPlayerFeatureRenderer<T extends Player, M extends PlayerModel<T>
                 } else {
                     noseVertex_e = vertexConsumerProvider.getBuffer(RenderType.entityTranslucentCull(playerTexture.texturedNoseIdentifierEmissive));
                 }
-                textureNose.render(matrixStack, noseVertex_e, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+                textureNose.render(matrixStack, noseVertex_e, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.NO_OVERLAY #if MC < MC_21 , 1F, 1F, 1F, 1F #endif);
             }
             if (playerTexture.texturedNoseIdentifierEnchanted != null) {
 //                textureNose.copyTransform(model.head);
-                VertexConsumer noseVertex_ench = ItemRenderer.getArmorFoilBuffer(vertexConsumerProvider, RenderType.armorCutoutNoCull(playerTexture.texturedNoseIdentifierEnchanted), false, true);
-                textureNose.render(matrixStack, noseVertex_ench, light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+                VertexConsumer noseVertex_ench = ItemRenderer.getArmorFoilBuffer(vertexConsumerProvider, RenderType.armorCutoutNoCull(playerTexture.texturedNoseIdentifierEnchanted), #if MC < MC_21 false, #endif true);
+                textureNose.render(matrixStack, noseVertex_ench, light, OverlayTexture.NO_OVERLAY #if MC < MC_21 , 1F, 1F, 1F, 1F #endif);
             }
         }
     }
@@ -184,16 +185,16 @@ public class ETFPlayerFeatureRenderer<T extends Player, M extends PlayerModel<T>
             VertexConsumer coatVert = vertexConsumerProvider.getBuffer(RenderType.entityTranslucent(playerTexture.coatIdentifier));
             matrixStack.pushPose();
             if (playerTexture.hasFatCoat) {
-                fatJacket.render(matrixStack, coatVert, light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+                fatJacket.render(matrixStack, coatVert, light, OverlayTexture.NO_OVERLAY #if MC < MC_21 , 1F, 1F, 1F, 1F #endif);
             } else {
-                jacket.render(matrixStack, coatVert, light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+                jacket.render(matrixStack, coatVert, light, OverlayTexture.NO_OVERLAY #if MC < MC_21 , 1F, 1F, 1F, 1F #endif);
             }
             if (playerTexture.coatEnchantedIdentifier != null) {
-                VertexConsumer enchantVert = ItemRenderer.getArmorFoilBuffer(vertexConsumerProvider, RenderType.armorCutoutNoCull(playerTexture.coatEnchantedIdentifier), false, true);
+                VertexConsumer enchantVert = ItemRenderer.getArmorFoilBuffer(vertexConsumerProvider, RenderType.armorCutoutNoCull(playerTexture.coatEnchantedIdentifier), #if MC < MC_21 false, #endif true);
                 if (playerTexture.hasFatCoat) {
-                    fatJacket.render(matrixStack, enchantVert, light, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1f);
+                    fatJacket.render(matrixStack, enchantVert, light, OverlayTexture.NO_OVERLAY #if MC < MC_21 , 1F, 1F, 1F, 1F #endif);
                 } else {
-                    jacket.render(matrixStack, enchantVert, light, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1f);
+                    jacket.render(matrixStack, enchantVert, light, OverlayTexture.NO_OVERLAY #if MC < MC_21 , 1F, 1F, 1F, 1F #endif);
                 }
             }
 
@@ -207,9 +208,9 @@ public class ETFPlayerFeatureRenderer<T extends Player, M extends PlayerModel<T>
                 }
 
                 if (playerTexture.hasFatCoat) {
-                    fatJacket.render(matrixStack, emissiveVert, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+                    fatJacket.render(matrixStack, emissiveVert, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.NO_OVERLAY #if MC < MC_21 , 1F, 1F, 1F, 1F #endif);
                 } else {
-                    jacket.render(matrixStack, emissiveVert, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+                    jacket.render(matrixStack, emissiveVert, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.NO_OVERLAY #if MC < MC_21 , 1F, 1F, 1F, 1F #endif);
                 }
             }
 

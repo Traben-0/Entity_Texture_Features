@@ -13,6 +13,7 @@ import net.minecraft.world.item.armortrim.ArmorTrim;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
+import traben.entity_texture_features.utils.ETFUtils;
 
 //todo is the patching still required?
 // this might have been only used for iris issues that were fixed by inflating the matrices?
@@ -58,7 +59,7 @@ public class ETFArmorHandler {
                 ETFRenderContext.startSpecialRenderOverlayPhase();
                 //do not pop/push as we want the scaling to trickle down to trim rendering, so they appear over the emissive
                 if (ETF.IRIS_DETECTED) matrices.scale(1.001f,1.001f,1.001f);
-                model.renderToBuffer(matrices, textureVert, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.NO_OVERLAY, red, green, blue, 1.0F);
+                model.renderToBuffer(matrices, textureVert, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.NO_OVERLAY #if MC < MC_21 , 1, 1, 1, 1.0F #endif);
                 ETFRenderContext.startSpecialRenderOverlayPhase();
             }
         }
@@ -69,7 +70,7 @@ public class ETFArmorHandler {
         if(ETF.config().getConfig().enableArmorAndTrims) {
             ResourceLocation trimBaseId = leggings ? trim.innerTexture(armorMaterial) : trim.outerTexture(armorMaterial);
             //support modded trims with namespace
-            ResourceLocation trimMaterialIdentifier = new ResourceLocation(trimBaseId.getNamespace(), "textures/" + trimBaseId.getPath() + ".png");
+            ResourceLocation trimMaterialIdentifier = ETFUtils.res(trimBaseId.getNamespace(), "textures/" + trimBaseId.getPath() + ".png");
             trimTexture = ETFManager.getInstance().getETFTextureNoVariation(trimMaterialIdentifier);
 
             //if it is emmissive we need to create an identifier of the trim to render separately in iris
@@ -107,7 +108,7 @@ public class ETFArmorHandler {
                 VertexConsumer textureVert= vertexConsumers.getBuffer(RenderType.armorCutoutNoCull(emissive));
                 ETFRenderContext.startSpecialRenderOverlayPhase();
                 if (ETF.IRIS_DETECTED) matrices.scale(1.001f,1.001f,1.001f);
-                model.renderToBuffer(matrices, textureVert, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1.0F);
+                model.renderToBuffer(matrices, textureVert, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.NO_OVERLAY #if MC < MC_21 , 1, 1, 1, 1.0F #endif);
                 ETFRenderContext.endSpecialRenderOverlayPhase();
             }
         }

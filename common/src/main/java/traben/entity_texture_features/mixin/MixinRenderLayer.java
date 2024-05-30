@@ -5,7 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.utils.ETFUtils;
 
 
 @Mixin(RenderType.class)
@@ -34,7 +34,7 @@ public abstract class MixinRenderLayer {
             at = @At(value = "HEAD"),
             index = 0, argsOnly = true)
     private static ResourceLocation etf$mixinAllEntityLayers(ResourceLocation value) {
-        return ETFUtils2.getETFVariantNotNullForInjector(value);
+        return ETFUtils.getETFVariantNotNullForInjector(value);
     }
 
 }

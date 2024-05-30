@@ -9,7 +9,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.features.ETFManager;
-import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.utils.ETFUtils;
 
 import java.util.Optional;
 
@@ -104,7 +104,7 @@ public enum ETFDirectory {
             }
 
             String[] strArray = resourcePackNames.keySet().toArray(new String[0]);
-            String returnedPack = ETFUtils2.returnNameOfHighestPackFromTheseMultiple(strArray);
+            String returnedPack = ETFUtils.returnNameOfHighestPackFromTheseMultiple(strArray);
             if (returnedPack != null) {
                 return resourcePackNames.get(returnedPack);
             } else {
@@ -117,7 +117,7 @@ public enum ETFDirectory {
     @NotNull
     public static ResourceLocation getIdentifierAsDirectory(ResourceLocation identifier, ETFDirectory directory) {
         if (directory.doesReplace()) {
-            return new ResourceLocation(identifier.getNamespace(), identifier.getPath().replace(directory.replaceStrings[0], directory.replaceStrings[1]));
+            return ETFUtils.res(identifier.getNamespace(), identifier.getPath().replace(directory.replaceStrings[0], directory.replaceStrings[1]));
         } else {
             return identifier;
         }

@@ -10,7 +10,7 @@ import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.property_reading.PropertiesRandomProvider;
 import traben.entity_texture_features.utils.ETFEntity;
-import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.utils.ETFUtils;
 import traben.entity_texture_features.utils.EntityIntLRU;
 
 import java.util.Objects;
@@ -24,7 +24,7 @@ public abstract class ETFTextureVariator {
     public static @NotNull ETFTextureVariator of(@NotNull final ResourceLocation vanillaIdentifier) {
         //if (ETF.config().getConfig().enableCustomTextures) {
         ETFApi.ETFVariantSuffixProvider variantProvider = ETFApi.ETFVariantSuffixProvider.getVariantProviderOrNull(
-                ETFUtils2.replaceIdentifier(vanillaIdentifier, ".png", ".properties"),
+                ETFUtils.replaceIdentifier(vanillaIdentifier, ".png", ".properties"),
                 vanillaIdentifier,
                 "skins", "textures"
         );
@@ -45,7 +45,7 @@ public abstract class ETFTextureVariator {
             ETFTexture output = getVariantOfInternal(entity);
 
             //noinspection DataFlowIssue,TextBlockMigration
-            ETFUtils2.logMessage(
+            ETFUtils.logMessage(
                     "\n§e-----------ETF Debug Printout-------------§r" +
                             "\n" + ETFManager.getInstance().getGeneralPrintout() +
                             "\n§eEntity:§r" +
@@ -67,7 +67,7 @@ public abstract class ETFTextureVariator {
     private String getVanillaVariantDetails() {
         ResourceLocation vanilla = getVanillaIdentifier();
         if (vanilla == null) return "§aProperty locations: NULL§r";
-        ResourceLocation property = ETFUtils2.replaceIdentifier(vanilla, ".png", ".properties");
+        ResourceLocation property = ETFUtils.replaceIdentifier(vanilla, ".png", ".properties");
         if (property == null) return "§aProperty locations: NULL§r";
 
         ResourceLocation optifine = ETFDirectory.getIdentifierAsDirectory(property, ETFDirectory.OPTIFINE);
@@ -97,8 +97,8 @@ public abstract class ETFTextureVariator {
             self = ETFManager.getInstance().getETFTextureNoVariation(singletonId);
 
             if (ETF.config().getConfig().logTextureDataInitialization) {
-                ETFUtils2.logMessage("Initializing texture for the first time: " + singletonId);
-                ETFUtils2.logMessage(" - no variants for: " + self);
+                ETFUtils.logMessage("Initializing texture for the first time: " + singletonId);
+                ETFUtils.logMessage(" - no variants for: " + self);
 
             }
         }
@@ -151,25 +151,25 @@ public abstract class ETFTextureVariator {
             variantMap.defaultReturnValue(vanilla);
 
             boolean logging = ETF.config().getConfig().logTextureDataInitialization;
-            if (logging) ETFUtils2.logMessage("Initializing texture for the first time: " + vanillaId);
+            if (logging) ETFUtils.logMessage("Initializing texture for the first time: " + vanillaId);
 
             IntOpenHashSet suffixes = suffixProvider.getAllSuffixes();
             suffixes.remove(0);
             suffixes.remove(1);
             for (int suffix :
                     suffixes) {
-                ResourceLocation variant = ETFDirectory.getDirectoryVersionOf(ETFUtils2.addVariantNumberSuffix(vanillaId, suffix));
-                if (logging) ETFUtils2.logMessage(" - looked for variant: " + variant);
+                ResourceLocation variant = ETFDirectory.getDirectoryVersionOf(ETFUtils.addVariantNumberSuffix(vanillaId, suffix));
+                if (logging) ETFUtils.logMessage(" - looked for variant: " + variant);
                 if (variant != null) {
                     variantMap.put(suffix, ETFManager.getInstance().getETFTextureNoVariation(variant));
                 } else {
-                    if (logging) ETFUtils2.logMessage("   - failed to find variant: " + suffix);
+                    if (logging) ETFUtils.logMessage("   - failed to find variant: " + suffix);
                     variantMap.put(suffix, vanilla);
                 }
             }
             if (logging) {
-                ETFUtils2.logMessage("Final variant map for: " + vanillaId);
-                variantMap.forEach((k, v) -> ETFUtils2.logMessage(" - " + k + " = " + v));
+                ETFUtils.logMessage("Final variant map for: " + vanillaId);
+                variantMap.forEach((k, v) -> ETFUtils.logMessage(" - " + k + " = " + v));
             }
         }
 

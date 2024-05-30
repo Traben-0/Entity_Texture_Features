@@ -19,7 +19,7 @@ import traben.entity_texture_features.config.ETFConfigWarnings;
 import traben.entity_texture_features.config.screens.ETFConfigScreenMain;
 import traben.entity_texture_features.config.screens.ETFConfigScreenWarnings;
 import traben.tconfig.TConfigHandler;
-import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.utils.ETFUtils;
 
 import java.io.File;
 import java.util.List;
@@ -87,7 +87,7 @@ public class ETF {
         warningConfigHandler = new TConfigHandler<>(ETFConfigScreenWarnings.WarningConfig::new, "etf_warnings.json", "ETF");
         registerConfigHandler(warningConfigHandler);
 
-        ETFUtils2.checkModCompatibility();
+        ETFUtils.checkModCompatibility();
 
         ETFConfigWarnings.registerConfigWarning(
                 //figura

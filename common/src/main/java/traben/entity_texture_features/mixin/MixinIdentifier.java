@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.config.ETFConfig;
-import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.utils.ETFUtils;
 
 
 @Mixin(ResourceLocation.class)
@@ -25,7 +25,7 @@ public abstract class MixinIdentifier {
                         case Entity -> {
                             if ((path.contains("/entity/") || path.contains("optifine/") || path.contains("etf/") || path.contains("emf/"))
                                     && (path.endsWith(".png") || path.endsWith(".properties") || path.endsWith(".mcmeta") || path.endsWith(".jem") || path.endsWith(".jpm"))) {
-                                ETFUtils2.logWarn(ETF.getTextFromTranslation("config.entity_texture_features.illegal_path_warn").getString()
+                                ETFUtils.logWarn(ETF.getTextFromTranslation("config.entity_texture_features.illegal_path_warn").getString()
                                         + " [" + path + "]");
 
                                 // String filename =path.replace(".png", "");
@@ -36,12 +36,12 @@ public abstract class MixinIdentifier {
                             }
                         }
                         case All -> {
-                            ETFUtils2.logWarn(ETF.getTextFromTranslation("config.entity_texture_features.illegal_path_warn").getString()
+                            ETFUtils.logWarn(ETF.getTextFromTranslation("config.entity_texture_features.illegal_path_warn").getString()
                                     + " [" + path + "]");
                             if (!path.isBlank())
                                 cir.setReturnValue(true);
                         }
-                        default -> ETFUtils2.logWarn("this message should not appear #65164");
+                        default -> ETFUtils.logWarn("this message should not appear #65164");
                     }
                 }
             }

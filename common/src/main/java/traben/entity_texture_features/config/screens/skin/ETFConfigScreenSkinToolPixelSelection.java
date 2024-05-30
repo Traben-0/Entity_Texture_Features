@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import traben.entity_texture_features.ETF;
-import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.utils.ETFUtils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -33,7 +33,7 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFScreenOldCompat {
 
     private final ETFConfigScreenSkinTool etfParent;
     Set<Integer> selectedPixels;
-    ResourceLocation currentSkinToRender = new ResourceLocation(MOD_ID + ":textures/gui/icon.png");
+    ResourceLocation currentSkinToRender = ETFUtils.res(MOD_ID + ":textures/gui/icon.png");
 
     protected ETFConfigScreenSkinToolPixelSelection(ETFConfigScreenSkinTool parent, SelectionMode mode) {
         super("config." + ETF.MOD_ID + (mode == SelectionMode.EMISSIVE ? ".emissive_select" : ".enchanted_select") + ".title", parent, false);
@@ -47,8 +47,8 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFScreenOldCompat {
     protected void init() {
         super.init();
 
-        ResourceLocation randomID = new ResourceLocation(MOD_ID + "_ignore", "gui_skin_" + System.currentTimeMillis() + ".png");
-        if (ETFUtils2.registerNativeImageToIdentifier(etfParent.currentEditorSkin, randomID)) {
+        ResourceLocation randomID = ETFUtils.res(MOD_ID + "_ignore", "gui_skin_" + System.currentTimeMillis() + ".png");
+        if (ETFUtils.registerNativeImageToIdentifier(etfParent.currentEditorSkin, randomID)) {
             currentSkinToRender = randomID;
         }
 
@@ -99,8 +99,8 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFScreenOldCompat {
 
                     applyCurrentSelectedPixels();
                     etfParent.thisETFPlayerTexture.changeSkinToThisForTool(etfParent.currentEditorSkin);
-                    ResourceLocation randomID2 = new ResourceLocation(MOD_ID + "_ignore", "gui_skin_" + System.currentTimeMillis() + ".png");
-                    if (ETFUtils2.registerNativeImageToIdentifier(etfParent.currentEditorSkin, randomID2)) {
+                    ResourceLocation randomID2 = ETFUtils.res(MOD_ID + "_ignore", "gui_skin_" + System.currentTimeMillis() + ".png");
+                    if (ETFUtils.registerNativeImageToIdentifier(etfParent.currentEditorSkin, randomID2)) {
                         currentSkinToRender = randomID2;
                     }
                 }, Supplier::get) {

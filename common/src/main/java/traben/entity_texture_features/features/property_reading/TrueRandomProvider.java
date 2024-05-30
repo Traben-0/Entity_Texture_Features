@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETFApi;
 import traben.entity_texture_features.features.texture_handlers.ETFDirectory;
 import traben.entity_texture_features.utils.ETFEntity;
-import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.utils.ETFUtils;
 
 import java.util.UUID;
 
@@ -32,15 +32,15 @@ public class TrueRandomProvider implements ETFApi.ETFVariantSuffixProvider {
 
         ResourceManager resources = Minecraft.getInstance().getResourceManager();
 
-        ResourceLocation second = ETFDirectory.getDirectoryVersionOf(ETFUtils2.addVariantNumberSuffix(vanillaIdentifier, 2));
+        ResourceLocation second = ETFDirectory.getDirectoryVersionOf(ETFUtils.addVariantNumberSuffix(vanillaIdentifier, 2));
         if (second != null) {
             String secondPack = resources.getResource(second).map(Resource::sourcePackId).orElse(null);
             String vanillaPack = resources.getResource(vanillaIdentifier).map(Resource::sourcePackId).orElse(null);
 
             if (secondPack != null
-                    && secondPack.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(secondPack, vanillaPack))) {
+                    && secondPack.equals(ETFUtils.returnNameOfHighestPackFromTheseTwo(secondPack, vanillaPack))) {
                 int totalTextureCount = 2;
-                while (ETFDirectory.getDirectoryVersionOf(ETFUtils2.addVariantNumberSuffix(vanillaIdentifier, totalTextureCount + 1))
+                while (ETFDirectory.getDirectoryVersionOf(ETFUtils.addVariantNumberSuffix(vanillaIdentifier, totalTextureCount + 1))
                         != null) {
                     totalTextureCount++;
                 }

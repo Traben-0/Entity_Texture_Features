@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.utils.ETFRenderLayerWithTexture;
-import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.utils.ETFUtils;
 
 @Mixin(EyesLayer.class)
 public abstract class MixinEyeFeatureRenderer {
@@ -22,7 +22,7 @@ public abstract class MixinEyeFeatureRenderer {
         //the eye texture render layers are hard coded in vanilla and do not recalculate each time
         if (layer instanceof ETFRenderLayerWithTexture etf && etf.etf$getId().isPresent()) {
             ResourceLocation id = etf.etf$getId().get();
-            ResourceLocation variant = ETFUtils2.getETFVariantNotNullForInjector(id);
+            ResourceLocation variant = ETFUtils.getETFVariantNotNullForInjector(id);
             if (!id.equals(variant)) {
                 //if there is a variant then lets send a layer with it
                 boolean allowed = ETFRenderContext.isAllowedToRenderLayerTextureModify();

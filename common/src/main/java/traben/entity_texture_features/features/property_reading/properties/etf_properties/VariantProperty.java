@@ -13,7 +13,6 @@ import net.minecraft.world.entity.VariantHolder;
 import net.minecraft.world.entity.animal.CatVariant;
 import net.minecraft.world.entity.animal.FrogVariant;
 import net.minecraft.world.entity.npc.VillagerType;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.ShulkerBoxBlock;
 import net.minecraft.world.level.block.SignBlock;
@@ -24,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperty;
 import traben.entity_texture_features.features.property_reading.properties.generic_properties.StringArrayOrRegexProperty;
 import traben.entity_texture_features.utils.ETFEntity;
-import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.utils.ETFUtils;
 
 import java.util.Optional;
 import java.util.Properties;
@@ -55,7 +54,7 @@ public class VariantProperty extends StringArrayOrRegexProperty {
     protected @Nullable String getValueFromEntity(ETFEntity etfEntity) {
         String value = getValueFromEntityInternal(etfEntity);
         if (doPrint) {
-            ETFUtils2.logMessage("[variant property print] = " + (value == null ? "//VARIANT CHECK FAILED AND WILL RETURN FALSE//" : value));
+            ETFUtils.logMessage("[variant property print] = " + (value == null ? "//VARIANT CHECK FAILED AND WILL RETURN FALSE//" : value));
         }
         return value;
     }

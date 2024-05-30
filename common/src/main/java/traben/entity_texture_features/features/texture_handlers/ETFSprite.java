@@ -20,6 +20,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceMetadata;
 import net.minecraft.util.Mth;
+import traben.entity_texture_features.utils.ETFUtils;
 
 public class ETFSprite {
 
@@ -42,7 +43,7 @@ public class ETFSprite {
             if (resource.isPresent()) {
                 TextureAtlasSprite possibleVariant = null;
 
-                try (SpriteContents contents = load(new ResourceLocation(variantId + "-etf_sprite"), resource.get())) {
+                try (SpriteContents contents = load(ETFUtils.res(variantId + "-etf_sprite"), resource.get())) {
                     if (contents != null)
                         possibleVariant = new TextureAtlasSprite(variantId, contents, contents.width(), contents.height(), 0, 0);
 
@@ -65,7 +66,7 @@ public class ETFSprite {
                 Optional<Resource> resource = Minecraft.getInstance().getResourceManager().getResource(emissiveId);
                 if (resource.isPresent()) {
 
-                    try (SpriteContents contents = load(new ResourceLocation(emissiveId + "-etf_sprite"), resource.get())) {
+                    try (SpriteContents contents = load(ETFUtils.res(emissiveId + "-etf_sprite"), resource.get())) {
                         if (contents != null)
                             possibleEmissive = new TextureAtlasSprite(emissiveId, contents, contents.width(), contents.height(), 0, 0);
                     }

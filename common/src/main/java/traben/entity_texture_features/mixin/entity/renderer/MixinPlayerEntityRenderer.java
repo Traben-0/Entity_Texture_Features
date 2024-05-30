@@ -27,7 +27,7 @@ import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.player.ETFPlayerFeatureRenderer;
 import traben.entity_texture_features.features.player.ETFPlayerSkinHolder;
 import traben.entity_texture_features.features.player.ETFPlayerTexture;
-import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.utils.ETFUtils;
 
 @Mixin(PlayerRenderer.class)
 public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> implements ETFPlayerSkinHolder {
@@ -82,7 +82,8 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
                         etf$renderOnce(matrices, vc2, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, player, arm, sleeve);
                     }
                     if (thisETFPlayerTexture.baseEnchantIdentifier != null) {
-                        VertexConsumer vc3 = ItemRenderer.getArmorFoilBuffer(vertexConsumers, RenderType.armorCutoutNoCull(thisETFPlayerTexture.baseEnchantIdentifier), false, true);
+                        VertexConsumer vc3 = ItemRenderer.getArmorFoilBuffer(vertexConsumers,
+                                RenderType.armorCutoutNoCull(thisETFPlayerTexture.baseEnchantIdentifier), #if MC < MC_21 false, #endif true);
                         etf$renderOnce(matrices, vc3, light, player, arm, sleeve);
                     }
                     ETFRenderContext.endSpecialRenderOverlayPhase();
@@ -112,7 +113,7 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
             } catch (NoClassDefFoundError error) {
                 // Should never be thrown
                 // unless a significant change if skin layers mod
-                ETFUtils2.logError("Error with ETF's 3D skin layers mod hand compatibility: " + error);
+                ETFUtils.logError("Error with ETF's 3D skin layers mod hand compatibility: " + error);
                 error.printStackTrace();
                 //prevent further attempts
                 ETF.SKIN_LAYERS_DETECTED = false;

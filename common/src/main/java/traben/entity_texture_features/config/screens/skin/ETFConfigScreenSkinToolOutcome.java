@@ -23,7 +23,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.features.ETFManager;
-import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.utils.ETFUtils;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -135,7 +135,7 @@ public class ETFConfigScreenSkinToolOutcome extends ETFScreenOldCompat {
                                 assert skinfile.file != null;
                                 skin.writeToFile(skinfile.file);
                             } catch (IOException e) {
-                                ETFUtils2.logError(ETF.getTextFromTranslation("config." + ETF.MOD_ID + ".player_skin_editor.upload_skin.success_local_fail").getString(), true);
+                                ETFUtils.logError(ETF.getTextFromTranslation("config." + ETF.MOD_ID + ".player_skin_editor.upload_skin.success_local_fail").getString(), true);
                                 //System.out.println("failed to change internal skin");
                             }
                             //clear etf data of skin

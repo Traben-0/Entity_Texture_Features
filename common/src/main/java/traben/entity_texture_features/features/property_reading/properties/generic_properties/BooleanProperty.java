@@ -3,7 +3,7 @@ package traben.entity_texture_features.features.property_reading.properties.gene
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperty;
 import traben.entity_texture_features.utils.ETFEntity;
-import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.utils.ETFUtils;
 
 import java.util.Properties;
 
@@ -28,7 +28,7 @@ public abstract class BooleanProperty extends RandomProperty {
                 if ("true".equals(input) || "false".equals(input)) {
                     return "true".equals(input);
                 } else {
-                    ETFUtils2.logWarn("properties files number error in " + propertyName + " category");
+                    ETFUtils.logWarn("properties files number error in " + propertyName + " category");
                 }
             }
         }

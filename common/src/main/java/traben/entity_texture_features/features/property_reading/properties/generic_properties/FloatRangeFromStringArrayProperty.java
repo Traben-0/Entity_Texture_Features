@@ -1,7 +1,7 @@
 package traben.entity_texture_features.features.property_reading.properties.generic_properties;
 
 import org.jetbrains.annotations.Nullable;
-import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.utils.ETFUtils;
 
 public abstract class FloatRangeFromStringArrayProperty extends NumberRangeFromStringArrayProperty<Float> {
 
@@ -31,7 +31,7 @@ public abstract class FloatRangeFromStringArrayProperty extends NumberRangeFromS
         } catch (Exception ignored) {
             //System.out.println(possibleRange + "failed ");
             //ignored.printStackTrace();
-            ETFUtils2.logError("number or range in [" + getPropertyId() + "] property could not be extracted from input: " + possibleRange);
+            ETFUtils.logError("number or range in [" + getPropertyId() + "] property could not be extracted from input: " + possibleRange);
         }
         return null;
     }

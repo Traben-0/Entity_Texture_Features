@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperty;
 import traben.entity_texture_features.features.property_reading.properties.generic_properties.StringArrayOrRegexProperty;
 import traben.entity_texture_features.utils.ETFEntity;
-import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.utils.ETFUtils;
 
 import java.util.Optional;
 import java.util.Properties;
@@ -59,7 +59,7 @@ public class DimensionProperty extends StringArrayOrRegexProperty {
             //modded
             output = key.toString();
         }
-        if (doPrint) ETFUtils2.logMessage("[Dimension property print]: " + output);
+        if (doPrint) ETFUtils.logMessage("[Dimension property print]: " + output);
         return output;
     }
 
