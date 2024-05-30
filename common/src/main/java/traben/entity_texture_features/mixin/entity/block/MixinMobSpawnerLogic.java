@@ -1,7 +1,9 @@
 package traben.entity_texture_features.mixin.entity.block;
 
 import net.minecraft.core.BlockPos;
+#if MC <= MC_20_2
 import net.minecraft.util.RandomSource;
+#endif
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.Level;

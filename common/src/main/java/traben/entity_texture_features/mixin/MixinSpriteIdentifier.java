@@ -45,6 +45,7 @@ public class MixinSpriteIdentifier {
                 ETFRenderContext.allowRenderLayerTextureModify();
                 if (layer != null) {
                     VertexConsumer consumer = vertexConsumers.getBuffer(layer);
+                    //noinspection ConstantValue
                     if (consumer != null) {
                         cir.setReturnValue(consumer);
                     }

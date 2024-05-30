@@ -233,6 +233,7 @@ public class ETFConfigScreenMain extends TConfigScreenMain {
             matrix.scale(-1.0F, -1.0F, 1.0F);
             matrix.translate(0.0F, -1.501F, 0.0F);
             RenderType rendertype = RenderType.entitySolid(texture);
+            //noinspection ConstantValue
             if (rendertype != null) {
                 VertexConsumer vertexconsumer = vcp.getBuffer(rendertype);
                 root.render(matrix, vertexconsumer, 15728880, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);

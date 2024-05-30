@@ -8,7 +8,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.features.player.ETFPlayerTexture;
@@ -16,9 +15,7 @@ import traben.entity_texture_features.features.player.ETFPlayerTexture;
 
 @Mixin(HttpTexture.class)
 public abstract class MixinPlayerSkinTexture {
-    @Shadow
-    private static void doNotchTransparencyHack(final NativeImage image, final int x, final int y, final int width, final int height) {
-    }
+
 
     @Shadow
     private static void setNoAlpha(final NativeImage image, final int x, final int y, final int width, final int height) {

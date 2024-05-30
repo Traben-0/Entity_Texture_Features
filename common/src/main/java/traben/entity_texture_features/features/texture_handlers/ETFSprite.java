@@ -1,6 +1,8 @@
 package traben.entity_texture_features.features.texture_handlers;
 
+#if MC <= MC_20_1
 import net.minecraft.client.resources.metadata.animation.AnimationMetadataSection;
+#endif
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.mojang.blaze3d.platform.NativeImage;

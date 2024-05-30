@@ -17,8 +17,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.decoration.Painting;
 import net.minecraft.world.entity.decoration.PaintingVariant;
+#if MC < MC_20_6
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
+#endif
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;

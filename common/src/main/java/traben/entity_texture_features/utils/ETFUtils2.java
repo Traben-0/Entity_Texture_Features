@@ -203,7 +203,6 @@ public abstract class ETFUtils2 {
     public static List<Properties> readAndReturnAllLayeredPropertiesElseNull(ResourceLocation path) {
         List<Properties> props = new ArrayList<>();
         try {
-            @SuppressWarnings("OptionalGetWithoutIsPresent") //try catch is intended
             var resources = Minecraft.getInstance().getResourceManager().getResourceStack(path);
             for (Resource resource : resources) {
                 if (resource == null) continue;

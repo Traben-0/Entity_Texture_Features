@@ -49,9 +49,9 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
     private void etf$markAllowedToChange(PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
         etf$armorHandler.end();
     }
-
-    //todo this method is duplicated of forge, its possibly the source of the split mixins
+    @SuppressWarnings("UnnecessaryQualifiedMemberReference")
     #if MC >= MC_20_6
+
     @ModifyArg(method = "Lnet/minecraft/client/renderer/entity/layers/HumanoidArmorLayer;renderModel(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/model/Model;FFFLnet/minecraft/resources/ResourceLocation;)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/RenderType;armorCutoutNoCull(Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/client/renderer/RenderType;"))
     #else
