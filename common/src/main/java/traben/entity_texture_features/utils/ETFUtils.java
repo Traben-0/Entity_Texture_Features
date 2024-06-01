@@ -110,9 +110,10 @@ public abstract class ETFUtils {
         return false;
     }
 
-    @NotNull
-    public static ResourceLocation addVariantNumberSuffix(ResourceLocation identifier, int variant) {
-        return ETFUtils.res(addVariantNumberSuffix(identifier.toString(), variant));
+    @Nullable
+    public static ResourceLocation addVariantNumberSuffix(@NotNull ResourceLocation identifier, int variant) {
+        var changed = ETFUtils.res(addVariantNumberSuffix(identifier.toString(), variant));
+        return identifier.equals(changed) ? null : changed;
     }
 
     @NotNull

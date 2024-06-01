@@ -74,7 +74,7 @@ public class ETFTexture {
     public ETFTexture(ResourceLocation variantIdentifier) {
 
         if (variantIdentifier == null) {
-            ETFUtils.logError("ETFTexture had a null identifier this MUST never happen");
+            ETFUtils.logError("ETFTexture had a null identifier this should NOT happen");
             //throw new IllegalArgumentException("ETFTexture had null identifier");
             thisIdentifier = null;
             variantNumber = 0;

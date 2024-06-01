@@ -40,7 +40,7 @@ public class MixinSpriteIdentifier {
             ETFTexture texture = ETFManager.getInstance().getETFTextureVariant(actualTexture, ETFRenderContext.getCurrentEntity());
 
             //if texture is emissive or a variant then replace with a non sprite vertex consumer like regular entities
-            if (texture.getVariantNumber() != 0 || texture.isEmissive() || texture.isEnchanted()) {
+            if (!actualTexture.equals(texture.thisIdentifier) || texture.isEmissive() || texture.isEnchanted()) {
                 ETFRenderContext.preventRenderLayerTextureModify();
                 RenderType layer = layerFactory.apply(texture.thisIdentifier);
                 ETFRenderContext.allowRenderLayerTextureModify();

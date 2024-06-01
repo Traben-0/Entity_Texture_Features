@@ -5,6 +5,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
+#if MC == MC_20_1
+//todo maybe more versions.....
+import net.minecraft.client.renderer.RenderType;
+#endif
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import traben.entity_texture_features.ETF;

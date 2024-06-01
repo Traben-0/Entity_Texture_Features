@@ -33,7 +33,8 @@ public enum ETFDirectory {
 
     @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
     @Nullable
-    public static ResourceLocation getDirectoryVersionOf(ResourceLocation vanillaIdentifier) {
+    public static ResourceLocation getDirectoryVersionOf(@Nullable ResourceLocation vanillaIdentifier) {
+        if (vanillaIdentifier == null) return null;
         ETFDirectory directory = getDirectoryOf(vanillaIdentifier);
         return switch (directory) {
             case DOES_NOT_EXIST -> null;
@@ -44,7 +45,7 @@ public enum ETFDirectory {
     }
 
     @NotNull
-    public static ETFDirectory getDirectoryOf(ResourceLocation vanillaIdentifier) {
+    public static ETFDirectory getDirectoryOf(@NotNull ResourceLocation vanillaIdentifier) {
         Object2ReferenceOpenHashMap<@NotNull ResourceLocation, @NotNull ETFDirectory> cache = getCache();
         if (!cache.containsKey(vanillaIdentifier)) {
             cache.put(vanillaIdentifier, findDirectoryOf(vanillaIdentifier));

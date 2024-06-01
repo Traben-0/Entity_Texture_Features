@@ -10,7 +10,7 @@
 - fixed emissive elytra breaking when enchanted
 - fixed the custom emissive suffix file declaration getting overridden by higher packs *(using `_e` is still highly recommended)*
 - fixed ImmediatelyFast compat for mod update v1.2.16, ETF still retains compat for the older versions
-- 
+- fixed a missing texture issue with the amendments mod's jukeboxes when playing disc 13
 
 [6.0.1]
 

@@ -13,6 +13,10 @@ import net.minecraft.world.entity.VariantHolder;
 import net.minecraft.world.entity.animal.CatVariant;
 import net.minecraft.world.entity.animal.FrogVariant;
 import net.minecraft.world.entity.npc.VillagerType;
+#if MC == MC_20_1
+//todo maybe more versions.....
+import net.minecraft.world.item.ItemStack;
+#endif
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.ShulkerBoxBlock;
 import net.minecraft.world.level.block.SignBlock;

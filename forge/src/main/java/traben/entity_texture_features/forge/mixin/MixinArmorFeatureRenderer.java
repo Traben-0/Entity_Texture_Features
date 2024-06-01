@@ -12,6 +12,10 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
+#if MC == MC_20_1
+//todo maybe more versions.....
+import net.minecraft.world.item.ArmorItem;
+#endif
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.armortrim.ArmorTrim;
 import org.spongepowered.asm.mixin.Mixin;
