@@ -7,8 +7,10 @@
 - fixed enchanted elytra not rendering emissive textures
 - fixed shoulder parrots
 - fixed emissive armor and trims breaking with iris
+- fixed emissive elytra breaking when enchanted
 - fixed the custom emissive suffix file declaration getting overridden by higher packs *(using `_e` is still highly recommended)*
 - fixed ImmediatelyFast compat for mod update v1.2.16, ETF still retains compat for the older versions
+- 
 
 [6.0.1]
 

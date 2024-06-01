@@ -258,55 +258,6 @@ The number for that color in the Color Guide will be the extension length from 1
 *(this example has a villager nose and also has a working villager cloak using the jacket extension features)*
 ---
 
-## Capes - [V2.5.0+]
-
-<img src="cape.png" alt="img" width="300"/><br>
-
-Capes are supported for players by this mod in 3 different ways
-
-```
-1. a custom cape drawn in the skin file and will vary by skin
-2. minecraftcapes.net Modded cape support
-3. Optifine cape support
-```
-
-### ETF Custom Cape
-
-<img src="custom-cape.png" alt="img" width="250"/><img src="mod-skins/cape.png" alt="img" width="64"/>
-
-This mod supports placing a custom cape texture in your skin file you upload to Mojang.
-
-- to select your custom cape to load you simply need to put a pink #1 pixel in the #5 slot of the choice box in your
-  skin and your custom cape will show to anyone with this mod and player features enabled.
-- This capes will also be checked for emissive and enchanted pixels as per the skin settings.
-- you can see an example skin file above to download and use.
-- For now your Elytra will be unaffected and will look like the default
-- Below is a visual guide of how the cape texture is 'cut up' and placed in the 5 orange rectangles in the skin file  
-  <img src="mod-data-example.png" alt="img" width="150"/><img src="cape.png" alt="img" width="150"/>
-
-### Third party capes
-
-- because I'm nice I am supporting other cape options you may choose that have their own benefits   
-  *(This support is provided by the servers of these third party services, they may not always support this usage)*
-- These capes will also be checked for emissive and enchanted pixels as per the skin settings.
-- Firstly you can always install the Third Party Cape Mod Itself if you want to, otherwise see below.
-
-#### Minecraftcapes.net Cape
-
-- to select your minecraftcapes.net cape to load in this mod you simply need to put a cyan #2 pixel
-  in the #5 slot of the choice box in your skin and your minecraftcapes.net cape will show to anyone with this mod and
-  player features enabled.   
-  *(you need to set up a free cape with [minecraftcapes.net](https://minecraftcapes.net) first)*
-
-#### Optifine Cape
-
-while I don't recommend this while other options Exist,
-I am supporting the people who have donated to the Optifine Dev
-
-- to select your Optifine cape to load you simply need to put a red #3 pixel
-  in the #5 slot of the choice box in your skin and your Optifine cape will show to anyone with this mod and player
-  features enabled.
-
 </div>
 
 </details>
