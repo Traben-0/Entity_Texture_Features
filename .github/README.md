@@ -1,6 +1,5 @@
 
-### If you are looking to clone this repository, either for contributing or for personal use,
-### you might want to check out [this guide](Cloning_or_contributing.md)
+## If you are looking to clone this repository, either for contributing or for personal use, you might want to check out [this guide](Cloning_or_contributing.md)
 
 
 <div align="center">
