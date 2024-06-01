@@ -33,6 +33,10 @@ dependencies {
     modImplementation("maven.modrinth:immediatelyfast:${project.immediatelyfast_version}") {
         exclude(group: "net.fabricmc.fabric-api")
     }
+    //immedeatelyfast renamed the mixin target class in v1.2.16 for now keep support for both but drop eventually
+    if (project.mc_build as int >= 2 && project.mc_build as int <= 7) {
+        modImplementation files("build/ImmediatelyFast-Fabric-1.2.15+1.20.6.jar")
+    }
 }
 
 publishing {
