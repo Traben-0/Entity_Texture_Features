@@ -6,7 +6,7 @@ import traben.entity_texture_features.features.property_reading.properties.Rando
 import traben.entity_texture_features.features.property_reading.properties.generic_properties.SimpleIntegerArrayProperty;
 import traben.entity_texture_features.features.property_reading.properties.generic_properties.StringArrayOrRegexProperty;
 import traben.entity_texture_features.utils.ETFEntity;
-import traben.entity_texture_features.utils.ETFUtils;
+import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -80,7 +80,7 @@ public class NBTProperty extends RandomProperty {
                 nbtTestInstruction = nbtTestInstruction.replaceFirst("!", "");
 
                 if (nbtTestInstruction.startsWith("print:")) {
-                    ETFUtils.logMessage("NBT entity data print: \n" + entityNBT.getAsString());
+                    ETFUtils2.logMessage("NBT entity data print: \n" + entityNBT.getAsString());
                     nbtTestInstruction = nbtTestInstruction.replaceFirst("print:", "");
                 }
 
@@ -91,7 +91,7 @@ public class NBTProperty extends RandomProperty {
                 Iterator<String> nbtPathInstructionIterator = Arrays.stream(nbtIdentifier.split("\\.")).iterator();
                 while (nbtPathInstructionIterator.hasNext()) {
                     if (lastIterationNBTElement == null) {
-                        ETFUtils.logWarn("null nbt in ETF");
+                        ETFUtils2.logWarn("null nbt in ETF");
                         break;
                     }
                     String nextPathInstruction = nbtPathInstructionIterator.next();
@@ -117,13 +117,13 @@ public class NBTProperty extends RandomProperty {
                             }
 
                         } else {
-                            ETFUtils.logWarn("cannot parse list index of [" + nextPathInstruction + "] in nbt property: " + nbtIdentifier);
+                            ETFUtils2.logWarn("cannot parse list index of [" + nextPathInstruction + "] in nbt property: " + nbtIdentifier);
                             break;
                         }
                     } else {
                         //here this means we have an nbt element without children yet have received an additional instruction???
                         //throw a fit if there are further instructions
-                        ETFUtils.logError("cannot parse next nbt instruction of [" + nextPathInstruction + "] in nbt property: " + nbtIdentifier + ", as this nbt is not a list or compound and cannot have further instructions");
+                        ETFUtils2.logError("cannot parse next nbt instruction of [" + nextPathInstruction + "] in nbt property: " + nbtIdentifier + ", as this nbt is not a list or compound and cannot have further instructions");
                         break;
 
                     }
@@ -140,7 +140,7 @@ public class NBTProperty extends RandomProperty {
                     if (nbtTestInstruction.startsWith("print_raw:")) {
                         String rawStringFromNBT = finalNBTElementOrNullIfFailed.getAsString();
                         String rawMatchString = nbtTestInstruction.replaceFirst("print_raw:", "");
-                        ETFUtils.logMessage("NBT RAW data of: " + nbtIdentifier + "=" + rawStringFromNBT);
+                        ETFUtils2.logMessage("NBT RAW data of: " + nbtIdentifier + "=" + rawStringFromNBT);
                         StringArrayOrRegexProperty.RegexAndPatternPropertyMatcher matcher = getStringMatcher_Regex_Pattern_List_Single(rawMatchString);
                         doesTestPass = matcher != null && matcher.testString(rawStringFromNBT);
                         //doesTestPass = rawMatchString.equals(rawStringFromNBT);
@@ -158,7 +158,7 @@ public class NBTProperty extends RandomProperty {
                             SimpleIntegerArrayProperty.IntRange range = SimpleIntegerArrayProperty.getIntRange(rawRangeString);
                             doesTestPass = range.isWithinRange(nbtNumber.getAsNumber().intValue());
                         } else {
-                            ETFUtils.logWarn("NBT range is not valid for non number nbt types: " + nbtIdentifier + "=" + nbtTestInstruction);
+                            ETFUtils2.logWarn("NBT range is not valid for non number nbt types: " + nbtIdentifier + "=" + nbtTestInstruction);
                         }
                         // }else  if (finalNBTElementOrNullIfFailed instanceof NbtCompound nbtCompound) {
                     } else if (finalNBTElementOrNullIfFailed instanceof CollectionTag<?> nbtList) {
@@ -170,7 +170,7 @@ public class NBTProperty extends RandomProperty {
                                 if (doesTestPass) break;
                             }
                         } else {
-                            ETFUtils.logWarn("NBT list error with: " + nbtIdentifier + "=" + nbtTestInstruction);
+                            ETFUtils2.logWarn("NBT list error with: " + nbtIdentifier + "=" + nbtTestInstruction);
                         }
 //                            }else if(finalNBTElementOrNullIfFailed instanceof AbstractNbtNumber nbtNumber) {
 //                                doesTestPass = doesStringMatch(nbtTestInstruction,nbtNumber.asString());
@@ -189,7 +189,7 @@ public class NBTProperty extends RandomProperty {
                     if (nbtTestInstruction.startsWith("print_raw:")) {
                         String rawStringFromNBT = "";
                         String rawMatchString = nbtTestInstruction.replaceFirst("print_raw:", "");
-                        ETFUtils.logMessage("NBT RAW data of: " + nbtIdentifier + "=" + rawStringFromNBT);
+                        ETFUtils2.logMessage("NBT RAW data of: " + nbtIdentifier + "=" + rawStringFromNBT);
                         doesTestPass = rawMatchString.equals(rawStringFromNBT);
                     } else if (nbtTestInstruction.startsWith("raw:")) {
                         String rawStringFromNBT = "";
@@ -205,7 +205,7 @@ public class NBTProperty extends RandomProperty {
             }
             return doesEntityMeetThisCaseTest;
         } else {
-            ETFUtils.logError("NBT test failed, as could not read entity NBT");
+            ETFUtils2.logError("NBT test failed, as could not read entity NBT");
         }
         return false;
     }

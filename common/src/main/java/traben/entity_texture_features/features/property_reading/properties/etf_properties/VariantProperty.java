@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperty;
 import traben.entity_texture_features.features.property_reading.properties.generic_properties.StringArrayOrRegexProperty;
 import traben.entity_texture_features.utils.ETFEntity;
-import traben.entity_texture_features.utils.ETFUtils;
+import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.Optional;
 import java.util.Properties;
@@ -58,7 +58,7 @@ public class VariantProperty extends StringArrayOrRegexProperty {
     protected @Nullable String getValueFromEntity(ETFEntity etfEntity) {
         String value = getValueFromEntityInternal(etfEntity);
         if (doPrint) {
-            ETFUtils.logMessage("[variant property print] = " + (value == null ? "//VARIANT CHECK FAILED AND WILL RETURN FALSE//" : value));
+            ETFUtils2.logMessage("[variant property print] = " + (value == null ? "//VARIANT CHECK FAILED AND WILL RETURN FALSE//" : value));
         }
         return value;
     }

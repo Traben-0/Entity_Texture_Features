@@ -13,7 +13,7 @@ import net.minecraft.world.item.armortrim.ArmorTrim;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
-import traben.entity_texture_features.utils.ETFUtils;
+import traben.entity_texture_features.utils.ETFUtils2;
 
 //todo is the patching still required?
 // this might have been only used for iris issues that were fixed by inflating the matrices?
@@ -70,7 +70,7 @@ public class ETFArmorHandler {
         if(ETF.config().getConfig().enableArmorAndTrims) {
             ResourceLocation trimBaseId = leggings ? trim.innerTexture(armorMaterial) : trim.outerTexture(armorMaterial);
             //support modded trims with namespace
-            ResourceLocation trimMaterialIdentifier = ETFUtils.res(trimBaseId.getNamespace(), "textures/" + trimBaseId.getPath() + ".png");
+            ResourceLocation trimMaterialIdentifier = ETFUtils2.res(trimBaseId.getNamespace(), "textures/" + trimBaseId.getPath() + ".png");
             trimTexture = ETFManager.getInstance().getETFTextureNoVariation(trimMaterialIdentifier);
 
             //if it is emmissive we need to create an identifier of the trim to render separately in iris

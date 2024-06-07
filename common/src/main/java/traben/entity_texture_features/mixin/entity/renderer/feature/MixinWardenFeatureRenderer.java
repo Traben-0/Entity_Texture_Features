@@ -16,14 +16,14 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.ETF;
-import traben.entity_texture_features.utils.ETFUtils;
+import traben.entity_texture_features.utils.ETFUtils2;
 
 
 @Mixin(WardenEmissiveLayer.class)
 public abstract class MixinWardenFeatureRenderer<T extends Warden, M extends WardenModel<T>> extends RenderLayer<T, M> {
 
     @Unique
-    private static final ResourceLocation VANILLA_TEXTURE = ETFUtils.res("textures/entity/warden/warden.png");
+    private static final ResourceLocation VANILLA_TEXTURE = ETFUtils2.res("textures/entity/warden/warden.png");
     @Shadow
     @Final
     private ResourceLocation texture;

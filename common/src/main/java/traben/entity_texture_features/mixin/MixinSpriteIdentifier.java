@@ -16,7 +16,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.SpriteCoordinateExpander;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.resources.ResourceLocation;
-import traben.entity_texture_features.utils.ETFUtils;
+import traben.entity_texture_features.utils.ETFUtils2;
 
 @Mixin(Material.class)
 public class MixinSpriteIdentifier {
@@ -33,7 +33,7 @@ public class MixinSpriteIdentifier {
                 actualTexture = rawId;
             } else {
                 //todo check all block entities follow this logic? i know chests, shulker boxes, and beds do
-                actualTexture = ETFUtils.res(rawId.getNamespace(), "textures/" + rawId.getPath() + ".png");
+                actualTexture = ETFUtils2.res(rawId.getNamespace(), "textures/" + rawId.getPath() + ".png");
             }
 
 

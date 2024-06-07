@@ -16,7 +16,7 @@ import traben.entity_texture_features.features.texture_handlers.ETFTexture;
 import traben.entity_texture_features.features.texture_handlers.ETFTextureVariator;
 import traben.entity_texture_features.utils.ETFEntity;
 import traben.entity_texture_features.utils.ETFLruCache;
-import traben.entity_texture_features.utils.ETFUtils;
+import traben.entity_texture_features.utils.ETFUtils2;
 import traben.entity_texture_features.utils.EntityIntLRU;
 
 import java.util.ArrayList;
@@ -72,7 +72,7 @@ public class ETFManager {
             for (String path :
                     paths) {
                 //retrieve all layered resources
-                var prop = ETFUtils.readAndReturnAllLayeredPropertiesElseNull(ETFUtils.res(path));
+                var prop = ETFUtils2.readAndReturnAllLayeredPropertiesElseNull(ETFUtils2.res(path));
                 if (prop != null)
                     props.addAll(prop);
             }
@@ -93,13 +93,13 @@ public class ETFManager {
             }
 
             if (EMISSIVE_SUFFIX_LIST.isEmpty()) {
-                ETFUtils.logMessage("no emissive suffixes found: default emissive suffix '_e' used");
+                ETFUtils2.logMessage("no emissive suffixes found: default emissive suffix '_e' used");
                 EMISSIVE_SUFFIX_LIST.add("_e");
             } else {
-                ETFUtils.logMessage("emissive suffixes loaded: " + EMISSIVE_SUFFIX_LIST);
+                ETFUtils2.logMessage("emissive suffixes loaded: " + EMISSIVE_SUFFIX_LIST);
             }
         } catch (Exception e) {
-            ETFUtils.logError("emissive suffixes could not be read: default emissive suffix '_e' used");
+            ETFUtils2.logError("emissive suffixes could not be read: default emissive suffix '_e' used");
             EMISSIVE_SUFFIX_LIST.add("_e");
         }
 
@@ -121,8 +121,8 @@ public class ETFManager {
     }
 
     public static @NotNull ETFTexture getErrorETFTexture() {
-        ETFUtils.registerNativeImageToIdentifier(ETFUtils.emptyNativeImage(), ETFUtils.res(MOD_ID, "error.png"));
-        return new ETFTexture(ETFUtils.res(MOD_ID, "error.png")/*, false*/ );//, ETFTexture.TextureSource.GENERIC_DEBUG);
+        ETFUtils2.registerNativeImageToIdentifier(ETFUtils2.emptyNativeImage(), ETFUtils2.res(MOD_ID, "error.png"));
+        return new ETFTexture(ETFUtils2.res(MOD_ID, "error.png")/*, false*/ );//, ETFTexture.TextureSource.GENERIC_DEBUG);
     }
 
     public static ETFConfig.EmissiveRenderModes getEmissiveMode() {
@@ -194,7 +194,7 @@ public class ETFManager {
         out.append("\n----------------------------------------")
                 .append("\n||||||||||||||-ETF EVERYTHING LOG END-|||||||||||||||");
 
-        ETFUtils.logMessage(out.toString());
+        ETFUtils2.logMessage(out.toString());
     }
 
     public void grabSpecialProperties(Properties props, ETFEntity entity) {
@@ -261,8 +261,8 @@ public class ETFManager {
             } else {
                 VARIATOR_MAP.put(vanillaIdentifier, ETFTextureVariator.of(vanillaIdentifier));
                 if (ETF.config().getConfig().logTextureDataInitialization) {
-                    ETFUtils.logMessage("Amount of 'base' textures: " + VARIATOR_MAP.size());
-                    ETFUtils.logMessage("Total textures including variants: " + ETF_TEXTURE_CACHE.size());
+                    ETFUtils2.logMessage("Amount of 'base' textures: " + VARIATOR_MAP.size());
+                    ETFUtils2.logMessage("Total textures including variants: " + ETF_TEXTURE_CACHE.size());
                 }
             }
         }
@@ -284,7 +284,7 @@ public class ETFManager {
             ETF_TEXTURE_CACHE.put(ofIdentifier, newTexture);
             return newTexture;
         }
-        ETFUtils.logError("getOrCreateETFTexture reached the end and should not have");
+        ETFUtils2.logError("getOrCreateETFTexture reached the end and should not have");
         return ETF_ERROR_TEXTURE;
     }
 

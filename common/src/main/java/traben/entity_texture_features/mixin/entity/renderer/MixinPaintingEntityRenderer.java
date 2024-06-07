@@ -33,7 +33,7 @@ import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.texture_handlers.ETFSprite;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
 import traben.entity_texture_features.utils.ETFEntity;
-import traben.entity_texture_features.utils.ETFUtils;
+import traben.entity_texture_features.utils.ETFUtils2;
 
 @Mixin(PaintingRenderer.class)
 public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Painting> {
@@ -46,7 +46,7 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
     @Shadow protected abstract void vertex(final Matrix4f matrix4f, final Matrix3f matrix3f, final VertexConsumer vertexConsumer, final float f, final float g, final float h, final float i, final float j, final int k, final int l, final int m, final int n);
     #endif
     @Unique
-    private static final ResourceLocation etf$BACK_SPRITE_ID = ETFUtils.res("textures/painting/back.png");
+    private static final ResourceLocation etf$BACK_SPRITE_ID = ETFUtils2.res("textures/painting/back.png");
 
     @SuppressWarnings("unused")
     protected MixinPaintingEntityRenderer(EntityRendererProvider.Context ctx) {
@@ -62,7 +62,7 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
         try {
             TextureAtlasSprite paintingSprite = Minecraft.getInstance().getPaintingTextures().get(paintingEntity.getVariant().value());
             ResourceLocation paintingId = paintingSprite.contents().name();
-            ResourceLocation paintingTexture = ETFUtils.res(paintingId.getNamespace(), "textures/painting/" + paintingId.getPath() + ".png");
+            ResourceLocation paintingTexture = ETFUtils2.res(paintingId.getNamespace(), "textures/painting/" + paintingId.getPath() + ".png");
 
             ETFEntity etfEntity = (ETFEntity) paintingEntity;
 

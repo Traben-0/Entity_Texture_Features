@@ -33,7 +33,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 
 
-public abstract class ETFUtils {
+public abstract class ETFUtils2 {
 
     public static @NotNull ResourceLocation res(String fullPath){
         #if MC >= MC_21
@@ -112,7 +112,7 @@ public abstract class ETFUtils {
 
     @Nullable
     public static ResourceLocation addVariantNumberSuffix(@NotNull ResourceLocation identifier, int variant) {
-        var changed = ETFUtils.res(addVariantNumberSuffix(identifier.toString(), variant));
+        var changed = ETFUtils2.res(addVariantNumberSuffix(identifier.toString(), variant));
         return identifier.equals(changed) ? null : changed;
     }
 
@@ -138,9 +138,9 @@ public abstract class ETFUtils {
         if (id == null) return null;
         ResourceLocation forReturn;
         try {
-            forReturn = ETFUtils.res(id.getNamespace(), id.getPath().replaceFirst(regex, replace));
+            forReturn = ETFUtils2.res(id.getNamespace(), id.getPath().replaceFirst(regex, replace));
         } catch (ResourceLocationException idFail) {
-            ETFUtils.logError(ETF.getTextFromTranslation("config.entity_texture_features.illegal_path_recommendation").getString() + "\n" + idFail);
+            ETFUtils2.logError(ETF.getTextFromTranslation("config.entity_texture_features.illegal_path_recommendation").getString() + "\n" + idFail);
             forReturn = null;
         } catch (Exception e) {
             forReturn = null;

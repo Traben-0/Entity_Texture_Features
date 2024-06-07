@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.features.ETFManager;
-import traben.entity_texture_features.utils.ETFUtils;
+import traben.entity_texture_features.utils.ETFUtils2;
 
 #if MC > MC_20_1
 @Mixin(Minecraft.class)
@@ -26,7 +26,7 @@ public abstract class MixinResourceReload {
     @Inject(method = "finishReload", at = @At("HEAD"))
     #endif
     private void etf$injected(CallbackInfo ci) {
-        ETFUtils.logMessage("reloading ETF data.");
+        ETFUtils2.logMessage("reloading ETF data.");
         ETFManager.resetInstance();
     }
 }

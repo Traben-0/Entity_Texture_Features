@@ -10,7 +10,7 @@ import traben.entity_texture_features.features.property_reading.properties.Rando
 import traben.entity_texture_features.features.property_reading.properties.generic_properties.SimpleIntegerArrayProperty;
 import traben.entity_texture_features.features.texture_handlers.ETFDirectory;
 import traben.entity_texture_features.utils.ETFEntity;
-import traben.entity_texture_features.utils.ETFUtils;
+import traben.entity_texture_features.utils.ETFUtils2;
 import traben.entity_texture_features.utils.EntityBooleanLRU;
 
 import java.util.*;
@@ -46,9 +46,9 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
         if (propertiesFileIdentifier == null) return null;
 
         try {
-            Properties props = ETFUtils.readAndReturnPropertiesElseNull(propertiesFileIdentifier);
+            Properties props = ETFUtils2.readAndReturnPropertiesElseNull(propertiesFileIdentifier);
             if (props == null) {
-                ETFUtils.logMessage("Ignoring properties file that was null @ " + propertiesFileIdentifier, false);
+                ETFUtils2.logMessage("Ignoring properties file that was null @ " + propertiesFileIdentifier, false);
                 return null;
             }
             if (vanillaIdentifier.getPath().endsWith(".png")) {
@@ -57,7 +57,7 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
 
             List<RandomPropertyRule> propertyRules = PropertiesRandomProvider.getAllValidPropertyObjects(props, propertiesFileIdentifier, suffixKeyName);
             if (propertyRules.isEmpty()) {
-                ETFUtils.logMessage("Ignoring properties file that failed to load any cases @ " + propertiesFileIdentifier, false);
+                ETFUtils2.logMessage("Ignoring properties file that failed to load any cases @ " + propertiesFileIdentifier, false);
                 return null;
             }
 
@@ -66,11 +66,11 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
             String vanillaPack = resourceManager.getResource(vanillaIdentifier).map(Resource::sourcePackId).orElse(null);
 
             if (properties != null
-                    && properties.equals(ETFUtils.returnNameOfHighestPackFromTheseTwo(properties, vanillaPack))) {
+                    && properties.equals(ETFUtils2.returnNameOfHighestPackFromTheseTwo(properties, vanillaPack))) {
                 return new PropertiesRandomProvider(propertiesFileIdentifier, propertyRules);
             }
         } catch (Exception e) {
-            ETFUtils.logWarn("Ignoring properties file that caused Exception @ " + propertiesFileIdentifier + "\n" + e, false);
+            ETFUtils2.logWarn("Ignoring properties file that caused Exception @ " + propertiesFileIdentifier + "\n" + e, false);
             e.printStackTrace();
         }
         return null;
@@ -100,7 +100,7 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
                         RandomProperties.getAllRegisteredRandomPropertiesOfIndex(properties, ruleNumber)
                 ));
             } else {
-                ETFUtils.logWarn("property number \"" + ruleNumber + ". in file \"" + propertiesFilePath + ". failed to read.");
+                ETFUtils2.logWarn("property number \"" + ruleNumber + ". in file \"" + propertiesFilePath + ". failed to read.");
             }
         }
         return allRulesOfProperty;

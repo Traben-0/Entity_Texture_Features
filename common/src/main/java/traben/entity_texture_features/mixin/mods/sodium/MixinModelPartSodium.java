@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
 import traben.entity_texture_features.mixin.MixinModelPart;
-import traben.entity_texture_features.utils.ETFUtils;
+import traben.entity_texture_features.utils.ETFUtils2;
 import traben.entity_texture_features.utils.ETFVertexConsumer;
 
 /**
@@ -54,15 +54,15 @@ public abstract class MixinModelPartSodium {
                     RenderType layer = etfVertexConsumer.etf$getRenderLayer();
                     if (provider != null && layer != null) {
                         //attempt special renders as eager OR checks
-                        ETFUtils.RenderMethodForOverlay renderer = (a, b) -> {
+                        ETFUtils2.RenderMethodForOverlay renderer = (a, b) -> {
                             VertexBufferWriter a2 = VertexConsumerUtils.convertOrLog(a);
                             if (a2 == null) {
                                 return;
                             }
                             render(matrixStack, a2, part, b, overlay, color);
                         };
-                        if (ETFUtils.renderEmissive(texture, provider, renderer) |
-                                ETFUtils.renderEnchanted(texture, provider, light, renderer)) {
+                        if (ETFUtils2.renderEmissive(texture, provider, renderer) |
+                                ETFUtils2.renderEnchanted(texture, provider, light, renderer)) {
                             //reset render layer stuff behind the scenes if special renders occurred
                             provider.getBuffer(layer);
                         }

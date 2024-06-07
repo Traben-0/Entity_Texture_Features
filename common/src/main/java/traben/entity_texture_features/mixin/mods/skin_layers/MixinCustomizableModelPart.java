@@ -16,7 +16,7 @@ import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.mixin.MixinModelPart;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
-import traben.entity_texture_features.utils.ETFUtils;
+import traben.entity_texture_features.utils.ETFUtils2;
 import traben.entity_texture_features.utils.ETFVertexConsumer;
 
 /**
@@ -53,9 +53,9 @@ public abstract class MixinCustomizableModelPart {
                         RenderType layer = etfVertexConsumer.etf$getRenderLayer();
                         if (provider != null && layer != null) {
                             //attempt special renders as eager OR checks
-                            ETFUtils.RenderMethodForOverlay renderer = (a, b) -> render(vanillaModel, poseStack, a, b, overlay, red, green, blue, alpha);
-                            if (ETFUtils.renderEmissive(texture, provider, renderer) |
-                                    ETFUtils.renderEnchanted(texture, provider, light, renderer)) {
+                            ETFUtils2.RenderMethodForOverlay renderer = (a, b) -> render(vanillaModel, poseStack, a, b, overlay, red, green, blue, alpha);
+                            if (ETFUtils2.renderEmissive(texture, provider, renderer) |
+                                    ETFUtils2.renderEnchanted(texture, provider, light, renderer)) {
                                 //reset render layer stuff behind the scenes if special renders occurred
                                 provider.getBuffer(layer);
                             }

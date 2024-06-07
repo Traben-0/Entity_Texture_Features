@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import traben.entity_texture_features.ETF;
-import traben.entity_texture_features.utils.ETFUtils;
+import traben.entity_texture_features.utils.ETFUtils2;
 
 
 @Mixin(EnderDragonRenderer.class)
@@ -53,7 +53,7 @@ public abstract class MixinEnderDragonEntityRenderer extends EntityRenderer<Ende
                     return RenderType.eyes(DRAGON_EYES_LOCATION);
                 }
             } catch (Exception e) {
-                ETFUtils.logError(e.toString(), false);
+                ETFUtils2.logError(e.toString(), false);
             }
         }
         return texturedRenderLayer;

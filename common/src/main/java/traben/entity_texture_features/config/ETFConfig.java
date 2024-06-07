@@ -23,7 +23,7 @@ import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.player.ETFPlayerTexture;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperties;
-import traben.entity_texture_features.utils.ETFUtils;
+import traben.entity_texture_features.utils.ETFUtils2;
 import traben.tconfig.TConfig;
 import traben.entity_texture_features.utils.ETFEntity;
 import traben.tconfig.gui.entries.*;
@@ -365,7 +365,7 @@ public final class ETFConfig extends TConfig {
 
     @Override
     public ResourceLocation getModIcon() {
-        return ETFUtils.res(MOD_ID, "textures/gui/icon.png");
+        return ETFUtils2.res(MOD_ID, "textures/gui/icon.png");
     }
 
     public enum OverrideBooleanType {

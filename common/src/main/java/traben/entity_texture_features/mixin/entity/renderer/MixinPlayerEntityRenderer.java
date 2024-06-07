@@ -27,7 +27,7 @@ import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.player.ETFPlayerFeatureRenderer;
 import traben.entity_texture_features.features.player.ETFPlayerSkinHolder;
 import traben.entity_texture_features.features.player.ETFPlayerTexture;
-import traben.entity_texture_features.utils.ETFUtils;
+import traben.entity_texture_features.utils.ETFUtils2;
 
 @Mixin(PlayerRenderer.class)
 public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> implements ETFPlayerSkinHolder {
@@ -113,7 +113,7 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
             } catch (NoClassDefFoundError error) {
                 // Should never be thrown
                 // unless a significant change if skin layers mod
-                ETFUtils.logError("Error with ETF's 3D skin layers mod hand compatibility: " + error);
+                ETFUtils2.logError("Error with ETF's 3D skin layers mod hand compatibility: " + error);
                 error.printStackTrace();
                 //prevent further attempts
                 ETF.SKIN_LAYERS_DETECTED = false;

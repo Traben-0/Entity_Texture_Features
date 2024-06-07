@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.config.screens.ETFConfigScreenMain;
-import traben.entity_texture_features.utils.ETFUtils;
+import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.nio.file.Path;
 import java.util.Objects;
@@ -30,9 +30,9 @@ public abstract class MixinPackScreen extends Screen {
 
 
     @Unique
-    private static final ResourceLocation etf$FOCUSED = ETFUtils.res("entity_features", "textures/gui/settings_focused.png");
+    private static final ResourceLocation etf$FOCUSED = ETFUtils2.res("entity_features", "textures/gui/settings_focused.png");
     @Unique
-    private static final ResourceLocation etf$UNFOCUSED = ETFUtils.res("entity_features", "textures/gui/settings_unfocused.png");
+    private static final ResourceLocation etf$UNFOCUSED = ETFUtils2.res("entity_features", "textures/gui/settings_unfocused.png");
     @Shadow
     @Final
     private Path packDir;

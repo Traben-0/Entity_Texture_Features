@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.mixin.mods.sodium.MixinModelPartSodium;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
-import traben.entity_texture_features.utils.ETFUtils;
+import traben.entity_texture_features.utils.ETFUtils2;
 import traben.entity_texture_features.utils.ETFVertexConsumer;
 
 /**
@@ -74,9 +74,9 @@ public abstract class MixinModelPart {
                     //are these render required objects valid?
                     if (provider != null && layer != null) {
                         //attempt special renders as eager OR checks
-                        ETFUtils.RenderMethodForOverlay renderer = (a, b) -> render(matrices, a, b, overlay #if MC < MC_21 , red, green, blue, alpha #endif);
-                        if (ETFUtils.renderEmissive(texture, provider, renderer) |
-                                ETFUtils.renderEnchanted(texture, provider, light, renderer)) {
+                        ETFUtils2.RenderMethodForOverlay renderer = (a, b) -> render(matrices, a, b, overlay #if MC < MC_21 , red, green, blue, alpha #endif);
+                        if (ETFUtils2.renderEmissive(texture, provider, renderer) |
+                                ETFUtils2.renderEnchanted(texture, provider, light, renderer)) {
                             //reset render layer stuff behind the scenes if special renders occurred
                             //this will also return ETFVertexConsumer held data to normal if the same ETFVertexConsumer
                             //was previously affected by a special render
