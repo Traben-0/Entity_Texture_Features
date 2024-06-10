@@ -83,12 +83,16 @@ public abstract class MixinModelPartSodium {
 
     @ModifyVariable(method = "render",
             at = @At("HEAD"), ordinal = 0, argsOnly = true)
-    private VertexConsumer etf$modify(final VertexConsumer value) {
+    private VertexBufferWriter etf$modify(final VertexBufferWriter value) {
         if (value instanceof BufferBuilder builder && !builder.building){
             if (value instanceof ETFVertexConsumer etf
                     && etf.etf$getRenderLayer() != null
                     && etf.etf$getProvider() != null){
-                return etf.etf$getProvider().getBuffer(etf.etf$getRenderLayer());
+                var a = etf.etf$getProvider().getBuffer(etf.etf$getRenderLayer());
+                VertexBufferWriter a2 = VertexConsumerUtils.convertOrLog(a);
+                if (a2 != null) {
+                    return a2;
+                }
             }
         }
         return value;
