@@ -1,6 +1,6 @@
-package traben.entity_texture_features.mixin.mods.iris.dh_beta;
-
-import net.irisshaders.iris.layer.InnerWrappedRenderType;
+package traben.entity_texture_features.mixin.mods.iris.old;
+#if MC < MC_21
+import net.coderbot.iris.layer.OuterWrappedRenderType;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,12 +13,10 @@ import java.util.Optional;
 
 /**
  * Required in case Iris wraps an instance of {@link ETFRenderLayerWithTexture}
- * <p>
- * This is assumed to be required, whereas I know {@link MixinOuterWrappedRenderType} is required.
  */
 @Pseudo
-@Mixin(value = InnerWrappedRenderType.class)
-public abstract class MixinInnerWrappedRenderType implements ETFRenderLayerWithTexture {
+@Mixin(value = OuterWrappedRenderType.class)
+public abstract class MixinOuterWrappedRenderType implements ETFRenderLayerWithTexture {
 
 
     @Shadow
@@ -31,3 +29,12 @@ public abstract class MixinInnerWrappedRenderType implements ETFRenderLayerWithT
         return Optional.empty();
     }
 }
+#else
+import net.minecraft.client.Minecraft;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
+
+@Pseudo
+@Mixin(Minecraft.class)
+public class MixinOuterWrappedRenderType {}
+#endif

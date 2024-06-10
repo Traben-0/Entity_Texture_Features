@@ -94,6 +94,7 @@ public abstract class ETFUtils2 {
     }
 
     public static boolean renderEnchanted(ETFTexture texture, MultiBufferSource provider, int light, RenderMethodForOverlay renderer) {
+
         //attempt enchanted render
         ResourceLocation enchanted = texture.getEnchantIdentifierOfCurrentState();
         if (enchanted != null) {

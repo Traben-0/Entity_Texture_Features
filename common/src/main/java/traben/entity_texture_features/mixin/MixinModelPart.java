@@ -1,5 +1,6 @@
 package traben.entity_texture_features.mixin;
 
+import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.geom.ModelPart;
@@ -7,8 +8,10 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.mixin.mods.sodium.MixinModelPartSodium;
 import traben.entity_texture_features.features.ETFRenderContext;
@@ -75,12 +78,13 @@ public abstract class MixinModelPart {
                     if (provider != null && layer != null) {
                         //attempt special renders as eager OR checks
                         ETFUtils2.RenderMethodForOverlay renderer = (a, b) -> render(matrices, a, b, overlay, #if MC < MC_21 red, green, blue, alpha #else k #endif);
-                        if (ETFUtils2.renderEmissive(texture, provider, renderer) |
-                                ETFUtils2.renderEnchanted(texture, provider, light, renderer)) {
+                        if (ETFUtils2.renderEmissive(texture, provider, renderer)
+                                | ETFUtils2.renderEnchanted(texture, provider, light, renderer)
+                        ) {
                             //reset render layer stuff behind the scenes if special renders occurred
                             //this will also return ETFVertexConsumer held data to normal if the same ETFVertexConsumer
                             //was previously affected by a special render
-                            provider.getBuffer(layer);
+                            #if MC < MC_21 provider.getBuffer(layer); #endif
                         }
                     }
                 }
@@ -89,7 +93,27 @@ public abstract class MixinModelPart {
             ETFRenderContext.resetCurrentModelPartDepth();
         }
     }
+    #if MC >= MC_21
 
 
+    @ModifyVariable(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;III)V",
+            at = @At("HEAD"), ordinal = 0, argsOnly = true)
+    private VertexConsumer etf$modify(final VertexConsumer value) {
+        if (value instanceof BufferBuilder builder && !builder.building){
+            if (value instanceof ETFVertexConsumer etf
+                    && etf.etf$getRenderLayer() != null
+                    && etf.etf$getProvider() != null){
+                return etf.etf$getProvider().getBuffer(etf.etf$getRenderLayer());
+            }
+        }
+        return value;
+    }
 
+    #endif
 }
+
+
+
+
+
+

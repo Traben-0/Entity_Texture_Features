@@ -1,7 +1,8 @@
-package traben.entity_texture_features.mixin.mods.iris.dh_beta;
+package traben.entity_texture_features.mixin.mods.iris.old;
 
+#if MC < MC_21
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.irisshaders.batchedentityrendering.impl.FullyBufferedMultiBufferSource;
+import net.coderbot.batchedentityrendering.impl.FullyBufferedMultiBufferSource;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import org.spongepowered.asm.mixin.Mixin;
@@ -11,7 +12,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import traben.entity_texture_features.features.ETFRenderContext;
-
 
 /**
  * this is a copy of {@link net.minecraft.client.renderer.MultiBufferSource.BufferSource} but for iris's
@@ -45,3 +45,12 @@ public class MixinFullyBufferedMultiBufferSource {
     }
 
 }
+#else
+import net.minecraft.client.Minecraft;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
+
+@Pseudo
+@Mixin(Minecraft.class)
+public class MixinFullyBufferedMultiBufferSource {}
+#endif

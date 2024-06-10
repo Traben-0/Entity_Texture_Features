@@ -1,6 +1,8 @@
 package traben.entity_texture_features.mixin.mods.sodium;
 
+import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import me.jellysquid.mods.sodium.client.render.immediate.model.EntityRenderer;
 import me.jellysquid.mods.sodium.client.render.vertex.VertexConsumerUtils;
 import net.caffeinemc.mods.sodium.api.vertex.buffer.VertexBufferWriter;
@@ -12,6 +14,7 @@ import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
@@ -64,7 +67,8 @@ public abstract class MixinModelPartSodium {
                         if (ETFUtils2.renderEmissive(texture, provider, renderer) |
                                 ETFUtils2.renderEnchanted(texture, provider, light, renderer)) {
                             //reset render layer stuff behind the scenes if special renders occurred
-                            provider.getBuffer(layer);
+                            //todo check the 1.21 stuff is needed for sodium
+                            #if MC < MC_21 provider.getBuffer(layer); #endif
                         }
                     }
                 }
@@ -73,6 +77,22 @@ public abstract class MixinModelPartSodium {
             ETFRenderContext.resetCurrentModelPartDepth();
         }
     }
+//todo check the 1.21 stuff is needed for sodium
+    #if MC >= MC_21
 
 
+    @ModifyVariable(method = "render",
+            at = @At("HEAD"), ordinal = 0, argsOnly = true)
+    private VertexConsumer etf$modify(final VertexConsumer value) {
+        if (value instanceof BufferBuilder builder && !builder.building){
+            if (value instanceof ETFVertexConsumer etf
+                    && etf.etf$getRenderLayer() != null
+                    && etf.etf$getProvider() != null){
+                return etf.etf$getProvider().getBuffer(etf.etf$getRenderLayer());
+            }
+        }
+        return value;
+    }
+
+    #endif
 }
