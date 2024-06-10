@@ -1,16 +1,17 @@
 [**ETF Changelog:**]
 
-- crowdin support
-- multiversion source
-- skin option to preserve transparency in extra skin pixels
+[6.1]
+
+- massive source code rework to move all Minecraft versions into the one source branch, this will have no impact to end users but will massively speed up backporting and deployment of mod updates
+- added crowdin translation support
+- added skin option to preserve transparency in extra skin pixels
 - fixed #265 crash when block entity state is null
 - fixed enchanted elytra not rendering emissive textures
 - fixed shoulder parrots
 - fixed emissive armor and trims breaking with iris
-- fixed emissive elytra breaking when enchanted
 - fixed the custom emissive suffix file declaration getting overridden by higher packs *(using `_e` is still highly recommended)*
 - fixed ImmediatelyFast compat for mod update v1.2.16, ETF still retains compat for the older versions
-- fixed a missing texture issue with the amendments mod's jukeboxes when playing disc 13
+- fixed a missing texture issue with the amendments mod's jukeboxes when playing disc 13 *(this may fix other missing texture issues with modded block entities)*
 
 [6.0.1]
 
