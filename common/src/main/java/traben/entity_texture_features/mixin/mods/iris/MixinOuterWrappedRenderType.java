@@ -1,5 +1,5 @@
 package traben.entity_texture_features.mixin.mods.iris;
-
+#if MC < MC_21
 import net.coderbot.iris.layer.OuterWrappedRenderType;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
@@ -29,3 +29,4 @@ public abstract class MixinOuterWrappedRenderType implements ETFRenderLayerWithT
         return Optional.empty();
     }
 }
+#endif

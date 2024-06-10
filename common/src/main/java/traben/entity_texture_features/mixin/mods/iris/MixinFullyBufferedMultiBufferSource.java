@@ -1,5 +1,6 @@
 package traben.entity_texture_features.mixin.mods.iris;
 
+#if MC < MC_21
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.coderbot.batchedentityrendering.impl.FullyBufferedMultiBufferSource;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -44,3 +45,4 @@ public class MixinFullyBufferedMultiBufferSource {
     }
 
 }
+#endif

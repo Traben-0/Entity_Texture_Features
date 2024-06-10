@@ -32,7 +32,7 @@ public abstract class MixinModelPart {
     public abstract void render(PoseStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha);
 #else
     @Shadow public abstract void render(final PoseStack poseStack, final VertexConsumer vertexConsumer, final int i, final int j, final int k);
-    @Shadow public abstract void render(final PoseStack poseStack, final VertexConsumer vertexConsumer, final int packedLight, final int packedOverlay);
+
 #endif
 
 
@@ -74,7 +74,7 @@ public abstract class MixinModelPart {
                     //are these render required objects valid?
                     if (provider != null && layer != null) {
                         //attempt special renders as eager OR checks
-                        ETFUtils2.RenderMethodForOverlay renderer = (a, b) -> render(matrices, a, b, overlay #if MC < MC_21 , red, green, blue, alpha #endif);
+                        ETFUtils2.RenderMethodForOverlay renderer = (a, b) -> render(matrices, a, b, overlay, #if MC < MC_21 red, green, blue, alpha #else k #endif);
                         if (ETFUtils2.renderEmissive(texture, provider, renderer) |
                                 ETFUtils2.renderEnchanted(texture, provider, light, renderer)) {
                             //reset render layer stuff behind the scenes if special renders occurred
