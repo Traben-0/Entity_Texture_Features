@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
-#if MC == MC_20_1
+#if MC < MC_20_6
 //todo maybe more versions.....
 import net.minecraft.world.item.ArmorItem;
 #endif

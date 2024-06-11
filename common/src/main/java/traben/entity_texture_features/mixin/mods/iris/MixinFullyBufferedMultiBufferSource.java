@@ -1,5 +1,13 @@
 package traben.entity_texture_features.mixin.mods.iris;
+#if MC == MC_20_2 || MC < MC_20_1
+import net.minecraft.client.Minecraft;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 
+@Pseudo
+@Mixin(Minecraft.class)
+public class MixinFullyBufferedMultiBufferSource {}
+#else
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.irisshaders.batchedentityrendering.impl.FullyBufferedMultiBufferSource;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -45,3 +53,4 @@ public class MixinFullyBufferedMultiBufferSource {
     }
 
 }
+#endif

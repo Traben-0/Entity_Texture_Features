@@ -1,15 +1,18 @@
 package traben.entity_texture_features.compat;
 
+#if MC == MC_20_1 || MC >= MC_20_4
 import me.jellysquid.mods.sodium.client.render.vertex.buffer.ExtendedBufferBuilder;
-
+import traben.entity_texture_features.features.ETFRenderContext;
+import traben.entity_texture_features.utils.ETFVertexConsumer;
+import java.util.Objects;
+#endif
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import org.apache.logging.log4j.util.TriConsumer;
-import traben.entity_texture_features.features.ETFRenderContext;
-import traben.entity_texture_features.utils.ETFVertexConsumer;
+
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
-import java.util.Objects;
+
 
 /**
  * A separate class to handle a specific sodium injection case for sodium 0.5.6+
@@ -24,13 +27,14 @@ public abstract class SodiumGetBufferInjector {
     }
 
     private static TriConsumer<MultiBufferSource, RenderType, VertexConsumer> get() {
+        #if MC == MC_20_1 || MC >= MC_20_4
         try {
             return new Impl();
-        } catch (NoClassDefFoundError | NullPointerException e) {
-            return null;
-        }
+        } catch (NoClassDefFoundError | NullPointerException ignored) {}
+        #endif
+        return null;
     }
-
+#if MC == MC_20_1 || MC >= MC_20_4
     private static class Impl implements TriConsumer<MultiBufferSource, RenderType, VertexConsumer> {
         Impl() {
             Objects.requireNonNull(ExtendedBufferBuilder.class);
@@ -46,4 +50,5 @@ public abstract class SodiumGetBufferInjector {
             }
         }
     }
+    #endif
 }

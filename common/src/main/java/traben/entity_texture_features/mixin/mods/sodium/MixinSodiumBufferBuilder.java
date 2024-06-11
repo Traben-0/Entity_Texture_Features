@@ -1,5 +1,13 @@
 package traben.entity_texture_features.mixin.mods.sodium;
+#if MC == MC_20_2 || MC < MC_20_1
+import net.minecraft.client.Minecraft;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 
+@Pseudo
+@Mixin(Minecraft.class)
+public class MixinSodiumBufferBuilder {}
+#else
 import me.jellysquid.mods.sodium.client.render.vertex.buffer.SodiumBufferBuilder;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -56,3 +64,4 @@ public class MixinSodiumBufferBuilder implements ETFVertexConsumer {
 //        }
     }
 }
+#endif

@@ -24,12 +24,7 @@ dependencies {
         exclude(group: "net.fabricmc.fabric-api")
     }
     int mc_build = project.mc_build as int
-    if (mc_build == 5 || mc_build == 3 ) {
-        //todo does 1.20.1 build need seperate version just for referencing 3 files?
-        //todo future versions wont need seperate dh beta for dual renamed classes support
-        modImplementation files("build/iris-1.7.0-snapshot+mc1.20.4-dfec34d-dirty.jar")
-    }
-    if (mc_build == 6) {
+    if (mc_build == 5 || mc_build == 3 || mc_build == 6) {
         //todo does 1.20.1 build need seperate version just for referencing 3 files?
         //todo future versions wont need seperate dh beta for dual renamed classes support
         modImplementation files("build/iris-1.7.0-snapshot+mc1.20.4-dfec34d-dirty.jar")

@@ -71,11 +71,11 @@ subprojects {
 
         //no idea why this breaks with those versions
 //        //todo just only use older build?
-//        if (rootProject.mc_build as int > 4 && rootProject.mc_build as int < 7){
+        if (rootProject.mc_build as int > 5){
             annotationProcessor 'systems.manifold:manifold-preprocessor:2024.1.17'
-//        }else{
-//            annotationProcessor 'systems.manifold:manifold-preprocessor:2023.1.17'
-//        }
+        }else{
+            annotationProcessor 'systems.manifold:manifold-preprocessor:2023.1.17'
+        }
 //        testAnnotationProcessor 'systems.manifold:manifold-preprocessor:2024.1.16'
 
     }

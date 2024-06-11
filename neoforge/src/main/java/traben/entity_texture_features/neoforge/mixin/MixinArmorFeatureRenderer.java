@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
@@ -69,7 +68,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
 #else
 @Inject(method = "renderModel(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/item/ArmorItem;Lnet/minecraft/client/model/HumanoidModel;ZFFFLjava/lang/String;)V",
         at = @At(value = "TAIL"))
-    private void etf$applyEmissive(final PoseStack arg, final MultiBufferSource arg2, final int i, final ArmorItem arg3, final A model, final boolean bl, final float f, final float g, final float h, final String string, final CallbackInfo ci) {
+    private void etf$applyEmissive(final PoseStack arg, final MultiBufferSource arg2, final int i, final ArmorItem arg3, final M model, final boolean bl, final float f, final float g, final float h, final String string, final CallbackInfo ci) {
 
 #endif
         etf$armorHandler.renderBaseEmissive(arg,arg2,model,f,g,h);
@@ -94,7 +93,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
 #else
     @Inject(method = "renderTrim(Lnet/minecraft/world/item/ArmorMaterial;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/item/armortrim/ArmorTrim;Lnet/minecraft/client/model/HumanoidModel;Z)V",
         at = @At(value = "HEAD"))
-    private void etf$trimGet(final ArmorMaterial arg, final PoseStack arg2, final MultiBufferSource arg3, final int i, final ArmorTrim arg4, final A arg5, final boolean bl, final CallbackInfo ci) {
+    private void etf$trimGet(final ArmorMaterial arg, final PoseStack arg2, final MultiBufferSource arg3, final int i, final ArmorTrim arg4, final M arg5, final boolean bl, final CallbackInfo ci) {
 #endif
         etf$armorHandler.setTrim(arg,arg4,bl);
     }
@@ -120,7 +119,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
 @Inject(method = "renderTrim(Lnet/minecraft/world/item/ArmorMaterial;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/item/armortrim/ArmorTrim;Lnet/minecraft/client/model/HumanoidModel;Z)V",
         at = @At(value = "TAIL"))
 
-    private void etf$trimEmissive(final ArmorMaterial arg, final PoseStack arg2, final MultiBufferSource arg3, final int i, final ArmorTrim arg4, final A arg5, final boolean bl, final CallbackInfo ci) {
+    private void etf$trimEmissive(final ArmorMaterial arg, final PoseStack arg2, final MultiBufferSource arg3, final int i, final ArmorTrim arg4, final M arg5, final boolean bl, final CallbackInfo ci) {
 #endif
         etf$armorHandler.renderTrimEmissive(arg2,arg3,arg5);
     }

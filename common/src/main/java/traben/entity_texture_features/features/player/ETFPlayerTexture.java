@@ -122,7 +122,7 @@ public class ETFPlayerTexture {
             #if MC > MC_20_1
                     ETFUtils2.getNativeImageElseNull(Minecraft.getInstance().player.getSkin().texture());
             #else
-                    ETFUtils.getNativeImageElseNull(Minecraft.getInstance().player.getSkinTextureLocation());
+                    ETFUtils2.getNativeImageElseNull(Minecraft.getInstance().player.getSkinTextureLocation());
             #endif
             if (skin != null) {
                 clientPlayerOriginalSkinImageForTool = skin;
