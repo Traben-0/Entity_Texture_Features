@@ -64,7 +64,13 @@ dependencies {
 
 shadowJar {
     exclude "fabric.mod.json"
-    exclude "META-INF/mods.toml"
+    int mc = project.mc_build as int
+    if (mc > 5) {
+        exclude "META-INF/mods.toml"
+    }else{
+        exclude "META-INF/neoforge.mods.toml"
+    }
+
     exclude "architectury.common.json"
 
     configurations = [project.configurations.shadowCommon]
