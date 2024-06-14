@@ -3,7 +3,10 @@ package traben.entity_texture_features.compat;
 #if MC == MC_20_1 || MC >= MC_20_4
 import me.jellysquid.mods.sodium.client.render.vertex.buffer.ExtendedBufferBuilder;
 import traben.entity_texture_features.features.ETFRenderContext;
+import traben.entity_texture_features.utils.ETFUtils2;
 import traben.entity_texture_features.utils.ETFVertexConsumer;
+
+import java.lang.reflect.Method;
 import java.util.Objects;
 #endif
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -22,22 +25,39 @@ public abstract class SodiumGetBufferInjector {
 
     private static final TriConsumer<MultiBufferSource, RenderType, VertexConsumer> INSTANCE = get();
 
+
     public static void inject(MultiBufferSource provider, RenderType renderLayer, VertexConsumer vertexConsumer) {
         if (INSTANCE != null) INSTANCE.accept(provider, renderLayer, vertexConsumer);
     }
 
     private static TriConsumer<MultiBufferSource, RenderType, VertexConsumer> get() {
-        #if MC == MC_20_1 || MC >= MC_20_4
+        #if MC == MC_20_1 || MC == MC_20_4 || MC == MC_20_6
         try {
             return new Impl();
-        } catch (NoClassDefFoundError | NullPointerException ignored) {}
+            //sodium 0.5.9+ will cause the NoSuchMethodError as the interface ExtendedBufferBuilder has changed to no longer need that
+            // ETF for now just still uses 0.5.8 to retain back compatibility until enough time has passed to drop this entirely
+        } catch (NoClassDefFoundError | NoSuchMethodError | NullPointerException ignored) {
+            ETFUtils2.logWarn("ETF compatibility method for sodium versions prior to 0.5.9 failed, this is fine if you are using a newer sodium or if it isn't installed at all");
+        }
+        //any of these errors means we are using an different version of sodium
         #endif
         return null;
     }
-#if MC == MC_20_1 || MC >= MC_20_4
+#if MC == MC_20_1 || MC == MC_20_4 || MC == MC_20_6
     private static class Impl implements TriConsumer<MultiBufferSource, RenderType, VertexConsumer> {
         Impl() {
             Objects.requireNonNull(ExtendedBufferBuilder.class);
+            var methods = ExtendedBufferBuilder.class.getMethods();
+            boolean found = false;
+            for (Method method : methods) {
+                if (method.getName().equals("sodium$getDelegate")) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                throw new NoSuchMethodError("Method sodium$getDelegate not found");
+            }
         }
 
         @Override

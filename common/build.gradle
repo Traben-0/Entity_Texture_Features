@@ -7,6 +7,8 @@ loom {
 }
 
 dependencies {
+    int mc_build = project.mc_build as int
+
     // We depend on fabric loader here to use the fabric @Environment annotations and get the mixin dependencies
     // Do NOT use other classes from fabric loader
     modImplementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
@@ -23,7 +25,7 @@ dependencies {
     modImplementation("maven.modrinth:iris:${project.iris_version}") {
         exclude(group: "net.fabricmc.fabric-api")
     }
-    int mc_build = project.mc_build as int
+
     if (mc_build == 5 || mc_build == 3 || mc_build == 6) {
         //todo does 1.20.1 build need seperate version just for referencing 3 files?
         //todo future versions wont need seperate dh beta for dual renamed classes support

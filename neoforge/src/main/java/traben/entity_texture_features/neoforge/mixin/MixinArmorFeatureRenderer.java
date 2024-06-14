@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
@@ -17,6 +18,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.armortrim.ArmorTrim;
+import org.checkerframework.checker.units.qual.A;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -49,7 +51,10 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
         etf$armorHandler.end();
     }
     @SuppressWarnings("UnnecessaryQualifiedMemberReference")
-    #if MC >= MC_20_6
+    #if MC >= MC_21
+    @ModifyArg(method = "Lnet/minecraft/client/renderer/entity/layers/HumanoidArmorLayer;renderModel(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/model/Model;ILnet/minecraft/resources/ResourceLocation;)V",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/RenderType;armorCutoutNoCull(Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/client/renderer/RenderType;"))
+    #elif MC >= MC_20_6
 
     @ModifyArg(method = "Lnet/minecraft/client/renderer/entity/layers/HumanoidArmorLayer;renderModel(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/model/Model;FFFLnet/minecraft/resources/ResourceLocation;)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/RenderType;armorCutoutNoCull(Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/client/renderer/RenderType;"))
@@ -60,7 +65,12 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
     private ResourceLocation etf$changeTexture(ResourceLocation texture) {
         return etf$armorHandler.getBaseTexture(texture);
     }
-    #if MC >= MC_20_6
+#if MC >= MC_21
+    @Inject(method = "Lnet/minecraft/client/renderer/entity/layers/HumanoidArmorLayer;renderModel(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/model/Model;ILnet/minecraft/resources/ResourceLocation;)V",
+            at = @At(value = "TAIL"))
+    private void etf$applyEmissive(final PoseStack arg, final MultiBufferSource arg2, final int i, final Model model, final int j, final ResourceLocation arg4, final CallbackInfo ci) {
+
+    #elif MC >= MC_20_6
     @Inject(method = "renderModel(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/model/Model;FFFLnet/minecraft/resources/ResourceLocation;)V",
             at = @At(value = "TAIL"))
     private void etf$applyEmissive(final PoseStack arg, final MultiBufferSource arg2, final int i, final Model model, final float f, final float g, final float h, final ResourceLocation arg4, final CallbackInfo ci) {
@@ -71,7 +81,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
     private void etf$applyEmissive(final PoseStack arg, final MultiBufferSource arg2, final int i, final ArmorItem arg3, final M model, final boolean bl, final float f, final float g, final float h, final String string, final CallbackInfo ci) {
 
 #endif
-        etf$armorHandler.renderBaseEmissive(arg,arg2,model,f,g,h);
+        etf$armorHandler.renderBaseEmissive(arg,arg2,model,#if MC >= MC_21 0,0, 0 #else f,g,h #endif);
 
     }
 
@@ -97,7 +107,13 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, M extend
 #endif
         etf$armorHandler.setTrim(arg,arg4,bl);
     }
-    #if MC >= MC_20_6
+
+    #if MC >= MC_21
+    @ModifyArg(method = "renderTrim(Lnet/minecraft/core/Holder;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/item/armortrim/ArmorTrim;Lnet/minecraft/client/model/Model;Z)V",
+            at = @At(value = "INVOKE",
+                    target = "Lnet/minecraft/client/model/Model;renderToBuffer(Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;II)V"),
+            index = 1)
+    #elif MC >= MC_20_6
     @ModifyArg(method = "renderTrim(Lnet/minecraft/core/Holder;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/item/armortrim/ArmorTrim;Lnet/minecraft/client/model/Model;Z)V",
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/client/model/Model;renderToBuffer(Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;IIFFFF)V"),

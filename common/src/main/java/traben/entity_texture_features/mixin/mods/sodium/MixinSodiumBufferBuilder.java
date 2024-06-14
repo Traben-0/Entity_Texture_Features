@@ -1,5 +1,5 @@
 package traben.entity_texture_features.mixin.mods.sodium;
-#if MC == MC_20_2 || MC < MC_20_1
+#if MC == MC_20_2 || MC < MC_20_1 || MC > MC_21
 import net.minecraft.client.Minecraft;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
@@ -22,6 +22,7 @@ import traben.entity_texture_features.utils.ETFVertexConsumer;
 
 import java.util.Optional;
 
+//class no longer exists post sodium 0.5.9 which is always true past 1.21
 @Pseudo
 @Mixin(SodiumBufferBuilder.class)
 public class MixinSodiumBufferBuilder implements ETFVertexConsumer {
