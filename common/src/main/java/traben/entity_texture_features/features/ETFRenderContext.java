@@ -20,6 +20,7 @@ public class ETFRenderContext {
     public static boolean renderingFeatures = false;
 
     private static boolean allowRenderLayerTextureModify = true;
+    private static boolean limitModifyToProperties = false;
     private static ETFEntity currentEntity = null;
     private static int currentModelPartDepth = 0;
 
@@ -101,6 +102,7 @@ public class ETFRenderContext {
         currentEntity = null;
         allowedToPatch = false;
         allowRenderLayerTextureModify = true;
+        limitModifyToProperties = false;
     }
 
     @SuppressWarnings("unused")//used in EMF
@@ -122,6 +124,18 @@ public class ETFRenderContext {
 
     public static void allowTexturePatching() {
         allowedToPatch = true;
+    }
+
+    public static void allowOnlyPropertiesRandom(){
+        limitModifyToProperties = true;
+    }
+
+    public static void allowAllRandom(){
+        limitModifyToProperties = false;
+    }
+
+    public static boolean isRandomLimitedToProperties(){
+        return limitModifyToProperties;
     }
 
     public static void preventTexturePatching() {

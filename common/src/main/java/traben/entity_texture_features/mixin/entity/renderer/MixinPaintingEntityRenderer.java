@@ -21,6 +21,7 @@ import net.minecraft.world.entity.decoration.PaintingVariant;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 #endif
+import net.minecraft.world.entity.decoration.PaintingVariants;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -62,18 +63,24 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
         try {
             TextureAtlasSprite paintingSprite = Minecraft.getInstance().getPaintingTextures().get(paintingEntity.getVariant().value());
             ResourceLocation paintingId = paintingSprite.contents().name();
-            ResourceLocation paintingTexture = ETFUtils2.res(paintingId.getNamespace(), "textures/painting/" + paintingId.getPath() + ".png");
-
+            String paintingFileName = paintingId.getPath();
+            ResourceLocation paintingTexture = ETFUtils2.res(paintingId.getNamespace(), "textures/painting/" + paintingFileName + ".png");
             ETFEntity etfEntity = (ETFEntity) paintingEntity;
 
-            ETFTexture frontTexture = ETFManager.getInstance().getETFTextureVariant(paintingTexture, etfEntity);
-            ETFSprite etf$Sprite = frontTexture.getSprite(paintingSprite);
+            boolean aztec = "aztec".equals(paintingFileName);
+            if (aztec) ETFRenderContext.allowOnlyPropertiesRandom();
 
+            ETFTexture frontTexture = ETFManager.getInstance().getETFTextureVariant(paintingTexture, etfEntity);
+            ETFSprite etf$Sprite = frontTexture.getPaintingSprite(paintingSprite, paintingTexture);
+
+            if (aztec) ETFRenderContext.allowAllRandom();
 
             ETFTexture backTexture = ETFManager.getInstance().getETFTextureVariant(etf$BACK_SPRITE_ID, etfEntity);
-            ETFSprite etf$BackSprite = backTexture.getSprite(Minecraft.getInstance().getPaintingTextures().getBackSprite());
+            ETFSprite etf$BackSprite = backTexture.getPaintingSprite(Minecraft.getInstance().getPaintingTextures().getBackSprite(), etf$BACK_SPRITE_ID);
+
 
             if (etf$Sprite.isETFAltered || etf$Sprite.isEmissive() || etf$BackSprite.isETFAltered || etf$BackSprite.isEmissive()) {
+
                 matrixStack.pushPose();
                 matrixStack.mulPose(Axis.YP.rotationDegrees(180.0F - f));
                 PaintingVariant paintingVariant = paintingEntity.getVariant().value();

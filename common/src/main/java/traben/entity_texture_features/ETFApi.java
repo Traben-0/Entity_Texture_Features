@@ -15,6 +15,7 @@ import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.config.ETFConfigWarning;
 import traben.entity_texture_features.config.ETFConfigWarnings;
 import traben.entity_texture_features.features.ETFManager;
+import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.property_reading.PropertiesRandomProvider;
 import traben.entity_texture_features.features.property_reading.TrueRandomProvider;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperties;
@@ -439,7 +440,7 @@ public final class ETFApi {
             //get optifine property provider or null
             PropertiesRandomProvider optifine = PropertiesRandomProvider.of(propertiesFileIdentifier, vanillaIdentifier, suffixKeyName);
             //get true random provider or null
-            TrueRandomProvider random = TrueRandomProvider.of(vanillaIdentifier);
+            TrueRandomProvider random = ETFRenderContext.isRandomLimitedToProperties() ? null : TrueRandomProvider.of(vanillaIdentifier);
 
             //try fallback property if null
             if (optifine == null

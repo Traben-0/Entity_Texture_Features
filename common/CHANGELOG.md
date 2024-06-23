@@ -1,5 +1,11 @@
 [**ETF Changelog:**]
 
+
+
+[6.1.2]
+- fixed vanilla paintings `textures/painting/aztec.png` & `textures/painting/aztec2.png` not working correctly. (`aztec` now requires a properties file to variate and will not variate with the presence of `aztec2`)
+
+
 [6.1]
 
 - massive source code rework to move all Minecraft versions into the one source branch, this will have no impact to end users but will massively speed up backporting and deployment of mod updates

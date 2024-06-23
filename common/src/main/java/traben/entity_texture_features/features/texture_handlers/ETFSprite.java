@@ -29,15 +29,18 @@ public class ETFSprite {
     //private final Sprite selfVariant;
     private final TextureAtlasSprite emissiveSprite;
 
-    public ETFSprite(@NotNull TextureAtlasSprite originalSprite, @NotNull ETFTexture etfTexture) {
+    public ETFSprite(@NotNull TextureAtlasSprite originalSprite, @NotNull ETFTexture etfTexture, boolean isNotVariant) {
 
 
         // the component ETFTexture at-least confirms the existence of the other component textures of the sprite atlas
         // we can use the atlas source to get these sprites for this object to hold
         // the ETFTexture already has all the checks for emissive and variant
 
-
-        if (etfTexture.getVariantNumber() != 0) {
+        //force original if not variant
+        if (isNotVariant) {
+            sprite = originalSprite;
+            isETFAltered = false;
+        } else {
             ResourceLocation variantId = etfTexture.getTextureIdentifier(null);
             Optional<Resource> resource = Minecraft.getInstance().getResourceManager().getResource(variantId);
             if (resource.isPresent()) {
@@ -49,14 +52,14 @@ public class ETFSprite {
 
                 }
                 sprite = Objects.requireNonNullElse(possibleVariant, originalSprite);
+                isETFAltered = possibleVariant != null;
             } else {
                 sprite = originalSprite;
+                isETFAltered = false;
             }
-        } else {
-            sprite = originalSprite;
         }
 
-        isETFAltered = !sprite.equals(originalSprite);
+//        isETFAltered = !sprite.equals(originalSprite);
 
 
         TextureAtlasSprite possibleEmissive = null;

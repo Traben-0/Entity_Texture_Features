@@ -19,6 +19,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.item.armortrim.ArmorTrim;
+import org.intellij.lang.annotations.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETF;
@@ -42,7 +43,7 @@ public class ETFTexture {
 
     //this variants id , might be vanilla
     public final ResourceLocation thisIdentifier;
-    private final int variantNumber;
+//    private final int variantNumber;
     public TextureReturnState currentTextureState = TextureReturnState.NORMAL;
     public String eSuffix = null;
     //a variation of thisIdentifier but with emissive texture pixels removed for z-fighting solution
@@ -77,23 +78,23 @@ public class ETFTexture {
             ETFUtils2.logError("ETFTexture had a null identifier this should NOT happen");
             //throw new IllegalArgumentException("ETFTexture had null identifier");
             thisIdentifier = null;
-            variantNumber = 0;
+//            variantNumber = 0;
             return;
         }
 
         this.thisIdentifier = variantIdentifier;
-        Pattern pattern = Pattern.compile("\\d+(?=\\.png)");
-        Matcher matcher = pattern.matcher(variantIdentifier.getPath());
-        int intFound = 0;
-        try {
-            if (matcher.find()) {
-                intFound = Integer.parseInt(matcher.group());
-
-            }
-        } catch (NumberFormatException ignored) {
-            // this.variantNumber = 0;
-        }
-        this.variantNumber = intFound;
+//        Pattern pattern = Pattern.compile("\\d+(?=\\.png)");
+//        Matcher matcher = pattern.matcher(variantIdentifier.getPath());
+//        int intFound = 0;
+//        try {
+//            if (matcher.find()) {
+//                intFound = Integer.parseInt(matcher.group());
+//
+//            }
+//        } catch (NumberFormatException ignored) {
+//            // this.variantNumber = 0;
+//        }
+//        this.variantNumber = intFound;
 //        canPatch = allowedToPatch;
 
         setupBlinking();
@@ -115,7 +116,7 @@ public class ETFTexture {
                       @Nullable ResourceLocation blinkpatchIdentifier,
                       @Nullable ResourceLocation blink2patchIdentifier) {
         //ALL input already tested and confirmed existing
-        this.variantNumber = 0;
+//        this.variantNumber = 0;
         this.thisIdentifier = modifiedSkinIdentifier;
         this.blinkIdentifier = blinkIdentifier;
         this.blink2Identifier = blink2Identifier;
@@ -153,7 +154,7 @@ public class ETFTexture {
                        @Nullable ResourceLocation emissiveIdentifier) {
 
         //ALL input already tested and confirmed existing
-        this.variantNumber = 0;
+//        this.variantNumber = 0;
         this.thisIdentifier = modifiedSkinIdentifier;
         this.emissiveIdentifier = emissiveIdentifier;
 
@@ -199,9 +200,9 @@ public class ETFTexture {
         return Minecraft.getInstance().getTextureManager().getTexture(ETFUtils2.res(idString + "-anim"), null) != null;
     }
 
-    public int getVariantNumber() {
-        return variantNumber;
-    }
+//    public int getVariantNumber() {
+//        return variantNumber;
+//    }
 
     private void setupBlinking() {
         if (ETF.config().getConfig().enableBlinking) {
@@ -536,9 +537,9 @@ public class ETFTexture {
     }
 
     @NotNull
-    public ETFSprite getSprite(@NotNull TextureAtlasSprite originalSprite) {
+    public ETFSprite getPaintingSprite(@NotNull TextureAtlasSprite originalSprite, @Nullable ResourceLocation originalID) {
         if (atlasSprite == null) {
-            atlasSprite = new ETFSprite(originalSprite, this);
+            atlasSprite = new ETFSprite(originalSprite, this, thisIdentifier.equals(originalID));
         }
         return atlasSprite;
     }
