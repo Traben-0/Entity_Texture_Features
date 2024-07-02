@@ -29,7 +29,7 @@ public class ETFClientForge {
             try {
                 ModLoadingContext.get().registerExtensionPoint(
                         ConfigScreenHandler.ConfigScreenFactory.class,
-                        () -> new ConfigScreenHandler.ConfigScreenFactory((Function<Screen, Screen>)ETF::getConfigScreen));
+                        () -> new ConfigScreenHandler.ConfigScreenFactory( #if MC >= MC_20_6 (Function<Screen, Screen>) #endif ETF::getConfigScreen));
             } catch (NoClassDefFoundError e) {
                 System.out.println("[Entity Texture Features]: Mod config broken, download latest forge version");
             }
