@@ -3,6 +3,7 @@
 [6.1.3]
 - added additional null checks to fix some odd mod crashes
 - fixed the config breaking with some mods
+- fixed player skin tool pixel select image being sideways in 1.21
 
 
 [6.1.2]
