@@ -11,7 +11,6 @@ import net.neoforged.fml.ModList;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.fml.loading.FMLPaths;
 
 import net.neoforged.neoforgespi.language.IModInfo;
 import traben.entity_texture_features.ETF;
@@ -39,22 +38,12 @@ public class ETFClientNeoForge {
             } catch (NoClassDefFoundError e) {
                 System.out.println("[Entity Texture Features]: Mod config broken, download latest forge version");
             }
-            ETF.start(
-                    ETFClientNeoForge::isThisModLoaded,
-                    ETFClientNeoForge::modsLoaded,
-                    FMLPaths.GAMEDIR.get().resolve(FMLPaths.CONFIGDIR.get()).toFile(),
-                    true);
+            ETF.start();
 
         } else {
             throw new UnsupportedOperationException("Attempting to load a clientside only mod on the server, refusing");
         }
     }
 
-    public static boolean isThisModLoaded(String modId) {
-        return ModList.get().isLoaded(modId);
-    }
 
-    public static List<String> modsLoaded() {
-        return ModList.get().getMods().stream().map(IModInfo::getModId).toList();
-    }
 }

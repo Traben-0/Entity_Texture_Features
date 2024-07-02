@@ -1,6 +1,9 @@
 [**ETF Changelog:**]
 
 
+- added additional null checks to fix some odd mod crashes
+- fixed the config breaking with some mods
+
 
 [6.1.2]
 - fixed vanilla paintings `textures/painting/aztec.png` & `textures/painting/aztec2.png` not working correctly. (`aztec` now requires a properties file to variate and will not variate with the presence of `aztec2`)

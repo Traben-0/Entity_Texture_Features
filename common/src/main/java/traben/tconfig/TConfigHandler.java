@@ -2,6 +2,7 @@ package traben.tconfig;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import traben.entity_texture_features.ETFVersionDifferenceManager;
 
 import java.io.File;
 import java.io.FileReader;
@@ -10,7 +11,7 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-import static traben.entity_texture_features.ETF.CONFIG_DIR;
+
 
 
 public class TConfigHandler<T extends TConfig> {
@@ -65,9 +66,9 @@ public class TConfigHandler<T extends TConfig> {
     }
 
     public void saveToFile() {
-        if (CONFIG_DIR == null) return;
+        if (ETFVersionDifferenceManager.getConfigDirectory() == null) return;
 
-        File config = new File(CONFIG_DIR, configFileName);
+        File config = new File(ETFVersionDifferenceManager.getConfigDirectory().toFile(), configFileName);
         if (!config.getParentFile().exists()) {
             //noinspection ResultOfMethodCallIgnored
             config.getParentFile().mkdir();
@@ -90,11 +91,11 @@ public class TConfigHandler<T extends TConfig> {
     }
 
     public void loadFromFile() {
-        if (CONFIG_DIR == null) {
+        if (ETFVersionDifferenceManager.getConfigDirectory() == null) {
             CONFIG = newConfigSupplier.get();
         }
         try {
-            File config = new File(CONFIG_DIR, configFileName);
+            File config = new File(ETFVersionDifferenceManager.getConfigDirectory().toFile(), configFileName);
             if (config.exists()) {
                 try {
                     FileReader fileReader = new FileReader(config);

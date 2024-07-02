@@ -21,12 +21,9 @@ import traben.entity_texture_features.config.screens.ETFConfigScreenWarnings;
 import traben.tconfig.TConfigHandler;
 import traben.entity_texture_features.utils.ETFUtils2;
 
-import java.io.File;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 
 public class ETF {
@@ -35,7 +32,6 @@ public class ETF {
     //logging object
     public final static Logger LOGGER = LoggerFactory.getLogger("Entity Texture Features");
     public static final int EMISSIVE_FEATURE_LIGHT_VALUE = LightTexture.FULL_BRIGHT + 2;
-    public static File CONFIG_DIR = null;
     public static TConfigHandler<ETFConfigScreenWarnings.WarningConfig> warningConfigHandler = null;
     public static boolean IRIS_DETECTED = false;
 
@@ -44,10 +40,7 @@ public class ETF {
     public static Set<TConfigHandler<?>> configHandlers = null;
     private static TConfigHandler<ETFConfig> CONFIG = null;
     //the below methods are used to handle version differences between forge and fabric
-    private static Function<String, Boolean> isThisModLoadedFunction = (str) -> false;
-    private static Supplier<List<String>> modsLoadedFunction = () -> null;
-    private static Supplier<Boolean> isForgeFunction = () -> false;
-    private static Supplier<Boolean> isFabricFunction = () -> false;
+
 
     public static TConfigHandler<ETFConfig> config() {
         if (CONFIG == null) {
@@ -56,18 +49,8 @@ public class ETF {
         return CONFIG;
     }
 
-    public static void start(Function<String, Boolean> isThisModLoadedFunction,
-                             Supplier<List<String>> modsLoadedFunction,
-                             File configDir,
-                             boolean isForge) {
+    public static void start() {
 
-        ETF.isThisModLoadedFunction = isThisModLoadedFunction;
-        ETF.modsLoadedFunction = modsLoadedFunction;
-        ETF.isForgeFunction = () -> isForge;
-        ETF.isFabricFunction = () -> !isForge;
-
-        //allows config modification
-        CONFIG_DIR = configDir;
 
         //set true config and load from file
         CONFIG = new TConfigHandler<>(ETFConfig::new, MOD_ID, "ETF");
@@ -185,21 +168,21 @@ public class ETF {
     }
 
     public static boolean isThisModLoaded(String modId) {
-        return isThisModLoadedFunction.apply(modId);
+        return ETFVersionDifferenceManager.isThisModLoaded(modId);
     }
 
     public static List<String> modsLoaded() {
-        return modsLoadedFunction.get();
+        return ETFVersionDifferenceManager.modsLoaded();
     }
 
 
     @SuppressWarnings("unused")
     public static boolean isForge() {
-        return isForgeFunction.get();
+        return ETFVersionDifferenceManager.isForge();
     }
 
     public static boolean isFabric() {
-        return isFabricFunction.get();
+        return !ETFVersionDifferenceManager.isForge();
     }
 
     //the below act as handlers for minecraft version differences that have come up during development

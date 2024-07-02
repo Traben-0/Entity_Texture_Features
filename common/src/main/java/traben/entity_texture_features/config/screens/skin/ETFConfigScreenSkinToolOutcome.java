@@ -22,6 +22,7 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import traben.entity_texture_features.ETF;
+import traben.entity_texture_features.ETFVersionDifferenceManager;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.utils.ETFUtils2;
 
@@ -33,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static traben.entity_texture_features.ETF.CONFIG_DIR;
+
 
 //inspired by puzzles custom gui code
 public class ETFConfigScreenSkinToolOutcome extends ETFScreenOldCompat {
@@ -63,10 +64,10 @@ public class ETFConfigScreenSkinToolOutcome extends ETFScreenOldCompat {
 
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
             builder.addTextBody("variant", skinType ? "classic" : "slim", ContentType.TEXT_PLAIN);
-            assert CONFIG_DIR != null;
+            assert ETFVersionDifferenceManager.getConfigDirectory() != null;
             builder.addBinaryBody(
                     "file",
-                    new FileInputStream(Path.of(CONFIG_DIR.getParent(), "\\ETF_player_skin_printout.png").toFile()),
+                    new FileInputStream(Path.of(ETFVersionDifferenceManager.getConfigDirectory().toFile().getParent(), "\\ETF_player_skin_printout.png").toFile()),
                     ContentType.IMAGE_PNG,
                     "skin.png"
             );
@@ -95,8 +96,8 @@ public class ETFConfigScreenSkinToolOutcome extends ETFScreenOldCompat {
                     ETF.getTextFromTranslation("config." + ETF.MOD_ID + ".player_skin_editor.print_skin.open"),
                     (button) -> {
                         try {
-                            assert CONFIG_DIR != null;
-                            Path outputDirectory = Path.of(CONFIG_DIR.getParent());
+                            assert ETFVersionDifferenceManager.getConfigDirectory() != null;
+                            Path outputDirectory = Path.of(ETFVersionDifferenceManager.getConfigDirectory().toFile().getParent());
                             Util.getPlatform().openFile(outputDirectory.toFile());
                         } catch (Exception ignored) {
                         }

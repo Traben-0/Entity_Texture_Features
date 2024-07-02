@@ -16,6 +16,7 @@ import net.minecraft.world.entity.LivingEntity;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import traben.entity_texture_features.ETF;
+import traben.entity_texture_features.ETFVersionDifferenceManager;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.player.ETFPlayerTexture;
 import traben.entity_texture_features.utils.ETFUtils2;
@@ -23,7 +24,6 @@ import traben.entity_texture_features.utils.ETFUtils2;
 import java.nio.file.Path;
 import java.util.Objects;
 
-import static traben.entity_texture_features.ETF.CONFIG_DIR;
 import static traben.entity_texture_features.ETF.MOD_ID;
 
 //inspired by puzzles custom gui code
@@ -514,8 +514,8 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
     }
 
     public boolean printPlayerSkinCopy() {
-        if ((ETF.isFabric() == ETF.isThisModLoaded("fabric")) && CONFIG_DIR != null) {
-            Path outputDirectory = Path.of(CONFIG_DIR.getParent(), "\\ETF_player_skin_printout.png");
+        if ((ETF.isFabric() == ETF.isThisModLoaded("fabric")) && ETFVersionDifferenceManager.getConfigDirectory() != null) {
+            Path outputDirectory = Path.of(ETFVersionDifferenceManager.getConfigDirectory().toFile().getParent(), "\\ETF_player_skin_printout.png");
             try {
                 currentEditorSkin.writeToFile(outputDirectory);
                 ETFUtils2.logMessage(ETF.getTextFromTranslation("config." + ETF.MOD_ID + ".player_skin_editor.print_skin.result.success").getString(), false);

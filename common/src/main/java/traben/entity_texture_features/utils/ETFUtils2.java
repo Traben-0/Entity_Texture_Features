@@ -53,7 +53,8 @@ public abstract class ETFUtils2 {
 
     public static ResourceLocation getETFVariantNotNullForInjector(ResourceLocation identifier) {
         //do not modify texture
-        if (ETFRenderContext.getCurrentEntity() == null
+        if (identifier == null
+                || ETFRenderContext.getCurrentEntity() == null
                 || !ETFRenderContext.isAllowedToRenderLayerTextureModify())
             return identifier;
 
