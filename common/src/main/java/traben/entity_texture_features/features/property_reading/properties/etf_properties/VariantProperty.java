@@ -64,7 +64,6 @@ public class VariantProperty extends StringArrayOrRegexProperty {
             //todo 1.21.5? probably isn't needed anymore
             #else
             if (etfEntity instanceof VariantHolder<?> variableEntity) {
-                Frog
                 if (variableEntity.getVariant() instanceof StringRepresentable stringIdentifiable) {
                     return stringIdentifiable.getSerializedName();
                 }

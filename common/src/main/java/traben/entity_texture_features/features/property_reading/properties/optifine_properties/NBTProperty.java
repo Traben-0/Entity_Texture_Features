@@ -135,7 +135,7 @@ public class NBTProperty extends RandomProperty {
         return #if MC < MC_21_5 nbt.getAsString(); #else nbt.toString(); #endif
     }
 
-    private static Number getAsNumber(Tag nbt) {
+    private static Number getAsNumber(NumericTag nbt) {
         return #if MC < MC_21_5 nbt.getAsNumber(); #else nbt.asNumber().orElse(0); #endif
     }
 
@@ -201,7 +201,7 @@ public class NBTProperty extends RandomProperty {
             return nbtList;
         } else if (isStringValidInt(instruction)) {
             try {
-                return nbtList.get(Integer.parseInt(instruction));
+                return (Tag) nbtList.get(Integer.parseInt(instruction));
             } catch (IndexOutOfBoundsException e) {
                 return null;
             }

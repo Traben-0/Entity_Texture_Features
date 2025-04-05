@@ -32,9 +32,17 @@ public class ClientGameModeProperty extends SimpleIntegerArrayProperty {
     @Override
     protected int getValueFromEntity(ETFEntity entity) {
         if (Minecraft.getInstance().player != null) {
+            #if MC>=MC_21_5
             var mode = Minecraft.getInstance().player.gameMode();
             if (mode != null) return mode.getId();
+            #else
+            var info  = Minecraft.getInstance().player.getPlayerInfo();
+            if (info != null) return -1;
+            var mode = info.getGameMode();
+            if (mode != null) return -1;
+            return mode.getId();
+            #endif
         }
-        return 0;
+        return -1;
     }
 }

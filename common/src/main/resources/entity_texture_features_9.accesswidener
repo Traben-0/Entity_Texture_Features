@@ -47,3 +47,5 @@ accessible field net/minecraft/client/renderer/entity/layers/EquipmentLayerRende
 accessible method net/minecraft/world/level/biome/Biome getHeightAdjustedTemperature (Lnet/minecraft/core/BlockPos;I)F
 
 accessible field net/minecraft/client/resources/SkinManager sessionService Lcom/mojang/authlib/minecraft/MinecraftSessionService;
+
+accessible method net/minecraft/client/player/AbstractClientPlayer getPlayerInfo ()Lnet/minecraft/client/multiplayer/PlayerInfo;#todo backport?
