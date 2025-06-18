@@ -5,6 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
@@ -144,7 +145,14 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFScreenOldCompat {
 
             int height = (int) (this.height * 0.75);
             int playerX = (int) (this.width * 0.14);
-            drawEntity(context, playerX, height, (int) (this.height * 0.3), (float) (-mouseX + playerX), (float) (-mouseY + (this.height * 0.3)), player);
+            drawEntity(context, playerX, height, (int) (this.height * 0.3),
+                    #if MC>=MC_21_6
+                    mouseX, mouseY,
+                    #else
+                    (float) (-mouseX + playerX), (float) (-mouseY + (this.height * 0.3)),
+                    #endif
+
+                    player);
         } else {
             context.drawString(font, Component.nullToEmpty("Player model only visible while in game!"), width / 7, (int) (this.height * 0.4), 0xFFFFFF);
             context.drawString(font, Component.nullToEmpty("load a single-player world and then open this menu."), width / 7, (int) (this.height * 0.45), 0xFFFFFF);
@@ -157,6 +165,17 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFScreenOldCompat {
     }
 
     public void drawEntity(GuiGraphics context, int x, int y, int size, float mouseX, float mouseY, LivingEntity entity) {
+        #if MC>=MC_21_6
+        ETFConfigScreenSkinTool.renderEntityInInventoryFollowsMouse(etfParent.flipView,
+                context,
+                0, (int) (this.height * 0.15), x * 2, y,
+                size, 0.0625F,
+                mouseX + (int) (this.height * 0.15), mouseY,
+                entity
+
+        );
+        #else
+
         float f = (float) Math.atan((mouseX / 40.0f));
 
         float g = (float) Math.atan((mouseY / 40.0F));
@@ -215,6 +234,7 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFScreenOldCompat {
 //        matrixStack.pop();
 //        RenderSystem.applyModelViewMatrix();
 //        DiffuseLighting.enableGuiDepthLighting();
+        #endif
     }
 
     public enum SelectionMode {

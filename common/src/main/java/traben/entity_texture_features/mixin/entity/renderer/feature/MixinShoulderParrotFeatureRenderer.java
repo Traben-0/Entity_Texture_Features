@@ -6,11 +6,17 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.ParrotOnShoulderLayer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Parrot;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -20,6 +26,7 @@ import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 #if MC > MC_21
 import net.minecraft.client.renderer.entity.state.PlayerRenderState;
@@ -68,7 +75,14 @@ public abstract class MixinShoulderParrotFeatureRenderer<T extends Player> exten
             try {
                 var optionalEntity = EntityType.PARROT.create(playerEntity.level(), EntitySpawnReason.COMMAND);
                 if (optionalEntity instanceof Parrot parrot) {//null check
+                    #if MC>=MC_21_6
+                    ValueInput valueInput = TagValueInput.create(ProblemReporter.DISCARDING,
+                            HolderLookup.Provider.create(Stream.empty()), //todo what does this do?
+                            nbtCompound);
+                    optionalEntity.load(valueInput);
+                    #else
                     optionalEntity.load(nbtCompound);
+                    #endif
                     ETFRenderContext.setCurrentEntity((ETFEntity) parrot);
                 }
             } catch (final Exception ignored) {}

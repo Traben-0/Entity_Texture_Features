@@ -9,6 +9,7 @@ import net.minecraft.client.gui.components.WidgetSprites;
 #endif
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.packs.PackSelectionScreen;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -84,7 +85,7 @@ public abstract class MixinPackScreen extends Screen {
 
         etf$button = this.addRenderableWidget(new ImageButton(
                 x, y, 24, 20,
-                    #if MC > MC_20_1 new WidgetSprites(etf$UNFOCUSED, etf$FOCUSED), #else 0,0,20, etf$UNFOCUSED, #endif
+                    #if MC > MC_20_1 new WidgetSprites(etf$UNFOCUSED, etf$FOCUSED), #else 0, 0, 20, etf$UNFOCUSED, #endif
                 (button) -> Objects.requireNonNull(minecraft).setScreen(new ETFConfigScreenMain(this))
                     #if MC > MC_20_1 , Component.nullToEmpty("") #endif ) {
             {
@@ -92,12 +93,19 @@ public abstract class MixinPackScreen extends Screen {
                         "config.entity_features.button_tooltip")));
             }
 
+
             //override required because textured button widget just doesnt work
             @Override
             public void renderWidget(GuiGraphics context, int mouseX, int mouseY, float delta) {
                 ResourceLocation identifier = this.isHoveredOrFocused() ? etf$FOCUSED : etf$UNFOCUSED;
-                context.blit(#if MC > MC_21 RenderType::guiTextured, #endif identifier, this.getX(), this.getY(), 0, 0, this.width, this.height, this.width, this.height);
-            }
+
+                #if MC>=MC_21_6
+                context.blit(RenderPipelines.GUI_TEXTURED, identifier, this.getX(), this.getY(), 0, 0, this.width, this.height, this.width, this.height);
+                #else
+                    context.blit(#if MC > MC_21 RenderType::guiTextured, #endif identifier, this.getX(), this.getY(), 0, 0, this.width, this.height, this.width, this.height);
+                #endif
+                }
+
 
         });
 
@@ -105,7 +113,7 @@ public abstract class MixinPackScreen extends Screen {
     }
 
     @Unique
-    private @Nullable int[] etf$etfButtonReSize() {
+    private int @Nullable [] etf$etfButtonReSize() {
         int x, y;
 
         switch (ETF.config().getConfig().configButtonLoc) {

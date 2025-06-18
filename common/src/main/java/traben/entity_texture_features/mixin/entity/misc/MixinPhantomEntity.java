@@ -1,9 +1,7 @@
 package traben.entity_texture_features.mixin.entity.misc;
 
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.FlyingMob;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Phantom;
-import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
@@ -11,12 +9,10 @@ import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.features.ETFManager;
 
 @Mixin(Phantom.class)
-public abstract class MixinPhantomEntity extends FlyingMob {
+public abstract class MixinPhantomEntity extends Entity {
 
-
-    protected MixinPhantomEntity(final EntityType<? extends FlyingMob> entityType, final Level level) {
-        super(entityType, level);
-    }
+    @SuppressWarnings("DataFlowIssue")
+    protected MixinPhantomEntity() {super(null, null);}
 
     @ModifyArg(
             method = "tick",
@@ -30,8 +26,6 @@ public abstract class MixinPhantomEntity extends FlyingMob {
         }
         return x;
     }
-
-
 }
 
 

@@ -9,6 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.model.CreeperModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
@@ -24,6 +25,7 @@ import net.minecraft.world.entity.animal.Squid;
 import net.minecraft.world.entity.animal.sniffer.Sniffer;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.monster.Guardian;
+import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -73,7 +75,20 @@ public class ETFConfigScreenMain extends TConfigScreenMain {
         }
     }
 
-    public static void drawEntity(GuiGraphics context, float x, float y, int size, Quaternionf quaternionf, @Nullable Quaternionf quaternionf2, LivingEntity entity) {
+#if MC>=MC_21_6
+    public void drawEntity12106(GuiGraphics context, int x, int y, int size, int width, int height, LivingEntity entity, int mouseX, int mouseY) {
+        InventoryScreen.renderEntityInInventoryFollowsMouse(
+                context,
+                x, y, width, height,
+                size, 0.0625F, //30, 0.0625F,
+                mouseX, mouseY,
+                entity
+
+        );//todo
+    }
+#else
+    public static void drawEntity(GuiGraphics context, float x, float y, int size, Quaternionf quaternionf, @Nullable Quaternionf quaternionf2, LivingEntity entity, int mouseX, int mouseY) {
+
         context.pose().pushPose();
         context.pose().translate(x, y, 150.0);
         #if MC >= MC_20_6
@@ -104,6 +119,7 @@ public class ETFConfigScreenMain extends TConfigScreenMain {
         context.pose().popPose();
         Lighting.setupFor3DItems();
     }
+#endif
 
     @Override
     protected void init() {
@@ -136,11 +152,11 @@ public class ETFConfigScreenMain extends TConfigScreenMain {
 
         //draw the entity else ETF logo creepers
         if (livingEntity != null && !livingEntity.isRemoved()) {
-            renderEntitySample(context, mouseY);
+            renderEntitySample(context, mouseX, mouseY);
         } else {
             renderETFLogoCreepers(context, mouseX, mouseY);
         }
-        context.pose().popPose();
+        #if MC<MC_21_6 context.pose().popPose(); #endif
     }
 
     private void renderETFLogoCreepers(final GuiGraphics context, final int mouseX, final int mouseY) {
@@ -152,6 +168,14 @@ public class ETFConfigScreenMain extends TConfigScreenMain {
         Quaternionf quaternionf2 = (new Quaternionf()).rotateX(-(g * 20.0F * 0.017453292F));
         quaternionf.mul(quaternionf2);
 
+
+        #if MC>=MC_21_6
+        PoseStack matrixStack = new PoseStack();
+        matrixStack.translate(x, y, 150.0);
+        float scaling = (float) (this.height * 0.3);
+        matrixStack.mulPose((new Matrix4f()).scaling(scaling, scaling, -scaling));
+        matrixStack.mulPose(quaternionf);
+        #else
         context.pose().pushPose();
         context.pose().translate(x, y, 150.0);
         float scaling = (float) (this.height * 0.3);
@@ -162,33 +186,41 @@ public class ETFConfigScreenMain extends TConfigScreenMain {
         #endif
         context.pose().mulPose(quaternionf);
         Lighting.setupForEntityInInventory();
+        PoseStack matrixStack = context.pose();
+        #endif
 
         float sin1 = (float) (Math.sin(System.currentTimeMillis() / 500d) / 32);
         float sin2 = (float) (Math.sin(System.currentTimeMillis() / 500d + 1) / 32);
         float sin3 = (float) (Math.sin(System.currentTimeMillis() / 500d + 2) / 32);
 
-        PoseStack matrixStack = context.pose();
+        #if MC>=MC_21_6
+        MultiBufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+        #elif MC < MC_21_2
+        MultiBufferSource bufferSource = context.bufferSource();
+        #else
+        MultiBufferSource bufferSource = context.bufferSource;
+        #endif
 
         matrixStack.pushPose();
         matrixStack.translate(-0.6, -sin1, 0);
         matrixStack.scale(1 + sin1, 1 + sin1, 1 + sin1);
-        LOGO_CREEPER.renderSimple(matrixStack, context.bufferSource #if MC < MC_21_2 () #endif, YELLOW);
+        LOGO_CREEPER.renderSimple(matrixStack, bufferSource, YELLOW);
         matrixStack.popPose();
         matrixStack.pushPose();
         matrixStack.translate(0, -sin2, 0);
         matrixStack.scale(1 + sin2, 1 + sin2, 1 + sin2);
-        LOGO_CREEPER.renderSimple(matrixStack, context.bufferSource #if MC < MC_21_2 () #endif, RED);
+        LOGO_CREEPER.renderSimple(matrixStack, bufferSource, RED);
         matrixStack.popPose();
         matrixStack.pushPose();
         matrixStack.translate(0.6, -sin3, 0);
         matrixStack.scale(1 + sin3, 1 + sin3, 1 + sin3);
-        LOGO_CREEPER.renderSimple(matrixStack, context.bufferSource #if MC < MC_21_2 () #endif,  BLUE);
+        LOGO_CREEPER.renderSimple(matrixStack, bufferSource,  BLUE);
         matrixStack.popPose();
 
-        Lighting.setupFor3DItems();
+        #if MC<MC_21_6 Lighting.setupFor3DItems(); #endif
     }
 
-    private void renderEntitySample(final GuiGraphics context, final int mouseY) {
+    private void renderEntitySample(final GuiGraphics context, final int mouseX, final int mouseY) {
         int y = (int) (this.height * 0.75);
         if (livingEntity.getBbHeight() < 0.7) y -= (int) (this.height * 0.15);
         int x = (int) (this.width * 0.33);
@@ -216,8 +248,15 @@ public class ETFConfigScreenMain extends TConfigScreenMain {
         double scaleModify2 = Math.max(Math.min(Math.abs(scaleModify), 1d), 0);//clamp
         int modelHeight = (int) Math.min(scale * scaleModify2, (this.height * 0.4));
 
+        #if MC>=MC_21_6
+        drawEntity12106(context, 0, (int) (this.height * 0.15),
+                modelHeight, (int) (this.width * 0.6), (int) (this.height * 0.7),
+                 livingEntity, mouseX, mouseY);
+        #else
         context.pose().pushPose();
-        drawEntity(context, x, y, modelHeight, quaternionf, quaternionf2, livingEntity);
+
+        drawEntity(context, x, y, modelHeight, quaternionf, quaternionf2, livingEntity, mouseX, mouseY);
+        #endif
     }
 
     public static class LogoCreeperRenderer {

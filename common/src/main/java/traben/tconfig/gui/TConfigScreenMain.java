@@ -1,12 +1,15 @@
 package traben.tconfig.gui;
 
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import traben.entity_texture_features.utils.ETFUtils2;
 import traben.tconfig.TConfig;
 import traben.tconfig.TConfigHandler;
 import traben.tconfig.gui.entries.TConfigEntry;
@@ -95,7 +98,11 @@ public abstract class TConfigScreenMain extends TConfigScreen {
         if (!modIcons.isEmpty()) {
             int ix = this.width - (modIcons.size() * 34);
             for (ResourceLocation modIcon : modIcons) {
+                #if MC>=MC_21_6
+                context.blit(RenderPipelines.GUI_TEXTURED, modIcon, ix, 2, 0, 0, 32, 32, 32, 32);
+                #else
                 context.blit(#if MC > MC_21 RenderType::guiTextured, #endif modIcon, ix, 2, 0, 0, 32, 32, 32, 32);
+                #endif
                 ix += 34;
             }
         }

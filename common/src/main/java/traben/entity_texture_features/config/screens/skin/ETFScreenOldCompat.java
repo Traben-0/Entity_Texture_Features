@@ -7,6 +7,9 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
+#if MC>=MC_21_6
+import net.minecraft.client.renderer.RenderPipelines;
+#endif
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.CommonComponents;
@@ -44,6 +47,9 @@ public abstract class ETFScreenOldCompat extends TConfigScreen {
         bufferBuilder.vertex(x2, y1, 0.0).uv(1, 0/*(float)x2*widthXValue, (float)y1*/ ).color(255, 255, 255, 255).endVertex();
         bufferBuilder.vertex(x1, y1, 0.0).uv(0, 0/*(float)x1, (float)y1*/ ).color(255, 255, 255, 255).endVertex();
         tessellator.end();
+        #elif MC>=MC_21_6
+        context.blit(RenderPipelines.GUI_TEXTURED, texture, (int) x1, (int) y1, 0, 0, (int) (x2-x1), (int) (y2-y1), 1, 1, 1, 1,
+                net.minecraft.util.ARGB.color( 255, 255, 255, 255));
         #elif MC > MC_21
         context.blit(RenderType::guiTextured, texture, (int) x1, (int) y1, 0, 0, (int) (x2-x1), (int) (y2-y1), 1, 1, 1, 1,
                 net.minecraft.util.ARGB.color( 255, 255, 255, 255));

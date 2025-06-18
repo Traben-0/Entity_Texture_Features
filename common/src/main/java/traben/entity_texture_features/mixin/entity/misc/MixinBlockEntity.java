@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.Nameable;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -15,6 +16,8 @@ import net.minecraft.world.level.block.entity.BedBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.properties.BedPart;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Team;
 import org.jetbrains.annotations.Nullable;
@@ -47,8 +50,11 @@ public abstract class MixinBlockEntity implements ETFEntity {
     @Nullable
     public abstract Level getLevel();
 
-    @Shadow
-    protected abstract void saveMetadata(final CompoundTag compoundTag);
+    #if MC>=MC_21_6
+    @Shadow protected abstract void saveMetadata(final ValueOutput valueOutput);
+    #else
+    @Shadow protected abstract void saveMetadata(final CompoundTag compoundTag);
+    #endif
 
     @Override
     public EntityType<?> etf$getType() {
@@ -106,12 +112,21 @@ public abstract class MixinBlockEntity implements ETFEntity {
 
     @Override
     public CompoundTag etf$getNbt() {
+        #if MC>=MC_21_6
+        return ETFRenderContext.cacheEntityNBTForFrame(etf$getUuid(),
+                ()->{
+                    TagValueOutput compound = TagValueOutput.createWithoutContext(ProblemReporter.DISCARDING);
+                    saveMetadata(compound);
+                    return compound.buildResult();
+                });
+        #else
         return ETFRenderContext.cacheEntityNBTForFrame(etf$getUuid(),
                 ()->{
                     CompoundTag compound = new CompoundTag();
                     saveMetadata(compound);
                     return compound;
                 });
+        #endif
     }
 
     @Override

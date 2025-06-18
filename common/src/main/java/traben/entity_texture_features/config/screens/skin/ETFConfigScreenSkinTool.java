@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -16,6 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFVersionDifferenceManager;
 import traben.entity_texture_features.features.ETFManager;
@@ -445,7 +447,14 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
 
             int height = (int) (this.height * 0.75);
             int playerX = (int) (this.width * 0.14);
-            drawEntity(context, playerX, height, (int) (this.height * 0.3), (float) (-mouseX + playerX), (float) (-mouseY + (this.height * 0.3)), player);
+            drawEntity(context, playerX, height, (int) (this.height * 0.3),
+                    #if MC>=MC_21_6
+                    mouseX, mouseY,
+                    #else
+                    (float) (-mouseX + playerX), (float) (-mouseY + (this.height * 0.3)),
+                    #endif
+
+                    player);
         } else {
             context.drawString(font, Component.nullToEmpty("Player is null for some reason!"), width / 7, (int) (this.height * 0.4), 0xFFFFFF);
             context.drawString(font, Component.nullToEmpty("Cannot load player to render!"), width / 7, (int) (this.height * 0.45), 0xFFFFFF);
@@ -530,8 +539,52 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
         }
         return false;
     }
+    #if MC>=MC_21_6
+    public static void renderEntityInInventoryFollowsMouse(boolean flipView, GuiGraphics guiGraphics, int i, int j, int k, int l, int m, float f, float g, float h, LivingEntity livingEntity) {
+        float n = (float)(i + k) / 2.0F;
+        float o = (float)(j + l) / 2.0F;
+        guiGraphics.enableScissor(i, j, k, l);
+        float p = (float)Math.atan((double)((n - g) / 40.0F));
+        float q = (float)Math.atan((double)((o - h) / 40.0F));
+        Quaternionf quaternionf = (new Quaternionf()).rotateZ((float)Math.PI);
+        Quaternionf quaternionf2 = (new Quaternionf()).rotateX(q * 20.0F * ((float)Math.PI / 180F));
+        quaternionf.mul(quaternionf2);
+        float r = livingEntity.yBodyRot;
+        float s = livingEntity.getYRot();
+        float t = livingEntity.getXRot();
+        float u = livingEntity.yHeadRotO;
+        float v = livingEntity.yHeadRot;
+        livingEntity.yBodyRot = (flipView ? 0 : 180.0F) + p * 20.0F;
+        livingEntity.setYRot((flipView ? 0 : 180.0F) + p * 40.0F);
+        livingEntity.setXRot(-q * 20.0F);
+        livingEntity.yHeadRot = livingEntity.getYRot();
+        livingEntity.yHeadRotO = livingEntity.getYRot();
+        float w = livingEntity.getScale();
+        Vector3f vector3f = new Vector3f(0.0F, livingEntity.getBbHeight() / 2.0F + f * w, 0.0F);
+        float x = (float)m / w;
+        InventoryScreen.renderEntityInInventory(guiGraphics, i, j, k, l, x, vector3f, quaternionf, quaternionf2, livingEntity);
+        livingEntity.yBodyRot = r;
+        livingEntity.setYRot(s);
+        livingEntity.setXRot(t);
+        livingEntity.yHeadRotO = u;
+        livingEntity.yHeadRot = v;
+        guiGraphics.disableScissor();
+    }
+    #endif
 
     public void drawEntity(GuiGraphics context, int x, int y, int size, float mouseX, float mouseY, LivingEntity entity) {
+        #if MC>=MC_21_6
+
+        renderEntityInInventoryFollowsMouse(flipView,
+                context,
+                0, (int) (this.height * 0.15), x * 2, y,
+                size, 0.0625F,
+                mouseX + (int) (this.height * 0.15), mouseY,
+                entity
+
+        );
+        #else
+
         float f = (float) Math.atan((mouseX / 40.0f));
 
         float g = (float) Math.atan((mouseY / 40.0F));
@@ -592,6 +645,7 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
 //        matrixStack.pop();
 //        RenderSystem.applyModelViewMatrix();
 //        DiffuseLighting.enableGuiDepthLighting();
+        #endif
     }
 
 
