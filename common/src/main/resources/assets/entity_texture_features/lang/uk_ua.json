@@ -1,4 +1,6 @@
 {
+    "modmenu.summaryTranslation.entity_texture_features": "Нові функції для пакетів ресурсів пов'язані з текстурами сутностей",
+  "modmenu.descriptionTranslation.entity_texture_features": "Додає підтримку нових функцій для пакетів ресурсів пов'язані з текстурами сутностей, включаючи деякі функції OptiFine\nПідтримує OptiFine:\n — Випадкові і спеціальні текстури\n — Сяйні текстури\nЗ додатковими функціями, такими як:\n — Кліпання\n — Підтримка скіна гравця",
   "config.entity_features": "Налаштування «Entity Features»",
   "config.entity_features.optifine_settings": "Сумісність з OptiFine",
   "config.entity_texture_features.settings_button_loc.title": "Розміщення кнопки налаштувань",
