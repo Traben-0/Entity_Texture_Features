@@ -38,3 +38,5 @@ classes/
 .vscode
 .settings
 Merged/
+
+versions/*/api/

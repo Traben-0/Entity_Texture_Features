@@ -1,0 +1,35 @@
+modLoader = "javafml"
+loaderVersion = "[33,)"
+issueTrackerURL = "https://github.com/Traben-0/EmissiveMod/issues"
+license = "LGPL-3.0"
+showAsResourcePack = false
+
+[[mods]]
+modId = "entity_texture_features"
+version = "${version}"
+displayName = "Entity Texture Features"
+authors = "Traben"
+description = '''
+Adds support for resource-pack driven features for entity textures including some OptiFine features
+Supports OptiFine:
+ - Random & Custom textures
+ - Emissive textures
+With more features such as:
+ - Blinking textures
+ - Player Skin support
+ '''
+logoFile = "icon.png"
+
+[[dependencies.entity_texture_features]]
+modId="forge"
+mandatory=true
+versionRange="[33,)"
+ordering="NONE"
+side="CLIENT"
+
+[[dependencies.entity_texture_features]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1,)"
+ordering = "NONE"
+side = "CLIENT"
