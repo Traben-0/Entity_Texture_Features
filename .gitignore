@@ -32,7 +32,7 @@ classes/
 
 # fabric
 
-
+jars/*
 
 .metadata
 .vscode

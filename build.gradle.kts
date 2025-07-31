@@ -238,3 +238,15 @@ tasks.processResources {
         if (this.name != accessWidener) this.exclude()
     }
 }
+
+tasks.register<Copy>("copyArtifacts") {
+    from(layout.buildDirectory.dir("libs").get())
+    into("${rootDir}\\jars")
+    mustRunAfter(tasks.build)
+    delete(layout.buildDirectory.dir("libs").get())
+}
+
+
+tasks.build {
+    finalizedBy("copyArtifacts")
+}
