@@ -15,10 +15,12 @@ import traben.entity_texture_features.utils.ETFUtils2;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import net.minecraft.nbt.CollectionTag;
 import net.minecraft.nbt.CompoundTag;
@@ -75,13 +77,13 @@ public class NBTProperty extends RandomProperty {
 
 
     protected @Nullable CompoundTag getEntityNBT(ETFEntityRenderState entity) {
-        //might return null, empty, INTENTIONAL_FAILURE, or throw an exception
+        // might return null, empty, INTENTIONAL_FAILURE, or throw an exception
         return entity.nbt();
     }
 
     protected static final CompoundTag INTENTIONAL_FAILURE = new CompoundTag();
 
-    private boolean crashMessage = true;
+    private static Set<String> crashMessages = new HashSet<>();
     private boolean nullMessage = true;
 
     @Override
@@ -96,17 +98,19 @@ public class NBTProperty extends RandomProperty {
 
         CompoundTag entityNBT;
         try {
-            //return for child property instances
+            // return for child property instances
             entityNBT = getEntityNBT(entity);
         }catch (Exception e){
-            if (printAll || crashMessage) { // reduce spam
-                crashMessage = false;
-                ETFUtils2.logError(prefix + " test crashed reading entity NBT: " + e.getMessage());
+            var crashMessage = e.getMessage();
+            if (printAll || !crashMessages.contains(crashMessage)) { // reduce spam
+                if (!printAll) crashMessages.add(crashMessage);
+                ETFUtils2.logError(prefix + " test crashed reading entity NBT: " + crashMessage);
+                e.printStackTrace();
             }
             throw e;
         }
 
-        //dont log expected failure unless printing
+        // dont log expected failure unless printing
         if (entityNBT == INTENTIONAL_FAILURE) {
             if (printAll) {
                 ETFUtils2.logMessage(prefix+" property [full] print:\n<NBT is missing>");
@@ -118,7 +122,7 @@ public class NBTProperty extends RandomProperty {
             if (printAll) {
                 ETFUtils2.logMessage(prefix+" property [full] print:\n<NBT is empty or missing>");
             }
-            //log unexpected failure
+            // log unexpected failure
             ETFUtils2.logError(prefix+" test failed, as could not read entity NBT");
             return false;
         }

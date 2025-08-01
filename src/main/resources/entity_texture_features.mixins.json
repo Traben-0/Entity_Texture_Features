@@ -11,6 +11,7 @@
     "entity.misc.MixinBlockEntity",
     "entity.misc.MixinEntity",
     "entity.misc.MixinGlowSquidEntity",
+    "entity.misc.MixinMob_LeashNBTFix",
     "entity.misc.MixinPhantomEntity",
     "entity.misc.MixinPlayerEntity",
     "entity.misc.MixinSkullBlockEntity",
