@@ -66,7 +66,7 @@ public abstract class SodiumGetBufferInjector {
 //$$         @Override
 //$$         public void accept(final MultiBufferSource vertexConsumerProvider, final RenderType renderLayer, final VertexConsumer vertexConsumer) {
 //$$             if (vertexConsumer instanceof ExtendedBufferBuilder buff) {
-//$$                 var delegate = buff.sodium$getDelegate();
+//$$                 VertexConsumer delegate = (VertexConsumer) (Object) buff.sodium$getDelegate();
 //$$                 if (delegate instanceof ETFVertexConsumer) {
 //$$                     ETFRenderContext.insertETFDataIntoVertexConsumer(vertexConsumerProvider, renderLayer, (VertexConsumer) delegate);
 //$$                 }

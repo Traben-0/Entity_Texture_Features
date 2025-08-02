@@ -115,8 +115,9 @@ dependencies {
         12006 to "SrazSQ8a",
         12004 to "S8ohsEt5",
         12002 to "v304JX3s",
-        12000 to ver("aiPCdDJa", "Sl4iZKoJ",  null),
+        12000 to ver("aiPCdDJa", "Sl4iZKoJ", null),
         )
+
     modImpl("maven.modrinth:sodium:",
         12105 to "fVbw1C7i",
         12104 to "c3YkZvne",
@@ -125,8 +126,12 @@ dependencies {
         12006 to "OwLQelEI",
         12004 to "4GyXKCLd",
         12002 to "pmgeU5yX",
-        12000 to "ygf8cVZg",
+        12000 to ver("ygf8cVZg", null,  null),
         )
+    modImpl("maven.modrinth:embeddium:", // forge sodium port
+        12002 to null,
+        12000 to ver(null, "UTbfe5d1", null),
+    )
     modImpl("maven.modrinth:iris:",
         12105 to "N0ln8GKQ",
         12100 to "kuOV4Ece",
@@ -135,7 +140,7 @@ dependencies {
         12002 to "Cjwm9s3i",
         12000 to ver("s5eFLITc", null,  null),
         )
-    modImpl("maven.modrinth:oculus:",
+    modImpl("maven.modrinth:oculus:", // forge iris port
         12002 to null,
         12000 to ver(null, "iQ1SwGc3", null),
     )
@@ -145,15 +150,18 @@ dependencies {
         12006 to ver("9i03nYHg", "w5Vr5Pxu", "J1qWHyyO"),
         12000 to ver("zJD8Yaa3", "ShWk0wN3", "CiZKgtZH"),
         )
-    modImpl("maven.modrinth:modmenu:",
-        12105 to "R7uVB42W",
-        12102 to "PcJvQYqu",
-        12100 to "9FL4cmP7",
-        12006 to "mtTzRMV2",
-        12004 to "sjtVVlsA",
-        12002 to "TwfjidT5",
-        12000 to "RTFDnTKf",
+
+    if (platform.isFabric) {
+        modImpl("maven.modrinth:modmenu:",
+            12105 to "R7uVB42W",
+            12102 to "PcJvQYqu",
+            12100 to "9FL4cmP7",
+            12006 to "mtTzRMV2",
+            12004 to "sjtVVlsA",
+            12002 to "TwfjidT5",
+            12000 to "RTFDnTKf",
         )
+    }
 
     if (platform.isNeoForge && mcVersion < 12002) { // NeoForge 20.2.84+ added it themselves
         include("io.github.llamalad7:mixinextras-neoforge:0.4.1:slim")
@@ -162,6 +170,7 @@ dependencies {
         compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.4.1")!!)
         implementation(include("io.github.llamalad7:mixinextras-forge:0.4.1")!!)
     }
+
 
 
 

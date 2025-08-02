@@ -31,6 +31,9 @@ public abstract class MixinInnerWrappedRenderType implements ETFRenderLayerWithT
 
 
     @Shadow
+            //#if !FABRIC && MC < 12100
+            (remap = false)
+            //#endif
     public abstract RenderType unwrap();
 
     @Override

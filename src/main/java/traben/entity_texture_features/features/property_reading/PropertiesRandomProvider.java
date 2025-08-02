@@ -235,11 +235,11 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
         int result= testEntityAgainstRules(entityToBeTested, entityHasBeenTestedBefore);
 
         if (!entityHasBeenTestedBefore) {
-            //return but capture spawn conditions of first time entity
-            //must be done separate to, and after, above method as it sets the entityCanUpdate return
+            // return but capture spawn conditions of first time entity
+            // must be done separate to, and after, above method as it sets the entityCanUpdate return
             if (entityCanUpdate.getBoolean(id)) {
                 for (RandomPropertyRule rule : propertyRules) {
-                    //cache entity spawns
+                    // cache entity spawns
                     rule.cacheEntityInitialResultsOfNonUpdatingProperties(entityToBeTested);
                 }
             }

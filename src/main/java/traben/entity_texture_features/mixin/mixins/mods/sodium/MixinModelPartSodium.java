@@ -46,6 +46,9 @@ public abstract class MixinModelPartSodium { }
 //$$
 //$$     @SuppressWarnings("EmptyMethod")
 //$$     @Shadow
+            //#if !FABRIC && MC < 12100
+            //$$ (remap = false)
+            //#endif
 //$$     public static void render(PoseStack matrixStack, VertexBufferWriter writer, ModelPart part, int light, int overlay, int color) {
 //$$     }
 //$$

@@ -33,6 +33,9 @@ public abstract class MixinCustomizableModelPart {
     public abstract void render(final ModelPart vanillaModel, final PoseStack poseStack, final VertexConsumer vertexConsumer, final int light, final int overlay, final int color);
     //#else
     //$$ @Shadow
+    //#if !FABRIC && MC < 12100
+    //$$ (remap = false)
+    //#endif
     //$$ public abstract void render(ModelPart vanillaModel, PoseStack poseStack, VertexConsumer vertexConsumer, int light, int overlay, float red, float green, float blue, float alpha);
     //#endif
 
@@ -42,7 +45,11 @@ public abstract class MixinCustomizableModelPart {
             //#else
             //$$ "render(Lnet/minecraft/client/model/geom/ModelPart;Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;IIFFFF)V",
             //#endif
-            at = @At(value = "HEAD"))
+            at = @At(value = "HEAD")
+            //#if !FABRIC && MC < 12100
+            , remap = false
+            //#endif
+    )
     private void etf$findOutIfInitialModelPart(CallbackInfo ci) {
         if (ETF.config().getConfig().use3DSkinLayerPatch) {
             ETFRenderContext.incrementCurrentModelPartDepth();
@@ -70,7 +77,11 @@ public abstract class MixinCustomizableModelPart {
             //#else
             //$$ "render(Lnet/minecraft/client/model/geom/ModelPart;Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;IIFFFF)V",
             //#endif
-            at = @At(value = "RETURN"))
+            at = @At(value = "RETURN")
+            //#if !FABRIC && MC < 12100
+            , remap = false
+            //#endif
+    )
     private void etf$doEmissive(
             //#if MC >= 12006
             final ModelPart vanillaModel, final PoseStack poseStack, final VertexConsumer vertexConsumer, final int light, final int overlay, final int color, final CallbackInfo ci

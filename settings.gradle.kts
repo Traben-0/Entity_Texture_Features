@@ -42,10 +42,10 @@ mutableListOf<String>()
     .version(12104)
     .version(12103)
     .version(12100)
-//    .version(12006) // FIXME borked mod dependency remapping
-//    .version(12004)
-//    .version(12002)
-//    .version(12001, neoforge = false)
+    .version(12006)
+    .version(12004)
+    .version(12002)
+    .version(12001, neoforge = false)
 .forEach { version ->
     include(":$version")
     project(":$version").apply {

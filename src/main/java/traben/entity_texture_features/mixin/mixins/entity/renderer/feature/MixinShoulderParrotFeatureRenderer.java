@@ -1,5 +1,6 @@
 package traben.entity_texture_features.mixin.mixins.entity.renderer.feature;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -29,6 +30,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.state.ETFEntityRenderState;
@@ -36,6 +38,7 @@ import traben.entity_texture_features.features.state.HoldsETFRenderState;
 import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 //#if MC >= 12103
@@ -112,13 +115,24 @@ public abstract class MixinShoulderParrotFeatureRenderer extends RenderLayer<Pla
     }
 
 //#else
-//$$     @SuppressWarnings("unused")
-//$$     public MixinShoulderParrotFeatureRenderer(RenderLayerParent<T, PlayerModel<T>> context) {
-//$$         super(context);
+//$$ @SuppressWarnings("unused")
+//$$ public MixinShoulderParrotFeatureRenderer(RenderLayerParent<T, PlayerModel<T>> context) {
+//$$     super(context);
+//$$ }
+//$$
+//$$     // cant target lambda directly with forge
+//$$     @ModifyArg(method = "Lnet/minecraft/client/renderer/entity/layers/ParrotOnShoulderLayer;render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/entity/player/Player;FFFFZ)V",
+//$$             at = @At(value = "INVOKE", target = "Ljava/util/Optional;ifPresent(Ljava/util/function/Consumer;)V"))
+//$$     private Consumer<? super T> etf$alterEntity(final Consumer<? super T> action, @Local(argsOnly = true) T t, @Local CompoundTag nbtCompound) {
+//$$         return (v)-> {
+//$$             etf$HEADalterEntity(t, nbtCompound);
+//$$             action.accept(v);
+//$$             etf$TAILresetEntity();
+//$$         };
 //$$     }
 //$$
-//$$     @Inject(method = "method_17958", at = @At(value = "HEAD"))
-//$$     private void etf$alterEntity(PoseStack matrixStack, boolean bl, Player playerEntity, CompoundTag nbtCompound, MultiBufferSource vertexConsumerProvider, int i, float f, float g, float h, float j, EntityType<?> type, CallbackInfo ci) {
+//$$     @Unique
+//$$     private void etf$HEADalterEntity(T playerEntity, CompoundTag nbtCompound) {
 //$$         if (nbtCompound != null) {
 //$$
 //$$             etf$heldEntity = ETFRenderContext.getCurrentEntityState();
@@ -130,8 +144,8 @@ public abstract class MixinShoulderParrotFeatureRenderer extends RenderLayer<Pla
 //$$         }
 //$$     }
 //$$
-//$$     @Inject(method = "method_17958", at = @At(value = "RETURN"))
-//$$     private void etf$resetEntity(PoseStack matrixStack, boolean bl, Player playerEntity, CompoundTag nbtCompound, MultiBufferSource vertexConsumerProvider, int i, float f, float g, float h, float j, EntityType<?> type, CallbackInfo ci) {
+//$$     @Unique
+//$$     private void etf$TAILresetEntity() {
 //$$         if (etf$heldEntity != null) {
 //$$             ETFRenderContext.setCurrentEntity(etf$heldEntity);
 //$$         }
@@ -139,8 +153,6 @@ public abstract class MixinShoulderParrotFeatureRenderer extends RenderLayer<Pla
 //$$     }
 //$$
 //#endif
-
-
 }
 
 

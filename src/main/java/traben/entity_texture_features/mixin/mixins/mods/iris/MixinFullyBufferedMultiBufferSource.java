@@ -36,7 +36,11 @@ public class MixinFullyBufferedMultiBufferSource {
     @ModifyVariable(
             method = "getBuffer",
             at = @At(value = "HEAD"),
-            index = 1, argsOnly = true)
+            index = 1, argsOnly = true
+            //#if !FABRIC && MC == 12004
+            //$$ , remap = false
+            //#endif
+            )
     private RenderType etf$modifyRenderLayer(RenderType value) {
         RenderType newLayer = ETFRenderContext.modifyRenderLayerIfRequired(value);
         return newLayer == null ? value : newLayer;
@@ -45,7 +49,11 @@ public class MixinFullyBufferedMultiBufferSource {
 
     @Inject(
             method = "getBuffer",
-            at = @At(value = "RETURN"))
+            at = @At(value = "RETURN")
+            //#if !FABRIC && MC == 12004
+            //$$ , remap = false
+            //#endif
+            )
     private void etf$injectIntoGetBufferReturn(RenderType renderLayer, CallbackInfoReturnable<VertexConsumer> cir) {
         ETFRenderContext.insertETFDataIntoVertexConsumer(
                 (MultiBufferSource) this,
