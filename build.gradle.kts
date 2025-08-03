@@ -133,8 +133,9 @@ dependencies {
         12000 to ver(null, "UTbfe5d1", null),
     )
     modImpl("maven.modrinth:iris:",
-        12105 to "N0ln8GKQ",
-        12100 to "kuOV4Ece",
+        12106 to ver("l77DAK6U", null,  "xA5cxBvz"),
+        12105 to ver("U6evbjd0", null,  "KAopiPos"),
+        12100 to ver("zsoi0dso", null,  "t3ruzodq"),
         12006 to "1bvcmYOc",
         12004 to "hq98tuSS",
         12002 to "Cjwm9s3i",
