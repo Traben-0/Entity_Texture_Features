@@ -23,12 +23,10 @@ public abstract class MixinEntityRenderer<T extends Entity
    //#if MC >= 12103
         , S extends EntityRenderState> {
 
-    @Shadow @Final private S reusedState;
-
     @Inject(method = "createRenderState(Lnet/minecraft/world/entity/Entity;F)Lnet/minecraft/client/renderer/entity/state/EntityRenderState;",
     at = @At(value = "TAIL"))
     private void etf$createRenderState(CallbackInfoReturnable<S> cir, @Local(argsOnly = true) Entity entity) {
-        ((HoldsETFRenderState) this.reusedState).etf$initState((ETFEntity) entity);
+        ((HoldsETFRenderState) cir.getReturnValue()).etf$initState((ETFEntity) entity);
     }
     //#else
     //$$    > {
