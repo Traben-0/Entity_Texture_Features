@@ -47,7 +47,7 @@ public abstract class MixinCustomizableModelPart {
             //#endif
             at = @At(value = "HEAD")
             //#if !FABRIC && MC < 12100
-            , remap = false
+            //$$ , remap = false
             //#endif
     )
     private void etf$findOutIfInitialModelPart(CallbackInfo ci) {
@@ -79,7 +79,7 @@ public abstract class MixinCustomizableModelPart {
             //#endif
             at = @At(value = "RETURN")
             //#if !FABRIC && MC < 12100
-            , remap = false
+            //$$ , remap = false
             //#endif
     )
     private void etf$doEmissive(

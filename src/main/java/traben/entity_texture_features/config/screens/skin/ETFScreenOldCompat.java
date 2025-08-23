@@ -40,7 +40,7 @@ public abstract class ETFScreenOldCompat extends TConfigScreen {
         //$$ RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
         //$$ RenderSystem.setShaderTexture(0, texture);
         //$$ RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-
+        //$$
         //$$ bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
         //$$ bufferBuilder.vertex(x1, y2, 0.0).uv(0, 1/*(float)x1, (float)y2*heightYValue*/ ).color(255, 255, 255, 255).endVertex();
         //$$ bufferBuilder.vertex(x2, y2, 0.0).uv(1, 1/*(float)x2*widthXValue, (float)y2*heightYValue*/ ).color(255, 255, 255, 255).endVertex();
@@ -58,9 +58,9 @@ public abstract class ETFScreenOldCompat extends TConfigScreen {
         //$$ RenderSystem.setShaderTexture(0, texture);
         //$$ RenderSystem.setShader(  GameRenderer::getPositionTexColorShader );
         //$$ RenderSystem.enableBlend();
-
+        //$$
         //$$ BufferBuilder bufferBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-
+        //$$
         //$$ bufferBuilder.addVertex( (float)x1, (float)y2, (float)0).setUv(0, 1).setColor(255, 255, 255, 255);
         //$$ bufferBuilder.addVertex( (float)x2, (float)y2, (float)0).setUv(1, 1).setColor(255, 255, 255, 255);
         //$$ bufferBuilder.addVertex( (float)x2, (float)y1, (float)0).setUv(1, 0).setColor(255, 255, 255, 255);

@@ -9,8 +9,8 @@ package traben.entity_texture_features.mixin.mixins.mods.iris.old;
 //$$ import traben.entity_texture_features.utils.ETFRenderLayerWithTexture;
 //$$
 //$$ import java.util.Optional;
-
-
+//$$
+//$$
 //$$ /**
 //$$  * Required in case Iris wraps an instance of {@link ETFRenderLayerWithTexture}
 //$$  * <p>

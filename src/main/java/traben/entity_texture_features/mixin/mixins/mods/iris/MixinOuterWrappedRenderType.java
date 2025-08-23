@@ -4,7 +4,7 @@ package traben.entity_texture_features.mixin.mixins.mods.iris;
 //$$ import org.spongepowered.asm.mixin.Mixin;
 //$$ import org.spongepowered.asm.mixin.Pseudo;
 //$$ import traben.entity_texture_features.mixin.CancelTarget;
-
+//$$
 //$$ @Pseudo
 //$$ @Mixin(CancelTarget.class)
 //$$ public class MixinOuterWrappedRenderType {}
@@ -30,7 +30,7 @@ public abstract class MixinOuterWrappedRenderType implements ETFRenderLayerWithT
 
     @Shadow
             //#if !FABRIC && MC < 12100
-            (remap = false)
+            //$$ (remap = false)
             //#endif
     public abstract RenderType unwrap();
 

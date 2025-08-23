@@ -15,7 +15,7 @@ public abstract class MixinMinecraftClient {
     //#if MC >= 12002
     @Inject(method = "disconnect*", at = @At("TAIL"))
     //#elseif MC >= 12002
-    ////todo huh?
+    //$$ ////todo huh?
     //$$ @Inject(method = "disconnect(Lnet/minecraft/client/gui/screens/Screen;)V", at = @At("TAIL"))
     //#else
     //$$ @Inject(method = "clearLevel(Lnet/minecraft/client/gui/screens/Screen;)V", at = @At("TAIL"))
