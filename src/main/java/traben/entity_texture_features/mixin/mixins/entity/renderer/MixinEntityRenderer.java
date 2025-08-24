@@ -47,4 +47,9 @@ public abstract class MixinEntityRenderer<T extends Entity
         ETFRenderContext.preventRenderLayerTextureModify();
     }
 
+    @Inject(method = "render", at = @At(value = "TAIL"))
+    private void etf$revertForRenderersThatCallSuperFirst(final CallbackInfo ci) {
+        ETFRenderContext.allowRenderLayerTextureModify(); // see minecart rendering
+    }
+
 }

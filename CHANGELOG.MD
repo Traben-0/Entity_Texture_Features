@@ -10,3 +10,4 @@ v7
 - large restructure of the source code
 - first release for 1.20 in a while
 - fixed a crash when illegal paths were enabled 
+- fixed minecart random textures
