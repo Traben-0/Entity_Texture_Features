@@ -74,20 +74,20 @@ public abstract class ETFUtils2 {
     }
 
     public static ResourceLocation getETFVariantNotNullForInjector(ResourceLocation identifier) {
-        //do not modify texture
+        // do not modify texture
         if (identifier == null
                 || ETFRenderContext.getCurrentEntityState() == null
                 || !ETFRenderContext.isAllowedToRenderLayerTextureModify())
             return identifier;
 
-        //get etf modified texture
+        // get etf modified texture
         ETFTexture etfTexture = ETFManager.getInstance().getETFTextureVariant(identifier, ETFRenderContext.getCurrentEntityState());
         if (ETFRenderContext.isAllowedToPatch()) {
             etfTexture.assertPatchedTextures();
         }
         ResourceLocation modified = etfTexture.getTextureIdentifier(ETFRenderContext.getCurrentEntityState());
 
-        //check not null just to be safe, it shouldn't be however
+        // check not null just to be safe, it shouldn't be however
         //noinspection ConstantValue
         return modified == null ? identifier : modified;
     }
@@ -119,7 +119,7 @@ public abstract class ETFUtils2 {
     }
 
     public static boolean renderEnchanted(ETFTexture texture, MultiBufferSource provider, int light, RenderMethodForOverlay renderer) {
-        //attempt enchanted render
+        // attempt enchanted render
         ResourceLocation enchanted = texture.getEnchantIdentifierOfCurrentState();
         if (enchanted != null) {
             boolean wasAllowed = ETFRenderContext.isAllowedToRenderLayerTextureModify();
@@ -172,13 +172,13 @@ public abstract class ETFUtils2 {
     @Nullable
     public static String returnNameOfHighestPackFromTheseMultiple(String[] packNameList) {
         ArrayList<String> packNames = new ArrayList<>(Arrays.asList(packNameList));
-        //loop through and remove the one from the lowest pack of the first 2 entries
-        //this iterates over the whole array
+        // loop through and remove the one from the lowest pack of the first 2 entries
+        // this iterates over the whole array
         final ArrayList<String> knownResourcepackOrder = ETFManager.getInstance().KNOWN_RESOURCEPACK_ORDER;
         while (packNames.size() > 1) {
             packNames.remove(knownResourcepackOrder.indexOf(packNames.get(0)) >= knownResourcepackOrder.indexOf(packNames.get(1)) ? 1 : 0);
         }
-        //here the array is down to 1 entry which should be the one in the highest pack
+        // here the array is down to 1 entry which should be the one in the highest pack
         return packNames.get(0);
     }
 
@@ -225,7 +225,7 @@ public abstract class ETFUtils2 {
     public static NativeImage getNativeImageElseNull(@Nullable ResourceLocation identifier) {
 
         try {
-            //try catch is intended
+            // try catch is intended
             Optional<Resource> resource = Minecraft.getInstance().getResourceManager().getResource(identifier);
             if (resource.isPresent()) {
                 try (InputStream in = resource.get().open()) {
@@ -249,7 +249,7 @@ public abstract class ETFUtils2 {
         }
     }
 
-    //improvements to logging by @Maximum#8760
+    // improvements to logging by @Maximum#8760
     public static void logMessage(String obj) {
         logMessage(obj, false);
     }
@@ -297,7 +297,6 @@ public abstract class ETFUtils2 {
         }
     }
 
-    //improvements to logging by @Maximum#8760
     public static void logError(String obj) {
         logError(obj, false);
     }

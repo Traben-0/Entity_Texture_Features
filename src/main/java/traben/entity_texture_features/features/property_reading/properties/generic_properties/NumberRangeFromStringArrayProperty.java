@@ -24,7 +24,7 @@ public abstract class NumberRangeFromStringArrayProperty<N extends Number> exten
 
         String testString = doPrint ? stringInput.substring(6) : stringInput;
 
-        //if you need to parse custom characters the originalInput is saved in that variable for you
+        // if you need to parse custom characters the originalInput is saved in that variable for you
         String onlyNumbersSpacesDashesAndPeriods = testString.replaceAll("[^0-9.\\s-]", "");
 
         String[] array = onlyNumbersSpacesDashesAndPeriods.trim().split("\\s+");

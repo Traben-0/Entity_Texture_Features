@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 
 /**
@@ -43,7 +44,7 @@ public abstract class SimpleIntegerArrayProperty extends RandomProperty {
                 String dataFromProps = props.getProperty(propertyName + "." + num).strip().replaceAll("[)(]", "");
                 ArrayList<Integer> integers = new ArrayList<>();
                 for (String data : dataFromProps.split("\\s+")) {
-                    //check if range
+                    // check if range
                     data = data.strip();
                     if (!data.replaceAll("\\D", "").isEmpty()) {
                         try {
@@ -64,11 +65,13 @@ public abstract class SimpleIntegerArrayProperty extends RandomProperty {
         return null;
     }
 
+    private static final Pattern RANGE_PATTERN = Pattern.compile("(\\d+|-\\d+)-(\\d+|-\\d+)");
+
     public static IntRange getIntRange(String rawRange) {
-        //assume rawRange =  "20-56"  but can be "-64-56", "-30--10"  or "-14"
+        // assume rawRange =  "20-56"  but can be "-64-56", "-30--10"  or "-14"
         String numberOnlyString = rawRange.trim().replaceAll("[^0-9-]", "");
         try {
-            if (numberOnlyString.matches("(\\d+|-\\d+)-(\\d+|-\\d+)")) {
+            if (RANGE_PATTERN.matcher(numberOnlyString).matches()) {
                 String[] str = numberOnlyString.split("(?<!^|-)-");
                 int small = Integer.parseInt(str[0]);
                 int large = Integer.parseInt(str[1]);

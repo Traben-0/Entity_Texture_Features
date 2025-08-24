@@ -47,7 +47,7 @@ public abstract class StringArrayOrRegexProperty extends RandomProperty {
                     array) {
                 ARRAY.add(shouldForceLowerCaseCheck() ? str.toLowerCase() : str);
             }
-            //add the entire text as well just incase spaced names were expected
+            // add the entire text as well just incase spaced names were expected
             if (array.length != 1) {
                 ARRAY.add(testString.trim());
             }
@@ -65,16 +65,22 @@ public abstract class StringArrayOrRegexProperty extends RandomProperty {
         if (invert) stringToMatch = stringToMatch.substring(1);
 
         if (stringToMatch.startsWith("regex:") || stringToMatch.startsWith("iregex:")) {
-            final boolean ignoreCase = stringToMatch.startsWith("i");
-            final String finalStringToMatch = stringToMatch.replaceFirst("iregex:|regex:", "");
-            return (string) -> invert != string.matches(ignoreCase ? "(?i)" + finalStringToMatch : finalStringToMatch);
+            boolean ignoreCase = stringToMatch.startsWith("i");
+            String finalStringToMatch = stringToMatch.replaceFirst("iregex:|regex:", "");
+
+            // precompile the regex pattern so we don't have to every time
+            var regex = Pattern.compile(ignoreCase ? "(?i)" + finalStringToMatch : finalStringToMatch);
+            return (string) -> invert != regex.matcher(string).matches();
         }else if (stringToMatch.startsWith("pattern:") || stringToMatch.startsWith("ipattern:")) {
-            final boolean ignoreCase = stringToMatch.startsWith("i");
+            boolean ignoreCase = stringToMatch.startsWith("i");
             //todo faster way to do this
             stringToMatch = stringToMatch.replaceFirst("ipattern:|pattern:", "").replace("*", "\\E.*\\Q").replace("?", "\\E.\\Q");
-            final String finalStringToMatch = "\\Q" + stringToMatch + "\\E";
-            return (string) -> invert != string.matches(ignoreCase ? "(?i)" + finalStringToMatch : finalStringToMatch);
-        } else {//direct comparison
+            String finalStringToMatch = "\\Q" + stringToMatch + "\\E";
+
+            // precompile the regex pattern so we don't have to every time
+            var regex = Pattern.compile(ignoreCase ? "(?i)" + finalStringToMatch : finalStringToMatch);
+            return (string) -> invert != regex.matcher(string).matches();
+        } else {// direct comparison
             String[] splitMatches = stringToMatch.split("\\s+");
             boolean hasQuotes = stringToMatch.contains("\"");
             final String finalString = stringToMatch;

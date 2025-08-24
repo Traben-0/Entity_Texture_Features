@@ -12,12 +12,12 @@ import traben.entity_texture_features.features.property_reading.properties.Rando
 import traben.entity_texture_features.features.property_reading.properties.generic_properties.SimpleIntegerArrayProperty;
 import traben.entity_texture_features.features.state.ETFEntityRenderState;
 import traben.entity_texture_features.features.texture_handlers.ETFDirectory;
-import traben.entity_texture_features.utils.ETFEntity;
 import traben.entity_texture_features.utils.ETFUtils2;
 import traben.entity_texture_features.utils.EntityBooleanLRU;
 
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
@@ -26,18 +26,16 @@ import net.minecraft.server.packs.resources.ResourceManager;
 
 public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider {
 
-
     protected final List<RandomPropertyRule> propertyRules;
 
     protected final EntityBooleanLRU entityCanUpdate = new EntityBooleanLRU(1000);
 
     protected final @NotNull String packname;
+
     protected EntityRandomSeedFunction entityRandomSeedFunction = ETFEntityRenderState::optifineId;
-        //entity.etf$getUuid().hashCode();
 
-
-    protected BiConsumer<ETFEntityRenderState, @Nullable RandomPropertyRule> onMeetsRule = (entity, rule) -> {
-    };
+    protected BiConsumer<ETFEntityRenderState, @Nullable RandomPropertyRule> onMeetsRule =
+            (entity, rule) -> { };
 
     private PropertiesRandomProvider(ResourceLocation propertiesFileIdentifier, List<RandomPropertyRule> propertyRules) {
         this.propertyRules = propertyRules;
@@ -67,9 +65,9 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
                 return null;
             }
 
-            //assure default return always present
+            // assure default return always present
             if (!propertyRules.get(propertyRules.size() - 1).isAlwaysMet()) {
-                propertyRules.add(RandomPropertyRule.defaultReturn);
+                propertyRules.add(RandomPropertyRule.DEFAULT_RETURN);
             }
 
             ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
@@ -93,11 +91,35 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
     }
 
     public static List<RandomPropertyRule> getAllValidPropertyObjects(Properties properties, ResourceLocation propertiesFilePath, String... suffixToTest) throws ETFException {
-        Set<String> propIds = properties.stringPropertyNames();
-        //set so only 1 of each
-        List<Integer> numbersList = getCaseNumbers(propIds);
-        Collections.sort(numbersList);
 
+        List<Integer> numbersList = getCaseNumbers(properties.stringPropertyNames());
+
+        validateRuleNumbers(propertiesFilePath, numbersList);
+
+        List<RandomPropertyRule> allRulesOfProperty = new ArrayList<>();
+        for (Integer ruleNumber :
+                numbersList) {
+            // loops through each known number in properties
+            // all rule.1 ect should be processed here
+            Integer[] suffixesOfRule = getSuffixes(properties, ruleNumber, suffixToTest);
+
+            // list easier to build
+            if (suffixesOfRule != null && suffixesOfRule.length != 0) {
+                allRulesOfProperty.add(new RandomPropertyRule(
+                        propertiesFilePath.toString(),
+                        ruleNumber,
+                        suffixesOfRule,
+                        getWeights(properties, ruleNumber),
+                        RandomProperties.getAllRegisteredRandomPropertiesOfIndex(properties, ruleNumber)
+                ));
+            } else {
+                ETFUtils2.logWarn("property number \"" + ruleNumber + ". in file \"" + propertiesFilePath + ". failed to read.");
+            }
+        }
+        return allRulesOfProperty;
+    }
+
+    private static void validateRuleNumbers(final ResourceLocation propertiesFilePath, final List<Integer> numbersList) {
         if (numbersList.isEmpty()) {
             ETFUtils2.logWarn("Properties file [" + propertiesFilePath + "] contains no rules, this is invalid.", false);
             throw new ETFException("Properties file [" + propertiesFilePath + "] contains no rules, this is invalid.");
@@ -108,7 +130,7 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
             throw new ETFException("Properties file [" + propertiesFilePath + "] contains rule numbers less than 1, this is invalid.");
         }
 
-        //send log message if skipping rule numbers
+        // send log message if skipping rule numbers
         int last = 0;
         for (Integer i : numbersList) {
             if (i >= last + 10) {
@@ -125,36 +147,13 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
                 ETFUtils2.logWarn("Properties file [" + propertiesFilePath + "] has skipped rule numbers by values greater than 10, this is invalid in OptiFine. This limitation has been disabled in ETF's settings, your pack is incompatible with OptiFine.", false);
             }
         }
-
-        List<RandomPropertyRule> allRulesOfProperty = new ArrayList<>();
-        for (Integer ruleNumber :
-                numbersList) {
-            //System.out.println("constructed as "+ruleNumber);
-            //loops through each known number in properties
-            //all rule.1 ect should be processed here
-            Integer[] suffixesOfRule = getSuffixes(properties, ruleNumber, suffixToTest);
-
-            //list easier to build
-            if (suffixesOfRule != null && suffixesOfRule.length != 0) {
-                allRulesOfProperty.add(new RandomPropertyRule(
-                        propertiesFilePath.toString(),
-                        ruleNumber,
-                        suffixesOfRule,
-                        getWeights(properties, ruleNumber),
-                        RandomProperties.getAllRegisteredRandomPropertiesOfIndex(properties, ruleNumber)
-                ));
-            } else {
-                ETFUtils2.logWarn("property number \"" + ruleNumber + ". in file \"" + propertiesFilePath + ". failed to read.");
-            }
-        }
-        return allRulesOfProperty;
     }
 
     @NotNull
     private static List<Integer> getCaseNumbers(final Set<String> propIds) {
         Set<Integer> foundRuleNumbers = new HashSet<>();
 
-        //get the foundRuleNumbers we are working with
+        // get the foundRuleNumbers we are working with
         for (String str : propIds) {
             String[] split = str.split("\\.");
             if (split.length >= 2 && !split[1].isBlank()) {
@@ -163,19 +162,18 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
                     try {
                         foundRuleNumbers.add(Integer.parseInt(possibleRuleNumber));
                     } catch (NumberFormatException e) {
-                        //ETFUtils2.logWarn("properties file number error in start count");
                     }
                 }
             }
         }
-        //sort from lowest to largest
-        return new ArrayList<>(foundRuleNumbers);
+        // sort
+        return foundRuleNumbers.stream().sorted().toList();
     }
 
     @Nullable
     private static Integer[] getSuffixes(Properties props, int num, String... suffixToTest) throws ETFException {
         var suffixes = SimpleIntegerArrayProperty.getGenericIntegerSplitWithRanges(props, num, suffixToTest);
-        //throw if it contains 0 or negatives
+        // throw if it contains 0 or negatives
         if (suffixes != null) {
             for (Integer suffix : suffixes) {
                 if (suffix < 1) {

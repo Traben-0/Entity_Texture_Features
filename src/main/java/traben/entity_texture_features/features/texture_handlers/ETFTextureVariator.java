@@ -10,7 +10,6 @@ import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.property_reading.PropertiesRandomProvider;
 import traben.entity_texture_features.features.state.ETFEntityRenderState;
-import traben.entity_texture_features.utils.ETFEntity;
 import traben.entity_texture_features.utils.ETFUtils2;
 import traben.entity_texture_features.utils.EntityIntLRU;
 
@@ -131,7 +130,7 @@ public abstract class ETFTextureVariator {
                     if (rule == null) {
                         ETFManager.getInstance().LAST_RULE_INDEX_OF_ENTITY.removeInt(entity.uuid());
                     } else {
-                        ETFManager.getInstance().LAST_RULE_INDEX_OF_ENTITY.put(entity.uuid(), rule.RULE_NUMBER);
+                        ETFManager.getInstance().LAST_RULE_INDEX_OF_ENTITY.put(entity.uuid(), rule.ruleNumber);
                     }
                 });
             }

@@ -44,7 +44,7 @@ public class ETFManager {
     public final ETFLruCache<UUID, ETFPlayerTexture> PLAYER_TEXTURE_MAP = new ETFLruCache<>();
     public final ArrayList<String> KNOWN_RESOURCEPACK_ORDER = new ArrayList<>();
     public final ObjectOpenHashSet<EntityType<?>> ENTITY_TYPE_IGNORE_PARTICLES = new ObjectOpenHashSet<>();
-    //this is a cache of all known ETFTexture versions of any existing resource-pack texture, used to prevent remaking objects
+    // this is a cache of all known ETFTexture versions of any existing resource-pack texture, used to prevent remaking objects
     public final Object2ReferenceOpenHashMap<@NotNull ResourceLocation, @Nullable ETFTexture> ETF_TEXTURE_CACHE = new Object2ReferenceOpenHashMap<>();
     public final EntityIntLRU LAST_SUFFIX_OF_ENTITY = new EntityIntLRU();
     public final EntityIntLRU LAST_RULE_INDEX_OF_ENTITY = new EntityIntLRU();
@@ -66,14 +66,14 @@ public class ETFManager {
             String[] paths = {"optifine/emissive.properties", "textures/emissive.properties", "etf/emissive.properties"};
             for (String path :
                     paths) {
-                //retrieve all layered resources
+                // retrieve all layered resources
                 var prop = ETFUtils2.readAndReturnAllLayeredPropertiesElseNull(ETFUtils2.res(path));
                 if (prop != null)
                     props.addAll(prop);
             }
             for (Properties prop :
                     props) {
-                //not an optifine property that I know of but this has come up in a few packs, so I am supporting it
+                // not an optifine property that I know of but this has come up in a few packs, so I am supporting it
                 String[] keys = {"entities.suffix.emissive", "suffix.emissive"};
                 for (String key : keys) {
                     String value = prop.getProperty(key);
@@ -107,8 +107,8 @@ public class ETFManager {
     public static void resetInstance() {
         ETF.config().loadFromFile();
 
-        //instance based format solves the issue of hashmaps and arrays being clearing while also being accessed
-        //as now those rare transitional (reading during clearing) occurrences will simply read from the previous instance of manager
+        // instance based format solves the issue of hashmaps and arrays being clearing while also being accessed
+        // as now those rare transitional (reading during clearing) occurrences will simply read from the previous instance of manager
         instance = new ETFManager();
     }
 
@@ -286,7 +286,7 @@ public class ETFManager {
                     return possibleSkin;
                 }
             }
-            PLAYER_TEXTURE_MAP.put(id, null);//incase of crash
+            PLAYER_TEXTURE_MAP.put(id, null); // incase of crash
             ETFPlayerTexture etfPlayerTexture = new ETFPlayerTexture(player, rendererGivenSkin);
             PLAYER_TEXTURE_MAP.put(id, etfPlayerTexture);
             return etfPlayerTexture;

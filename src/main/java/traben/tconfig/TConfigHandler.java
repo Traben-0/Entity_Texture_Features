@@ -13,11 +13,7 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-
-
-
 public class TConfigHandler<T extends TConfig> {
-
 
     private final Supplier<T> newConfigSupplier;
     private final String configFileName;
@@ -31,7 +27,7 @@ public class TConfigHandler<T extends TConfig> {
         this.configFileName = configFileName.endsWith(".json") ? configFileName : configFileName + ".json";
         //noinspection unchecked
         this.configClass = Objects.requireNonNull((Class<T>) newConfigSupplier.get().getClass());
-        //needs class set above
+        // needs class set above
         this.loadFromFile();
 
     }

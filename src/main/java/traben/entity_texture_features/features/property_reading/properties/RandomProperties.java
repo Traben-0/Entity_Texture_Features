@@ -22,7 +22,7 @@ public class RandomProperties {
 
     static {
         register(
-                //ETF properties
+                // ETF properties
                 RandomPropertyFactory.of("angry", "config.entity_texture_features.property_explanation.angry", AngryProperty::getPropertyOrNull),
                 RandomPropertyFactory.of("creeperCharged", "config.entity_texture_features.property_explanation.creeper", ChargedCreeperProperty::getPropertyOrNull),
                 RandomPropertyFactory.of("distance", "config.entity_texture_features.property_explanation.distance", DistanceToPlayerProperty::getPropertyOrNull),
@@ -52,7 +52,7 @@ public class RandomProperties {
                 RandomPropertyFactory.of("biomeTag", "config.entity_texture_features.property_explanation.biome_tag", BiomeTagProperty::getPropertyOrNull, true),
                 RandomPropertyFactory.of("temperature", "config.entity_texture_features.property_explanation.temperature", TemperatureProperty::getPropertyOrNull,true),
 
-                //etf externals
+                // etf externals
                 RandomPropertyFactory.of("hour", "config.entity_texture_features.property_explanation.hour", HourProperty::getPropertyOrNull),
                 RandomPropertyFactory.of("minute", "config.entity_texture_features.property_explanation.min", MinuteProperty::getPropertyOrNull),
                 RandomPropertyFactory.of("monthDay", "config.entity_texture_features.property_explanation.month_day", MonthDayProperty::getPropertyOrNull, true),
@@ -73,7 +73,7 @@ public class RandomProperties {
                 RandomPropertyFactory.of("hardcore", "config.entity_texture_features.property_explanation.hardcore", HardcoreProperty::getPropertyOrNull),
 
 
-                //OptiFine properties
+                // OptiFine properties
                 RandomPropertyFactory.of("baby", "config.entity_texture_features.property_explanation.baby", BabyProperty::getPropertyOrNull),
                 RandomPropertyFactory.of("biomes", "config.entity_texture_features.property_explanation.biome", BiomeProperty::getPropertyOrNull, true),
                 RandomPropertyFactory.of("blocks", "config.entity_texture_features.property_explanation.block", BlocksProperty::getPropertyOrNull),

@@ -143,7 +143,7 @@ public final class ETFConfig extends TConfig {
         if (key != null && entityLightOverrides.containsKey(key)) {
             //noinspection deprecation
             int lightETF = Mth.clamp(entityLightOverrides.get(key), 0, 15);
-            //recalculate to avoid child overrides
+            // recalculate to avoid child overrides
             var pos = BlockPos.containing(entity.getLightProbePosition(tickDelta));
             int block = entity.level().getBrightness(LightLayer.SKY, pos);//LightmapTextureManager.getBlockLightCoordinates(light);
             int sky = entity.isOnFire() ? 15 : entity.level().getBrightness(LightLayer.BLOCK, pos);//LightmapTextureManager.getSkyLightCoordinates(light);
@@ -369,7 +369,6 @@ public final class ETFConfig extends TConfig {
             if (!condition4) {
                 reasonText.append(ETF.getTextFromTranslation("config.entity_texture_features.player_skin_editor.reason_4").getString());
             }
-            //ETFUtils2.logWarn(reasonText.toString());
         }
 
         return canLaunchSkinTool ?

@@ -50,7 +50,7 @@ public class TrueRandomProvider implements ETFApi.ETFVariantSuffixProvider {
         suffixes.add(1);
         suffixes.add(2);
 
-        //matches optifines weird behaviour
+        // matches optifines weird behaviour
         boolean notAllowSkip = !ETF.config().getConfig().optifine_allowWeirdSkipsInTrueRandom;
 
         for (int i = 3; i < suffixes.size() + 10; i++) {

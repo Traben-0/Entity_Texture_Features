@@ -94,7 +94,7 @@ public abstract class TConfigScreenMain extends TConfigScreen {
     public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
 
-        //draw mod icons in the top right corner of the screen
+        // draw mod icons in the top right corner of the screen
         // from left to right
         if (!modIcons.isEmpty()) {
             int ix = this.width - (modIcons.size() * 34);

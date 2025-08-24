@@ -2,23 +2,22 @@ package traben.entity_texture_features.features.property_reading;
 
 import traben.entity_texture_features.features.property_reading.properties.RandomProperty;
 import traben.entity_texture_features.features.state.ETFEntityRenderState;
-import traben.entity_texture_features.utils.ETFEntity;
 import traben.entity_texture_features.utils.ETFUtils2;
 import traben.entity_texture_features.utils.EntityBooleanLRU;
 
 import java.util.*;
 
 public class RandomPropertyRule {
-    public final int RULE_NUMBER;
-    public final String PROPERTY_FILE;
-    private final Integer[] SUFFIX_NUMBERS;
-    private final Integer[] WEIGHTS;
-    private final int WEIGHT_TOTAL;
-    private final RandomProperty[] PROPERTIES_TO_TEST;
-    private final boolean RULE_ALWAYS_APPROVED;
-    private final boolean UPDATES;
+    public final int ruleNumber;
+    public final String propertyFile;
+    private final Integer[] suffixNumbers;
+    private final Integer[] weights;
+    private final int weightTotal;
+    private final RandomProperty[] propertiesToTest;
+    private final boolean ruleAlwaysApproved;
+    private final boolean updates;
 
-    static final RandomPropertyRule defaultReturn = new RandomPropertyRule(){
+    static final RandomPropertyRule DEFAULT_RETURN = new RandomPropertyRule() {
         @Override
         public int getVariantSuffixFromThisCase(final int seed) {
             return 1;
@@ -30,19 +29,19 @@ public class RandomPropertyRule {
         }
     };
 
-    private RandomPropertyRule(){
-        RULE_NUMBER = 0;//used for rule matching settings
-        PROPERTY_FILE = "default setter";
-        SUFFIX_NUMBERS = new Integer[]{1};
-        PROPERTIES_TO_TEST = new RandomProperty[]{};
-        RULE_ALWAYS_APPROVED = true;
-        UPDATES = false;
-        WEIGHTS = null;
-        WEIGHT_TOTAL = 0;
+    private RandomPropertyRule() {
+        ruleNumber = 0; // used for rule matching settings
+        propertyFile = "default setter";
+        suffixNumbers = new Integer[]{1};
+        propertiesToTest = new RandomProperty[]{};
+        ruleAlwaysApproved = true;
+        updates = false;
+        weights = null;
+        weightTotal = 0;
     }
 
     public boolean isAlwaysMet(){
-        return RULE_ALWAYS_APPROVED;
+        return ruleAlwaysApproved;
     }
 
 
@@ -52,19 +51,18 @@ public class RandomPropertyRule {
             Integer[] suffixes,
             Integer[] weights,
             RandomProperty... properties
-
     ) {
-        PROPERTY_FILE = propertiesFile;
-        RULE_NUMBER = ruleNumber;
-        PROPERTIES_TO_TEST = properties;
-        RULE_ALWAYS_APPROVED = properties.length == 0;
+        propertyFile = propertiesFile;
+        this.ruleNumber = ruleNumber;
+        propertiesToTest = properties;
+        ruleAlwaysApproved = properties.length == 0;
 
 
-        SUFFIX_NUMBERS = suffixes;
+        suffixNumbers = suffixes;
 
         if (weights == null || weights.length == 0) {
-            WEIGHTS = null;
-            WEIGHT_TOTAL = 0;
+            this.weights = null;
+            weightTotal = 0;
         } else /*if (weights.length == suffixes.length)*/ {
 
             if(weights.length != suffixes.length) {
@@ -73,9 +71,9 @@ public class RandomPropertyRule {
                 System.arraycopy(weights, 0, weightsFinal, 0, smaller);
 
                 if (weights.length >= suffixes.length) {
-                    ETFUtils2.logWarn("Random Property file [" + PROPERTY_FILE + "] rule # [" + RULE_NUMBER + "] has more weights than suffixes, trimming to match");
+                    ETFUtils2.logWarn("Random Property file [" + propertyFile + "] rule # [" + this.ruleNumber + "] has more weights than suffixes, trimming to match");
                 } else {
-                    ETFUtils2.logWarn("Random Property file [" + PROPERTY_FILE + "] rule # [" + RULE_NUMBER + "] has more suffixes than weights, expanding to match");
+                    ETFUtils2.logWarn("Random Property file [" + propertyFile + "] rule # [" + this.ruleNumber + "] has more suffixes than weights, expanding to match");
                     int avgWeight = Arrays.stream(weights).mapToInt(Integer::intValue).sum() / weights.length;
                     for (int i = weights.length; i < weightsFinal.length; i++) {
                         weightsFinal[i] = avgWeight;
@@ -85,7 +83,7 @@ public class RandomPropertyRule {
             }
 
             int total = 0;
-            WEIGHTS = new Integer[weights.length];
+            this.weights = new Integer[weights.length];
             for (int i = 0; i < weights.length; i++) {
                 Integer weight = weights[i];
                 if (weight < 0) {
@@ -93,60 +91,56 @@ public class RandomPropertyRule {
                     break;
                 }
                 total += weight;
-                WEIGHTS[i] = total;
+                this.weights[i] = total;
             }
-            WEIGHT_TOTAL = total;
+            weightTotal = total;
         }
-        UPDATES = Arrays.stream(PROPERTIES_TO_TEST).anyMatch(RandomProperty::canPropertyUpdate);
+        updates = Arrays.stream(propertiesToTest).anyMatch(RandomProperty::canPropertyUpdate);
     }
 
     public Set<Integer> getSuffixSet() {
-        return new HashSet<>(List.of(SUFFIX_NUMBERS));
+        return new HashSet<>(List.of(suffixNumbers));
     }
 
     public boolean doesEntityMeetConditionsOfThisCase(ETFEntityRenderState etfEntity, boolean isUpdate, EntityBooleanLRU UUID_CaseHasUpdateablesCustom) {
-        if (RULE_ALWAYS_APPROVED) return true;
+        if (ruleAlwaysApproved) return true;
         if (etfEntity == null) return false;
-        if (UPDATES && UUID_CaseHasUpdateablesCustom != null) {
+        if (updates && UUID_CaseHasUpdateablesCustom != null) {
             UUID_CaseHasUpdateablesCustom.put(etfEntity.uuid(), true);
         }
 
         try {
-            for (RandomProperty property : PROPERTIES_TO_TEST) {
+            for (RandomProperty property : propertiesToTest) {
                 if (!property.testEntity(etfEntity, isUpdate)) return false;
             }
             return true;
         } catch (Exception e) {
-            ETFUtils2.logWarn("Random Property file [" + PROPERTY_FILE + "] rule # [" + RULE_NUMBER + "] failed with Exception:\n" + e.getMessage());
-            //fail this test
+            ETFUtils2.logWarn("Random Property file [" + propertyFile + "] rule # [" + ruleNumber + "] failed with Exception:\n" + e.getMessage());
+            // fail this test
             return false;
         }
     }
 
     public int getVariantSuffixFromThisCase(int seed) {
-
-        if (WEIGHT_TOTAL == 0){
-            return SUFFIX_NUMBERS[Math.abs(seed) % SUFFIX_NUMBERS.length];
+        if (weightTotal == 0){
+            return suffixNumbers[Math.abs(seed) % suffixNumbers.length];
         }else{
-            int seedValue = Math.abs(seed) % WEIGHT_TOTAL;
-            for (int i = 0; i < WEIGHTS.length; i++) {
-                if (seedValue < WEIGHTS[i]) {
-                    return SUFFIX_NUMBERS[i];
+            int seedValue = Math.abs(seed) % weightTotal;
+            for (int i = 0; i < weights.length; i++) {
+                if (seedValue < weights[i]) {
+                    return suffixNumbers[i];
                 }
             }
             return 0;
         }
-
-        //return SUFFIX_NUMBERS[Math.abs(seed) % SUFFIX_NUMBERS.length];
     }
 
     public void cacheEntityInitialResultsOfNonUpdatingProperties(ETFEntityRenderState entity) {
-        for (RandomProperty property : PROPERTIES_TO_TEST) {
+        for (RandomProperty property : propertiesToTest) {
             if (!property.canPropertyUpdate()) {
                 try {
                     property.cacheEntityInitialResult(entity);
-                } catch (Exception ignored) {
-                }
+                } catch (Exception ignored) { }
             }
         }
     }
