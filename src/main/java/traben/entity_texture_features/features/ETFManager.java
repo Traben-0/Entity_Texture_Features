@@ -264,7 +264,13 @@ public class ETFManager {
 
     @NotNull
     private ETFTexture getOrCreateETFTexture(ResourceLocation ofIdentifier) {
-        return ETF_TEXTURE_CACHE.computeIfAbsent(ofIdentifier, (k)-> new ETFTexture((ResourceLocation) k));
+        var texture = ETF_TEXTURE_CACHE.get(ofIdentifier);
+        if (texture != null) return texture;
+
+        // computeIfAbsent() is broken af
+        var texture2 = new ETFTexture(ofIdentifier);
+        ETF_TEXTURE_CACHE.put(ofIdentifier, texture2);
+        return texture2;
     }
 
     @Nullable
