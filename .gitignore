@@ -32,9 +32,11 @@ classes/
 
 # fabric
 
-
+jars/*
 
 .metadata
 .vscode
 .settings
 Merged/
+
+versions/*/api/
