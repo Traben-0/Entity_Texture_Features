@@ -1,7 +1,9 @@
 
-- 
+[7.0.1]
+- fixed crash with immediatelyfast
+- bumped api number
 
-v7
+[7.0.0]
 - fixed entities in gui in 1.21.6+
 - fixed extreme lag caused when un-leashing entities in 1.21.5+ caused by invalid leash data breaking nbt reading1.20
 - fixed entity nbt tests in 1.21.5+

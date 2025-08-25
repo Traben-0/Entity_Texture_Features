@@ -146,9 +146,10 @@ dependencies {
         12000 to ver(null, "iQ1SwGc3", null),
     )
     modImpl("maven.modrinth:immediatelyfast:",
-        12105 to "4I1VLQHK",
-        12100 to "jMIMrEow",
-        12006 to ver("9i03nYHg", "w5Vr5Pxu", "J1qWHyyO"),
+        12106 to ver("9JPEk4KN", "d8kpGqVx"/**/, "d8kpGqVx"),
+        12105 to ver("kcSoZlE9", "43iGBJDV"/**/, "43iGBJDV"),
+        12100 to ver("giRXGeHH", "yPO020MY", "mWsZ4opk"),
+        12006 to ver("ISvVqTAo", "w5Vr5Pxu", "J1qWHyyO"),
         12000 to ver("zJD8Yaa3", "ShWk0wN3", "CiZKgtZH"),
         )
 

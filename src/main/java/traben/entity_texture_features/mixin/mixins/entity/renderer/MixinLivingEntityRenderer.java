@@ -1,6 +1,8 @@
 package traben.entity_texture_features.mixin.mixins.entity.renderer;
 
 import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.Share;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -29,9 +31,6 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, S extend
 //#endif
 
 
-    @Unique
-    private ETFEntityRenderState etf$heldEntity = null;
-
     @SuppressWarnings("unused")
     protected MixinLivingEntityRenderer(EntityRendererProvider.Context ctx) {
         super(ctx);
@@ -46,13 +45,13 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, S extend
             //#endif
 
             at = @At(value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;"))
-    private void etf$markFeatures(CallbackInfo ci
+    private void etf$markFeatures(CallbackInfo ci, @Share("shareState") LocalRef<ETFEntityRenderState> etf$heldEntity
             //#if MC>= 12103
                , @Local(argsOnly = true) net.minecraft.client.renderer.entity.state.LivingEntityRenderState state
-            ) { etf$heldEntity = ((HoldsETFRenderState) state).etf$getState();
+            ) { etf$heldEntity.set(((HoldsETFRenderState) state).etf$getState());
             //#else
             //$$     , @Local(argsOnly = true) net.minecraft.world.entity.LivingEntity entity
-            //$$ ) { etf$heldEntity = ETFEntityRenderState.forEntity((ETFEntity) entity);
+            //$$ ) { etf$heldEntity.set(ETFEntityRenderState.forEntity((ETFEntity) entity));
             //#endif
         ETFRenderContext.allowRenderLayerTextureModify();
         ETFRenderContext.setRenderingFeatures(true);
@@ -65,9 +64,9 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, S extend
             //$$ "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
             //#endif
             at = @At(value = "INVOKE", target = "Ljava/util/Iterator;next()Ljava/lang/Object;"))
-    private void etf$markFeaturesLoopEnd(CallbackInfo ci) {
-        //assert main entity each loop in case of other entities within feature renderer
-        ETFRenderContext.setCurrentEntity(etf$heldEntity);
+    private void etf$markFeaturesLoopEnd(CallbackInfo ci, @Share("shareState") LocalRef<ETFEntityRenderState> etf$heldEntity) {
+        // assert main entity each loop in case of other entities within feature renderer
+        ETFRenderContext.setCurrentEntity(etf$heldEntity.get());
         ETFRenderContext.allowRenderLayerTextureModify();
         ETFRenderContext.endSpecialRenderOverlayPhase();
     }
