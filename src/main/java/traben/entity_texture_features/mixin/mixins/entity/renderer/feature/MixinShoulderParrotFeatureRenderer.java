@@ -123,7 +123,7 @@ public abstract class MixinShoulderParrotFeatureRenderer extends RenderLayer<Pla
 //$$     // cant target lambda directly with forge
 //$$     @ModifyArg(method = "Lnet/minecraft/client/renderer/entity/layers/ParrotOnShoulderLayer;render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/entity/player/Player;FFFFZ)V",
 //$$             at = @At(value = "INVOKE", target = "Ljava/util/Optional;ifPresent(Ljava/util/function/Consumer;)V"))
-//$$     private Consumer<? super T> etf$alterEntity(final Consumer<? super T> action, @Local(argsOnly = true) T t, @Local CompoundTag nbtCompound) {
+//$$     private Consumer<EntityType<?>> etf$alterEntity(final Consumer<EntityType<?>> action, @Local(argsOnly = true) T t, @Local CompoundTag nbtCompound) {
 //$$         return (v)-> {
 //$$             etf$HEADalterEntity(t, nbtCompound);
 //$$             action.accept(v);
