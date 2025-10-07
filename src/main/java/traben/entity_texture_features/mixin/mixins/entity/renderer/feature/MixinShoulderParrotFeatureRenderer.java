@@ -41,79 +41,122 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-//#if MC >= 12103
-import net.minecraft.client.renderer.entity.state.PlayerRenderState;
+//#if MC >= 12109
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.world.entity.EntitySpawnReason;
 
 @Mixin(ParrotOnShoulderLayer.class)
-public abstract class MixinShoulderParrotFeatureRenderer extends RenderLayer<PlayerRenderState, PlayerModel> {
+public abstract class MixinShoulderParrotFeatureRenderer extends RenderLayer<AvatarRenderState, PlayerModel> {
+//#elseif MC >= 12103
+//$$ import net.minecraft.client.renderer.entity.state.PlayerRenderState;
+//$$ import net.minecraft.world.entity.EntitySpawnReason;
+//$$
+//$$ @Mixin(ParrotOnShoulderLayer.class)
+//$$ public abstract class MixinShoulderParrotFeatureRenderer extends RenderLayer<PlayerRenderState, PlayerModel> {
 //#else
 //$$ @Mixin(ParrotOnShoulderLayer.class)
 //$$ public abstract class MixinShoulderParrotFeatureRenderer<T extends Player> extends RenderLayer<T, PlayerModel<T>> {
 //#endif
 
+//#if MC < 12109
+//$$     @Unique
+//$$     private ETFEntityRenderState etf$heldEntity = null;
+//#endif
 
-    @Unique
-    private ETFEntityRenderState etf$heldEntity = null;
+//#if MC >= 12109
 
-//#if MC >= 12103
+    public MixinShoulderParrotFeatureRenderer() {super(null);}
 
-    @Shadow @Final private ParrotRenderState parrotState;
-    public MixinShoulderParrotFeatureRenderer(final RenderLayerParent<PlayerRenderState, PlayerModel> renderLayerParent) {
-        super(renderLayerParent);
-    }
-
-    @Inject(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/renderer/entity/state/PlayerRenderState;FF)V",
-            at = @At(value = "HEAD"))
-    private void etf$alterEntityLeft(final PoseStack poseStack, final MultiBufferSource multiBufferSource, final int i, final PlayerRenderState playerRenderState, final float f, final float g, final CallbackInfo ci) {
-        etf$heldEntity = ETFRenderContext.getCurrentEntityState();
-        if (etf$heldEntity != null && etf$heldEntity.entity() instanceof Player playerEntity) {
-            etf$setParrotAsCurrentEntity(playerEntity, playerEntity.getShoulderEntityLeft());
-        }
-    }
-
-    @Inject(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/renderer/entity/state/PlayerRenderState;FF)V",
-            at = @At(value = "INVOKE",
-                    target = "Lnet/minecraft/client/renderer/entity/layers/ParrotOnShoulderLayer;renderOnShoulder(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/renderer/entity/state/PlayerRenderState;Lnet/minecraft/world/entity/animal/Parrot$Variant;FFZ)V"
-                , shift = At.Shift.AFTER, ordinal = 0
-            )
-    )
-    private void etf$alterEntityRight(final PoseStack poseStack, final MultiBufferSource multiBufferSource, final int i, final PlayerRenderState playerRenderState, final float f, final float g, final CallbackInfo ci) {
-        etf$heldEntity = ETFRenderContext.getCurrentEntityState();
-        if (etf$heldEntity != null && etf$heldEntity.entity() instanceof Player playerEntity) {
-            etf$setParrotAsCurrentEntity(playerEntity, playerEntity.getShoulderEntityRight());
+    @Inject(method = "submitOnShoulder", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/SubmitNodeCollector;submitModel(Lnet/minecraft/client/model/Model;Ljava/lang/Object;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/RenderType;IIILnet/minecraft/client/renderer/feature/ModelFeatureRenderer$CrumblingOverlay;)V"))
+    private void etf$modifySubmit(final PoseStack poseStack, final SubmitNodeCollector submitNodeCollector, final int i, final AvatarRenderState avatarRenderState, final Parrot.Variant variant, final float f, final float g, final boolean bl, final CallbackInfo ci,
+                                  @Local ParrotRenderState parrotRenderState) {
+        var state =  ((HoldsETFRenderState) avatarRenderState).etf$getState();
+        if (state != null && state.entity() instanceof Player playerEntity) {
+            etf$setParrotAsCurrentEntity(playerEntity, parrotRenderState);
         }
     }
 
     @Unique
-    private void etf$setParrotAsCurrentEntity(final Player playerEntity, final CompoundTag nbtCompound) {
-        if (nbtCompound != null) {
+    private void etf$setParrotAsCurrentEntity(final Player playerEntity, final ParrotRenderState parrotRenderState) {
+        if (parrotRenderState != null) {
             try {
                 var optionalEntity = EntityType.PARROT.create(playerEntity.level(), EntitySpawnReason.COMMAND);
-                if (optionalEntity instanceof Parrot parrot) {//null check
-                    //#if MC>=12106
-                    ValueInput valueInput = TagValueInput.create(ProblemReporter.DISCARDING,
-                            HolderLookup.Provider.create(Stream.empty()), //todo what does this do?
-                            nbtCompound);
-                    optionalEntity.load(valueInput);
-                    //#else
-                    //$$ optionalEntity.load(nbtCompound);
-                    //#endif
-                    ETFRenderContext.setCurrentEntity(ETFEntityRenderState.forEntity((ETFEntity) parrot));//todo state probably broke this
-                    ((HoldsETFRenderState)parrotState).etf$initState((ETFEntity) parrot);// todo does this work?
+                if (optionalEntity instanceof Parrot parrot) {
+                    //todo do i even need to set variant?
+                    ETFRenderContext.setCurrentEntity(ETFEntityRenderState.forEntity((ETFEntity) parrot));
+                    ((HoldsETFRenderState) parrotRenderState).etf$initState((ETFEntity) parrot);
                 }
             } catch (final Exception ignored) {}
         }
     }
 
-    @Inject(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/renderer/entity/state/PlayerRenderState;FF)V", at = @At(value = "RETURN"))
-    private void etf$resetEntity(CallbackInfo ci) {
-        if (etf$heldEntity != null) {
-            ETFRenderContext.setCurrentEntity(etf$heldEntity);
+    @Inject(method = "submitOnShoulder", at = @At(value = "RETURN"))
+    private void etf$resetEntity(CallbackInfo ci, @Local AvatarRenderState avatarRenderState) {
+        var state =  ((HoldsETFRenderState) avatarRenderState).etf$getState();
+        if (ETFRenderContext.getCurrentEntityState() != state) {
+            ETFRenderContext.setCurrentEntity(state);
         }
-        etf$heldEntity = null;
     }
 
+//#elseif MC >= 12103
+//$$
+//$$     @Shadow @Final private ParrotRenderState parrotState;
+//$$     public MixinShoulderParrotFeatureRenderer(final RenderLayerParent<PlayerRenderState, PlayerModel> renderLayerParent) {
+//$$         super(renderLayerParent);
+//$$     }
+//$$
+//$$     @Inject(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/renderer/entity/state/PlayerRenderState;FF)V",
+//$$             at = @At(value = "HEAD"))
+//$$     private void etf$alterEntityLeft(final PoseStack poseStack, final MultiBufferSource multiBufferSource, final int i, final PlayerRenderState playerRenderState, final float f, final float g, final CallbackInfo ci) {
+//$$         etf$heldEntity = ETFRenderContext.getCurrentEntityState();
+//$$         if (etf$heldEntity != null && etf$heldEntity.entity() instanceof Player playerEntity) {
+//$$             etf$setParrotAsCurrentEntity(playerEntity, playerEntity.getShoulderEntityLeft());
+//$$         }
+//$$     }
+//$$
+//$$     @Inject(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/renderer/entity/state/PlayerRenderState;FF)V",
+//$$             at = @At(value = "INVOKE",
+//$$                     target = "Lnet/minecraft/client/renderer/entity/layers/ParrotOnShoulderLayer;renderOnShoulder(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/renderer/entity/state/PlayerRenderState;Lnet/minecraft/world/entity/animal/Parrot$Variant;FFZ)V"
+//$$                 , shift = At.Shift.AFTER, ordinal = 0
+//$$             )
+//$$     )
+//$$     private void etf$alterEntityRight(final PoseStack poseStack, final MultiBufferSource multiBufferSource, final int i, final PlayerRenderState playerRenderState, final float f, final float g, final CallbackInfo ci) {
+//$$         etf$heldEntity = ETFRenderContext.getCurrentEntityState();
+//$$         if (etf$heldEntity != null && etf$heldEntity.entity() instanceof Player playerEntity) {
+//$$             etf$setParrotAsCurrentEntity(playerEntity, playerEntity.getShoulderEntityRight());
+//$$         }
+//$$     }
+//$$
+//$$     @Unique
+//$$     private void etf$setParrotAsCurrentEntity(final Player playerEntity, final CompoundTag nbtCompound) {
+//$$         if (nbtCompound != null) {
+//$$             try {
+//$$                 var optionalEntity = EntityType.PARROT.create(playerEntity.level(), EntitySpawnReason.COMMAND);
+//$$                 if (optionalEntity instanceof Parrot parrot) {//null check
+                    //#if MC>=12106
+                    //$$ ValueInput valueInput = TagValueInput.create(ProblemReporter.DISCARDING,
+                    //$$         HolderLookup.Provider.create(Stream.empty()), //todo what does this do?
+                    //$$         nbtCompound);
+                    //$$ optionalEntity.load(valueInput);
+                    //#else
+                    //$$ optionalEntity.load(nbtCompound);
+                    //#endif
+//$$                     ETFRenderContext.setCurrentEntity(ETFEntityRenderState.forEntity((ETFEntity) parrot));//todo state probably broke this
+//$$                     ((HoldsETFRenderState)parrotState).etf$initState((ETFEntity) parrot);// todo does this work?
+//$$                 }
+//$$             } catch (final Exception ignored) {}
+//$$         }
+//$$     }
+//$$
+//$$     @Inject(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/renderer/entity/state/PlayerRenderState;FF)V", at = @At(value = "RETURN"))
+//$$     private void etf$resetEntity(CallbackInfo ci) {
+//$$         if (etf$heldEntity != null) {
+//$$             ETFRenderContext.setCurrentEntity(etf$heldEntity);
+//$$         }
+//$$         etf$heldEntity = null;
+//$$     }
+//$$
 //#else
 //$$ @SuppressWarnings("unused")
 //$$ public MixinShoulderParrotFeatureRenderer(RenderLayerParent<T, PlayerModel<T>> context) {

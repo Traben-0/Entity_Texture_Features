@@ -104,7 +104,11 @@ public class TConfigEntryBoolean extends TConfigEntryValue<Boolean> {
         }
 
         @Override
-        public void onPress() {
+        public void onPress(
+                //#if MC >= 12109
+                net.minecraft.client.input.InputWithModifiers inputWithModifiers
+                //#endif
+        ) {
             value = !value;
             updateMessage();
         }

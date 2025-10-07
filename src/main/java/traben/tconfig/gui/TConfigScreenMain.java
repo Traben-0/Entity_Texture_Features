@@ -84,10 +84,14 @@ public abstract class TConfigScreenMain extends TConfigScreen {
                 (int) (this.width * 0.6),
                 24,
                 entries.getOptions().values().toArray(new TConfigEntry[0]));
-//#if MC >= 12006
+        //#if MC >= 12006
         child.setWidgetBackgroundToFullWidth();
-//#endif
+        //#endif
         this.addRenderableWidget(child);
+
+        //#if MC >= 12109
+        child.setScrollAmount(0); // actually used to trigger repositionEntries() call to setup entry positions
+        //#endif
     }
 
     @Override

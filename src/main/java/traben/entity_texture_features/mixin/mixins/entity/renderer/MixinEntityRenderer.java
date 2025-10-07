@@ -27,6 +27,9 @@ public abstract class MixinEntityRenderer<T extends Entity
     at = @At(value = "TAIL"))
     private void etf$createRenderState(final CallbackInfo ci, @Local(argsOnly = true) Entity entity, @Local(argsOnly = true) S state) {
         ((HoldsETFRenderState) state).etf$initState((ETFEntity) entity);
+        //#if MC >= 12109
+        ETFRenderContext.setCurrentEntity(((HoldsETFRenderState) state).etf$getState()); // either this or the one in the dispatcher is redundant but ill put both for now
+        //#endif
     }
     //#else
     //$$    > {
@@ -42,12 +45,18 @@ public abstract class MixinEntityRenderer<T extends Entity
                 cir.getReturnValue()));
     }
 
-    @Inject(method = "render", at = @At(value = "HEAD"))
+    //#if MC >= 12109
+    private static final String RENDER = "submit";
+    //#else
+    //$$ private static final String RENDER = "render";
+    //#endif
+
+    @Inject(method = RENDER, at = @At(value = "HEAD"))
     private void etf$protectPostRenderersLikeNametag(final CallbackInfo ci) {
         ETFRenderContext.preventRenderLayerTextureModify();
     }
 
-    @Inject(method = "render", at = @At(value = "TAIL"))
+    @Inject(method = RENDER, at = @At(value = "TAIL"))
     private void etf$revertForRenderersThatCallSuperFirst(final CallbackInfo ci) {
         ETFRenderContext.allowRenderLayerTextureModify(); // see minecart rendering
     }

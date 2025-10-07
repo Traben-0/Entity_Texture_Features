@@ -58,7 +58,13 @@ public class ETFInit implements ClientModInitializer {
 //$$ @net.neoforged.fml.common.Mod("entity_texture_features")
 //$$ public class ETFInit {
 //$$     public ETFInit() {
-//$$        if (FMLEnvironment.dist.isClient()) {
+//$$        if (FMLEnvironment
+               //#if MC >= 12109
+               //$$ .getDist()
+               //#else
+               //$$ .dist
+               //#endif
+//$$                .isClient()) {
 //$$            try {
 //$$                ModLoadingContext.get().registerExtensionPoint(
                         //#if MC >= 12100

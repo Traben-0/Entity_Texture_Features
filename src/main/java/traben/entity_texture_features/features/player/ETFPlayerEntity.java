@@ -16,6 +16,7 @@ public interface ETFPlayerEntity extends ETFEntity {
 
     Inventory etf$getInventory();
 
+    @Deprecated
     boolean etf$isPartVisible(PlayerModelPart part);
 
     Component etf$getName();

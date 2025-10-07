@@ -16,12 +16,14 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.LightLayer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.config.screens.skin.ETFConfigScreenSkinTool;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.player.ETFPlayerTexture;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperties;
+import traben.entity_texture_features.features.state.ETFEntityRenderState;
 import traben.entity_texture_features.utils.ETFUtils2;
 import traben.tconfig.TConfig;
 import traben.entity_texture_features.utils.ETFEntity;
@@ -153,15 +155,19 @@ public final class ETFConfig extends TConfig {
     }
 
     public int getLightOverrideBE(int light) {
-        if (entityLightOverrides.isEmpty() || ETFRenderContext.getCurrentEntityState() == null)
+        return getLightOverrideBE(light, ETFRenderContext.getCurrentEntityState());
+    }
+
+    public int getLightOverrideBE(int light, @Nullable ETFEntityRenderState state) {
+        if (entityLightOverrides.isEmpty() || state == null)
             return light;
-        var key = ETFRenderContext.getCurrentEntityState().entityKey();
+        var key = state.entityKey();
         if (key != null && entityLightOverrides.containsKey(key)) {
             //noinspection deprecation
             int lightETF = Mth.clamp(entityLightOverrides.get(key), 0, 15);
 
-            var world = ETFRenderContext.getCurrentEntityState().world();
-            var pos = ETFRenderContext.getCurrentEntityState().blockPos();
+            var world = state.world();
+            var pos = state.blockPos();
             if (world == null || pos == null) return light;
 
             int block = world.getBrightness(LightLayer.BLOCK, pos);

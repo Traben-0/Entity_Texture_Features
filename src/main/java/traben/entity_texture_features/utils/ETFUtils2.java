@@ -1,6 +1,11 @@
 package traben.entity_texture_features.utils;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.model.geom.ModelPart;
+//#if MC >= 12109
+import net.minecraft.client.renderer.SubmitNodeCollector;
+//#endif
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETF;
@@ -8,6 +13,7 @@ import traben.entity_texture_features.config.ETFConfigWarning;
 import traben.entity_texture_features.config.ETFConfigWarnings;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
+import traben.entity_texture_features.features.state.ETFEntityRenderState;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -73,6 +79,35 @@ public abstract class ETFUtils2 {
         //#endif
     }
 
+    //#if MC >= 12109
+    public static void submitModelPart(final PoseStack matrixStack, final SubmitNodeCollector submit, final int light, final ModelPart modelPart, final ETFTexture etfTexture, @Nullable ETFEntityRenderState state) {
+        var texture = etfTexture.getTextureIdentifier(state);
+        var emissive = etfTexture.getEmissiveIdentifierOfCurrentState();
+        var enchanted = etfTexture.getEnchantIdentifierOfCurrentState();
+        submitModelPart(matrixStack, submit, light, modelPart, texture, emissive, enchanted);
+    }
+
+    public static void submitModelPart(final PoseStack matrixStack, final SubmitNodeCollector submit, final int light, final ModelPart modelPart, @NotNull final ResourceLocation texture, @Nullable final ResourceLocation emissive, @Nullable final ResourceLocation enchanted) {
+        submit.submitModelPart(modelPart, matrixStack, RenderType.entityTranslucent(texture), light, OverlayTexture.NO_OVERLAY, null);
+        if (emissive != null) {
+            submitEmissiveModelPart(matrixStack, submit, modelPart, emissive);
+        }
+        if (enchanted != null) {
+            submitEnchantedModelPart(matrixStack, submit, light, modelPart, enchanted);
+        }
+    }
+
+    public static void submitEmissiveModelPart(final PoseStack matrixStack, final SubmitNodeCollector submit, final ModelPart modelPart, final @NotNull ResourceLocation emissive) {
+        submit.submitModelPart(modelPart, matrixStack, RenderType.entityTranslucent(emissive), ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.NO_OVERLAY, null);
+    }
+
+    public static void submitEnchantedModelPart(final PoseStack matrixStack, final SubmitNodeCollector submit, final int light, final ModelPart modelPart, final @NotNull ResourceLocation enchanted) {
+        submit.submitModelPart(modelPart, matrixStack,  RenderType.armorCutoutNoCull(enchanted), light, OverlayTexture.NO_OVERLAY, null,
+                false, true);
+    }
+    //#endif
+
+
     public static ResourceLocation getETFVariantNotNullForInjector(ResourceLocation identifier) {
         // do not modify texture
         if (identifier == null
@@ -124,12 +159,17 @@ public abstract class ETFUtils2 {
         if (enchanted != null) {
             boolean wasAllowed = ETFRenderContext.isAllowedToRenderLayerTextureModify();
             ETFRenderContext.preventRenderLayerTextureModify();
-            VertexConsumer enchantedVertex = ItemRenderer.getArmorFoilBuffer(provider,
-                    RenderType.armorCutoutNoCull(enchanted),
+            VertexConsumer enchantedVertex =
+                    //#if MC>=12109
+                    ItemRenderer.getFoilBuffer(provider, RenderType.armorCutoutNoCull(enchanted), false, true);
+                    //#else
+                    //$$ ItemRenderer.getArmorFoilBuffer(provider,
+                    //$$ RenderType.armorCutoutNoCull(enchanted),
                         //#if MC < 12100
                         //$$ false,
                         //#endif
-                        true);
+                    //$$     true);
+                    //#endif
             if (wasAllowed) ETFRenderContext.allowRenderLayerTextureModify();
 
             ETFRenderContext.startSpecialRenderOverlayPhase();

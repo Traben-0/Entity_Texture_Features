@@ -119,7 +119,11 @@ public class TConfigEntryEnumButton<E extends Enum<E>> extends TConfigEntryNullS
         }
 
         @Override
-        public void onPress() {
+        public void onPress(
+                //#if MC >= 12109
+                net.minecraft.client.input.InputWithModifiers inputWithModifiers
+                //#endif
+        ) {
             index++;
             if (index > getChoiceCount()) {
                 index = 0;

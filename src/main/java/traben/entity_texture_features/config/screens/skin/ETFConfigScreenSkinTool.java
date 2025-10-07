@@ -8,6 +8,10 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+//#if MC>=12109
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.input.MouseButtonInfo;
+//#endif
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.network.chat.CommonComponents;
@@ -930,7 +934,11 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
             if (overridesButton == null) {
                 allowOverrides = false;
             } else {
-                overridesButton.onPress();
+                overridesButton.onPress(
+                        //#if MC>=12109
+                        new MouseButtonEvent(overridesButton.getX(), overridesButton.getY(), new MouseButtonInfo(1,0))
+                        //#endif
+                );
             }
             Minecraft.getInstance().setScreen(this.parent);
         }

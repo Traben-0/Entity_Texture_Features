@@ -17,6 +17,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.decoration.Painting;
 import net.minecraft.world.entity.decoration.PaintingVariant;
+//#if MC >= 12109
+import net.minecraft.client.renderer.state.CameraRenderState;
+import com.llamalad7.mixinextras.sugar.Local;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+//#endif
+
 //#if MC < 12006
 //$$ import org.joml.Matrix3f;
 //$$ import org.joml.Matrix4f;
@@ -74,14 +80,20 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
     }
 
 
-    //#if MC >= 12103
-    @Inject(method = "render(Lnet/minecraft/client/renderer/entity/state/PaintingRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
-        at = @At(value = "HEAD"), cancellable = true)
-    private void etf$getSprites(final PaintingRenderState paintingRenderState, final PoseStack matrixStack, final MultiBufferSource vertexConsumerProvider, final int i, final CallbackInfo ci) {
+    //#if MC >= 12109
+    @Inject(method = "submit(Lnet/minecraft/client/renderer/entity/state/PaintingRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/CameraRenderState;)V",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/PaintingRenderer;renderPainting(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/RenderType;[IIILnet/minecraft/client/renderer/texture/TextureAtlasSprite;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;)V"))
+    private void etf$getSprites(final PaintingRenderState paintingRenderState, final PoseStack matrixStack, final SubmitNodeCollector submitNodeCollector, final CameraRenderState cameraRenderState, final CallbackInfo ci,
+                                @Local(ordinal = 0) TextureAtlasSprite paintingSprite, @Local(ordinal = 1) TextureAtlasSprite backSprite
+                                ) {
+    //#elseif MC >= 12103
+    //$$ @Inject(method = "render(Lnet/minecraft/client/renderer/entity/state/PaintingRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
+    //$$     at = @At(value = "HEAD"), cancellable = true)
+    //$$ private void etf$getSprites(final PaintingRenderState paintingRenderState, final PoseStack matrixStack, final MultiBufferSource vertexConsumerProvider, final int i, final CallbackInfo ci) {
     //#else
-        //$$ @Inject(method = "render(Lnet/minecraft/world/entity/decoration/Painting;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
-        //$$     at = @At(value = "HEAD"), cancellable = true)
-        //$$ private void etf$getSprites(Painting paintingEntity, float f, float g, PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, int i, CallbackInfo ci) {
+    //$$ @Inject(method = "render(Lnet/minecraft/world/entity/decoration/Painting;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
+    //$$     at = @At(value = "HEAD"), cancellable = true)
+    //$$ private void etf$getSprites(Painting paintingEntity, float f, float g, PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, int i, CallbackInfo ci) {
     //#endif
 
         ETFEntityRenderState etfEntity =
@@ -97,7 +109,10 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
         //#endif
 
         try {
-            TextureAtlasSprite paintingSprite = Minecraft.getInstance().getPaintingTextures().get(paintingEntity.getVariant().value());
+            //#if MC < 12109
+            //$$ TextureAtlasSprite paintingSprite = Minecraft.getInstance().getPaintingTextures().get(paintingEntity.getVariant().value());
+            //$$ TextureAtlasSprite backSprite = Minecraft.getInstance().getPaintingTextures().getBackSprite();
+            //#endif
             ResourceLocation paintingId = paintingSprite.contents().name();
             String paintingFileName = paintingId.getPath();
             ResourceLocation paintingTexture = ETFUtils2.res(paintingId.getNamespace(), "textures/painting/" + paintingFileName + ".png");
@@ -112,13 +127,14 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
             if (aztec) ETFRenderContext.allowAllRandom();
 
             ETFTexture backTexture = ETFManager.getInstance().getETFTextureVariant(etf$BACK_SPRITE_ID, etfEntity);
-            ETFSprite etf$BackSprite = backTexture.getPaintingSprite(Minecraft.getInstance().getPaintingTextures().getBackSprite(), etf$BACK_SPRITE_ID);
+            ETFSprite etf$BackSprite = backTexture.getPaintingSprite(backSprite, etf$BACK_SPRITE_ID);
 
 
             if (etf$Sprite.isETFAltered || etf$Sprite.isEmissive() || etf$BackSprite.isETFAltered || etf$BackSprite.isEmissive()) {
-
-                matrixStack.pushPose();
-                matrixStack.mulPose(Axis.YP.rotationDegrees(180.0F - f));
+                //#if MC < 12109
+                //$$ matrixStack.pushPose();
+                //$$ matrixStack.mulPose(Axis.YP.rotationDegrees(180.0F - f));
+                //#endif
                 PaintingVariant paintingVariant = paintingEntity.getVariant().value();
 
                 //#if MC < 12100
@@ -140,21 +156,46 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
                 //#endif
                 ;
 
+                //#if MC>= 12109
+                ETFRenderContext.preventRenderLayerTextureModify();
+                var type = RenderType.entitySolid(etf$Sprite.getSpriteVariant().atlasLocation());
+                var back = RenderType.entitySolid(etf$BackSprite.getSpriteVariant().atlasLocation());
+                var typeE = RenderType.entityTranslucent(etf$Sprite.getEmissive().atlasLocation());
+                var backE = RenderType.entityTranslucent(etf$BackSprite.getEmissive().atlasLocation());
+                ETFRenderContext.allowRenderLayerTextureModify();
 
-                etf$renderETFPainting(matrixStack,
-                        vertexConsumerProvider,
-                        paintingEntity,
-                        width,
-                        height,
-                        etf$Sprite,
-                        etf$BackSprite);
-                matrixStack.popPose();
-                //#if MC >= 12103
-                super.render(paintingRenderState, matrixStack, vertexConsumerProvider, i);
+                submitNodeCollector.submitCustomGeometry(matrixStack, type, (pose, vertexConsumer) ->
+                            etf$renderETFPaintingFront(pose, vertexConsumer, paintingEntity, width, height, etf$Sprite.getSpriteVariant(), false));
+
+                submitNodeCollector.submitCustomGeometry(matrixStack, back, (pose, vertexConsumer) ->
+                        etf$renderETFPaintingBack(pose, vertexConsumer, paintingEntity, width, height, etf$BackSprite.getSpriteVariant(), false));
+
+                if (etf$Sprite.isEmissive()) {
+                    submitNodeCollector.submitCustomGeometry(matrixStack, typeE, (pose, vertexConsumer) ->
+                            etf$renderETFPaintingFront(pose, vertexConsumer, paintingEntity, width, height, etf$Sprite.getSpriteVariant(), true));
+                }
+
+                if (etf$BackSprite.isEmissive()) {
+                    submitNodeCollector.submitCustomGeometry(matrixStack, backE, (pose, vertexConsumer) ->
+                            etf$renderETFPaintingFront(pose, vertexConsumer, paintingEntity, width, height, etf$BackSprite.getSpriteVariant(), true));
+                }
+
                 //#else
-                //$$ super.render(paintingEntity, f, g, matrixStack, vertexConsumerProvider, i);
+                //$$ etf$renderETFPainting(matrixStack.last(),
+                //$$         vertexConsumerProvider,
+                //$$         paintingEntity,
+                //$$         width,
+                //$$         height,
+                //$$         etf$Sprite,
+                //$$         etf$BackSprite);
+                //$$ matrixStack.popPose();
+                    //#if MC >= 12103
+                    //$$ super.render(paintingRenderState, matrixStack, vertexConsumerProvider, i);
+                    //#else
+                    //$$ super.render(paintingEntity, f, g, matrixStack, vertexConsumerProvider, i);
+                    //#endif
+                //$$ ci.cancel();
                 //#endif
-                ci.cancel();
             }
 
 
@@ -163,32 +204,33 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
         }
 
     }
+    //#if MC < 12109
+    //$$ @Unique
+    //$$ private void etf$renderETFPainting(PoseStack.Pose entry, MultiBufferSource vertexConsumerProvider, Painting entity, int width, int height, ETFSprite ETFPaintingSprite, ETFSprite ETFBackSprite) {
+    //$$     ETFRenderContext.preventRenderLayerTextureModify();
+    //$$     VertexConsumer vertexConsumerFront = vertexConsumerProvider.getBuffer(RenderType.entitySolid(ETFPaintingSprite.getSpriteVariant().atlasLocation()));
+    //$$     etf$renderETFPaintingFront(entry, vertexConsumerFront, entity, width, height, ETFPaintingSprite.getSpriteVariant(), false);
+    //$$
+    //$$     VertexConsumer vertexConsumerBack = vertexConsumerProvider.getBuffer(RenderType.entitySolid(ETFBackSprite.getSpriteVariant().atlasLocation()));
+    //$$     etf$renderETFPaintingBack(entry, vertexConsumerBack, entity, width, height, ETFBackSprite.getSpriteVariant(), false);
+    //$$
+    //$$     if (ETFPaintingSprite.isEmissive()) {
+    //$$         vertexConsumerFront = vertexConsumerProvider.getBuffer(RenderType.entityTranslucent(ETFPaintingSprite.getEmissive().atlasLocation()));
+    //$$         etf$renderETFPaintingFront(entry, vertexConsumerFront, entity, width, height, ETFPaintingSprite.getEmissive(), true);
+    //$$     }
+    //$$
+    //$$     if (ETFBackSprite.isEmissive()) {
+    //$$         vertexConsumerFront = vertexConsumerProvider.getBuffer(RenderType.entityTranslucent(ETFBackSprite.getEmissive().atlasLocation()));
+    //$$         etf$renderETFPaintingBack(entry, vertexConsumerFront, entity, width, height, ETFBackSprite.getEmissive(), true);
+    //$$     }
+    //$$     ETFRenderContext.allowRenderLayerTextureModify();
+    //$$ }
+    //#endif
 
     @Unique
-    private void etf$renderETFPainting(PoseStack matrices, MultiBufferSource vertexConsumerProvider, Painting entity, int width, int height, ETFSprite ETFPaintingSprite, ETFSprite ETFBackSprite) {
-        ETFRenderContext.preventRenderLayerTextureModify();
-        VertexConsumer vertexConsumerFront = vertexConsumerProvider.getBuffer(RenderType.entitySolid(ETFPaintingSprite.getSpriteVariant().atlasLocation()));
-        etf$renderETFPaintingFront(matrices, vertexConsumerFront, entity, width, height, ETFPaintingSprite.getSpriteVariant(), false);
+    private void etf$renderETFPaintingFront(PoseStack.Pose entry, VertexConsumer vertexConsumerFront, Painting entity, int width, int height, TextureAtlasSprite paintingSprite, boolean emissive) {
 
-        VertexConsumer vertexConsumerBack = vertexConsumerProvider.getBuffer(RenderType.entitySolid(ETFBackSprite.getSpriteVariant().atlasLocation()));
-        etf$renderETFPaintingBack(matrices, vertexConsumerBack, entity, width, height, ETFBackSprite.getSpriteVariant(), false);
-
-        if (ETFPaintingSprite.isEmissive()) {
-            vertexConsumerFront = vertexConsumerProvider.getBuffer(RenderType.entityTranslucent(ETFPaintingSprite.getEmissive().atlasLocation()));
-            etf$renderETFPaintingFront(matrices, vertexConsumerFront, entity, width, height, ETFPaintingSprite.getEmissive(), true);
-        }
-
-        if (ETFBackSprite.isEmissive()) {
-            vertexConsumerFront = vertexConsumerProvider.getBuffer(RenderType.entityTranslucent(ETFBackSprite.getEmissive().atlasLocation()));
-            etf$renderETFPaintingBack(matrices, vertexConsumerFront, entity, width, height, ETFBackSprite.getEmissive(), true);
-        }
-        ETFRenderContext.allowRenderLayerTextureModify();
-    }
-
-    @Unique
-    private void etf$renderETFPaintingFront(PoseStack matrices, VertexConsumer vertexConsumerFront, Painting entity, int width, int height, TextureAtlasSprite paintingSprite, boolean emissive) {
-
-        PoseStack.Pose entry = matrices.last();
+//        PoseStack.Pose entry = matrices.last();
 //        Matrix4f matrix4f = entry.getPositionMatrix();
 //        Matrix3f matrix3f = entry.getNormalMatrix();
 
@@ -275,9 +317,9 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
     }
 
     @Unique
-    private void etf$renderETFPaintingBack(PoseStack matrices, VertexConsumer vertexConsumerBack, Painting entity, int width, int height, TextureAtlasSprite backSprite, boolean emissive) {
+    private void etf$renderETFPaintingBack(PoseStack.Pose entry, VertexConsumer vertexConsumerBack, Painting entity, int width, int height, TextureAtlasSprite backSprite, boolean emissive) {
 
-        PoseStack.Pose entry = matrices.last();
+//        PoseStack.Pose entry = matrices.last();
 //        Matrix4f matrix4f = entry.getPositionMatrix();
 //        Matrix3f matrix3f = entry.getNormalMatrix();
 

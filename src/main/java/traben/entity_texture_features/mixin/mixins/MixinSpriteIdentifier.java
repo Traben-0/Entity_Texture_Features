@@ -1,5 +1,6 @@
 package traben.entity_texture_features.mixin.mixins;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -20,9 +21,16 @@ import traben.entity_texture_features.utils.ETFUtils2;
 
 @Mixin(Material.class)
 public class MixinSpriteIdentifier {
-    @Inject(method = "buffer(Lnet/minecraft/client/renderer/MultiBufferSource;Ljava/util/function/Function;)Lcom/mojang/blaze3d/vertex/VertexConsumer;",
+    @Inject(method =
+            //#if MC >= 12109
+            "buffer(Lnet/minecraft/client/resources/model/MaterialSet;Lnet/minecraft/client/renderer/MultiBufferSource;Ljava/util/function/Function;)Lcom/mojang/blaze3d/vertex/VertexConsumer;",
+            //#else
+            //$$ "buffer(Lnet/minecraft/client/renderer/MultiBufferSource;Ljava/util/function/Function;)Lcom/mojang/blaze3d/vertex/VertexConsumer;",
+            //#endif
             at = @At(value = "RETURN"), cancellable = true)
-    private void etf$modifyIfRequired(MultiBufferSource vertexConsumers, Function<ResourceLocation, RenderType> layerFactory, CallbackInfoReturnable<VertexConsumer> cir) {
+    private void etf$modifyIfRequired(CallbackInfoReturnable<VertexConsumer> cir,
+                                      @Local(argsOnly = true) MultiBufferSource vertexConsumers,
+                                      @Local(argsOnly = true) Function<ResourceLocation, RenderType> layerFactory) {
 
         if (cir.getReturnValue() instanceof SpriteCoordinateExpander spriteTexturedVertexConsumer) {
             ResourceLocation rawId = spriteTexturedVertexConsumer.sprite.contents().name();

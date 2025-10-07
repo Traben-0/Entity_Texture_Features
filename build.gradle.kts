@@ -42,6 +42,7 @@ base.archivesName.set("entity_texture_features-$modVersion-${project.name}")
 
 // todo figure out why preprocessor wont work with these
 val accessWidener = "entity_texture_features_" + when {
+    mcVersion >= 12109 -> 12
     mcVersion >= 12106 -> 11
     mcVersion >= 12105 -> 10
     mcVersion >= 12104 -> 9

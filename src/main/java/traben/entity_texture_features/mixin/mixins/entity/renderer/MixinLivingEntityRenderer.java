@@ -37,14 +37,15 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, S extend
 
     }
 
-    @Inject(method =
-            //#if MC >= 12103
-            "render(Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
-            //#else
-            //$$ "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
-            //#endif
+    //#if MC >= 12109
+    private static final String RENDER = "submit(Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/CameraRenderState;)V";
+    //#elseif MC >= 12103
+    //$$ private static final String RENDER = "render(Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V";
+    //#else
+    //$$ private static final String RENDER = "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V";
+    //#endif
 
-            at = @At(value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;"))
+    @Inject(method = RENDER, at = @At(value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;"))
     private void etf$markFeatures(CallbackInfo ci, @Share("shareState") LocalRef<ETFEntityRenderState> etf$heldEntity
             //#if MC>= 12103
                , @Local(argsOnly = true) net.minecraft.client.renderer.entity.state.LivingEntityRenderState state
@@ -57,13 +58,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, S extend
         ETFRenderContext.setRenderingFeatures(true);
     }
 
-    @Inject(method =
-           //#if MC >= 12103
-            "render(Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
-            //#else
-            //$$ "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
-            //#endif
-            at = @At(value = "INVOKE", target = "Ljava/util/Iterator;next()Ljava/lang/Object;"))
+    @Inject(method = RENDER, at = @At(value = "INVOKE", target = "Ljava/util/Iterator;next()Ljava/lang/Object;"))
     private void etf$markFeaturesLoopEnd(CallbackInfo ci, @Share("shareState") LocalRef<ETFEntityRenderState> etf$heldEntity) {
         // assert main entity each loop in case of other entities within feature renderer
         ETFRenderContext.setCurrentEntity(etf$heldEntity.get());
@@ -71,13 +66,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, S extend
         ETFRenderContext.endSpecialRenderOverlayPhase();
     }
 
-    @Inject(method =
-            //#if MC >= 12103
-            "render(Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
-            //#else
-            //$$ "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
-            //#endif
-            at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;popPose()V"))
+    @Inject(method = RENDER, at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;popPose()V"))
     private void etf$markFeaturesEnd(CallbackInfo ci) {
         ETFRenderContext.setRenderingFeatures(false);
     }

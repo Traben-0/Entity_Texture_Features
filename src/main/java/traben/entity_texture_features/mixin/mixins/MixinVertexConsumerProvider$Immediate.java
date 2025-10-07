@@ -30,7 +30,6 @@ public class MixinVertexConsumerProvider$Immediate {
     private void etf$injectIntoGetBufferReturn(RenderType renderLayer, CallbackInfoReturnable<VertexConsumer> cir) {
         var returned = cir.getReturnValue();
         ETFRenderContext.insertETFDataIntoVertexConsumer((MultiBufferSource) this, renderLayer, returned);
-
         //quarantined class to contain all sodium interaction
         //sodium ExtendedBufferBuilder classes contain a delegate that must instead have the above data passed into
         SodiumGetBufferInjector.inject((MultiBufferSource) this, renderLayer, returned);
