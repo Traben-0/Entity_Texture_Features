@@ -30,16 +30,19 @@ import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.utils.ETFUtils2;
 
-//#if MC >= 12103
-import net.minecraft.client.renderer.entity.state.PlayerRenderState;
+//#if MC >= 12109
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 
-public class ETFPlayerFeatureRenderer<T extends PlayerRenderState, M extends PlayerModel> extends RenderLayer<T, M> {
+public class ETFPlayerFeatureRenderer<T extends AvatarRenderState, M extends PlayerModel> extends RenderLayer<T, M> {
+//#elseif MC >= 12103
+//$$ import net.minecraft.client.renderer.entity.state.PlayerRenderState;
+//$$ public class ETFPlayerFeatureRenderer<T extends PlayerRenderState, M extends PlayerModel> extends RenderLayer<T, M> {
 //#else
 //$$ import net.minecraft.world.entity.player.Player;
 //$$
 //$$ public class ETFPlayerFeatureRenderer<T extends Player, M extends PlayerModel<T>> extends RenderLayer<T, M> {
 //#endif
-
     protected static final ModelPart villagerNose = getModelData(new CubeDeformation(0)).getRoot().getChild("nose").bake(64, 64);
     protected static final ModelPart textureNose = getModelData(new CubeDeformation(0)).getRoot().getChild("textureNose").bake(8, 8);
     protected static final ModelPart jacket = getModelData(new CubeDeformation(0)).getRoot().getChild("jacket").bake(64, 64);
@@ -64,7 +67,13 @@ public class ETFPlayerFeatureRenderer<T extends PlayerRenderState, M extends Pla
         return modelData;
     }
 
-    public static void renderSkullFeatures(PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, int light, SkullModelBase skullModel, ETFPlayerTexture playerTexture, float yaw) {
+    public static void renderSkullFeatures(PoseStack matrixStack,
+                                           //#if MC >= 12109
+                                           SubmitNodeCollector vertexConsumerProvider,
+                                           //#else
+                                           //$$ MultiBufferSource vertexConsumerProvider,
+                                           //#endif
+                                           int light, SkullModelBase skullModel, ETFPlayerTexture playerTexture, float yaw) {
         ETFRenderContext.preventRenderLayerTextureModify();
         ETFRenderContext.startSpecialRenderOverlayPhase();
 
@@ -90,113 +99,181 @@ public class ETFPlayerFeatureRenderer<T extends PlayerRenderState, M extends Pla
 //        }
 //    }
 
-    private static void renderEnchanted(PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, int light, ETFPlayerTexture playerTexture, Model model) {
+    private static void renderEnchanted(PoseStack matrixStack,
+                                        //#if MC >= 12109
+                                        SubmitNodeCollector submit,
+                                        //#else
+                                        //$$ MultiBufferSource vertexConsumerProvider,
+                                        //#endif
+                                        int light, ETFPlayerTexture playerTexture, Model model) {
+        //#if MC >= 12109
         if (playerTexture.hasEnchant && playerTexture.baseEnchantIdentifier != null && playerTexture.etfTextureOfFinalBaseSkin != null) {
-            VertexConsumer enchantVert = ItemRenderer.getArmorFoilBuffer(vertexConsumerProvider, RenderType.armorCutoutNoCull(
-                    switch (playerTexture.etfTextureOfFinalBaseSkin.currentTextureState) {
-                        case BLINK, BLINK_PATCHED, APPLY_BLINK -> playerTexture.baseEnchantBlinkIdentifier;
-                        case BLINK2, BLINK2_PATCHED, APPLY_BLINK2 -> playerTexture.baseEnchantBlink2Identifier;
-                        default -> playerTexture.baseEnchantIdentifier;
-                    }),
-                    //#if MC < 12100
-                    //$$ false,
-                    //#endif
-                    true);
-            model.renderToBuffer(matrixStack, enchantVert, light, OverlayTexture.NO_OVERLAY
-                    //#if MC < 12100
-                    //$$ , 1F, 1F, 1F, 1F
-                    //#endif
-                    );
+            ETFUtils2.submitEnchantedModelPart(matrixStack, submit, light, model.root(),playerTexture.baseEnchantIdentifier);
         }
+        //#else
+        //$$ if (playerTexture.hasEnchant && playerTexture.baseEnchantIdentifier != null && playerTexture.etfTextureOfFinalBaseSkin != null) {
+        //$$     VertexConsumer enchantVert = ItemRenderer.getArmorFoilBuffer(vertexConsumerProvider, RenderType.armorCutoutNoCull(
+        //$$             switch (playerTexture.etfTextureOfFinalBaseSkin.currentTextureState) {
+        //$$                 case BLINK, BLINK_PATCHED, APPLY_BLINK -> playerTexture.baseEnchantBlinkIdentifier;
+        //$$                 case BLINK2, BLINK2_PATCHED, APPLY_BLINK2 -> playerTexture.baseEnchantBlink2Identifier;
+        //$$                 default -> playerTexture.baseEnchantIdentifier;
+        //$$             }),
+        //$$             //#if MC < 12100
+        //$$             //$$ false,
+        //$$             //#endif
+        //$$             true);
+        //$$    model.renderToBuffer(matrixStack, enchantVert, light, OverlayTexture.NO_OVERLAY
+        //$$             //#if MC < 12100
+        //$$             //$$ , 1F, 1F, 1F, 1F
+        //$$             //#endif
+        //$$             );
+        //$$ }
+        //#endif
     }
 
-    private static void renderNose(PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, int light, ETFPlayerTexture playerTexture) {
+    private static void renderNose(PoseStack matrixStack,
+                                   //#if MC >= 12109
+                                   SubmitNodeCollector submit,
+                                   //#else
+                                   //$$ MultiBufferSource vertexConsumerProvider,
+                                   //#endif
+                                   int light, ETFPlayerTexture playerTexture) {
         if (playerTexture.hasVillagerNose) {
 //            villagerNose.copyTransform(model.head);
             if (playerTexture.noseType == ETFConfigScreenSkinTool.NoseType.VILLAGER_TEXTURED || playerTexture.noseType == ETFConfigScreenSkinTool.NoseType.VILLAGER_TEXTURED_REMOVE) {
-                VertexConsumer villagerVert = vertexConsumerProvider.getBuffer(RenderType.entityTranslucent(playerTexture.etfTextureOfFinalBaseSkin.getTextureIdentifier(null)));
-                villagerNose.render(matrixStack, villagerVert, light, OverlayTexture.NO_OVERLAY
-                        //#if MC < 12100
-                        //$$ , 1F, 1F, 1F, 1F
-                        //#endif
-                );
-                playerTexture.etfTextureOfFinalBaseSkin.renderEmissive(matrixStack, vertexConsumerProvider, villagerNose);
+
+                var type = RenderType.entityTranslucent(playerTexture.etfTextureOfFinalBaseSkin.getTextureIdentifier(null));
+                //#if MC >= 12109
+                submit.submitModelPart(villagerNose, matrixStack, type,  light, OverlayTexture.NO_OVERLAY, null);
+                var emissive = playerTexture.etfTextureOfFinalBaseSkin.getEmissiveRenderLayer(null);
+                if (emissive != null) {
+                    submit.submitModelPart(villagerNose, matrixStack, emissive,  ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.NO_OVERLAY, null);
+                }
+                //#else
+                //$$ VertexConsumer villagerVert = vertexConsumerProvider.getBuffer(type);
+                //$$ villagerNose.render(matrixStack, villagerVert, light, OverlayTexture.NO_OVERLAY
+                //$$         //#if MC < 12100
+                //$$         //$$ , 1F, 1F, 1F, 1F
+                //$$         //#endif
+                //$$ );
+                //$$ playerTexture.etfTextureOfFinalBaseSkin.renderEmissive(matrixStack, vertexConsumerProvider, villagerNose);
+                //#endif
             } else {
-                VertexConsumer villagerVert = vertexConsumerProvider.getBuffer(RenderType.entitySolid(VILLAGER_TEXTURE));
-                villagerNose.render(matrixStack, villagerVert, light, OverlayTexture.NO_OVERLAY
-                        //#if MC < 12100
-                        //$$ , 1F, 1F, 1F, 1F
-                        //#endif
-                );
+                //#if MC >= 12109
+                submit.submitModelPart(villagerNose, matrixStack, RenderType.entitySolid(VILLAGER_TEXTURE),  light, OverlayTexture.NO_OVERLAY, null);
+                //#else
+                //$$ VertexConsumer villagerVert = vertexConsumerProvider.getBuffer(RenderType.entitySolid(VILLAGER_TEXTURE));
+                //$$ villagerNose.render(matrixStack, villagerVert, light, OverlayTexture.NO_OVERLAY
+                //$$         //#if MC < 12100
+                //$$         //$$ , 1F, 1F, 1F, 1F
+                //$$         //#endif
+                //$$ );
+                //#endif
             }
         } else if (playerTexture.texturedNoseIdentifier != null) {
 //            textureNose.copyTransform(model.head);
-            VertexConsumer noseVertex = vertexConsumerProvider.getBuffer(RenderType.entityTranslucent(playerTexture.texturedNoseIdentifier));
-            textureNose.render(matrixStack, noseVertex, light, OverlayTexture.NO_OVERLAY
-                    //#if MC < 12100
-                    //$$ , 1F, 1F, 1F, 1F
-                    //#endif
+            //#if MC >= 12109
+            ETFUtils2.submitModelPart(matrixStack, submit, light,
+                    textureNose,
+                    playerTexture.texturedNoseIdentifier,
+                    playerTexture.texturedNoseIdentifierEmissive,
+                    playerTexture.texturedNoseIdentifierEnchanted
             );
-            if (playerTexture.texturedNoseIdentifierEmissive != null) {
+            //#else
+            //$$ VertexConsumer noseVertex = vertexConsumerProvider.getBuffer(RenderType.entityTranslucent(playerTexture.texturedNoseIdentifier));
+            //$$ textureNose.render(matrixStack, noseVertex, light, OverlayTexture.NO_OVERLAY
+            //$$         //#if MC < 12100
+            //$$         //$$ , 1F, 1F, 1F, 1F
+            //$$         //#endif
+            //$$ );
+            //$$ if (playerTexture.texturedNoseIdentifierEmissive != null) {
 //                textureNose.copyTransform(model.head);
-                VertexConsumer noseVertex_e;
-                if (ETFManager.getEmissiveMode() == ETFConfig.EmissiveRenderModes.BRIGHT) {
-                    noseVertex_e = vertexConsumerProvider.getBuffer(RenderType.beaconBeam(playerTexture.texturedNoseIdentifierEmissive, true));
-                } else {
-                    noseVertex_e = vertexConsumerProvider.getBuffer(RenderType.entityTranslucent(playerTexture.texturedNoseIdentifierEmissive));
-                }
-                textureNose.render(matrixStack, noseVertex_e, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.NO_OVERLAY
-                        //#if MC < 12100
-                        //$$ , 1F, 1F, 1F, 1F
-                        //#endif
-                );
-            }
-            if (playerTexture.texturedNoseIdentifierEnchanted != null) {
+            //$$     VertexConsumer noseVertex_e;
+            //$$     if (ETFManager.getEmissiveMode() == ETFConfig.EmissiveRenderModes.BRIGHT) {
+            //$$         noseVertex_e = vertexConsumerProvider.getBuffer(RenderType.beaconBeam(playerTexture.texturedNoseIdentifierEmissive, true));
+            //$$     } else {
+            //$$         noseVertex_e = vertexConsumerProvider.getBuffer(RenderType.entityTranslucent(playerTexture.texturedNoseIdentifierEmissive));
+            //$$     }
+            //$$     textureNose.render(matrixStack, noseVertex_e, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.NO_OVERLAY
+            //$$             //#if MC < 12100
+            //$$             //$$ , 1F, 1F, 1F, 1F
+            //$$             //#endif
+            //$$     );
+            //$$ }
+            //$$ if (playerTexture.texturedNoseIdentifierEnchanted != null) {
 //                textureNose.copyTransform(model.head);
-                VertexConsumer noseVertex_ench = ItemRenderer.getArmorFoilBuffer(vertexConsumerProvider, RenderType.armorCutoutNoCull(playerTexture.texturedNoseIdentifierEnchanted),
+            //$$     VertexConsumer noseVertex_ench = ItemRenderer.getArmorFoilBuffer(vertexConsumerProvider, RenderType.armorCutoutNoCull(playerTexture.texturedNoseIdentifierEnchanted),
                         //#if MC < 12100
                         //$$ false,
                         //#endif
-                        true);
-                textureNose.render(matrixStack, noseVertex_ench, light, OverlayTexture.NO_OVERLAY
-                        //#if MC < 12100
-                        //$$ , 1F, 1F, 1F, 1F
-                        //#endif
-                );
-            }
+            //$$             true);
+            //$$     textureNose.render(matrixStack, noseVertex_ench, light, OverlayTexture.NO_OVERLAY
+            //$$             //#if MC < 12100
+            //$$             //$$ , 1F, 1F, 1F, 1F
+            //$$             //#endif
+            //$$     );
+            //$$ }
+            //#endif
         }
     }
 
-//#if MC >= 12103
+
+
+
+    //#if MC >= 12109
     @Override
-    public void render(final PoseStack matrices, final MultiBufferSource vertexConsumers, final int light, final T entityRenderState, final float f, final float g) {
-//#else
-//$$     @Override
-//$$     public void render(PoseStack matrices, MultiBufferSource vertexConsumers, int light, T entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
-//#endif
+        public void submit(final PoseStack matrices, final SubmitNodeCollector submit, final int light, final T entityRenderState, final float f, final float g) {
+    //#elseif MC >= 12103
+    //$$ @Override
+    //$$ public void render(final PoseStack matrices, final MultiBufferSource submit, final int light, final T entityRenderState, final float f, final float g) {
+    //#else
+    //$$     @Override
+    //$$     public void render(PoseStack matrices, MultiBufferSource submit, int light, T entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
+    //#endif
         if (ETF.config().getConfig().skinFeaturesEnabled && skinHolder != null) {
             ETFRenderContext.preventRenderLayerTextureModify();
 
             ETFPlayerTexture playerTexture = skinHolder.etf$getETFPlayerTexture();
             if (playerTexture != null && playerTexture.hasFeatures) {
 
-                renderFeatures(matrices, vertexConsumers, light, getParentModel(), playerTexture);
+                renderFeatures(matrices, submit,
+                        //#if MC >= 12109
+                        entityRenderState,
+                        //#endif
+                        light, getParentModel(), playerTexture);
             }
 
             ETFRenderContext.allowRenderLayerTextureModify();
         }
     }
 
-    public void renderFeatures(PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, int light, M model, ETFPlayerTexture playerTexture) {
+    public void renderFeatures(PoseStack matrixStack,
+                               //#if MC >= 12109
+                               SubmitNodeCollector vertexConsumerProvider,
+                               T entityRenderState,
+                               //#else
+                               //$$ MultiBufferSource vertexConsumerProvider,
+                               //#endif
+                               int light, M model, ETFPlayerTexture playerTexture) {
         if (playerTexture.canUseFeaturesForThisPlayer()) {
             ETFRenderContext.startSpecialRenderOverlayPhase();
 
             if (playerTexture.hasVillagerNose || playerTexture.texturedNoseIdentifier != null) {
-                villagerNose.copyFrom(model.head);
-                textureNose.copyFrom(model.head);
+                //#if MC >= 12109
+                var head = model.head.storePose();
+                villagerNose.loadPose(head);
+                textureNose.loadPose(head);
+                //#else
+                //$$ villagerNose.copyFrom(model.head);
+                //$$ textureNose.copyFrom(model.head);
+                //#endif
                 renderNose(matrixStack, vertexConsumerProvider, light, playerTexture);
             }
-            renderCoat(matrixStack, vertexConsumerProvider, light, playerTexture, model);
+            renderCoat(matrixStack, vertexConsumerProvider,
+                    //#if MC >= 12109
+                    entityRenderState,
+                    //#endif
+                    light, playerTexture, model);
 
 //            ETFPlayerFeatureRenderer.renderEmmisive(matrixStack, vertexConsumerProvider, playerTexture, model);
             //ETFPlayerFeatureRenderer.renderEnchanted(matrixStack, vertexConsumerProvider, light, playerTexture, model);
@@ -205,7 +282,14 @@ public class ETFPlayerFeatureRenderer<T extends PlayerRenderState, M extends Pla
         }
     }
 
-    private void renderCoat(PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, int light, ETFPlayerTexture playerTexture, M model) {
+    private void renderCoat(PoseStack matrixStack,
+                            //#if MC >= 12109
+                            SubmitNodeCollector submit,
+                            T entityRenderState,
+                            //#else
+                            //$$ MultiBufferSource vertexConsumerProvider,
+                            //#endif
+                            int light, ETFPlayerTexture playerTexture, M model) {
         ItemStack armour = playerTexture.player.etf$getInventory()
                 //#if MC >= 12105
                 .getItem(EquipmentSlot.LEGS.getIndex(36));
@@ -213,7 +297,11 @@ public class ETFPlayerFeatureRenderer<T extends PlayerRenderState, M extends Pla
                 //$$ .getArmor(1);
                 //#endif
         if (playerTexture.coatIdentifier != null &&
-                playerTexture.player.etf$isPartVisible(PlayerModelPart.JACKET) &&
+                //#if MC >= 12109
+                entityRenderState.showJacket &&
+                //#else
+                //$$ playerTexture.player.etf$isPartVisible(PlayerModelPart.JACKET) &&
+                //#endif
                 //#if MC >= 12006
                 !(armour.is(ItemTags.LEG_ARMOR)) //todo check all versions for the else, might have just been written before i learned about tags
                 //#else
@@ -226,74 +314,81 @@ public class ETFPlayerFeatureRenderer<T extends PlayerRenderState, M extends Pla
                 //#endif
         ) {
             //String coat = ETFPlayerSkinUtils.SKIN_NAMESPACE + id + "_coat.png";
+            //#if MC >= 12109
+            var part = playerTexture.hasFatCoat ? fatJacket : jacket;
+            part.loadPose(model.jacket.storePose());
 
-            if (playerTexture.hasFatCoat) {
-                fatJacket.copyFrom(model.jacket);
-            } else {
-                jacket.copyFrom(model.jacket);
-            }
-            //perform texture features
-            VertexConsumer coatVert = vertexConsumerProvider.getBuffer(RenderType.entityTranslucent(playerTexture.coatIdentifier));
-            matrixStack.pushPose();
-            if (playerTexture.hasFatCoat) {
-                fatJacket.render(matrixStack, coatVert, light, OverlayTexture.NO_OVERLAY
-                        //#if MC < 12100
-                        //$$ , 1F, 1F, 1F, 1F
-                        //#endif
-                );
-            } else {
-                jacket.render(matrixStack, coatVert, light, OverlayTexture.NO_OVERLAY
-                        //#if MC < 12100
-                        //$$ , 1F, 1F, 1F, 1F
-                        //#endif
-                );
-            }
-            if (playerTexture.coatEnchantedIdentifier != null) {
-                VertexConsumer enchantVert = ItemRenderer.getArmorFoilBuffer(vertexConsumerProvider, RenderType.armorCutoutNoCull(playerTexture.coatEnchantedIdentifier),
-                        //#if MC < 12100
-                        //$$ false,
-                        //#endif
-                        true);
-                if (playerTexture.hasFatCoat) {
-                    fatJacket.render(matrixStack, enchantVert, light, OverlayTexture.NO_OVERLAY
-                            //#if MC < 12100
-                            //$$ , 1F, 1F, 1F, 1F
-                            //#endif
-                    );
-                } else {
-                    jacket.render(matrixStack, enchantVert, light, OverlayTexture.NO_OVERLAY
-                            //#if MC < 12100
-                            //$$ , 1F, 1F, 1F, 1F
-                            //#endif
-                    );
-                }
-            }
-
-
-            if (playerTexture.coatEmissiveIdentifier != null) {
-                VertexConsumer emissiveVert;// = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(emissive, true));
-                if (ETFManager.getEmissiveMode() == ETFConfig.EmissiveRenderModes.BRIGHT) {
-                    emissiveVert = vertexConsumerProvider.getBuffer(RenderType.beaconBeam(playerTexture.coatEmissiveIdentifier, true));
-                } else {
-                    emissiveVert = vertexConsumerProvider.getBuffer(RenderType.entityTranslucent(playerTexture.coatEmissiveIdentifier));
-                }
-
-                if (playerTexture.hasFatCoat) {
-                    fatJacket.render(matrixStack, emissiveVert, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.NO_OVERLAY
-                            //#if MC < 12100
-                            //$$ , 1F, 1F, 1F, 1F
-                            //#endif
-                    );
-                } else {
-                    jacket.render(matrixStack, emissiveVert, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.NO_OVERLAY
-                            //#if MC < 12100
-                            //$$ , 1F, 1F, 1F, 1F
-                            //#endif
-                    );
-                }
-            }
-
-            matrixStack.popPose();
+            ETFUtils2.submitModelPart(matrixStack, submit, light,
+                    part,
+                    playerTexture.coatIdentifier,
+                    playerTexture.coatEmissiveIdentifier,
+                    playerTexture.coatEnchantedIdentifier
+            );
+            //#else
+            //$$ if (playerTexture.hasFatCoat) {
+            //$$     fatJacket.copyFrom(model.jacket);
+            //$$ } else {
+            //$$     jacket.copyFrom(model.jacket);
+            //$$ }
+            //$$ //perform texture features
+            //$$ VertexConsumer coatVert = vertexConsumerProvider.getBuffer(RenderType.entityTranslucent(playerTexture.coatIdentifier));
+            //$$ matrixStack.pushPose();
+            //$$ if (playerTexture.hasFatCoat) {
+            //$$     fatJacket.render(matrixStack, coatVert, light, OverlayTexture.NO_OVERLAY
+            //$$             //#if MC < 12100
+            //$$             //$$ , 1F, 1F, 1F, 1F
+            //$$             //#endif
+            //$$     );
+            //$$ } else {
+            //$$     jacket.render(matrixStack, coatVert, light, OverlayTexture.NO_OVERLAY
+            //$$             //#if MC < 12100
+            //$$             //$$ , 1F, 1F, 1F, 1F
+            //$$             //#endif
+            //$$     );
+            //$$ }
+            //$$ if (playerTexture.coatEnchantedIdentifier != null) {
+            //$$     VertexConsumer enchantVert = ItemRenderer.getArmorFoilBuffer(vertexConsumerProvider, RenderType.armorCutoutNoCull(playerTexture.coatEnchantedIdentifier),
+            //$$             //#if MC < 12100
+            //$$             //$$ false,
+            //$$             //#endif
+            //$$             true);
+            //$$     if (playerTexture.hasFatCoat) {
+            //$$         fatJacket.render(matrixStack, enchantVert, light, OverlayTexture.NO_OVERLAY
+            //$$                 //#if MC < 12100
+            //$$                 //$$ , 1F, 1F, 1F, 1F
+            //$$                 //#endif
+            //$$         );
+            //$$     } else {
+            //$$         jacket.render(matrixStack, enchantVert, light, OverlayTexture.NO_OVERLAY
+            //$$                 //#if MC < 12100
+            //$$                 //$$ , 1F, 1F, 1F, 1F
+            //$$                 //#endif
+            //$$         );
+            //$$     }
+            //$$ }
+            //$$ if (playerTexture.coatEmissiveIdentifier != null) {
+            //$$     VertexConsumer emissiveVert;// = vertexConsumerProvider.getBuffer(RenderLayer.getBeaconBeam(emissive, true));
+            //$$     if (ETFManager.getEmissiveMode() == ETFConfig.EmissiveRenderModes.BRIGHT) {
+            //$$         emissiveVert = vertexConsumerProvider.getBuffer(RenderType.beaconBeam(playerTexture.coatEmissiveIdentifier, true));
+            //$$     } else {
+            //$$         emissiveVert = vertexConsumerProvider.getBuffer(RenderType.entityTranslucent(playerTexture.coatEmissiveIdentifier));
+            //$$     }
+            //$$     if (playerTexture.hasFatCoat) {
+            //$$         fatJacket.render(matrixStack, emissiveVert, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.NO_OVERLAY
+            //$$                 //#if MC < 12100
+            //$$                 //$$ , 1F, 1F, 1F, 1F
+            //$$                 //#endif
+            //$$         );
+            //$$     } else {
+            //$$         jacket.render(matrixStack, emissiveVert, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.NO_OVERLAY
+            //$$                 //#if MC < 12100
+            //$$                 //$$ , 1F, 1F, 1F, 1F
+            //$$                 //#endif
+            //$$         );
+            //$$     }
+            //$$ }
+            //$$ matrixStack.popPose();
+            //#endif
         }
     }
 

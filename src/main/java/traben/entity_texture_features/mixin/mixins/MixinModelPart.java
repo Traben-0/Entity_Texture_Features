@@ -63,8 +63,8 @@ public abstract class MixinModelPart {
             ETFRenderContext.decrementCurrentModelPartDepth();
         } else {
             //top level model so try special rendering
-            if (ETFRenderContext.isCurrentlyRenderingEntity()
-                    && vertices instanceof ETFVertexConsumer etfVertexConsumer) {
+            if (ETFRenderContext.isCurrentlyRenderingEntity() &&
+                    vertices instanceof ETFVertexConsumer etfVertexConsumer) {
                 ETFTexture texture = etfVertexConsumer.etf$getETFTexture();
                 //is etf texture not null and does it special render?
                 if (texture != null && (texture.isEmissive() || texture.isEnchanted())) {

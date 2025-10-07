@@ -13,7 +13,7 @@ pluginManagement {
     // We also recommend specifying your desired version here if you're using more than one of the plugins,
     // so you do not have to change the version in multilpe places when updating.
     plugins {
-        val egtVersion = "0.6.9" // should be whatever is displayed in above badge
+        val egtVersion = "0.6.10" // should be whatever is displayed in above badge
         id("gg.essential.multi-version.root") version egtVersion
         id("gg.essential.multi-version.api-validation") version egtVersion
     }
@@ -37,6 +37,7 @@ fun MutableList<String>.version(mcVersion: Int, forge: Boolean = true, neoforge:
 }
 
 mutableListOf<String>()
+    .version(12109)
     .version(12106)
     .version(12105)
     .version(12104)

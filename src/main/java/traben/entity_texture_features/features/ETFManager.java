@@ -264,13 +264,18 @@ public class ETFManager {
 
     @NotNull
     private ETFTexture getOrCreateETFTexture(ResourceLocation ofIdentifier) {
-        var texture = ETF_TEXTURE_CACHE.get(ofIdentifier);
-        if (texture != null) return texture;
+        try {
+            ETFTexture texture = ETF_TEXTURE_CACHE.get(ofIdentifier);
+            if (texture != null) return texture;
 
-        // computeIfAbsent() is broken af
-        var texture2 = new ETFTexture(ofIdentifier);
-        ETF_TEXTURE_CACHE.put(ofIdentifier, texture2);
-        return texture2;
+            // computeIfAbsent() is broken af in fastutil
+            ETFTexture texture2 = new ETFTexture(ofIdentifier);
+            ETF_TEXTURE_CACHE.put(ofIdentifier, texture2);
+            return texture2;
+        } catch (ArrayIndexOutOfBoundsException e) {
+            // you keep letting me down fastutil
+            return new ETFTexture(ofIdentifier);
+        }
     }
 
     @Nullable

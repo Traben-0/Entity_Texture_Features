@@ -36,8 +36,11 @@ public abstract class MixinPlayerEntity extends Entity implements ETFPlayerEntit
     @Shadow
     public abstract @NotNull Component getName();
 
-    @Shadow
-    public abstract boolean isModelPartShown(final PlayerModelPart playerModelPart);
+    //#if MC >= 12109
+    //#else
+    //$$ @Shadow
+    //$$ public abstract boolean isModelPartShown(final PlayerModelPart playerModelPart);
+    //#endif
 
     //will force update entity texture at any player interaction useful for debugging
     @Inject(method = "interactOn", at = @At("HEAD"))
@@ -64,8 +67,13 @@ public abstract class MixinPlayerEntity extends Entity implements ETFPlayerEntit
     }
 
     @Override
+    @Deprecated
     public boolean etf$isPartVisible(PlayerModelPart part) {
-        return isModelPartShown(part);
+        //#if MC >= 12109
+        return false;
+        //#else
+        //$$ return isModelPartShown(part);
+        //#endif
     }
 
     @Override

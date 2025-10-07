@@ -511,32 +511,41 @@ public class ETFTexture {
 
     @Nullable
     public VertexConsumer getEmissiveVertexConsumer(MultiBufferSource vertexConsumerProvider, @Nullable Model model, ETFConfig.EmissiveRenderModes modeToUsePossiblyManuallyChosen) {
-        ETFRenderContext.preventRenderLayerTextureModify();
-        VertexConsumer wrapped = getEmissiveVertexConsumerWrapped(vertexConsumerProvider, model, modeToUsePossiblyManuallyChosen);
-        ETFRenderContext.allowRenderLayerTextureModify();
-        return wrapped;
-
+        var type = getEmissiveRenderLayer(model, modeToUsePossiblyManuallyChosen);
+        if (type == null) return null;
+        return vertexConsumerProvider.getBuffer(type);
     }
 
     @Nullable
-    private VertexConsumer getEmissiveVertexConsumerWrapped(MultiBufferSource vertexConsumerProvider, @Nullable Model model, ETFConfig.EmissiveRenderModes modeToUsePossiblyManuallyChosen) {
+    public RenderType getEmissiveRenderLayer(@Nullable Model model) {
+        return getEmissiveRenderLayer(model, ETFManager.getEmissiveMode());
+    }
+
+    @Nullable
+    public RenderType getEmissiveRenderLayer(@Nullable Model model, ETFConfig.EmissiveRenderModes modeToUsePossiblyManuallyChosen) {
+        ETFRenderContext.preventRenderLayerTextureModify();
+        var type = getEmissiveVertexConsumerWrapped(model, modeToUsePossiblyManuallyChosen);
+        ETFRenderContext.allowRenderLayerTextureModify();
+        return type;
+    }
+
+    @Nullable
+    private RenderType getEmissiveVertexConsumerWrapped(@Nullable Model model, ETFConfig.EmissiveRenderModes modeToUsePossiblyManuallyChosen) {
         if (isEmissive()) {
             ResourceLocation emissiveToUse = getEmissiveIdentifierOfCurrentState();
-
             if (emissiveToUse != null) {
-
                 if (modeToUsePossiblyManuallyChosen == ETFConfig.EmissiveRenderModes.BRIGHT) {
-                    return vertexConsumerProvider.getBuffer(RenderType.beaconBeam(emissiveToUse, true));
+                    return RenderType.beaconBeam(emissiveToUse, true);
                 } else {
                     if (model == null) {
-                        return vertexConsumerProvider.getBuffer(RenderType.entityCutoutNoCull /*RenderLayer.getEntityTranslucent*/(emissiveToUse));
+                        return RenderType.entityCutoutNoCull /*RenderLayer.getEntityTranslucent*/(emissiveToUse);
                     } else {
-                        return vertexConsumerProvider.getBuffer(model.renderType(emissiveToUse));
+                        return model.renderType(emissiveToUse);
                     }
                 }
             }
         }
-        //return null for any fail
+        // return null for any fail
         return null;
     }
 

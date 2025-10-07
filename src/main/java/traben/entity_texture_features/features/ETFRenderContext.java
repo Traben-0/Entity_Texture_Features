@@ -201,6 +201,10 @@ public class ETFRenderContext {
     }
 
     public static boolean isCurrentlyRenderingEntity() {
-        return currentEntity != null;
+        //#if MC >= 12109
+        return true; // todo consequences of this??
+        //#else
+        //$$ return currentEntity != null;
+        //#endif
     }
 }

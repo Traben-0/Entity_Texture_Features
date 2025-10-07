@@ -1,5 +1,6 @@
 package traben.entity_texture_features.mixin.mixins.entity.renderer.feature;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.layers.EyesLayer;
 import net.minecraft.resources.ResourceLocation;
@@ -13,11 +14,15 @@ import traben.entity_texture_features.utils.ETFUtils2;
 @Mixin(EyesLayer.class)
 public abstract class MixinEyeFeatureRenderer {
 
-    @ModifyArg(
-            method = "render",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/MultiBufferSource;getBuffer(Lnet/minecraft/client/renderer/RenderType;)Lcom/mojang/blaze3d/vertex/VertexConsumer;"),
-            index = 0
-    )
+    //#if MC>=12109
+    @ModifyExpressionValue(method = "submit", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/layers/EyesLayer;renderType()Lnet/minecraft/client/renderer/RenderType;"))
+    //#else
+    //$$ @ModifyArg(
+    //$$         method = "render",
+    //$$         at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/MultiBufferSource;getBuffer(Lnet/minecraft/client/renderer/RenderType;)Lcom/mojang/blaze3d/vertex/VertexConsumer;"),
+    //$$         index = 0
+    //$$ )
+    //#endif
     private RenderType etf$allowModifiableEyes(RenderType layer) {
         //the eye texture render layers are hard coded in vanilla and do not recalculate each time
         if (layer instanceof ETFRenderLayerWithTexture etf && etf.etf$getId().isPresent()) {

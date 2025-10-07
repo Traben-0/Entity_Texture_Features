@@ -48,13 +48,14 @@ preprocess {
     }
 
 
-    val current = null.connectToVersion(12106)
+    val current = null.connectToVersion(12109)
 
     // next, then remap the main project to this and set the current to old
     //current.connectToVersion(12109, forge = false, neoforge = false)
 
     // older
-    current.connectToVersion(12105)
+    current.connectToVersion(12106)
+        .connectToVersion(12105)
         .connectToVersion(12104)
         .connectToVersion(12103) // would normally do 12102 to have the lowest compatible version but forge 1.21.2 doesn't exist
         .connectToVersion(12100)

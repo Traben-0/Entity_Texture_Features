@@ -12,14 +12,21 @@ import traben.entity_texture_features.features.state.ETFEntityRenderState;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
 import traben.entity_texture_features.utils.ETFUtils2;
 import com.mojang.blaze3d.platform.NativeImage;
+import net.minecraft.client.Minecraft;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 
 import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.util.*;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Player;
+//#if MC >= 12109
+import com.mojang.authlib.minecraft.client.MinecraftClient;
+import net.minecraft.core.ClientAsset;
+import org.apache.commons.io.FilenameUtils;
+//#endif
+
+
 //#if MC >= 12104
 import traben.entity_texture_features.ETFException;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -78,6 +85,10 @@ public class ETFPlayerTexture {
 //    private Identifier etfCapeEnchantedIdentifier = null;
     private ResourceLocation normalVanillaSkinIdentifier = null;
 
+    public ResourceLocation getOriginal() {
+        return normalVanillaSkinIdentifier;
+    }
+
     public ETFPlayerTexture(ETFPlayerEntity player, ResourceLocation rendererGivenSkin) {
         //initiate texture download as we need unprocessed texture from the skin server
         this.player = player;
@@ -132,25 +143,67 @@ public class ETFPlayerTexture {
         String url;
         GameProfile gameProfile;
         if(clientPlayer instanceof AbstractClientPlayer abstractClientPlayer){
-            url = abstractClientPlayer.getSkin().textureUrl();
             gameProfile = abstractClientPlayer.getGameProfile();
+
+            //#if MC >= 12109
+            try {
+                var playerSkinOptional = Minecraft.getInstance().getSkinManager().get(gameProfile).get();
+                if (playerSkinOptional.isEmpty())
+                    throw new ETFException("No profile texture found for player: " + gameProfile.name());
+
+                var minecraftProfileTexture = playerSkinOptional.get().body();
+                if (!(minecraftProfileTexture instanceof ClientAsset.DownloadedTexture))
+                    throw new ETFException("No profile texture found 2 for player: " + gameProfile.name());
+
+                url = ((ClientAsset.DownloadedTexture) minecraftProfileTexture).url();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            //#else
+            //$$ url = abstractClientPlayer.getSkin().textureUrl();
+            //#endif
         }else if (clientPlayer instanceof SkullBlockEntity skull && skull.getOwnerProfile() != null) {
-            gameProfile = skull.getOwnerProfile().gameProfile();
-            url = Minecraft.getInstance().getSkinManager().getInsecureSkin(gameProfile).textureUrl();
+
+            //#if MC >= 12109
+            gameProfile = skull.getOwnerProfile().partialProfile(); //todo is partial enough?
+            try {
+                var playerSkinOptional = Minecraft.getInstance().getSkinManager().get(gameProfile).get();
+                if (playerSkinOptional.isEmpty())
+                    throw new ETFException("No profile texture found for player: " + gameProfile.name());
+
+                var minecraftProfileTexture = playerSkinOptional.get().body();
+                if (!(minecraftProfileTexture instanceof ClientAsset.DownloadedTexture))
+                    throw new ETFException("No profile texture found 2 for player: " + gameProfile.name());
+
+                url = ((ClientAsset.DownloadedTexture) minecraftProfileTexture).url();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            //#else
+            //$$ gameProfile = skull.getOwnerProfile().gameProfile();
+            //$$ url = Minecraft.getInstance().getSkinManager().getInsecureSkin(gameProfile).textureUrl();
+            //#endif
         } else {
             throw new ETFException("Invalid player type to get skin for ETF: " + clientPlayer.getClass());
         }
 
-        var minecraftProfileTexture = Minecraft.getInstance().getSkinManager().sessionService.getTextures(gameProfile).skin();
-        if (minecraftProfileTexture == null) throw new ETFException("No profile texture found for player: " + gameProfile.getName());
-
-        String string = Hashing.sha1().hashUnencodedChars(minecraftProfileTexture.getHash()).toString();
+        //#if MC >= 12109
+        String string = Hashing.sha1().hashUnencodedChars(FilenameUtils.getBaseName(url)).toString();
+        //#else
+        //$$ var minecraftProfileTexture = Minecraft.getInstance().getSkinManager().sessionService.getTextures(gameProfile).skin();
+        //$$ if (minecraftProfileTexture == null) throw new ETFException("No profile texture found for player: " + gameProfile.getName());
+        //$$
+        //$$ String string = Hashing.sha1().hashUnencodedChars(minecraftProfileTexture.getHash()).toString();
+        //#endif
 
         try {
             Path path = Minecraft.getInstance().getSkinManager().skinTextures.
                         root.resolve(string.length() > 2 ? string.substring(0, 2) : "xx").resolve(string);
-
-            return SkinTextureDownloader.downloadSkin(path, url);
+            //#if MC >= 12109
+            return downloader.downloadSkin(path, url);
+            //#else
+            //$$ return SkinTextureDownloader.downloadSkin(path, url);
+            //#endif
         } catch (IOException e) {
             if (rendererGivenSkin != null) {
                 var texture = Minecraft.getInstance().getTextureManager().getTexture(rendererGivenSkin);
@@ -162,6 +215,11 @@ public class ETFPlayerTexture {
         }
     }
     //#endif
+
+    //#if MC >= 12109
+    private static final SkinTextureDownloader downloader = new SkinTextureDownloader(Minecraft.getInstance().getProxy(), Minecraft.getInstance().getTextureManager(),Minecraft.getInstance());
+    //#endif
+
 
     //THIS REPRESENTS A NON FEATURED SKIN
     // must still create an object as the identifier is important to detect skin changes from other mods
@@ -179,7 +237,13 @@ public class ETFPlayerTexture {
             assert Minecraft.getInstance().player != null;
             NativeImage skin =
             //#if MC >= 12002
-                    ETFUtils2.getNativeImageElseNull(Minecraft.getInstance().player.getSkin().texture());
+                    ETFUtils2.getNativeImageElseNull(Minecraft.getInstance().player.getSkin()
+                            //#if MC >= 12109
+                            .body().texturePath()
+                            //#else
+                            //$$ .texture()
+                            //#endif
+                    );
             //#else
             //$$         ETFUtils2.getNativeImageElseNull(Minecraft.getInstance().player.getSkinTextureLocation());
             //#endif

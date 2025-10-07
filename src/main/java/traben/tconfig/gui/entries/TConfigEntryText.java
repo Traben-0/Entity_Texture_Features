@@ -88,21 +88,25 @@ public class TConfigEntryText extends TConfigEntry {
 
     }
 
+    @Deprecated //todo reimplement manually
     public enum TextAlignment {
         LEFT, CENTER, RIGHT;
 
         private void align(StringWidget widget) {
-            switch (this) {
-                case LEFT:
-                    widget.alignLeft();
-                    break;
-                case CENTER:
-                    widget.alignCenter();
-                    break;
-                case RIGHT:
-                    widget.alignRight();
-                    break;
-            }
+            //#if MC < 12109
+            //$$ switch (this) {
+            //$$     case LEFT:
+            //$$
+            //$$         widget.alignLeft();
+            //$$         break;
+            //$$     case CENTER:
+            //$$         widget.alignCenter();
+            //$$         break;
+            //$$     case RIGHT:
+            //$$         widget.alignRight();
+            //$$         break;
+            //$$ }
+            //#endif
         }
     }
 
@@ -143,9 +147,16 @@ public class TConfigEntryText extends TConfigEntry {
             return widget;
         }
 
+
+        //#if MC >= 12109
         @Override
-        public void render(final GuiGraphics context, final int index, final int y, final int x, final int entryWidth, final int entryHeight, final int mouseX, final int mouseY, final boolean hovered, final float tickDelta) {
-            lastWidgetRendered = getWidget(x, y, entryWidth, entryHeight);
+        public void renderContent(final GuiGraphics context, final int mouseX, final int mouseY, final boolean hovered, final float tickDelta) {
+            lastWidgetRendered = getWidget(getContentX(), getContentY(), getContentWidth(), getContentHeight());
+        //#else
+        //$$ @Override
+        //$$ public void render(final GuiGraphics context, final int index, final int y, final int x, final int entryWidth, final int entryHeight, final int mouseX, final int mouseY, final boolean hovered, final float tickDelta) {
+        //$$     lastWidgetRendered = getWidget(x, y, entryWidth, entryHeight);
+        //#endif
             widget.render(context, mouseX, mouseY, tickDelta);
             widget2.render(context, mouseX, mouseY, tickDelta);
         }

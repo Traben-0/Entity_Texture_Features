@@ -52,6 +52,11 @@ public interface ETFEntityRenderState {
     void setVanillaState(EntityRenderState vanillaState);
     //#endif
 
+    //#if MC>=12109
+    @Nullable net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState vanillaBlockState();
+    void setVanillaBlockState(net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState vanillaState);
+    //#endif
+
     float distanceTo(Entity entity);
 
 

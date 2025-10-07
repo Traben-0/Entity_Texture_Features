@@ -19,13 +19,15 @@ public abstract class MixinIllusionerRenderer {
     @Unique
     private ETFEntityRenderState etf$heldEntity = null;
 
-    @Inject(method =
-            //#if MC >= 12103
-            "render(Lnet/minecraft/client/renderer/entity/state/IllusionerRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
-            //#else
-            //$$ "render(Lnet/minecraft/world/entity/monster/Illusioner;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
-            //#endif
-            at = @At(value = "HEAD"))
+    //#if MC >= 12109
+    private static final String RENDER = "submit(Lnet/minecraft/client/renderer/entity/state/IllusionerRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/CameraRenderState;)V";
+    //#elseif MC >= 12103
+    //$$ private static final String RENDER = "render(Lnet/minecraft/client/renderer/entity/state/IllusionerRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V";
+    //#else
+    //$$ private static final String RENDER = "render(Lnet/minecraft/world/entity/monster/Illusioner;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V";
+    //#endif
+
+    @Inject(method = RENDER, at = @At(value = "HEAD"))
     private void etf$start(CallbackInfo ci
         //#if MC>= 12103
                , @Local(argsOnly = true) net.minecraft.client.renderer.entity.state.IllusionerRenderState state
@@ -36,21 +38,17 @@ public abstract class MixinIllusionerRenderer {
         //#endif
     }
 
-    @Inject(method =
-            //#if MC >= 12103
-            "render(Lnet/minecraft/client/renderer/entity/state/IllusionerRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
-            //#else
-            //$$ "render(Lnet/minecraft/world/entity/monster/Illusioner;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
-            //#endif
-            at = @At(value = "INVOKE", target =
-                    //#if MC >= 12103
-                    "Lnet/minecraft/client/renderer/entity/IllagerRenderer;render(Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
+    @Inject(method = RENDER, at = @At(value = "INVOKE", target =
+                    //#if MC >= 12109
+                    "Lnet/minecraft/client/renderer/entity/IllagerRenderer;submit(Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/CameraRenderState;)V"
+                    //#elseif MC >= 12103
+                    //$$ "Lnet/minecraft/client/renderer/entity/IllagerRenderer;render(Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V"
                     //#elseif MC >= 12100
-                    //$$ "Lnet/minecraft/client/renderer/entity/IllagerRenderer;render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
+                    //$$ "Lnet/minecraft/client/renderer/entity/IllagerRenderer;render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V"
                     //#else
-                    //$$ "Lnet/minecraft/client/renderer/entity/IllagerRenderer;render(Lnet/minecraft/world/entity/Mob;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
+                    //$$ "Lnet/minecraft/client/renderer/entity/IllagerRenderer;render(Lnet/minecraft/world/entity/Mob;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V"
                     //#endif
-                    shift = At.Shift.BEFORE))
+                    ))
     private void etf$loop(CallbackInfo ci) {
         //assert main entity each loop
         ETFRenderContext.setCurrentEntity(etf$heldEntity);

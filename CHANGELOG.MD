@@ -1,4 +1,10 @@
 
+
+
+[7.0.2]
+- fixed parrots on shoulders crashing the game
+- fixed ArrayIndexOutOfBoundsException crash
+
 [7.0.1]
 - fixed crash with immediatelyfast
 - bumped api number

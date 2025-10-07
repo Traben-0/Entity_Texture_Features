@@ -1,4 +1,7 @@
 package traben.entity_texture_features.features.state;
+//#if MC>=12109
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+//#endif
 //#if MC>=12102
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 //#endif
@@ -40,6 +43,20 @@ public class ETFEntityRenderStateViaReference implements ETFEntityRenderState {
     @Override
     public void setVanillaState(EntityRenderState vanillaState) {
         this.vanillaState = vanillaState;
+    }
+    //#endif
+
+    //#if MC>=12109
+    private BlockEntityRenderState vanillaBlockState = null;
+
+    @Override
+    public BlockEntityRenderState vanillaBlockState() {
+        return vanillaBlockState;
+    }
+
+    @Override
+    public void setVanillaBlockState(BlockEntityRenderState vanillaBlockState) {
+        this.vanillaBlockState = vanillaBlockState;
     }
     //#endif
 

@@ -16,8 +16,14 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 //$$ import net.minecraft.client.renderer.texture.HttpTexture;
 //#endif
 
-//#if MC >= 12002
-import net.minecraft.client.resources.PlayerSkin;
+//#if MC >= 12109
+import net.minecraft.core.ClientAsset;
+import net.minecraft.world.entity.player.PlayerModelType;
+import org.apache.commons.io.FilenameUtils;
+import java.net.URL;
+import java.util.concurrent.ExecutionException;
+//#elseif MC >= 12002
+//$$ import net.minecraft.client.resources.PlayerSkin;
 //#else
 //$$ import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 //#endif
@@ -42,7 +48,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
 
 
 //inspired by puzzles custom gui code
@@ -118,8 +123,13 @@ public class ETFConfigScreenSkinToolOutcome extends ETFScreenOldCompat {
                         if (Minecraft.getInstance().getConnection() != null) {
                             PlayerInfo playerListEntry = Minecraft.getInstance().getConnection().getPlayerInfo(Minecraft.getInstance().player.getUUID());
                             if (playerListEntry != null) {
-                                //#if MC >= 12002
-                                skinType = Minecraft.getInstance().getSkinManager().getInsecureSkin(playerListEntry.getProfile()).model() == PlayerSkin.Model.WIDE;
+                                //#if MC >= 12109
+                                try {
+                                    var skin = Minecraft.getInstance().getSkinManager().get(playerListEntry.getProfile()).get();
+                                    if (skin.isPresent()) skinType = skin.get().model() == PlayerModelType.WIDE;
+                                } catch (InterruptedException | ExecutionException ignored) { }
+                                //#elseif MC >= 12002
+                                //$$ skinType = Minecraft.getInstance().getSkinManager().getInsecureSkin(playerListEntry.getProfile()).model() == PlayerSkin.Model.WIDE;
                                 //#else
                                 //$$ String skinTypeData = Minecraft.getInstance().getSkinManager().getInsecureSkinInformation(playerListEntry.getProfile()).get(MinecraftProfileTexture.Type.SKIN).getMetadata("model");
                                 //$$ if (skinTypeData != null) {
@@ -136,12 +146,20 @@ public class ETFConfigScreenSkinToolOutcome extends ETFScreenOldCompat {
                             //#if MC >= 12104
                             try {
                                 GameProfile gameProfile = Minecraft.getInstance().player.getGameProfile();
+                                //#if MC >= 12109
+                                var playerSkinOptional = Minecraft.getInstance().getSkinManager().get(gameProfile).get();
+                                if (playerSkinOptional.isEmpty()) throw new ETFException("No profile texture found for player: " + gameProfile.name());
 
-                                var minecraftProfileTexture = Minecraft.getInstance().getSkinManager().sessionService.getTextures(gameProfile).skin();
-                                if (minecraftProfileTexture == null)
-                                    throw new ETFException("No profile texture found for player: " + gameProfile.getName());
+                                var minecraftProfileTexture = playerSkinOptional.get().body();
+                                if (!(minecraftProfileTexture instanceof ClientAsset.DownloadedTexture))  throw new ETFException("No profile texture found 2 for player: " + gameProfile.name());
 
-                                String string = Hashing.sha1().hashUnencodedChars(minecraftProfileTexture.getHash()).toString();
+                                var url = new URL(((ClientAsset.DownloadedTexture) minecraftProfileTexture).url()).getPath();
+                                String string = Hashing.sha1().hashUnencodedChars(FilenameUtils.getBaseName(url)).toString();
+                                //#else
+                                //$$ var minecraftProfileTexture = Minecraft.getInstance().getSkinManager().sessionService.getTextures(gameProfile).skin();
+                                //$$ if (minecraftProfileTexture == null) throw new ETFException("No profile texture found for player: " + gameProfile.getName());
+                                //$$ String string = Hashing.sha1().hashUnencodedChars(minecraftProfileTexture.getHash()).toString();
+                                //#endif
 
                                 Path path = Minecraft.getInstance().getSkinManager().skinTextures.
                                         root.resolve(string.length() > 2 ? string.substring(0, 2) : "xx").resolve(string);
@@ -156,7 +174,12 @@ public class ETFConfigScreenSkinToolOutcome extends ETFScreenOldCompat {
                             }
 
                             // update the registered texture
-                            var texture = Minecraft.getInstance().getTextureManager().getTexture(Minecraft.getInstance().player.getSkin().texture());
+                            var texture = Minecraft.getInstance().getTextureManager().getTexture(Minecraft.getInstance().player.getSkin()
+                                    //#if MC >= 12109
+                                    .body().texturePath());
+                                    //#else
+                                    //$$ .texture());
+                                    //#endif
                             if(texture instanceof DynamicTexture dynamicTexture){
                                 dynamicTexture.setPixels(skin);
                             }

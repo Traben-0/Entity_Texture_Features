@@ -177,13 +177,18 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
         return null;
     }
 
-
-    //rewritten as original didn't seem to work, I must have accidentally changed the vanilla mushroom texture when testing originally
-    @Inject(method = "renderMushroomBlock", at = @At(value = "HEAD"), cancellable = true)
-    //#if MC >= 12105
-    private void etf$injected(final PoseStack matrices, final MultiBufferSource vertexConsumers, final int light, final boolean renderAsModel, final BlockState mushroomState, final int overlay, final BlockStateModel mushroomModel, final CallbackInfo ci) {
+    //#if MC >= 12109
+    @Inject(method = "submitMushroomBlock", at = @At(value = "HEAD"), cancellable = true)
+    private void etf$injected(final PoseStack matrices, final net.minecraft.client.renderer.SubmitNodeCollector submitNodeCollector, final int light, final boolean renderAsModel, final int j, final BlockState mushroomState, final int overlay, final BlockStateModel mushroomModel, final CallbackInfo ci) {
     //#else
+    //$$
+    //$$ //rewritten as original didn't seem to work, I must have accidentally changed the vanilla mushroom texture when testing originally
+    //$$ @Inject(method = "renderMushroomBlock", at = @At(value = "HEAD"), cancellable = true)
+        //#if MC >= 12105
+        //$$ private void etf$injected(final PoseStack matrices, final MultiBufferSource vertexConsumers, final int light, final boolean renderAsModel, final BlockState mushroomState, final int overlay, final BlockStateModel mushroomModel, final CallbackInfo ci) {
+        //#else
         //$$ private void etf$injected(PoseStack matrices, MultiBufferSource vertexConsumers, int light, boolean renderAsModel, BlockState mushroomState, int overlay, BakedModel mushroomModel, CallbackInfo ci) {
+        //#endif
     //#endif
         Boolean shroomType = entity_texture_features$returnRedTrueBrownFalseVanillaNull(mushroomState);
         if (shroomType != null) {
@@ -191,16 +196,24 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
             if (thisTexture != null) {
                 for (ModelPart model :
                         entity_texture_features$shroomAsEntityModel) {
-                    VertexConsumer texturedConsumer = vertexConsumers.getBuffer(RenderType.entityCutout(thisTexture.thisIdentifier));
-                    model.render(matrices, texturedConsumer, light, overlay
+                    //#if MC >= 12109
+                    ETFUtils2.submitModelPart(matrices, submitNodeCollector, light, model,
+                            thisTexture.thisIdentifier,
+                            thisTexture.getEmissiveIdentifierOfCurrentState(),
+                            null
+                    );
+                    //#else
+                    //$$
+                    //$$ VertexConsumer texturedConsumer = vertexConsumers.getBuffer(RenderType.entityCutout(thisTexture.thisIdentifier));
+                    //$$ model.render(matrices, texturedConsumer, light, overlay
                             //#if MC < 12100
                             //$$ , 1F, 1F, 1F, 1F
                             //#endif
-                        );
-
-                    thisTexture.renderEmissive(matrices, vertexConsumers, model);
-                    //ETFUtils2.generalEmissiveRenderPart(matrices, vertexConsumers, shroomType ? RED_SHROOM_ALT : BROWN_SHROOM_ALT, model, false);
-
+                    //$$     );
+                    //$$
+                    //$$ thisTexture.renderEmissive(matrices, vertexConsumers, model);
+                    //$$ //ETFUtils2.generalEmissiveRenderPart(matrices, vertexConsumers, shroomType ? RED_SHROOM_ALT : BROWN_SHROOM_ALT, model, false);
+                    //#endif
                 }
                 ci.cancel();
             }

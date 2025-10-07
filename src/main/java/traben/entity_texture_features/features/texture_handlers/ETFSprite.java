@@ -9,6 +9,8 @@ import com.mojang.blaze3d.platform.NativeImage;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -117,7 +119,14 @@ public class ETFSprite {
         //SpriteDimensions spriteDimensions = animationResourceMetadata.getSize(nativeImage.getWidth(), nativeImage.getHeight());
         FrameSize spriteDimensions = new FrameSize(nativeImage.getWidth(), nativeImage.getHeight());
         if (Mth.isMultipleOf(nativeImage.getWidth(), spriteDimensions.width()) && Mth.isMultipleOf(nativeImage.getHeight(), spriteDimensions.height())) {
-            return new SpriteContents(id, spriteDimensions, nativeImage, animationResourceMetadata);
+            //#if MC >= 12109
+
+            return new SpriteContents(id, spriteDimensions, nativeImage,
+                    animationResourceMetadata.getSection(net.minecraft.client.resources.metadata.animation.AnimationMetadataSection.TYPE),
+                    animationResourceMetadata.getTypedSections(List.of(net.minecraft.client.resources.metadata.animation.AnimationMetadataSection.TYPE)));
+            //#else
+            //$$ return new SpriteContents(id, spriteDimensions, nativeImage, animationResourceMetadata);
+            //#endif
         } else {
 //            LOGGER.error("Image {} size {},{} is not multiple of frame size {},{}", new Object[]{id, nativeImage.getWidth(), nativeImage.getHeight(), spriteDimensions.width(), spriteDimensions.height()});
             nativeImage.close();
