@@ -299,6 +299,14 @@ public class ETFManager {
             }
             PLAYER_TEXTURE_MAP.put(id, null); // incase of crash
             ETFPlayerTexture etfPlayerTexture = new ETFPlayerTexture(player, rendererGivenSkin);
+            var set = PLAYER_TEXTURE_MAP.get(id);
+            if (set != null) {
+                if (set.shouldRetryOnFail) { // todo tech debt, need to rewrite this whole player skin system
+                    PLAYER_TEXTURE_MAP.remove(id);
+                    return null;
+                }
+                return set;
+            }
             PLAYER_TEXTURE_MAP.put(id, etfPlayerTexture);
             return etfPlayerTexture;
         } catch (Exception e) {
