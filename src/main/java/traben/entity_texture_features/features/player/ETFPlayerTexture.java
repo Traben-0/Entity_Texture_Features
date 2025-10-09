@@ -19,6 +19,7 @@ import net.minecraft.world.entity.player.Player;
 import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.util.*;
+import traben.entity_texture_features.ETFException;
 
 //#if MC >= 12109
 import com.mojang.authlib.minecraft.client.MinecraftClient;
@@ -28,7 +29,6 @@ import org.apache.commons.io.FilenameUtils;
 
 
 //#if MC >= 12104
-import traben.entity_texture_features.ETFException;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.texture.SkinTextureDownloader;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
