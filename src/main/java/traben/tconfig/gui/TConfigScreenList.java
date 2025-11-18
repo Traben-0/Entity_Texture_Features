@@ -78,6 +78,10 @@ public class TConfigScreenList extends TConfigScreen {
             child.setWidgetBackgroundToFullWidth();
         }
         //#endif
+
+        //#if MC >= 12109
+        child.setScrollAmount(0); // actually used to trigger repositionEntries() call to setup entry positions
+        //#endif
     }
 
     public enum Align {

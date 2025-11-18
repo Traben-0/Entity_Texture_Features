@@ -1,5 +1,5 @@
 
-
+- fixed 1.21.9 config lists appearing blank until scrolled
 
 [7.0.2]
 - fixed parrots on shoulders crashing the game
