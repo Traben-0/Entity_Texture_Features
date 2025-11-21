@@ -71,7 +71,7 @@ if (!cfVersionsRequest.ok) {
 }
 
 const cfVersions = await cfVersionsRequest.json()
-console.log('cfVersions:', JSON.stringify(cfVersions, null, 2));
+//console.log('cfVersions:', JSON.stringify(cfVersions, null, 2));
 
 const cfLoaders = cfVersions.versionsData[1].flatMap(e => e.choices)
 const cfMcVersions = cfVersions.versionsData[3].flatMap(e => e.choices)
@@ -82,7 +82,7 @@ for (const file of config.files) {
   const name = `${file.versions[0]}-${file.loaders[0].toLowerCase()}`
 
   try {
-    const content = fs.readFileSync(`files/${config.id}-${version}-${name}.jar`)
+    const content = fs.readFileSync(`jars/${config.id}-${version}-${name}.jar`)
     const blob = new Blob([content], {
       type: "application/java-archive"
     })
@@ -105,17 +105,17 @@ for (const file of config.files) {
 
     cfForm.append("file", blob, `${config.id}_${name}-${version}.jar`)
 
-    // const cfRequest = await fetch(`https://minecraft.curseforge.com/api/projects/${config.curseforge}/upload-file`, {
-    //   method: "POST",
-    //   headers: {
-    //     "X-Api-Token": cfToken
-    //   },
-    //   body: cfForm
-    // })
-    //
-    // if (!cfRequest.ok) {
-    //   throw new Error(`CurseForge: Failed to upload "${name}" - ${await cfRequest.text()}`)
-    // }
+    const cfRequest = await fetch(`https://minecraft.curseforge.com/api/projects/${config.curseforge}/upload-file`, {
+      method: "POST",
+      headers: {
+        "X-Api-Token": cfToken
+      },
+      body: cfForm
+    })
+
+    if (!cfRequest.ok) {
+      throw new Error(`CurseForge: Failed to upload "${name}"`) // - ${await cfRequest.text()}`)
+    }
 
     console.log(`CurseForge: File "${name}" uploaded`)
 
@@ -141,19 +141,19 @@ for (const file of config.files) {
       }
     })
 
-    // mrForm.append("file", blob, `${config.id}_${name}-${version}.jar`)
-    //
-    // const mrRequest = await fetch("https://api.modrinth.com/v2/version", {
-    //   method: "POST",
-    //   headers: {
-    //     Authorization: modrinth
-    //   },
-    //   body: mrForm
-    // }).then(e => e.json())
-    //
-    // if (mrRequest.error) {
-    //   throw new Error(`Modrinth: Failed to upload "${name}" - ${JSON.stringify(mrRequest)}`)
-    // }
+    mrForm.append("file", blob, `${config.id}_${name}-${version}.jar`)
+
+    const mrRequest = await fetch("https://api.modrinth.com/v2/version", {
+      method: "POST",
+      headers: {
+        Authorization: modrinth
+      },
+      body: mrForm
+    }).then(e => e.json())
+
+    if (mrRequest.error) {
+      throw new Error(`Modrinth: Failed to upload "${name}"`) // - ${JSON.stringify(mrRequest)}`)
+    }
 
     console.log(`Modrinth: File "${name}" uploaded`)
   } catch (error) {
