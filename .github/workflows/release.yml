@@ -21,6 +21,10 @@ jobs:
           distribution: temurin
           java-version: 21
 
+      - run: node changelog_test.js
+        env:
+          TAG_NAME: ${{ github.ref_name }}
+
       - run: ./gradlew build
 
       - run: node uploader.js
@@ -28,4 +32,3 @@ jobs:
           CF_TOKEN: ${{ secrets.CF_TOKEN }}
           CF_COOKIE: ${{ secrets.CF_COOKIE }}
           MODRINTH: ${{ secrets.MODRINTH }}
-          TAG_NAME: ${{ github.ref_name }}

@@ -1,16 +1,30 @@
+// Credit to Ewan Howell for writing the initial script
+
 import config from "./uploader_config.json" with { type: "json" }
-import properties from "./gradle.properties" with { type: "properties" }
 import fs from "node:fs"
 
 // read env vars
 const cfToken = process.env.CF_TOKEN;
 const cfCookie = process.env.CF_COOKIE;
 const modrinth = process.env.MODRINTH;
-const tagVersion = process.env.TAG_NAME.substring(1);
 
-const version = properties.mod_version;
+function readProp(key) {
+  const raw = fs.readFileSync("gradle.properties", "utf8");
+  const lines = raw.split("\n");
 
-if (version !== tagVersion) throw new Error(`found project version: ${version} does not match tagged version: ${tagVersion}`)
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) continue;
+    const idx = trimmed.indexOf("=");
+    if (idx === -1) continue;
+    const k = trimmed.slice(0, idx).trim();
+    const v = trimmed.slice(idx + 1).trim();
+    if (k === key) return v;
+  }
+  return "";
+}
+
+const version = readProp("mod_version");
 
 function changelog(version) {
   const raw = fs.readFileSync("CHANGELOG.md", "utf8");
@@ -29,9 +43,7 @@ function changelog(version) {
   }
   return thisVersion;
 }
-
 const thisChangelog = changelog(version);
-console.log(`changelog for: ${version}\n${thisChangelog}`);
 
 function makeForm(data) {
   const form = new FormData
@@ -112,7 +124,8 @@ for (const file of config.files) {
     const mrForm = makeForm({
       data: {
         name: `${file.loaders[0]} - ${file.versions[0]}`,
-        version_number: version.toString(),
+        // addressable version for use as dependency
+        version_number: `${version}-${file.loaders[0].toLowerCase()}-${file.versions[0]}`, // 7.0.5-fabric-1.21.9
         changelog: thisChangelog,
         dependencies: config.modrinth.dependancy ? [{
           project_id: config.modrinth.dependancy,
@@ -143,9 +156,8 @@ for (const file of config.files) {
     // }
 
     console.log(`Modrinth: File "${name}" uploaded`)
-} catch (error) {
+  } catch (error) {
     console.error(`File "${name}" FAILED!!!`, error)
-    continue
   }
 }
 
