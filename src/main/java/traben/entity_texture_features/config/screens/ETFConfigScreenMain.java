@@ -14,7 +14,6 @@ import net.minecraft.client.model.CreeperModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -166,7 +165,7 @@ public class ETFConfigScreenMain extends TConfigScreenMain {
             int y = (int) (this.height * 0.25f + yAdjust);
             int x = (int) (this.width * 0.15f + xAdjust);
             int square = this.height / 2 + sin * 2;
-            context.blit(RenderPipelines.GUI_TEXTURED, LOGO_HACK, x, y, 0, 0, square, square, square, square);
+            context.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, LOGO_HACK, x, y, 0, 0, square, square, square, square);
             //#else
             //$$ renderETFLogoCreepers(context, mouseX, mouseY);
             //#endif
