@@ -6,8 +6,11 @@ import fs from "node:fs"
 const cfToken = process.env.CF_TOKEN;
 const cfCookie = process.env.CF_COOKIE;
 const modrinth = process.env.MODRINTH;
+const tagVersion = process.env.TAG_NAME.substring(1);
 
 const version = properties.mod_version;
+
+if (version !== tagVersion) throw new Error(`found project version: ${version} does not match tagged version: ${tagVersion}`)
 
 function changelog(version) {
   const raw = fs.readFileSync("CHANGELOG.md", "utf8");

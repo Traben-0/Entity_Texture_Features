@@ -28,3 +28,4 @@ jobs:
           CF_TOKEN: ${{ secrets.CF_TOKEN }}
           CF_COOKIE: ${{ secrets.CF_COOKIE }}
           MODRINTH: ${{ secrets.MODRINTH }}
+          TAG_NAME: ${{ github.ref_name }}
