@@ -14,6 +14,7 @@ import net.minecraft.client.model.CreeperModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -49,6 +50,10 @@ public class ETFConfigScreenMain extends TConfigScreenMain {
     private final ResourceLocation BLUE = ETFUtils2.res("entity_features", "textures/gui/entity/e.png");
     private final ResourceLocation RED = ETFUtils2.res("entity_features", "textures/gui/entity/t.png");
     private final ResourceLocation YELLOW = ETFUtils2.res("entity_features", "textures/gui/entity/f.png");
+    //#if MC>=12106
+    private final ResourceLocation LOGO_HACK = ETFUtils2.res("entity_texture_features", "textures/gui/logo.png");
+    //#endif
+
     boolean shownWarning = false;
     int warningCount = 0;
     private long timer = 0;
@@ -154,7 +159,17 @@ public class ETFConfigScreenMain extends TConfigScreenMain {
         if (livingEntity != null && !livingEntity.isRemoved()) {
             renderEntitySample(context, mouseX, mouseY);
         } else {
-            renderETFLogoCreepers(context, mouseX, mouseY);
+            //#if MC>=12106
+            int sin = (int) (float) (Math.sin(System.currentTimeMillis() / 500d) * height * 0.015f);
+            float yAdjust = (((float) mouseY / height) - 0.5f) * height * 0.05f - sin;
+            float xAdjust = (((float) mouseX / width) - 0.5f) * width * 0.05f - sin;
+            int y = (int) (this.height * 0.25f + yAdjust);
+            int x = (int) (this.width * 0.15f + xAdjust);
+            int square = this.height / 2 + sin * 2;
+            context.blit(RenderPipelines.GUI_TEXTURED, LOGO_HACK, x, y, 0, 0, square, square, square, square);
+            //#else
+            //$$ renderETFLogoCreepers(context, mouseX, mouseY);
+            //#endif
         }
         //#if MC<12106
         //$$ context.pose().popPose();
