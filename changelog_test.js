@@ -23,7 +23,7 @@ if (version !== tagVersion) throw new Error(`found project version: ${version} d
 console.log(`version: ${version} is OK`);
 
 function changelog(version) {
-  const raw = fs.readFileSync("CHANGELOG.md", "utf8");
+  const raw = fs.readFileSync("CHANGELOG.MD", "utf8");
   const lines = raw.split("\n");
   let thisVersion = "";
   let inside = false;
