@@ -27,7 +27,7 @@ function readProp(key) {
 const version = readProp("mod_version");
 
 function changelog(version) {
-  const raw = fs.readFileSync("CHANGELOG.md", "utf8");
+  const raw = fs.readFileSync("CHANGELOG.MD", "utf8");
   const lines = raw.split("\n");
   let thisVersion = "";
   let inside = false;
