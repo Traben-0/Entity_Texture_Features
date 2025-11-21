@@ -1,4 +1,4 @@
-
+[7.0.5]
 - added a search bar to config screens with more than a dozen listings
 - fixed 1.21.9 config lists appearing blank until scrolled
 - fixed config titles being missing in 1.21.6+
