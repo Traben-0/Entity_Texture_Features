@@ -3,7 +3,7 @@ name: release-pipeline
 on:
   push:
     tags:
-      - "release *"
+      - "v*"
 
 jobs:
   build-release-upload:
