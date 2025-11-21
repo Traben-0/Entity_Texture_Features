@@ -47,7 +47,7 @@ public class TConfigScreen extends Screen {
         }
         if (undoChangesRunnable != null) {
             this.addRenderableWidget(Button.builder(
-                    Component.nullToEmpty("Undo changes"),
+                            ETF.getTextFromTranslation("config.entity_features.undo"),
                     (button) -> {
                         undoChangesRunnable.run();
                         rebuildWidgets();
@@ -63,7 +63,7 @@ public class TConfigScreen extends Screen {
         //#endif
 
         super.render(context, mouseX, mouseY, delta);
-        context.drawCenteredString(font, title, width / 2, 15, 0xFFFFFF);
+        context.drawCenteredString(font, title, width / 2, 15, 0xFFFFFFFF);
 
     }
 

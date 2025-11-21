@@ -1,6 +1,7 @@
 {
   "config.entity_features": "Entity Features mod settings",
   "config.entity_features.optifine_settings": "OptiFine Compat",
+  "config.entity_features.search": "Search...",
   "config.entity_texture_features.settings_button_loc.title": "Settings button location",
   "config.entity_texture_features.settings_button_loc.tooltip": "Sets where the ETF settings button will appear in the resource pack menu.\nor disable it entirely.",
   "config.entity_features.button_tooltip": "Opens the Entity Features config screen.",

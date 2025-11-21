@@ -19,6 +19,7 @@ import net.minecraft.world.entity.player.Player;
 import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.util.*;
+import traben.entity_texture_features.ETFException;
 
 //#if MC >= 12109
 import com.mojang.authlib.minecraft.client.MinecraftClient;
@@ -28,7 +29,6 @@ import org.apache.commons.io.FilenameUtils;
 
 
 //#if MC >= 12104
-import traben.entity_texture_features.ETFException;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.texture.SkinTextureDownloader;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
@@ -135,9 +135,11 @@ public class ETFPlayerTexture {
         }
     }
 
+    private static final ETFException TRY_AGAIN_LATER = new ETFException("try again later");
+
     //#if MC >= 12104
     //mostly a copy of new skin downloading code, except we want to grab the nativeImage of the skin itself without any edits
-    public static @NotNull NativeImage getSkinOfPlayer(final ETFPlayerEntity clientPlayer, @Nullable ResourceLocation rendererGivenSkin) throws IOException {
+    public static @NotNull NativeImage getSkinOfPlayer(final ETFPlayerEntity clientPlayer, @Nullable ResourceLocation rendererGivenSkin) throws Exception {
         //todo renderer given skin will need to be reconsidered how to use in 1.21.4+
 
         String url;
@@ -147,15 +149,17 @@ public class ETFPlayerTexture {
 
             //#if MC >= 12109
             try {
-                var playerSkinOptional = Minecraft.getInstance().getSkinManager().get(gameProfile).get();
+                var playerSkinOptional = Minecraft.getInstance().getSkinManager().get(gameProfile).getNow(Optional.empty());
                 if (playerSkinOptional.isEmpty())
-                    throw new ETFException("No profile texture found for player: " + gameProfile.name());
+                    throw TRY_AGAIN_LATER;
 
                 var minecraftProfileTexture = playerSkinOptional.get().body();
                 if (!(minecraftProfileTexture instanceof ClientAsset.DownloadedTexture))
                     throw new ETFException("No profile texture found 2 for player: " + gameProfile.name());
 
                 url = ((ClientAsset.DownloadedTexture) minecraftProfileTexture).url();
+            } catch (ETFException e) {
+                throw e;
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -167,15 +171,17 @@ public class ETFPlayerTexture {
             //#if MC >= 12109
             gameProfile = skull.getOwnerProfile().partialProfile(); //todo is partial enough?
             try {
-                var playerSkinOptional = Minecraft.getInstance().getSkinManager().get(gameProfile).get();
+                var playerSkinOptional = Minecraft.getInstance().getSkinManager().get(gameProfile).getNow(Optional.empty());
                 if (playerSkinOptional.isEmpty())
-                    throw new ETFException("No profile texture found for player: " + gameProfile.name());
+                    throw TRY_AGAIN_LATER;
 
                 var minecraftProfileTexture = playerSkinOptional.get().body();
                 if (!(minecraftProfileTexture instanceof ClientAsset.DownloadedTexture))
                     throw new ETFException("No profile texture found 2 for player: " + gameProfile.name());
 
                 url = ((ClientAsset.DownloadedTexture) minecraftProfileTexture).url();
+            } catch (ETFException e) {
+                throw e;
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -223,8 +229,9 @@ public class ETFPlayerTexture {
 
     //THIS REPRESENTS A NON FEATURED SKIN
     // must still create an object as the identifier is important to detect skin changes from other mods
-    private ETFPlayerTexture(ResourceLocation rendererGivenSkin) {
+    private ETFPlayerTexture(ResourceLocation rendererGivenSkin, boolean shouldRetryOnFail) {
         this.player = null;
+        this.shouldRetryOnFail = shouldRetryOnFail;
         this.normalVanillaSkinIdentifier = rendererGivenSkin;
     }
 
@@ -758,13 +765,19 @@ public class ETFPlayerTexture {
                         || player.etf$getScoreboardTeam() == null));
     }
 
+    public boolean shouldRetryOnFail = false;
+
     private void skinFailed(String reason) {
+        skinFailed(reason, false);
+    }
+
+    private void skinFailed(@Nullable String reason, boolean retryLater) {
         if (!(Minecraft.getInstance().screen instanceof ETFConfigScreenSkinTool)) {
-            ETFManager.getInstance().PLAYER_TEXTURE_MAP.put(player.etf$getUuid(), new ETFPlayerTexture(normalVanillaSkinIdentifier));
-        } else {
+            ETFManager.getInstance().PLAYER_TEXTURE_MAP.put(player.etf$getUuid(),
+                    new ETFPlayerTexture(normalVanillaSkinIdentifier, retryLater));
+        } else if (reason != null) {
             ETFUtils2.logError("something went wrong applying skin in tool, or skin features are not added: "+ reason);
         }
-
     }
 
     public void checkTexture(boolean skipSkinLoad) {
@@ -772,11 +785,11 @@ public class ETFPlayerTexture {
             try {
                 //#if MC < 12104
                 //$$ HttpTexture skin =
-                //#if MC >= 12002
-                //$$         (HttpTexture) Minecraft.getInstance().getSkinManager().skinTextures.textureManager.getTexture(normalVanillaSkinIdentifier, null);
-                //#else
-                //$$         (HttpTexture) Minecraft.getInstance().getSkinManager().textureManager.getTexture(normalVanillaSkinIdentifier, null);
-                //#endif
+                    //#if MC >= 12002
+                    //$$         (HttpTexture) Minecraft.getInstance().getSkinManager().skinTextures.textureManager.getTexture(normalVanillaSkinIdentifier, null);
+                    //#else
+                    //$$         (HttpTexture) Minecraft.getInstance().getSkinManager().textureManager.getTexture(normalVanillaSkinIdentifier, null);
+                    //#endif
                 //$$ assert skin.file != null;
                 //$$ FileInputStream fileInputStream = new FileInputStream(skin.file);
                 //$$
@@ -797,6 +810,13 @@ public class ETFPlayerTexture {
                     clientPlayerOriginalSkinImageForTool = originalSkin;
                 }
 
+            } catch (ETFException e) {
+                if (e == TRY_AGAIN_LATER) {
+                    skinFailed(null, true);
+                } else {
+                    skinFailed("skin pre load failure: "+ e.getMessage());
+                }
+                return;
             } catch (Exception e) {
                 skinFailed("skin pre load failure: "+ e.getMessage());
                 return;
