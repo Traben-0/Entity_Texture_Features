@@ -127,8 +127,8 @@ for (const file of config.files) {
         // addressable version for use as dependency
         version_number: `${version}-${file.loaders[0].toLowerCase()}-${file.versions[0]}`, // 7.0.5-fabric-1.21.9
         changelog: thisChangelog,
-        dependencies: config.modrinth.dependancy ? [{
-          project_id: config.modrinth.dependancy,
+        dependencies: config.dependency_modrinth ? [{
+          project_id: config.dependency_modrinth,
           dependency_type: "required"
         }] : [],
         game_versions: file.versions,

@@ -1,0 +1,35 @@
+{
+  "username": "<SET VIA ACTION>",
+  "avatar_url": "https://github.com/Traben-0/Entity_Texture_Features/blob/ETF-Main/src/main/resources/icon.png?raw=true",
+  "content": "<@&999200930203451442>",
+  "embeds": [
+    {
+      "author": {
+        "name": "Changelog",
+        "url": "https://github.com/Traben-0/Entity_Texture_Features/blob/ETF-Main/CHANGELOG.MD",
+        "icon_url": "https://i.imgur.com/EYNx6oL.png"
+      }
+    },
+    {
+      "author": {
+        "name": "Modrinth",
+        "url": "https://modrinth.com/mod/entitytexturefeatures",
+        "icon_url": "https://i.imgur.com/7fioiRx.png"
+      }
+    },
+    {
+      "author": {
+        "name": "CurseForge (might take a day...)",
+        "url": "https://www.curseforge.com/minecraft/mc-mods/entity-texture-features-fabric",
+        "icon_url": "https://i.imgur.com/rpoyjVG.png"
+      }
+    },
+    {
+      "author": {
+        "name": "Support me on Ko-fi",
+        "url": "https://ko-fi.com/traben",
+        "icon_url": "https://i.imgur.com/xdhWKwC.png"
+      }
+    }
+  ]
+}
