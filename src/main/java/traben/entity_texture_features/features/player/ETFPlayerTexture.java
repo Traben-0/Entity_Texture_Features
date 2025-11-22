@@ -1345,6 +1345,7 @@ public class ETFPlayerTexture {
     }
 
     public void changeSkinToThisForTool(NativeImage image) {
+        if (this.player == null) this.player = (ETFPlayerEntity) Minecraft.getInstance().player;
 //        this.etfCape = null;
         this.baseEnchantBlinkIdentifier = null;
         this.baseEnchantIdentifier = null;

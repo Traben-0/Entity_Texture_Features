@@ -1,3 +1,7 @@
+
+[7.0.6]
+- fixed crash when clicking "Add ETF features to skin" in the skin tool
+
 [7.0.5]
 - added a search bar to config screens with more than a dozen listings
 - fixed 1.21.9 config lists appearing blank until scrolled
