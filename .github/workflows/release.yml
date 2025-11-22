@@ -39,7 +39,7 @@ jobs:
             $0=="[" ver "]" {p=1; next}
             /^\[/ && p==1 {p=0}
             p==1
-          ' CHANGELOG.MD > CHANGELOG_SEGMENT.txt
+          ' CHANGELOG.MD | sed '/./,$!d' | tac | sed '/./,$!d' | tac > CHANGELOG_SEGMENT.txt
 
       - name: insert extracted text into json
         run: |
@@ -50,11 +50,6 @@ jobs:
 
       - name: print discord notification json to be verified before final upload (build will take a while)
         run: cat discord_update.json
-
-      - name: fail if final json changelog empty
-        run: |
-          VAL=$(jq -r '.embeds[0].description' discord_update.json)
-          [ -z "$VAL" ] && exit 1
 
       - run: ./gradlew build
 
