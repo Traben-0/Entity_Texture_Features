@@ -26,6 +26,36 @@ jobs:
         env:
           TAG_NAME: ${{ github.ref_name }}
 
+      - name: prep discord notification json
+        run: |
+          jq --arg ref "$GITHUB_REF_NAME" '.username = "Entity Texture Features \($ref) released!"' discord_update.json > tmp.json
+          mv tmp.json discord_update.json
+
+      - name: extract changelog segment
+        id: extract
+        run: |
+          VER="${GITHUB_REF_NAME#v}"
+          awk -v ver="$VER" '
+            $0=="[" ver "]" {p=1; next}
+            /^\[/ && p==1 {p=0}
+            p==1
+          ' CHANGELOG.MD > CHANGELOG_SEGMENT.txt
+
+      - name: insert extracted text into json
+        run: |
+          jq --rawfile seg CHANGELOG_SEGMENT.txt '
+            .embeds[0].description = $seg
+          ' discord_update.json > tmp.json
+          mv tmp.json discord_update.json
+
+      - name: fail if final json changelog empty
+        run: |
+          VAL=$(jq -r '.embeds[0].description' discord_update.json)
+          [ -z "$VAL" ] && exit 1
+
+      - name: print discord notification json to be verified before final upload (build will take a while)
+        run: cat discord_update.json
+
       - run: ./gradlew build
 
       - name: upload mod
@@ -34,11 +64,6 @@ jobs:
           CF_TOKEN: ${{ secrets.CF_TOKEN }}
           CF_COOKIE: ${{ secrets.CF_COOKIE }}
           MODRINTH: ${{ secrets.MODRINTH }}
-
-      - name: prep discord notification json
-        run: |
-          jq --arg ref "$GITHUB_REF_NAME" '.username = "Entity Texture Features \($ref) released!"' discord_update.json > tmp.json
-          mv tmp.json discord_update.json
 
       - name: discord notification
         run: |

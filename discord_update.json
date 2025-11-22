@@ -4,6 +4,7 @@
   "content": "<@&999200930203451442>",
   "embeds": [
     {
+      "description": "",
       "author": {
         "name": "Changelog",
         "url": "https://github.com/Traben-0/Entity_Texture_Features/blob/ETF-Main/CHANGELOG.MD",
