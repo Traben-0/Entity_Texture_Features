@@ -48,13 +48,13 @@ jobs:
           ' discord_update.json > tmp.json
           mv tmp.json discord_update.json
 
+      - name: print discord notification json to be verified before final upload (build will take a while)
+        run: cat discord_update.json
+
       - name: fail if final json changelog empty
         run: |
           VAL=$(jq -r '.embeds[0].description' discord_update.json)
           [ -z "$VAL" ] && exit 1
-
-      - name: print discord notification json to be verified before final upload (build will take a while)
-        run: cat discord_update.json
 
       - run: ./gradlew build
 
