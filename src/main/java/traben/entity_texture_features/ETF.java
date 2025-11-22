@@ -34,10 +34,12 @@ import net.fabricmc.loader.api.FabricLoader;
 //#elseif FORGE
 //$$ import net.minecraftforge.fml.ModList;
 //$$ import net.minecraftforge.fml.loading.FMLPaths;
+//$$ import net.minecraftforge.fml.loading.LoadingModList;
 //$$ import net.minecraftforge.forgespi.language.IModInfo;
 //#else
 //$$ import net.neoforged.fml.ModList;
 //$$ import net.neoforged.fml.loading.FMLPaths;
+//$$ import net.neoforged.fml.loading.LoadingModList;
 //$$ import net.neoforged.neoforgespi.language.IModInfo;
 //#endif
 
@@ -194,7 +196,22 @@ public class ETF {
         //#if FABRIC
         return FabricLoader.getInstance().isModLoaded(modId);
         //#else
-        //$$ return ModList.get().isLoaded(modId);
+        //$$ try {
+        //$$     ModList list = ModList.get();
+        //$$     if (list != null) {
+        //$$         return list.isLoaded(modId);
+        //$$     } else {
+        //$$         LoadingModList list2 = LoadingModList.get();
+        //$$         if (list2 != null) {
+        //$$             return list2.getModFileById(modId) != null;
+        //$$         } else {
+        //$$             ETFUtils2.logError("Forge ModList checking failed!");
+        //$$         }
+        //$$     }
+        //$$ } catch (Exception e) {
+        //$$     ETFUtils2.logError("Forge ModList checking failed, via exception!");
+        //$$ }
+        //$$ return false;
         //#endif
     }
 
@@ -202,7 +219,26 @@ public class ETF {
         //#if FABRIC
         return FabricLoader.getInstance().getAllMods().stream().map(modContainer -> modContainer.getMetadata().getId()).toList();
         //#else
-        //$$ return ModList.get().getMods().stream().map(IModInfo::getModId).toList();
+        //$$ try {
+        //$$     ModList list = ModList.get();
+        //$$     if (list != null) {
+        //$$         return list.getMods().stream().map(IModInfo::getModId).toList();
+        //$$     } else {
+        //$$         LoadingModList list2 = LoadingModList.get();
+        //$$         if (list2 != null) {
+        //$$             return list2.getModFiles().stream()
+        //$$                     .flatMap(it -> it.getMods().stream())
+        //$$                     .map(IModInfo::getModId)
+        //$$                     .toList();
+        //$$         } else {
+        //$$             ETFUtils2.logError("Forge ModList checking failed!");
+        //$$         }
+        //$$     }
+        //$$ } catch (Exception e) {
+        //$$     ETFUtils2.logError("Forge ModList checking failed, via exception!");
+        //$$ }
+        //$$ return List.of();
+        //$$
         //#endif
     }
 
