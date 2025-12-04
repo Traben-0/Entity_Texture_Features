@@ -1,6 +1,7 @@
 {
   "config.entity_features": "Configuraciones del mod de Características de Entidad",
   "config.entity_features.optifine_settings": "Compatibilidad con OptiFine",
+  "config.entity_features.search": "Buscar...",
   "config.entity_texture_features.settings_button_loc.title": "Ubicación del botón de configuración",
   "config.entity_texture_features.settings_button_loc.tooltip": "Define dónde aparecerá el botón de configuración de ETF en el menú del paquete de recursos.\no desactívalo por completo.",
   "config.entity_features.button_tooltip": "Abre la pantalla de configuración de Características de Entidad.",
