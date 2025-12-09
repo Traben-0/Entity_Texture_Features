@@ -33,7 +33,7 @@ public class Plugin implements IMixinConfigPlugin {
             return hasClass("me.jellysquid.mods.sodium.client.render.immediate.model.EntityRenderer");
         }
 
-        return !targetClassName.equals("traben.entity_texture_features.mixins.CancelTarget");
+        return !targetClassName.equals("traben.entity_texture_features.mixin.CancelTarget");
     }
 
     private boolean hasClass(final String className) {
