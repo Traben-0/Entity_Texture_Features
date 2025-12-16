@@ -296,7 +296,13 @@ public class ETFConfigScreenMain extends TConfigScreenMain {
             matrix.pushPose();
             matrix.scale(-1.0F, -1.0F, 1.0F);
             matrix.translate(0.0F, -1.501F, 0.0F);
-            RenderType rendertype = RenderType.entitySolid(texture);
+            RenderType rendertype =
+                    //#if MC>= 12111
+                    //$$ net.minecraft.client.renderer.rendertype.RenderTypes
+                    //#else
+                    RenderType
+                    //#endif
+                            .entitySolid(texture);
             //noinspection ConstantValue
             if (rendertype != null) {
                 VertexConsumer vertexconsumer = vcp.getBuffer(rendertype);

@@ -149,7 +149,13 @@ public class TConfigEntryCategory extends TConfigEntry {
 
     }
 
-    private class CategoryButton extends Button {
+    private class CategoryButton extends
+            //#if MC>= 12111
+            //$$ Button.Plain
+            //#else
+            Button
+            //#endif
+    {
 
         protected CategoryButton(final int x, final int y, final int width, final int height, final Component message, final OnPress onPress) {
             super(x, y, width, height, message, onPress, Supplier::get);

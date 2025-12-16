@@ -83,7 +83,11 @@ public class TConfigEntryBoolean extends TConfigEntryValue<Boolean> {
         }
     }
 
-    private class BooleanButtonWidget extends Button {
+    private class BooleanButtonWidget extends Button
+            //#if MC >= 12111
+            //$$ .Plain
+            //#endif
+    {
         private final String title;
         private boolean value;
 

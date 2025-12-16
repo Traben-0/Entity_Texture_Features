@@ -16,6 +16,12 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+
+//#if MC >= 12111
+//$$ import net.minecraft.client.model.object.skull.SkullModelBase;
+//$$ import net.minecraft.client.model.player.PlayerModel;
+//#endif
+
 //#if MC >= 12105
 import net.minecraft.world.entity.EquipmentSlot;
 //#endif
@@ -142,7 +148,13 @@ public class ETFPlayerFeatureRenderer<T extends AvatarRenderState, M extends Pla
 //            villagerNose.copyTransform(model.head);
             if (playerTexture.noseType == ETFConfigScreenSkinTool.NoseType.VILLAGER_TEXTURED || playerTexture.noseType == ETFConfigScreenSkinTool.NoseType.VILLAGER_TEXTURED_REMOVE) {
 
-                var type = RenderType.entityTranslucent(playerTexture.etfTextureOfFinalBaseSkin.getTextureIdentifier(null));
+                var type =
+                        //#if MC>= 12111
+                        //$$ net.minecraft.client.renderer.rendertype.RenderTypes
+                        //#else
+                        RenderType
+                        //#endif
+                                .entityTranslucent(playerTexture.etfTextureOfFinalBaseSkin.getTextureIdentifier(null));
                 //#if MC >= 12109
                 submit.submitModelPart(villagerNose, matrixStack, type,  light, OverlayTexture.NO_OVERLAY, null);
                 var emissive = playerTexture.etfTextureOfFinalBaseSkin.getEmissiveRenderLayer(null);
@@ -160,7 +172,13 @@ public class ETFPlayerFeatureRenderer<T extends AvatarRenderState, M extends Pla
                 //#endif
             } else {
                 //#if MC >= 12109
-                submit.submitModelPart(villagerNose, matrixStack, RenderType.entitySolid(VILLAGER_TEXTURE),  light, OverlayTexture.NO_OVERLAY, null);
+                submit.submitModelPart(villagerNose, matrixStack,
+                        //#if MC>= 12111
+                        //$$ net.minecraft.client.renderer.rendertype.RenderTypes
+                        //#else
+                        RenderType
+                        //#endif
+                                .entitySolid(VILLAGER_TEXTURE),  light, OverlayTexture.NO_OVERLAY, null);
                 //#else
                 //$$ VertexConsumer villagerVert = vertexConsumerProvider.getBuffer(RenderType.entitySolid(VILLAGER_TEXTURE));
                 //$$ villagerNose.render(matrixStack, villagerVert, light, OverlayTexture.NO_OVERLAY

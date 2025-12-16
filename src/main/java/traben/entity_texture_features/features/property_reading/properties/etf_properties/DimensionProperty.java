@@ -50,12 +50,21 @@ public class DimensionProperty extends StringArrayOrRegexProperty {
         if (key == null) return null;
 
         String output;
+        //#if MC >= 12111
+        //$$ if (key.equals(BuiltinDimensionTypes.OVERWORLD.identifier()) || key.getPath().equals("overworld_caves")) {
+        //$$     output = "overworld";
+        //$$ } else if (key.equals(BuiltinDimensionTypes.NETHER.identifier())) {
+        //$$     output = "the_nether";
+        //$$ } else if (key.equals(BuiltinDimensionTypes.END.identifier())) {
+        //$$     output = "the_end";
+        //#else
         if (key.equals(BuiltinDimensionTypes.OVERWORLD_EFFECTS) || key.getPath().equals("overworld_caves")) {
             output = "overworld";
         } else if (key.equals(BuiltinDimensionTypes.NETHER_EFFECTS)) {
             output = "the_nether";
         } else if (key.equals(BuiltinDimensionTypes.END_EFFECTS)) {
             output = "the_end";
+        //#endif
         } else {
             //modded
             output = key.toString();

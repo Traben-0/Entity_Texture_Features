@@ -8,7 +8,12 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 
+//#if MC >= 12111
+//$$ import net.minecraft.client.renderer.rendertype.RenderTypes;
+//$$ @Mixin(RenderTypes.class)
+//#else
 @Mixin(RenderType.class)
+//#endif
 public abstract class MixinRenderLayer {
 
 

@@ -28,7 +28,13 @@ public abstract class MixinEndCrystalRenderer {
     private RenderType etf$modifyTexture(final RenderType renderType) {
         if (ETF.config().getConfig().canDoCustomTextures()) {
             // recreate each frame so ETF can modify
-            return RenderType.entityCutoutNoCull(END_CRYSTAL_LOCATION);
+            return
+                    //#if MC>= 12111
+                    //$$ net.minecraft.client.renderer.rendertype.RenderTypes
+                    //#else
+                    RenderType
+                    //#endif
+                            .entityCutoutNoCull(END_CRYSTAL_LOCATION);
         }
         return renderType;
     }

@@ -76,7 +76,11 @@ public class TConfigEntryEnumButton<E extends Enum<E>> extends TConfigEntryNullS
     }
 
 
-    public class EnumButtonWidget<T extends Enum<?>> extends Button {
+    public class EnumButtonWidget<T extends Enum<?>> extends Button
+            //#if MC >= 12111
+            //$$ .Plain
+            //#endif
+    {
         private final T[] enumValues;
         private final String title;
         private int index;

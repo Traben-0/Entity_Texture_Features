@@ -564,7 +564,11 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
         float w = livingEntity.getScale();
         Vector3f vector3f = new Vector3f(0.0F, livingEntity.getBbHeight() / 2.0F + f * w, 0.0F);
         float x = (float)m / w;
-        InventoryScreen.renderEntityInInventory(guiGraphics, i, j, k, l, x, vector3f, quaternionf, quaternionf2, livingEntity);
+        InventoryScreen.renderEntityInInventory(
+                //#if MC < 12111
+                guiGraphics, i, j, k, l, x, vector3f, quaternionf, quaternionf2,
+                //#endif
+                livingEntity);
         livingEntity.yBodyRot = r;
         livingEntity.setYRot(s);
         livingEntity.setXRot(t);

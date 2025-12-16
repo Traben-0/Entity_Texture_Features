@@ -10,7 +10,6 @@ import net.minecraft.client.renderer.GameRenderer;
 //#if MC>=12106
 import net.minecraft.client.renderer.RenderPipelines;
 //#endif
-import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -53,8 +52,8 @@ public abstract class ETFScreenOldCompat extends TConfigScreen {
         //#elseif MC >= 12103
         //$$ context.blit(RenderType::guiTextured, texture, (int) x1, (int) y1, 0, 0, (int) (x2-x1), (int) (y2-y1), 1, 1, 1, 1,
         //$$         net.minecraft.util.ARGB.color( 255, 255, 255, 255));
-        //#else //mc_21
-//$$
+        //#else
+        //$$
         //$$ RenderSystem.setShaderTexture(0, texture);
         //$$ RenderSystem.setShader(  GameRenderer::getPositionTexColorShader );
         //$$ RenderSystem.enableBlend();

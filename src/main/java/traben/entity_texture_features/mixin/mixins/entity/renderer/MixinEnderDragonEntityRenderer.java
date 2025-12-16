@@ -78,11 +78,29 @@ EntityRenderer<EnderDragon, net.minecraft.client.renderer.entity.state.EnderDrag
             try {
                 // recreate each frame so ETF can modify
                 if (DECAL.equals(texturedRenderLayer)) {
-                    return RenderType.entityDecal(DRAGON_LOCATION);
+                    return
+                            //#if MC>= 12111
+                            //$$ net.minecraft.client.renderer.rendertype.RenderTypes
+                            //#else
+                            RenderType
+                            //#endif
+                                    .entityDecal(DRAGON_LOCATION);
                 } else if (RENDER_TYPE.equals(texturedRenderLayer)) {
-                    return RenderType.entityCutoutNoCull(DRAGON_LOCATION);
+                    return
+                            //#if MC>= 12111
+                            //$$ net.minecraft.client.renderer.rendertype.RenderTypes
+                            //#else
+                            RenderType
+                            //#endif
+                                    .entityCutoutNoCull(DRAGON_LOCATION);
                 } else if (EYES.equals(texturedRenderLayer)) {
-                    return RenderType.eyes(DRAGON_EYES_LOCATION);
+                    return
+                            //#if MC>= 12111
+                            //$$ net.minecraft.client.renderer.rendertype.RenderTypes
+                            //#else
+                            RenderType
+                            //#endif
+                                    .eyes(DRAGON_EYES_LOCATION);
                 }
             } catch (Exception e) {
                 ETFUtils2.logError(e.toString(), false);

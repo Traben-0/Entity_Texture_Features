@@ -50,6 +50,8 @@ preprocess {
 
     val current = null.connectToVersion(12109)
 
+    current.connectToVersion(12111, neoforge = false)
+
     // next, then remap the main project to this and set the current to old
     //current.connectToVersion(12109, forge = false, neoforge = false)
 

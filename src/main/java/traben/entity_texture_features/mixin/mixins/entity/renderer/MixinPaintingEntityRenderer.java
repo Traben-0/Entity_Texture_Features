@@ -158,10 +158,34 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
 
                 //#if MC>= 12109
                 ETFRenderContext.preventRenderLayerTextureModify();
-                var type = RenderType.entitySolid(etf$Sprite.getSpriteVariant().atlasLocation());
-                var back = RenderType.entitySolid(etf$BackSprite.getSpriteVariant().atlasLocation());
-                var typeE = RenderType.entityTranslucent(etf$Sprite.getEmissive().atlasLocation());
-                var backE = RenderType.entityTranslucent(etf$BackSprite.getEmissive().atlasLocation());
+                var type =
+                        //#if MC>= 12111
+                        //$$ net.minecraft.client.renderer.rendertype.RenderTypes
+                        //#else
+                        RenderType
+                        //#endif
+                                .entitySolid(etf$Sprite.getSpriteVariant().atlasLocation());
+                var back =
+                        //#if MC>= 12111
+                        //$$ net.minecraft.client.renderer.rendertype.RenderTypes
+                        //#else
+                        RenderType
+                        //#endif
+                                .entitySolid(etf$BackSprite.getSpriteVariant().atlasLocation());
+                var typeE =
+                        //#if MC>= 12111
+                        //$$ net.minecraft.client.renderer.rendertype.RenderTypes
+                        //#else
+                        RenderType
+                        //#endif
+                                .entityTranslucent(etf$Sprite.getEmissive().atlasLocation());
+                var backE =
+                        //#if MC>= 12111
+                        //$$ net.minecraft.client.renderer.rendertype.RenderTypes
+                        //#else
+                        RenderType
+                        //#endif
+                                .entityTranslucent(etf$BackSprite.getEmissive().atlasLocation());
                 ETFRenderContext.allowRenderLayerTextureModify();
 
                 submitNodeCollector.submitCustomGeometry(matrixStack, type, (pose, vertexConsumer) ->

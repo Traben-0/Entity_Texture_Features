@@ -1,4 +1,7 @@
 
+[7.0.7]
+- updated to 1.21.11
+
 [7.0.6]
 - fixed crash when clicking "Add ETF features to skin" in the skin tool
 - fixed forge and neoforge crash, affecting EMF also, relating to checking loaded mods

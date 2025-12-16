@@ -34,7 +34,14 @@ public class RegionalDifficultyProperty extends FloatRangeFromStringArrayPropert
             // The raw regional difficulty is always 0.0 on Peaceful and ranges from 0.75 to 1.5 on Easy, 1.5 to 4.0 on Normal, and 2.25 to 6.75 on Hard.
             // https://minecraft.wiki/w/Difficulty#Regional_difficulty
             // i.e. 0.0 to 1.0 for clamped regional difficulty and 0.0 to 6.75 for regional difficulty
-            return entity.world().getCurrentDifficultyAt(entity.blockPos()).getEffectiveDifficulty();
+            return //TODO
+                    //#if MC >= 12112
+                    //$$ bruh
+                    //#elseif MC >= 12111
+                    //$$ 0f;
+                    //#else
+                    entity.world().getCurrentDifficultyAt(entity.blockPos()).getEffectiveDifficulty();
+                    //#endif
         }
         return 0f;
     }

@@ -88,7 +88,13 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFScreenOldCompat {
     @NotNull
     private Button getButtonPixels(final int x, final int y, final int pixelSize) {
 
-        return new Button((int) ((ETFConfigScreenSkinToolPixelSelection.this.width * 0.35) + (x * pixelSize)), (int) ((ETFConfigScreenSkinToolPixelSelection.this.height * 0.2) + (y * pixelSize)), pixelSize, pixelSize,
+        return new
+                //#if MC >= 12111
+                //$$ Button.Plain
+                //#else
+                Button
+                //#endif
+                ((int) ((ETFConfigScreenSkinToolPixelSelection.this.width * 0.35) + (x * pixelSize)), (int) ((ETFConfigScreenSkinToolPixelSelection.this.height * 0.2) + (y * pixelSize)), pixelSize, pixelSize,
                 Component.nullToEmpty(""),
                 (button) -> {
                     int colorAtPixel = ETFUtils2.getPixel(etfParent.currentEditorSkin, x, y);
@@ -106,11 +112,17 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFScreenOldCompat {
                     }
                 }, Supplier::get) {
 
+            //#if MC >= 12111
+            //$$    @Override
+            //$$        protected void renderContents(GuiGraphics guiGraphics, int i, int j, float f) {
+            //$$    }
+            //#else
             @Override
             protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float delta) {
                 //invisible lol
 //                        super.renderWidget(context, mouseX, mouseY, delta);
             }
+            //#endif
 
         };
     }

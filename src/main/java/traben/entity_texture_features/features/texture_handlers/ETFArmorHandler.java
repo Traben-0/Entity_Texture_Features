@@ -146,7 +146,13 @@ public class ETFArmorHandler {
             ResourceLocation emissive = trimTexture.getEmissiveIdentifierOfCurrentState();
             if (emissive != null) {
                 ETFRenderContext.startSpecialRenderOverlayPhase();
-                VertexConsumer textureVert = vertexConsumers.getBuffer(RenderType.armorCutoutNoCull(emissive));
+                VertexConsumer textureVert = vertexConsumers.getBuffer(
+                        //#if MC>= 12111
+                        //$$ net.minecraft.client.renderer.rendertype.RenderTypes
+                        //#else
+                        RenderType
+                        //#endif
+                                .armorCutoutNoCull(emissive));
 //                if (ETF.IRIS_DETECTED)
                     matrices.scale(1.001f,1.001f,1.001f);//inflate
                 model.renderToBuffer(matrices, textureVert, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.NO_OVERLAY);

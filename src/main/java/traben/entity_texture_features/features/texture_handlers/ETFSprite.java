@@ -50,7 +50,11 @@ public class ETFSprite {
 
                 try (SpriteContents contents = load(ETFUtils2.res(variantId + "-etf_sprite"), resource.get())) {
                     if (contents != null)
-                        possibleVariant = new TextureAtlasSprite(variantId, contents, contents.width(), contents.height(), 0, 0);
+                        possibleVariant = new TextureAtlasSprite(variantId, contents, contents.width(), contents.height(), 0, 0
+                                //#if MC >= 12111
+                                //$$ , 0
+                                //#endif
+                        );
 
                 }
                 sprite = Objects.requireNonNullElse(possibleVariant, originalSprite);
@@ -73,7 +77,11 @@ public class ETFSprite {
 
                     try (SpriteContents contents = load(ETFUtils2.res(emissiveId + "-etf_sprite"), resource.get())) {
                         if (contents != null)
-                            possibleEmissive = new TextureAtlasSprite(emissiveId, contents, contents.width(), contents.height(), 0, 0);
+                            possibleEmissive = new TextureAtlasSprite(emissiveId, contents, contents.width(), contents.height(), 0, 0
+                                    //#if MC >= 12111
+                                    //$$ , 0
+                                    //#endif
+                            );
                     }
                 }
             }
@@ -119,8 +127,12 @@ public class ETFSprite {
         //SpriteDimensions spriteDimensions = animationResourceMetadata.getSize(nativeImage.getWidth(), nativeImage.getHeight());
         FrameSize spriteDimensions = new FrameSize(nativeImage.getWidth(), nativeImage.getHeight());
         if (Mth.isMultipleOf(nativeImage.getWidth(), spriteDimensions.width()) && Mth.isMultipleOf(nativeImage.getHeight(), spriteDimensions.height())) {
-            //#if MC >= 12109
-
+            //#if MC >= 12111
+            //$$ return new SpriteContents(id, spriteDimensions, nativeImage,
+            //$$         animationResourceMetadata.getSection(net.minecraft.client.resources.metadata.animation.AnimationMetadataSection.TYPE),
+            //$$         animationResourceMetadata.getTypedSections(List.of(net.minecraft.client.resources.metadata.animation.AnimationMetadataSection.TYPE)),
+            //$$         Optional.empty());
+            //#elseif MC >= 12109
             return new SpriteContents(id, spriteDimensions, nativeImage,
                     animationResourceMetadata.getSection(net.minecraft.client.resources.metadata.animation.AnimationMetadataSection.TYPE),
                     animationResourceMetadata.getTypedSections(List.of(net.minecraft.client.resources.metadata.animation.AnimationMetadataSection.TYPE)));

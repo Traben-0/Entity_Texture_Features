@@ -123,8 +123,11 @@ public class TConfigEntryText extends TConfigEntry {
             super(text1, alignment);
             widget2 = new StringWidget(ETF.getTextFromTranslation(text2), Minecraft.getInstance().font);
             alignment.align(widget2);
+            // TODO
+            //#if MC < 12111
             if (!widget2.getMessage().getString().contains("§"))
-                widget2.setColor(0xCCCCCC);//off-white for better visual separation
+                widget2.setColor(0xCCCCCC); // off-white for better visual separation
+            //#endif
         }
 
         @Override

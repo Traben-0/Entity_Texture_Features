@@ -102,10 +102,13 @@ public abstract class MixinPackScreen extends Screen {
                         "config.entity_features.button_tooltip")));
             }
 
-
             //override required because textured button widget just doesnt work
             @Override
+            //#if MC >= 12111
+            //$$ public void renderContents(GuiGraphics context, int mouseX, int mouseY, float delta) {
+            //#else
             public void renderWidget(GuiGraphics context, int mouseX, int mouseY, float delta) {
+            //#endif
                 ResourceLocation identifier = this.isHoveredOrFocused() ? etf$FOCUSED : etf$UNFOCUSED;
 
                 //#if MC>=12106
@@ -118,8 +121,6 @@ public abstract class MixinPackScreen extends Screen {
                 //$$ identifier, this.getX(), this.getY(), 0, 0, this.width, this.height, this.width, this.height);
                 //#endif
                 }
-
-
         });
 
 

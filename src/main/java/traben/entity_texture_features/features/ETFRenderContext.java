@@ -173,15 +173,39 @@ public class ETFRenderContext {
                     preventRenderLayerTextureModify();
 
                     RenderType forReturn = switch (layer) {
-                        case TRANSLUCENT -> RenderType.entityTranslucent(texture.get());
+                        case TRANSLUCENT ->
+                            //#if MC>= 12111
+                            //$$ net.minecraft.client.renderer.rendertype.RenderTypes
+                            //#else
+                            RenderType
+                            //#endif
+                                    .entityTranslucent(texture.get());
                         case TRANSLUCENT_CULL ->
                         //#if MC >= 12103
-                             RenderType.entityTranslucent(texture.get());
+
+                            //#if MC>= 12111
+                            //$$ net.minecraft.client.renderer.rendertype.RenderTypes
+                            //#else
+                            RenderType
+                            //#endif
+                                    .entityTranslucent(texture.get());
                         //#else
                         //$$     RenderType.entityTranslucentCull(texture.get());
                         //#endif
-                        case END -> RenderType.endGateway();
-                        case OUTLINE -> RenderType.outline(texture.get());
+                        case END ->
+                            //#if MC>= 12111
+                            //$$ net.minecraft.client.renderer.rendertype.RenderTypes
+                            //#else
+                            RenderType
+                            //#endif
+                                    .endGateway();
+                        case OUTLINE ->
+                            //#if MC>= 12111
+                            //$$ net.minecraft.client.renderer.rendertype.RenderTypes
+                            //#else
+                            RenderType
+                            //#endif
+                                    .outline(texture.get());
                     };
                     allowRenderLayerTextureModify();
                     return forReturn;

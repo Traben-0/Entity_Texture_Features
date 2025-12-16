@@ -535,10 +535,22 @@ public class ETFTexture {
             ResourceLocation emissiveToUse = getEmissiveIdentifierOfCurrentState();
             if (emissiveToUse != null) {
                 if (modeToUsePossiblyManuallyChosen == ETFConfig.EmissiveRenderModes.BRIGHT) {
-                    return RenderType.beaconBeam(emissiveToUse, true);
+                    return
+                            //#if MC>= 12111
+                            //$$ net.minecraft.client.renderer.rendertype.RenderTypes
+                            //#else
+                            RenderType
+                            //#endif
+                                    .beaconBeam(emissiveToUse, true);
                 } else {
                     if (model == null) {
-                        return RenderType.entityCutoutNoCull /*RenderLayer.getEntityTranslucent*/(emissiveToUse);
+                        return
+                                //#if MC>= 12111
+                                //$$ net.minecraft.client.renderer.rendertype.RenderTypes
+                                //#else
+                                RenderType
+                                //#endif
+                                        .entityCutoutNoCull /*RenderLayer.getEntityTranslucent*/(emissiveToUse);
                     } else {
                         return model.renderType(emissiveToUse);
                     }

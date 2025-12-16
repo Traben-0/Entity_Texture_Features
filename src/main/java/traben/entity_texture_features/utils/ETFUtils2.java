@@ -88,7 +88,13 @@ public abstract class ETFUtils2 {
     }
 
     public static void submitModelPart(final PoseStack matrixStack, final SubmitNodeCollector submit, final int light, final ModelPart modelPart, @NotNull final ResourceLocation texture, @Nullable final ResourceLocation emissive, @Nullable final ResourceLocation enchanted) {
-        submit.submitModelPart(modelPart, matrixStack, RenderType.entityTranslucent(texture), light, OverlayTexture.NO_OVERLAY, null);
+        submit.submitModelPart(modelPart, matrixStack,
+                //#if MC>= 12111
+                //$$ net.minecraft.client.renderer.rendertype.RenderTypes
+                //#else
+                RenderType
+                //#endif
+                        .entityTranslucent(texture), light, OverlayTexture.NO_OVERLAY, null);
         if (emissive != null) {
             submitEmissiveModelPart(matrixStack, submit, modelPart, emissive);
         }
@@ -98,11 +104,23 @@ public abstract class ETFUtils2 {
     }
 
     public static void submitEmissiveModelPart(final PoseStack matrixStack, final SubmitNodeCollector submit, final ModelPart modelPart, final @NotNull ResourceLocation emissive) {
-        submit.submitModelPart(modelPart, matrixStack, RenderType.entityTranslucent(emissive), ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.NO_OVERLAY, null);
+        submit.submitModelPart(modelPart, matrixStack,
+                //#if MC>= 12111
+                //$$ net.minecraft.client.renderer.rendertype.RenderTypes
+                //#else
+                RenderType
+                //#endif
+                        .entityTranslucent(emissive), ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.NO_OVERLAY, null);
     }
 
     public static void submitEnchantedModelPart(final PoseStack matrixStack, final SubmitNodeCollector submit, final int light, final ModelPart modelPart, final @NotNull ResourceLocation enchanted) {
-        submit.submitModelPart(modelPart, matrixStack,  RenderType.armorCutoutNoCull(enchanted), light, OverlayTexture.NO_OVERLAY, null,
+        submit.submitModelPart(modelPart, matrixStack,
+                //#if MC>= 12111
+                //$$ net.minecraft.client.renderer.rendertype.RenderTypes
+                //#else
+                RenderType
+                //#endif
+                        .armorCutoutNoCull(enchanted), light, OverlayTexture.NO_OVERLAY, null,
                 false, true);
     }
     //#endif
@@ -136,12 +154,24 @@ public abstract class ETFUtils2 {
 
             VertexConsumer emissiveConsumer = provider.getBuffer(
                     ETFRenderContext.canRenderInBrightMode() ?
-                            RenderType.beaconBeam(emissive, true) :
+
+                            //#if MC>= 12111
+                            //$$ net.minecraft.client.renderer.rendertype.RenderTypes
+                            //#else
+                            RenderType
+                            //#endif
+                                    .beaconBeam(emissive, true) :
                             //#if MC < 12103
                             //$$     ETFRenderContext.shouldEmissiveUseCullingLayer() ?
                             //$$         RenderType.entityTranslucentCull(emissive) :
                             //#endif
-                                    RenderType.entityTranslucent(emissive));
+
+                            //#if MC>= 12111
+                            //$$ net.minecraft.client.renderer.rendertype.RenderTypes
+                            //#else
+                            RenderType
+                            //#endif
+                                    .entityTranslucent(emissive));
 
             if (wasAllowed) ETFRenderContext.allowRenderLayerTextureModify();
 
@@ -161,7 +191,13 @@ public abstract class ETFUtils2 {
             ETFRenderContext.preventRenderLayerTextureModify();
             VertexConsumer enchantedVertex =
                     //#if MC>=12109
-                    ItemRenderer.getFoilBuffer(provider, RenderType.armorCutoutNoCull(enchanted), false, true);
+                    ItemRenderer.getFoilBuffer(provider,
+                            //#if MC>= 12111
+                            //$$ net.minecraft.client.renderer.rendertype.RenderTypes
+                            //#else
+                            RenderType
+                            //#endif
+                                    .armorCutoutNoCull(enchanted), false, true);
                     //#else
                     //$$ ItemRenderer.getArmorFoilBuffer(provider,
                     //$$ RenderType.armorCutoutNoCull(enchanted),

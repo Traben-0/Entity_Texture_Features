@@ -33,7 +33,13 @@ public abstract class MixinEyeFeatureRenderer {
                 boolean allowed = ETFRenderContext.isAllowedToRenderLayerTextureModify();
                 ETFRenderContext.preventRenderLayerTextureModify();
 
-                RenderType layer2 = RenderType.eyes(variant);
+                RenderType layer2 =
+                        //#if MC>= 12111
+                        //$$ net.minecraft.client.renderer.rendertype.RenderTypes
+                        //#else
+                        RenderType
+                        //#endif
+                                .eyes(variant);
 
                 if (allowed) ETFRenderContext.allowRenderLayerTextureModify();
 

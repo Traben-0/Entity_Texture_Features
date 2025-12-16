@@ -1,6 +1,7 @@
 package traben.entity_texture_features.features.property_reading.properties.optifine_properties;
 
 import org.jetbrains.annotations.NotNull;
+import net.minecraft.client.Minecraft;
 import traben.entity_texture_features.features.property_reading.properties.generic_properties.SimpleIntegerArrayProperty;
 import traben.entity_texture_features.features.state.ETFEntityRenderState;
 import traben.entity_texture_features.utils.ETFEntity;
@@ -32,8 +33,12 @@ public class MoonPhaseProperty extends SimpleIntegerArrayProperty {
 
     @Override
     protected int getValueFromEntity(ETFEntityRenderState entity) {
+        //#if MC >= 12111
+        //$$ return Minecraft.getInstance().gameRenderer.getLevelRenderState().skyRenderState.moonPhase.index();
+        //#else
         if (entity.world() == null)
             return Integer.MIN_VALUE;
         return entity.world().getMoonPhase();
+        //#endif
     }
 }

@@ -29,7 +29,11 @@ public class JumpProperty extends FloatRangeFromStringArrayProperty {
     @Override
     protected Float getRangeValueFromEntity(ETFEntityRenderState entity) {
         if (entity != null && entity.entity() instanceof AbstractHorse horse)
+            //#if MC >= 12111
+            //$$ return horse.getJumpBoostPower();
+            //#else
             return horse.playerJumpPendingScale;
+            //#endif
         return null;
     }
 
