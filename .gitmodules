@@ -1,0 +1,3 @@
+[submodule "egt-plugin-fork"]
+	path = egt-plugin-fork
+	url = https://github.com/Traben-0/essential-gradle-toolkit
