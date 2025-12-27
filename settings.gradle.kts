@@ -3,9 +3,9 @@ import org.gradle.internal.impldep.com.google.common.collect.ImmutableList
 pluginManagement {
     includeBuild("egt-plugin-fork")
     repositories {
+        mavenLocal()
         gradlePluginPortal()
         mavenCentral()
-        //mavenLocal()
         maven("https://repo.essential.gg/repository/maven-public")
         maven("https://maven.architectury.dev")
         maven("https://maven.fabricmc.net")
@@ -15,9 +15,9 @@ pluginManagement {
     // We also recommend specifying your desired version here if you're using more than one of the plugins,
     // so you do not have to change the version in multilpe places when updating.
     plugins {
-        //val egtVersion = "0.6.11-test2"
-        id("gg.essential.multi-version.root") //version egtVersion
-        id("gg.essential.multi-version.api-validation") //version egtVersion
+        val egtVersion = "0.6.11-test2"
+        id("gg.essential.multi-version.root") version egtVersion
+        id("gg.essential.multi-version.api-validation") version egtVersion
     }
 }
 

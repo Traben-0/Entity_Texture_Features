@@ -11,6 +11,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - uses: actions/setup-node@v4
         with:
@@ -51,6 +53,10 @@ jobs:
 
       - name: print discord notification json to be verified before final upload (build will take a while)
         run: cat discord_update.json
+
+      - name: build forked plugin
+        working-directory: egt-plugin-fork
+        run: ./gradlew publishToMavenLocal
 
       # Build the mod
       - run: ./gradlew build
