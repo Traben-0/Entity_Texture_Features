@@ -4,6 +4,7 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         mavenCentral()
+        mavenLocal()
         maven("https://repo.essential.gg/repository/maven-public")
         maven("https://maven.architectury.dev")
         maven("https://maven.fabricmc.net")
@@ -13,7 +14,7 @@ pluginManagement {
     // We also recommend specifying your desired version here if you're using more than one of the plugins,
     // so you do not have to change the version in multilpe places when updating.
     plugins {
-        val egtVersion = "0.6.10" // should be whatever is displayed in above badge
+        val egtVersion = "0.6.11-test2" // this is a local maven version to fix a 1.21.11 neoforge issue, if you are cloning use 0.6.10 and disable neoforge for 1.21.11
         id("gg.essential.multi-version.root") version egtVersion
         id("gg.essential.multi-version.api-validation") version egtVersion
     }
@@ -37,7 +38,7 @@ fun MutableList<String>.version(mcVersion: Int, forge: Boolean = true, neoforge:
 }
 
 mutableListOf<String>()
-    .version(12111, neoforge = false)
+    .version(12111)
     .version(12109)
     .version(12106)
     .version(12105)

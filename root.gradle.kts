@@ -7,7 +7,7 @@ plugins {
     // Advanced users may use multiple (potentially independent) multi-version trees in different sub-projects.
     // This is currently equivalent to applying `com.replaymod.preprocess-root`.
     kotlin("jvm") version "2.0.0" apply false
-    id("gg.essential.loom") version "1.9.32" apply false // https://repo.essential.gg/#/public/gg/essential/loom/gg.essential.loom.gradle.plugin
+    id("gg.essential.loom") version "1.11.38" apply false // https://repo.essential.gg/#/public/gg/essential/loom/gg.essential.loom.gradle.plugin
     id("gg.essential.multi-version.root")
 }
 
@@ -50,7 +50,7 @@ preprocess {
 
     val current = null.connectToVersion(12109)
 
-    current.connectToVersion(12111, neoforge = false)
+    current.connectToVersion(12111)
 
     // next, then remap the main project to this and set the current to old
     //current.connectToVersion(12109, forge = false, neoforge = false)
