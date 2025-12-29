@@ -83,7 +83,7 @@ jobs:
 
       - name: close labeled issues
         run: |
-          LABEL="Fixed or added in dev"
+          LABEL="Added / Fixed in next release"
           ISSUES=$(gh issue list --label "$LABEL" --state open --json number --jq '.[].number')
           for i in $ISSUES; do
             gh issue close $i
