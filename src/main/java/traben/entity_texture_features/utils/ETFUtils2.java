@@ -6,6 +6,7 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 //#endif
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETF;
@@ -19,6 +20,7 @@ import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.*;
 
 import net.minecraft.ChatFormatting;
@@ -125,6 +127,18 @@ public abstract class ETFUtils2 {
     }
     //#endif
 
+    @Deprecated // just to ide highlight usages
+    public static void printDebugImage(NativeImage image) {
+        if ((ETF.isFabric() == ETF.isThisModLoaded("fabric")) && ETF.getConfigDirectory() != null) {
+            Path outputDirectory = Path.of(ETF.getConfigDirectory().toFile().getParent(), "\\ETF_debug_printout.png");
+            try {
+                image.writeToFile(outputDirectory);
+                ETFUtils2.logMessage("printed debug image to: " + outputDirectory, false);
+            } catch (Exception e) {
+                ETFUtils2.logError(e.toString(), false);
+            }
+        }
+    }
 
     public static ResourceLocation getETFVariantNotNullForInjector(ResourceLocation identifier) {
         // do not modify texture
