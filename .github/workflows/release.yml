@@ -65,19 +65,18 @@ jobs:
       # Build the mod
       - run: ./gradlew build
 
-# todo
-#      - name: upload mod
-#        run: node uploader.js
-#        env:
-#          CF_TOKEN: ${{ secrets.CF_TOKEN }}
-#          CF_COOKIE: ${{ secrets.CF_COOKIE }}
-#          MODRINTH: ${{ secrets.MODRINTH }}
-#
-#      - name: discord notification
-#        run: |
-#          curl -H "Content-Type: application/json" \
-#               -X POST \
-#               -d @discord_update.json \
-#                 "$DISCORD_WEBHOOK"
-#        env:
-#          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+      - name: upload mod
+        run: node uploader.js
+        env:
+          CF_TOKEN: ${{ secrets.CF_TOKEN }}
+          CF_COOKIE: ${{ secrets.CF_COOKIE }}
+          MODRINTH: ${{ secrets.MODRINTH }}
+
+      - name: discord notification
+        run: |
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d @discord_update.json \
+                 "$DISCORD_WEBHOOK"
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
