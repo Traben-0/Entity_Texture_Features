@@ -1,6 +1,7 @@
 
 [7.0.8]
 - neoforge 1.21.11
+- fixed various issues with the skin tool and uploading on 1.21.11 specifically and some other versions
 
 [7.0.7]
 - updated to 1.21.11

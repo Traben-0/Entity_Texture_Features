@@ -27,14 +27,14 @@ import java.util.concurrent.ExecutionException;
 //#else
 //$$ import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 //#endif
+
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.UUID;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFException;
 import traben.entity_texture_features.features.ETFManager;
@@ -62,38 +62,69 @@ public class ETFConfigScreenSkinToolOutcome extends ETFScreenOldCompat {
         //this.skin = new PlayerSkinTexture(skin);
     }
 
-    //upload code sourced from by https://github.com/cobrasrock/Skin-Swapper/blob/1.18-fabric/src/main/java/net/cobrasrock/skinswapper/changeskin/SkinChange.java
     public static boolean uploadSkin(boolean skinType) {
-        try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
+        try {
             if ("127.0.0.1".equals(InetAddress.getLocalHost().getHostAddress())) {
                 return false;
             }
 
             String auth = Minecraft.getInstance().getUser().getAccessToken();
 
-            //uploads skin
-            HttpPost http = new HttpPost("https://api.minecraftservices.com/minecraft/profile/skins");
-
-
-            MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-            builder.addTextBody("variant", skinType ? "classic" : "slim", ContentType.TEXT_PLAIN);
-            assert ETF.getConfigDirectory() != null;
-            builder.addBinaryBody(
-                    "file",
-                    new FileInputStream(Path.of(ETF.getConfigDirectory().toFile().getParent(), "\\ETF_player_skin_printout.png").toFile()),
-                    ContentType.IMAGE_PNG,
-                    "skin.png"
+            Path skinPath = Path.of(
+                    ETF.getConfigDirectory().toFile().getParent(),
+                    "ETF_player_skin_printout.png"
             );
 
-            http.setEntity(builder.build());
-            http.addHeader("Authorization", "Bearer " + auth);
-            HttpResponse response = httpClient.execute(http);
+            String boundary = UUID.randomUUID().toString();
+            byte[] fileBytes = Files.readAllBytes(skinPath);
 
-            return response.getStatusLine().getStatusCode() == 200;
+            String bodyStart =
+                    "--" + boundary + "\r\n" +
+                            "Content-Disposition: form-data; name=\"variant\"\r\n\r\n" +
+                            (skinType ? "classic" : "slim") + "\r\n" +
+                            "--" + boundary + "\r\n" +
+                            "Content-Disposition: form-data; name=\"file\"; filename=\"skin.png\"\r\n" +
+                            "Content-Type: image/png\r\n\r\n";
+
+            String bodyEnd = "\r\n--" + boundary + "--\r\n";
+
+            byte[] requestBody = concat(
+                    bodyStart.getBytes(),
+                    fileBytes,
+                    bodyEnd.getBytes()
+            );
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("https://api.minecraftservices.com/minecraft/profile/skins"))
+                    .header("Authorization", "Bearer " + auth)
+                    .header("Content-Type", "multipart/form-data; boundary=" + boundary)
+                    .POST(HttpRequest.BodyPublishers.ofByteArray(requestBody))
+                    .build();
+
+
+            HttpClient client = HttpClient.newHttpClient();
+            HttpResponse<Void> response = client.send(request, HttpResponse.BodyHandlers.discarding());
+            //#if MC >= 12006
+            client.close();
+            //#endif
+            return response.statusCode() == 200;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
+    }
+
+    private static byte[] concat(byte[]... parts) {
+        int len = 0;
+        for (byte[] p : parts) len += p.length;
+
+        byte[] out = new byte[len];
+        int pos = 0;
+        for (byte[] p : parts) {
+            System.arraycopy(p, 0, out, pos, p.length);
+            pos += p.length;
+        }
+        return out;
     }
 
     @Override

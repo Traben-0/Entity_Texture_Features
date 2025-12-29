@@ -175,11 +175,6 @@ dependencies {
         implementation(include("io.github.llamalad7:mixinextras-forge:0.4.1")!!)
     }
 
-
-
-
-    implementation(include("org.apache.httpcomponents:httpmime:4.5.10")!!)
-
     implementation("com.demonwav.mcdev:annotations:2.1.0")
 
 }
