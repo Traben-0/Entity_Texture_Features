@@ -3,6 +3,7 @@
 - neoforge 1.21.11
 - fixed various issues with the skin tool and uploading on 1.21.11 specifically and some other versions
 - fixed player skin enchanted pixel selections being inverted in 1.21.9+
+- fixed a crash with block entities
 
 [7.0.7]
 - updated to 1.21.11

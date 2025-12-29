@@ -17,7 +17,7 @@ public class ETFException extends RuntimeException {
                  - Entity = %s
                  - EMF installed = %s
                 ----------------------
-                """.formatted(entity == null ? "null" : entity.isBlockEntity() ? ((BlockEntity)entity).getType() : entity.entityType(),
+                """.formatted(entity == null ? "null" : entity.isBlockEntity() ? ((BlockEntity) entity.entity()).getType() : entity.entityType(),
                 ETF.isThisModLoaded("entity_model_features"));
     }
 }
