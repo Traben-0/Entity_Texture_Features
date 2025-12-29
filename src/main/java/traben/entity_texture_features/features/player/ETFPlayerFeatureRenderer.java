@@ -334,7 +334,7 @@ public class ETFPlayerFeatureRenderer<T extends AvatarRenderState, M extends Pla
             //String coat = ETFPlayerSkinUtils.SKIN_NAMESPACE + id + "_coat.png";
             //#if MC >= 12109
             var part = playerTexture.hasFatCoat ? fatJacket : jacket;
-            part.loadPose(model.jacket.storePose());
+            part.loadPose(model.body.storePose());
 
             ETFUtils2.submitModelPart(matrixStack, submit, light,
                     part,
