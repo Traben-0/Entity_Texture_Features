@@ -80,3 +80,13 @@ jobs:
                  "$DISCORD_WEBHOOK"
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+
+      - name: close labeled issues
+        run: |
+          LABEL="Fixed or added in dev"
+          ISSUES=$(gh issue list --label "$LABEL" --state open --json number --jq '.[].number')
+          for i in $ISSUES; do
+            gh issue close $i
+          done
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
