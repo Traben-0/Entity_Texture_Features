@@ -12,12 +12,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: checkout forked egt plugin repo
-        uses: actions/checkout@v4
-        with:
-          repository: Traben-0/essential-gradle-toolkit
-          path: egt-plugin-fork
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -57,10 +51,6 @@ jobs:
 
       - name: print discord notification json to be verified before final upload (build will take a while)
         run: cat discord_update.json
-
-      - name: build forked plugin
-        working-directory: egt-plugin-fork
-        run: ./gradlew publishToMavenLocal
 
       # Build the mod
       - run: ./gradlew build

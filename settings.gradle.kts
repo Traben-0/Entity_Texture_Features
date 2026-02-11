@@ -2,7 +2,6 @@ import org.gradle.internal.impldep.com.google.common.collect.ImmutableList
 
 pluginManagement {
     repositories {
-        mavenLocal()
         gradlePluginPortal()
         mavenCentral()
         maven("https://repo.essential.gg/repository/maven-public")
@@ -14,7 +13,7 @@ pluginManagement {
     // We also recommend specifying your desired version here if you're using more than one of the plugins,
     // so you do not have to change the version in multilpe places when updating.
     plugins {
-        val egtVersion = "0.6.11-test2" // see github fork Traben-0/essential-gradle-toolkit, fixes a neoforge 1.21.11 bug, you can downgrade this to 0.6.10 (public) if you disable neoforge 1.21.11
+        val egtVersion = "0.7.0-alpha.2"
         id("gg.essential.multi-version.root") version egtVersion
         id("gg.essential.multi-version.api-validation") version egtVersion
     }
