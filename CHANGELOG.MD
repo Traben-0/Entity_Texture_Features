@@ -1,4 +1,9 @@
 
+[7.0.9]
+- added random entity properties `seedOffset` and `seedSource`
+- removed certain OptiFine limitations on newer versions where they have been lifted
+
+
 [7.0.8]
 - neoforge 1.21.11
 - fixed various issues with the skin tool and uploading on 1.21.11 specifically and some other versions

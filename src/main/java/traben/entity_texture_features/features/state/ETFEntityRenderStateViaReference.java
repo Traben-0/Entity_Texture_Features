@@ -94,6 +94,10 @@ public class ETFEntityRenderStateViaReference implements ETFEntityRenderState {
     public int optifineId() {
         return entity.etf$getOptifineId();
     }
+    @Override
+    public int optifineVehicleId() {
+        return entity.etf$getOptifineVehicleId();
+    }
 
     @Override
     public int blockY() {

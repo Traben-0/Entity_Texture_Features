@@ -29,6 +29,7 @@ import org.spongepowered.asm.mixin.Unique;
 import traben.entity_texture_features.ETFApi;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.utils.ETFEntity;
+import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.UUID;
 
@@ -73,21 +74,15 @@ public abstract class MixinBlockEntity implements ETFEntity {
     public int etf$getOptifineId() {
         BlockPos pos = etf$getBlockPos();
         //optifine matching id
-        int hash = etf$optifineHashing(37);
-        hash = etf$optifineHashing(hash + pos.getX());
-        hash = etf$optifineHashing(hash + pos.getZ());
-        return etf$optifineHashing(hash + pos.getY());
+        int hash = ETFUtils2.optifineHashing(37);
+        hash = ETFUtils2.optifineHashing(hash + pos.getX());
+        hash = ETFUtils2.optifineHashing(hash + pos.getZ());
+        return ETFUtils2.optifineHashing(hash + pos.getY());
     }
 
-    @Unique
-    private static int etf$optifineHashing(int x) {
-        //Optifine integer hashing algorithm used by block entity uuid matching
-        x ^= 0x3D ^ x >> 16;
-        x += x << 3;
-        x ^= x >> 4;
-        x *= 668265261;
-        x ^= x >> 15;
-        return x;
+    @Override
+    public int etf$getOptifineVehicleId() {
+        return etf$getOptifineId();
     }
 
     @Override

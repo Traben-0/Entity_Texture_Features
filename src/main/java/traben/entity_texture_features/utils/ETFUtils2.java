@@ -127,6 +127,16 @@ public abstract class ETFUtils2 {
     }
     //#endif
 
+    public static int optifineHashing(int x) {
+        // OptiFine integer hashing algorithm
+        x ^= 0x3D ^ x >> 16;
+        x += x << 3;
+        x ^= x >> 4;
+        x *= 668265261;
+        x ^= x >> 15;
+        return x;
+    }
+
     @Deprecated // just to ide highlight usages
     public static void printDebugImage(NativeImage image) {
         if ((ETF.isFabric() == ETF.isThisModLoaded("fabric")) && ETF.getConfigDirectory() != null) {

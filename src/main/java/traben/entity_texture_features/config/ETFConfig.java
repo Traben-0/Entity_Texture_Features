@@ -39,7 +39,7 @@ import static traben.entity_texture_features.ETFApi.getBlockEntityTypeToTranslat
 @SuppressWarnings("CanBeFinal")
 public final class ETFConfig extends TConfig {
 
-    public boolean optifine_limitRandomVariantGapsBy10 = true;
+    @Deprecated(forRemoval = true) public boolean optifine_limitRandomVariantGapsBy10 = false;
     public boolean optifine_allowWeirdSkipsInTrueRandom = true;
     public boolean optifine_preventBaseTextureInOptifineDirectory = true;
 
@@ -59,13 +59,13 @@ public final class ETFConfig extends TConfig {
     public SkinTransparencyMode skinTransparencyMode = SkinTransparencyMode.ETF_SKINS_ONLY;
     public boolean skinTransparencyInExtraPixels = true;
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public boolean skinFeaturesEnableTransparency = true;
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public boolean skinFeaturesEnableFullTransparency = false;
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public boolean tryETFTransparencyForAllSkins = false;
     public boolean enableEnemyTeamPlayersSkinFeatures = true;
     public boolean enableBlinking = true;
@@ -74,7 +74,7 @@ public final class ETFConfig extends TConfig {
     public double advanced_IncreaseCacheSizeModifier = 1.0;
     public DebugLogMode debugLoggingMode = DebugLogMode.None;
     public boolean logTextureDataInitialization = false;
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public boolean hideConfigButton = false;
 
     public SettingsButtonLocation configButtonLoc = SettingsButtonLocation.BOTTOM_RIGHT;
@@ -259,8 +259,8 @@ public final class ETFConfig extends TConfig {
                 new TConfigEntryCategory("config.entity_features.optifine_settings","config.entity_texture_features.optifine.desc").addAll(
                         TConfigEntryText.fromLongOrMultilineTranslation("config.entity_texture_features.optifine.desc",200, TConfigEntryText.TextAlignment.LEFT)
                 ).add(
-                        new TConfigEntryBoolean("config.entity_texture_features.optifine.variant_gap.title", "config.entity_texture_features.optifine.variant_gap.tooltip",
-                                () -> optifine_limitRandomVariantGapsBy10, aBoolean -> optifine_limitRandomVariantGapsBy10 = aBoolean, true),
+//                        new TConfigEntryBoolean("config.entity_texture_features.optifine.variant_gap.title", "config.entity_texture_features.optifine.variant_gap.tooltip",
+//                                () -> optifine_limitRandomVariantGapsBy10, aBoolean -> optifine_limitRandomVariantGapsBy10 = aBoolean, true),
                         new TConfigEntryBoolean("config.entity_texture_features.optifine.random_skips.title", "config.entity_texture_features.optifine.random_skips.tooltip",
                                 () -> optifine_allowWeirdSkipsInTrueRandom, aBoolean -> optifine_allowWeirdSkipsInTrueRandom = aBoolean, true),
                         new TConfigEntryBoolean("config.entity_texture_features.optifine.prevent_base.title", "config.entity_texture_features.optifine.prevent_base.tooltip",

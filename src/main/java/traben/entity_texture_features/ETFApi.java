@@ -77,7 +77,7 @@ public final class ETFApi {
     /**
      * The current ETF API version.
      */
-    public static final int ETFApiVersion = 10;
+    public static final int ETFApiVersion = 11;
     /**
      * This UUID if passed into ETF will tell it to skip looking for variants
      */
@@ -545,9 +545,11 @@ public final class ETFApi {
          *
          * @param entityRandomSeedFunction the function to generate the seed
          */
-        void setRandomSupplier(EntityRandomSeedFunction entityRandomSeedFunction);
+        @Deprecated(forRemoval = true)
+        default void setRandomSupplier(EntityRandomSeedFunction entityRandomSeedFunction) {}
 
 
+        @Deprecated(forRemoval = true)
         interface EntityRandomSeedFunction {
             int toInt(ETFEntityRenderState entity);
         }

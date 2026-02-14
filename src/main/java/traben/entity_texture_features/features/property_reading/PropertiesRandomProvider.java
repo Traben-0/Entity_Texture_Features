@@ -32,7 +32,7 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
 
     protected final @NotNull String packname;
 
-    protected EntityRandomSeedFunction entityRandomSeedFunction = ETFEntityRenderState::optifineId;
+    //protected EntityRandomSeedFunction entityRandomSeedFunction = ETFEntityRenderState::optifineId;
 
     protected BiConsumer<ETFEntityRenderState, @Nullable RandomPropertyRule> onMeetsRule =
             (entity, rule) -> { };
@@ -110,6 +110,8 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
                         ruleNumber,
                         suffixesOfRule,
                         getWeights(properties, ruleNumber),
+                        getSeedOffset(properties, ruleNumber),
+                        properties.getProperty("seedSource." + ruleNumber),
                         RandomProperties.getAllRegisteredRandomPropertiesOfIndex(properties, ruleNumber)
                 ));
             } else {
@@ -117,6 +119,16 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
             }
         }
         return allRulesOfProperty;
+    }
+
+    private static int getSeedOffset(Properties props, int num) {
+        String seedOffsetStr = props.getProperty("seedOffset." + num);
+        if (seedOffsetStr != null) {
+            try {
+                return Integer.parseInt(seedOffsetStr);
+            } catch (NumberFormatException ignored) {}
+        }
+        return 0;
     }
 
     private static void validateRuleNumbers(final ResourceLocation propertiesFilePath, final List<Integer> numbersList) {
@@ -140,12 +152,9 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
             last = i;
         }
         if (last == -1) {
-           if (ETF.config().getConfig().optifine_limitRandomVariantGapsBy10) {
-                ETFUtils2.logError("Properties file [" + propertiesFilePath + "] has skipped rule numbers by values greater than 10, this is invalid in OptiFine. This limitation can be disabled in ETF's settings, but will make your pack incompatible with OptiFine.", false);
-                throw new ETFException("Properties file [" + propertiesFilePath + "] has skipped rule numbers by values greater than 10, this is invalid in OptiFine. This limitation can be disabled in ETF's settings, but will make your pack incompatible with OptiFine.");
-            }else{
-                ETFUtils2.logWarn("Properties file [" + propertiesFilePath + "] has skipped rule numbers by values greater than 10, this is invalid in OptiFine. This limitation has been disabled in ETF's settings, your pack is incompatible with OptiFine.", false);
-            }
+            //#if MC < 1.21.11
+            ETFUtils2.logWarn("Properties file [" + propertiesFilePath + "] has skipped rule numbers by values greater than 10, this is invalid in older OptiFine. This limitation has been disabled in ETF's settings, your pack is incompatible with older OptiFine.", false);
+            //#endif
         }
     }
 
@@ -252,18 +261,10 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
         for (RandomPropertyRule rule : propertyRules) {
             if (rule.doesEntityMeetConditionsOfThisCase(entityToBeTested, isUpdate, entityCanUpdate)) {
                 onMeetsRule.accept(entityToBeTested, rule);
-                return rule.getVariantSuffixFromThisCase(entityRandomSeedFunction.toInt(entityToBeTested));
+                return rule.getVariantSuffixFromThisCase(entityToBeTested);
             }
         }
         return 0;
     }
-
-    @Override
-    public void setRandomSupplier(final EntityRandomSeedFunction entityRandomSeedFunction) {
-        if (entityRandomSeedFunction != null) {
-            this.entityRandomSeedFunction = entityRandomSeedFunction;
-        }
-    }
-
 
 }

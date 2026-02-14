@@ -39,6 +39,7 @@ public interface ETFEntity {
     BlockPos etf$getBlockPos();
 
     int etf$getOptifineId();
+    int etf$getOptifineVehicleId();
 
     int etf$getBlockY();
 

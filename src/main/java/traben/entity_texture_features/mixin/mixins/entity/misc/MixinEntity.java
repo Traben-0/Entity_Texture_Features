@@ -94,6 +94,10 @@ public abstract class MixinEntity implements ETFEntity {
     public abstract Vec3 getDeltaMovement();
 
 
+    @Shadow
+    @Nullable
+    public abstract Entity getVehicle();
+
     @Override
     public EntityType<?> etf$getType() {
         return getType();
@@ -107,6 +111,13 @@ public abstract class MixinEntity implements ETFEntity {
     @Override
     public int etf$getOptifineId() {
         return (int) (etf$getUuid().getLeastSignificantBits() & 0x7FFFFFFFL);
+    }
+
+    @Override
+    public int etf$getOptifineVehicleId() {
+        return getVehicle() == null
+                ? etf$getOptifineId()
+                : ((ETFEntity) getVehicle()).etf$getOptifineId();
     }
 
     @Override

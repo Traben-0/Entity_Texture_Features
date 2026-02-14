@@ -1,5 +1,6 @@
 package traben.entity_texture_features.features.property_reading;
 
+import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperty;
 import traben.entity_texture_features.features.state.ETFEntityRenderState;
 import traben.entity_texture_features.utils.ETFUtils2;
@@ -13,13 +14,21 @@ public class RandomPropertyRule {
     private final Integer[] suffixNumbers;
     private final Integer[] weights;
     private final int weightTotal;
+    private final int seedOffset;
+    private final SeedSource seedSource;
     private final RandomProperty[] propertiesToTest;
     private final boolean ruleAlwaysApproved;
     private final boolean updates;
 
     static final RandomPropertyRule DEFAULT_RETURN = new RandomPropertyRule() {
+        @SuppressWarnings("removal")
         @Override
         public int getVariantSuffixFromThisCase(final int seed) {
+            return 1;
+        }
+
+        @Override
+        public int getVariantSuffixFromThisCase(ETFEntityRenderState entity) {
             return 1;
         }
 
@@ -38,6 +47,8 @@ public class RandomPropertyRule {
         updates = false;
         weights = null;
         weightTotal = 0;
+        seedOffset = 0;
+        seedSource = SeedSource.entity;
     }
 
     public boolean isAlwaysMet(){
@@ -50,6 +61,8 @@ public class RandomPropertyRule {
             int ruleNumber,
             Integer[] suffixes,
             Integer[] weights,
+            int seedOffset,
+            @Nullable String seedSource,
             RandomProperty... properties
     ) {
         propertyFile = propertiesFile;
@@ -57,6 +70,18 @@ public class RandomPropertyRule {
         propertiesToTest = properties;
         ruleAlwaysApproved = properties.length == 0;
 
+        this.seedOffset = seedOffset;
+        if (seedSource == null || seedSource.isBlank()) {
+            this.seedSource = SeedSource.entity;
+        } else {
+            SeedSource source = SeedSource.entity;
+            try {
+                source = SeedSource.valueOf(seedSource);
+            } catch (IllegalArgumentException e) {
+                ETFUtils2.logWarn("Random Property file [" + propertyFile + "] rule # [" + ruleNumber + "] has invalid seed source [" + seedSource + "], ignoring'");
+            }
+            this.seedSource = source;
+        }
 
         suffixNumbers = suffixes;
 
@@ -121,6 +146,7 @@ public class RandomPropertyRule {
         }
     }
 
+    @Deprecated(forRemoval = true) // Old non seed modified version, don't think i use it anywhere anymore
     public int getVariantSuffixFromThisCase(int seed) {
         if (weightTotal == 0){
             return suffixNumbers[Math.abs(seed) % suffixNumbers.length];
@@ -135,6 +161,29 @@ public class RandomPropertyRule {
         }
     }
 
+    public int getVariantSuffixFromThisCase(ETFEntityRenderState entity) {
+        int seed = getSeedFrom(entity);
+        if (weightTotal == 0){
+            return suffixNumbers[Math.abs(seed) % suffixNumbers.length];
+        }else{
+            int seedValue = Math.abs(seed) % weightTotal;
+            for (int i = 0; i < weights.length; i++) {
+                if (seedValue < weights[i]) {
+                    return suffixNumbers[i];
+                }
+            }
+            return 0;
+        }
+    }
+
+    private int getSeedFrom(ETFEntityRenderState entity) {
+        int seed = seedSource == SeedSource.entity
+                ? entity.optifineId()
+                : entity.optifineVehicleId();
+        if (seedOffset != 0) seed ^= ETFUtils2.optifineHashing(seedOffset);
+        return seed;
+    }
+
     public void cacheEntityInitialResultsOfNonUpdatingProperties(ETFEntityRenderState entity) {
         for (RandomProperty property : propertiesToTest) {
             if (!property.canPropertyUpdate()) {
@@ -143,6 +192,10 @@ public class RandomPropertyRule {
                 } catch (Exception ignored) { }
             }
         }
+    }
+
+    private enum SeedSource {
+        entity, vehicle
     }
 
 }

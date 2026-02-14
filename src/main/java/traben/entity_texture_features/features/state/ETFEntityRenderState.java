@@ -29,6 +29,7 @@ public interface ETFEntityRenderState {
     Level world();
     BlockPos blockPos();
     int optifineId();
+    int optifineVehicleId();
     int blockY();
     CompoundTag nbt();
     boolean hasCustomName();
