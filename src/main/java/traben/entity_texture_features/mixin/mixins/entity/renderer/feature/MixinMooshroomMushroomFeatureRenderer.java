@@ -1,9 +1,14 @@
 package traben.entity_texture_features.mixin.mixins.entity.renderer.feature;
 
+import com.llamalad7.mixinextras.sugar.Local;
 //#if MC >= 12105
 import net.minecraft.client.renderer.block.model.BlockStateModel;
 //#else
 //$$ import net.minecraft.client.resources.model.BakedModel;
+//#endif
+
+//#if MC >= 1.21.2
+import net.minecraft.client.renderer.entity.state.MushroomCowRenderState;
 //#endif
 
 import com.mojang.blaze3d.platform.NativeImage;
@@ -20,6 +25,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.layers.MushroomCowMushroomLayer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.animal.MushroomCow;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -49,6 +55,10 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
     @Unique
     private static ResourceLocation entity_texture_features$brownEmissive = null;
 
+    // Check both in case of mod shenanigans
+    @Unique private boolean isRed = false;
+    @Unique private boolean isBrown = false;
+
     @Unique
     private static ModelPart[] entity_texture_features$getModelData() {
         CubeDeformation dilation = new CubeDeformation(0);
@@ -63,10 +73,10 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
 
     @Unique
     @Nullable
-    private static Boolean entity_texture_features$returnRedTrueBrownFalseVanillaNull(BlockState mushroomState) {
+    private Boolean entity_texture_features$returnRedTrueBrownFalseVanillaNull() {
         //enable custom mooshroom mushrooms
         if (ETF.config().getConfig().enableCustomTextures) {
-            if (mushroomState.is(Blocks.RED_MUSHROOM)) {
+            if (isRed) {
                 if (ETFManager.getInstance().mooshroomRedCustomShroomExists == null) {
                     if (Minecraft.getInstance().getResourceManager().getResource(RED_SHROOM).isPresent()) {
                         ETFManager.getInstance().mooshroomRedCustomShroomExists = entity_texture_features$prepareMushroomTextures(true);
@@ -75,7 +85,7 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
                     }
                 }
                 return ETFManager.getInstance().mooshroomRedCustomShroomExists;
-            } else if (mushroomState.is(Blocks.BROWN_MUSHROOM)) {
+            } else if (isBrown) {
                 if (ETFManager.getInstance().mooshroomBrownCustomShroomExists == null) {
                     if (Minecraft.getInstance().getResourceManager().getResource(BROWN_SHROOM).isPresent()) {
                         ETFManager.getInstance().mooshroomBrownCustomShroomExists = entity_texture_features$prepareMushroomTextures(false);
@@ -177,9 +187,33 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
         return null;
     }
 
-    //#if MC >= 12109
+    //#if MC >= 1.21.2
+    @Inject(method ="submit(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;ILnet/minecraft/client/renderer/entity/state/MushroomCowRenderState;FF)V", at = @At(value = "HEAD"))
+    //#else
+    //$$ @Inject(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/entity/animal/MushroomCow;FFFFFF)V", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;pushPose()V"))
+    //#endif
+    private void etf$injected(CallbackInfo ci,
+                              //#if MC >= 1.21.2
+                              @Local(argsOnly = true) MushroomCowRenderState state
+                              //#else
+                              //$$ @Local BlockState mushroomState
+                              //#endif
+                              ) {
+        //#if MC >= 1.21.2
+        isRed = state.variant.equals(net.minecraft.world.entity.animal.MushroomCow.Variant.RED);
+        isBrown = state.variant.equals(MushroomCow.Variant.BROWN);
+        //#else
+        //$$ isRed = mushroomState.is(Blocks.RED_MUSHROOM);
+        //$$ isBrown = mushroomState.is(Blocks.BROWN_MUSHROOM);
+        //#endif
+    }
+
+    //#if MC >= 1.21.9
     @Inject(method = "submitMushroomBlock", at = @At(value = "HEAD"), cancellable = true)
-    private void etf$injected(final PoseStack matrices, final net.minecraft.client.renderer.SubmitNodeCollector submitNodeCollector, final int light, final boolean renderAsModel, final int j, final BlockState mushroomState, final int overlay, final BlockStateModel mushroomModel, final CallbackInfo ci) {
+    private void etf$injected(final CallbackInfo ci, @Local(argsOnly = true) PoseStack matrices,
+                              @Local(argsOnly = true) net.minecraft.client.renderer.SubmitNodeCollector submitNodeCollector,
+                              @Local(argsOnly = true, ordinal = 0) int light
+    ) {
     //#else
     //$$
     //$$ //rewritten as original didn't seem to work, I must have accidentally changed the vanilla mushroom texture when testing originally
@@ -190,7 +224,7 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
         //$$ private void etf$injected(PoseStack matrices, MultiBufferSource vertexConsumers, int light, boolean renderAsModel, BlockState mushroomState, int overlay, BakedModel mushroomModel, CallbackInfo ci) {
         //#endif
     //#endif
-        Boolean shroomType = entity_texture_features$returnRedTrueBrownFalseVanillaNull(mushroomState);
+        Boolean shroomType = entity_texture_features$returnRedTrueBrownFalseVanillaNull();
         if (shroomType != null) {
             ETFTexture thisTexture = shroomType ? ETFManager.getInstance().redMooshroomAlt : ETFManager.getInstance().brownMooshroomAlt;
             if (thisTexture != null) {

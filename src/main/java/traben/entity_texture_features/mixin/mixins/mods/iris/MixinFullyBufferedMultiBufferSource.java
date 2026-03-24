@@ -1,5 +1,5 @@
 package traben.entity_texture_features.mixin.mixins.mods.iris;
-//#if FORGE || MC == 12002 || MC < 12000
+//#if !IRIS || MC == 12002 || MC < 12000
 //$$ import net.minecraft.client.Minecraft;
 //$$ import org.spongepowered.asm.mixin.Mixin;
 //$$ import org.spongepowered.asm.mixin.Pseudo;

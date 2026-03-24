@@ -68,7 +68,13 @@ public abstract class MixinShoulderParrotFeatureRenderer extends RenderLayer<Ava
 
     public MixinShoulderParrotFeatureRenderer() {super(null);}
 
-    @Inject(method = "submitOnShoulder", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/SubmitNodeCollector;submitModel(Lnet/minecraft/client/model/Model;Ljava/lang/Object;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/RenderType;IIILnet/minecraft/client/renderer/feature/ModelFeatureRenderer$CrumblingOverlay;)V"))
+    @Inject(method = "submitOnShoulder", at = @At(value = "INVOKE", target =
+            //#if MC >= 26.1
+            //$$ "Lnet/minecraft/client/renderer/SubmitNodeCollector;submitModel(Lnet/minecraft/client/model/Model;Ljava/lang/Object;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/resources/Identifier;IIILnet/minecraft/client/renderer/feature/ModelFeatureRenderer$CrumblingOverlay;)V"
+            //#else
+            "Lnet/minecraft/client/renderer/SubmitNodeCollector;submitModel(Lnet/minecraft/client/model/Model;Ljava/lang/Object;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/RenderType;IIILnet/minecraft/client/renderer/feature/ModelFeatureRenderer$CrumblingOverlay;)V"
+            //#endif
+    ))
     private void etf$modifySubmit(final PoseStack poseStack, final SubmitNodeCollector submitNodeCollector, final int i, final AvatarRenderState avatarRenderState, final Parrot.Variant variant, final float f, final float g, final boolean bl, final CallbackInfo ci,
                                   @Local ParrotRenderState parrotRenderState) {
         var state =  ((HoldsETFRenderState) avatarRenderState).etf$getState();
@@ -81,12 +87,12 @@ public abstract class MixinShoulderParrotFeatureRenderer extends RenderLayer<Ava
     private void etf$setParrotAsCurrentEntity(final Player playerEntity, final ParrotRenderState parrotRenderState) {
         if (parrotRenderState != null) {
             try {
-                var optionalEntity = EntityType.PARROT.create(playerEntity.level(), EntitySpawnReason.COMMAND);
-                if (optionalEntity instanceof Parrot parrot) {
+                var parrot = EntityType.PARROT.create(playerEntity.level(), EntitySpawnReason.COMMAND);
+//                if (optionalEntity instanceof Parrot parrot) {
                     //todo do i even need to set variant?
                     ETFRenderContext.setCurrentEntity(ETFEntityRenderState.forEntity((ETFEntity) parrot));
                     ((HoldsETFRenderState) parrotRenderState).etf$initState((ETFEntity) parrot);
-                }
+//                }
             } catch (final Exception ignored) {}
         }
     }

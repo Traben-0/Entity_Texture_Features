@@ -2,7 +2,7 @@ package traben.entity_texture_features.compat;
 
 
 
-//#if MC < 12100 && MC != 12002
+//#if MC < 12100 && MC != 12002 && SODIUM
 //$$ import me.jellysquid.mods.sodium.client.render.vertex.buffer.ExtendedBufferBuilder;
 //$$ import traben.entity_texture_features.features.ETFRenderContext;
 //$$ import traben.entity_texture_features.utils.ETFUtils2;
@@ -32,7 +32,7 @@ public abstract class SodiumGetBufferInjector {
     }
 
     private static TriConsumer<MultiBufferSource, RenderType, VertexConsumer> get() {
-        //#if MC < 12100 && MC != 12002
+        //#if MC < 12100 && MC != 12002 && SODIUM
         //$$
         //$$ try {
         //$$     return new Impl();
@@ -45,7 +45,7 @@ public abstract class SodiumGetBufferInjector {
         //#endif
         return null;
     }
-//#if MC < 12100 && MC != 12002
+//#if MC < 12100 && MC != 12002 && SODIUM
 //$$
 //$$    private static class Impl implements TriConsumer<MultiBufferSource, RenderType, VertexConsumer> {
 //$$         Impl() {

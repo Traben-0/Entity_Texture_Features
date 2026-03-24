@@ -48,8 +48,20 @@ public class TConfigScreenList extends TConfigScreen {
     }
 
     @Override
-    public void render(final GuiGraphics context, final int mouseX, final int mouseY, final float delta) {
-        super.render(context, mouseX, mouseY, delta);
+    public void
+        //#if MC >= 26.1
+        //$$ extractRenderState
+        //#else
+        render
+        //#endif
+    (final GuiGraphics context, final int mouseX, final int mouseY, final float delta) {
+        super.
+                //#if MC >= 26.1
+                //$$ extractRenderState
+                //#else
+                render
+                //#endif
+                        (context, mouseX, mouseY, delta);
         if (renderFeature != null) {
             renderFeature.render(context, mouseX, mouseY);
         }

@@ -1,5 +1,6 @@
 package traben.entity_texture_features.mixin.mixins.entity.misc;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -44,7 +45,7 @@ public abstract class MixinPlayerEntity extends Entity implements ETFPlayerEntit
 
     //will force update entity texture at any player interaction useful for debugging
     @Inject(method = "interactOn", at = @At("HEAD"))
-    private void etf$injected(Entity entity, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
+    private void etf$injected(CallbackInfoReturnable<InteractionResult> cir, @Local(argsOnly = true) Entity entity) {
         if (level().isClientSide()) {
             if (ETF.config().getConfig().debugLoggingMode != ETFConfig.DebugLogMode.None)
                 ETFManager.getInstance().markEntityForDebugPrint(entity.getUUID());

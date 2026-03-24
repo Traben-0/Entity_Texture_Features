@@ -5,7 +5,6 @@ import it.unimi.dsi.fastutil.Function;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
@@ -46,7 +45,7 @@ import net.fabricmc.loader.api.FabricLoader;
 public class ETF {
     public static final String MOD_ID = "entity_texture_features";
     public final static Logger LOGGER = LoggerFactory.getLogger("Entity Texture Features");
-    public static final int EMISSIVE_FEATURE_LIGHT_VALUE = LightTexture.FULL_BRIGHT + 2;
+    public static final int EMISSIVE_FEATURE_LIGHT_VALUE = ETFUtils2.FULL_BRIGHT + 2;
     public static TConfigHandler<ETFConfigScreenWarnings.WarningConfig> warningConfigHandler = null;
     public static boolean IRIS_DETECTED = false;
 

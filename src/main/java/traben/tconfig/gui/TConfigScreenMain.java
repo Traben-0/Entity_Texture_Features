@@ -95,8 +95,20 @@ public abstract class TConfigScreenMain extends TConfigScreen {
     }
 
     @Override
-    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
-        super.render(context, mouseX, mouseY, delta);
+    public void
+        //#if MC >= 26.1
+        //$$ extractRenderState
+        //#else
+        render
+        //#endif
+    (GuiGraphics context, int mouseX, int mouseY, float delta) {
+        super.
+                //#if MC >= 26.1
+                //$$ extractRenderState
+                //#else
+                        render
+                //#endif
+                        (context, mouseX, mouseY, delta);
 
         // draw mod icons in the top right corner of the screen
         // from left to right

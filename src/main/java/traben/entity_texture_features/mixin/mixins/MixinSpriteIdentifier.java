@@ -21,6 +21,29 @@ import traben.entity_texture_features.utils.ETFUtils2;
 
 @Mixin(Material.class)
 public class MixinSpriteIdentifier {
+
+    //#if MC >= 26.1
+    //$$ @com.llamalad7.mixinextras.injector.ModifyReturnValue(method = "sprite", at = @At(value = "RETURN"))
+    //$$ private Identifier etf$modifyIfRequired(Identifier original) {
+    //$$
+    //$$     //infer actual texture
+    //$$     Identifier actualTexture;
+    //$$     if (original.toString().endsWith(".png")) {
+    //$$         actualTexture = original;
+    //$$     } else {
+    //$$         //todo check all block entities follow this logic? i know chests, shulker boxes, and beds do
+    //$$         actualTexture = ETFUtils2.res(original.getNamespace(), "textures/" + original.getPath() + ".png");
+    //$$     }
+    //$$
+    //$$     ETFTexture texture = ETFManager.getInstance().getETFTextureVariant(actualTexture, ETFRenderContext.getCurrentEntityState());
+    //$$
+    //$$     //if texture is emissive or a variant then replace with a non sprite vertex consumer like regular entities
+    //$$     if (!actualTexture.equals(texture.thisIdentifier) || texture.isEmissive() || texture.isEnchanted()) {
+    //$$         return texture.thisIdentifier;
+    //$$     }
+    //$$     return original;
+    //$$ }
+    //#else
     @Inject(method =
             //#if MC >= 12109
             "buffer(Lnet/minecraft/client/resources/model/MaterialSet;Lnet/minecraft/client/renderer/MultiBufferSource;Ljava/util/function/Function;)Lcom/mojang/blaze3d/vertex/VertexConsumer;",
@@ -62,5 +85,6 @@ public class MixinSpriteIdentifier {
             }
         }
     }
+    //#endif
 
 }

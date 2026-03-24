@@ -135,7 +135,13 @@ public class TConfigEntryListWidget extends AbstractSelectionList<TConfigEntryLi
         @Override
         public void renderContent(final GuiGraphics guiGraphics, final int i, final int j, final boolean bl, final float f) {
             lastWidgetRendered = getWidget(getContentX(), getContentY(), getContentWidth(), getContentHeight());
-            if (lastWidgetRendered != null) lastWidgetRendered.render(guiGraphics, i, j, f);
+            if (lastWidgetRendered != null) lastWidgetRendered.
+                    //#if MC >= 26.1
+                    //$$ extractRenderState
+                    //#else
+                    render
+                    //#endif
+                            (guiGraphics, i, j, f);
         }
         //#else
         //$$ @Override

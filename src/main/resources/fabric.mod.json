@@ -55,5 +55,6 @@
         "modmenu.discord": "https://discord.gg/rURmwrzUcz"
       }
     }
-  }
+  },
+  "accessWidener" : "${access}"
 }

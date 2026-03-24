@@ -2,6 +2,12 @@ package traben.entity_texture_features.utils;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.geom.ModelPart;
+
+//#if MC >= 26.1
+//$$ import net.minecraft.client.renderer.rendertype.RenderTypes;
+//$$ import com.mojang.blaze3d.vertex.VertexMultiConsumer;
+//$$ import net.minecraft.client.renderer.Sheets;
+//#endif
 //#if MC >= 12109
 import net.minecraft.client.renderer.SubmitNodeCollector;
 //#endif
@@ -78,6 +84,20 @@ public abstract class ETFUtils2 {
         return ARGB.fromABGR( image.getPixel(x, y));
         //#else
         //$$ return image.getPixelRGBA(x, y);
+        //#endif
+    }
+
+    //#if MC >= 26.1
+    //$$ public static final int FULL_BRIGHT = 15728880;
+    //#else
+    public static final int FULL_BRIGHT = net.minecraft.client.renderer.LightTexture.FULL_BRIGHT;
+    //#endif
+
+    public static int packLight(int sky, int block) {
+        //#if MC >= 26.1
+        //$$ return sky << 4 | block << 20;
+        //#else
+        return net.minecraft.client.renderer.LightTexture.pack(sky, block);
         //#endif
     }
 
@@ -207,6 +227,20 @@ public abstract class ETFUtils2 {
         return false;
     }
 
+    //#if MC >= 26.1
+    //$$ public static VertexConsumer getFoilBuffer(MultiBufferSource multiBufferSource, RenderType renderType, boolean bl, boolean bl2) {
+    //$$     if (bl2) {
+    //$$         return useTransparentGlint(renderType) ? VertexMultiConsumer.create(multiBufferSource.getBuffer(RenderTypes.glintTranslucent()), multiBufferSource.getBuffer(renderType)) : VertexMultiConsumer.create(multiBufferSource.getBuffer(bl ? RenderTypes.glint() : RenderTypes.entityGlint()), multiBufferSource.getBuffer(renderType));
+    //$$     } else {
+    //$$         return multiBufferSource.getBuffer(renderType);
+    //$$     }
+    //$$ }
+    //$$
+    //$$ private static boolean useTransparentGlint(RenderType renderType) {
+    //$$     return Minecraft.useShaderTransparency() && (renderType == Sheets.translucentItemSheet() || renderType == Sheets.translucentBlockItemSheet());
+    //$$ }
+    //#endif
+
     public static boolean renderEnchanted(ETFTexture texture, MultiBufferSource provider, int light, RenderMethodForOverlay renderer) {
         // attempt enchanted render
         ResourceLocation enchanted = texture.getEnchantIdentifierOfCurrentState();
@@ -214,7 +248,9 @@ public abstract class ETFUtils2 {
             boolean wasAllowed = ETFRenderContext.isAllowedToRenderLayerTextureModify();
             ETFRenderContext.preventRenderLayerTextureModify();
             VertexConsumer enchantedVertex =
-                    //#if MC>=12109
+                    //#if MC >= 26.1
+                    //$$ getFoilBuffer(provider, RenderTypes.armorCutoutNoCull(enchanted), false, true);
+                    //#elseif MC>=12109
                     ItemRenderer.getFoilBuffer(provider,
                             //#if MC>= 12111
                             //$$ net.minecraft.client.renderer.rendertype.RenderTypes
@@ -358,6 +394,10 @@ public abstract class ETFUtils2 {
         if (inChat) {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player != null) {
+                //#if MC >= 26.1
+                //$$ player.sendSystemMessage(MutableComponent.create(new PlainTextContents.LiteralContents(
+                //$$     "§a[INFO]§r [ETF]: " + obj)));
+                //#else
                 player.displayClientMessage(MutableComponent.create(
                         //#if MC >= 12004
                         new PlainTextContents.LiteralContents
@@ -365,6 +405,7 @@ public abstract class ETFUtils2 {
                         //$$ new LiteralContents
                         //#endif
                             ("§a[INFO]§r [ETF]: " + obj))/*.formatted(Formatting.GRAY, Formatting.ITALIC)*/ , false);
+                //#endif
             } else {
                 ETF.LOGGER.info("[ETF]: {}", obj);
             }
@@ -382,6 +423,10 @@ public abstract class ETFUtils2 {
         if (inChat) {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player != null) {
+                //#if MC >= 26.1
+                //$$ player.sendSystemMessage(MutableComponent.create(new PlainTextContents.LiteralContents(
+                //$$     "§e[WARN]§r [Entity Texture Features]: " + obj)).withStyle(ChatFormatting.YELLOW));
+                //#else
                 player.displayClientMessage(MutableComponent.create(
                         //#if MC >= 12004
                         new PlainTextContents.LiteralContents
@@ -389,6 +434,7 @@ public abstract class ETFUtils2 {
                         //$$ new LiteralContents
                         //#endif
                                 ("§e[WARN]§r [Entity Texture Features]: " + obj)).withStyle(ChatFormatting.YELLOW), false);
+                //#endif
             } else {
                 ETF.LOGGER.warn("[ETF]: {}", obj);
             }
@@ -405,6 +451,10 @@ public abstract class ETFUtils2 {
         if (inChat) {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player != null) {
+                //#if MC >= 26.1
+                //$$ player.sendSystemMessage(MutableComponent.create(new PlainTextContents.LiteralContents(
+                //$$     "§4[ERROR]§r [Entity Texture Features]: " + obj)).withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
+                //#else
                 player.displayClientMessage(MutableComponent.create(
                         //#if MC >= 12004
                         new PlainTextContents.LiteralContents
@@ -412,6 +462,7 @@ public abstract class ETFUtils2 {
                         //$$ new LiteralContents
                         //#endif
                                 ("§4[ERROR]§r [Entity Texture Features]: " + obj)).withStyle(ChatFormatting.RED, ChatFormatting.BOLD), false);
+                //#endif
             } else {
                 ETF.LOGGER.error("[ETF]: {}", obj);
             }
@@ -436,17 +487,23 @@ public abstract class ETFUtils2 {
             return false;
         }
         try {
-            NativeImage closableImage = new NativeImage(image.getWidth(), image.getHeight(), true);
-            closableImage.copyFrom(image);
+            Minecraft.getInstance().execute(() -> {
+                try {
+                    NativeImage closableImage = new NativeImage(image.getWidth(), image.getHeight(), true);
+                    closableImage.copyFrom(image);
 
-            Minecraft.getInstance().getTextureManager().release(identifier);
+                    Minecraft.getInstance().getTextureManager().release(identifier);
 
-            DynamicTexture closableBackedTexture = new DynamicTexture(
-                    //#if MC>=12105
-                    null,
-                    //#endif
-                    closableImage);
-            Minecraft.getInstance().getTextureManager().register(identifier, closableBackedTexture);
+                    DynamicTexture closableBackedTexture = new DynamicTexture(
+                            //#if MC>=12105
+                            null,
+                            //#endif
+                            closableImage);
+                    Minecraft.getInstance().getTextureManager().register(identifier, closableBackedTexture);
+                } catch (Exception e) {
+                    logError("registering native image failed (inner): " + e);
+                }
+            });
 
             return true;
         } catch (Exception e) {

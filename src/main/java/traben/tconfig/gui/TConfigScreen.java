@@ -57,12 +57,20 @@ public class TConfigScreen extends Screen {
     }
 
     @Override
+    //#if MC >= 26.1
+    //$$ public void extractRenderState(final GuiGraphicsExtractor context, final int mouseX, final int mouseY, final float delta) {
+    //#else
     public void render(final GuiGraphics context, final int mouseX, final int mouseY, final float delta) {
+    //#endif
         //#if MC == 12001
         //$$ this.renderBackground(context);
         //#endif
 
+        //#if MC >= 26.1
+        //$$ super.extractRenderState(context, mouseX, mouseY, delta);
+        //#else
         super.render(context, mouseX, mouseY, delta);
+        //#endif
         context.drawCenteredString(font, title, width / 2, 15, 0xFFFFFFFF);
 
     }

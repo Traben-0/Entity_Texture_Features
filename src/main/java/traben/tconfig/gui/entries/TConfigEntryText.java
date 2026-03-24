@@ -160,8 +160,20 @@ public class TConfigEntryText extends TConfigEntry {
         //$$ public void render(final GuiGraphics context, final int index, final int y, final int x, final int entryWidth, final int entryHeight, final int mouseX, final int mouseY, final boolean hovered, final float tickDelta) {
         //$$     lastWidgetRendered = getWidget(x, y, entryWidth, entryHeight);
         //#endif
-            widget.render(context, mouseX, mouseY, tickDelta);
-            widget2.render(context, mouseX, mouseY, tickDelta);
+            widget.
+                    //#if MC >= 26.1
+                    //$$ extractRenderState
+                    //#else
+                    render
+                    //#endif
+                            (context, mouseX, mouseY, tickDelta);
+            widget2.
+                    //#if MC >= 26.1
+                    //$$ extractRenderState
+                    //#else
+                    render
+                    //#endif
+                            (context, mouseX, mouseY, tickDelta);
         }
     }
 }

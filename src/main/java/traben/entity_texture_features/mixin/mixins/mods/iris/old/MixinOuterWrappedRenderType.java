@@ -1,5 +1,5 @@
 package traben.entity_texture_features.mixin.mixins.mods.iris.old;
-//#if MC < 12004 && MC >= 12002 && !FORGE
+//#if MC < 12004 && MC >= 12002 && IRIS
 //$$ import net.coderbot.iris.layer.OuterWrappedRenderType;
 //$$ import net.minecraft.client.renderer.RenderType;
 //$$ import net.minecraft.resources.ResourceLocation;

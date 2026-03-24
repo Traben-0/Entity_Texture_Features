@@ -30,18 +30,22 @@ EntityRenderer<EnderDragon, net.minecraft.client.renderer.entity.state.EnderDrag
 //#endif
 {
 
+    //#if MC < 26.1
     @Final
     @Shadow
     private static ResourceLocation DRAGON_LOCATION;          // = new Identifier("textures/entity/enderdragon/dragon.png");
-    @Final
-    @Shadow
-    private static ResourceLocation DRAGON_EYES_LOCATION;      // = new Identifier("textures/entity/enderdragon/dragon_eyes.png");
     @Final
     @Shadow
     private static RenderType RENDER_TYPE;   //= RenderLayer.getEntityCutoutNoCull(TEXTURE);
     @Final
     @Shadow
     private static RenderType DECAL;    //= RenderLayer.getEntityDecal(TEXTURE);
+    //#endif
+
+    @Final
+    @Shadow
+    private static ResourceLocation DRAGON_EYES_LOCATION;      // = new Identifier("textures/entity/enderdragon/dragon_eyes.png");
+
     @Final
     @Shadow
     private static RenderType EYES;     //= RenderLayer.getEyes(EYE_TEXTURE);
@@ -52,9 +56,11 @@ EntityRenderer<EnderDragon, net.minecraft.client.renderer.entity.state.EnderDrag
     }
 
     //#if MC >= 12109
+    //#if MC < 26.1
     @ModifyArg(method = "submit(Lnet/minecraft/client/renderer/entity/state/EnderDragonRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/CameraRenderState;)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/OrderedSubmitNodeCollector;submitModel(Lnet/minecraft/client/model/Model;Ljava/lang/Object;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/RenderType;IIILnet/minecraft/client/renderer/texture/TextureAtlasSprite;ILnet/minecraft/client/renderer/feature/ModelFeatureRenderer$CrumblingOverlay;)V"))
     private RenderType etf$returnAlteredTexture(RenderType texturedRenderLayer) { return getType(texturedRenderLayer); }
+    //#endif
 
     @ModifyArg(method = "submit(Lnet/minecraft/client/renderer/entity/state/EnderDragonRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/CameraRenderState;)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/SubmitNodeCollector;submitModel(Lnet/minecraft/client/model/Model;Ljava/lang/Object;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/RenderType;IIILnet/minecraft/client/renderer/feature/ModelFeatureRenderer$CrumblingOverlay;)V"))
@@ -76,6 +82,7 @@ EntityRenderer<EnderDragon, net.minecraft.client.renderer.entity.state.EnderDrag
     private static @Nullable RenderType getType(final RenderType texturedRenderLayer) {
         if (ETF.config().getConfig().canDoCustomTextures()) {
             try {
+                //#if MC < 26.1
                 // recreate each frame so ETF can modify
                 if (DECAL.equals(texturedRenderLayer)) {
                     return
@@ -93,7 +100,9 @@ EntityRenderer<EnderDragon, net.minecraft.client.renderer.entity.state.EnderDrag
                             RenderType
                             //#endif
                                     .entityCutoutNoCull(DRAGON_LOCATION);
-                } else if (EYES.equals(texturedRenderLayer)) {
+                } else
+                //#endif
+                if (EYES.equals(texturedRenderLayer)) {
                     return
                             //#if MC>= 12111
                             //$$ net.minecraft.client.renderer.rendertype.RenderTypes

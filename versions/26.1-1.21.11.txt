@@ -1,0 +1,27 @@
+
+net.minecraft.client.gui.GuiGraphicsExtractor net.minecraft.client.gui.GuiGraphics
+net.minecraft.client.gui.GuiGraphicsExtractor blit() drawTexture()
+net.minecraft.client.gui.GuiGraphicsExtractor blitSprite() drawGuiTexture()
+net.minecraft.client.gui.GuiGraphicsExtractor text() drawString()
+net.minecraft.client.gui.GuiGraphicsExtractor centeredText() drawCenteredString()
+
+net.minecraft.client.renderer.rendertype.RenderTypes entityCutout() entityCutoutNoCull()
+net.minecraft.client.renderer.rendertype.RenderTypes entityCutoutCull() entityCutout()
+
+net.minecraft.client.renderer.LevelRenderer getLightCoords() getLightColor()
+
+net.minecraft.client.gui.components.AbstractWidget extractRenderState() render()
+net.minecraft.client.gui.screens.Screen extractRenderState() render()
+net.minecraft.client.gui.components.ImageButton extractRenderState() render()
+net.minecraft.client.gui.components.StringWidget extractRenderState() render()
+net.minecraft.client.gui.components.AbstractSelectionList.Entry extractContent() renderContent()
+net.minecraft.client.gui.components.Button.Plain extractContents() renderContents()
+net.minecraft.client.gui.components.AbstractSelectionList extractListSeparators() renderListSeparators()
+net.minecraft.client.gui.components.AbstractSelectionList extractListBackground() renderListBackground()
+net.minecraft.client.gui.screens.inventory.InventoryScreen extractEntityInInventoryFollowsMouse() renderEntityInInventoryFollowsMouse()
+
+net.minecraft.client.resources.model.sprite.Material net.minecraft.client.resources.model.Material
+net.minecraft.client.renderer.entity.ItemEntityRenderer net.minecraft.client.renderer.entity.ItemRenderer
+net.minecraft.client.renderer.block.model.BlockModel net.minecraft.client.renderer.block.model.BlockStateModel
+net.minecraft.client.renderer.state.level.CameraRenderState net.minecraft.client.renderer.state.CameraRenderState
+

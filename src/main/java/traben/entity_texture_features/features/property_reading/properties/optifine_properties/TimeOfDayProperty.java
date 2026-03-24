@@ -29,7 +29,11 @@ public class TimeOfDayProperty extends LongRangeFromStringArrayProperty {
     @Override
     protected Long getRangeValueFromEntity(ETFEntityRenderState entity) {
         if (entity.world() != null)
-            return entity.world().getDayTime();
+            //#if MC >= 26.1
+            //$$ return entity.world().getOverworldClockTime() % 24000;
+            //#else
+            return entity.world().getDayTime() % 24000;
+            //#endif
         return null;
     }
 

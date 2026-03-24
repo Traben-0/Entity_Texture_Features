@@ -1,5 +1,6 @@
 package traben.entity_texture_features.mixin.mixins.mods.imediatelyfast;
 
+//#if IMMEDIATELYFAST
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -41,3 +42,11 @@ public class MixinBatchableBufferSource {
     }
 
 }
+//#else
+//$$ import net.minecraft.client.Minecraft;
+//$$ import org.spongepowered.asm.mixin.Mixin;
+//$$ import traben.entity_texture_features.mixin.CancelTarget;
+//$$
+//$$ @Mixin(CancelTarget.class)
+//$$ public class MixinBatchableBufferSource {}
+//#endif

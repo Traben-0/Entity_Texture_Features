@@ -6,7 +6,6 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -149,7 +148,7 @@ public final class ETFConfig extends TConfig {
             var pos = BlockPos.containing(entity.getLightProbePosition(tickDelta));
             int block = entity.level().getBrightness(LightLayer.SKY, pos);//LightmapTextureManager.getBlockLightCoordinates(light);
             int sky = entity.isOnFire() ? 15 : entity.level().getBrightness(LightLayer.BLOCK, pos);//LightmapTextureManager.getSkyLightCoordinates(light);
-            return LightTexture.pack(Math.max(block, sky), lightETF);
+            return ETFUtils2.packLight(Math.max(block, sky), lightETF);
         }
         return light;
     }
@@ -172,7 +171,7 @@ public final class ETFConfig extends TConfig {
 
             int block = world.getBrightness(LightLayer.BLOCK, pos);
             int sky = world.getBrightness(LightLayer.SKY, pos);
-            return LightTexture.pack(Math.max(block, sky), lightETF);
+            return ETFUtils2.packLight(Math.max(block, sky), lightETF);
         }
         return light;
     }

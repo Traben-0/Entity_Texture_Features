@@ -104,7 +104,9 @@ public abstract class MixinPackScreen extends Screen {
 
             //override required because textured button widget just doesnt work
             @Override
-            //#if MC >= 12111
+            //#if MC >= 26.1
+            //$$ public void extractContents(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+            //#elseif MC >= 1.21.11
             //$$ public void renderContents(GuiGraphics context, int mouseX, int mouseY, float delta) {
             //#else
             public void renderWidget(GuiGraphics context, int mouseX, int mouseY, float delta) {

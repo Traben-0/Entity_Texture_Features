@@ -243,8 +243,20 @@ public class ETFConfigScreenSkinToolOutcome extends ETFScreenOldCompat {
     }
 
     @Override
-    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
-        super.render(context, mouseX, mouseY, delta);
+    public void
+        //#if MC >= 26.1
+        //$$ extractRenderState
+        //#else
+        render
+        //#endif
+    (GuiGraphics context, int mouseX, int mouseY, float delta) {
+        super.
+                //#if MC >= 26.1
+                //$$ extractRenderState
+                //#else
+                render
+                //#endif
+                        (context, mouseX, mouseY, delta);
 
         String[] strings =
                 ETF.getTextFromTranslation(

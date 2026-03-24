@@ -1,5 +1,5 @@
 package traben.entity_texture_features.mixin.mixins.mods.sodium;
-//#if MC >= 12100 || MC == 12002
+//#if MC >= 12100 || MC == 12002 || !SODIUM
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import traben.entity_texture_features.mixin.CancelTarget;

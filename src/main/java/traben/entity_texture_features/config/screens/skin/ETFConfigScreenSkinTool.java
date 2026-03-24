@@ -439,8 +439,20 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
     }
 
     @Override
-    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
-        super.render(context, mouseX, mouseY, delta);
+    public void
+        //#if MC >= 26.1
+        //$$ extractRenderState
+        //#else
+        render
+        //#endif
+    (GuiGraphics context, int mouseX, int mouseY, float delta) {
+        super.
+                //#if MC >= 26.1
+                //$$ extractRenderState
+                //#else
+                render
+                //#endif
+                        (context, mouseX, mouseY, delta);
 
 
         LocalPlayer player = Minecraft.getInstance().player;
@@ -965,8 +977,13 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
         }
 
         @Override
+        //#if MC >= 26.1
+        //$$ public void extractRenderState(final GuiGraphicsExtractor context, final int mouseX, final int mouseY, final float delta) {
+        //$$     super.extractRenderState(context, mouseX, mouseY, delta);
+        //#else
         public void render(final GuiGraphics context, final int mouseX, final int mouseY, final float delta) {
             super.render(context, mouseX, mouseY, delta);
+        //#endif
 
             context.drawCenteredString(font, ETF.getTextFromTranslation("config.entity_texture_features.skin_editor.overlays.1"), width / 2, height / 2, 0xFFFFFFFF);
             context.drawCenteredString(font, ETF.getTextFromTranslation("config.entity_texture_features.skin_editor.overlays.2"), width / 2, height / 2 + 11, 0xFFFFFFFF);

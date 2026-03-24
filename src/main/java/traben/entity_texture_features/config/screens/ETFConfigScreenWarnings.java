@@ -80,8 +80,20 @@ public class ETFConfigScreenWarnings extends TConfigScreen {
     }
 
     @Override
-    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
-        super.render(context, mouseX, mouseY, delta);
+    public void
+        //#if MC >= 26.1
+        //$$ extractRenderState
+        //#else
+        render
+        //#endif
+    (GuiGraphics context, int mouseX, int mouseY, float delta) {
+        super.
+                //#if MC >= 26.1
+                //$$ extractRenderState
+                //#else
+                render
+                //#endif
+                        (context, mouseX, mouseY, delta);
 
         context.drawCenteredString(font, ETF.getTextFromTranslation("config." + ETF.MOD_ID + ".warn_instruction"), (int) (width * 0.5), (int) (height * 0.18), 0xFFFFFF);
         double offset = 0.0;

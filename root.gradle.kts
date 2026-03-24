@@ -7,7 +7,7 @@ plugins {
     // Advanced users may use multiple (potentially independent) multi-version trees in different sub-projects.
     // This is currently equivalent to applying `com.replaymod.preprocess-root`.
     kotlin("jvm") version "2.0.0" apply false
-    id("gg.essential.loom") version "1.11.38" apply false // https://repo.essential.gg/#/public/gg/essential/loom/gg.essential.loom.gradle.plugin
+    id("gg.essential.loom") version "1.15.48" apply false // https://repo.essential.gg/#/public/gg/essential/loom/gg.essential.loom.gradle.plugin
     id("gg.essential.multi-version.root")
 }
 
@@ -24,47 +24,52 @@ preprocess {
 
     fun Int.formatVersionNumber(): String {
         val str = this.toString()
-        val part2 = str.substring(1, 3)
-        val part3 = str.substring(3, 5).trimStart('0')
-        return "${str[0]}.$part2${if (part3.isNotEmpty()) ".$part3" else ""}"
+        val l = str.length
+        val major = str.substring((l - 6).coerceAtLeast(0), l - 4)
+        val minor = str.substring(l - 4, l - 2).trimStart('0')
+        val patch = str.substring(l - 2, l).trimStart('0')
+        return "$major.$minor${if (patch.isNotEmpty()) ".$patch" else ""}"
     }
 
     fun Node?.connectToVersion(mcVersion: Int, forge: Boolean = true, neoforge: Boolean = true): Node {
         val verString = mcVersion.formatVersionNumber()
 
-        val fabric = createNode("$verString-fabric", mcVersion, "mojmap")
-        this?.let { fabric.link(it) }
+        // Issue: these need to be created before fabric's node is, only affects 26.1+
+        val forgeNode = if (forge) createNode("$verString-forge", mcVersion, "srg") else null
+        val neoforgeNode = if (neoforge) createNode("$verString-neoforge", mcVersion, "mojmap") else null
 
-        if (forge) {
-            createNode("$verString-forge", mcVersion, "srg")
-            .link(fabric)
-        }
-        if (neoforge) {
-            createNode("$verString-neoforge", mcVersion, "mojmap")
-            .link(fabric)
+        val fabricNode = createNode("$verString-fabric", mcVersion, "mojmap")
+
+        forgeNode?.link(fabricNode)
+        neoforgeNode?.link(fabricNode)
+
+        this?.let {
+            val itVerStr = it.mcVersion.formatVersionNumber()
+            val file = projectDir.resolve("versions/$itVerStr-$verString.txt")
+            it.link(fabricNode, file.takeIf(File::exists))
         }
 
-        return fabric
+        return fabricNode
     }
-
-
-    val current = null.connectToVersion(12109)
-
-    current.connectToVersion(12111)
 
     // next, then remap the main project to this and set the current to old
     //current.connectToVersion(12109, forge = false, neoforge = false)
+//    val n = createNode("26.1-neoforge", 26_01_00, "mojmap")
+//    val fabric = createNode("26.1-fabric", 26_01_00, "mojmap")
+//        fabric.link(n)
 
-    // older
-    current.connectToVersion(12106)
-        .connectToVersion(12105)
-        .connectToVersion(12104)
-        .connectToVersion(12103) // would normally do 12102 to have the lowest compatible version but forge 1.21.2 doesn't exist
-        .connectToVersion(12100)
-        .connectToVersion(12006)
-        .connectToVersion(12004)
-        .connectToVersion(12002)
-        .connectToVersion(12001, neoforge = false)
+    null.connectToVersion(26_01_00, forge = false, neoforge = true)
+        .connectToVersion(1_21_11)
+        .connectToVersion(1_21_09)
+        .connectToVersion(1_21_06)
+        .connectToVersion(1_21_05)
+        .connectToVersion(1_21_04)
+        .connectToVersion(1_21_03) // would normally do 12102 to have the lowest compatible version but forge 1.21.2 doesn't exist
+        .connectToVersion(1_21_00)
+        .connectToVersion(1_20_06)
+        .connectToVersion(1_20_04)
+        .connectToVersion(1_20_02)
+        .connectToVersion(1_20_01, neoforge = false)
 
     // And then you need to tell the preprocessor which versions it should directly convert between.
     // This should form a directed graph with no cycles (i.e. a tree), which the preprocessor will then traverse to

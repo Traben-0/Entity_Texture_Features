@@ -17,6 +17,7 @@ import traben.entity_texture_features.utils.ETFUtils2;
 public abstract class MixinRenderLayer {
 
 
+    @SuppressWarnings("UnresolvedMixinReference")
     @ModifyVariable(
             method = {
                     "entitySolid",
@@ -36,7 +37,11 @@ public abstract class MixinRenderLayer {
                     //#endif
                     "entityTranslucentEmissive(Lnet/minecraft/resources/ResourceLocation;Z)Lnet/minecraft/client/renderer/RenderType;",
                     "armorCutoutNoCull",
-                    "entityShadow"
+                    "entityShadow",
+                    "entityTranslucentCullItemTarget",
+                    "entityCutoutZOffset(Lnet/minecraft/resources/Identifier;Z)Lnet/minecraft/client/renderer/rendertype/RenderType;",
+                    "entityCutoutDissolve",
+                    "entitySolidZOffsetForward",
             },
             at = @At(value = "HEAD"),
             index = 0, argsOnly = true)

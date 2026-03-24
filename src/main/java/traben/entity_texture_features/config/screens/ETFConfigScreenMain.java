@@ -137,8 +137,20 @@ public class ETFConfigScreenMain extends TConfigScreenMain {
     }
 
     @Override
-    public void render(final GuiGraphics context, final int mouseX, final int mouseY, final float delta) {
-        super.render(context, mouseX, mouseY, delta);
+    public void
+        //#if MC >= 26.1
+        //$$ extractRenderState
+        //#else
+        render
+        //#endif
+    (final GuiGraphics context, final int mouseX, final int mouseY, final float delta) {
+        super.
+                //#if MC >= 26.1
+                //$$ extractRenderState
+                //#else
+                render
+                //#endif
+                        (context, mouseX, mouseY, delta);
         //get a random entity and display for 5 seconds
         //noinspection ConstantValue
         if (timer + 5000 < System.currentTimeMillis() && Minecraft.getInstance().player != null && Minecraft.getInstance().player.level() != null) {

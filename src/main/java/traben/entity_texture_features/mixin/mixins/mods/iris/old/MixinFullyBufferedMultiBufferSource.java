@@ -1,6 +1,6 @@
 package traben.entity_texture_features.mixin.mixins.mods.iris.old;
 
-//#if MC < 12004 && MC >= 12002 && !FORGE
+//#if MC < 12004 && MC >= 12002 && IRIS
 //$$ import com.mojang.blaze3d.vertex.VertexConsumer;
 //$$ import net.coderbot.batchedentityrendering.impl.FullyBufferedMultiBufferSource;
 //$$ import net.minecraft.client.renderer.MultiBufferSource;

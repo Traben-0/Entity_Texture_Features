@@ -56,7 +56,7 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
 
     @Unique
     private void uVertex(final PoseStack.Pose matrix, final VertexConsumer vertexConsumer, final float x, final float y, final float u, final float v, final float z, final int normalX, final int normalY, final int normalZ, final int light) {
-        this.vertex(
+        vertex(
                 //#if MC >= 12006
                 matrix
                 //#else
@@ -65,7 +65,11 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
                 , vertexConsumer, x, y, u, v, z, normalX, normalY, normalZ, light);
     }
 
-    //#if MC >= 12006
+    //#if MC >= 26.1
+    //$$ @Shadow
+    //$$ protected static void vertex(PoseStack.Pose par1, VertexConsumer par2, float par3, float par4, float par5, float par6, float par7, int par8, int par9, int par10, int par11) {
+    //$$ }
+    //#elseif MC >= 12006
     @Shadow
     protected abstract void vertex(final PoseStack.Pose matrix, final VertexConsumer vertexConsumer, final float x, final float y, final float u, final float v, final float z, final int normalX, final int normalY, final int normalZ, final int light);
     //#else

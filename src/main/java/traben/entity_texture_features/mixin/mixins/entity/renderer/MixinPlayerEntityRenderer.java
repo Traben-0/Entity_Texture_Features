@@ -45,8 +45,6 @@ import traben.entity_texture_features.utils.ETFUtils2;
 
 @Mixin(AvatarRenderer.class)
 public abstract class MixinPlayerEntityRenderer<AvatarlikeEntity extends Avatar & ClientAvatarEntity> extends LivingEntityRenderer<AvatarlikeEntity, AvatarRenderState, PlayerModel> implements ETFPlayerSkinHolder {
-    @Shadow
-    protected abstract void submitNameTag(AvatarRenderState avatarRenderState, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) ;
 
 
 //#elseif MC >= 12103

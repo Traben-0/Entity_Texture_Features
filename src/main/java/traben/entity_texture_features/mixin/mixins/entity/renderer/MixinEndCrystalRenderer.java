@@ -1,5 +1,6 @@
 package traben.entity_texture_features.mixin.mixins.entity.renderer;
 
+//#if MC < 26.1
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EndCrystalRenderer;
 import net.minecraft.resources.ResourceLocation;
@@ -38,8 +39,12 @@ public abstract class MixinEndCrystalRenderer {
         }
         return renderType;
     }
-
-    //todo multiversioning
 }
-
+//#else
+//$$ import org.spongepowered.asm.mixin.Mixin;
+//$$ import traben.entity_texture_features.mixin.CancelTarget;
+//$$
+//$$ @Mixin(CancelTarget.class)
+//$$ public class MixinEndCrystalRenderer {}
+//#endif
 

@@ -1,5 +1,6 @@
 package traben.entity_texture_features.mixin.mixins.mods.skin_layers;
 
+//#if 3DSKINLAYERS
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -25,7 +26,7 @@ import traben.entity_texture_features.utils.ETFVertexConsumer;
  * this is a copy of {@link MixinModelPart}
  */
 @Pseudo
-@Mixin(value = CustomizableModelPart.class)// implements Mesh
+@Mixin(value = CustomizableModelPart.class) // implements Mesh
 public abstract class MixinCustomizableModelPart {
 
     //#if MC >= 12006
@@ -124,6 +125,12 @@ public abstract class MixinCustomizableModelPart {
             }
         }
     }
-
-
 }
+//#else
+//$$ import net.minecraft.client.Minecraft;
+//$$ import org.spongepowered.asm.mixin.Mixin;
+//$$ import traben.entity_texture_features.mixin.CancelTarget;
+//$$
+//$$ @Mixin(CancelTarget.class)
+//$$ public class MixinCustomizableModelPart {}
+//#endif

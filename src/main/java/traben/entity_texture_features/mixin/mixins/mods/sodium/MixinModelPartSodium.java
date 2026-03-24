@@ -1,19 +1,14 @@
 package traben.entity_texture_features.mixin.mixins.mods.sodium;
 
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.caffeinemc.mods.sodium.api.vertex.buffer.VertexBufferWriter;
 import org.spongepowered.asm.mixin.Mixin;
 
-//#if MC >= 12105
+//#if MC >= 12105 || !SODIUM
 // todo seems to be no longer needed as sodium mixins to Cube now
-import org.spongepowered.asm.mixin.Unique;
 import traben.entity_texture_features.mixin.CancelTarget;
-import traben.entity_texture_features.utils.ETFUtils2;
 
 @Mixin(value = CancelTarget.class)
 public abstract class MixinModelPartSodium { }
 //#else
-//$$
 //$$ import com.mojang.blaze3d.vertex.BufferBuilder;
 //$$ import com.mojang.blaze3d.vertex.PoseStack;
 //$$ import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -102,7 +97,7 @@ public abstract class MixinModelPartSodium { }
 //$$                             //reset render layer stuff behind the scenes if special renders occurred
 //$$                             //todo check the 1.21 stuff is needed for sodium
                             //#if MC < 12100
-        //$$         provider.getBuffer(layer);
+                            //$$ provider.getBuffer(layer);
                             //#endif
 //$$                         }
 //$$                     }
@@ -114,25 +109,25 @@ public abstract class MixinModelPartSodium { }
 //$$     }
 //$$ //todo check the 1.21 stuff is needed for sodium
     //#if MC >= 12100
-//$$
-//$$
-//$$     @ModifyVariable(method = "render",
-//$$             at = @At("HEAD"), ordinal = 0, argsOnly = true)
-//$$     private static VertexBufferWriter etf$modify(final VertexBufferWriter value) {
-//$$         if (value instanceof BufferBuilder builder && !builder.building){
-//$$             if (value instanceof ETFVertexConsumer etf
-//$$                     && etf.etf$getRenderLayer() != null
-//$$                     && etf.etf$getProvider() != null){
-//$$                 var a = etf.etf$getProvider().getBuffer(etf.etf$getRenderLayer());
-//$$                 VertexBufferWriter a2 = etf$convertOrLog(a);
-//$$                 if (a2 != null) {
-//$$                     return a2;
-//$$                 }
-//$$             }
-//$$         }
-//$$         return value;
-//$$     }
-//$$
+    //$$
+    //$$
+    //$$     @ModifyVariable(method = "render",
+    //$$             at = @At("HEAD"), ordinal = 0, argsOnly = true)
+    //$$     private static VertexBufferWriter etf$modify(final VertexBufferWriter value) {
+    //$$         if (value instanceof BufferBuilder builder && !builder.building){
+    //$$             if (value instanceof ETFVertexConsumer etf
+    //$$                     && etf.etf$getRenderLayer() != null
+    //$$                     && etf.etf$getProvider() != null){
+    //$$                 var a = etf.etf$getProvider().getBuffer(etf.etf$getRenderLayer());
+    //$$                 VertexBufferWriter a2 = etf$convertOrLog(a);
+    //$$                 if (a2 != null) {
+    //$$                     return a2;
+    //$$                 }
+    //$$             }
+    //$$         }
+    //$$         return value;
+    //$$     }
+    //$$
     //#endif
 //$$ }
 //#endif

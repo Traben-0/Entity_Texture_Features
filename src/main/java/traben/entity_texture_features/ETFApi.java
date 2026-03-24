@@ -142,9 +142,13 @@ public final class ETFApi {
      * @return the translation key
      */
     public static String getBlockEntityTypeToTranslationKey(BlockEntityType<?> type) {
+        //#if MC >= 26.1
+        //$$ return java.util.Objects.requireNonNullElse(net.minecraft.core.registries.BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(type), "null").toString();
+        //#else
         var id = BlockEntityType.getKey(type);
         if (id == null) return null;
         return "block." + id.getNamespace() + '.' + id.getPath();
+        //#endif
     }
 
     /**

@@ -26,6 +26,7 @@ public class TrueRandomProvider implements ETFApi.ETFVariantSuffixProvider {
 
     private final int[] suffixes;
     private final String packname;
+    @SuppressWarnings("removal")
     protected EntityRandomSeedFunction entityRandomSeedFunction = ETFEntityRenderState::optifineId;
 
     private TrueRandomProvider(String secondPack, int[] suffixes) {
@@ -89,7 +90,7 @@ public class TrueRandomProvider implements ETFApi.ETFVariantSuffixProvider {
         return 1;
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "removal"})
     @Override
     public int getSuffixForETFEntity(ETFEntityRenderState entityToBeTested) {
         if (entityToBeTested == null) return 0;
@@ -97,6 +98,7 @@ public class TrueRandomProvider implements ETFApi.ETFVariantSuffixProvider {
     }
 
     @Override
+    @SuppressWarnings("removal")
     public void setRandomSupplier(final EntityRandomSeedFunction entityRandomSeedFunction) {
         if (entityRandomSeedFunction != null) {
             this.entityRandomSeedFunction = entityRandomSeedFunction;

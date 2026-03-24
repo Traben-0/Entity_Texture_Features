@@ -24,7 +24,7 @@ import traben.entity_texture_features.utils.ETFUtils2;
 
 
 public class BlocksProperty extends StringArrayOrRegexProperty {
-
+    //#if MC < 26.1
     private static final Function<Map.Entry<Property<?>, Comparable<?>>, String> PROPERTY_MAP_PRINTER = new Function<>() {
         public String apply(@Nullable Map.Entry<Property<?>, Comparable<?>> entry) {
             if (entry == null) {
@@ -41,6 +41,7 @@ public class BlocksProperty extends StringArrayOrRegexProperty {
             return property.getName((T) value);
         }
     };
+    //#endif
     protected final Function<BlockState, Boolean> blockStateMatcher;
     protected final boolean botherWithDeepStateCheck;
 
@@ -84,8 +85,18 @@ public class BlocksProperty extends StringArrayOrRegexProperty {
 
     private String getFromStateBlockNameWithStateData(BlockState state) {
         String block = getFromStateBlockNameOnly(state);
-        if (!state.getValues().isEmpty())
+        if (!state.getValues()
+                //#if MC >= 26.1
+                //$$ .toList()
+                //#endif
+                .isEmpty())
+            //#if MC >= 26.1
+            //$$ block = block + ':' + state.getValues().map(
+            //$$         it -> it == null ? "<NULL>" : it.property().getName()  + "=" + it.valueName()
+            //$$ ).collect(Collectors.joining(":"));
+            //#else
             block = block + ':' + state.getValues().entrySet().stream().map(PROPERTY_MAP_PRINTER).collect(Collectors.joining(":"));
+            //#endif
 
         if (doPrint)ETFUtils2.logMessage("Blocks property print (with blockstate data): [" + block+"]");
         return block;

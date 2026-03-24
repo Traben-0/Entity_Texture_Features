@@ -7,7 +7,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -112,10 +111,10 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFScreenOldCompat {
                     }
                 }, Supplier::get) {
 
-            //#if MC >= 12111
-            //$$    @Override
-            //$$        protected void renderContents(GuiGraphics guiGraphics, int i, int j, float f) {
-            //$$    }
+            //#if MC >= 26.1
+            //$$ @Override protected void extractContents(GuiGraphicsExtractor guiGraphics, int i, int j, float f) {}
+            //#elseif MC >= 12111
+            //$$ @Override protected void renderContents(GuiGraphics guiGraphics, int i, int j, float f) {}
             //#else
             @Override
             protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float delta) {
@@ -143,8 +142,20 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFScreenOldCompat {
     }
 
     @Override
-    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
-        super.render(context, mouseX, mouseY, delta);
+    public void
+        //#if MC >= 26.1
+        //$$ extractRenderState
+        //#else
+        render
+        //#endif
+    (GuiGraphics context, int mouseX, int mouseY, float delta) {
+        super.
+                //#if MC >= 26.1
+                //$$ extractRenderState
+                //#else
+                render
+                //#endif
+                        (context, mouseX, mouseY, delta);
 
         int pixelSize = (int) (this.height * 0.7 / 64);
 
