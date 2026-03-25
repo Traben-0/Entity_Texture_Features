@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.utils.ETFUtils2;
 
+import java.util.HashMap;
 import java.util.Optional;
 
 public enum ETFDirectory {
@@ -27,7 +28,7 @@ public enum ETFDirectory {
     }
 
 
-    public static Object2ReferenceOpenHashMap<@NotNull ResourceLocation, @NotNull ETFDirectory> getCache() {
+    public static HashMap<@NotNull ResourceLocation, @NotNull ETFDirectory> getCache() {
         return ETFManager.getInstance().ETF_DIRECTORY_CACHE;
     }
 
@@ -46,7 +47,7 @@ public enum ETFDirectory {
 
     @NotNull
     public static ETFDirectory getDirectoryOf(@NotNull ResourceLocation vanillaIdentifier) {
-        Object2ReferenceOpenHashMap<@NotNull ResourceLocation, ETFDirectory> cache = getCache();
+        HashMap<@NotNull ResourceLocation, ETFDirectory> cache = getCache();
         var value = cache.get(vanillaIdentifier);
         if (value == null) {
             value = findDirectoryOf(vanillaIdentifier);
@@ -92,7 +93,7 @@ public enum ETFDirectory {
         } else {
             //must be multiple
             //find the one in the highest resource-pack
-            Object2ReferenceOpenHashMap<String, ETFDirectory> resourcePackNames = new Object2ReferenceOpenHashMap<>();
+            HashMap<String, ETFDirectory> resourcePackNames = new HashMap<>();
 
             for (ETFDirectory directory :
                     foundDirectories) {

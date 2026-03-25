@@ -1,7 +1,6 @@
 package traben.entity_texture_features.features.property_reading.properties.optifine_properties;
 
 import it.unimi.dsi.fastutil.Function;
-import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETF;
@@ -17,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -39,7 +39,7 @@ public class NBTProperty extends RandomProperty {
     protected NBTProperty(Properties properties, int propertyNum, String nbtPrefix) throws RandomPropertyException {
         prefix = nbtPrefix;
         final String keyPrefix = prefix+"." + propertyNum + '.';
-        NBT_MAP = new Object2ObjectLinkedOpenHashMap<>();
+        NBT_MAP = new LinkedHashMap<>();
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
             String key = entry.getKey().toString();//are null keys allowed in properties?
             if (key != null && key.startsWith(keyPrefix)) {

@@ -1,4 +1,10 @@
 
+[7.0.12]
+- fixed ETF causing issues with block and item textures in 26.1
+
+[7.0.11]
+- fixed ArrayIndexOutOfBoundsException crash
+
 [7.0.9]
 - added random entity properties `seedOffset` and `seedSource`
 - removed certain OptiFine limitations on newer versions where they have been lifted

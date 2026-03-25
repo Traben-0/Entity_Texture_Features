@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import traben.tconfig.gui.TConfigScreenList;
 
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.function.Supplier;
 
 import net.minecraft.client.Minecraft;
@@ -16,7 +17,7 @@ import net.minecraft.network.chat.Component;
 
 public class TConfigEntryCategory extends TConfigEntry {
 
-    private final Object2ObjectLinkedOpenHashMap<String, TConfigEntry> options = new Object2ObjectLinkedOpenHashMap<>();
+    private final LinkedHashMap<String, TConfigEntry> options = new LinkedHashMap<>();
     private final String translationKey;
     protected boolean fullWidthBackgroundEvenIfSmaller = false;
     private TConfigScreenList screen = null;
@@ -39,7 +40,7 @@ public class TConfigEntryCategory extends TConfigEntry {
         this.align = align;
     }
 
-    public Object2ObjectLinkedOpenHashMap<String, TConfigEntry> getOptions() {
+    public LinkedHashMap<String, TConfigEntry> getOptions() {
         return options;
     }
 

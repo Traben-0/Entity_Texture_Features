@@ -3,7 +3,6 @@ package traben.entity_texture_features.config;
 import com.demonwav.mcdev.annotations.Translatable;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
@@ -29,6 +28,7 @@ import traben.entity_texture_features.utils.ETFEntity;
 import traben.tconfig.gui.entries.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static traben.entity_texture_features.ETF.MOD_ID;
@@ -557,7 +557,7 @@ public final class ETFConfig extends TConfig {
         }
     }
 
-    public static class String2EnumNullMap<E extends Enum<E>> extends Object2ObjectOpenHashMap<String, E> {
+    public static class String2EnumNullMap<E extends Enum<E>> extends HashMap<String, E> {
 
 
         public void putNullable(final String s, final E v) {

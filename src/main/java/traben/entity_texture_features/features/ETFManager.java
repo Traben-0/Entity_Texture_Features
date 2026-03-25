@@ -1,7 +1,6 @@
 package traben.entity_texture_features.features;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
+
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,6 +20,7 @@ import traben.entity_texture_features.utils.ETFUtils2;
 import traben.entity_texture_features.utils.EntityIntLRU;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
@@ -45,11 +45,11 @@ public class ETFManager {
     public final ArrayList<String> KNOWN_RESOURCEPACK_ORDER = new ArrayList<>();
     public final ObjectOpenHashSet<EntityType<?>> ENTITY_TYPE_IGNORE_PARTICLES = new ObjectOpenHashSet<>();
     // this is a cache of all known ETFTexture versions of any existing resource-pack texture, used to prevent remaking objects
-    public final Object2ReferenceOpenHashMap<@NotNull ResourceLocation, @Nullable ETFTexture> ETF_TEXTURE_CACHE = new Object2ReferenceOpenHashMap<>();
+    public final HashMap<@NotNull ResourceLocation, @Nullable ETFTexture> ETF_TEXTURE_CACHE = new HashMap<>();
     public final EntityIntLRU LAST_SUFFIX_OF_ENTITY = new EntityIntLRU();
     public final EntityIntLRU LAST_RULE_INDEX_OF_ENTITY = new EntityIntLRU();
-    public final Object2ReferenceOpenHashMap<@NotNull ResourceLocation, @NotNull ETFDirectory> ETF_DIRECTORY_CACHE = new Object2ReferenceOpenHashMap<>();// = new Object2ReferenceOpenHashMap<>();
-    private final Object2ObjectOpenHashMap<ResourceLocation, ETFTextureVariator> VARIATOR_MAP = new Object2ObjectOpenHashMap<>();
+    public final HashMap<@NotNull ResourceLocation, @NotNull ETFDirectory> ETF_DIRECTORY_CACHE = new HashMap<>();// = new Object2ReferenceOpenHashMap<>();
+    private final HashMap<ResourceLocation, ETFTextureVariator> VARIATOR_MAP = new HashMap<>();
     public UUID ENTITY_DEBUG = null;
     public Boolean mooshroomBrownCustomShroomExists = null;
     public Boolean mooshroomRedCustomShroomExists = null;
