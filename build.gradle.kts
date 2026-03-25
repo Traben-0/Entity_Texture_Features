@@ -126,7 +126,7 @@ dependencies {
 
     "SODIUM" setVar (
             modImpl("maven.modrinth:sodium:",
-                26_01_00 to null,
+                26_01_00 to ver("Amr4VcZo", null, null),
                 1_21_05 to ver("fVbw1C7i", null,  "dfyNHRhw"),
                 1_21_04 to ver("c3YkZvne", null,  "XgEfENfn"),
                 1_21_03 to ver("rLBgU2jc", null,  "M0CXIL7c"),
@@ -143,7 +143,7 @@ dependencies {
 
     "IRIS" setVar (
             modImpl("maven.modrinth:iris:",
-                26_01_00 to null,
+                26_01_00 to ver("4cGUAiJ6", null, null),
                 //1_21_11 to ver("TSXvi2yD", null,  "t3ruzodq"), //"k9tHcfnb"), //todo why does this break
                 1_21_06 to ver("l77DAK6U", null,  "t3ruzodq"), //"xA5cxBvz"), // same here
                 1_21_05 to ver("U6evbjd0", null,  "t3ruzodq"), //"KAopiPos"),
@@ -169,7 +169,7 @@ dependencies {
 
     if (platform.isFabric) {
         modImpl("maven.modrinth:modmenu:",
-            26_01_00 to "lWZE38V3",
+            26_01_00 to "XIDyVLo7",
             1_21_05 to "R7uVB42W",
             1_21_02 to "PcJvQYqu",
             1_21_00 to "9FL4cmP7",

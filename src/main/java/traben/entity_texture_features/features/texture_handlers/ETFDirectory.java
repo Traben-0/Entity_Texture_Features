@@ -46,8 +46,15 @@ public enum ETFDirectory {
 
     @NotNull
     public static ETFDirectory getDirectoryOf(@NotNull ResourceLocation vanillaIdentifier) {
-        Object2ReferenceOpenHashMap<@NotNull ResourceLocation, @NotNull ETFDirectory> cache = getCache();
-        return cache.computeIfAbsent(vanillaIdentifier, ETFDirectory::findDirectoryOf);
+        Object2ReferenceOpenHashMap<@NotNull ResourceLocation, ETFDirectory> cache = getCache();
+        var value = cache.get(vanillaIdentifier);
+        if (value == null) {
+            value = findDirectoryOf(vanillaIdentifier);
+            cache.put(vanillaIdentifier, value);
+        }
+        return value;
+        // compute if absent can crash
+        //return cache.computeIfAbsent(vanillaIdentifier, ETFDirectory::findDirectoryOf);
     }
 
     @NotNull
