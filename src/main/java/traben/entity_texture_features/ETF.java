@@ -48,6 +48,7 @@ public class ETF {
     public static final int EMISSIVE_FEATURE_LIGHT_VALUE = ETFUtils2.FULL_BRIGHT + 2;
     public static TConfigHandler<ETFConfigScreenWarnings.WarningConfig> warningConfigHandler = null;
     public static boolean IRIS_DETECTED = false;
+    public static boolean FABRIC_API = false;
 
     public static ETFEntityRenderState.ETFRenderStateInit etfRenderStateConstructor = (it)-> new ETFEntityRenderStateViaReference(it); // todo 1.21+ impl that doesn't smuggle entity
 
@@ -71,6 +72,7 @@ public class ETF {
         // check only once
         SKIN_LAYERS_DETECTED = isThisModLoaded("skinlayers3d");
         IRIS_DETECTED = isThisModLoaded("iris") || isThisModLoaded("oculus");
+        FABRIC_API = isThisModLoaded("fabric") || isThisModLoaded("fabric-api");
 
         LOGGER.info("Loading Entity Texture Features, {}", randomQuip());
 

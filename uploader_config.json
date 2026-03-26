@@ -263,30 +263,16 @@
                 "1.21.10"
             ]
         },
-        {
-            "loaders": [
-                "NeoForge"
-            ],
-            "versions": [
-                "1.21.11"
-            ]
-        },
-        {
-            "loaders": [
-                "Forge"
-            ],
-            "versions": [
-                "1.21.11"
-            ]
-        },
-        {
-            "loaders": [
-                "Fabric",
-                "Quilt"
-            ],
-            "versions": [
-                "1.21.11"
-            ]
-        }
+        {"loaders": ["NeoForge"],
+            "versions": ["1.21.11"]},
+        {"loaders": ["Forge"],
+            "versions": ["1.21.11"]},
+        {"loaders": ["Fabric", "Quilt"],
+            "versions": ["1.21.11"]},
+
+        {"loaders": ["NeoForge"],
+            "versions": ["26.1"]},
+        {"loaders": ["Fabric", "Quilt"],
+            "versions": ["26.1"]}
     ]
 }

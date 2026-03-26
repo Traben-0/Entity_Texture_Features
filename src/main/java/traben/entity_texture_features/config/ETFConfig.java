@@ -353,7 +353,7 @@ public final class ETFConfig extends TConfig {
 
     private TConfigEntry getPlayerSkinEditorButton() {
         boolean condition1 = ETF.config().getConfig().skinFeaturesEnabled;
-        boolean condition2 = !ETF.isFabric() || ETF.isThisModLoaded("fabric");
+        boolean condition2 = !ETF.isFabric() || ETF.FABRIC_API;
         boolean condition3 = Minecraft.getInstance().player != null;
         boolean condition4 = ETFPlayerTexture.clientPlayerOriginalSkinImageForTool != null;
         boolean canLaunchSkinTool = condition1 && condition2 && condition3 && condition4;

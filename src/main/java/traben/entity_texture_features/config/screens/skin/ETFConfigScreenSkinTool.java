@@ -482,7 +482,7 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
     }
 
     public void applyExistingOverlayToSkin(ResourceLocation overlayTexture) {
-        if ((ETF.isFabric() == ETF.isThisModLoaded("fabric"))) {//todo still needed? might be implicit now
+        if ((ETF.isFabric() == ETF.FABRIC_API)) {//todo still needed? might be implicit now
 
 
             NativeImage overlayImage = ETFUtils2.getNativeImageElseNull(overlayTexture);
@@ -538,7 +538,7 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
     }
 
     public boolean printPlayerSkinCopy() {
-        if ((ETF.isFabric() == ETF.isThisModLoaded("fabric")) && ETF.getConfigDirectory() != null) {
+        if ((ETF.isFabric() == ETF.FABRIC_API) && ETF.getConfigDirectory() != null) {
             Path outputDirectory = Path.of(ETF.getConfigDirectory().toFile().getParent(), "\\ETF_player_skin_printout.png");
             try {
                 currentEditorSkin.writeToFile(outputDirectory);
@@ -576,11 +576,16 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
         float w = livingEntity.getScale();
         Vector3f vector3f = new Vector3f(0.0F, livingEntity.getBbHeight() / 2.0F + f * w, 0.0F);
         float x = (float)m / w;
+        //#if MC >= 1.21.11
+        //$$ guiGraphics.submitEntityRenderState(InventoryScreen.extractRenderState(livingEntity),
+        //$$         x, vector3f, quaternionf, quaternionf2, i, j, k, l);
+        //#else
         InventoryScreen.renderEntityInInventory(
                 //#if MC < 12111
                 guiGraphics, i, j, k, l, x, vector3f, quaternionf, quaternionf2,
                 //#endif
                 livingEntity);
+        //#endif
         livingEntity.yBodyRot = r;
         livingEntity.setYRot(s);
         livingEntity.setXRot(t);

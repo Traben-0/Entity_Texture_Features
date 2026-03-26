@@ -277,21 +277,26 @@ public class ETFPlayerFeatureRenderer<T extends AvatarRenderState, M extends Pla
             ETFRenderContext.startSpecialRenderOverlayPhase();
 
             if (playerTexture.hasVillagerNose || playerTexture.texturedNoseIdentifier != null) {
+                matrixStack.pushPose();
                 //#if MC >= 12109
-                var head = model.head.storePose();
+                var head = model.head.getInitialPose();
                 villagerNose.loadPose(head);
                 textureNose.loadPose(head);
+                model.head.translateAndRotate(matrixStack);
                 //#else
                 //$$ villagerNose.copyFrom(model.head);
                 //$$ textureNose.copyFrom(model.head);
                 //#endif
                 renderNose(matrixStack, vertexConsumerProvider, light, playerTexture);
+                matrixStack.popPose();
             }
+            matrixStack.pushPose();
             renderCoat(matrixStack, vertexConsumerProvider,
                     //#if MC >= 12109
                     entityRenderState,
                     //#endif
                     light, playerTexture, model);
+            matrixStack.popPose();
 
 //            ETFPlayerFeatureRenderer.renderEmmisive(matrixStack, vertexConsumerProvider, playerTexture, model);
             //ETFPlayerFeatureRenderer.renderEnchanted(matrixStack, vertexConsumerProvider, light, playerTexture, model);
@@ -334,7 +339,8 @@ public class ETFPlayerFeatureRenderer<T extends AvatarRenderState, M extends Pla
             //String coat = ETFPlayerSkinUtils.SKIN_NAMESPACE + id + "_coat.png";
             //#if MC >= 12109
             var part = playerTexture.hasFatCoat ? fatJacket : jacket;
-            part.loadPose(model.body.storePose());
+            part.loadPose(model.body.getInitialPose());
+            model.body.translateAndRotate(matrixStack);
 
             ETFUtils2.submitModelPart(matrixStack, submit, light,
                     part,

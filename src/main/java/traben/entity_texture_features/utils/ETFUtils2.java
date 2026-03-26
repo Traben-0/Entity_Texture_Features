@@ -120,9 +120,6 @@ public abstract class ETFUtils2 {
         if (emissive != null) {
             submitEmissiveModelPart(matrixStack, submit, modelPart, emissive);
         }
-        if (enchanted != null) {
-            submitEnchantedModelPart(matrixStack, submit, light, modelPart, enchanted);
-        }
     }
 
     public static void submitEmissiveModelPart(final PoseStack matrixStack, final SubmitNodeCollector submit, final ModelPart modelPart, final @NotNull ResourceLocation emissive) {
@@ -159,7 +156,7 @@ public abstract class ETFUtils2 {
 
     @Deprecated // just to ide highlight usages
     public static void printDebugImage(NativeImage image) {
-        if ((ETF.isFabric() == ETF.isThisModLoaded("fabric")) && ETF.getConfigDirectory() != null) {
+        if ((ETF.isFabric() == ETF.FABRIC_API) && ETF.getConfigDirectory() != null) {
             Path outputDirectory = Path.of(ETF.getConfigDirectory().toFile().getParent(), "\\ETF_debug_printout.png");
             try {
                 image.writeToFile(outputDirectory);

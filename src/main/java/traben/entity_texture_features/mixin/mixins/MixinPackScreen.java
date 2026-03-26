@@ -74,7 +74,7 @@ public abstract class MixinPackScreen extends Screen {
 
         if (this.minecraft == null
                 || !this.packDir.equals(this.minecraft.getResourcePackDirectory())
-                || (ETF.isFabric() != ETF.isThisModLoaded("fabric")))
+                || (ETF.isFabric() != ETF.FABRIC_API))
             return;
 
 //        int x = doneButton.getX() + doneButton.getWidth() + 8;

@@ -4,6 +4,7 @@ net.minecraft.client.gui.GuiGraphicsExtractor blit() drawTexture()
 net.minecraft.client.gui.GuiGraphicsExtractor blitSprite() drawGuiTexture()
 net.minecraft.client.gui.GuiGraphicsExtractor text() drawString()
 net.minecraft.client.gui.GuiGraphicsExtractor centeredText() drawCenteredString()
+net.minecraft.client.gui.GuiGraphicsExtractor entity() submitEntityRenderState()
 
 net.minecraft.client.renderer.rendertype.RenderTypes entityCutout() entityCutoutNoCull()
 net.minecraft.client.renderer.rendertype.RenderTypes entityCutoutCull() entityCutout()

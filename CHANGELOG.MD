@@ -1,4 +1,9 @@
 
+[7.0.13]
+- fixed the player skin tool menu on 26.1
+- fixed fabric api detection
+- fixed skin feature part transforms
+
 [7.0.12]
 - fixed ETF causing issues with block and item textures in 26.1
 
