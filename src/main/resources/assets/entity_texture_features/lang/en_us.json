@@ -167,7 +167,7 @@
   "config.entity_texture_features.player_skin_editor.nose.villager4": "Villager textured, remove face pixels",
   "config.entity_texture_features.player_skin_editor.print_skin.open": "Open skin folder",
   "config.entity_texture_features.player_skin_editor.print_skin.result": "Skin file saving",
-  "config.entity_texture_features.player_skin_editor.print_skin.result.fail": "Skin file failed to save to file.\nCheck you latest.log for errors.",
+  "config.entity_texture_features.player_skin_editor.print_skin.result.fail": "Skin file failed to save to file.\nCheck your latest.log for errors.",
   "config.entity_texture_features.player_skin_editor.print_skin.result.success": "Skin file has been saved successfully.",
   "config.entity_texture_features.player_skin_editor.reason_0": "The skin tool could not be enabled because: \n",
   "config.entity_texture_features.player_skin_editor.reason_1": "-ETF skin features are not enabled.\n You must enable them, then close and reopen the settings to apply it.\n",
