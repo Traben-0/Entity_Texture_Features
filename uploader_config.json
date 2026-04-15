@@ -271,8 +271,8 @@
             "versions": ["1.21.11"]},
 
         {"loaders": ["NeoForge"],
-            "versions": ["26.1"]},
+            "versions": ["26.1", "26.1.1", "26.1.2"]},
         {"loaders": ["Fabric", "Quilt"],
-            "versions": ["26.1"]}
+            "versions": ["26.1", "26.1.1", "26.1.2"]}
     ]
 }
