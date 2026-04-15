@@ -275,7 +275,10 @@ public class ETFPlayerFeatureRenderer<T extends AvatarRenderState, M extends Pla
                                int light, M model, ETFPlayerTexture playerTexture) {
         if (playerTexture.canUseFeaturesForThisPlayer()) {
             ETFRenderContext.startSpecialRenderOverlayPhase();
-
+            matrixStack.pushPose();
+            //#if MC >= 1.21.2
+            getParentModel().root().translateAndRotate(matrixStack);
+            //#endif
             if (playerTexture.hasVillagerNose || playerTexture.texturedNoseIdentifier != null) {
                 matrixStack.pushPose();
                 //#if MC >= 12109
@@ -301,6 +304,7 @@ public class ETFPlayerFeatureRenderer<T extends AvatarRenderState, M extends Pla
 //            ETFPlayerFeatureRenderer.renderEmmisive(matrixStack, vertexConsumerProvider, playerTexture, model);
             //ETFPlayerFeatureRenderer.renderEnchanted(matrixStack, vertexConsumerProvider, light, playerTexture, model);
 
+            matrixStack.popPose();
             ETFRenderContext.endSpecialRenderOverlayPhase();
         }
     }

@@ -33,7 +33,7 @@ public class TextureSuffixProperty extends SimpleIntegerArrayProperty {
 
     @Override
     protected int getValueFromEntity(ETFEntityRenderState entity) {
-        int val = ETFManager.getInstance().LAST_SUFFIX_OF_ENTITY.getInt(entity.uuid());
+        int val = ETFManager.getInstance().LAST_SUFFIX_OF_ENTITY.get(entity.uuid());
         return Math.max(val, 0);
     }
 }

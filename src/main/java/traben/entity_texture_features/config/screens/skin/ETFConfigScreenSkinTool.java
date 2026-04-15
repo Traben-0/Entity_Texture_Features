@@ -989,7 +989,9 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
         public void render(final GuiGraphics context, final int mouseX, final int mouseY, final float delta) {
             super.render(context, mouseX, mouseY, delta);
         //#endif
-
+            context.drawCenteredString(font, ETF.getTextFromTranslation("config.entity_texture_features.skin_editor.overlays.-2_extra_space_for_other_lang"), width / 2, height / 2 - 33, 0xFFFFFFFF);
+            context.drawCenteredString(font, ETF.getTextFromTranslation("config.entity_texture_features.skin_editor.overlays.-1_extra_space_for_other_lang"), width / 2, height / 2 - 22, 0xFFFFFFFF);
+            context.drawCenteredString(font, ETF.getTextFromTranslation("config.entity_texture_features.skin_editor.overlays.0_extra_space_for_other_lang"), width / 2, height / 2 - 11, 0xFFFFFFFF);
             context.drawCenteredString(font, ETF.getTextFromTranslation("config.entity_texture_features.skin_editor.overlays.1"), width / 2, height / 2, 0xFFFFFFFF);
             context.drawCenteredString(font, ETF.getTextFromTranslation("config.entity_texture_features.skin_editor.overlays.2"), width / 2, height / 2 + 11, 0xFFFFFFFF);
             context.drawCenteredString(font, ETF.getTextFromTranslation("config.entity_texture_features.skin_editor.overlays.3"), width / 2, height / 2 + 22, 0xFFFFFFFF);

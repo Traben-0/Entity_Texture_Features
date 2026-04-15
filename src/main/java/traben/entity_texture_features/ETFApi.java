@@ -1,7 +1,6 @@
 package traben.entity_texture_features;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -31,6 +30,7 @@ import traben.entity_texture_features.utils.ETFEntity;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.Properties;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -77,7 +77,7 @@ public final class ETFApi {
     /**
      * The current ETF API version.
      */
-    public static final int ETFApiVersion = 11;
+    public static final int ETFApiVersion = 12;
     /**
      * This UUID if passed into ETF will tell it to skip looking for variants
      */
@@ -495,7 +495,7 @@ public final class ETFApi {
         /**
          * @return all the suffixes mentioned in this OptiFine property file
          */
-        IntOpenHashSet getAllSuffixes();
+        Set<Integer> getAllSuffixes();
 
         /**
          * @return the amount of rules in this OptiFine property file

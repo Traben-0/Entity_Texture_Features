@@ -1,8 +1,6 @@
 package traben.entity_texture_features;
 
 import com.demonwav.mcdev.annotations.Translatable;
-import it.unimi.dsi.fastutil.Function;
-import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
@@ -23,6 +21,7 @@ import traben.entity_texture_features.utils.ETFEntity;
 import traben.tconfig.TConfigHandler;
 import traben.entity_texture_features.utils.ETFUtils2;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -155,7 +154,7 @@ public class ETF {
     }
 
     public static void registerConfigHandler(TConfigHandler<?> configHandler) {
-        if (configHandlers == null) configHandlers = new ObjectArraySet<>();
+        if (configHandlers == null) configHandlers = new HashSet<>();
         configHandlers.add(configHandler);
     }
 

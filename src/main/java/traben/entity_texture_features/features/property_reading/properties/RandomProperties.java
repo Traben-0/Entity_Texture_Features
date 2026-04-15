@@ -1,7 +1,6 @@
 package traben.entity_texture_features.features.property_reading.properties;
 
 import com.demonwav.mcdev.annotations.Translatable;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETF;
@@ -9,15 +8,13 @@ import traben.entity_texture_features.features.property_reading.properties.etf_p
 import traben.entity_texture_features.features.property_reading.properties.etf_properties.external.*;
 import traben.entity_texture_features.features.property_reading.properties.optifine_properties.*;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Properties;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 public class RandomProperties {
     @SuppressWarnings("StaticCollection")
-    private static final ObjectOpenHashSet<RandomPropertyFactory> REGISTERED_PROPERTIES = new ObjectOpenHashSet<>();
+    private static final Set<RandomPropertyFactory> REGISTERED_PROPERTIES = new HashSet<>();
 
     static {
         register(

@@ -1,6 +1,6 @@
 package traben.entity_texture_features.features.property_reading.properties.generic_properties;
 
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperty;
 import traben.entity_texture_features.features.state.ETFEntityRenderState;
@@ -8,6 +8,8 @@ import traben.entity_texture_features.utils.ETFEntity;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,7 +17,7 @@ public abstract class StringArrayOrRegexProperty extends RandomProperty {
 
     protected static final Pattern GROUP_BY_QUOTATION_PATTERN = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
     protected final String ORIGINAL_INPUT;
-    protected final ObjectOpenHashSet<String> ARRAY;
+    protected final Set<String> ARRAY;
     protected final RegexAndPatternPropertyMatcher MATCHER;
 
     protected final boolean usesRegex;
@@ -34,7 +36,7 @@ public abstract class StringArrayOrRegexProperty extends RandomProperty {
         if (testString.startsWith("regex:") || testString.startsWith("pattern:")
                 || testString.startsWith("iregex:") || testString.startsWith("ipattern:")) {
             MATCHER = getStringMatcher_Regex_Pattern_List_Single(testString);
-            ARRAY = ObjectOpenHashSet.of(testString);
+            ARRAY = Set.of(testString);
             usesRegex = true;
         } else {
             String[] array = testString.trim().split("\\s+");
@@ -42,7 +44,7 @@ public abstract class StringArrayOrRegexProperty extends RandomProperty {
             if (array.length == 0)
                 throw new RandomPropertyException(getPropertyId() + " property was broken");
 
-            ARRAY = new ObjectOpenHashSet<>();
+            ARRAY = new HashSet<>();
             for (String str :
                     array) {
                 ARRAY.add(shouldForceLowerCaseCheck() ? str.toLowerCase() : str);

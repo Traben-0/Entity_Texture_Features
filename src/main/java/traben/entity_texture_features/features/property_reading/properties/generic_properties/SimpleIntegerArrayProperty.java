@@ -1,6 +1,6 @@
 package traben.entity_texture_features.features.property_reading.properties.generic_properties;
 
-import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.features.property_reading.PropertiesRandomProvider;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperty;
@@ -8,10 +8,7 @@ import traben.entity_texture_features.features.state.ETFEntityRenderState;
 import traben.entity_texture_features.utils.ETFEntity;
 import traben.entity_texture_features.utils.ETFUtils2;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.regex.Pattern;
 
 
@@ -26,12 +23,12 @@ import java.util.regex.Pattern;
 public abstract class SimpleIntegerArrayProperty extends RandomProperty {
 
 
-    private final IntOpenHashSet ARRAY;
+    private final Set<Integer> ARRAY;
 
     protected SimpleIntegerArrayProperty(Integer[] array) throws RandomPropertyException {
         if (array == null || array.length == 0)
             throw new RandomPropertyException(getPropertyId() + " property was broken");
-        ARRAY = new IntOpenHashSet(List.of(array));
+        ARRAY = new HashSet<>(List.of(array));
     }
 
     @Nullable

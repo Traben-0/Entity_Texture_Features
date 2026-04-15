@@ -1,9 +1,6 @@
 package traben.entity_texture_features.config;
 
 import com.demonwav.mcdev.annotations.Translatable;
-import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.core.BlockPos;
@@ -29,6 +26,7 @@ import traben.tconfig.gui.entries.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import static traben.entity_texture_features.ETF.MOD_ID;
@@ -81,12 +79,12 @@ public final class ETFConfig extends TConfig {
     public boolean use3DSkinLayerPatch = true;
     public boolean enableFullBodyWardenTextures = true;
     public String2BooleanNullMap entityEmissiveOverrides = new String2BooleanNullMap();
-    public ObjectOpenHashSet<String> propertiesDisabled = new ObjectOpenHashSet<>();
-    public ObjectOpenHashSet<String> propertyInvertUpdatingOverrides = new ObjectOpenHashSet<>();
+    public HashSet<String> propertiesDisabled = new HashSet<>();
+    public HashSet<String> propertyInvertUpdatingOverrides = new HashSet<>();
     public String2BooleanNullMap entityRandomOverrides = new String2BooleanNullMap();
     public String2EnumNullMap<EmissiveRenderModes> entityEmissiveBrightOverrides = new String2EnumNullMap<>();
     public String2EnumNullMap<RenderLayerOverride> entityRenderLayerOverrides = new String2EnumNullMap<>();
-    public Object2IntOpenHashMap<String> entityLightOverrides = new Object2IntOpenHashMap<>();
+    public HashMap<String, Integer> entityLightOverrides = new HashMap<>();
 
     public boolean isPropertyDisabled(@NotNull RandomProperties.RandomPropertyFactory property) {
         return propertiesDisabled.contains(property.getPropertyId());
@@ -101,7 +99,7 @@ public final class ETFConfig extends TConfig {
             return enableCustomTextures;
         var key = ETFRenderContext.getCurrentEntityState().entityKey();
         if (key != null && entityRandomOverrides.containsKey(key)) {
-            return entityRandomOverrides.getBoolean(key);
+            return entityRandomOverrides.getOrDefault(key, false);
         }
         return enableCustomTextures;
     }
@@ -112,7 +110,7 @@ public final class ETFConfig extends TConfig {
             return enableEmissiveTextures;
         var key = ETFRenderContext.getCurrentEntityState().entityKey();
         if (key != null && entityEmissiveOverrides.containsKey(key)) {
-            return entityEmissiveOverrides.getBoolean(key);
+            return entityEmissiveOverrides.getOrDefault(key, false);
         }
         return enableEmissiveTextures;
     }
@@ -302,11 +300,11 @@ public final class ETFConfig extends TConfig {
                         new TConfigEntryEnumButton<>("config.entity_texture_features.enable_custom_textures.title", "config.entity_texture_features.enable_custom_textures.tooltip",
                                 () -> entityRandomOverrides.getNullable(translationKey), overrideBooleanType -> entityRandomOverrides.putNullable(translationKey, overrideBooleanType), null, OverrideBooleanType.class),
                         new TConfigEntryEnumButton<>("config.entity_texture_features.emissive_mode.title", "config.entity_texture_features.emissive_mode.tooltip",
-                                () -> entityEmissiveBrightOverrides.getNullable(translationKey),
+                                () -> entityEmissiveBrightOverrides.get(translationKey),
                                 mode -> entityEmissiveBrightOverrides.putNullable(translationKey, mode),
                                 null, EmissiveRenderModes.class),
                         new TConfigEntryEnumButton<>("config.entity_features.per_entity_settings.layer", "config.entity_features.per_entity_settings.layer.tooltip",
-                                () -> entityRenderLayerOverrides.getNullable(translationKey),
+                                () -> entityRenderLayerOverrides.get(translationKey),
                                 layer -> entityRenderLayerOverrides.putNullable(translationKey, layer),
                                 null, RenderLayerOverride.class)
                 ),
@@ -314,7 +312,7 @@ public final class ETFConfig extends TConfig {
                         () -> entityLightOverrides.getOrDefault(translationKey, -1),
                         light -> {
                             if (light == -1) {
-                                entityLightOverrides.removeInt(translationKey);
+                                entityLightOverrides.remove(translationKey);
                                 return;
                             }
                             //noinspection deprecation
@@ -528,23 +526,15 @@ public final class ETFConfig extends TConfig {
 
     }
 
-    public static class String2BooleanNullMap extends Object2BooleanOpenHashMap<String> {
-        public String2BooleanNullMap() {
-            super();
-            defaultReturnValue(false);
-        }
-
+    public static class String2BooleanNullMap extends HashMap<String, Boolean> {
 
         public void putNullable(final String s, final OverrideBooleanType v) {
-            if (v == null) {
-                removeBoolean(s);
-                return;
-            }
-            super.put(s, v == OverrideBooleanType.TRUE);
+            if (v == null) remove(s);
+            else put(s, v == OverrideBooleanType.TRUE);
         }
 
         public OverrideBooleanType getNullable(final String s) {
-            if (getBoolean(s)) {
+            if (getOrDefault(s, false)) {
                 return OverrideBooleanType.TRUE;
             } else {
                 if (containsKey(s)) {
@@ -559,21 +549,14 @@ public final class ETFConfig extends TConfig {
 
     public static class String2EnumNullMap<E extends Enum<E>> extends HashMap<String, E> {
 
-
         public void putNullable(final String s, final E v) {
-            if (v == null) {
-                remove(s);
-                return;
-            }
-            super.put(s, v);
+            if (v == null) remove(s);
+            else put(s, v);
         }
 
+        @Deprecated
         public E getNullable(final String s) {
-            if (containsKey(s)) {
-                return get(s);
-            } else {
-                return null;
-            }
+            return get(s);
         }
     }
 

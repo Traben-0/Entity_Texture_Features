@@ -1,6 +1,5 @@
 package traben.entity_texture_features.config.screens;
 
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.config.ETFConfigWarning;
 import traben.entity_texture_features.config.ETFConfigWarnings;
@@ -19,9 +18,9 @@ import net.minecraft.network.chat.Component;
 
 //inspired by puzzles custom gui code
 public class ETFConfigScreenWarnings extends TConfigScreen {
-    final ObjectOpenHashSet<ETFConfigWarning> warningsFound;
+    final Set<ETFConfigWarning> warningsFound;
 
-    public ETFConfigScreenWarnings(Screen parent, ObjectOpenHashSet<ETFConfigWarning> warningsFound) {
+    public ETFConfigScreenWarnings(Screen parent, Set<ETFConfigWarning> warningsFound) {
         super("config." + ETF.MOD_ID + ".warnings.title", parent, true);
         this.warningsFound = warningsFound;
 

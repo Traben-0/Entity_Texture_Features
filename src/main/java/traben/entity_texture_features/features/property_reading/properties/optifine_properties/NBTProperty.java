@@ -1,6 +1,5 @@
 package traben.entity_texture_features.features.property_reading.properties.optifine_properties;
 
-import it.unimi.dsi.fastutil.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETF;
@@ -21,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.function.Function;
 
 import net.minecraft.nbt.CollectionTag;
 import net.minecraft.nbt.CompoundTag;
@@ -307,7 +307,7 @@ public class NBTProperty extends RandomProperty {
     }
 
     public record NBTTester(boolean inverts, Function<Tag, Boolean> tester, boolean wantsBlank,
-                             boolean print) {
+                            boolean print) {
 
         public static NBTTester of(String nbtId, String instructionMaybePrint) throws RandomPropertyException {
             try {

@@ -1,7 +1,5 @@
 package traben.entity_texture_features.features.texture_handlers;
 
-import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
@@ -11,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.utils.ETFUtils2;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -74,7 +73,7 @@ public enum ETFDirectory {
 
         //it is not cached and does not need to be
         //may either be properties or image
-        ObjectArrayList<ETFDirectory> foundDirectories = new ObjectArrayList<>();
+        ArrayList<ETFDirectory> foundDirectories = new ArrayList<>();
 
         if (resources.getResource(getIdentifierAsDirectory(vanillaIdentifier, VANILLA)).isPresent())
             foundDirectories.add(VANILLA);

@@ -19,7 +19,7 @@ public class TConfigHandler<T extends TConfig> {
     private final String configFileName;
     private final Class<T> configClass;
     private final String logID;
-    private T CONFIG;
+    private T CONFIG = null;
 
     public TConfigHandler(Supplier<T> newConfigSupplier, String configFileName, String logID) {
         this.newConfigSupplier = newConfigSupplier;
@@ -48,7 +48,7 @@ public class TConfigHandler<T extends TConfig> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final TConfigHandler<?> that = (TConfigHandler<?>) o;
-        return getConfig().getClass().equals(that.getConfig().getClass());
+        return configClass.equals(that.configClass) && configFileName.equals(that.configFileName);
     }
 
     @SuppressWarnings("unused")
@@ -60,7 +60,7 @@ public class TConfigHandler<T extends TConfig> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(newConfigSupplier, CONFIG, configFileName, configClass);
+        return Objects.hash(configFileName, configClass);
     }
 
     public void saveToFile() {
@@ -73,6 +73,8 @@ public class TConfigHandler<T extends TConfig> {
 
         try (FileWriter fileWriter = new FileWriter(config)) {
             fileWriter.write(toJson());
+            fileWriter.close();
+            loadFromFile(false);
         } catch (IOException e) {
             TConfigLog.logError(logID, "Config file could not be saved: " + e.getMessage());
         }
@@ -87,30 +89,37 @@ public class TConfigHandler<T extends TConfig> {
     }
 
     public void loadFromFile() {
+        loadFromFile(true);
+    }
+
+    public void loadFromFile(boolean saveAfterLoad) {
         var configDir = ETF.getConfigDirectory();
         if (configDir == null) {
             CONFIG = newConfigSupplier.get();
             return;
         }
 
+        T newConfig;
         File config = new File(configDir.toFile(), configFileName);
         if (config.exists()) {
             try (FileReader fileReader = new FileReader(config)) {
-                CONFIG = fromJson(fileReader);
+                newConfig = fromJson(fileReader);
             } catch (Exception e) {
                 TConfigLog.logError(logID, "Config could not be loaded, using defaults");
-                CONFIG = newConfigSupplier.get();
+                newConfig = newConfigSupplier.get();
             }
         } else {
-            CONFIG = newConfigSupplier.get();
+            newConfig = newConfigSupplier.get();
         }
 
-        if (CONFIG == null) {
+        if (newConfig == null) {
             TConfigLog.logError(logID, "Config was null, using defaults");
             CONFIG = newConfigSupplier.get();
+        } else {
+            CONFIG = newConfig;
         }
 
-        saveToFile();
+        if (saveAfterLoad) saveToFile();
     }
 
     public T fromJson(String json) {

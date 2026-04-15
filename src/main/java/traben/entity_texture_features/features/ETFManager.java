@@ -1,7 +1,6 @@
 package traben.entity_texture_features.features;
 
 
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETF;
@@ -17,13 +16,8 @@ import traben.entity_texture_features.features.texture_handlers.ETFTextureVariat
 import traben.entity_texture_features.utils.ETFEntity;
 import traben.entity_texture_features.utils.ETFLruCache;
 import traben.entity_texture_features.utils.ETFUtils2;
-import traben.entity_texture_features.utils.EntityIntLRU;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
-import java.util.UUID;
+import java.util.*;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Vec3i;
@@ -40,14 +34,14 @@ public class ETFManager {
 
     private static final ETFTexture ETF_ERROR_TEXTURE = getErrorETFTexture();
     private static ETFManager instance;
-    public final ObjectOpenHashSet<String> EMISSIVE_SUFFIX_LIST = new ObjectOpenHashSet<>();
+    public final Set<String> EMISSIVE_SUFFIX_LIST = new HashSet<>();
     public final ETFLruCache<UUID, ETFPlayerTexture> PLAYER_TEXTURE_MAP = new ETFLruCache<>();
     public final ArrayList<String> KNOWN_RESOURCEPACK_ORDER = new ArrayList<>();
-    public final ObjectOpenHashSet<EntityType<?>> ENTITY_TYPE_IGNORE_PARTICLES = new ObjectOpenHashSet<>();
+    public final Set<EntityType<?>> ENTITY_TYPE_IGNORE_PARTICLES = new HashSet<>();
     // this is a cache of all known ETFTexture versions of any existing resource-pack texture, used to prevent remaking objects
     public final HashMap<@NotNull ResourceLocation, @Nullable ETFTexture> ETF_TEXTURE_CACHE = new HashMap<>();
-    public final EntityIntLRU LAST_SUFFIX_OF_ENTITY = new EntityIntLRU();
-    public final EntityIntLRU LAST_RULE_INDEX_OF_ENTITY = new EntityIntLRU();
+    public final ETFLruCache.UUIDInteger LAST_SUFFIX_OF_ENTITY = new ETFLruCache.UUIDInteger();
+    public final ETFLruCache.UUIDInteger LAST_RULE_INDEX_OF_ENTITY = new ETFLruCache.UUIDInteger();
     public final HashMap<@NotNull ResourceLocation, @NotNull ETFDirectory> ETF_DIRECTORY_CACHE = new HashMap<>();// = new Object2ReferenceOpenHashMap<>();
     private final HashMap<ResourceLocation, ETFTextureVariator> VARIATOR_MAP = new HashMap<>();
     public UUID ENTITY_DEBUG = null;

@@ -7,7 +7,7 @@ plugins {
     // Advanced users may use multiple (potentially independent) multi-version trees in different sub-projects.
     // This is currently equivalent to applying `com.replaymod.preprocess-root`.
     kotlin("jvm") version "2.3.0" apply false
-    id("gg.essential.loom") version "1.15.48" apply false // https://repo.essential.gg/#/public/gg/essential/loom/gg.essential.loom.gradle.plugin
+    id("gg.essential.loom") version "1.15.49" apply false // https://repo.essential.gg/#/public/gg/essential/loom/gg.essential.loom.gradle.plugin
     id("gg.essential.multi-version.root")
 }
 
@@ -66,9 +66,9 @@ preprocess {
         .connectToVersion(1_21_04)
         .connectToVersion(1_21_03) // would normally do 12102 to have the lowest compatible version but forge 1.21.2 doesn't exist
         .connectToVersion(1_21_00)
-        .connectToVersion(1_20_06)
-        .connectToVersion(1_20_04)
-        .connectToVersion(1_20_02)
+//        .connectToVersion(1_20_06)
+//        .connectToVersion(1_20_04)
+//        .connectToVersion(1_20_02)
         .connectToVersion(1_20_01, neoforge = false)
 
     // And then you need to tell the preprocessor which versions it should directly convert between.
