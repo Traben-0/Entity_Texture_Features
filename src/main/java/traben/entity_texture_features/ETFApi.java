@@ -77,7 +77,7 @@ public final class ETFApi {
     /**
      * The current ETF API version.
      */
-    public static final int ETFApiVersion = 11;
+    public static final int ETFApiVersion = 12;
     /**
      * This UUID if passed into ETF will tell it to skip looking for variants
      */
