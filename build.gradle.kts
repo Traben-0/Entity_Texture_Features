@@ -159,7 +159,7 @@ dependencies {
         )
 
     "IMMEDIATELYFAST" setVar modImpl("maven.modrinth:immediatelyfast:",
-        26_01_00 to null,
+        26_01_00 to ver("lRuSLf0Y", null, "KibcXkbk"),
         1_21_06 to ver("9JPEk4KN", null, "d8kpGqVx"),
         1_21_05 to ver("kcSoZlE9", null, "43iGBJDV"),
         1_21_00 to ver("giRXGeHH", "yPO020MY", "mWsZ4opk"),

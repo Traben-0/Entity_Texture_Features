@@ -3,8 +3,8 @@ package traben.entity_texture_features.features.property_reading;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperty;
 import traben.entity_texture_features.features.state.ETFEntityRenderState;
+import traben.entity_texture_features.utils.ETFLruCache;
 import traben.entity_texture_features.utils.ETFUtils2;
-import traben.entity_texture_features.utils.EntityBooleanLRU;
 
 import java.util.*;
 
@@ -33,7 +33,7 @@ public class RandomPropertyRule {
         }
 
         @Override
-        public boolean doesEntityMeetConditionsOfThisCase(final ETFEntityRenderState etfEntity, final boolean isUpdate, final EntityBooleanLRU UUID_CaseHasUpdateablesCustom) {
+        public boolean doesEntityMeetConditionsOfThisCase(final ETFEntityRenderState etfEntity, final boolean isUpdate, final ETFLruCache.UUIDBoolean UUID_CaseHasUpdateablesCustom) {
             return true;
         }
     };
@@ -127,7 +127,7 @@ public class RandomPropertyRule {
         return new HashSet<>(List.of(suffixNumbers));
     }
 
-    public boolean doesEntityMeetConditionsOfThisCase(ETFEntityRenderState etfEntity, boolean isUpdate, EntityBooleanLRU UUID_CaseHasUpdateablesCustom) {
+    public boolean doesEntityMeetConditionsOfThisCase(ETFEntityRenderState etfEntity, boolean isUpdate, ETFLruCache.UUIDBoolean UUID_CaseHasUpdateablesCustom) {
         if (ruleAlwaysApproved) return true;
         if (etfEntity == null) return false;
         if (updates && UUID_CaseHasUpdateablesCustom != null) {

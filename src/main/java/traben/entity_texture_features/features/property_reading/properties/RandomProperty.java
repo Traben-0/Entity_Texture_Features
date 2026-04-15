@@ -3,7 +3,7 @@ package traben.entity_texture_features.features.property_reading.properties;
 import org.jetbrains.annotations.NotNull;
 import traben.entity_texture_features.features.state.ETFEntityRenderState;
 import traben.entity_texture_features.utils.ETFEntity;
-import traben.entity_texture_features.utils.EntityBooleanLRU;
+import traben.entity_texture_features.utils.ETFLruCache;
 
 import java.util.Properties;
 
@@ -13,7 +13,7 @@ import java.util.Properties;
  */
 public abstract class RandomProperty {
 
-    protected final EntityBooleanLRU entityCachedInitialResult = new EntityBooleanLRU();
+    protected final ETFLruCache.UUIDBoolean entityCachedInitialResult = new ETFLruCache.UUIDBoolean();
     private boolean canUpdate = true;
 
     /**
@@ -53,7 +53,7 @@ public abstract class RandomProperty {
     public boolean testEntity(ETFEntityRenderState entity, boolean isUpdate) {
         var key = entity.uuid();
         if (isUpdate && !canPropertyUpdate() && entityCachedInitialResult.containsKey(key)) {
-            return entityCachedInitialResult.getBoolean(key);//false default value
+            return entityCachedInitialResult.get(key);//false default value
         }
         try {
             return testEntityInternal(entity);

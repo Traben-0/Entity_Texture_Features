@@ -1,7 +1,5 @@
 package traben.entity_texture_features.features.texture_handlers;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
-import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFApi;
@@ -10,11 +8,10 @@ import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.property_reading.PropertiesRandomProvider;
 import traben.entity_texture_features.features.state.ETFEntityRenderState;
+import traben.entity_texture_features.utils.ETFLruCache;
 import traben.entity_texture_features.utils.ETFUtils2;
-import traben.entity_texture_features.utils.EntityIntLRU;
 
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 import net.minecraft.resources.ResourceLocation;
 
@@ -115,20 +112,19 @@ public abstract class ETFTextureVariator {
 
     private static class ETFTextureMultiple extends ETFTextureVariator {
 
-        public final @NotNull EntityIntLRU entitySuffixMap = new EntityIntLRU(500);
+        public final @NotNull ETFLruCache.UUIDInteger entitySuffixMap = new ETFLruCache.UUIDInteger(500);
         final @NotNull ETFApi.ETFVariantSuffixProvider suffixProvider;
-        private final @NotNull Int2ObjectArrayMap<ETFTexture> variantMap = new Int2ObjectArrayMap<>();
+        private final @NotNull Map<Integer, ETFTexture> variantMap;
         private final @NotNull ResourceLocation vanillaIdentifier;
 
         ETFTextureMultiple(@NotNull ResourceLocation vanillaIdentifier, @NotNull ETFApi.ETFVariantSuffixProvider suffixProvider) {
             this.vanillaIdentifier = vanillaIdentifier;
             this.suffixProvider = suffixProvider;
-            entitySuffixMap.defaultReturnValue(-1);
 
             if (suffixProvider instanceof PropertiesRandomProvider) {
                 ((PropertiesRandomProvider) suffixProvider).setOnMeetsRuleHook((entity, rule) -> {
                     if (rule == null) {
-                        ETFManager.getInstance().LAST_RULE_INDEX_OF_ENTITY.removeInt(entity.uuid());
+                        ETFManager.getInstance().LAST_RULE_INDEX_OF_ENTITY.remove(entity.uuid());
                     } else {
                         ETFManager.getInstance().LAST_RULE_INDEX_OF_ENTITY.put(entity.uuid(), rule.ruleNumber);
                     }
@@ -138,14 +134,20 @@ public abstract class ETFTextureVariator {
                     ? null : ETFDirectory.getDirectoryVersionOf(vanillaIdentifier);
             ETFTexture vanilla = ETFManager.getInstance().getETFTextureNoVariation(directorized == null ? vanillaIdentifier : directorized);
 
+            variantMap = new HashMap<>() {
+                @Override
+                public ETFTexture get(final Object key) {
+                    return super.getOrDefault(key, vanilla);
+                }
+            };
+
             variantMap.put(1, vanilla);
-//            variantMap.put(0, vanilla);
-            variantMap.defaultReturnValue(vanilla);
+            //variantMap.defaultReturnValue(vanilla);
 
             boolean logging = ETF.config().getConfig().logTextureDataInitialization;
             if (logging) ETFUtils2.logMessage("Initializing texture for the first time: " + vanillaIdentifier);
 
-            IntOpenHashSet suffixes = suffixProvider.getAllSuffixes();
+            Set<Integer> suffixes = suffixProvider.getAllSuffixes();
             suffixes.remove(0);
             suffixes.remove(1);
             for (int suffix :
@@ -193,12 +195,12 @@ public abstract class ETFTextureVariator {
                 switch (ETF.config().getConfig().textureUpdateFrequency_V2) {
                     case Never -> {
                     }
-                    case Instant -> this.entitySuffixMap.removeInt(id);
+                    case Instant -> this.entitySuffixMap.remove(id);
                     default -> {
                         int delay = ETF.config().getConfig().textureUpdateFrequency_V2.getDelay();
                         int time = (int) (entity.world().getGameTime() % delay);
                         if (time == Math.abs(id.hashCode()) % delay) {
-                            this.entitySuffixMap.removeInt(id);
+                            this.entitySuffixMap.remove(id);
                         }
                     }
                 }
@@ -210,7 +212,7 @@ public abstract class ETFTextureVariator {
             ETFManager.TextureSource source = determineTextureSource(entity);
 
             UUID id = entity.uuid();
-            int knownSuffix = entitySuffixMap.getInt(id);
+            int knownSuffix = entitySuffixMap.get(id);
             if (knownSuffix != -1) {
 //                if (source != ETFManager.TextureSource.BLOCK_ENTITY) { no idea why, some legacy limitation?
                     checkIfShouldExpireEntity(entity,id);
@@ -250,7 +252,7 @@ public abstract class ETFTextureVariator {
 
         private int getBaseEntitySuffixOrNew(@NotNull ETFEntityRenderState entity) {
             int baseEntitySuffix = ETFRenderContext.getCurrentEntityState() == null ? -1 : // note this needs to refer to the entity set at the render dispatcher cant just used passes state
-                    ETFManager.getInstance().LAST_SUFFIX_OF_ENTITY.getInt(ETFRenderContext.getCurrentEntityState().uuid());
+                    ETFManager.getInstance().LAST_SUFFIX_OF_ENTITY.get(ETFRenderContext.getCurrentEntityState().uuid());
             if (baseEntitySuffix != -1 && variantMap.containsKey(baseEntitySuffix)) {
                 return baseEntitySuffix;
             } else {

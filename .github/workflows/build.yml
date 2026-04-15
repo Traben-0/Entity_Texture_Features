@@ -1,4 +1,4 @@
-name: release-pipeline
+name: build
 
 on:
   push:

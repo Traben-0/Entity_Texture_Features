@@ -101,7 +101,7 @@ public class TConfigEntryEnumSlider<E extends Enum<E>> extends TConfigEntryNullS
 
         @Override
         protected void updateMessage() {
-            value = getIndex() / (double) getChoiceCount();
+            this.value = getIndex() / (double) getChoiceCount();
 
             T value2 = getValue();
             setMessage(Component.nullToEmpty(title + (value2 != getter.get() ? CHANGED_COLOR : "") + (value2 == null ? "---" : value2)));
@@ -117,7 +117,7 @@ public class TConfigEntryEnumSlider<E extends Enum<E>> extends TConfigEntryNullS
         }
 
         private int getIndex() {
-            return (int) Math.round(value * getChoiceCount());
+            return (int) Math.round(this.value * getChoiceCount());
         }
 
     }

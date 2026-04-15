@@ -4,7 +4,6 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -36,13 +35,11 @@ import traben.entity_texture_features.utils.ETFUtils2;
 import traben.tconfig.gui.TConfigScreenMain;
 import traben.tconfig.gui.entries.TConfigEntryCategory;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
 public class ETFConfigScreenMain extends TConfigScreenMain {
 
-    final ObjectOpenHashSet<ETFConfigWarning> warningsFound = new ObjectOpenHashSet<>();
+    final Set<ETFConfigWarning> warningsFound = new HashSet<>();
 
     private final Random rand = new Random();
     private final LogoCreeperRenderer LOGO_CREEPER = new LogoCreeperRenderer();

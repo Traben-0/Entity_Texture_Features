@@ -1,6 +1,5 @@
 package traben.entity_texture_features.features.property_reading;
 
-import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETF;
@@ -12,8 +11,8 @@ import traben.entity_texture_features.features.property_reading.properties.Rando
 import traben.entity_texture_features.features.property_reading.properties.generic_properties.SimpleIntegerArrayProperty;
 import traben.entity_texture_features.features.state.ETFEntityRenderState;
 import traben.entity_texture_features.features.texture_handlers.ETFDirectory;
+import traben.entity_texture_features.utils.ETFLruCache;
 import traben.entity_texture_features.utils.ETFUtils2;
-import traben.entity_texture_features.utils.EntityBooleanLRU;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -28,7 +27,7 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
 
     protected final List<RandomPropertyRule> propertyRules;
 
-    protected final EntityBooleanLRU entityCanUpdate = new EntityBooleanLRU(1000);
+    protected final ETFLruCache.UUIDBoolean entityCanUpdate = new ETFLruCache.UUIDBoolean();
 
     protected final @NotNull String packname;
 
@@ -214,13 +213,13 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
 
     @Override
     public boolean entityCanUpdate(UUID uuid) {
-        return entityCanUpdate.getBoolean(uuid);
+        return entityCanUpdate.get(uuid);
     }
 
     @SuppressWarnings("unused")
     @Override
-    public IntOpenHashSet getAllSuffixes() {
-        IntOpenHashSet allSuffixes = new IntOpenHashSet();
+    public Set getAllSuffixes() {
+        HashSet allSuffixes = new HashSet();
         for (RandomPropertyRule rule :
                 propertyRules) {
             allSuffixes.addAll(rule.getSuffixSet());
@@ -244,7 +243,7 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
         if (!entityHasBeenTestedBefore) {
             // return but capture spawn conditions of first time entity
             // must be done separate to, and after, above method as it sets the entityCanUpdate return
-            if (entityCanUpdate.getBoolean(id)) {
+            if (entityCanUpdate.get(id)) {
                 for (RandomPropertyRule rule : propertyRules) {
                     // cache entity spawns
                     rule.cacheEntityInitialResultsOfNonUpdatingProperties(entityToBeTested);

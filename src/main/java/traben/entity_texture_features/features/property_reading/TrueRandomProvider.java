@@ -1,6 +1,6 @@
 package traben.entity_texture_features.features.property_reading;
 
-import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+
 //#if MC >= 12103
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 //#endif
@@ -12,9 +12,8 @@ import traben.entity_texture_features.features.texture_handlers.ETFDirectory;
 import traben.entity_texture_features.utils.ETFEntity;
 import traben.entity_texture_features.utils.ETFUtils2;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
@@ -81,8 +80,8 @@ public class TrueRandomProvider implements ETFApi.ETFVariantSuffixProvider {
 
     @SuppressWarnings("unused")
     @Override
-    public IntOpenHashSet getAllSuffixes() {
-        return new IntOpenHashSet(suffixes);
+    public Set<Integer> getAllSuffixes() {
+        return Arrays.stream(suffixes).boxed().collect(Collectors.toSet());
     }
 
     @Override

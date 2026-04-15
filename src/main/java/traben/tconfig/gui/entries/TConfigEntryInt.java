@@ -97,10 +97,10 @@ public class TConfigEntryInt extends TConfigEntryValue<Integer> {
         }
 
         private boolean isOff() {
-            if (isMinOff && value == 0) {
+            if (isMinOff && this.value == 0) {
                 return true;
             }
-            return isMaxOff && value == 1;
+            return isMaxOff && this.value == 1;
         }
 
         private void setValue(int intIndex) {
@@ -121,7 +121,7 @@ public class TConfigEntryInt extends TConfigEntryValue<Integer> {
         }
 
         private void snapValueToNearestIndex() {
-            value = (int) Math.round(value * difference) / (double) difference;
+            this.value = (int) Math.round(this.value * difference) / (double) difference;
         }
 
         //snaps the double value to the nearest index
@@ -129,7 +129,7 @@ public class TConfigEntryInt extends TConfigEntryValue<Integer> {
             if (isOff() && modifiesOffMaxToMin) {
                 return min;
             }
-            return (int) Math.round(value * difference) + min;
+            return (int) Math.round(this.value * difference) + min;
         }
 
 
