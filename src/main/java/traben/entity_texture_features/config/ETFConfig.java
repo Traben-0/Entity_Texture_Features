@@ -300,11 +300,11 @@ public final class ETFConfig extends TConfig {
                         new TConfigEntryEnumButton<>("config.entity_texture_features.enable_custom_textures.title", "config.entity_texture_features.enable_custom_textures.tooltip",
                                 () -> entityRandomOverrides.getNullable(translationKey), overrideBooleanType -> entityRandomOverrides.putNullable(translationKey, overrideBooleanType), null, OverrideBooleanType.class),
                         new TConfigEntryEnumButton<>("config.entity_texture_features.emissive_mode.title", "config.entity_texture_features.emissive_mode.tooltip",
-                                () -> entityEmissiveBrightOverrides.getNullable(translationKey),
+                                () -> entityEmissiveBrightOverrides.get(translationKey),
                                 mode -> entityEmissiveBrightOverrides.putNullable(translationKey, mode),
                                 null, EmissiveRenderModes.class),
                         new TConfigEntryEnumButton<>("config.entity_features.per_entity_settings.layer", "config.entity_features.per_entity_settings.layer.tooltip",
-                                () -> entityRenderLayerOverrides.getNullable(translationKey),
+                                () -> entityRenderLayerOverrides.get(translationKey),
                                 layer -> entityRenderLayerOverrides.putNullable(translationKey, layer),
                                 null, RenderLayerOverride.class)
                 ),
@@ -529,11 +529,8 @@ public final class ETFConfig extends TConfig {
     public static class String2BooleanNullMap extends HashMap<String, Boolean> {
 
         public void putNullable(final String s, final OverrideBooleanType v) {
-            if (v == null) {
-                remove(s);
-                return;
-            }
-            super.put(s, v == OverrideBooleanType.TRUE);
+            if (v == null) remove(s);
+            else put(s, v == OverrideBooleanType.TRUE);
         }
 
         public OverrideBooleanType getNullable(final String s) {
@@ -552,21 +549,14 @@ public final class ETFConfig extends TConfig {
 
     public static class String2EnumNullMap<E extends Enum<E>> extends HashMap<String, E> {
 
-
         public void putNullable(final String s, final E v) {
-            if (v == null) {
-                remove(s);
-                return;
-            }
-            super.put(s, v);
+            if (v == null) remove(s);
+            else put(s, v);
         }
 
+        @Deprecated
         public E getNullable(final String s) {
-            if (containsKey(s)) {
-                return get(s);
-            } else {
-                return null;
-            }
+            return get(s);
         }
     }
 
