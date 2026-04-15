@@ -4,6 +4,7 @@
 - fixed immediatelyfast compat on 26.1+
 - fixed skin feature models not accounting for root transforms in player animations
 - fixed ArrayIndexOutOfBoundsException crash on 26.1+
+- fixed certain skin changing plugins not working with skin features in 1.21.4+
 
 [7.0.13]
 - fixed the player skin tool menu on 26.1

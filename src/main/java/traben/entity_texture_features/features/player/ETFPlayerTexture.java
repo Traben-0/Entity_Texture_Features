@@ -138,9 +138,54 @@ public class ETFPlayerTexture {
     private static final ETFException TRY_AGAIN_LATER = new ETFException("try again later");
 
     //#if MC >= 12104
+    /**
+     * ResourceLocation the skin manager associates with this profile (may lag behind the texture the renderer bound).
+     * Used to detect mismatches so we sample pixels from the renderer texture for ETF markers (e.g. async skin updates).
+     */
+    private static @Nullable ResourceLocation etf$profileSkinTextureLocation(GameProfile gameProfile) {
+        //#if MC >= 12109
+        return Minecraft.getInstance().getSkinManager().get(gameProfile).getNow(Optional.empty())
+                .map(playerSkin -> playerSkin.body().texturePath())
+                .orElse(null);
+        //#else
+        //$$ return Minecraft.getInstance().getSkinManager().getInsecureSkin(gameProfile).texture();
+        //#endif
+    }
+
+    /**
+     * If {@link #normalVanillaSkinIdentifier} differs from the profile's skin id, copies GPU pixels from the renderer
+     * id into {@link #originalSkin}. Vanilla can show the correct skin while {@link #getSkinOfPlayer} still resolves
+     * an older cache path.
+     *
+     * @return true if {@code originalSkin} was filled from the renderer texture
+     */
+    private boolean etf$tryLoadOriginalSkinFromRendererIfProfileTextureIdDiffers(AbstractClientPlayer abstractClientPlayer) {
+        ResourceLocation rendererSkin = this.normalVanillaSkinIdentifier;
+        if (rendererSkin == null) {
+            return false;
+        }
+        ResourceLocation profileSkin = etf$profileSkinTextureLocation(abstractClientPlayer.getGameProfile());
+        if (profileSkin == null || profileSkin.equals(rendererSkin)) {
+            return false;
+        }
+        NativeImage fromRenderer = ETFUtils2.getNativeImageElseNull(rendererSkin);
+        if (fromRenderer == null) {
+            return false;
+        }
+        try {
+            if (fromRenderer.getWidth() >= 64 && fromRenderer.getHeight() >= 64) {
+                this.originalSkin = new NativeImage(fromRenderer.getWidth(), fromRenderer.getHeight(), false);
+                this.originalSkin.copyFrom(fromRenderer);
+                return true;
+            }
+            return false;
+        } finally {
+            fromRenderer.close();
+        }
+    }
+
     //mostly a copy of new skin downloading code, except we want to grab the nativeImage of the skin itself without any edits
     public static @NotNull NativeImage getSkinOfPlayer(final ETFPlayerEntity clientPlayer, @Nullable ResourceLocation rendererGivenSkin) throws Exception {
-        //todo renderer given skin will need to be reconsidered how to use in 1.21.4+
 
         String url;
         GameProfile gameProfile;
@@ -213,8 +258,11 @@ public class ETFPlayerTexture {
         } catch (IOException e) {
             if (rendererGivenSkin != null) {
                 var texture = Minecraft.getInstance().getTextureManager().getTexture(rendererGivenSkin);
-                if(texture instanceof DynamicTexture dynamicTexture){
-                    return Objects.requireNonNull(dynamicTexture.getPixels());
+                if (texture instanceof DynamicTexture dynamicTexture) {
+                    NativeImage px = Objects.requireNonNull(dynamicTexture.getPixels());
+                    NativeImage copy = new NativeImage(px.getWidth(), px.getHeight(), false);
+                    copy.copyFrom(px);
+                    return copy;
                 }
             }
             throw e;
@@ -806,10 +854,14 @@ public class ETFPlayerTexture {
                 //$$  fileInputStream.close();
                 //#else
 
-                NativeImage img = getSkinOfPlayer(player, null);
-                remappingETFSkin = true;
-                originalSkin = SkinTextureDownloader.processLegacySkin(img, "ETF pre test, skin check");
-                remappingETFSkin = false;
+                boolean loadedFromRendererMismatch = player instanceof AbstractClientPlayer abstractClientPlayer
+                        && etf$tryLoadOriginalSkinFromRendererIfProfileTextureIdDiffers(abstractClientPlayer);
+                if (!loadedFromRendererMismatch) {
+                    NativeImage img = getSkinOfPlayer(player, normalVanillaSkinIdentifier);
+                    remappingETFSkin = true;
+                    originalSkin = SkinTextureDownloader.processLegacySkin(img, "ETF pre test, skin check");
+                    remappingETFSkin = false;
+                }
                 //#endif
 
                 if (Minecraft.getInstance().player != null && player.etf$getUuid().equals(Minecraft.getInstance().player.getUUID())) {
