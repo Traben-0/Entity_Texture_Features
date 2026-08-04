@@ -25,6 +25,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
+import traben.entity_texture_features.utils.UScreen;
 
 import static traben.entity_texture_features.ETF.MOD_ID;
 import static traben.entity_texture_features.features.player.ETFPlayerTexture.SKIN_NAMESPACE;
@@ -287,7 +288,7 @@ public class ETFManager {
                         (possibleSkin.player == null && possibleSkin.isCorrectObjectForThisSkin(rendererGivenSkin))) {
                     return null;
                 } else if (possibleSkin.isCorrectObjectForThisSkin(rendererGivenSkin)
-                        || Minecraft.getInstance().screen instanceof ETFConfigScreenSkinTool) {
+                        || UScreen.currentScreen() instanceof ETFConfigScreenSkinTool) {
                     return possibleSkin;
                 }
             }

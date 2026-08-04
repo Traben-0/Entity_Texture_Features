@@ -5,14 +5,13 @@ import net.minecraft.client.model.geom.ModelPart;
 
 //#if MC >= 26.1
 //$$ import net.minecraft.client.renderer.rendertype.RenderTypes;
-//$$ import com.mojang.blaze3d.vertex.VertexMultiConsumer;
 //$$ import net.minecraft.client.renderer.Sheets;
 //#endif
 //#if MC >= 12109
+import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 //#endif
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETF;
@@ -33,7 +32,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.AbstractTexture;
@@ -134,13 +132,14 @@ public abstract class ETFUtils2 {
 
     public static void submitEnchantedModelPart(final PoseStack matrixStack, final SubmitNodeCollector submit, final int light, final ModelPart modelPart, final @NotNull ResourceLocation enchanted) {
         submit.submitModelPart(modelPart, matrixStack,
-                //#if MC>= 12111
-                //$$ net.minecraft.client.renderer.rendertype.RenderTypes
+                //TODO enchanted models needs refactoring
+                //#if MC >= 26.2
+                //$$ net.minecraft.client.renderer.rendertype.RenderTypes.entityGlint(),light, OverlayTexture.NO_OVERLAY, null);
+                //#elseif MC >= 1.21.11
+                //$$ net.minecraft.client.renderer.rendertype.RenderTypes.armorCutoutNoCull(enchanted), light, OverlayTexture.NO_OVERLAY, null, false, true);
                 //#else
-                RenderType
+                RenderType.armorCutoutNoCull(enchanted), light, OverlayTexture.NO_OVERLAY, null, false, true);
                 //#endif
-                        .armorCutoutNoCull(enchanted), light, OverlayTexture.NO_OVERLAY, null,
-                false, true);
     }
     //#endif
 
@@ -186,7 +185,7 @@ public abstract class ETFUtils2 {
         return modified == null ? identifier : modified;
     }
 
-    public static boolean renderEmissive(ETFTexture texture, MultiBufferSource provider, RenderMethodForOverlay renderer) {
+    public static boolean renderEmissive(ETFTexture texture, URenderTypeToVertexConsumer provider, RenderMethodForOverlay renderer) {
         if (!ETF.config().getConfig().canDoEmissiveTextures()) return false;
         ResourceLocation emissive = texture.getEmissiveIdentifierOfCurrentState();
         if (emissive != null) {
@@ -224,21 +223,18 @@ public abstract class ETFUtils2 {
         return false;
     }
 
-    //#if MC >= 26.1
-    //$$ public static VertexConsumer getFoilBuffer(MultiBufferSource multiBufferSource, RenderType renderType, boolean bl, boolean bl2) {
-    //$$     if (bl2) {
-    //$$         return useTransparentGlint(renderType) ? VertexMultiConsumer.create(multiBufferSource.getBuffer(RenderTypes.glintTranslucent()), multiBufferSource.getBuffer(renderType)) : VertexMultiConsumer.create(multiBufferSource.getBuffer(bl ? RenderTypes.glint() : RenderTypes.entityGlint()), multiBufferSource.getBuffer(renderType));
-    //$$     } else {
-    //$$         return multiBufferSource.getBuffer(renderType);
-    //$$     }
+    //#if MC >= 26.2
+    //$$ //todo actual impl
+    //$$ public static VertexConsumer getFoilBuffer(URenderTypeToVertexConsumer multiBufferSource, RenderType renderType) {
+    //$$     return multiBufferSource.getBuffer(RenderTypes.entityGlint());
     //$$ }
-    //$$
-    //$$ private static boolean useTransparentGlint(RenderType renderType) {
-    //$$     return Minecraft.useShaderTransparency() && (renderType == Sheets.translucentItemSheet() || renderType == Sheets.translucentBlockItemSheet());
+    //#elseif MC >= 26.1
+    //$$ public static VertexConsumer getFoilBuffer(URenderTypeToVertexConsumer multiBufferSource, RenderType renderType) {
+    //$$     return com.mojang.blaze3d.vertex.VertexMultiConsumer.create(multiBufferSource.getBuffer(RenderTypes.entityGlint()), multiBufferSource.getBuffer(renderType));
     //$$ }
     //#endif
 
-    public static boolean renderEnchanted(ETFTexture texture, MultiBufferSource provider, int light, RenderMethodForOverlay renderer) {
+    public static boolean renderEnchanted(ETFTexture texture, URenderTypeToVertexConsumer provider, int light, RenderMethodForOverlay renderer) {
         // attempt enchanted render
         ResourceLocation enchanted = texture.getEnchantIdentifierOfCurrentState();
         if (enchanted != null) {
@@ -246,9 +242,9 @@ public abstract class ETFUtils2 {
             ETFRenderContext.preventRenderLayerTextureModify();
             VertexConsumer enchantedVertex =
                     //#if MC >= 26.1
-                    //$$ getFoilBuffer(provider, RenderTypes.armorCutoutNoCull(enchanted), false, true);
+                    //$$ getFoilBuffer(provider, RenderTypes.armorCutoutNoCull(enchanted));
                     //#elseif MC>=12109
-                    ItemRenderer.getFoilBuffer(provider,
+                    ItemRenderer.getFoilBuffer(provider.delegate,
                             //#if MC>= 12111
                             //$$ net.minecraft.client.renderer.rendertype.RenderTypes
                             //#else
@@ -256,7 +252,7 @@ public abstract class ETFUtils2 {
                             //#endif
                                     .armorCutoutNoCull(enchanted), false, true);
                     //#else
-                    //$$ ItemRenderer.getArmorFoilBuffer(provider,
+                    //$$ ItemRenderer.getArmorFoilBuffer(provider.delegate,
                     //$$ RenderType.armorCutoutNoCull(enchanted),
                         //#if MC < 12100
                         //$$ false,

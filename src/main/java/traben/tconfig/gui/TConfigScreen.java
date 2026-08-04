@@ -11,6 +11,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import traben.entity_texture_features.ETF;
+import traben.entity_texture_features.utils.UScreen;
 
 public class TConfigScreen extends Screen {
     private final boolean showBackButton;
@@ -82,7 +83,7 @@ public class TConfigScreen extends Screen {
 
     @Override
     public void onClose() {
-        Minecraft.getInstance().setScreen(parent);
+        UScreen.setScreen(parent);
     }
 
 //#if MC < 12002

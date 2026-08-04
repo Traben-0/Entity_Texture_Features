@@ -10,6 +10,7 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.input.MouseButtonInfo;
 //#endif
 import org.jetbrains.annotations.Nullable;
+import traben.entity_texture_features.utils.UScreen;
 import traben.tconfig.gui.entries.TConfigEntry;
 
 public class TConfigEntryListWidget extends AbstractSelectionList<TConfigEntryListWidget.TConfigEntryForList> {
@@ -99,8 +100,8 @@ public class TConfigEntryListWidget extends AbstractSelectionList<TConfigEntryLi
             int x = getX();
             int width = getWidth();
             setX(0);
-            assert Minecraft.getInstance().screen != null;
-            setWidth(Minecraft.getInstance().screen.width);
+            assert UScreen.currentScreen() != null;
+            setWidth(UScreen.currentScreen().width);
             super.renderListBackground(context);
             setX(x);
             setWidth(width);
@@ -115,8 +116,8 @@ public class TConfigEntryListWidget extends AbstractSelectionList<TConfigEntryLi
             int x = getX();
             int width = getWidth();
             setX(0);
-            assert Minecraft.getInstance().screen != null;
-            setWidth(Minecraft.getInstance().screen.width);
+            assert UScreen.currentScreen() != null;
+            setWidth(UScreen.currentScreen().width);
             super.renderListSeparators(context);
             setX(x);
             setWidth(width);

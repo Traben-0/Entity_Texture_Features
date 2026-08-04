@@ -14,9 +14,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
+import traben.entity_texture_features.utils.URenderTypeToVertexConsumer;
 
 @Deprecated // todo collapse into ETFEntityRenderState as best as i can
 public class ETFRenderContext {
@@ -67,11 +67,15 @@ public class ETFRenderContext {
         return currentEntity;
     }
 
+    //TODO see usage for details, just temp to get 26.2 out on release day
+    public static boolean temp_markRenderingEntity = false;
+
     public static void setCurrentEntity(ETFEntityRenderState currentEntity) {
         allowRenderLayerTextureModify = true;
         currentEntityNBT = null;
         entityNBT_UUID = null;
         ETFRenderContext.currentEntity = currentEntity;
+        temp_markRenderingEntity = true;
     }
 
     public static boolean canRenderInBrightMode() {
@@ -120,6 +124,7 @@ public class ETFRenderContext {
         limitModifyToProperties = false;
         currentEntityNBT = null;
         entityNBT_UUID = null;
+        temp_markRenderingEntity = false;
     }
 
     @SuppressWarnings("unused")//used in EMF
@@ -216,7 +221,7 @@ public class ETFRenderContext {
         return value;
     }
 
-    public static void insertETFDataIntoVertexConsumer(MultiBufferSource provider, RenderType renderLayer, VertexConsumer vertexConsumer) {
+    public static void insertETFDataIntoVertexConsumer(URenderTypeToVertexConsumer provider, RenderType renderLayer, VertexConsumer vertexConsumer) {
         if (isCurrentlyRenderingEntity() && vertexConsumer instanceof ETFVertexConsumer etfVertexConsumer) {
             //need to store etf texture of consumer and original render layer
             //store provider as well for future actions
@@ -226,7 +231,7 @@ public class ETFRenderContext {
 
     public static boolean isCurrentlyRenderingEntity() {
         //#if MC >= 12109
-        return true; // todo consequences of this??
+        return currentEntity != null || temp_markRenderingEntity;
         //#else
         //$$ return currentEntity != null;
         //#endif

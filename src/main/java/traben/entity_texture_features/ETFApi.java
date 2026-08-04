@@ -3,7 +3,10 @@ package traben.entity_texture_features;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelPart;
+//#if MC < 26.2
 import net.minecraft.client.renderer.MultiBufferSource;
+//#endif
+
 //#if MC >= 12103
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 //#endif
@@ -294,6 +297,7 @@ public final class ETFApi {
         return null;
     }
 
+    //#if MC < 26.2
     /**
      * To render your entity using its emissive textures you can simply call this method sometime after
      * your entity model is rendered, but before you pop or modify the matrix stack
@@ -383,6 +387,7 @@ public final class ETFApi {
             etfTexture.renderEmissive(matrixStack, vertexConsumerProvider, modelPart);
         }
     }
+    //#endif
 
     /**
      * This should only be used if you want to handle your own variation code.

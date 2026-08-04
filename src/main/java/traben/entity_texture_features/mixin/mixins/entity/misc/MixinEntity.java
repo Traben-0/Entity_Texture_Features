@@ -1,6 +1,5 @@
 package traben.entity_texture_features.mixin.mixins.entity.misc;
 
-import net.minecraft.advancements.critereon.NbtPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -138,7 +137,13 @@ public abstract class MixinEntity implements ETFEntity {
     @Override
     public CompoundTag etf$getNbt() {
         return ETFRenderContext.cacheEntityNBTForFrame(etf$getUuid(),
-                ()->NbtPredicate.getEntityTagToCompare(((Entity)((Object)this))));
+                ()->
+                        //#if MC >= 26.2
+                        //$$ net.minecraft.advancements.predicates.NbtPredicate
+                        //#else
+                        net.minecraft.advancements.critereon.NbtPredicate
+                        //#endif
+                                .getEntityTagToCompare(((Entity)((Object)this))));
         //try include id
 //        if (saveAsPassenger(comp)) {
 //            return comp;

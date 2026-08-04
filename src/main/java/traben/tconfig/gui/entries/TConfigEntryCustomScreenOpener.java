@@ -8,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
+import traben.entity_texture_features.utils.UScreen;
 
 public class TConfigEntryCustomScreenOpener extends TConfigEntry {
 
@@ -27,7 +28,7 @@ public class TConfigEntryCustomScreenOpener extends TConfigEntry {
         this.screenIsSingleton = screenIsSingleton;
         this.setValuesDefault = setValuesDefault;
         this.resetValuesToInitial = resetValuesToInitial;
-        button = Button.builder(getText(), (button) -> Minecraft.getInstance().setScreen(getScreen()))
+        button = Button.builder(getText(), (button) -> UScreen.setScreen(getScreen()))
                 .bounds(0, 0, 0, 0).tooltip(getTooltip()).build();
     }
 

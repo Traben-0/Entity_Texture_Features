@@ -3,7 +3,6 @@ package traben.entity_texture_features.mixin.mixins.entity.renderer.feature;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.PlayerModel;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.ParrotOnShoulderLayer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
@@ -11,9 +10,9 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Parrot;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.EntityType;
 
 //#if MC >= 12103
 import net.minecraft.client.renderer.entity.state.ParrotRenderState;
@@ -41,6 +40,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+import traben.entity_texture_features.utils.UEntityTypes;
 //#if MC >= 12109
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
@@ -87,7 +87,7 @@ public abstract class MixinShoulderParrotFeatureRenderer extends RenderLayer<Ava
     private void etf$setParrotAsCurrentEntity(final Player playerEntity, final ParrotRenderState parrotRenderState) {
         if (parrotRenderState != null) {
             try {
-                var parrot = EntityType.PARROT.create(playerEntity.level(), EntitySpawnReason.COMMAND);
+                var parrot = UEntityTypes.PARROT.create(playerEntity.level(), EntitySpawnReason.COMMAND);
 //                if (optionalEntity instanceof Parrot parrot) {
                     //todo do i even need to set variant?
                     ETFRenderContext.setCurrentEntity(ETFEntityRenderState.forEntity((ETFEntity) parrot));
@@ -114,7 +114,7 @@ public abstract class MixinShoulderParrotFeatureRenderer extends RenderLayer<Ava
 //$$
 //$$     @Inject(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/renderer/entity/state/PlayerRenderState;FF)V",
 //$$             at = @At(value = "HEAD"))
-//$$     private void etf$alterEntityLeft(final PoseStack poseStack, final MultiBufferSource multiBufferSource, final int i, final PlayerRenderState playerRenderState, final float f, final float g, final CallbackInfo ci) {
+//$$     private void etf$alterEntityLeft(final PoseStack poseStack, final net.minecraft.client.renderer.MultiBufferSource multiBufferSource, final int i, final PlayerRenderState playerRenderState, final float f, final float g, final CallbackInfo ci) {
 //$$         etf$heldEntity = ETFRenderContext.getCurrentEntityState();
 //$$         if (etf$heldEntity != null && etf$heldEntity.entity() instanceof Player playerEntity) {
 //$$             etf$setParrotAsCurrentEntity(playerEntity, playerEntity.getShoulderEntityLeft());
@@ -127,7 +127,7 @@ public abstract class MixinShoulderParrotFeatureRenderer extends RenderLayer<Ava
 //$$                 , shift = At.Shift.AFTER, ordinal = 0
 //$$             )
 //$$     )
-//$$     private void etf$alterEntityRight(final PoseStack poseStack, final MultiBufferSource multiBufferSource, final int i, final PlayerRenderState playerRenderState, final float f, final float g, final CallbackInfo ci) {
+//$$     private void etf$alterEntityRight(final PoseStack poseStack, final net.minecraft.client.renderer.MultiBufferSource multiBufferSource, final int i, final PlayerRenderState playerRenderState, final float f, final float g, final CallbackInfo ci) {
 //$$         etf$heldEntity = ETFRenderContext.getCurrentEntityState();
 //$$         if (etf$heldEntity != null && etf$heldEntity.entity() instanceof Player playerEntity) {
 //$$             etf$setParrotAsCurrentEntity(playerEntity, playerEntity.getShoulderEntityRight());
@@ -138,7 +138,7 @@ public abstract class MixinShoulderParrotFeatureRenderer extends RenderLayer<Ava
 //$$     private void etf$setParrotAsCurrentEntity(final Player playerEntity, final CompoundTag nbtCompound) {
 //$$         if (nbtCompound != null) {
 //$$             try {
-//$$                 var optionalEntity = EntityType.PARROT.create(playerEntity.level(), EntitySpawnReason.COMMAND);
+//$$                 var optionalEntity = UEntityTypes.PARROT.create(playerEntity.level(), EntitySpawnReason.COMMAND);
 //$$                 if (optionalEntity instanceof Parrot parrot) {//null check
                     //#if MC>=12106
                     //$$ ValueInput valueInput = TagValueInput.create(ProblemReporter.DISCARDING,

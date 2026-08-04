@@ -9,7 +9,6 @@ import traben.entity_texture_features.mixin.CancelTarget;
 public class MixinSodiumBufferBuilder {}
 //#else
 //$$ import me.jellysquid.mods.sodium.client.render.vertex.buffer.SodiumBufferBuilder;
-//$$ import net.minecraft.client.renderer.MultiBufferSource;
 //$$ import net.minecraft.client.renderer.RenderType;
 //$$ import net.minecraft.resources.ResourceLocation;
 //$$ import org.spongepowered.asm.mixin.Mixin;
@@ -28,7 +27,7 @@ public class MixinSodiumBufferBuilder {}
 //$$ public class MixinSodiumBufferBuilder implements ETFVertexConsumer {
 //$$
 //$$     @Unique
-//$$     MultiBufferSource etf$provider = null;
+//$$     traben.entity_texture_features.utils.URenderTypeToVertexConsumer etf$provider = null;
 //$$     @Unique
 //$$     RenderType etf$renderLayer = null;
 //$$     @Unique
@@ -40,7 +39,7 @@ public class MixinSodiumBufferBuilder {}
 //$$    }
 //$$
 //$$     @Override
-//$$     public MultiBufferSource etf$getProvider() {
+//$$     public traben.entity_texture_features.utils.URenderTypeToVertexConsumer etf$getProvider() {
 //$$         return etf$provider;
 //$$     }
 //$$
@@ -50,7 +49,7 @@ public class MixinSodiumBufferBuilder {}
 //$$     }
 //$$
 //$$     @Override
-//$$     public void etf$initETFVertexConsumer(MultiBufferSource provider, RenderType renderLayer) {
+//$$     public void etf$initETFVertexConsumer(traben.entity_texture_features.utils.URenderTypeToVertexConsumer provider, RenderType renderLayer) {
 //$$         etf$provider = provider;
 //$$
 //$$         etf$renderLayer = renderLayer;

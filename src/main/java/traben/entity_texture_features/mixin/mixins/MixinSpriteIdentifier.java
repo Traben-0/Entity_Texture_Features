@@ -12,7 +12,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import java.util.function.Function;
 
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.SpriteCoordinateExpander;
 import net.minecraft.client.resources.model.Material;
@@ -24,7 +23,8 @@ import traben.entity_texture_features.utils.ETFUtils2;
 @Mixin(Material.class)
 //#endif
 public class MixinSpriteIdentifier {
-
+    //TODO really needs a look at
+//#if MC < 26.2
     @Inject(method =
             //#if MC >= 26.1
             //$$ {
@@ -38,7 +38,7 @@ public class MixinSpriteIdentifier {
             //#endif
             at = @At(value = "RETURN"), cancellable = true)
     private void etf$modifyIfRequired(CallbackInfoReturnable<VertexConsumer> cir,
-                                      @Local(argsOnly = true) MultiBufferSource vertexConsumers,
+                                      @Local(argsOnly = true) net.minecraft.client.renderer.MultiBufferSource vertexConsumers,
                                       @Local(argsOnly = true) Function<ResourceLocation, RenderType> layerFactory) {
 
         if (cir.getReturnValue() instanceof SpriteCoordinateExpander spriteTexturedVertexConsumer) {
@@ -71,5 +71,5 @@ public class MixinSpriteIdentifier {
             }
         }
     }
-
+//#endif
 }

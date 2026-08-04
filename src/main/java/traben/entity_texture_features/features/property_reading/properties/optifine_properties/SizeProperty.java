@@ -9,7 +9,11 @@ import traben.entity_texture_features.utils.ETFEntity;
 import java.util.Properties;
 
 import net.minecraft.world.entity.monster.Phantom;
+//#if MC >= 26.2
+//$$ import net.minecraft.world.entity.monster.cubemob.Slime;
+//#else
 import net.minecraft.world.entity.monster.Slime;
+//#endif
 
 public class SizeProperty extends SimpleIntegerArrayProperty {
 

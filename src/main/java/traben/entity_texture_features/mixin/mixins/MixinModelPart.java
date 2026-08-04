@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -18,6 +17,7 @@ import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
 import traben.entity_texture_features.utils.ETFUtils2;
 import traben.entity_texture_features.utils.ETFVertexConsumer;
+import traben.entity_texture_features.utils.URenderTypeToVertexConsumer;
 
 /**
  * this method figures out if a {@link ModelPart} is the top level of the children tree being rendered,
@@ -68,7 +68,7 @@ public abstract class MixinModelPart {
                 ETFTexture texture = etfVertexConsumer.etf$getETFTexture();
                 //is etf texture not null and does it special render?
                 if (texture != null && (texture.isEmissive() || texture.isEnchanted())) {
-                    MultiBufferSource provider = etfVertexConsumer.etf$getProvider();
+                    URenderTypeToVertexConsumer provider = etfVertexConsumer.etf$getProvider();
                     //very important this is captured before doing the special renders as they can potentially modify
                     //the same ETFVertexConsumer down stream
                     RenderType layer = etfVertexConsumer.etf$getRenderLayer();

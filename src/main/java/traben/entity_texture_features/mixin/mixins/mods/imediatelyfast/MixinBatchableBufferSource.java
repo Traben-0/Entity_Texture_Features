@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import traben.entity_texture_features.compat.SodiumGetBufferInjector;
 import traben.entity_texture_features.features.ETFRenderContext;
+import traben.entity_texture_features.utils.URenderTypeToVertexConsumer;
 
 @Pseudo
 @Mixin(value = BatchableBufferSource.class, priority = 800)
@@ -33,12 +34,12 @@ public class MixinBatchableBufferSource {
         if (!ETFRenderContext.isCurrentlyRenderingEntity()) return; // faster cancel
 
         var returned = cir.getReturnValue();
-        ETFRenderContext.insertETFDataIntoVertexConsumer((MultiBufferSource) this, renderLayer, returned);
+        ETFRenderContext.insertETFDataIntoVertexConsumer(new URenderTypeToVertexConsumer((MultiBufferSource) this), renderLayer, returned);
 
         //todo is this required with immedeately fast?
         // quarantined class to contain all sodium interaction
         // sodium ExtendedBufferBuilder classes contain a delegate that must instead have the above data passed into
-        SodiumGetBufferInjector.inject((MultiBufferSource) this, renderLayer, returned);
+        SodiumGetBufferInjector.inject(new URenderTypeToVertexConsumer((MultiBufferSource) this), renderLayer, returned);
     }
 
 }

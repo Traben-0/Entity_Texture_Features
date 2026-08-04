@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -93,11 +92,11 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
     //#elseif MC >= 12103
     //$$ @Inject(method = "render(Lnet/minecraft/client/renderer/entity/state/PaintingRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
     //$$     at = @At(value = "HEAD"), cancellable = true)
-    //$$ private void etf$getSprites(final PaintingRenderState paintingRenderState, final PoseStack matrixStack, final MultiBufferSource vertexConsumerProvider, final int i, final CallbackInfo ci) {
+    //$$ private void etf$getSprites(final PaintingRenderState paintingRenderState, final PoseStack matrixStack, final net.minecraft.client.renderer.MultiBufferSource vertexConsumerProvider, final int i, final CallbackInfo ci) {
     //#else
     //$$ @Inject(method = "render(Lnet/minecraft/world/entity/decoration/Painting;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
     //$$     at = @At(value = "HEAD"), cancellable = true)
-    //$$ private void etf$getSprites(Painting paintingEntity, float f, float g, PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, int i, CallbackInfo ci) {
+    //$$ private void etf$getSprites(Painting paintingEntity, float f, float g, PoseStack matrixStack, net.minecraft.client.renderer.MultiBufferSource vertexConsumerProvider, int i, CallbackInfo ci) {
     //#endif
 
         ETFEntityRenderState etfEntity =
@@ -234,7 +233,7 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
     }
     //#if MC < 12109
     //$$ @Unique
-    //$$ private void etf$renderETFPainting(PoseStack.Pose entry, MultiBufferSource vertexConsumerProvider, Painting entity, int width, int height, ETFSprite ETFPaintingSprite, ETFSprite ETFBackSprite) {
+    //$$ private void etf$renderETFPainting(PoseStack.Pose entry, net.minecraft.client.renderer.MultiBufferSource vertexConsumerProvider, Painting entity, int width, int height, ETFSprite ETFPaintingSprite, ETFSprite ETFBackSprite) {
     //$$     ETFRenderContext.preventRenderLayerTextureModify();
     //$$     VertexConsumer vertexConsumerFront = vertexConsumerProvider.getBuffer(RenderType.entitySolid(ETFPaintingSprite.getSpriteVariant().atlasLocation()));
     //$$     etf$renderETFPaintingFront(entry, vertexConsumerFront, entity, width, height, ETFPaintingSprite.getSpriteVariant(), false);
@@ -320,7 +319,11 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
                         ae = Mth.floor(entity.getZ() + (double) ((y + z) / 2.0F / divider));
                     }
 
+                    //#if MC >= 26.2
+                    //$$ light = net.minecraft.util.LightCoordsUtil.getLightCoords(entity.level(), new BlockPos(ac, ad, ae));
+                    //#else
                     light = LevelRenderer.getLightColor(entity.level(), new BlockPos(ac, ad, ae));
+                    //#endif
                 }
 
                 float zConst =
@@ -419,7 +422,11 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
                         ae = Mth.floor(entity.getZ() + (double) ((y + z) / 2.0F / divider));
                     }
 
+                    //#if MC >= 26.2
+                    //$$ light = net.minecraft.util.LightCoordsUtil.getLightCoords(entity.level(), new BlockPos(ac, ad, ae));
+                    //#else
                     light = LevelRenderer.getLightColor(entity.level(), new BlockPos(ac, ad, ae));
+                    //#endif
                 }
 
                 float zConst =

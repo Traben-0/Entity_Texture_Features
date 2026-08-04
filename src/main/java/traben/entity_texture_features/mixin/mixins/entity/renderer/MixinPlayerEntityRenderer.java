@@ -6,7 +6,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
@@ -52,7 +51,7 @@ public abstract class MixinPlayerEntityRenderer<AvatarlikeEntity extends Avatar 
 //$$ @Mixin(PlayerRenderer.class)
 //$$ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<AbstractClientPlayer, PlayerRenderState, PlayerModel> implements ETFPlayerSkinHolder {
 //$$     @Shadow
-//$$     protected abstract void renderNameTag(final PlayerRenderState playerRenderState, final Component component, final PoseStack poseStack, final MultiBufferSource multiBufferSource, final int i);
+//$$     protected abstract void renderNameTag(final PlayerRenderState playerRenderState, final Component component, final PoseStack poseStack, final net.minecraft.client.renderer.MultiBufferSource multiBufferSource, final int i);
 //$$
 //$$
 //#else
@@ -109,7 +108,7 @@ public abstract class MixinPlayerEntityRenderer<AvatarlikeEntity extends Avatar 
         //$$ @Inject(method = "renderHand",
         //$$     at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/geom/ModelPart;render(Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;II)V",
         //$$             shift = At.Shift.BEFORE), cancellable = true)
-        //$$ private void etf$redirectNicely(final PoseStack matrices, final MultiBufferSource vertexConsumers, final int light, final ResourceLocation resourceLocation, final ModelPart armAndSleeve, final boolean bl, final CallbackInfo ci) {
+        //$$ private void etf$redirectNicely(final PoseStack matrices, final net.minecraft.client.renderer.MultiBufferSource vertexConsumers, final int light, final ResourceLocation resourceLocation, final ModelPart armAndSleeve, final boolean bl, final CallbackInfo ci) {
         //$$ //todo redo all this, 1.21.2 really changed things
         //$$ if (Minecraft.getInstance().player == null) return;
         //$$ var player = Minecraft.getInstance().player;
@@ -118,7 +117,7 @@ public abstract class MixinPlayerEntityRenderer<AvatarlikeEntity extends Avatar 
         //$$     @Inject(method = "renderHand",
         //$$         at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/PlayerModel;setupAnim(Lnet/minecraft/world/entity/LivingEntity;FFFFF)V",
         //$$                 shift = At.Shift.AFTER), cancellable = true)
-        //$$ private void etf$redirectNicely(PoseStack matrices, MultiBufferSource vertexConsumers, int light, AbstractClientPlayer player, ModelPart arm, ModelPart sleeve, CallbackInfo ci) {
+        //$$ private void etf$redirectNicely(PoseStack matrices, net.minecraft.client.renderer.MultiBufferSource vertexConsumers, int light, AbstractClientPlayer player, ModelPart arm, ModelPart sleeve, CallbackInfo ci) {
         //#endif
     //$$     if (ETF.config().getConfig().skinFeaturesEnabled) {
     //$$         ETFPlayerTexture thisETFPlayerTexture = ETFManager.getInstance().getPlayerTexture(player,

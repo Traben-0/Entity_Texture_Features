@@ -21,6 +21,7 @@ import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
 import traben.entity_texture_features.utils.ETFUtils2;
 import traben.entity_texture_features.utils.ETFVertexConsumer;
+import traben.entity_texture_features.utils.URenderTypeToVertexConsumer;
 
 /**
  * this is a copy of {@link MixinModelPart}
@@ -99,7 +100,7 @@ public abstract class MixinCustomizableModelPart {
                         && vertexConsumer instanceof ETFVertexConsumer etfVertexConsumer) {
                     ETFTexture texture = etfVertexConsumer.etf$getETFTexture();
                     if (texture != null && (texture.isEmissive() || texture.isEnchanted())) {
-                        MultiBufferSource provider = etfVertexConsumer.etf$getProvider();
+                        URenderTypeToVertexConsumer provider = etfVertexConsumer.etf$getProvider();
                         RenderType layer = etfVertexConsumer.etf$getRenderLayer();
                         if (provider != null && layer != null) {
                             //attempt special renders as eager OR checks

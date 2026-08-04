@@ -11,7 +11,6 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BedBlock;
-import net.minecraft.world.level.block.entity.BedBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.properties.BedPart;
@@ -92,13 +91,15 @@ public abstract class MixinBlockEntity implements ETFEntity {
 
     @Override
     public BlockPos etf$getBlockPos() {
+        //#if MC < 26.2
         var self = (BlockEntity) ((Object) this);
-        if(self instanceof BedBlockEntity bed){
+        if(self instanceof net.minecraft.world.level.block.entity.BedBlockEntity bed){
             var state = bed.getBlockState();
             if(state.getValue(BedBlock.PART) == BedPart.HEAD){
                 return getBlockPos().relative(state.getValue(BedBlock.FACING));
             }
         }
+        //#endif
         return getBlockPos();
     }
 

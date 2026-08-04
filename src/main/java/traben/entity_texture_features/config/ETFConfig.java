@@ -20,6 +20,8 @@ import traben.entity_texture_features.features.player.ETFPlayerTexture;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperties;
 import traben.entity_texture_features.features.state.ETFEntityRenderState;
 import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.utils.UEntityTypes;
+import traben.entity_texture_features.utils.UScreen;
 import traben.tconfig.TConfig;
 import traben.entity_texture_features.utils.ETFEntity;
 import traben.tconfig.gui.entries.*;
@@ -270,7 +272,7 @@ public final class ETFConfig extends TConfig {
         var category = new TConfigEntryCategory("config.entity_features.per_entity_settings");
         try {
             BuiltInRegistries.ENTITY_TYPE.forEach(entityType -> {
-                if (entityType == EntityType.PLAYER) return;
+                if (entityType == UEntityTypes.PLAYER) return;
                 String translationKey = entityType.getDescriptionId();
                 var entityCategory = new TConfigEntryCategory(translationKey);
                 addEntityConfigs(entityCategory, translationKey);
@@ -376,9 +378,9 @@ public final class ETFConfig extends TConfig {
 
         return canLaunchSkinTool ?
                 new TConfigEntryCustomScreenOpener("config.entity_texture_features.player_skin_editor.button.enabled", reasonText.toString(),
-                        () -> new ETFConfigScreenSkinTool(Minecraft.getInstance().screen), false) :
+                        () -> new ETFConfigScreenSkinTool(UScreen.currentScreen()), false) :
                 new TConfigEntryCustomScreenOpener("config.entity_texture_features.player_skin_editor.button.disabled", reasonText.toString(),
-                        () -> new ETFConfigScreenSkinTool(Minecraft.getInstance().screen), false).setEnabled(false);
+                        () -> new ETFConfigScreenSkinTool(UScreen.currentScreen()), false).setEnabled(false);
     }
 
     @Override

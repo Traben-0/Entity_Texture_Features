@@ -6,7 +6,9 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelPart;
+//#if MC < 26.2
 import net.minecraft.client.renderer.MultiBufferSource;
+//#endif
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -478,6 +480,7 @@ public class ETFTexture {
         return "[" + this.thisIdentifier.toString() + ", emissive=" + isEmissive() + ", blinks=" + doesBlink() + "]";
     }
 
+    //#if MC < 26.2
     public void renderEmissive(PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, ModelPart modelPart) {
         renderEmissive(matrixStack, vertexConsumerProvider, modelPart, ETFManager.getEmissiveMode());
     }
@@ -514,6 +517,7 @@ public class ETFTexture {
         if (type == null) return null;
         return vertexConsumerProvider.getBuffer(type);
     }
+    //#endif
 
     @Nullable
     public RenderType getEmissiveRenderLayer(@Nullable Model model) {

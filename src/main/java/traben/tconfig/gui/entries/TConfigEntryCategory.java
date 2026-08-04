@@ -2,6 +2,7 @@ package traben.tconfig.gui.entries;
 
 import com.demonwav.mcdev.annotations.Translatable;
 import org.jetbrains.annotations.NotNull;
+import traben.entity_texture_features.utils.UScreen;
 import traben.tconfig.gui.TConfigScreenList;
 
 import java.util.Collection;
@@ -46,7 +47,7 @@ public class TConfigEntryCategory extends TConfigEntry {
     //don't need to init screen each time
     public TConfigScreenList getScreen() {
         if (screen == null) {
-            screen = new TConfigScreenList(translationKey, Minecraft.getInstance().screen, options.values().toArray(new TConfigEntry[0]), this::setValuesToDefault, this::resetValuesToInitial, align);
+            screen = new TConfigScreenList(translationKey, UScreen.currentScreen(), options.values().toArray(new TConfigEntry[0]), this::setValuesToDefault, this::resetValuesToInitial, align);
             screen.setRenderFeature(renderFeature);
             if (fullWidthBackgroundEvenIfSmaller) {
                 screen.setWidgetBackgroundToFullWidth();
@@ -58,7 +59,7 @@ public class TConfigEntryCategory extends TConfigEntry {
     @Override
     public AbstractWidget getWidget(final int x, final int y, final int width, final int height) {
         return new CategoryButton(x, y, width, height, getText(),
-                (button) -> Minecraft.getInstance().setScreen(getScreen()));
+                (button) -> UScreen.setScreen(getScreen()));
     }
 
     @Override

@@ -20,6 +20,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import traben.entity_texture_features.features.ETFRenderContext;
+import traben.entity_texture_features.utils.URenderTypeToVertexConsumer;
 
 
 /**
@@ -56,7 +57,7 @@ public class MixinFullyBufferedMultiBufferSource {
             )
     private void etf$injectIntoGetBufferReturn(RenderType renderLayer, CallbackInfoReturnable<VertexConsumer> cir) {
         ETFRenderContext.insertETFDataIntoVertexConsumer(
-                (MultiBufferSource) this,
+                new URenderTypeToVertexConsumer((MultiBufferSource) this),
                 renderLayer,
                 cir.getReturnValue());
     }

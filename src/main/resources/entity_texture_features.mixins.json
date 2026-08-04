@@ -59,6 +59,7 @@
     "mods.iris.MixinInnerWrappedRenderType",
     "mods.iris.MixinOuterWrappedRenderType",
     "reloading.MixinMinecraftClient",
-    "reloading.MixinResourceReload"
+    "reloading.MixinResourceReload",
+    "submit.Mixin_ModelRenderer"
   ]
 }

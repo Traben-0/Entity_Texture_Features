@@ -17,6 +17,7 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.utils.UScreen;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -69,7 +70,7 @@ public class ETFConfigScreenSkinToolPixelSelection extends ETFScreenOldCompat {
 
         this.addRenderableWidget(getETFButton((int) (this.width * 0.55), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,
                 CommonComponents.GUI_BACK,
-                (button) -> Objects.requireNonNull(minecraft).setScreen(parent)));
+                (button) -> UScreen.setScreen(parent)));
 
         int pixelSize = (int) (this.height * 0.7 / 64);
 

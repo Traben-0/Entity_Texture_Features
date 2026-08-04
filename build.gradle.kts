@@ -42,6 +42,7 @@ base.archivesName.set("entity_texture_features-$modVersion-${project.name}")
 
 val manuallyAccessTransform = mcVersion >= 26_00_00 && platform.isNeoForge
 val accessWidener = "entity_texture_features_" + when {
+    mcVersion >= 26_02_00 -> 15
     mcVersion >= 26_01_00 -> 14
     mcVersion >= 1_21_11 -> 13
     mcVersion >= 1_21_09 -> 12
@@ -93,14 +94,13 @@ dependencies {
     fun modImpl(modPrefix: String, vararg versions: Pair<Int, String?>): Boolean {
         for ((versionMC, versionMod) in versions) {
             if (platform.mcVersion >= versionMC) {
-                if (versionMod != null) {
+                return if (versionMod != null) {
                     modImplementation("$modPrefix$versionMod") {
                         exclude("net.fabricmc.fabric-api")
                         isTransitive = true
                     }
-                    return true
-                }
-                break
+                    true
+                } else false
             }
         }
         return false
@@ -115,7 +115,8 @@ dependencies {
     infix fun String.setVar(enabled: Boolean) = preprocess.vars.put(this, if (enabled) 1 else 0)
 
     "3DSKINLAYERS" setVar modImpl("maven.modrinth:3dskinlayers:",
-        26_01_00 to null,
+        26_02_00 to null, // TODO
+        26_01_00 to ver("8kxiY3G1", null, null),
         1_21_02 to ver("R1cL8Kvt", "lmgrljtK",  "9V8JcyMQ"),
         1_21_00 to ver("hRPGTUwZ", "Gx8v5lo4",  "vj8UV3SS"),
         1_20_06 to ver("SrazSQ8a", "CKyYI9pm",  "eSgdmwEr"),
@@ -126,7 +127,8 @@ dependencies {
 
     "SODIUM" setVar (
             modImpl("maven.modrinth:sodium:",
-                26_01_00 to ver("Amr4VcZo", null, null),
+                26_02_00 to ver("3QgJXuSK", null, "5dWEDeL4"),
+                26_01_00 to ver("1rha2U1D", null, "I6y5LD6f"),
                 1_21_05 to ver("fVbw1C7i", null,  "dfyNHRhw"),
                 1_21_04 to ver("c3YkZvne", null,  "XgEfENfn"),
                 1_21_03 to ver("rLBgU2jc", null,  "M0CXIL7c"),
@@ -143,7 +145,8 @@ dependencies {
 
     "IRIS" setVar (
             modImpl("maven.modrinth:iris:",
-                26_01_00 to ver("4cGUAiJ6", null, null),
+                26_02_00 to ver("3uIIps8q", null, null),
+                26_01_00 to ver("MwcLS51S", null, "YEGDGnJM"),
                 //1_21_11 to ver("TSXvi2yD", null,  "t3ruzodq"), //"k9tHcfnb"), //todo why does this break
                 1_21_06 to ver("l77DAK6U", null,  "t3ruzodq"), //"xA5cxBvz"), // same here
                 1_21_05 to ver("U6evbjd0", null,  "t3ruzodq"), //"KAopiPos"),
@@ -159,6 +162,7 @@ dependencies {
         )
 
     "IMMEDIATELYFAST" setVar modImpl("maven.modrinth:immediatelyfast:",
+        26_02_00 to null, // TODO
         26_01_00 to ver("lRuSLf0Y", null, "KibcXkbk"),
         1_21_06 to ver("9JPEk4KN", null, "d8kpGqVx"),
         1_21_05 to ver("kcSoZlE9", null, "43iGBJDV"),
@@ -169,6 +173,7 @@ dependencies {
 
     if (platform.isFabric) {
         modImpl("maven.modrinth:modmenu:",
+            26_02_00 to "TLnEHUyx",
             26_01_00 to "XIDyVLo7",
             1_21_05 to "R7uVB42W",
             1_21_02 to "PcJvQYqu",
