@@ -17,6 +17,8 @@ plugins {
     // You can also overwrite some of these if need be. See the `gg.essential.defaults.loom` README section.
     // Otherwise you'll need to configure those as usual for (architectury) loom.
     id("gg.essential.defaults")
+
+    id("me.modmuss50.mod-publish-plugin") version "2.0.0-beta.1"
 }
 
 //tasks.compileKotlin.setJvmDefault("all")
@@ -276,18 +278,102 @@ tasks.processResources {
     }
 }
 
-tasks.register<Copy>("copyArtifacts") {
+tasks.register<Copy>("buildBulkJars") {
+    dependsOn(tasks.build)
+
     from(layout.buildDirectory.dir("libs").get())
     into("${rootDir}\\jars")
-    mustRunAfter(tasks.build)
     delete(layout.buildDirectory.dir("libs").get())
 }
 
+private val versionRangeMap: Map<String, Array<String>> = mapOf(
+    "26.1"   to arrayOf("26.1", "26.1.1", "26.1.2"),
+    "1.21.9" to arrayOf("1.21.9", "1.21.10"),
+    "1.21.6" to arrayOf("1.21.6", "1.21.7", "1.21.8"),
+    "1.21.3" to arrayOf("1.21.3", "1.21.2"),
+    "1.21"   to arrayOf("1.21", "1.21.1"),
+    "1.20.1" to arrayOf("1.20.1", "1.20")
+)
 
-tasks.build {
-    finalizedBy("copyArtifacts")
+private val String.versionRange: Array<String>
+    get() = versionRangeMap[this] ?: arrayOf(this)
+
+private fun changelog(): String? {
+    val lines = rootProject.rootDir.resolve("CHANGELOG.MD").readText(Charsets.UTF_8).lines()
+    val sb = StringBuilder()
+    var inside = false
+
+    for (rawLine in lines) {
+        val line = rawLine.trim()
+        if (line.startsWith("[")) {
+            if (line == "[$modVersion]") {
+                inside = true
+                continue
+            } else if (inside) {
+                // we've reached the next header after the section we wanted
+                break
+            } else {
+                // if first header wasn't the requested one
+                break
+            }
+        }
+        if (inside && line.isNotBlank()) {
+            sb.append(line).append("\n")
+        }
+    }
+
+    if (sb.isEmpty()) null
+
+    return sb.toString()
 }
 
+publishMods {
+    val changes = changelog()
+    if (changes == null) {
+        println("No changelog entry found at top, assuming development build")
+        return@publishMods
+    }
+
+    // https://modmuss50.github.io/mod-publish-plugin/
+    file.set(
+        (if (platform.isUnobfuscated) tasks.jar
+        else tasks.named<net.fabricmc.loom.task.RemapJarTask>("remapJar"))
+            .get().archiveFile
+    )
+    changelog.set(changes)
+    type.set(STABLE)
+    val ver = "$modVersion-${platform.loaderStr}-${platform.mcVersionStr}"
+    version.set(ver)
+    when {
+        platform.isFabric -> {
+            modLoaders.add("fabric")
+            modLoaders.add("quilt")
+        }
+        platform.isForge -> {
+            modLoaders.add("forge")
+        }
+        platform.isNeoForge -> {
+            modLoaders.add("neoforge")
+        }
+        else -> {
+            throw UnsupportedOperationException()
+        }
+    }
+
+    displayName.set(ver)
+
+    curseforge {
+        projectId.set("568563")
+        accessToken.set(providers.environmentVariable("CURSEFORGE_TOKEN"))
+        minecraftVersions.addAll(*platform.mcVersionStr.versionRange)
+        clientRequired.set(true)
+    }
+    modrinth {
+        projectId.set("BVzZfTc1")
+        accessToken.set(providers.environmentVariable("MODRINTH_TOKEN"))
+        minecraftVersions.addAll(*platform.mcVersionStr.versionRange)
+    }
+}
 
 //region 26.1+ NEOFORGE ACCESS TRANSFORMER GENERATION
 
