@@ -10,6 +10,7 @@ import traben.entity_texture_features.config.screens.skin.ETFConfigScreenSkinToo
 import traben.entity_texture_features.features.player.ETFPlayerEntity;
 import traben.entity_texture_features.features.player.ETFPlayerTexture;
 import traben.entity_texture_features.features.state.ETFEntityRenderState;
+import traben.entity_texture_features.features.state.ETFState;
 import traben.entity_texture_features.features.texture_handlers.ETFDirectory;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
 import traben.entity_texture_features.features.texture_handlers.ETFTextureVariator;
@@ -100,6 +101,7 @@ public class ETFManager {
     }
 
     public static void resetInstance() {
+        ETFState.clear();
         ETF.config().loadFromFile();
 
         // instance based format solves the issue of hashmaps and arrays being clearing while also being accessed
@@ -114,10 +116,11 @@ public class ETFManager {
 
     public static ETFConfig.EmissiveRenderModes getEmissiveMode() {
         var mode = ETF.config().getConfig().getEmissiveRenderMode();
-        if (mode == ETFConfig.EmissiveRenderModes.BRIGHT
-                && ETFRenderContext.getCurrentEntityState() != null
-                && !ETFRenderContext.getCurrentEntityState().canRenderBright()) {
-            return ETFConfig.EmissiveRenderModes.DULL;
+        if (mode == ETFConfig.EmissiveRenderModes.BRIGHT) {
+            var state = ETFState.state();
+            if (state != null && !state.canRenderBright()) {
+                return ETFConfig.EmissiveRenderModes.DULL;
+            }
         }
         return mode;
     }

@@ -30,7 +30,7 @@ import net.minecraft.resources.ResourceLocation;
 
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.features.ETFManager;
-import traben.entity_texture_features.features.ETFRenderContext;
+import traben.entity_texture_features.features.state.ETFState;
 import traben.entity_texture_features.utils.ETFUtils2;
 import traben.entity_texture_features.utils.URenderTypeToVertexConsumer;
 
@@ -47,16 +47,16 @@ public class ETFArmorHandler {
 //$$
 //$$     private ETFTexture texture = null;
 //$$
-//$$         public void start(){
-//$$         ETFRenderContext.preventRenderLayerTextureModify();
+//$$     public void start(){
+//$$             ETFState.pushRenderLayerModifyState(false);
 //$$         //todo ETFRenderContext.allowTexturePatching();
-//$$ }
-//$$ public void end(){
-//$$ ETFRenderContext.allowRenderLayerTextureModify();
+//$$     }
+//$$     public void end(){
+//$$         ETFState.popRenderLayerModifyState();
 //$$         //todo ETFRenderContext.preventTexturePatching();
 //$$     }
 //$$
-//$$ public ResourceLocation getBaseTexture(ResourceLocation vanilla) {
+//$$     public ResourceLocation getBaseTexture(ResourceLocation vanilla) {
 //$$         if(ETF.config().getConfig().enableArmorAndTrims) {
 //$$             texture = ETFManager.getInstance().getETFTextureNoVariation(vanilla);
 //$$             //noinspection ConstantConditions
@@ -80,44 +80,44 @@ public class ETFArmorHandler {
 //$$                 //} else {
 //$$                 textureVert = vertexConsumers.getBuffer(RenderType.armorCutoutNoCull(emissive)); //ItemRenderer.getArmorGlintConsumer(vertexConsumers.delegate, RenderLayer.getEntityTranslucent(emissive), false, usesSecondLayer);
 //$$                 //}
-//$$                 ETFRenderContext.startSpecialRenderOverlayPhase();
+//$$                 ETFState.startSpecialRenderOverlayPhase();
 //$$                 //do not pop/push as we want the scaling to trickle down to trim rendering, so they appear over the emissive
 //$$                 if (ETF.IRIS_DETECTED) matrices.scale(1.001f,1.001f,1.001f);
 //$$                 model.renderToBuffer(matrices, textureVert, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.NO_OVERLAY
-//#if MC < 12100
-//$$  , 1, 1, 1, 1.0F
-//#endif
-//$$  );
-//$$                 ETFRenderContext.startSpecialRenderOverlayPhase();
+                //#if MC < 12100
+                //$$  , 1, 1, 1, 1.0F
+                //#endif
+//$$                 );
+//$$                 ETFState.startSpecialRenderOverlayPhase();
 //$$             }
 //$$         }
-//$$
 //$$     }
+//$$
 //$$     public void renderTrimEmissive(final PoseStack matrices, final URenderTypeToVertexConsumer vertexConsumers, final Model model) {
 //$$         if(trimTexture != null && ETF.config().getConfig().canDoEmissiveTextures()){
 //$$             //trimTexture.renderEmissive(matrices,vertexConsumers,model);
 //$$             ResourceLocation emissive = trimTexture.getEmissiveIdentifierOfCurrentState();
 //$$             if (emissive != null) {
 //$$                 VertexConsumer textureVert= vertexConsumers.getBuffer(RenderType.armorCutoutNoCull(emissive));
-//$$                 ETFRenderContext.startSpecialRenderOverlayPhase();
+//$$                 ETFState.startSpecialRenderOverlayPhase();
 //$$                 if (ETF.IRIS_DETECTED) matrices.scale(1.001f,1.001f,1.001f);
 //$$                 model.renderToBuffer(matrices, textureVert, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.NO_OVERLAY
 //#if MC < 12100
 //$$ , 1, 1, 1, 1.0F
 //#endif
 //$$ );
-//$$                 ETFRenderContext.endSpecialRenderOverlayPhase();
+//$$                 ETFState.endSpecialRenderOverlayPhase();
 //$$             }
 //$$         }
 //$$     }
 //$$
 //$$
 //$$     public void setTrim(final
-//$$                                 //#if MC >= 12006
-//$$                                 Holder<ArmorMaterial>
-//$$                                 //#else
-//$$                                 //$$     ArmorMaterial
-//$$                                 //#endif
+                                //#if MC >= 12006
+                                //$$ Holder<ArmorMaterial>
+                                //#else
+                                //$$     ArmorMaterial
+                                //#endif
 //$$                                 armorMaterial, final ArmorTrim trim, final boolean leggings) {
 //$$
 //$$         if(ETF.config().getConfig().enableArmorAndTrims) {
@@ -133,19 +133,17 @@ public class ETFArmorHandler {
 //#else
 
     public void start(){
-//        ETFRenderContext.setInflateEmissiveLayer(true);
-        ETFRenderContext.allowTexturePatching();
+        ETFState.allowTexturePatching = true;
     }
     public void end(){
-//        ETFRenderContext.setInflateEmissiveLayer(false);
-        ETFRenderContext.preventTexturePatching();
+        ETFState.allowTexturePatching = false;
     }
 
     public void renderTrimEmissive(final PoseStack matrices, final URenderTypeToVertexConsumer vertexConsumers, final Model model) {
         if(trimTexture != null && ETF.config().getConfig().canDoEmissiveTextures()){
             ResourceLocation emissive = trimTexture.getEmissiveIdentifierOfCurrentState();
             if (emissive != null) {
-                ETFRenderContext.startSpecialRenderOverlayPhase();
+                ETFState.startSpecialRenderOverlayPhase();
                 VertexConsumer textureVert = vertexConsumers.getBuffer(
                         //#if MC>= 12111
                         //$$ net.minecraft.client.renderer.rendertype.RenderTypes
@@ -160,7 +158,7 @@ public class ETFArmorHandler {
                 //$$ , -1
                 //#endif
                 );
-                ETFRenderContext.endSpecialRenderOverlayPhase();
+                ETFState.endSpecialRenderOverlayPhase();
             }
         }
         trimTexture = null;

@@ -26,3 +26,4 @@ net.minecraft.client.renderer.entity.ItemEntityRenderer net.minecraft.client.ren
 net.minecraft.client.renderer.block.model.BlockModel net.minecraft.client.renderer.block.model.BlockStateModel
 net.minecraft.client.renderer.state.level.CameraRenderState net.minecraft.client.renderer.state.CameraRenderState
 
+net.minecraft.client.renderer.state.gui.pip.GuiEntityRenderState net.minecraft.client.gui.render.state.pip.GuiEntityRenderState

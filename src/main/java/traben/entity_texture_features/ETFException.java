@@ -1,7 +1,7 @@
 package traben.entity_texture_features;
 
 import net.minecraft.world.level.block.entity.BlockEntity;
-import traben.entity_texture_features.features.ETFRenderContext;
+import traben.entity_texture_features.features.state.ETFState;
 
 public class ETFException extends RuntimeException {
     public ETFException(String message) {
@@ -9,7 +9,7 @@ public class ETFException extends RuntimeException {
     }
 
     private static String amendMessage(String message) {
-        var entity = ETFRenderContext.getCurrentEntityState();
+        var entity = ETFState.state();
         return message + """
                 
                 ----------------------

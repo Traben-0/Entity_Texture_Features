@@ -7,9 +7,12 @@ import net.minecraft.resources.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
-import traben.entity_texture_features.features.ETFRenderContext;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import traben.entity_texture_features.features.state.ETFState;
 import traben.entity_texture_features.utils.ETFRenderLayerWithTexture;
 import traben.entity_texture_features.utils.ETFUtils2;
+
+import static traben.entity_texture_features.ETF.EYES_FEATURE_LIGHT_VALUE;
 
 @Mixin(EyesLayer.class)
 public abstract class MixinEyeFeatureRenderer {
@@ -30,8 +33,7 @@ public abstract class MixinEyeFeatureRenderer {
             ResourceLocation variant = ETFUtils2.getETFVariantNotNullForInjector(id);
             if (!id.equals(variant)) {
                 //if there is a variant then lets send a layer with it
-                boolean allowed = ETFRenderContext.isAllowedToRenderLayerTextureModify();
-                ETFRenderContext.preventRenderLayerTextureModify();
+                ETFState.pushRenderLayerModifyState(false);
 
                 RenderType layer2 =
                         //#if MC>= 12111
@@ -41,13 +43,25 @@ public abstract class MixinEyeFeatureRenderer {
                         //#endif
                                 .eyes(variant);
 
-                if (allowed) ETFRenderContext.allowRenderLayerTextureModify();
+                ETFState.popRenderLayerModifyState();
 
                 return layer2;
             }
         }
         //no need to variate so lets just send the hard coded final layer
         return layer;
+    }
+
+    @SuppressWarnings("SameReturnValue")
+    @ModifyVariable(method =
+            //#if MC >= 12109
+            "submit"
+            //#else
+            //$$ "render"
+            //#endif
+            , at = @At(value = "HEAD"), argsOnly = true, ordinal = 0)
+    private int emf$markEyeLight(int i) {
+        return EYES_FEATURE_LIGHT_VALUE;
     }
 
 }

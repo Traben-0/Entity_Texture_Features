@@ -10,7 +10,7 @@ package traben.entity_texture_features.mixin.mixins;
 //$$ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 //$$ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 //$$ import traben.entity_texture_features.compat.SodiumGetBufferInjector;
-//$$ import traben.entity_texture_features.features.ETFRenderContext;
+//$$ import traben.entity_texture_features.features.state.ETFState;
 //$$ import traben.entity_texture_features.utils.URenderTypeToVertexConsumer;
 //$$
 //$$ @Mixin(value = RenderTypeFeatureRenderer.class, priority = 800)
@@ -22,7 +22,7 @@ package traben.entity_texture_features.mixin.mixins;
 //$$             at = @At(value = "HEAD"),
 //$$             index = 1, argsOnly = true)
 //$$     private RenderType etf$modifyRenderLayer(RenderType value) {
-//$$         return ETFRenderContext.modifyRenderLayerIfRequired(value);
+//$$         return ETFState.modifyRenderLayerIfRequired(value);
 //$$     }
 //$$
 //$$
@@ -32,7 +32,7 @@ package traben.entity_texture_features.mixin.mixins;
 //$$     private void etf$injectIntoGetBufferReturn(RenderType renderLayer, CallbackInfoReturnable<VertexConsumer> cir) {
 //$$         var returned = cir.getReturnValue();
 //$$         var uSource = new URenderTypeToVertexConsumer((RenderTypeFeatureRenderer) (Object) this);
-//$$         ETFRenderContext.insertETFDataIntoVertexConsumer(uSource, renderLayer, returned);
+//$$         ETFState.insertETFDataIntoVertexConsumer(uSource, renderLayer, returned);
 //$$         //quarantined class to contain all sodium interaction
 //$$         //sodium ExtendedBufferBuilder classes contain a delegate that must instead have the above data passed into
 //$$         SodiumGetBufferInjector.inject(uSource, renderLayer, returned);
@@ -49,7 +49,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import traben.entity_texture_features.compat.SodiumGetBufferInjector;
-import traben.entity_texture_features.features.ETFRenderContext;
+import traben.entity_texture_features.features.state.ETFState;
 import traben.entity_texture_features.utils.URenderTypeToVertexConsumer;
 
 @Mixin(value = MultiBufferSource.BufferSource.class, priority = 800)
@@ -61,7 +61,7 @@ public class MixinVertexConsumerProvider$Immediate {
             at = @At(value = "HEAD"),
             index = 1, argsOnly = true)
     private RenderType etf$modifyRenderLayer(RenderType value) {
-        return ETFRenderContext.modifyRenderLayerIfRequired(value);
+        return ETFState.modifyRenderLayerIfRequired(value);
     }
 
 
@@ -70,7 +70,7 @@ public class MixinVertexConsumerProvider$Immediate {
             at = @At(value = "RETURN"))
     private void etf$injectIntoGetBufferReturn(RenderType renderLayer, CallbackInfoReturnable<VertexConsumer> cir) {
         var returned = cir.getReturnValue();
-        ETFRenderContext.insertETFDataIntoVertexConsumer(new URenderTypeToVertexConsumer((MultiBufferSource) this), renderLayer, returned);
+        ETFState.insertETFDataIntoVertexConsumer(new URenderTypeToVertexConsumer((MultiBufferSource) this), renderLayer, returned);
         //quarantined class to contain all sodium interaction
         //sodium ExtendedBufferBuilder classes contain a delegate that must instead have the above data passed into
         SodiumGetBufferInjector.inject(new URenderTypeToVertexConsumer((MultiBufferSource) this), renderLayer, returned);

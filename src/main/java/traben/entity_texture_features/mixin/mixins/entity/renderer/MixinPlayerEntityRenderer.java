@@ -23,10 +23,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.features.ETFManager;
-import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.player.ETFPlayerFeatureRenderer;
 import traben.entity_texture_features.features.player.ETFPlayerSkinHolder;
 import traben.entity_texture_features.features.player.ETFPlayerTexture;
+import traben.entity_texture_features.features.state.ETFState;
 import traben.entity_texture_features.features.state.HoldsETFRenderState;
 
 //#if MC < 12109
@@ -130,7 +130,7 @@ public abstract class MixinPlayerEntityRenderer<AvatarlikeEntity extends Avatar 
     //$$         if (thisETFPlayerTexture != null && thisETFPlayerTexture.hasFeatures) {
     //$$             ResourceLocation etfTexture = thisETFPlayerTexture.getBaseTextureIdentifierOrNullForVanilla(player);
     //$$             if (etfTexture != null) {
-    //$$                 ETFRenderContext.preventRenderLayerTextureModify();
+    //$$                 ETFState.pushRenderLayerModifyState(false);
                     //#if MC <= 12100
                     //$$ arm.xRot = 0.0F;
                     //$$ sleeve.xRot = 0.0F;
@@ -145,7 +145,7 @@ public abstract class MixinPlayerEntityRenderer<AvatarlikeEntity extends Avatar 
                             //#endif
     //$$                     );
     //$$
-    //$$                 ETFRenderContext.startSpecialRenderOverlayPhase();
+    //$$                 ETFState.startSpecialRenderOverlayPhase();
     //$$                 ResourceLocation emissive = thisETFPlayerTexture.getBaseTextureEmissiveIdentifierOrNullForNone();
     //$$                 if (emissive != null) {
     //$$                     VertexConsumer vc2 = vertexConsumers.getBuffer(RenderType.entityTranslucent(emissive));
@@ -172,9 +172,9 @@ public abstract class MixinPlayerEntityRenderer<AvatarlikeEntity extends Avatar 
                                 //#endif
     //$$                         );
     //$$                 }
-    //$$                 ETFRenderContext.endSpecialRenderOverlayPhase();
+    //$$                 ETFState.endSpecialRenderOverlayPhase();
     //$$
-    //$$                 ETFRenderContext.allowRenderLayerTextureModify();
+    //$$                 ETFState.popRenderLayerModifyState();
     //$$                 //don't further render vanilla arms
     //$$                 ci.cancel();
     //$$             }

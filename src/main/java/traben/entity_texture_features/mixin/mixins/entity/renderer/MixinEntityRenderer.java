@@ -14,22 +14,19 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import traben.entity_texture_features.ETF;
-import traben.entity_texture_features.features.ETFRenderContext;
+import traben.entity_texture_features.features.state.ETFState;
 import traben.entity_texture_features.features.state.HoldsETFRenderState;
 import traben.entity_texture_features.utils.ETFEntity;
 
 @Mixin(EntityRenderer.class)
 public abstract class MixinEntityRenderer<T extends Entity
-   //#if MC >= 12103
+    //#if MC >= 12103
         , S extends EntityRenderState> {
 
     @Inject(method = "extractRenderState",
     at = @At(value = "TAIL"))
     private void etf$createRenderState(final CallbackInfo ci, @Local(argsOnly = true) Entity entity, @Local(argsOnly = true) S state) {
         ((HoldsETFRenderState) state).etf$initState((ETFEntity) entity);
-        //#if MC >= 12109
-        ETFRenderContext.setCurrentEntity(((HoldsETFRenderState) state).etf$getState()); // either this or the one in the dispatcher is redundant but ill put both for now
-        //#endif
     }
     //#else
     //$$    > {
@@ -53,12 +50,12 @@ public abstract class MixinEntityRenderer<T extends Entity
 
     @Inject(method = RENDER, at = @At(value = "HEAD"))
     private void etf$protectPostRenderersLikeNametag(final CallbackInfo ci) {
-        ETFRenderContext.preventRenderLayerTextureModify();
+        ETFState.pushRenderLayerModifyState(false);
     }
 
     @Inject(method = RENDER, at = @At(value = "TAIL"))
     private void etf$revertForRenderersThatCallSuperFirst(final CallbackInfo ci) {
-        ETFRenderContext.allowRenderLayerTextureModify(); // see minecart rendering
+        ETFState.popRenderLayerModifyState(); // see minecart rendering
     }
 
 }

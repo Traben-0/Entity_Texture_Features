@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import traben.entity_texture_features.features.ETFManager;
-import traben.entity_texture_features.features.ETFRenderContext;
+import traben.entity_texture_features.features.state.ETFState;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
@@ -54,13 +54,13 @@ public class MixinSpriteIdentifier {
             }
 
 
-            ETFTexture texture = ETFManager.getInstance().getETFTextureVariant(actualTexture, ETFRenderContext.getCurrentEntityState());
+            ETFTexture texture = ETFManager.getInstance().getETFTextureVariant(actualTexture, ETFState.state());
 
             //if texture is emissive or a variant then replace with a non sprite vertex consumer like regular entities
             if (!actualTexture.equals(texture.thisIdentifier) || texture.isEmissive() || texture.isEnchanted()) {
-                ETFRenderContext.preventRenderLayerTextureModify();
+                ETFState.pushRenderLayerModifyState(false);
                 RenderType layer = layerFactory.apply(texture.thisIdentifier);
-                ETFRenderContext.allowRenderLayerTextureModify();
+                ETFState.popRenderLayerModifyState();
                 if (layer != null) {
                     VertexConsumer consumer = vertexConsumers.getBuffer(layer);
                     //noinspection ConstantValue

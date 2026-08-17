@@ -26,13 +26,14 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import traben.entity_texture_features.ETFApi;
-import traben.entity_texture_features.features.ETFRenderContext;
+import traben.entity_texture_features.features.state.ETFState;
 import traben.entity_texture_features.utils.ETFEntity;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.UUID;
 
 import static traben.entity_texture_features.ETFApi.getBlockEntityTypeToTranslationKey;
+import static traben.entity_texture_features.features.property_reading.properties.optifine_properties.NBTProperty.INTENTIONAL_FAILURE;
 
 @Mixin(BlockEntity.class)
 public abstract class MixinBlockEntity implements ETFEntity {
@@ -110,15 +111,17 @@ public abstract class MixinBlockEntity implements ETFEntity {
 
     @Override
     public CompoundTag etf$getNbt() {
+        var state = ETFState.state();
+        if (state == null) return INTENTIONAL_FAILURE;
         //#if MC>=12106
-        return ETFRenderContext.cacheEntityNBTForFrame(etf$getUuid(),
+        return state.cacheEntityNBTForState(etf$getUuid(),
                 ()->{
                     TagValueOutput compound = TagValueOutput.createWithoutContext(ProblemReporter.DISCARDING);
                     saveMetadata(compound);
                     return compound.buildResult();
                 });
         //#else
-        //$$ return ETFRenderContext.cacheEntityNBTForFrame(etf$getUuid(),
+        //$$ return state.cacheEntityNBTForState(etf$getUuid(),
         //$$         ()->{
         //$$             CompoundTag compound = new CompoundTag();
         //$$             saveMetadata(compound);

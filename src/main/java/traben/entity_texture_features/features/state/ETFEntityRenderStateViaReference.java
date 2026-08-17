@@ -17,6 +17,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Team;
 import traben.entity_texture_features.utils.ETFEntity;
 import java.util.*;
+import java.util.function.Supplier;
 
 // TODO implement caching version for 1.21.2+ as smuggling in the entity wont work forever
 public class ETFEntityRenderStateViaReference implements ETFEntityRenderState {
@@ -159,5 +160,17 @@ public class ETFEntityRenderStateViaReference implements ETFEntityRenderState {
     public float distanceTo(Entity other) {
         return entity.etf$distanceTo(other);
     }
+
+    @Override
+    public CompoundTag cacheEntityNBTForState(UUID entityUUID, Supplier<CompoundTag> computeNBT) {
+        if(currentEntityNBT == null || !entityUUID.equals(entityNBT_UUID)){
+            currentEntityNBT = computeNBT.get();
+            entityNBT_UUID = entityUUID;
+        }
+        return currentEntityNBT;
+    }
+
+    private CompoundTag currentEntityNBT = null;
+    private UUID entityNBT_UUID = null;
 
 }

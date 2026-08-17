@@ -35,8 +35,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.features.ETFManager;
-import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.state.ETFEntityRenderState;
+import traben.entity_texture_features.features.state.ETFState;
 import traben.entity_texture_features.features.state.HoldsETFRenderState;
 import traben.entity_texture_features.features.texture_handlers.ETFSprite;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
@@ -122,12 +122,12 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
 
 
             boolean aztec = "aztec".equals(paintingFileName);
-            if (aztec) ETFRenderContext.allowOnlyPropertiesRandom();
+            if (aztec) ETFState.onlyRandomizeViaPropertiesFiles = true;
 
             ETFTexture frontTexture = ETFManager.getInstance().getETFTextureVariant(paintingTexture, etfEntity);
             ETFSprite etf$Sprite = frontTexture.getPaintingSprite(paintingSprite, paintingTexture);
 
-            if (aztec) ETFRenderContext.allowAllRandom();
+            if (aztec) ETFState.onlyRandomizeViaPropertiesFiles = false;
 
             ETFTexture backTexture = ETFManager.getInstance().getETFTextureVariant(etf$BACK_SPRITE_ID, etfEntity);
             ETFSprite etf$BackSprite = backTexture.getPaintingSprite(backSprite, etf$BACK_SPRITE_ID);
@@ -160,7 +160,7 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
                 ;
 
                 //#if MC>= 12109
-                ETFRenderContext.preventRenderLayerTextureModify();
+                ETFState.pushRenderLayerModifyState(false);
                 var type =
                         //#if MC>= 12111
                         //$$ net.minecraft.client.renderer.rendertype.RenderTypes
@@ -189,7 +189,7 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
                         RenderType
                         //#endif
                                 .entityTranslucent(etf$BackSprite.getEmissive().atlasLocation());
-                ETFRenderContext.allowRenderLayerTextureModify();
+                ETFState.popRenderLayerModifyState();
 
                 submitNodeCollector.submitCustomGeometry(matrixStack, type, (pose, vertexConsumer) ->
                             etf$renderETFPaintingFront(pose, vertexConsumer, paintingEntity, width, height, etf$Sprite.getSpriteVariant(), false));
@@ -234,7 +234,7 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
     //#if MC < 12109
     //$$ @Unique
     //$$ private void etf$renderETFPainting(PoseStack.Pose entry, net.minecraft.client.renderer.MultiBufferSource vertexConsumerProvider, Painting entity, int width, int height, ETFSprite ETFPaintingSprite, ETFSprite ETFBackSprite) {
-    //$$     ETFRenderContext.preventRenderLayerTextureModify();
+    //$$     ETFState.pushRenderLayerModifyState(false);
     //$$     VertexConsumer vertexConsumerFront = vertexConsumerProvider.getBuffer(RenderType.entitySolid(ETFPaintingSprite.getSpriteVariant().atlasLocation()));
     //$$     etf$renderETFPaintingFront(entry, vertexConsumerFront, entity, width, height, ETFPaintingSprite.getSpriteVariant(), false);
     //$$
@@ -250,7 +250,7 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
     //$$         vertexConsumerFront = vertexConsumerProvider.getBuffer(RenderType.entityTranslucent(ETFBackSprite.getEmissive().atlasLocation()));
     //$$         etf$renderETFPaintingBack(entry, vertexConsumerFront, entity, width, height, ETFBackSprite.getEmissive(), true);
     //$$     }
-    //$$     ETFRenderContext.allowRenderLayerTextureModify();
+    //$$     ETFState.popRenderLayerModifyState();
     //$$ }
     //#endif
 

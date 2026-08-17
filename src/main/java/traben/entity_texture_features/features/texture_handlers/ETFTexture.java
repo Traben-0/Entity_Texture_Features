@@ -25,8 +25,8 @@ import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFException;
 import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.features.ETFManager;
-import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.state.ETFEntityRenderState;
+import traben.entity_texture_features.features.state.ETFState;
 import traben.entity_texture_features.utils.ETFEntity;
 import traben.entity_texture_features.utils.ETFUtils2;
 
@@ -456,7 +456,7 @@ public class ETFTexture {
     }
 
     public boolean canPatch() {
-        return ETFRenderContext.isAllowedToPatch() && this.thisIdentifier_Patched != null;
+        return ETFState.allowTexturePatching && this.thisIdentifier_Patched != null;
     }
 
     public boolean doesBlink() {
@@ -488,9 +488,9 @@ public class ETFTexture {
     public void renderEmissive(PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, ModelPart modelPart, ETFConfig.EmissiveRenderModes modeToUsePossiblyManuallyChosen) {
         VertexConsumer vertexC = getEmissiveVertexConsumer(vertexConsumerProvider, null, modeToUsePossiblyManuallyChosen);
         if (vertexC != null) {
-            ETFRenderContext.startSpecialRenderOverlayPhase();
+            ETFState.startSpecialRenderOverlayPhase();
             modelPart.render(matrixStack, vertexC, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.NO_OVERLAY);
-            ETFRenderContext.endSpecialRenderOverlayPhase();
+            ETFState.endSpecialRenderOverlayPhase();
         }
     }
 
@@ -501,13 +501,13 @@ public class ETFTexture {
     public void renderEmissive(PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, Model model, ETFConfig.EmissiveRenderModes modeToUsePossiblyManuallyChosen) {
         VertexConsumer vertexC = getEmissiveVertexConsumer(vertexConsumerProvider, model, modeToUsePossiblyManuallyChosen);
         if (vertexC != null) {
-            ETFRenderContext.startSpecialRenderOverlayPhase();
+            ETFState.startSpecialRenderOverlayPhase();
             model.renderToBuffer(matrixStack, vertexC, ETF.EMISSIVE_FEATURE_LIGHT_VALUE, OverlayTexture.NO_OVERLAY
                     //#if MC < 12100
                     //$$ , 1F, 1F, 1F, 1F
                     //#endif
                     );
-            ETFRenderContext.endSpecialRenderOverlayPhase();
+            ETFState.endSpecialRenderOverlayPhase();
         }
     }
 
@@ -526,9 +526,9 @@ public class ETFTexture {
 
     @Nullable
     public RenderType getEmissiveRenderLayer(@Nullable Model model, ETFConfig.EmissiveRenderModes modeToUsePossiblyManuallyChosen) {
-        ETFRenderContext.preventRenderLayerTextureModify();
+        ETFState.pushRenderLayerModifyState(false);
         var type = getEmissiveVertexConsumerWrapped(model, modeToUsePossiblyManuallyChosen);
-        ETFRenderContext.allowRenderLayerTextureModify();
+        ETFState.popRenderLayerModifyState();
         return type;
     }
 

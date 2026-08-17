@@ -12,8 +12,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import traben.entity_texture_features.features.state.ETFState;
 import traben.entity_texture_features.mixin.mixins.mods.sodium.MixinModelPartSodium;
-import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
 import traben.entity_texture_features.utils.ETFUtils2;
 import traben.entity_texture_features.utils.ETFVertexConsumer;
@@ -48,7 +48,7 @@ public abstract class MixinModelPart {
     @Inject(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;III)V",at = @At(value = "HEAD"))
     private void etf$findOutIfInitialModelPart(final PoseStack poseStack, final VertexConsumer vertexConsumer, final int i, final int j, final int k, final CallbackInfo ci) {
     //#endif
-        ETFRenderContext.incrementCurrentModelPartDepth();
+        ETFState.currentModelPartDepth++;
     }
 
     //#if MC < 12100
@@ -59,11 +59,11 @@ public abstract class MixinModelPart {
     private void etf$doEmissiveIfInitialPart(final PoseStack matrices, final VertexConsumer vertices, final int light, final int overlay, final int k, final CallbackInfo ci) {
     //#endif
         //run code if this is the initial topmost rendered part
-        if (ETFRenderContext.getCurrentModelPartDepth() > 1) {
-            ETFRenderContext.decrementCurrentModelPartDepth();
+        if (ETFState.currentModelPartDepth > 1) {
+            ETFState.currentModelPartDepth--;
         } else {
             //top level model so try special rendering
-            if (ETFRenderContext.isCurrentlyRenderingEntity() &&
+            if (ETFState.isStateActive() &&
                     vertices instanceof ETFVertexConsumer etfVertexConsumer) {
                 ETFTexture texture = etfVertexConsumer.etf$getETFTexture();
                 //is etf texture not null and does it special render?
@@ -96,7 +96,7 @@ public abstract class MixinModelPart {
                 }
             }
             //ensure model count is reset
-            ETFRenderContext.resetCurrentModelPartDepth();
+            ETFState.currentModelPartDepth = 0;
         }
     }
     //#if MC >= 12100

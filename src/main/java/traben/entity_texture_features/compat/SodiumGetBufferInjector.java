@@ -4,7 +4,7 @@ package traben.entity_texture_features.compat;
 
 //#if MC < 12100 && MC != 12002 && SODIUM
 //$$ import me.jellysquid.mods.sodium.client.render.vertex.buffer.ExtendedBufferBuilder;
-//$$ import traben.entity_texture_features.features.ETFRenderContext;
+//$$ import traben.entity_texture_features.features.state.ETFState;
 //$$ import traben.entity_texture_features.utils.ETFUtils2;
 //$$ import traben.entity_texture_features.utils.ETFVertexConsumer;
 //$$ import java.lang.reflect.Method;
@@ -68,7 +68,7 @@ public abstract class SodiumGetBufferInjector {
 //$$             if (vertexConsumer instanceof ExtendedBufferBuilder buff) {
 //$$                 VertexConsumer delegate = (VertexConsumer) (Object) buff.sodium$getDelegate();
 //$$                 if (delegate instanceof ETFVertexConsumer) {
-//$$                     ETFRenderContext.insertETFDataIntoVertexConsumer(vertexConsumerProvider, renderLayer, (VertexConsumer) delegate);
+//$$                     ETFState.insertETFDataIntoVertexConsumer(vertexConsumerProvider, renderLayer, (VertexConsumer) delegate);
 //$$                 }
 //$$             }
 //$$         }

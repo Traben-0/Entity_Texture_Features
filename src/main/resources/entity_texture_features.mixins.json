@@ -29,6 +29,8 @@
   },
   "client": [
     "MixinBufferBuilder",
+    "MixinGameRenderer",
+    "MixinLevelRenderer",
     "MixinModelPart",
     "MixinMultiPhase",
     "MixinPackScreen",
@@ -60,6 +62,10 @@
     "mods.iris.MixinOuterWrappedRenderType",
     "reloading.MixinMinecraftClient",
     "reloading.MixinResourceReload",
-    "submit.Mixin_ModelRenderer"
+    "submit.Mixin_GuiEntityRenderer",
+    "submit.Mixin_ModelPartRenderer",
+    "submit.Mixin_ModelRenderer",
+    "submit.Mixin_ModelSubmit_AddData",
+    "submit.backupstates.Mixin_ChestSpecialRenderer_PassState"
   ]
 }

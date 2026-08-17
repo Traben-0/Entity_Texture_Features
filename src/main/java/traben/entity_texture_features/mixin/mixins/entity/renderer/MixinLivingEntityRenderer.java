@@ -9,13 +9,14 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.world.entity.LivingEntity;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.state.ETFEntityRenderState;
+import traben.entity_texture_features.features.state.ETFState;
 import traben.entity_texture_features.features.state.HoldsETFRenderState;
 import traben.entity_texture_features.utils.ETFEntity;
 
@@ -45,7 +46,7 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, S extend
     //#endif
 
     @Inject(method = RENDER, at = @At(value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;"))
-    private void etf$markFeatures(CallbackInfo ci, @Share("shareState") LocalRef<ETFEntityRenderState> etf$heldEntity
+    private void etf$markFeatures(CallbackInfo ci, @Share("shareState") LocalRef<@Nullable ETFEntityRenderState> etf$heldEntity
             //#if MC>= 12103
                , @Local(argsOnly = true) net.minecraft.client.renderer.entity.state.LivingEntityRenderState state
             ) { etf$heldEntity.set(((HoldsETFRenderState) state).etf$getState());
@@ -53,21 +54,21 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, S extend
             //$$     , @Local(argsOnly = true) net.minecraft.world.entity.LivingEntity entity
             //$$ ) { etf$heldEntity.set(ETFEntityRenderState.forEntity((ETFEntity) entity));
             //#endif
-        ETFRenderContext.allowRenderLayerTextureModify();
-        ETFRenderContext.setRenderingFeatures(true);
+        ETFState.pushRenderLayerModifyState(true);
+        ETFState.isRenderingFeatures = true;
     }
 
-    @Inject(method = RENDER, at = @At(value = "INVOKE", target = "Ljava/util/Iterator;next()Ljava/lang/Object;"))
-    private void etf$markFeaturesLoopEnd(CallbackInfo ci, @Share("shareState") LocalRef<ETFEntityRenderState> etf$heldEntity) {
-        // assert main entity each loop in case of other entities within feature renderer
-        ETFRenderContext.setCurrentEntity(etf$heldEntity.get());
-        ETFRenderContext.allowRenderLayerTextureModify();
-        ETFRenderContext.endSpecialRenderOverlayPhase();
-    }
+//    @Inject(method = RENDER, at = @At(value = "INVOKE", target = "Ljava/util/Iterator;next()Ljava/lang/Object;"))
+//    private void etf$markFeaturesLoopEnd(CallbackInfo ci, @Share("shareState") LocalRef<@Nullable ETFEntityRenderState> etf$heldEntity) {
+//        // assert main entity each loop in case of other entities within feature renderer
+//        ETFState.unMountTo(etf$heldEntity.get()); // should be redundunt now with ETFState impl but just in case
+//    }
 
     @Inject(method = RENDER, at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;popPose()V"))
-    private void etf$markFeaturesEnd(CallbackInfo ci) {
-        ETFRenderContext.setRenderingFeatures(false);
+    private void etf$markFeaturesEnd(CallbackInfo ci, @Share("shareState") LocalRef<@Nullable ETFEntityRenderState> etf$heldEntity) {
+//        ETFState.unMountTo(etf$heldEntity.get());
+        ETFState.isRenderingFeatures = false;
+        ETFState.popRenderLayerModifyState();
     }
 
 

@@ -18,8 +18,8 @@ import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.config.ETFConfigWarning;
 import traben.entity_texture_features.config.ETFConfigWarnings;
 import traben.entity_texture_features.features.ETFManager;
-import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.state.ETFEntityRenderState;
+import traben.entity_texture_features.features.state.ETFState;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -169,16 +169,16 @@ public abstract class ETFUtils2 {
     public static ResourceLocation getETFVariantNotNullForInjector(ResourceLocation identifier) {
         // do not modify texture
         if (identifier == null
-                || ETFRenderContext.getCurrentEntityState() == null
-                || !ETFRenderContext.isAllowedToRenderLayerTextureModify())
+                || !ETFState.isStateActive()
+                || !ETFState.isAllowedToRenderLayerTextureModify())
             return identifier;
 
         // get etf modified texture
-        ETFTexture etfTexture = ETFManager.getInstance().getETFTextureVariant(identifier, ETFRenderContext.getCurrentEntityState());
-        if (ETFRenderContext.isAllowedToPatch()) {
+        ETFTexture etfTexture = ETFManager.getInstance().getETFTextureVariant(identifier, ETFState.state());
+        if (ETFState.allowTexturePatching) {
             etfTexture.assertPatchedTextures();
         }
-        ResourceLocation modified = etfTexture.getTextureIdentifier(ETFRenderContext.getCurrentEntityState());
+        ResourceLocation modified = etfTexture.getTextureIdentifier(ETFState.state());
 
         // check not null just to be safe, it shouldn't be however
         //noinspection ConstantValue
@@ -189,11 +189,10 @@ public abstract class ETFUtils2 {
         if (!ETF.config().getConfig().canDoEmissiveTextures()) return false;
         ResourceLocation emissive = texture.getEmissiveIdentifierOfCurrentState();
         if (emissive != null) {
-            boolean wasAllowed = ETFRenderContext.isAllowedToRenderLayerTextureModify();
-            ETFRenderContext.preventRenderLayerTextureModify();
+            ETFState.pushRenderLayerModifyState(false);
 
             VertexConsumer emissiveConsumer = provider.getBuffer(
-                    ETFRenderContext.canRenderInBrightMode() ?
+                    ETFState.canRenderInBrightMode() ?
 
                             //#if MC>= 12111
                             //$$ net.minecraft.client.renderer.rendertype.RenderTypes
@@ -202,7 +201,7 @@ public abstract class ETFUtils2 {
                             //#endif
                                     .beaconBeam(emissive, true) :
                             //#if MC < 12103
-                            //$$     ETFRenderContext.shouldEmissiveUseCullingLayer() ?
+                            //$$     ETFState.shouldEmissiveUseCullingLayer() ?
                             //$$         RenderType.entityTranslucentCull(emissive) :
                             //#endif
 
@@ -213,11 +212,11 @@ public abstract class ETFUtils2 {
                             //#endif
                                     .entityTranslucent(emissive));
 
-            if (wasAllowed) ETFRenderContext.allowRenderLayerTextureModify();
+            ETFState.popRenderLayerModifyState();
 
-            ETFRenderContext.startSpecialRenderOverlayPhase();
+            ETFState.startSpecialRenderOverlayPhase();
             renderer.render(emissiveConsumer, ETF.EMISSIVE_FEATURE_LIGHT_VALUE);
-            ETFRenderContext.endSpecialRenderOverlayPhase();
+            ETFState.endSpecialRenderOverlayPhase();
             return true;
         }
         return false;
@@ -238,8 +237,7 @@ public abstract class ETFUtils2 {
         // attempt enchanted render
         ResourceLocation enchanted = texture.getEnchantIdentifierOfCurrentState();
         if (enchanted != null) {
-            boolean wasAllowed = ETFRenderContext.isAllowedToRenderLayerTextureModify();
-            ETFRenderContext.preventRenderLayerTextureModify();
+            ETFState.pushRenderLayerModifyState(false);
             VertexConsumer enchantedVertex =
                     //#if MC >= 26.1
                     //$$ getFoilBuffer(provider, RenderTypes.armorCutoutNoCull(enchanted));
@@ -259,11 +257,11 @@ public abstract class ETFUtils2 {
                         //#endif
                     //$$     true);
                     //#endif
-            if (wasAllowed) ETFRenderContext.allowRenderLayerTextureModify();
+            ETFState.popRenderLayerModifyState();
 
-            ETFRenderContext.startSpecialRenderOverlayPhase();
+            ETFState.startSpecialRenderOverlayPhase();
             renderer.render(enchantedVertex, light);
-            ETFRenderContext.endSpecialRenderOverlayPhase();
+            ETFState.endSpecialRenderOverlayPhase();
             return true;
         }
         return false;

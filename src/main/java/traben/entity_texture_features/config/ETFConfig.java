@@ -15,10 +15,10 @@ import org.jetbrains.annotations.Nullable;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.config.screens.skin.ETFConfigScreenSkinTool;
 import traben.entity_texture_features.features.ETFManager;
-import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.player.ETFPlayerTexture;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperties;
 import traben.entity_texture_features.features.state.ETFEntityRenderState;
+import traben.entity_texture_features.features.state.ETFState;
 import traben.entity_texture_features.utils.ETFUtils2;
 import traben.entity_texture_features.utils.UEntityTypes;
 import traben.entity_texture_features.utils.UScreen;
@@ -75,6 +75,7 @@ public final class ETFConfig extends TConfig {
     public boolean logTextureDataInitialization = false;
     @Deprecated(forRemoval = true)
     public boolean hideConfigButton = false;
+    public boolean stackDebugPrinting = false;
 
     public SettingsButtonLocation configButtonLoc = SettingsButtonLocation.BOTTOM_RIGHT;
     public boolean disableVanillaDirectoryVariantTextures = false;
@@ -97,9 +98,11 @@ public final class ETFConfig extends TConfig {
     }
 
     public boolean canDoCustomTextures() {
-        if (entityRandomOverrides.isEmpty() || ETFRenderContext.getCurrentEntityState() == null)
+        if (entityRandomOverrides.isEmpty())
             return enableCustomTextures;
-        var key = ETFRenderContext.getCurrentEntityState().entityKey();
+        var state = ETFState.state();
+        if (state == null) return enableCustomTextures;
+        var key = state.entityKey();
         if (key != null && entityRandomOverrides.containsKey(key)) {
             return entityRandomOverrides.getOrDefault(key, false);
         }
@@ -108,9 +111,11 @@ public final class ETFConfig extends TConfig {
 
 
     public boolean canDoEmissiveTextures() {
-        if (entityEmissiveOverrides.isEmpty() || ETFRenderContext.getCurrentEntityState() == null)
+        if (entityEmissiveOverrides.isEmpty())
             return enableEmissiveTextures;
-        var key = ETFRenderContext.getCurrentEntityState().entityKey();
+        var state = ETFState.state();
+        if (state == null) return enableEmissiveTextures;
+        var key = state.entityKey();
         if (key != null && entityEmissiveOverrides.containsKey(key)) {
             return entityEmissiveOverrides.getOrDefault(key, false);
         }
@@ -118,9 +123,11 @@ public final class ETFConfig extends TConfig {
     }
 
     public EmissiveRenderModes getEmissiveRenderMode() {
-        if (entityEmissiveBrightOverrides.isEmpty() || ETFRenderContext.getCurrentEntityState() == null)
+        if (entityEmissiveBrightOverrides.isEmpty())
             return emissiveRenderMode;
-        var key = ETFRenderContext.getCurrentEntityState().entityKey();
+        var state = ETFState.state();
+        if (state == null) return emissiveRenderMode;
+        var key = state.entityKey();
         if (key != null && entityEmissiveBrightOverrides.containsKey(key)) {
             return entityEmissiveBrightOverrides.get(key);
         }
@@ -128,9 +135,11 @@ public final class ETFConfig extends TConfig {
     }
 
     public RenderLayerOverride getRenderLayerOverride() {
-        if (entityRenderLayerOverrides.isEmpty() || ETFRenderContext.getCurrentEntityState() == null)
+        if (entityRenderLayerOverrides.isEmpty())
             return null;
-        var key = ETFRenderContext.getCurrentEntityState().entityKey();
+        var state = ETFState.state();
+        if (state == null) return null;
+        var key = state.entityKey();
         if (key != null && entityRenderLayerOverrides.containsKey(key)) {
             return entityRenderLayerOverrides.get(key);
         }
@@ -154,7 +163,7 @@ public final class ETFConfig extends TConfig {
     }
 
     public int getLightOverrideBE(int light) {
-        return getLightOverrideBE(light, ETFRenderContext.getCurrentEntityState());
+        return getLightOverrideBE(light, ETFState.state());
     }
 
     public int getLightOverrideBE(int light, @Nullable ETFEntityRenderState state) {
@@ -241,7 +250,9 @@ public final class ETFConfig extends TConfig {
                                             ETFManager.getInstance().doTheBigBoyPrintoutKronk();
                                             button.setMessage(ETF.getTextFromTranslation("config.entity_texture_features.debug_screen.mass_log.done"));
                                             button.active = false;
-                                        })
+                                        }),
+                                new TConfigEntryBoolean("Log stack debugging", "Probably only the dev needs this",
+                                        () -> stackDebugPrinting, aBoolean -> stackDebugPrinting = aBoolean, false)
                         )
                 ), new TConfigEntryCategory("config.entity_features.general_settings.title").add(
                         new TConfigEntryEnumButton<>("config.entity_texture_features.allow_illegal_texture_paths.title", "config.entity_texture_features.allow_illegal_texture_paths.tooltip",
