@@ -1,4 +1,4 @@
-package traben.entity_texture_features.mixin.mixins;
+package traben.entity_texture_features.mixin.mixins.vertexconsumers;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;

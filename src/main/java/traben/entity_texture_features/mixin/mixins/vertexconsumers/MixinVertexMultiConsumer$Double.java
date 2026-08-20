@@ -1,4 +1,4 @@
-package traben.entity_texture_features.mixin.mixins;
+package traben.entity_texture_features.mixin.mixins.vertexconsumers;
 
 //#if MC >= 26.2
 //$$
@@ -11,7 +11,6 @@ package traben.entity_texture_features.mixin.mixins;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexMultiConsumer;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

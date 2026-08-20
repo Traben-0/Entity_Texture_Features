@@ -5,6 +5,12 @@
   "package": "traben.entity_texture_features.mixin.mixins",
   "plugin": "traben.entity_texture_features.mixin.Plugin",
   "mixins": [
+  ],
+  "injectors": {
+    "maxShiftBy": 2,
+    "defaultRequire": 1
+  },
+  "client": [
     "MixinIdentifier",
     "entity.block.MixinMobSpawnerLogic",
     "entity.misc.MixinBlazeEntity",
@@ -21,14 +27,7 @@
     "mods.iris.old.MixinOuterWrappedRenderType",
     "mods.skin_layers.MixinCustomizableModelPart",
     "mods.sodium.MixinModelPartSodium",
-    "mods.sodium.MixinSodiumBufferBuilder"
-  ],
-  "injectors": {
-    "maxShiftBy": 2,
-    "defaultRequire": 1
-  },
-  "client": [
-    "MixinBufferBuilder",
+    "mods.sodium.MixinSodiumBufferBuilder",
     "MixinGameRenderer",
     "MixinLevelRenderer",
     "MixinModelPart",
@@ -37,8 +36,6 @@
     "MixinPlayerSkinTexture",
     "MixinRenderLayer",
     "MixinSpriteIdentifier",
-    "MixinVertexConsumerProvider$Immediate",
-    "MixinVertexMultiConsumer$Double",
     "accessor.TooltipAccessor",
     "entity.block.MixinSkullBlockEntityRenderer",
     "entity.misc.MixinBlockEntityRenderDispatcher",
@@ -66,6 +63,11 @@
     "submit.Mixin_ModelPartRenderer",
     "submit.Mixin_ModelRenderer",
     "submit.Mixin_ModelSubmit_AddData",
-    "submit.backupstates.Mixin_ChestSpecialRenderer_PassState"
+    "submit.backupstates.Mixin_ChestSpecialRenderer_PassState",
+    "vertexconsumers.MixinBufferBuilder",
+    "vertexconsumers.MixinSheetedDecalTextureGen",
+    "vertexconsumers.MixinSpriteCoordExpander",
+    "vertexconsumers.MixinVertexConsumerProvider$Immediate",
+    "vertexconsumers.MixinVertexMultiConsumer$Double"
   ]
 }

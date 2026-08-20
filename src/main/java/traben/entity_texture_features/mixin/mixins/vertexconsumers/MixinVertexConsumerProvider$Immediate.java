@@ -1,4 +1,4 @@
-package traben.entity_texture_features.mixin.mixins;
+package traben.entity_texture_features.mixin.mixins.vertexconsumers;
 
 //#if MC >= 26.2
 //$$ import com.mojang.blaze3d.vertex.VertexConsumer;
