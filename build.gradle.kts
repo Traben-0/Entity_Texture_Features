@@ -131,6 +131,7 @@ dependencies {
             modImpl("maven.modrinth:sodium:",
                 26_02_00 to ver("3QgJXuSK", null, "5dWEDeL4"),
                 26_01_00 to ver("1rha2U1D", null, "I6y5LD6f"),
+                1_21_09 to ver("fVbw1C7i", null,  "dfyNHRhw"),
                 1_21_05 to ver("fVbw1C7i", null,  "dfyNHRhw"),
                 1_21_04 to ver("c3YkZvne", null,  "XgEfENfn"),
                 1_21_03 to ver("rLBgU2jc", null,  "M0CXIL7c"),
