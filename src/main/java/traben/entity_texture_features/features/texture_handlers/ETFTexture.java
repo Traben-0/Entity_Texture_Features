@@ -37,9 +37,7 @@ import java.util.Properties;
 //can either refer to a vanilla identifier or a variant
 public class ETFTexture {
     public final static String PATCH_NAMESPACE_PREFIX = "etf_patched_";
-    //this variants id , might be vanilla
     public final ResourceLocation thisIdentifier;
-//    private final int variantNumber;
     public TextureReturnState currentTextureState = TextureReturnState.NORMAL;
     public String eSuffix = null;
     //a variation of thisIdentifier but with emissive texture pixels removed for z-fighting solution
@@ -57,9 +55,7 @@ public class ETFTexture {
     private ResourceLocation blink2Identifier_Patched = null;
     private Integer blinkLength = ETF.config().getConfig().blinkLength;
     private Integer blinkFrequency = ETF.config().getConfig().blinkFrequency;
-    private boolean isBuilt = false;
     private ETFSprite atlasSprite = null;
-    private boolean hasBeenReRegistered = false;
     private Boolean resourceExists = null;
     private boolean guiBlink = false;
     private boolean hasPatched = false;
@@ -73,9 +69,11 @@ public class ETFTexture {
 
         this.thisIdentifier = variantIdentifier;
 
-        setupBlinking();
-        setupEmissives();
-        setupEnchants();
+        if (variantIdentifier.getPath().endsWith(".png")) {
+            setupBlinking();
+            setupEmissives();
+            setupEnchants();
+        }
     }
 
     public static ETFTexture manual(@NotNull ResourceLocation modifiedSkinIdentifier,
@@ -230,56 +228,8 @@ public class ETFTexture {
         if (resourceExists == null) {
             resourceExists = Minecraft.getInstance().getResourceManager().getResource(thisIdentifier).isPresent();
         }
-        return isBuilt || resourceExists;
+        return resourceExists;
     }
-
-//    public void buildTrimTexture(ArmorTrim trim, boolean leggings) {
-////        trim=minecraft:trims/models/armor/rib_gold
-////        trim2=minecraft:trims/models/armor/rib_leggings_gold
-//        try {
-//            String mat = trim.material().value().assetName();
-//            String namespace = trim.pattern().value().assetId().getNamespace();
-//            String pattern = trim.pattern().value().assetId().getPath() + (leggings ? "_leggings" : "");
-//
-//            NativeImage patternImg = ETFUtils2.getNativeImageElseNull(ETFUtils2.res(namespace, "textures/trims/models/armor/" + pattern + ".png"));
-//
-//            NativeImage matImg = ETFUtils2.getNativeImageElseNull(ETFUtils2.res(namespace, "textures/trims/color_palettes/" + mat + ".png"));
-//            NativeImage palletteImg = ETFUtils2.getNativeImageElseNull(ETFUtils2.res(namespace, "textures/trims/color_palettes/trim_palette.png"));
-//
-//            if (matImg != null && palletteImg != null && patternImg != null) {
-//                Int2IntOpenHashMap palletteMap = new Int2IntOpenHashMap();
-//                for (int i = 0; i < palletteImg.getWidth(); i++) {
-//                    for (int j = 0; j < palletteImg.getHeight(); j++) {
-//                        palletteMap.put(palletteImg.getPixelRGBA(i, j), matImg.getPixelRGBA(i, j));
-//                    }
-//                }
-//                try (NativeImage newImage = ETFUtils2.emptyNativeImage(patternImg.getWidth(), patternImg.getHeight())) {
-//                    for (int i = 0; i < patternImg.getWidth(); i++) {
-//                        for (int j = 0; j < patternImg.getHeight(); j++) {
-//                            int colour = patternImg.getPixelRGBA(i, j);
-//                            if (palletteMap.containsKey(colour)) {
-//                                newImage.setPixelRGBA(i, j, palletteMap.get(colour));
-//                            } else {
-//                                newImage.setPixelRGBA(i, j, colour);
-//                            }
-//                        }
-//                    }
-//                    ETFUtils2.registerNativeImageToIdentifier(newImage, thisIdentifier);
-//                } catch (Exception b) {
-//                    // make empty
-//                    thisIdentifier_Patched = ETFManager.getErrorETFTexture().thisIdentifier;
-//                }
-//            } else {
-//                // make empty
-//                thisIdentifier_Patched = ETFManager.getErrorETFTexture().thisIdentifier;
-//            }
-//        } catch (Exception e) {
-//            // make empty
-//            thisIdentifier_Patched = ETFManager.getErrorETFTexture().thisIdentifier;
-//
-//        }
-//        isBuilt = true;
-//    }
 
     private void setupEmissives() {
         ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
@@ -369,27 +319,6 @@ public class ETFTexture {
         }
         return vanillaR1;
     }
-
-//    /**
-//     * Re registers the base texture to a new identifier, this fixes some iris stuff with armor.
-//     */
-//    public void reRegisterBaseTexture() {//todo needed
-//        if (hasBeenReRegistered) return;
-//        hasPatched = true;
-//        hasBeenReRegistered = true;
-//        NativeImage newBaseTexture = ETFUtils2.getNativeImageElseNull(thisIdentifier);
-//        if (newBaseTexture != null) {
-//            var newPatchIdentifier = ETFUtils2.res(PATCH_NAMESPACE_PREFIX + thisIdentifier.getNamespace(), thisIdentifier.getPath());
-//            if (ETFUtils2.registerNativeImageToIdentifier(newBaseTexture, newPatchIdentifier)) {
-//                thisIdentifier_Patched = newPatchIdentifier;
-//                ETFManager.getInstance().ETF_TEXTURE_CACHE.put(thisIdentifier_Patched, this);
-//            } else {
-//                //assert
-//                thisIdentifier_Patched = null;
-//            }
-//        }
-//
-//    }
 
     @NotNull
     public ResourceLocation getTextureIdentifier(@Nullable ETFEntityRenderState entity) {
