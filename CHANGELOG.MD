@@ -1,5 +1,5 @@
 
-[?]
+[7.2]
 - fixed the size property breaking with slimes in 26.2
 - fixed various texture layer issues
 - fixed various block entity issues
