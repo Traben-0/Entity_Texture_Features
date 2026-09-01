@@ -1,4 +1,11 @@
 
+[?]
+- fixed the size property breaking with slimes in 26.2
+- fixed various texture layer issues
+- fixed various block entity issues
+- fixed various issues affecting EMF
+- fixed non .png textures registering as enchanted and emissive always
+
 [7.1]
 - Both EMF & ESF will need to update to be compatible with this version *(expect about half an hour for EMF to update)*
 - fixed immediatelyfast compat on 26.1+

@@ -33,7 +33,9 @@ public class MoonPhaseProperty extends SimpleIntegerArrayProperty {
 
     @Override
     protected int getValueFromEntity(ETFEntityRenderState entity) {
-        //#if MC >= 26.1
+        //#if MC >= 26.2
+        //$$ return Minecraft.getInstance().gameRenderer.gameRenderState().levelRenderState.skyRenderState.moonPhase.index();
+        //#elseif MC >= 26.1
         //$$ return Minecraft.getInstance().gameRenderer.getGameRenderState().levelRenderState.skyRenderState.moonPhase.index();
         //#elseif MC >= 12111
         //$$ return Minecraft.getInstance().gameRenderer.getLevelRenderState().skyRenderState.moonPhase.index();

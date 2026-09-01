@@ -1,6 +1,5 @@
 package traben.entity_texture_features.mixin.mixins.entity.misc;
 
-import net.minecraft.advancements.critereon.NbtPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -23,14 +22,16 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.state.ETFEntityRenderState;
+import traben.entity_texture_features.features.state.ETFState;
 import traben.entity_texture_features.utils.ETFEntity;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import static traben.entity_texture_features.features.property_reading.properties.optifine_properties.NBTProperty.INTENTIONAL_FAILURE;
 
 @Mixin(Entity.class)
 public abstract class MixinEntity implements ETFEntity {
@@ -137,8 +138,16 @@ public abstract class MixinEntity implements ETFEntity {
 
     @Override
     public CompoundTag etf$getNbt() {
-        return ETFRenderContext.cacheEntityNBTForFrame(etf$getUuid(),
-                ()->NbtPredicate.getEntityTagToCompare(((Entity)((Object)this))));
+        var state = ETFState.state();
+        if (state == null) return INTENTIONAL_FAILURE;
+        return state.cacheEntityNBTForState(etf$getUuid(),
+                ()->
+                        //#if MC >= 26.2
+                        //$$ net.minecraft.advancements.predicates.NbtPredicate
+                        //#else
+                        net.minecraft.advancements.critereon.NbtPredicate
+                        //#endif
+                                .getEntityTagToCompare(((Entity)((Object)this))));
         //try include id
 //        if (saveAsPassenger(comp)) {
 //            return comp;

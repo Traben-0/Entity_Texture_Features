@@ -9,7 +9,9 @@ import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.client.renderer.MultiBufferSource;
+//#if MC < 1.21.9
+//$$ import net.minecraft.client.renderer.MultiBufferSource;
+//#endif
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
@@ -33,7 +35,7 @@ import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.config.screens.skin.ETFConfigScreenSkinTool;
 import traben.entity_texture_features.features.ETFManager;
-import traben.entity_texture_features.features.ETFRenderContext;
+import traben.entity_texture_features.features.state.ETFState;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 //#if MC >= 12109
@@ -80,8 +82,8 @@ public class ETFPlayerFeatureRenderer<T extends AvatarRenderState, M extends Pla
                                            //$$ MultiBufferSource vertexConsumerProvider,
                                            //#endif
                                            int light, SkullModelBase skullModel, ETFPlayerTexture playerTexture, float yaw) {
-        ETFRenderContext.preventRenderLayerTextureModify();
-        ETFRenderContext.startSpecialRenderOverlayPhase();
+        ETFState.pushRenderLayerModifyState(false);
+        ETFState.startSpecialRenderOverlayPhase();
 
         if (playerTexture.hasVillagerNose || playerTexture.texturedNoseIdentifier != null) {
             villagerNose.yRot = yaw * 0.017453292F;
@@ -95,8 +97,8 @@ public class ETFPlayerFeatureRenderer<T extends AvatarRenderState, M extends Pla
 //        ETFPlayerFeatureRenderer.renderEmmisive(matrixStack, vertexConsumerProvider, playerTexture, skullModel);
         ETFPlayerFeatureRenderer.renderEnchanted(matrixStack, vertexConsumerProvider, light, playerTexture, skullModel);
 
-        ETFRenderContext.endSpecialRenderOverlayPhase();
-        ETFRenderContext.allowRenderLayerTextureModify();
+        ETFState.endSpecialRenderOverlayPhase();
+        ETFState.popRenderLayerModifyState();
     }
 
 //    private static void renderEmmisive(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, ETFPlayerTexture playerTexture, Model model) {
@@ -249,7 +251,7 @@ public class ETFPlayerFeatureRenderer<T extends AvatarRenderState, M extends Pla
     //$$     public void render(PoseStack matrices, MultiBufferSource submit, int light, T entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
     //#endif
         if (ETF.config().getConfig().skinFeaturesEnabled && skinHolder != null) {
-            ETFRenderContext.preventRenderLayerTextureModify();
+            ETFState.pushRenderLayerModifyState(false);
 
             ETFPlayerTexture playerTexture = skinHolder.etf$getETFPlayerTexture();
             if (playerTexture != null && playerTexture.hasFeatures) {
@@ -261,7 +263,7 @@ public class ETFPlayerFeatureRenderer<T extends AvatarRenderState, M extends Pla
                         light, getParentModel(), playerTexture);
             }
 
-            ETFRenderContext.allowRenderLayerTextureModify();
+            ETFState.popRenderLayerModifyState();
         }
     }
 
@@ -274,7 +276,7 @@ public class ETFPlayerFeatureRenderer<T extends AvatarRenderState, M extends Pla
                                //#endif
                                int light, M model, ETFPlayerTexture playerTexture) {
         if (playerTexture.canUseFeaturesForThisPlayer()) {
-            ETFRenderContext.startSpecialRenderOverlayPhase();
+            ETFState.startSpecialRenderOverlayPhase();
             matrixStack.pushPose();
             //#if MC >= 1.21.2
             getParentModel().root().translateAndRotate(matrixStack);
@@ -305,7 +307,7 @@ public class ETFPlayerFeatureRenderer<T extends AvatarRenderState, M extends Pla
             //ETFPlayerFeatureRenderer.renderEnchanted(matrixStack, vertexConsumerProvider, light, playerTexture, model);
 
             matrixStack.popPose();
-            ETFRenderContext.endSpecialRenderOverlayPhase();
+            ETFState.endSpecialRenderOverlayPhase();
         }
     }
 

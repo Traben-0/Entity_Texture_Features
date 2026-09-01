@@ -11,7 +11,7 @@ package traben.entity_texture_features.mixin.mixins.mods.iris.old;
 //$$ import org.spongepowered.asm.mixin.injection.Inject;
 //$$ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 //$$ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-//$$ import traben.entity_texture_features.features.ETFRenderContext;
+//$$ import traben.entity_texture_features.features.state.ETFState;
 //$$
 //$$ /**
 //$$  * this is a copy of {@link net.minecraft.client.renderer.MultiBufferSource.BufferSource} but for iris's
@@ -27,7 +27,7 @@ package traben.entity_texture_features.mixin.mixins.mods.iris.old;
 //$$            at = @At(value = "HEAD"),
 //$$            index = 1, argsOnly = true)
 //$$    private RenderType etf$modifyRenderLayer(RenderType value) {
-//$$        RenderType newLayer = ETFRenderContext.modifyRenderLayerIfRequired(value);
+//$$        RenderType newLayer = ETFState.modifyRenderLayerIfRequired(value);
 //$$        return newLayer == null ? value : newLayer;
 //$$    }
 //$$
@@ -35,7 +35,7 @@ package traben.entity_texture_features.mixin.mixins.mods.iris.old;
 //$$             method = "getBuffer",
 //$$             at = @At(value = "RETURN"))
 //$$     private void etf$injectIntoGetBufferReturn(RenderType renderLayer, CallbackInfoReturnable<VertexConsumer> cir) {
-//$$        ETFRenderContext.insertETFDataIntoVertexConsumer(
+//$$        ETFState.insertETFDataIntoVertexConsumer(
 //$$                (MultiBufferSource) this,
 //$$                 renderLayer,
 //$$                 cir.getReturnValue());

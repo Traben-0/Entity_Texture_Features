@@ -3,7 +3,10 @@ package traben.entity_texture_features;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelPart;
+//#if MC < 26.2
 import net.minecraft.client.renderer.MultiBufferSource;
+//#endif
+
 //#if MC >= 12103
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 //#endif
@@ -17,13 +20,13 @@ import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.config.ETFConfigWarning;
 import traben.entity_texture_features.config.ETFConfigWarnings;
 import traben.entity_texture_features.features.ETFManager;
-import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.property_reading.PropertiesRandomProvider;
 import traben.entity_texture_features.features.property_reading.TrueRandomProvider;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperties;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperty;
 import traben.entity_texture_features.features.property_reading.properties.optifine_properties.BabyProperty;
 import traben.entity_texture_features.features.state.ETFEntityRenderState;
+import traben.entity_texture_features.features.state.ETFState;
 import traben.entity_texture_features.features.state.HoldsETFRenderState;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
 import traben.entity_texture_features.utils.ETFEntity;
@@ -294,6 +297,7 @@ public final class ETFApi {
         return null;
     }
 
+    //#if MC < 26.2
     /**
      * To render your entity using its emissive textures you can simply call this method sometime after
      * your entity model is rendered, but before you pop or modify the matrix stack
@@ -383,6 +387,7 @@ public final class ETFApi {
             etfTexture.renderEmissive(matrixStack, vertexConsumerProvider, modelPart);
         }
     }
+    //#endif
 
     /**
      * This should only be used if you want to handle your own variation code.
@@ -463,7 +468,7 @@ public final class ETFApi {
             //get optifine property provider or null
             PropertiesRandomProvider optifine = PropertiesRandomProvider.of(propertiesFileIdentifier, vanillaIdentifier, suffixKeyName);
             //get true random provider or null
-            TrueRandomProvider random = ETFRenderContext.isRandomLimitedToProperties() ? null : TrueRandomProvider.of(vanillaIdentifier);
+            TrueRandomProvider random = ETFState.onlyRandomizeViaPropertiesFiles ? null : TrueRandomProvider.of(vanillaIdentifier);
 
             //try fallback property if null
             if (optifine == null

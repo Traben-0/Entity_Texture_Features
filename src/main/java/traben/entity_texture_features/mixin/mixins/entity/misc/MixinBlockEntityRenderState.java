@@ -15,8 +15,8 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import traben.entity_texture_features.ETF;
-import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.state.ETFEntityRenderState;
+import traben.entity_texture_features.features.state.ETFState;
 import traben.entity_texture_features.features.state.HoldsETFRenderState;
 import traben.entity_texture_features.utils.ETFEntity;
 
@@ -43,12 +43,13 @@ public class MixinBlockEntityRenderState implements HoldsETFRenderState {
     private static void etf$createRenderState(final BlockEntity blockEntity, final BlockEntityRenderState blockEntityRenderState, final ModelFeatureRenderer.CrumblingOverlay crumblingOverlay, final CallbackInfo ci) {
         var holder = (HoldsETFRenderState) blockEntityRenderState;
         holder.etf$initState((ETFEntity) blockEntity);
-        ETFRenderContext.setCurrentEntity(holder.etf$getState()); // either this or the one in the dispatcher is redundant but ill put both for now
     }
 
     @ModifyExpressionValue(method = "extractBase",
             at = @At(value = "INVOKE",target =
                     //#if MC >= 26.1
+                    //$$ "Lnet/minecraft/util/LightCoordsUtil;getLightCoords(Lnet/minecraft/world/level/BlockAndLightGetter;Lnet/minecraft/core/BlockPos;)I"
+                    //#elseif MC >= 26.1
                     //$$ "Lnet/minecraft/client/renderer/LevelRenderer;getLightCoords(Lnet/minecraft/world/level/BlockAndLightGetter;Lnet/minecraft/core/BlockPos;)I"
                     //#else
                     "Lnet/minecraft/client/renderer/LevelRenderer;getLightColor(Lnet/minecraft/world/level/BlockAndTintGetter;Lnet/minecraft/core/BlockPos;)I"

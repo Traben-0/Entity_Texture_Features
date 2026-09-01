@@ -5,9 +5,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import traben.entity_texture_features.features.ETFRenderContext;
+import traben.entity_texture_features.features.state.ETFState;
 //#if MC >= 12103
 import net.minecraft.client.renderer.entity.layers.WingsLayer;
+
 @Mixin(WingsLayer.class)
 public abstract class MixinElytraFeatureRenderer<T extends LivingEntity> {
 //#else
@@ -27,7 +28,7 @@ public abstract class MixinElytraFeatureRenderer<T extends LivingEntity> {
             ,
             at = @At(value = "HEAD"))
     private void etf$markPatchable(CallbackInfo ci) {
-        ETFRenderContext.allowTexturePatching();
+        ETFState.allowTexturePatching = true;
     }
 
     @Inject(method =
@@ -41,7 +42,7 @@ public abstract class MixinElytraFeatureRenderer<T extends LivingEntity> {
             ,
             at = @At(value = "RETURN"))
     private void etf$markPatchableEnd(CallbackInfo ci) {
-        ETFRenderContext.preventTexturePatching();
+        ETFState.allowTexturePatching = false;
     }
 }
 

@@ -1,9 +1,5 @@
 package traben.entity_texture_features.config.screens;
 
-import com.mojang.blaze3d.platform.Lighting;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -12,10 +8,19 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.model.CreeperModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
+//#if MC < 1.21.6
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.world.entity.player.Inventory;
+import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4f;
+//#endif
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -24,14 +29,12 @@ import net.minecraft.world.entity.animal.Squid;
 import net.minecraft.world.entity.animal.sniffer.Sniffer;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.monster.Guardian;
-import net.minecraft.world.entity.player.Inventory;
-import org.jetbrains.annotations.Nullable;
-import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.config.ETFConfigWarning;
 import traben.entity_texture_features.config.ETFConfigWarnings;
 import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.utils.UScreen;
 import traben.tconfig.gui.TConfigScreenMain;
 import traben.tconfig.gui.entries.TConfigEntryCategory;
 
@@ -127,7 +130,7 @@ public class ETFConfigScreenMain extends TConfigScreenMain {
         super.init();
         if (shownWarning) {
             this.addRenderableWidget(Button.builder(Component.translatable("config.entity_features.warnings_main"),
-                            (button) -> Objects.requireNonNull(minecraft).setScreen(new ETFConfigScreenWarnings(this, warningsFound)))
+                            (button) -> UScreen.setScreen(new ETFConfigScreenWarnings(this, warningsFound)))
                     .bounds((int) (this.width * 0.1), (int) (this.height * 0.1) - 15, (int) (this.width * 0.2), 20
                     ).build());
         }
@@ -183,23 +186,23 @@ public class ETFConfigScreenMain extends TConfigScreenMain {
         //$$ context.pose().popPose();
         //#endif
     }
-
-    private void renderETFLogoCreepers(final GuiGraphics context, final int mouseX, final int mouseY) {
-        int y = (int) (this.height * 0.75);
-        int x = (int) (this.width * 0.33);
-        float g = (float) -Math.atan(((-mouseY + this.height / 2f) / 40.0F));
-        float g2 = (float) -Math.atan(((-mouseX + this.width / 3f) / 400.0F));
-        Quaternionf quaternionf = (new Quaternionf()).rotateZ(3.1415927F).rotateY(g2);
-        Quaternionf quaternionf2 = (new Quaternionf()).rotateX(-(g * 20.0F * 0.017453292F));
-        quaternionf.mul(quaternionf2);
-
-
+    //#if MC < 1.21.6
+    //$$ private void renderETFLogoCreepers(final GuiGraphics context, final int mouseX, final int mouseY) {
+    //$$     int y = (int) (this.height * 0.75);
+    //$$     int x = (int) (this.width * 0.33);
+    //$$     float g = (float) -Math.atan(((-mouseY + this.height / 2f) / 40.0F));
+    //$$     float g2 = (float) -Math.atan(((-mouseX + this.width / 3f) / 400.0F));
+    //$$     Quaternionf quaternionf = (new Quaternionf()).rotateZ(3.1415927F).rotateY(g2);
+    //$$     Quaternionf quaternionf2 = (new Quaternionf()).rotateX(-(g * 20.0F * 0.017453292F));
+    //$$     quaternionf.mul(quaternionf2);
+    //$$
+    //$$
         //#if MC>=12106
-        PoseStack matrixStack = new PoseStack();
-        matrixStack.translate(x, y, 150.0);
-        float scaling = (float) (this.height * 0.3);
-        matrixStack.mulPose((new Matrix4f()).scaling(scaling, scaling, -scaling));
-        matrixStack.mulPose(quaternionf);
+        //$$ PoseStack matrixStack = new PoseStack();
+        //$$ matrixStack.translate(x, y, 150.0);
+        //$$ float scaling = (float) (this.height * 0.3);
+        //$$ matrixStack.mulPose((new Matrix4f()).scaling(scaling, scaling, -scaling));
+        //$$ matrixStack.mulPose(quaternionf);
         //#else
         //$$ context.pose().pushPose();
         //$$ context.pose().translate(x, y, 150.0);
@@ -213,39 +216,40 @@ public class ETFConfigScreenMain extends TConfigScreenMain {
         //$$ Lighting.setupForEntityInInventory();
         //$$ PoseStack matrixStack = context.pose();
         //#endif
-
-        float sin1 = (float) (Math.sin(System.currentTimeMillis() / 500d) / 32);
-        float sin2 = (float) (Math.sin(System.currentTimeMillis() / 500d + 1) / 32);
-        float sin3 = (float) (Math.sin(System.currentTimeMillis() / 500d + 2) / 32);
-
+    //$$
+    //$$     float sin1 = (float) (Math.sin(System.currentTimeMillis() / 500d) / 32);
+    //$$     float sin2 = (float) (Math.sin(System.currentTimeMillis() / 500d + 1) / 32);
+    //$$     float sin3 = (float) (Math.sin(System.currentTimeMillis() / 500d + 2) / 32);
+    //$$
         //#if MC>=12106
-        MultiBufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+        //$$ MultiBufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         //#elseif MC < 12103
         //$$ MultiBufferSource bufferSource = context.bufferSource();
         //#else
         //$$ MultiBufferSource bufferSource = context.bufferSource;
         //#endif
-
-        matrixStack.pushPose();
-        matrixStack.translate(-0.6, -sin1, 0);
-        matrixStack.scale(1 + sin1, 1 + sin1, 1 + sin1);
-        LOGO_CREEPER.renderSimple(matrixStack, bufferSource, YELLOW);
-        matrixStack.popPose();
-        matrixStack.pushPose();
-        matrixStack.translate(0, -sin2, 0);
-        matrixStack.scale(1 + sin2, 1 + sin2, 1 + sin2);
-        LOGO_CREEPER.renderSimple(matrixStack, bufferSource, RED);
-        matrixStack.popPose();
-        matrixStack.pushPose();
-        matrixStack.translate(0.6, -sin3, 0);
-        matrixStack.scale(1 + sin3, 1 + sin3, 1 + sin3);
-        LOGO_CREEPER.renderSimple(matrixStack, bufferSource,  BLUE);
-        matrixStack.popPose();
-
+    //$$
+    //$$     matrixStack.pushPose();
+    //$$     matrixStack.translate(-0.6, -sin1, 0);
+    //$$     matrixStack.scale(1 + sin1, 1 + sin1, 1 + sin1);
+    //$$     LOGO_CREEPER.renderSimple(matrixStack, bufferSource, YELLOW);
+    //$$     matrixStack.popPose();
+    //$$     matrixStack.pushPose();
+    //$$     matrixStack.translate(0, -sin2, 0);
+    //$$     matrixStack.scale(1 + sin2, 1 + sin2, 1 + sin2);
+    //$$     LOGO_CREEPER.renderSimple(matrixStack, bufferSource, RED);
+    //$$     matrixStack.popPose();
+    //$$     matrixStack.pushPose();
+    //$$     matrixStack.translate(0.6, -sin3, 0);
+    //$$     matrixStack.scale(1 + sin3, 1 + sin3, 1 + sin3);
+    //$$     LOGO_CREEPER.renderSimple(matrixStack, bufferSource,  BLUE);
+    //$$     matrixStack.popPose();
+    //$$
         //#if MC<12106
         //$$ Lighting.setupFor3DItems();
         //#endif
-    }
+    //$$ }
+    //#endif
 
     private void renderEntitySample(final GuiGraphics context, final int mouseX, final int mouseY) {
         int y = (int) (this.height * 0.75);
@@ -300,28 +304,29 @@ public class ETFConfigScreenMain extends TConfigScreenMain {
             root.getChild("left_front_leg").z += 2;
         }
 
-
-        public void renderSimple(final PoseStack matrix, final MultiBufferSource vcp, ResourceLocation texture) {
-            matrix.pushPose();
-            matrix.scale(-1.0F, -1.0F, 1.0F);
-            matrix.translate(0.0F, -1.501F, 0.0F);
-            RenderType rendertype =
+        //#if MC < 1.21.6
+        //$$ public void renderSimple(final PoseStack matrix, final MultiBufferSource vcp, ResourceLocation texture) {
+        //$$     matrix.pushPose();
+        //$$     matrix.scale(-1.0F, -1.0F, 1.0F);
+        //$$     matrix.translate(0.0F, -1.501F, 0.0F);
+        //$$     RenderType rendertype =
                     //#if MC>= 12111
                     //$$ net.minecraft.client.renderer.rendertype.RenderTypes
                     //#else
-                    RenderType
+                    //$$ RenderType
                     //#endif
-                            .entitySolid(texture);
-            //noinspection ConstantValue
-            if (rendertype != null) {
-                VertexConsumer vertexconsumer = vcp.getBuffer(rendertype);
-                root.render(matrix, vertexconsumer, 15728880, OverlayTexture.NO_OVERLAY
+        //$$                     .entitySolid(texture);
+        //$$     //noinspection ConstantValue
+        //$$     if (rendertype != null) {
+        //$$         VertexConsumer vertexconsumer = vcp.getBuffer(rendertype);
+        //$$         root.render(matrix, vertexconsumer, 15728880, OverlayTexture.NO_OVERLAY
                     //#if MC < 12100
                     //$$ , 1F, 1F, 1F, 1F
                     //#endif
-                    );
-            }
-            matrix.popPose();
-        }
+        //$$             );
+        //$$     }
+        //$$     matrix.popPose();
+        //$$ }
+        //#endif
     }
 }

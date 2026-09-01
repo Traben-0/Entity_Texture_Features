@@ -81,7 +81,7 @@ public class NBTProperty extends RandomProperty {
         return entity.nbt();
     }
 
-    protected static final CompoundTag INTENTIONAL_FAILURE = new CompoundTag();
+    public static final CompoundTag INTENTIONAL_FAILURE = new CompoundTag();
 
     private static Set<String> crashMessages = new HashSet<>();
     private boolean nullMessage = true;

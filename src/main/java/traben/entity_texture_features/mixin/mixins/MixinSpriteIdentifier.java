@@ -6,13 +6,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import traben.entity_texture_features.features.ETFManager;
-import traben.entity_texture_features.features.ETFRenderContext;
+import traben.entity_texture_features.features.state.ETFState;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import java.util.function.Function;
 
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.SpriteCoordinateExpander;
 import net.minecraft.client.resources.model.Material;
@@ -24,7 +23,8 @@ import traben.entity_texture_features.utils.ETFUtils2;
 @Mixin(Material.class)
 //#endif
 public class MixinSpriteIdentifier {
-
+    //TODO really needs a look at
+//#if MC < 26.2
     @Inject(method =
             //#if MC >= 26.1
             //$$ {
@@ -38,7 +38,7 @@ public class MixinSpriteIdentifier {
             //#endif
             at = @At(value = "RETURN"), cancellable = true)
     private void etf$modifyIfRequired(CallbackInfoReturnable<VertexConsumer> cir,
-                                      @Local(argsOnly = true) MultiBufferSource vertexConsumers,
+                                      @Local(argsOnly = true) net.minecraft.client.renderer.MultiBufferSource vertexConsumers,
                                       @Local(argsOnly = true) Function<ResourceLocation, RenderType> layerFactory) {
 
         if (cir.getReturnValue() instanceof SpriteCoordinateExpander spriteTexturedVertexConsumer) {
@@ -54,13 +54,13 @@ public class MixinSpriteIdentifier {
             }
 
 
-            ETFTexture texture = ETFManager.getInstance().getETFTextureVariant(actualTexture, ETFRenderContext.getCurrentEntityState());
+            ETFTexture texture = ETFManager.getInstance().getETFTextureVariant(actualTexture, ETFState.state());
 
             //if texture is emissive or a variant then replace with a non sprite vertex consumer like regular entities
             if (!actualTexture.equals(texture.thisIdentifier) || texture.isEmissive() || texture.isEnchanted()) {
-                ETFRenderContext.preventRenderLayerTextureModify();
+                ETFState.pushRenderLayerModifyState(false);
                 RenderType layer = layerFactory.apply(texture.thisIdentifier);
-                ETFRenderContext.allowRenderLayerTextureModify();
+                ETFState.popRenderLayerModifyState();
                 if (layer != null) {
                     VertexConsumer consumer = vertexConsumers.getBuffer(layer);
                     //noinspection ConstantValue
@@ -71,5 +71,5 @@ public class MixinSpriteIdentifier {
             }
         }
     }
-
+//#endif
 }

@@ -5,9 +5,9 @@ import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFApi;
 import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.features.ETFManager;
-import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.property_reading.PropertiesRandomProvider;
 import traben.entity_texture_features.features.state.ETFEntityRenderState;
+import traben.entity_texture_features.features.state.ETFState;
 import traben.entity_texture_features.utils.ETFLruCache;
 import traben.entity_texture_features.utils.ETFUtils2;
 
@@ -227,7 +227,7 @@ public abstract class ETFTextureVariator {
         }
 
         private ETFManager.TextureSource determineTextureSource(@NotNull ETFEntityRenderState entity) {
-            if (ETFRenderContext.isRenderingFeatures()) {
+            if (ETFState.isRenderingFeatures) {
                 return ETFManager.TextureSource.ENTITY_FEATURE;
             } else if (entity.isBlockEntity()) {
                 return ETFManager.TextureSource.BLOCK_ENTITY;
@@ -251,8 +251,9 @@ public abstract class ETFTextureVariator {
         }
 
         private int getBaseEntitySuffixOrNew(@NotNull ETFEntityRenderState entity) {
-            int baseEntitySuffix = ETFRenderContext.getCurrentEntityState() == null ? -1 : // note this needs to refer to the entity set at the render dispatcher cant just used passes state
-                    ETFManager.getInstance().LAST_SUFFIX_OF_ENTITY.get(ETFRenderContext.getCurrentEntityState().uuid());
+            var state = ETFState.state();
+            int baseEntitySuffix = state == null ? -1 : // note this needs to refer to the entity set at the render dispatcher cant just used passes state
+                    ETFManager.getInstance().LAST_SUFFIX_OF_ENTITY.get(state.uuid());
             if (baseEntitySuffix != -1 && variantMap.containsKey(baseEntitySuffix)) {
                 return baseEntitySuffix;
             } else {

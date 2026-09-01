@@ -1,4 +1,4 @@
-package traben.entity_texture_features.mixin.mixins;
+package traben.entity_texture_features.mixin.mixins.vertexconsumers;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -10,15 +10,15 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 
 import java.util.Optional;
 
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
+import traben.entity_texture_features.utils.URenderTypeToVertexConsumer;
 
 @Mixin(BufferBuilder.class)
 public class MixinBufferBuilder implements ETFVertexConsumer {
 
     @Unique
-    private MultiBufferSource etf$provider = null;
+    private URenderTypeToVertexConsumer etf$provider = null;
     @Unique
     private RenderType etf$renderLayer = null;
     @Unique
@@ -30,7 +30,7 @@ public class MixinBufferBuilder implements ETFVertexConsumer {
     }
 
     @Override
-    public MultiBufferSource etf$getProvider() {
+    public URenderTypeToVertexConsumer etf$getProvider() {
         return etf$provider;
     }
 
@@ -40,7 +40,7 @@ public class MixinBufferBuilder implements ETFVertexConsumer {
     }
 
     @Override
-    public void etf$initETFVertexConsumer(MultiBufferSource provider, RenderType renderLayer) {
+    public void etf$initETFVertexConsumer(URenderTypeToVertexConsumer provider, RenderType renderLayer) {
         etf$provider = provider;
 
         etf$renderLayer = renderLayer;

@@ -11,7 +11,6 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BedBlock;
-import net.minecraft.world.level.block.entity.BedBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.properties.BedPart;
@@ -27,13 +26,14 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import traben.entity_texture_features.ETFApi;
-import traben.entity_texture_features.features.ETFRenderContext;
+import traben.entity_texture_features.features.state.ETFState;
 import traben.entity_texture_features.utils.ETFEntity;
 import traben.entity_texture_features.utils.ETFUtils2;
 
 import java.util.UUID;
 
 import static traben.entity_texture_features.ETFApi.getBlockEntityTypeToTranslationKey;
+import static traben.entity_texture_features.features.property_reading.properties.optifine_properties.NBTProperty.INTENTIONAL_FAILURE;
 
 @Mixin(BlockEntity.class)
 public abstract class MixinBlockEntity implements ETFEntity {
@@ -92,13 +92,15 @@ public abstract class MixinBlockEntity implements ETFEntity {
 
     @Override
     public BlockPos etf$getBlockPos() {
+        //#if MC < 26.2
         var self = (BlockEntity) ((Object) this);
-        if(self instanceof BedBlockEntity bed){
+        if(self instanceof net.minecraft.world.level.block.entity.BedBlockEntity bed){
             var state = bed.getBlockState();
             if(state.getValue(BedBlock.PART) == BedPart.HEAD){
                 return getBlockPos().relative(state.getValue(BedBlock.FACING));
             }
         }
+        //#endif
         return getBlockPos();
     }
 
@@ -109,15 +111,17 @@ public abstract class MixinBlockEntity implements ETFEntity {
 
     @Override
     public CompoundTag etf$getNbt() {
+        var state = ETFState.state();
+        if (state == null) return INTENTIONAL_FAILURE;
         //#if MC>=12106
-        return ETFRenderContext.cacheEntityNBTForFrame(etf$getUuid(),
+        return state.cacheEntityNBTForState(etf$getUuid(),
                 ()->{
                     TagValueOutput compound = TagValueOutput.createWithoutContext(ProblemReporter.DISCARDING);
                     saveMetadata(compound);
                     return compound.buildResult();
                 });
         //#else
-        //$$ return ETFRenderContext.cacheEntityNBTForFrame(etf$getUuid(),
+        //$$ return state.cacheEntityNBTForState(etf$getUuid(),
         //$$         ()->{
         //$$             CompoundTag compound = new CompoundTag();
         //$$             saveMetadata(compound);

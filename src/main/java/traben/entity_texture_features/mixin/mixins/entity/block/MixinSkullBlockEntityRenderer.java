@@ -1,36 +1,36 @@
 package traben.entity_texture_features.mixin.mixins.entity.block;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.SkullModelBase;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.SkullBlockRenderer;
-import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.SkullBlock;
-import net.minecraft.world.level.block.entity.SkullBlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-import traben.entity_texture_features.ETF;
-import traben.entity_texture_features.features.ETFManager;
-import traben.entity_texture_features.features.ETFRenderContext;
-import traben.entity_texture_features.features.player.ETFPlayerEntity;
-import traben.entity_texture_features.features.player.ETFPlayerFeatureRenderer;
-import traben.entity_texture_features.features.player.ETFPlayerTexture;
 
 //#if MC >= 12109
 @Mixin(traben.entity_texture_features.mixin.CancelTarget.class)
 public abstract class MixinSkullBlockEntityRenderer { } // TODO 1.21.9 support
 //#else
+//$$ import com.mojang.blaze3d.vertex.PoseStack;
+//$$ import net.minecraft.client.Minecraft;
+//$$ import net.minecraft.client.model.SkullModelBase;
+//$$ import net.minecraft.client.renderer.MultiBufferSource;
+//$$ import net.minecraft.client.renderer.RenderType;
+//$$ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+//$$ import net.minecraft.client.renderer.blockentity.SkullBlockRenderer;
+//$$ import net.minecraft.core.Direction;
+//$$ import net.minecraft.resources.ResourceLocation;
+//$$ import net.minecraft.world.level.block.SkullBlock;
+//$$ import net.minecraft.world.level.block.entity.SkullBlockEntity;
+//$$ import net.minecraft.world.level.block.state.BlockState;
+//$$ import net.minecraft.world.phys.Vec3;
+//$$ import org.spongepowered.asm.mixin.Unique;
+//$$ import org.spongepowered.asm.mixin.injection.At;
+//$$ import org.spongepowered.asm.mixin.injection.Inject;
+//$$ import org.spongepowered.asm.mixin.injection.ModifyArg;
+//$$ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+//$$ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+//$$ import traben.entity_texture_features.ETF;
+//$$ import traben.entity_texture_features.features.ETFManager;
+//$$ import traben.entity_texture_features.features.player.ETFPlayerEntity;
+//$$ import traben.entity_texture_features.features.player.ETFPlayerFeatureRenderer;
+//$$ import traben.entity_texture_features.features.player.ETFPlayerTexture;
+//$$ import traben.entity_texture_features.features.state.ETFState;
 //$$
 //$$ @Mixin(SkullBlockRenderer.class)
 //$$ public abstract class MixinSkullBlockEntityRenderer implements BlockEntityRenderer<SkullBlockEntity> {
@@ -48,14 +48,15 @@ public abstract class MixinSkullBlockEntityRenderer { } // TODO 1.21.9 support
 //$$     @Inject(method = RENDER_METHOD,
 //$$             at = @At(value = "HEAD"))
 //$$     private void etf$markNotToChange(CallbackInfo ci) {
-//$$         ETFRenderContext.allowTexturePatching();
+//$$         ETFState.pushRenderLayerModifyState(true);
+//$$         ETFState.allowTexturePatching = true;
 //$$     }
 //$$
 //$$     @Inject(method = RENDER_METHOD,
 //$$             at = @At(value = "RETURN"))
 //$$     private void etf$markAllowedToChange(CallbackInfo ci) {
-//$$         ETFRenderContext.allowRenderLayerTextureModify();
-//$$         ETFRenderContext.preventTexturePatching();
+//$$         ETFState.popRenderLayerModifyState();
+//$$         ETFState.allowTexturePatching = false;
 //$$     }
 //$$
     //#if MC >= 12105
@@ -92,7 +93,8 @@ public abstract class MixinSkullBlockEntityRenderer { } // TODO 1.21.9 support
 //$$
 //$$                 entity_texture_features$thisETFPlayerTexture = ETFManager.getInstance().getPlayerTexture((ETFPlayerEntity) skullBlockEntity, identifier);
 //$$                 if (entity_texture_features$thisETFPlayerTexture != null) {
-//$$                     ETFRenderContext.preventRenderLayerTextureModify();
+//$$                     ETFState.popRenderLayerModifyState();
+//$$                     ETFState.pushRenderLayerModifyState(false);
 //$$                 }
 //$$             }
 //$$         }

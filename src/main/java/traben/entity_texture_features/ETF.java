@@ -48,6 +48,7 @@ public class ETF {
     public static TConfigHandler<ETFConfigScreenWarnings.WarningConfig> warningConfigHandler = null;
     public static boolean IRIS_DETECTED = false;
     public static boolean FABRIC_API = false;
+    public static final int EYES_FEATURE_LIGHT_VALUE = ETFUtils2.FULL_BRIGHT + 1;
 
     public static ETFEntityRenderState.ETFRenderStateInit etfRenderStateConstructor = (it)-> new ETFEntityRenderStateViaReference(it); // todo 1.21+ impl that doesn't smuggle entity
 

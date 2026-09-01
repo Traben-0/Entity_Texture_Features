@@ -6,10 +6,10 @@ import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFApi;
 import traben.entity_texture_features.ETFException;
 import traben.entity_texture_features.features.ETFManager;
-import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.property_reading.properties.RandomProperties;
 import traben.entity_texture_features.features.property_reading.properties.generic_properties.SimpleIntegerArrayProperty;
 import traben.entity_texture_features.features.state.ETFEntityRenderState;
+import traben.entity_texture_features.features.state.ETFState;
 import traben.entity_texture_features.features.texture_handlers.ETFDirectory;
 import traben.entity_texture_features.utils.ETFLruCache;
 import traben.entity_texture_features.utils.ETFUtils2;
@@ -55,7 +55,7 @@ public class PropertiesRandomProvider implements ETFApi.ETFVariantSuffixProvider
                 return null;
             }
             if (vanillaIdentifier.getPath().endsWith(".png")) {
-                ETFManager.getInstance().grabSpecialProperties(props, ETFRenderContext.getCurrentEntityState());
+                ETFManager.getInstance().grabSpecialProperties(props, ETFState.state());
             }
 
             List<RandomPropertyRule> propertyRules = PropertiesRandomProvider.getAllValidPropertyObjects(props, propertiesFileIdentifier, suffixKeyName);

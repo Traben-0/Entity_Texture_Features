@@ -4,18 +4,18 @@ package traben.entity_texture_features.compat;
 
 //#if MC < 12100 && MC != 12002 && SODIUM
 //$$ import me.jellysquid.mods.sodium.client.render.vertex.buffer.ExtendedBufferBuilder;
-//$$ import traben.entity_texture_features.features.ETFRenderContext;
+//$$ import traben.entity_texture_features.features.state.ETFState;
 //$$ import traben.entity_texture_features.utils.ETFUtils2;
 //$$ import traben.entity_texture_features.utils.ETFVertexConsumer;
 //$$ import java.lang.reflect.Method;
 //$$ import java.util.Objects;
 //#endif
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import org.apache.logging.log4j.util.TriConsumer;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.utils.URenderTypeToVertexConsumer;
 
 
 /**
@@ -24,14 +24,14 @@ import traben.entity_texture_features.utils.ETFUtils2;
  */
 public abstract class SodiumGetBufferInjector {
 
-    private static final TriConsumer<MultiBufferSource, RenderType, VertexConsumer> INSTANCE = get();
+    private static final TriConsumer<URenderTypeToVertexConsumer, RenderType, VertexConsumer> INSTANCE = get();
 
 
-    public static void inject(MultiBufferSource provider, RenderType renderLayer, VertexConsumer vertexConsumer) {
+    public static void inject(URenderTypeToVertexConsumer provider, RenderType renderLayer, VertexConsumer vertexConsumer) {
         if (INSTANCE != null) INSTANCE.accept(provider, renderLayer, vertexConsumer);
     }
 
-    private static TriConsumer<MultiBufferSource, RenderType, VertexConsumer> get() {
+    private static TriConsumer<URenderTypeToVertexConsumer, RenderType, VertexConsumer> get() {
         //#if MC < 12100 && MC != 12002 && SODIUM
         //$$
         //$$ try {
@@ -47,7 +47,7 @@ public abstract class SodiumGetBufferInjector {
     }
 //#if MC < 12100 && MC != 12002 && SODIUM
 //$$
-//$$    private static class Impl implements TriConsumer<MultiBufferSource, RenderType, VertexConsumer> {
+//$$    private static class Impl implements TriConsumer<URenderTypeToVertexConsumer, RenderType, VertexConsumer> {
 //$$         Impl() {
 //$$             Objects.requireNonNull(ExtendedBufferBuilder.class);
 //$$             var methods = ExtendedBufferBuilder.class.getMethods();
@@ -64,11 +64,11 @@ public abstract class SodiumGetBufferInjector {
 //$$         }
 //$$
 //$$         @Override
-//$$         public void accept(final MultiBufferSource vertexConsumerProvider, final RenderType renderLayer, final VertexConsumer vertexConsumer) {
+//$$         public void accept(final URenderTypeToVertexConsumer vertexConsumerProvider, final RenderType renderLayer, final VertexConsumer vertexConsumer) {
 //$$             if (vertexConsumer instanceof ExtendedBufferBuilder buff) {
 //$$                 VertexConsumer delegate = (VertexConsumer) (Object) buff.sodium$getDelegate();
 //$$                 if (delegate instanceof ETFVertexConsumer) {
-//$$                     ETFRenderContext.insertETFDataIntoVertexConsumer(vertexConsumerProvider, renderLayer, (VertexConsumer) delegate);
+//$$                     ETFState.insertETFDataIntoVertexConsumer(vertexConsumerProvider, renderLayer, (VertexConsumer) delegate);
 //$$                 }
 //$$             }
 //$$         }

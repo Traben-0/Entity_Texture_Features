@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -36,8 +35,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.features.ETFManager;
-import traben.entity_texture_features.features.ETFRenderContext;
 import traben.entity_texture_features.features.state.ETFEntityRenderState;
+import traben.entity_texture_features.features.state.ETFState;
 import traben.entity_texture_features.features.state.HoldsETFRenderState;
 import traben.entity_texture_features.features.texture_handlers.ETFSprite;
 import traben.entity_texture_features.features.texture_handlers.ETFTexture;
@@ -93,11 +92,11 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
     //#elseif MC >= 12103
     //$$ @Inject(method = "render(Lnet/minecraft/client/renderer/entity/state/PaintingRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
     //$$     at = @At(value = "HEAD"), cancellable = true)
-    //$$ private void etf$getSprites(final PaintingRenderState paintingRenderState, final PoseStack matrixStack, final MultiBufferSource vertexConsumerProvider, final int i, final CallbackInfo ci) {
+    //$$ private void etf$getSprites(final PaintingRenderState paintingRenderState, final PoseStack matrixStack, final net.minecraft.client.renderer.MultiBufferSource vertexConsumerProvider, final int i, final CallbackInfo ci) {
     //#else
     //$$ @Inject(method = "render(Lnet/minecraft/world/entity/decoration/Painting;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
     //$$     at = @At(value = "HEAD"), cancellable = true)
-    //$$ private void etf$getSprites(Painting paintingEntity, float f, float g, PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, int i, CallbackInfo ci) {
+    //$$ private void etf$getSprites(Painting paintingEntity, float f, float g, PoseStack matrixStack, net.minecraft.client.renderer.MultiBufferSource vertexConsumerProvider, int i, CallbackInfo ci) {
     //#endif
 
         ETFEntityRenderState etfEntity =
@@ -123,12 +122,12 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
 
 
             boolean aztec = "aztec".equals(paintingFileName);
-            if (aztec) ETFRenderContext.allowOnlyPropertiesRandom();
+            if (aztec) ETFState.onlyRandomizeViaPropertiesFiles = true;
 
             ETFTexture frontTexture = ETFManager.getInstance().getETFTextureVariant(paintingTexture, etfEntity);
             ETFSprite etf$Sprite = frontTexture.getPaintingSprite(paintingSprite, paintingTexture);
 
-            if (aztec) ETFRenderContext.allowAllRandom();
+            if (aztec) ETFState.onlyRandomizeViaPropertiesFiles = false;
 
             ETFTexture backTexture = ETFManager.getInstance().getETFTextureVariant(etf$BACK_SPRITE_ID, etfEntity);
             ETFSprite etf$BackSprite = backTexture.getPaintingSprite(backSprite, etf$BACK_SPRITE_ID);
@@ -161,7 +160,7 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
                 ;
 
                 //#if MC>= 12109
-                ETFRenderContext.preventRenderLayerTextureModify();
+                ETFState.pushRenderLayerModifyState(false);
                 var type =
                         //#if MC>= 12111
                         //$$ net.minecraft.client.renderer.rendertype.RenderTypes
@@ -190,7 +189,7 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
                         RenderType
                         //#endif
                                 .entityTranslucent(etf$BackSprite.getEmissive().atlasLocation());
-                ETFRenderContext.allowRenderLayerTextureModify();
+                ETFState.popRenderLayerModifyState();
 
                 submitNodeCollector.submitCustomGeometry(matrixStack, type, (pose, vertexConsumer) ->
                             etf$renderETFPaintingFront(pose, vertexConsumer, paintingEntity, width, height, etf$Sprite.getSpriteVariant(), false));
@@ -234,8 +233,8 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
     }
     //#if MC < 12109
     //$$ @Unique
-    //$$ private void etf$renderETFPainting(PoseStack.Pose entry, MultiBufferSource vertexConsumerProvider, Painting entity, int width, int height, ETFSprite ETFPaintingSprite, ETFSprite ETFBackSprite) {
-    //$$     ETFRenderContext.preventRenderLayerTextureModify();
+    //$$ private void etf$renderETFPainting(PoseStack.Pose entry, net.minecraft.client.renderer.MultiBufferSource vertexConsumerProvider, Painting entity, int width, int height, ETFSprite ETFPaintingSprite, ETFSprite ETFBackSprite) {
+    //$$     ETFState.pushRenderLayerModifyState(false);
     //$$     VertexConsumer vertexConsumerFront = vertexConsumerProvider.getBuffer(RenderType.entitySolid(ETFPaintingSprite.getSpriteVariant().atlasLocation()));
     //$$     etf$renderETFPaintingFront(entry, vertexConsumerFront, entity, width, height, ETFPaintingSprite.getSpriteVariant(), false);
     //$$
@@ -251,7 +250,7 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
     //$$         vertexConsumerFront = vertexConsumerProvider.getBuffer(RenderType.entityTranslucent(ETFBackSprite.getEmissive().atlasLocation()));
     //$$         etf$renderETFPaintingBack(entry, vertexConsumerFront, entity, width, height, ETFBackSprite.getEmissive(), true);
     //$$     }
-    //$$     ETFRenderContext.allowRenderLayerTextureModify();
+    //$$     ETFState.popRenderLayerModifyState();
     //$$ }
     //#endif
 
@@ -320,7 +319,11 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
                         ae = Mth.floor(entity.getZ() + (double) ((y + z) / 2.0F / divider));
                     }
 
+                    //#if MC >= 26.2
+                    //$$ light = net.minecraft.util.LightCoordsUtil.getLightCoords(entity.level(), new BlockPos(ac, ad, ae));
+                    //#else
                     light = LevelRenderer.getLightColor(entity.level(), new BlockPos(ac, ad, ae));
+                    //#endif
                 }
 
                 float zConst =
@@ -419,7 +422,11 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
                         ae = Mth.floor(entity.getZ() + (double) ((y + z) / 2.0F / divider));
                     }
 
+                    //#if MC >= 26.2
+                    //$$ light = net.minecraft.util.LightCoordsUtil.getLightCoords(entity.level(), new BlockPos(ac, ad, ae));
+                    //#else
                     light = LevelRenderer.getLightColor(entity.level(), new BlockPos(ac, ad, ae));
+                    //#endif
                 }
 
                 float zConst =

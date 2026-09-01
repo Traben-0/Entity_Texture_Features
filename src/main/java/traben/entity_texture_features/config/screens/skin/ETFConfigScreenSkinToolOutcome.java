@@ -39,6 +39,7 @@ import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.ETFException;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.utils.UScreen;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -134,7 +135,7 @@ public class ETFConfigScreenSkinToolOutcome extends ETFScreenOldCompat {
 
         this.addRenderableWidget(getETFButton((int) (this.width * 0.55), (int) (this.height * 0.9), (int) (this.width * 0.2), 20,
                 CommonComponents.GUI_DONE,
-                (button) -> Objects.requireNonNull(minecraft).setScreen(parent)));
+                (button) -> UScreen.setScreen(parent)));
         if (didSucceed) {
             this.addRenderableWidget(getETFButton((int) (this.width * 0.15), (int) (this.height * 0.6), (int) (this.width * 0.7), 20,
                     ETF.getTextFromTranslation("config." + ETF.MOD_ID + ".player_skin_editor.print_skin.open"),

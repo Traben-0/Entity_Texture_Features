@@ -112,10 +112,12 @@ public class VariantProperty extends StringArrayOrRegexProperty {
                     && shulkerBoxBlockEntity.getBlockState().getBlock() instanceof ShulkerBoxBlock shulkerBoxBlock) {
                 return String.valueOf(shulkerBoxBlock.getColor());
             }
+            //#if MC < 26.2
             if (etfEntity instanceof BedBlockEntity bedBlockEntity
                     && bedBlockEntity.getBlockState().getBlock() instanceof BedBlock bedBlock) {
                 return String.valueOf(bedBlock.getColor());
             }
+            //#endif
             if (etfEntity instanceof DecoratedPotBlockEntity pot) {
                 //#if MC >= 12006
                 PotDecorations sherds = pot.getDecorations();

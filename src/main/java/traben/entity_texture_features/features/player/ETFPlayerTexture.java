@@ -28,11 +28,13 @@ import org.apache.commons.io.FilenameUtils;
 //#endif
 
 
+import traben.entity_texture_features.utils.UScreen;
 //#if MC >= 12104
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.texture.SkinTextureDownloader;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.nio.file.Path;
 //#else
@@ -826,7 +828,7 @@ public class ETFPlayerTexture {
     }
 
     private void skinFailed(@Nullable String reason, boolean retryLater) {
-        if (!(Minecraft.getInstance().screen instanceof ETFConfigScreenSkinTool)) {
+        if (!(UScreen.currentScreen() instanceof ETFConfigScreenSkinTool)) {
             ETFManager.getInstance().PLAYER_TEXTURE_MAP.put(player.etf$getUuid(),
                     new ETFPlayerTexture(normalVanillaSkinIdentifier, retryLater));
         } else if (reason != null) {

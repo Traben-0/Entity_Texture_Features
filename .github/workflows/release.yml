@@ -5,6 +5,9 @@ on:
     tags:
       - "v*"
 
+permissions:
+  issues: write
+
 jobs:
   build-release-upload:
     runs-on: ubuntu-latest
@@ -53,14 +56,14 @@ jobs:
         run: cat discord_update.json
 
       # Build the mod
-      - run: ./gradlew build
+      - name: build
+        run: ./gradlew build
 
-      - name: upload mod
-        run: node uploader.js
+      - name: publish
+        run: ./gradlew publishMods
         env:
-          CF_TOKEN: ${{ secrets.CF_TOKEN }}
-          CF_COOKIE: ${{ secrets.CF_COOKIE }}
-          MODRINTH: ${{ secrets.MODRINTH }}
+          CURSEFORGE_TOKEN: ${{ secrets.CF_TOKEN }}
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH }}
 
       - name: discord notification
         run: |

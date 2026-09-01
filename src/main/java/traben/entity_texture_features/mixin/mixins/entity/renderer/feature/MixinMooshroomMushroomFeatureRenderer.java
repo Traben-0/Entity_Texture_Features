@@ -21,7 +21,6 @@ import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.layers.MushroomCowMushroomLayer;
 import net.minecraft.resources.ResourceLocation;
@@ -219,9 +218,9 @@ public abstract class MixinMooshroomMushroomFeatureRenderer {
     //$$ //rewritten as original didn't seem to work, I must have accidentally changed the vanilla mushroom texture when testing originally
     //$$ @Inject(method = "renderMushroomBlock", at = @At(value = "HEAD"), cancellable = true)
         //#if MC >= 12105
-        //$$ private void etf$injected(final PoseStack matrices, final MultiBufferSource vertexConsumers, final int light, final boolean renderAsModel, final BlockState mushroomState, final int overlay, final BlockStateModel mushroomModel, final CallbackInfo ci) {
+        //$$ private void etf$injected(final PoseStack matrices, final net.minecraft.client.renderer.MultiBufferSource vertexConsumers, final int light, final boolean renderAsModel, final BlockState mushroomState, final int overlay, final BlockStateModel mushroomModel, final CallbackInfo ci) {
         //#else
-        //$$ private void etf$injected(PoseStack matrices, MultiBufferSource vertexConsumers, int light, boolean renderAsModel, BlockState mushroomState, int overlay, BakedModel mushroomModel, CallbackInfo ci) {
+        //$$ private void etf$injected(PoseStack matrices, net.minecraft.client.renderer.MultiBufferSource vertexConsumers, int light, boolean renderAsModel, BlockState mushroomState, int overlay, BakedModel mushroomModel, CallbackInfo ci) {
         //#endif
     //#endif
         Boolean shroomType = entity_texture_features$returnRedTrueBrownFalseVanillaNull();

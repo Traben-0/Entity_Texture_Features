@@ -9,7 +9,11 @@ import traben.entity_texture_features.utils.ETFEntity;
 import java.util.Properties;
 
 import net.minecraft.world.entity.monster.Phantom;
+//#if MC >= 26.2
+//$$ import net.minecraft.world.entity.monster.cubemob.Slime;
+//#else
 import net.minecraft.world.entity.monster.Slime;
+//#endif
 
 public class SizeProperty extends SimpleIntegerArrayProperty {
 
@@ -35,7 +39,13 @@ public class SizeProperty extends SimpleIntegerArrayProperty {
 
     @Override
     protected int getValueFromEntity(ETFEntityRenderState entity) {
-        if (entity != null && entity.entity() instanceof Slime slime) {
+        if (entity != null && entity.entity() instanceof
+                //#if MC >= 26.2
+                //$$ net.minecraft.world.entity.monster.cubemob.AbstractCubeMob slime // Changes for sulfur cube, now all 3 slimes share new generic type
+                //#else
+                Slime slime // Magma cube extends this in these versions
+                //#endif
+        ) {
             //magma cube too
             return slime.getSize() - 1;
         } else if (entity != null && entity.entity() instanceof Phantom phantom) {

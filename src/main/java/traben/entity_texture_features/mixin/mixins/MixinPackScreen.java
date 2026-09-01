@@ -27,6 +27,7 @@ import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.config.ETFConfig;
 import traben.entity_texture_features.config.screens.ETFConfigScreenMain;
 import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.utils.UScreen;
 
 import java.nio.file.Path;
 import java.util.Objects;
@@ -92,7 +93,7 @@ public abstract class MixinPackScreen extends Screen {
                     //#else
                     //$$    0, 0, 20, etf$UNFOCUSED,
                     //#endif
-                (button) -> Objects.requireNonNull(minecraft).setScreen(new ETFConfigScreenMain(this))
+                (button) -> UScreen.setScreen(new ETFConfigScreenMain(this))
                     //#if MC >= 12002
                     , Component.nullToEmpty("")
                     //#endif

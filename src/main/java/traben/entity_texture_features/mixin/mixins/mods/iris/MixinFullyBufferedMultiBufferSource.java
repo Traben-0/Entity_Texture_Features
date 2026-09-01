@@ -19,7 +19,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import traben.entity_texture_features.features.ETFRenderContext;
+import traben.entity_texture_features.features.state.ETFState;
+import traben.entity_texture_features.utils.URenderTypeToVertexConsumer;
 
 
 /**
@@ -42,7 +43,7 @@ public class MixinFullyBufferedMultiBufferSource {
             //#endif
             )
     private RenderType etf$modifyRenderLayer(RenderType value) {
-        RenderType newLayer = ETFRenderContext.modifyRenderLayerIfRequired(value);
+        RenderType newLayer = ETFState.modifyRenderLayerIfRequired(value);
         return newLayer == null ? value : newLayer;
     }
 
@@ -55,8 +56,8 @@ public class MixinFullyBufferedMultiBufferSource {
             //#endif
             )
     private void etf$injectIntoGetBufferReturn(RenderType renderLayer, CallbackInfoReturnable<VertexConsumer> cir) {
-        ETFRenderContext.insertETFDataIntoVertexConsumer(
-                (MultiBufferSource) this,
+        ETFState.insertETFDataIntoVertexConsumer(
+                new URenderTypeToVertexConsumer((MultiBufferSource) this),
                 renderLayer,
                 cir.getReturnValue());
     }

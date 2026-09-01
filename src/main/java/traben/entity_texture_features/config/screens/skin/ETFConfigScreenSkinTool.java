@@ -25,6 +25,7 @@ import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.features.ETFManager;
 import traben.entity_texture_features.features.player.ETFPlayerTexture;
 import traben.entity_texture_features.utils.ETFUtils2;
+import traben.entity_texture_features.utils.UScreen;
 
 import java.nio.file.Path;
 import java.util.Objects;
@@ -132,14 +133,14 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
 
                 onExit();
                 ETFUtils2.logError("could not load tool as skin could not be loaded");
-                Objects.requireNonNull(minecraft).setScreen(parent);
+                UScreen.setScreen(parent);
 
             }
         }
 
         this.addRenderableWidget(getETFButton(this.width / 2 - 210, (int) (this.height * 0.9), 200, 20, CommonComponents.GUI_CANCEL, (button) -> {
             onExit();
-            Objects.requireNonNull(minecraft).setScreen(parent);
+            UScreen.setScreen(parent);
         }));
 
         this.addRenderableWidget(getETFButton((int) (this.width * 0.024), (int) (this.height * 0.2), 20, 20,
@@ -153,7 +154,7 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
                     if (Minecraft.getInstance().player != null) {
                         result = printPlayerSkinCopy();
                     }
-                    Objects.requireNonNull(minecraft).setScreen(new ETFConfigScreenSkinToolOutcome(parent, result, currentEditorSkin));
+                    UScreen.setScreen(new ETFConfigScreenSkinToolOutcome(parent, result, currentEditorSkin));
                     onExit();
         });
         this.addRenderableWidget(printSkinFileButton);
@@ -335,7 +336,7 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
 
             emissiveSelectButton = getETFButton((int) (this.width * 0.695), (int) (this.height * 0.5), (int) (this.width * 0.275), 20,
                     ETF.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.emissive_select.button"),
-                    (button) -> Objects.requireNonNull(minecraft).setScreen(new ETFConfigScreenSkinToolPixelSelection(this, ETFConfigScreenSkinToolPixelSelection.SelectionMode.EMISSIVE))
+                    (button) -> UScreen.setScreen(new ETFConfigScreenSkinToolPixelSelection(this, ETFConfigScreenSkinToolPixelSelection.SelectionMode.EMISSIVE))
             );
 
             enchantButton = getETFButton((int) (this.width * 0.25), (int) (this.height * 0.6), (int) (this.width * 0.42), 20,
@@ -359,7 +360,7 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
 
             enchantSelectButton = getETFButton((int) (this.width * 0.695), (int) (this.height * 0.6), (int) (this.width * 0.275), 20,
                     ETF.getTextFromTranslation("config." + MOD_ID + ".player_skin_editor.enchant_select.button"),
-                    (button) -> Objects.requireNonNull(minecraft).setScreen(new ETFConfigScreenSkinToolPixelSelection(this, ETFConfigScreenSkinToolPixelSelection.SelectionMode.ENCHANTED))
+                    (button) -> UScreen.setScreen(new ETFConfigScreenSkinToolPixelSelection(this, ETFConfigScreenSkinToolPixelSelection.SelectionMode.ENCHANTED))
             );
 
             updateButtons();
@@ -502,7 +503,7 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
 //                            //ignore an already applied overlay texture with identical pixels
 //                            if (skin != overlay) {
                 if (allowOverrides == null) {
-                    Minecraft.getInstance().setScreen(new ConfirmScreen(Component.nullToEmpty(""), this));
+                    UScreen.setScreen(new ConfirmScreen(Component.nullToEmpty(""), this));
                     if (allowOverrides == null) allowOverrides = false;
                 }
                 if (!allowOverrides) {
@@ -961,7 +962,7 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
                         //#endif
                 );
             }
-            Minecraft.getInstance().setScreen(this.parent);
+            UScreen.setScreen(this.parent);
         }
 
         @Override
@@ -975,7 +976,7 @@ public class ETFConfigScreenSkinTool extends ETFScreenOldCompat {
 
             addRenderableWidget(Button.builder(CommonComponents.GUI_YES, (button) -> {
                 allowOverrides = true;
-                Minecraft.getInstance().setScreen(this.parent);
+                UScreen.setScreen(this.parent);
             }).bounds(width / 2 - 210, height / 2 + 50, 200, 20).build());
 
             addRenderableWidget(Button.builder(CommonComponents.GUI_NO, (button) -> onClose()).bounds(width / 2 + 10, height / 2 + 50, 200, 20).build());
