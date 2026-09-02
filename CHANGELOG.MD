@@ -1,4 +1,7 @@
 
+[7.2.1]
+- fixed crash on 26.1
+
 [7.2]
 - fixed the size property breaking with slimes in 26.2
 - fixed various texture layer issues

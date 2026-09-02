@@ -47,7 +47,7 @@ public class MixinBlockEntityRenderState implements HoldsETFRenderState {
 
     @ModifyExpressionValue(method = "extractBase",
             at = @At(value = "INVOKE",target =
-                    //#if MC >= 26.1
+                    //#if MC >= 26.2
                     //$$ "Lnet/minecraft/util/LightCoordsUtil;getLightCoords(Lnet/minecraft/world/level/BlockAndLightGetter;Lnet/minecraft/core/BlockPos;)I"
                     //#elseif MC >= 26.1
                     //$$ "Lnet/minecraft/client/renderer/LevelRenderer;getLightCoords(Lnet/minecraft/world/level/BlockAndLightGetter;Lnet/minecraft/core/BlockPos;)I"
