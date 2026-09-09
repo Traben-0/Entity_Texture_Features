@@ -132,9 +132,11 @@ public abstract class ETFUtils2 {
 
     public static void submitEnchantedModelPart(final PoseStack matrixStack, final SubmitNodeCollector submit, final int light, final ModelPart modelPart, final @NotNull ResourceLocation enchanted) {
         submit.submitModelPart(modelPart, matrixStack,
-                //TODO enchanted models needs refactoring
-                //#if MC >= 26.2
-                //$$ net.minecraft.client.renderer.rendertype.RenderTypes.entityGlint(),light, OverlayTexture.NO_OVERLAY, null);
+                //TODO enchanted models REALLY needs refactoring
+                //#if MC >= 26.3
+                //$$ net.minecraft.client.renderer.rendertype.RenderTypes.armorCutoutNoCullGlint(enchanted), light, OverlayTexture.NO_OVERLAY, null);
+                //#elseif MC >= 26.2
+                //$$ net.minecraft.client.renderer.rendertype.RenderTypes.entityGlint(), light, OverlayTexture.NO_OVERLAY, null);
                 //#elseif MC >= 1.21.11
                 //$$ net.minecraft.client.renderer.rendertype.RenderTypes.armorCutoutNoCull(enchanted), light, OverlayTexture.NO_OVERLAY, null, false, true);
                 //#else
@@ -222,7 +224,12 @@ public abstract class ETFUtils2 {
         return false;
     }
 
-    //#if MC >= 26.2
+    //#if MC >= 26.3
+    //$$ //todo actual impl
+    //$$ public static VertexConsumer getFoilBuffer(URenderTypeToVertexConsumer multiBufferSource, Identifier location) {
+    //$$     return multiBufferSource.getBuffer(RenderTypes.armorCutoutNoCullGlint(location));
+    //$$ }
+    //#elseif MC >= 26.2
     //$$ //todo actual impl
     //$$ public static VertexConsumer getFoilBuffer(URenderTypeToVertexConsumer multiBufferSource, RenderType renderType) {
     //$$     return multiBufferSource.getBuffer(RenderTypes.entityGlint());
@@ -239,7 +246,9 @@ public abstract class ETFUtils2 {
         if (enchanted != null) {
             ETFState.pushRenderLayerModifyState(false);
             VertexConsumer enchantedVertex =
-                    //#if MC >= 26.1
+                    //#if MC >= 26.3
+                    //$$ getFoilBuffer(provider, enchanted);
+                    //#elseif MC >= 26.1
                     //$$ getFoilBuffer(provider, RenderTypes.armorCutoutNoCull(enchanted));
                     //#elseif MC>=12109
                     ItemRenderer.getFoilBuffer(provider.delegate,

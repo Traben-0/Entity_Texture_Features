@@ -23,7 +23,13 @@ public class Mixin_GuiEntityRenderer {
 
     //#if MC >= 26.2
     //$$ @Inject(method = "prepare",
-    //$$         at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/feature/FeatureRenderDispatcher;renderAllFeatures(Lnet/minecraft/client/renderer/SubmitNodeStorage;)V"))
+    //$$         at = @At(value = "INVOKE", target =
+            //#if MC >= 26.3
+            //$$ "Lnet/minecraft/client/renderer/feature/FeatureRenderDispatcher;renderAllFeatures(Lcom/mojang/renderpearl/api/commands/RenderPass;Lnet/minecraft/client/renderer/feature/FeatureRenderDispatcher$PreparedFrame;)V"
+            //#else
+            //$$ "Lnet/minecraft/client/renderer/feature/FeatureRenderDispatcher;renderAllFeatures(Lnet/minecraft/client/renderer/SubmitNodeStorage;)V"
+            //#endif
+    //$$ ))
     //$$ private <T extends net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState> void emf$initRender2(final CallbackInfo ci, @Local(argsOnly = true) T guiEntityRenderState) {
     //$$     // things get reset by the render dispatcher, re-assert before the actual render
     //$$     if (guiEntityRenderState instanceof GuiEntityRenderState gui) {
