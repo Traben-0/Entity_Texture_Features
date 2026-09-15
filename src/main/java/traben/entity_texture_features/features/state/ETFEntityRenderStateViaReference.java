@@ -1,16 +1,12 @@
 package traben.entity_texture_features.features.state;
-//#if MC>=12109
-import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
-//#endif
-//#if MC>=12102
-import net.minecraft.client.renderer.entity.state.EntityRenderState;
-//#endif
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -19,18 +15,45 @@ import traben.entity_texture_features.utils.ETFEntity;
 import java.util.*;
 import java.util.function.Supplier;
 
+//#if MC>=12109
+import net.minecraft.world.entity.Avatar;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+//#endif
+
+//#if MC>=12102
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+//#endif
+
 // TODO implement caching version for 1.21.2+ as smuggling in the entity wont work forever
 public class ETFEntityRenderStateViaReference implements ETFEntityRenderState {
 
 
     private final ETFEntity entity;
+    private final boolean isPlayer;
+    private final boolean isClientPlayer;
     public ETFEntityRenderStateViaReference(ETFEntity entity) {
             this.entity = entity;
+            //#if MC >= 1.21.9
+            this.isPlayer = entity instanceof Avatar;
+            //#else
+            //$$ this.isPlayer = entity instanceof Player;
+            //#endif
+            this.isClientPlayer = isPlayer && entity == Minecraft.getInstance().player;
     }
 
     @Deprecated
     public ETFEntity entity() {
         return entity;
+    }
+
+    @Override
+    public boolean isPlayer() {
+        return isPlayer;
+    }
+
+    @Override
+    public boolean isClientPlayer() {
+        return isClientPlayer;
     }
 
     //#if MC>=12102

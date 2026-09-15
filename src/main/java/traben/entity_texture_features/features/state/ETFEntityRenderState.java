@@ -49,6 +49,12 @@ public interface ETFEntityRenderState {
     @Deprecated() // TODO
     ETFEntity entity();
 
+    /**
+     * specifically checks if it's an Avatar type on 1.21.9+
+     */
+    boolean isPlayer();
+    boolean isClientPlayer();
+
     //#if MC>=12102
     @Nullable EntityRenderState vanillaState();
     void setVanillaState(EntityRenderState vanillaState);
@@ -211,6 +217,16 @@ public interface ETFEntityRenderState {
         @Override
         public ETFEntity entity() {
             return null;
+        }
+
+        @Override
+        public boolean isPlayer() {
+            return false;
+        }
+
+        @Override
+        public boolean isClientPlayer() {
+            return false;
         }
 
         //#if MC>=12102
