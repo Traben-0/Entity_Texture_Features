@@ -1,6 +1,7 @@
 
 [?]
 - re-added the 'id' field to all nbt property readings (field isn't usually present in loaded entity nbt)
+- fixed captures that broke EMF texture overrides on 1.21.9 - 26.1
 
 [7.2.1]
 - fixed crash on 26.1

@@ -31,7 +31,6 @@ public class MixinBatchableBufferSource {
             method = "getBuffer",
             at = @At(value = "RETURN"), require = 0)
     private void etf$injectIntoGetBufferReturn(RenderType renderLayer, CallbackInfoReturnable<VertexConsumer> cir) {
-        if (!ETFState.isStateActive()) return; // faster cancel
 
         var returned = cir.getReturnValue();
         ETFState.insertETFDataIntoVertexConsumer(new URenderTypeToVertexConsumer((MultiBufferSource) this), renderLayer, returned);

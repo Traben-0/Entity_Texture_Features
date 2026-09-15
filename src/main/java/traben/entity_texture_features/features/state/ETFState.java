@@ -255,7 +255,7 @@ public abstract class ETFState {
     }
 
     public static void insertETFDataIntoVertexConsumer(URenderTypeToVertexConsumer provider, RenderType renderLayer, VertexConsumer vertexConsumer) {
-        if (isStateActive() && vertexConsumer instanceof ETFVertexConsumer etfVertexConsumer) {
+        if (vertexConsumer instanceof ETFVertexConsumer etfVertexConsumer) {
             // need to store etf texture of consumer and original render layer
             // store provider as well for future actions
             etfVertexConsumer.etf$initETFVertexConsumer(provider, renderLayer);
