@@ -23,9 +23,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import traben.entity_texture_features.ETF;
 import traben.entity_texture_features.features.ETFManager;
+import traben.entity_texture_features.features.player.ETFPlayerEntity;
 import traben.entity_texture_features.features.player.ETFPlayerFeatureRenderer;
 import traben.entity_texture_features.features.player.ETFPlayerSkinHolder;
 import traben.entity_texture_features.features.player.ETFPlayerTexture;
+import traben.entity_texture_features.features.state.ETFEntityRenderState;
 import traben.entity_texture_features.features.state.ETFState;
 import traben.entity_texture_features.features.state.HoldsETFRenderState;
 
@@ -205,22 +207,24 @@ public abstract class MixinPlayerEntityRenderer<AvatarlikeEntity extends Avatar 
     @Inject(method = "getTextureLocation(Lnet/minecraft/client/renderer/entity/state/AvatarRenderState;)Lnet/minecraft/resources/ResourceLocation;", at = @At(value = "RETURN"), cancellable = true)
     private void etf$getTexture(final AvatarRenderState playerRenderState, final CallbackInfoReturnable<ResourceLocation> cir) {
         var state = ((HoldsETFRenderState) playerRenderState).etf$getState();
-        if(!(state != null && state.entity() instanceof AbstractClientPlayer abstractClientPlayerEntity)) return;
     //#elseif MC >= 12103
     //$$ @Inject(method = "getTextureLocation(Lnet/minecraft/client/renderer/entity/state/PlayerRenderState;)Lnet/minecraft/resources/ResourceLocation;", at = @At(value = "RETURN"), cancellable = true)
     //$$ private void etf$getTexture(final PlayerRenderState playerRenderState, final CallbackInfoReturnable<ResourceLocation> cir) {
-    //$$ var state = ((HoldsETFRenderState) playerRenderState).etf$getState();
-    //$$ if(!(state != null && state.entity() instanceof AbstractClientPlayer abstractClientPlayerEntity)) return;
-    //$$ //todo definitely state improvements here
+    //$$     var state = ((HoldsETFRenderState) playerRenderState).etf$getState();
     //#else
     //$$ @Inject(method = "getTextureLocation(Lnet/minecraft/client/player/AbstractClientPlayer;)Lnet/minecraft/resources/ResourceLocation;",
     //$$         at = @At(value = "RETURN"), cancellable = true)
-    //$$ private void etf$getTexture(AbstractClientPlayer abstractClientPlayerEntity, CallbackInfoReturnable<ResourceLocation> cir) {
+    //$$ private void etf$getTexture(AbstractClientPlayer player, CallbackInfoReturnable<ResourceLocation> cir) {
+    //$$     var state = ETFEntityRenderState.forEntity((ETFPlayerEntity) player);
     //#endif
         if (ETF.config().getConfig().skinFeaturesEnabled) {
-            etf$ETFPlayerTexture = ETFManager.getInstance().getPlayerTexture(abstractClientPlayerEntity, cir.getReturnValue());
+            if (state == null || !state.isPlayer()) return;
+            //#if MC >= 1.21.3
+            var player = (ETFPlayerEntity) state.entity();
+            //#endif
+            etf$ETFPlayerTexture = ETFManager.getInstance().getPlayerTexture(player, cir.getReturnValue());
             if (etf$ETFPlayerTexture != null && etf$ETFPlayerTexture.hasFeatures) {
-                ResourceLocation texture = etf$ETFPlayerTexture.getBaseTextureIdentifierOrNullForVanilla(abstractClientPlayerEntity);
+                ResourceLocation texture = etf$ETFPlayerTexture.getBaseTextureIdentifierOrNullForVanilla(state);
                 if (texture != null) {
                     cir.setReturnValue(texture);
                 }

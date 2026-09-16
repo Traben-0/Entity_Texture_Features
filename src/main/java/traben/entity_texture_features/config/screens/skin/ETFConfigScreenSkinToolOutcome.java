@@ -143,7 +143,11 @@ public class ETFConfigScreenSkinToolOutcome extends ETFScreenOldCompat {
                         try {
                             assert ETF.getConfigDirectory() != null;
                             Path outputDirectory = Path.of(ETF.getConfigDirectory().toFile().getParent());
+                            //#if MC >= 26.3
+                            //$$ com.mojang.blaze3d.Blaze3D.openPath(outputDirectory);
+                            //#else
                             Util.getPlatform().openFile(outputDirectory.toFile());
+                            //#endif
                         } catch (Exception ignored) {
                         }
                     }));

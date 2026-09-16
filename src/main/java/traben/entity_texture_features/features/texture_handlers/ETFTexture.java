@@ -313,7 +313,11 @@ public class ETFTexture {
             PackResources pack;
             vanillaR1 = resourceManager.getResource(ETFUtils2.res(thisIdentifier.getNamespace(), thisIdentifier.getPath().replaceAll("_(.*?)(?=\\.png)", "")));
             pack = vanillaR1.map(Resource::source)
-                    .orElseGet(() -> Minecraft.getInstance().getVanillaPackResources());
+                    .orElseGet(() -> Minecraft.getInstance().getVanillaPackResources()
+                            //#if MC >= 26.3
+                            //$$ .fullResources()
+                            //#endif
+                    );
             //create resource object sufficient for following code
             vanillaR1 = Optional.of(new Resource(pack, null));
         }

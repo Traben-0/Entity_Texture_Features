@@ -1,6 +1,5 @@
 package traben.tconfig.gui;
 //#if MC>=12106
-import com.mojang.blaze3d.pipeline.RenderPipeline;
 import net.minecraft.client.renderer.RenderPipelines;
 //#endif
 import net.minecraft.client.Minecraft;

@@ -141,19 +141,23 @@ public abstract class MixinEntity implements ETFEntity {
         var state = ETFState.state();
         if (state == null) return INTENTIONAL_FAILURE;
         return state.cacheEntityNBTForState(etf$getUuid(),
-                ()->
-                        //#if MC >= 26.2
-                        //$$ net.minecraft.advancements.predicates.NbtPredicate
-                        //#else
-                        net.minecraft.advancements.critereon.NbtPredicate
-                        //#endif
-                                .getEntityTagToCompare(((Entity)((Object)this))));
-        //try include id
-//        if (saveAsPassenger(comp)) {
-//            return comp;
-//        }
-//        //else
-//        return saveWithoutId(comp);
+                () -> {
+                    var tag =
+                            //#if MC >= 26.2
+                            //$$ net.minecraft.advancements.predicates.NbtPredicate
+                            //#else
+                            net.minecraft.advancements.critereon.NbtPredicate
+                            //#endif
+                                .getEntityTagToCompare(((Entity) ((Object) this)));
+
+                    if (!tag.contains("id")) {
+                        try {
+                            tag.putString("id", EntityType.getKey(getType()).toString());
+                        } catch (Exception ignore) { }
+                    }
+
+                    return tag;
+                });
     }
 
     @Override

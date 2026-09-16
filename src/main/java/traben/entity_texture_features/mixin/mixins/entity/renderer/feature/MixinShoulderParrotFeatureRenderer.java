@@ -64,7 +64,9 @@ public abstract class MixinShoulderParrotFeatureRenderer extends RenderLayer<Ava
     public MixinShoulderParrotFeatureRenderer() {super(null);}
 
     @Inject(method = "submitOnShoulder", at = @At(value = "INVOKE", target =
-            //#if MC >= 26.1
+            //#if MC >= 26.3
+            //$$ "Lnet/minecraft/client/renderer/SubmitNodeCollector;submitModel(Lnet/minecraft/client/model/Model;Ljava/lang/Object;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/resources/Identifier;III)V"
+            //#elseif MC >= 26.1
             //$$ "Lnet/minecraft/client/renderer/SubmitNodeCollector;submitModel(Lnet/minecraft/client/model/Model;Ljava/lang/Object;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/resources/Identifier;IIILnet/minecraft/client/renderer/feature/ModelFeatureRenderer$CrumblingOverlay;)V"
             //#else
             "Lnet/minecraft/client/renderer/SubmitNodeCollector;submitModel(Lnet/minecraft/client/model/Model;Ljava/lang/Object;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/RenderType;IIILnet/minecraft/client/renderer/feature/ModelFeatureRenderer$CrumblingOverlay;)V"

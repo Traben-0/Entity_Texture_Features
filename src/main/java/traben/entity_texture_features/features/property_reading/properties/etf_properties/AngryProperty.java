@@ -3,7 +3,6 @@ package traben.entity_texture_features.features.property_reading.properties.etf_
 
 import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.monster.Blaze;
-import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.Guardian;
 import net.minecraft.world.entity.monster.SpellcasterIllager;
 import net.minecraft.world.entity.monster.Vindicator;
@@ -36,7 +35,13 @@ public class AngryProperty extends BooleanProperty {
     protected Boolean getValueFromEntity(ETFEntityRenderState state) {
         if (state != null) {
             var etfEntity = state.entity();
-            if (etfEntity instanceof EnderMan enderman) return enderman.isCreepy();
+            if (etfEntity instanceof
+                    //#if MC >= 26.3
+                    //$$ net.minecraft.world.entity.monster.Enderman
+                    //#else
+                    net.minecraft.world.entity.monster.EnderMan
+                    //#endif
+                            enderman) return enderman.isCreepy();
             if (etfEntity instanceof Blaze blaze) return blaze.isOnFire();
             if (etfEntity instanceof Guardian guardian) return guardian.getActiveAttackTarget() != null;
             if (etfEntity instanceof Vindicator vindicator) return vindicator.isAggressive();

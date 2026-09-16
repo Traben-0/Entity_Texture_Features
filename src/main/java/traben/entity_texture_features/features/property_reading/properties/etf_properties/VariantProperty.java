@@ -119,7 +119,16 @@ public class VariantProperty extends StringArrayOrRegexProperty {
             }
             //#endif
             if (etfEntity instanceof DecoratedPotBlockEntity pot) {
-                //#if MC >= 12006
+                //#if MC >= 26.3
+                //$$ PotDecorations sherds = pot.getDecorations();
+                //$$ return (sherds.back().isPresent() ? sherds.back().get().create().getHoverName().getString() : "none")
+                //$$         + "," +
+                //$$         (sherds.left().isPresent() ? sherds.left().get().create().getHoverName().getString() : "none")
+                //$$         + "," +
+                //$$         (sherds.right().isPresent() ? sherds.right().get().create().getHoverName().getString() : "none")
+                //$$         + "," +
+                //$$         (sherds.front().isPresent() ? sherds.front().get().create().getHoverName().getString() : "none");
+                //#elseif MC >= 12006
                 PotDecorations sherds = pot.getDecorations();
                 return (sherds.back().isPresent() ? sherds.back().get().getDescriptionId() : "none")
                         + "," +
