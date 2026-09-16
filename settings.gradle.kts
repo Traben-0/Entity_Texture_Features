@@ -39,7 +39,7 @@ fun MutableList<String>.version(mcVersion: Int, forge: Boolean = true, neoforge:
 }
 
 mutableListOf<String>()
-    .version(26_03_00, forge = false, neoforge = false)
+    .version(26_03_00, forge = false, neoforge = true)
     .version(26_02_00, forge = false, neoforge = true)
     .version(26_01_00, forge = false, neoforge = true)
     .version(12111)

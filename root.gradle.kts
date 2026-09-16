@@ -58,7 +58,7 @@ preprocess {
 //    val fabric = createNode("26.1-fabric", 26_01_00, "mojmap")
 //        fabric.link(n)
 
-    null.connectToVersion(26_03_00, forge = false, neoforge = false)
+    null.connectToVersion(26_03_00, forge = false, neoforge = true)
         .connectToVersion(26_02_00, forge = false, neoforge = true)
         .connectToVersion(26_01_00, forge = false, neoforge = true)
         .connectToVersion(1_21_11)
