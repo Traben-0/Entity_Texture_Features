@@ -113,14 +113,14 @@ public abstract class ETFState {
     }
 
     public static void stackVerify(ETFEntityRenderState shouldBeHere) {
-        boolean log = ETF.config().getConfig().stackDebugPrinting;
         if (shouldBeHere == null) {
-            if (log) ETFUtils2.logWarn("ETFState stack verify called with null, this is likely a bug");
+            if (ETF.config().getConfig().stackDebugPrinting) ETFUtils2.logWarn("ETFState stack verify called with null, this is likely a bug");
             stackVerifyHasFailed = true;
             return;
         }
 
         if (state() != shouldBeHere) {
+            boolean log = ETF.config().getConfig().stackDebugPrinting;
             stackVerifyHasFailed = false;
             if (log) ETFUtils2.logWarn("ETFState stack is not correct");
             if (stateStack.contains(shouldBeHere)) {
