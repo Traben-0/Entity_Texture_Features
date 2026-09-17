@@ -76,7 +76,7 @@
   "config.entity_texture_features.disable_default_directory.tooltip": "Par défaut, le répertoire vanilla peut être utilisé pour les textures aléatoires.\nCe paramètre désactive cela et force l'utilisation des dossiers optifine et etf.\nUtile pour les mods ayant des textures nommées 'mob2.png'.",
   
   "config.entity_texture_features.elytra_thickness_fix.title": "Correction de taille Elytra",
-  "config.entity_texture_features.elytra_thickness_fix.tooltip": "Corrige l'épaisseur de l'elytra pour être plus proche de 2 pixels.\nNécessite un rechargement des ressources (F3 + T)."
+  "config.entity_texture_features.elytra_thickness_fix.tooltip": "Corrige l'épaisseur de l'elytra pour être plus proche de 2 pixels.\nNécessite un rechargement des ressources (F3 + T).",
   
   "config.entity_texture_features.emissive_block_entity.title": "Textures des entités de bloc",
   "config.entity_texture_features.emissive_block_entity.tooltip": "Permet aux entités de bloc d’utiliser des textures émissives\nIncompatible avec le mod Enhanced Block Entities",
@@ -184,7 +184,7 @@
   "config.entity_texture_features.player_skin_editor.print_skin.open": "Ouvrir le dossier de skin",
   "config.entity_texture_features.player_skin_editor.print_skin.result": "Sauvegarde du fichier de skin",
   "config.entity_texture_features.player_skin_editor.print_skin.result.fail": "Échec de la sauvegarde du skin.\nVérifiez le latest.log pour les erreurs.",
-  "config.entity_texture_features.player_skin_editor.print_skin.result.success": "Le fichier de skin a été sauvegardé avec succès."
+  "config.entity_texture_features.player_skin_editor.print_skin.result.success": "Le fichier de skin a été sauvegardé avec succès.",
   "config.entity_texture_features.player_skin_editor.reason_0": "L’outil de skin n’a pas pu être activé car : \n",
   "config.entity_texture_features.player_skin_editor.reason_1": "-Les fonctionnalités de skin ETF ne sont pas activées.\nVous devez les activer, puis fermer et rouvrir les paramètres pour que cela prenne effet.\n",
   "config.entity_texture_features.player_skin_editor.reason_2": "-L’API Fabric n’a pas été trouvée.\nElle est requise pour que l’outil de skin fonctionne sur Fabric.\n",
@@ -212,7 +212,7 @@
   "config.entity_texture_features.restrict_update_properties.allow.tooltip": "Permet l’utilisation de cette propriété\nLes propriétés désactivées seront ignorées dans les packs de ressources",
   "config.entity_texture_features.restrict_update_properties.lock": "Verrouillé aux conditions de spawn",
   "config.entity_texture_features.restrict_update_properties.lock.tooltip": "Définit si cette propriété est verrouillée aux\nconditions de spawn de l’entité\nSi verrouillée, la propriété ne s’appliquera qu’aux conditions de spawn initiales de l’entité\nSinon, la propriété s’appliquera aux conditions actuelles de l’entité",
-  "config.entity_texture_features.settings.button": "Paramètres"
+  "config.entity_texture_features.settings.button": "Paramètres",
   
   "config.entity_texture_features.skin_feature_print.title": "Enregistrer une copie de votre skin avec le modèle de fonctionnalités appliqué",
   "config.entity_texture_features.skin_feature_print.tooltip": "Pour vous aider à préparer votre skin pour les fonctionnalités de skin.\nCe paramètre enregistrera une copie de votre skin avec\nle modèle de fonctionnalités appliqué\ndans le répertoire Minecraft.\nAprès avoir activé ce paramètre, ouvrez une partie, passez en vue à la troisième personne et appuyez sur F3+T.\nVous recevrez un message dans le chat lorsque l’opération sera terminée.",
@@ -269,7 +269,7 @@
   "config.entity_texture_features.transparent_skins.etf": "Skins ETF uniquement",
   "config.entity_texture_features.transparent_skins.all": "Tous les skins",
   "config.entity_texture_features.transparent_skins.title": "Autoriser la transparence des skins",
-  "config.entity_texture_features.transparent_skins.tooltip": "Définit comment ETF doit activer la transparence des skins.\nPar défaut, ceci n’est activé que pour les skins utilisant les fonctionnalités ETF"
+  "config.entity_texture_features.transparent_skins.tooltip": "Définit comment ETF doit activer la transparence des skins.\nPar défaut, ceci n’est activé que pour les skins utilisant les fonctionnalités ETF",
   
   "config.entity_texture_features.property_explanation.hardcore": "Hardcore\nIndique si le monde est en mode hardcore ou non\n§ahardcore.<n>=<true/false>",
   "config.entity_texture_features.property_explanation.biome": "Liste des biomes\nLes noms de biomes vanilla sont listés ici : https://minecraft.gamepedia.com/Biome#Biome_IDs\nLes biomes ajoutés par les mods peuvent également être utilisés mais nécessitent \"modID:biomeName\", tandis que les biomes vanilla peuvent être \"minecraft:plains\" ou simplement \"plains\".\nAvec ETF uniquement, vous pouvez aussi utiliser des regex : iregex:, pattern:, et ipattern: comme pour la propriété Name\n§abiomes.<n>=<liste_biomes>",

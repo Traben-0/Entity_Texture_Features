@@ -46,32 +46,37 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, S extend
     //#endif
 
     @Inject(method = RENDER, at = @At(value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;"))
-    private void etf$markFeatures(CallbackInfo ci, @Share("shareState") LocalRef<@Nullable ETFEntityRenderState> etf$heldEntity
-            //#if MC>= 12103
-               , @Local(argsOnly = true) net.minecraft.client.renderer.entity.state.LivingEntityRenderState state
-            ) { etf$heldEntity.set(((HoldsETFRenderState) state).etf$getState());
-            //#else
-            //$$     , @Local(argsOnly = true) net.minecraft.world.entity.LivingEntity entity
-            //$$ ) { etf$heldEntity.set(ETFEntityRenderState.forEntity((ETFEntity) entity));
-            //#endif
+    private void etf$markFeatures(CallbackInfo ci) {
         ETFState.pushRenderLayerModifyState(true);
         ETFState.isRenderingFeatures = true;
     }
 
-//    @Inject(method = RENDER, at = @At(value = "INVOKE", target = "Ljava/util/Iterator;next()Ljava/lang/Object;"))
-//    private void etf$markFeaturesLoopEnd(CallbackInfo ci, @Share("shareState") LocalRef<@Nullable ETFEntityRenderState> etf$heldEntity) {
-//        // assert main entity each loop in case of other entities within feature renderer
-//        ETFState.unMountTo(etf$heldEntity.get()); // should be redundunt now with ETFState impl but just in case
-//    }
-
     @Inject(method = RENDER, at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;popPose()V"))
-    private void etf$markFeaturesEnd(CallbackInfo ci, @Share("shareState") LocalRef<@Nullable ETFEntityRenderState> etf$heldEntity) {
-//        ETFState.unMountTo(etf$heldEntity.get());
+    private void etf$markFeaturesEnd(CallbackInfo ci) {
         ETFState.isRenderingFeatures = false;
         ETFState.popRenderLayerModifyState();
     }
 
+    @Inject(method = RENDER, at = @At(value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;"))
+    private void emf$grabEntity(CallbackInfo ci, @Share("stateCaptureEntity") LocalRef<ETFEntityRenderState> stateCaptureEntity) {
+        stateCaptureEntity.set(ETFState.state());
+    }
 
+    @Inject(method = RENDER, at = @At(value = "INVOKE", target = "Ljava/util/Iterator;next()Ljava/lang/Object;"))
+    private void emf$eachFeatureLoop(CallbackInfo ci, @Share("stateCaptureEntity") LocalRef<ETFEntityRenderState> stateCaptureEntity) {
+        // Assert state each call in case things got cancelled and couldn't be undone
+        if (stateCaptureEntity.get() != null) {
+            ETFState.stackVerify(stateCaptureEntity.get());
+        }
+    }
+
+
+    @Inject(method = RENDER, at = @At("TAIL"))
+    private void emf$postRender(CallbackInfo ci, @Share("stateCaptureEntity") LocalRef<ETFEntityRenderState> stateCaptureEntity) {
+        if (stateCaptureEntity.get() != null) {
+            ETFState.stackVerify(stateCaptureEntity.get());
+        }
+    }
 }
 
 

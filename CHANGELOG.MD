@@ -1,4 +1,8 @@
 
+[7.2.3]
+- fixed several issues where third party mixins cancelling certain renders would mess up following renders
+- fixed an issue with the French localization file
+
 [7.2.2]
 - re-added the 'id' field to all nbt property readings (field isn't usually present in loaded entity nbt)
 - fixed captures that broke EMF texture overrides on 1.21.9 - 26.1
