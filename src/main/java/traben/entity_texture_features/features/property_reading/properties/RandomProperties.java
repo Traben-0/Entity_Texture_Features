@@ -67,6 +67,8 @@ public class RandomProperties {
                 RandomPropertyFactory.of("regionalDifficulty", "config.entity_texture_features.property_explanation.regional_difficulty", RegionalDifficultyProperty::getPropertyOrNull),
                 RandomPropertyFactory.of("clientGameMode", "config.entity_texture_features.property_explanation.client_game_mode", ClientGameModeProperty::getPropertyOrNull),
                 RandomPropertyFactory.of("hardcore", "config.entity_texture_features.property_explanation.hardcore", HardcoreProperty::getPropertyOrNull),
+                RandomPropertyFactory.of("usingShaders", "config.entity_texture_features.property_explanation.usingShaders", ShadersEnabledProperty::getPropertyOrNull),
+                RandomPropertyFactory.of("resourcepack", "config.entity_texture_features.property_explanation.resourcepack", ResourcePackLoadedProperty::getPropertyOrNull),
 
 
                 // OptiFine properties

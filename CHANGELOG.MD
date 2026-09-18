@@ -1,4 +1,9 @@
 
+[7.2.4]
+- fixed an issue with shoulder parrots that affected EMF
+- added `usingShaders` property to vary textures and EMF models depending on iris shaders
+- added `resourcepack` property to vary textures and EMF models depending on loaded resource-packs
+
 [7.2.3]
 - fixed several issues where third party mixins cancelling certain renders would mess up following renders
 - fixed an issue with the French localization file

@@ -247,6 +247,8 @@
   "config.entity_texture_features.transparent_skins.all": "All skins",
   "config.entity_texture_features.transparent_skins.title": "Allow skin transparency",
   "config.entity_texture_features.transparent_skins.tooltip": "Sets how ETF should enable transparent skins\nBy default this is only enabled for skins using ETF skin features",
+  "config.entity_texture_features.property_explanation.resourcepack": "Resourcepacks\nTests each of the loaded resourcepack names\n§aresourcepack.<n>=<resourcepack_list|regex|pattern>",
+  "config.entity_texture_features.property_explanation.usingShaders": "Using Shaders\nIf Iris shaders are in use or not\n§ausingShaders.<n>=<true/false>",
   "config.entity_texture_features.property_explanation.hardcore": "Hardcore\nIf the world is hardcore mode or not\n§ahardcore.<n>=<true/false>",
   "config.entity_texture_features.property_explanation.biome": "List of biomes\nThe vanilla biome names are listed here: https://minecraft.gamepedia.com/Biome#Biome_IDs\nBiomes added by mods can also be used but require \"modID:biomeName\", whereas vanilla biomes can be either \"minecraft:plains\" or just \"plains\".\nWith ETF only, you can also use regex: iregex: pattern: and ipattern: like the Name property\n§abiomes.<n>=<biome_list>",
   "config.entity_texture_features.property_explanation.client_game_mode": "List of game modes of the client player\nIn vanilla these are: 0=survival, 1=creative, 2=adventure, 3=spectator\n§aclientGameMode.<n>=<list>",

@@ -85,8 +85,9 @@ public abstract class MixinShoulderParrotFeatureRenderer extends RenderLayer<Ava
         if (parrotRenderState != null) {
             try {
                 var parrot = UEntityTypes.PARROT.create(playerEntity.level(), EntitySpawnReason.COMMAND);
-                    ETFState.mount(ETFEntityRenderState.forEntity((ETFEntity) parrot));
-                    ((HoldsETFRenderState) parrotRenderState).etf$initState((ETFEntity) parrot);
+                var state = ETFEntityRenderState.forEntity((ETFEntity) parrot);
+                ((HoldsETFRenderState) parrotRenderState).etf$initState((ETFEntity) parrot);
+                ETFState.mount(state);
             } catch (final Exception ignored) {
                 ETFState.mountNone();
             }
