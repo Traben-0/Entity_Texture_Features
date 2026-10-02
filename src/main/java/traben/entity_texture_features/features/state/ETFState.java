@@ -1,5 +1,6 @@
 package traben.entity_texture_features.features.state;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
@@ -13,11 +14,10 @@ import traben.entity_texture_features.utils.ETFUtils2;
 import traben.entity_texture_features.utils.ETFVertexConsumer;
 import traben.entity_texture_features.utils.URenderTypeToVertexConsumer;
 
+import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.EmptyStackException;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
  * Global state data for ETF
@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
  */
 public abstract class ETFState {
 
-    private static final Deque<ETFEntityRenderState> stateStack = new ConcurrentLinkedDeque<>(){
+    private static final Deque<ETFEntityRenderState> stateStack = new ArrayDeque<>(){
         @Override
         public void push(ETFEntityRenderState etfEntityRenderState) {
             super.push(etfEntityRenderState == null ? ETFEntityRenderState.NULL : etfEntityRenderState);
@@ -42,9 +42,10 @@ public abstract class ETFState {
 
 
     public static void mount(@Nullable ETFEntityRenderState state) {
-        if (state != null && state() == state) return;
-
+        if (!RenderSystem.isOnRenderThread()) return; // stacks are render-thread confined, see stateStack
         var current = state();
+        if (state != null && current == state) return;
+
         if (current != null) current.deactivate(true);
         stateStack.push(state);
         if (state != null) state.activate(true);
@@ -53,6 +54,7 @@ public abstract class ETFState {
     }
 
     public static void unMount() {
+        if (!RenderSystem.isOnRenderThread()) return; // matches mount()
         try {
             var popped = stateStack.peek();
             if (popped != null) popped.deactivate(false);
@@ -73,6 +75,7 @@ public abstract class ETFState {
 
 
     public static @Nullable ETFEntityRenderState state() {
+        if (!RenderSystem.isOnRenderThread()) return null;
         return stateStack.peek();
     }
 
@@ -162,48 +165,41 @@ public abstract class ETFState {
     public static boolean allowTexturePatching = false;
 
     // Stack here probably isn't required, merely a safeguard against early exiting of the phase
-    private static final Deque<Boolean> specialPhaseStack = new ConcurrentLinkedDeque<>();
+    private static final Deque<Boolean> specialPhaseStack = new ArrayDeque<>();
     //region specialPhaseStack methods
     @SuppressWarnings("unused") // EMF uses it
-    public static boolean isIsInSpecialRenderOverlayPhase() {return !specialPhaseStack.isEmpty();}
+    public static boolean isIsInSpecialRenderOverlayPhase() {return RenderSystem.isOnRenderThread() && !specialPhaseStack.isEmpty();}
     public static void startSpecialRenderOverlayPhase() {
-        specialPhaseStack.push(true);
+        if (RenderSystem.isOnRenderThread()) specialPhaseStack.push(true);
     }
     public static void endSpecialRenderOverlayPhase() {
-        try {
-            if (!specialPhaseStack.isEmpty()) specialPhaseStack.pop();
-        } catch (NoSuchElementException e) {
-            // You'd think the isEmpty() check would avoid this
-        }
+        if (RenderSystem.isOnRenderThread()) specialPhaseStack.pollFirst(); // no-op when empty
     }
     //endregion
 
-    private static final Deque<Boolean> renderLayerModifyStack = new ConcurrentLinkedDeque<>();
+    private static final Deque<Boolean> renderLayerModifyStack = new ArrayDeque<>();
     //region allowRenderLayerTextureModify methods
     public static boolean isAllowedToRenderLayerTextureModify() {
         if (!ETF.config().getConfig().canDoCustomTextures()) return false;
+        if (!RenderSystem.isOnRenderThread()) return true; // same as empty stack
         Boolean peek = renderLayerModifyStack.peek();
         return peek == null || peek;
     }
     public static void pushRenderLayerModifyState(boolean allow) {
-        renderLayerModifyStack.push(allow);
+        if (RenderSystem.isOnRenderThread()) renderLayerModifyStack.push(allow);
     }
     public static void popRenderLayerModifyState() {
-        try {
-            if (!renderLayerModifyStack.isEmpty()) renderLayerModifyStack.pop();
-        } catch (NoSuchElementException e) {
-            // You'd think the isEmpty() check would avoid this
-        }
+        if (RenderSystem.isOnRenderThread()) renderLayerModifyStack.pollFirst(); // no-op when empty
     }
     //endregion
 
     public static RenderType modifyRenderLayerIfRequired(RenderType value) {
 
-        if (isStateActive()
+        var layer = ETF.config().getConfig().getRenderLayerOverride();
+        if (layer != null
+                && isStateActive()
                 && isAllowedToRenderLayerTextureModify()) {
-            var layer = ETF.config().getConfig().getRenderLayerOverride();
-            if (layer != null
-                    && !value.isOutline()
+            if (!value.isOutline()
                     && value instanceof ETFRenderLayerWithTexture multiphase) {
 
                 Optional<ResourceLocation> texture = multiphase.etf$getId();

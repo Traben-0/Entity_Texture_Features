@@ -18,10 +18,12 @@ import java.util.Optional;
 //$$
 //$$     @Shadow @Final private RenderSetup state;
 //$$
+//$$     @org.spongepowered.asm.mixin.Unique private Optional<Identifier> etf$id;
+//$$
 //$$     @Override
 //$$     public Optional<Identifier> etf$getId() {
-//$$         var optional = state.textures.values().stream().findFirst();
-//$$         return optional.map(it -> it.location());
+//$$         if (etf$id == null) etf$id = state.textures.values().stream().findFirst().map(it -> it.location());
+//$$         return etf$id;
 //$$     }
 //$$ }
 //$$

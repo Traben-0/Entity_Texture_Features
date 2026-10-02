@@ -31,8 +31,11 @@ public class ETFEntityRenderStateViaReference implements ETFEntityRenderState {
     private final ETFEntity entity;
     private final boolean isPlayer;
     private final boolean isClientPlayer;
+    private final boolean isBlockEntity;
+    private UUID uuid = null; // lazy, block entities compute theirs on first request
     public ETFEntityRenderStateViaReference(ETFEntity entity) {
             this.entity = entity;
+            this.isBlockEntity = entity != null && entity.etf$isBlockEntity();
             //#if MC >= 1.21.9
             this.isPlayer = entity instanceof Avatar;
             //#else
@@ -86,7 +89,8 @@ public class ETFEntityRenderStateViaReference implements ETFEntityRenderState {
 
     @Override
     public UUID uuid() {
-        return entity.etf$getUuid();
+        if (uuid == null) uuid = entity.etf$getUuid();
+        return uuid;
     }
 
     @Override
@@ -96,7 +100,7 @@ public class ETFEntityRenderStateViaReference implements ETFEntityRenderState {
 
     @Override
     public boolean isBlockEntity() {
-        return entity.etf$isBlockEntity();
+        return isBlockEntity;
     }
 
     @Override

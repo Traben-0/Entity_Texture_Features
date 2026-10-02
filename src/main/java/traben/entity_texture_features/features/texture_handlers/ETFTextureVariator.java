@@ -92,6 +92,10 @@ public abstract class ETFTextureVariator {
         }
 
 
+        public @NotNull ETFTexture texture() {
+            return self;
+        }
+
         @Override
         protected @NotNull ETFTexture getVariantOfInternal(@NotNull ETFEntityRenderState entity) {
             return self;

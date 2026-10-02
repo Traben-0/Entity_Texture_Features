@@ -48,7 +48,8 @@ public class Mixin_ModelRenderer {
         }
 
         if (data != null) {
-            ETFSubmitData.DATA_OUT.forEach(entry -> entry.accept(data, modelSubmit));
+            var out = ETFSubmitData.DATA_OUT;
+            for (int i = 0, n = out.size(); i < n; i++) out.get(i).accept(data, modelSubmit); // no lambda or iterator alloc per submit
         }
     }
 
