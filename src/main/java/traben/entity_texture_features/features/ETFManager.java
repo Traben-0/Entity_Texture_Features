@@ -240,23 +240,28 @@ public class ETFManager {
 
     @NotNull
     public ETFTexture getETFTextureVariant(@NotNull ResourceLocation vanillaIdentifier, @Nullable ETFEntityRenderState entity) {
+        var variator = VARIATOR_MAP.get(vanillaIdentifier);
+        if (ENTITY_DEBUG == null && variator instanceof ETFTextureVariator.ETFTextureSingleton singleton) {
+            return singleton.texture();
+        }
         if (entity == null
                 || entity.uuid() == ETFApi.ETF_GENERIC_UUID
                 || (entity.blockPos().equals(Vec3i.ZERO) && entity.uuid().getLeastSignificantBits() != ETFApi.ETF_SPAWNER_MARKER)) {
             return getETFTextureNoVariation(vanillaIdentifier);
         }
-        if (!VARIATOR_MAP.containsKey(vanillaIdentifier)) {
+        if (variator == null) {
             if (SKIN_NAMESPACE.equals(vanillaIdentifier.getNamespace())) {
                 return getETFTextureNoVariation(vanillaIdentifier);
             } else {
-                VARIATOR_MAP.put(vanillaIdentifier, ETFTextureVariator.of(vanillaIdentifier));
+                variator = ETFTextureVariator.of(vanillaIdentifier);
+                VARIATOR_MAP.put(vanillaIdentifier, variator);
                 if (ETF.config().getConfig().logTextureDataInitialization) {
                     ETFUtils2.logMessage("Amount of 'base' textures: " + VARIATOR_MAP.size());
                     ETFUtils2.logMessage("Total textures including variants: " + ETF_TEXTURE_CACHE.size());
                 }
             }
         }
-        return VARIATOR_MAP.get(vanillaIdentifier).getVariantOf(entity);
+        return variator.getVariantOf(entity);
     }
 
 

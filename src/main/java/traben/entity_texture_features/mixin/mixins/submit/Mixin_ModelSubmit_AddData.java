@@ -28,13 +28,15 @@ public abstract class Mixin_ModelSubmit_AddData implements ETFSubmitExtension {
     @Inject(method = "<init>", at = @At("RETURN"))
     private void emf$initBackupState(CallbackInfo ci) {
         if (data != null) {
-            ETFSubmitData.DATA_IN.forEach(entry -> entry.accept(data, (
+            var self = (
                     //#if MC >= 26.2
                     //$$ net.minecraft.client.renderer.feature.ModelFeatureRenderer.Submit
                     //#else
                     net.minecraft.client.renderer.SubmitNodeStorage.ModelSubmit
                     //#endif
-                    ) (Object) this));
+                    ) (Object) this;
+            var in = ETFSubmitData.DATA_IN;
+            for (int i = 0, n = in.size(); i < n; i++) in.get(i).accept(data, self); // no lambda or iterator alloc per submit
         }
     }
 
