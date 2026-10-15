@@ -1,3 +1,5 @@
+[7.2.6]
+- improved performance of NBT property testing, also applies to the EMF NBT animation function
 
 [7.2.5]
 - reduced per frame allocations to improve performance
