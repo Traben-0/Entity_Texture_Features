@@ -129,10 +129,18 @@ public class NBTProperty extends RandomProperty {
 
         if (printAll) {
             ETFUtils2.logMessage(prefix+" property [full] print:\n" + formatNbtPretty(entityNBT));
+            return testAllNBTCases(entityNBT);
         }
 
-        return testAllNBTCases(entityNBT);
+        if (entityNBT != lastTestedNBT) {
+            lastTestedResult = testAllNBTCases(entityNBT);
+            lastTestedNBT = entityNBT;
+        }
+        return lastTestedResult;
     }
+
+    private CompoundTag lastTestedNBT = null;
+    private boolean lastTestedResult = false;
 
     protected boolean testAllNBTCases(final CompoundTag entityNBT) {
         for (Map.Entry<String, NBTTester> nbtPropertyEntry : NBT_MAP.entrySet()) {
