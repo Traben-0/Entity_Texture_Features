@@ -140,24 +140,41 @@ public abstract class MixinEntity implements ETFEntity {
     public CompoundTag etf$getNbt() {
         var state = ETFState.state();
         if (state == null) return INTENTIONAL_FAILURE;
-        return state.cacheEntityNBTForState(etf$getUuid(),
-                () -> {
-                    var tag =
-                            //#if MC >= 26.2
-                            //$$ net.minecraft.advancements.predicates.NbtPredicate
-                            //#else
-                            net.minecraft.advancements.critereon.NbtPredicate
-                            //#endif
-                                .getEntityTagToCompare(((Entity) ((Object) this)));
+        return state.cacheEntityNBTForState(etf$getUuid(), this::etf$getNbtThisTick);
+    }
 
-                    if (!tag.contains("id")) {
-                        try {
-                            tag.putString("id", EntityType.getKey(getType()).toString());
-                        } catch (Exception ignore) { }
-                    }
+    @Unique
+    private CompoundTag etf$cachedNbt = null;
+    @Unique
+    private long etf$cachedNbtTime = Long.MIN_VALUE;
 
-                    return tag;
-                });
+    @Unique
+    private CompoundTag etf$getNbtThisTick() {
+        long time = level().getGameTime();
+        if (etf$cachedNbt == null || etf$cachedNbtTime != time) {
+            etf$cachedNbt = etf$computeNbt();
+            etf$cachedNbtTime = time;
+        }
+        return etf$cachedNbt;
+    }
+
+    @Unique
+    private CompoundTag etf$computeNbt() {
+        var tag =
+                //#if MC >= 26.2
+                //$$ net.minecraft.advancements.predicates.NbtPredicate
+                //#else
+                net.minecraft.advancements.critereon.NbtPredicate
+                //#endif
+                    .getEntityTagToCompare(((Entity) ((Object) this)));
+
+        if (!tag.contains("id")) {
+            try {
+                tag.putString("id", EntityType.getKey(getType()).toString());
+            } catch (Exception ignore) { }
+        }
+
+        return tag;
     }
 
     @Override
