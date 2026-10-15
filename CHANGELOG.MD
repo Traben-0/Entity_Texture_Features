@@ -1,4 +1,7 @@
 
+[7.2.5]
+- reduced per frame allocations to improve performance
+
 [7.2.4]
 - fixed an issue with shoulder parrots that affected EMF
 - added `usingShaders` property to vary textures and EMF models depending on iris shaders
