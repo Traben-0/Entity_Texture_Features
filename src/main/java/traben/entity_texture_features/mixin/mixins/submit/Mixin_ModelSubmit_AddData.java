@@ -18,7 +18,7 @@ import traben.entity_texture_features.features.state.ETFSubmitExtension;
 //#endif
 public abstract class Mixin_ModelSubmit_AddData implements ETFSubmitExtension {
 
-    @Unique private final @Nullable ETFSubmitData data = new ETFSubmitData();
+    @Unique private final @Nullable ETFSubmitData data = ETFSubmitData.acquire();
 
     @Override
     public @Nullable ETFSubmitData emf$getData() {

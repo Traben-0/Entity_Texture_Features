@@ -23,5 +23,12 @@ public abstract class MixinMinecraftClient {
     private void etf$injected(CallbackInfo ci) {
         ETFManager.resetInstance();
     }
+
+    //#if MC >= 12109
+    @Inject(method = "runTick", at = @At("HEAD"))
+    private void etf$recycleSubmitData(CallbackInfo ci) {
+        traben.entity_texture_features.features.state.ETFSubmitData.recycle();
+    }
+    //#endif
 }
 
