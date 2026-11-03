@@ -1,3 +1,8 @@
+[7.2.7]
+- fixed the enchanted skin pixels feature not working properly in 1.21.9+
+- improved memory usage for 1.21.9+
+- translation updates
+
 [7.2.6]
 - improved performance of NBT property testing, also applies to the EMF NBT animation function
 

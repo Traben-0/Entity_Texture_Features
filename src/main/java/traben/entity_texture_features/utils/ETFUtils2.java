@@ -131,12 +131,16 @@ public abstract class ETFUtils2 {
     }
 
     public static void submitEnchantedModelPart(final PoseStack matrixStack, final SubmitNodeCollector submit, final int light, final ModelPart modelPart, final @NotNull ResourceLocation enchanted) {
+        //#if MC == 26.2
+        //$$ // From what I can see 26.2 applies the glint to a matching depth render, so we need to submit this first
+        //$$ // using the armor offset layer for it to match depth with
+        //$$ submit.submitModelPart(modelPart, matrixStack,net.minecraft.client.renderer.rendertype.RenderTypes.armorCutoutNoCull(enchanted), light, OverlayTexture.NO_OVERLAY, null);
+        //#endif
         submit.submitModelPart(modelPart, matrixStack,
-                //TODO enchanted models REALLY needs refactoring
                 //#if MC >= 26.3
                 //$$ net.minecraft.client.renderer.rendertype.RenderTypes.armorCutoutNoCullGlint(enchanted), light, OverlayTexture.NO_OVERLAY, null);
                 //#elseif MC >= 26.2
-                //$$ net.minecraft.client.renderer.rendertype.RenderTypes.entityGlint(), light, OverlayTexture.NO_OVERLAY, null);
+                //$$ net.minecraft.client.renderer.rendertype.RenderTypes.armorEntityGlint(), light, OverlayTexture.NO_OVERLAY, null);
                 //#elseif MC >= 1.21.11
                 //$$ net.minecraft.client.renderer.rendertype.RenderTypes.armorCutoutNoCull(enchanted), light, OverlayTexture.NO_OVERLAY, null, false, true);
                 //#else
@@ -225,14 +229,12 @@ public abstract class ETFUtils2 {
     }
 
     //#if MC >= 26.3
-    //$$ //todo actual impl
     //$$ public static VertexConsumer getFoilBuffer(URenderTypeToVertexConsumer multiBufferSource, Identifier location) {
     //$$     return multiBufferSource.getBuffer(RenderTypes.armorCutoutNoCullGlint(location));
     //$$ }
     //#elseif MC >= 26.2
-    //$$ //todo actual impl
     //$$ public static VertexConsumer getFoilBuffer(URenderTypeToVertexConsumer multiBufferSource, RenderType renderType) {
-    //$$     return multiBufferSource.getBuffer(RenderTypes.entityGlint());
+    //$$     return multiBufferSource.getBuffer(RenderTypes.armorEntityGlint());
     //$$ }
     //#elseif MC >= 26.1
     //$$ public static VertexConsumer getFoilBuffer(URenderTypeToVertexConsumer multiBufferSource, RenderType renderType) {
@@ -241,9 +243,22 @@ public abstract class ETFUtils2 {
     //#endif
 
     public static boolean renderEnchanted(ETFTexture texture, URenderTypeToVertexConsumer provider, int light, RenderMethodForOverlay renderer) {
-        // attempt enchanted render
+        // Attempt enchanted render
         ResourceLocation enchanted = texture.getEnchantIdentifierOfCurrentState();
         if (enchanted != null) {
+
+            //#if MC == 26.2
+            //$$ // From what I can see 26.2 applies the glint to a matching depth render, so we need to render this first
+            //$$ // using the armor offsetting layer for it to match depth with
+            //$$ ETFState.pushRenderLayerModifyState(false);
+            //$$ VertexConsumer baseVertexConsumer = provider.getBuffer(RenderTypes.armorCutoutNoCull(enchanted));
+            //$$ ETFState.popRenderLayerModifyState();
+            //$$
+            //$$ ETFState.startSpecialRenderOverlayPhase();
+            //$$ renderer.render(baseVertexConsumer, light);
+            //$$ ETFState.endSpecialRenderOverlayPhase();
+            //#endif
+
             ETFState.pushRenderLayerModifyState(false);
             VertexConsumer enchantedVertex =
                     //#if MC >= 26.3

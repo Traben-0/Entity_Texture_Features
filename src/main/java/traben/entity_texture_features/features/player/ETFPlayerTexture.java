@@ -922,51 +922,34 @@ public class ETFPlayerTexture {
                 //enchant
                 hasEnchant = markerChoices.contains(2);
                 if (hasEnchant) {
+
+                    //#if MC >= 12109 && MC < 26.2
+                    boolean invertMatch = true;
+                    //#else
+                    //$$ boolean invertMatch = false;
+                    //#endif
+
                     int[] boxChosenBounds = getSkinPixelBounds("marker" + (markerChoices.indexOf(2) + 1));
-                    NativeImage check = returnMatchPixels(modifiedSkin, boxChosenBounds,
-                            //#if MC >= 12109
-                            true
-                            //#else
-                            //$$ false
-                            //#endif
-                    );
+                    NativeImage check = returnMatchPixels(modifiedSkin, boxChosenBounds, invertMatch);
                     if (check != null) {
                         baseEnchantIdentifier = ETFUtils2.res(SKIN_NAMESPACE, id + "_enchant.png");
                         ETFUtils2.registerNativeImageToIdentifier(check, baseEnchantIdentifier);
                         if (blinkSkinFile != null) {
-                            NativeImage checkBlink = returnMatchPixels(blinkSkinFile, boxChosenBounds,
-                                    //#if MC >= 12109
-                                    true
-                                    //#else
-                                    //$$ false
-                                    //#endif
-                            );
+                            NativeImage checkBlink = returnMatchPixels(blinkSkinFile, boxChosenBounds, invertMatch);
                             if (checkBlink != null) {
                                 baseEnchantBlinkIdentifier = ETFUtils2.res(SKIN_NAMESPACE, id + "_blink_enchant.png");
                                 ETFUtils2.registerNativeImageToIdentifier(checkBlink, baseEnchantBlinkIdentifier);
                             }
                         }
                         if (blinkSkinFile2 != null) {
-                            NativeImage checkBlink = returnMatchPixels(blinkSkinFile2, boxChosenBounds,
-                                    //#if MC >= 12109
-                                    true
-                                    //#else
-                                    //$$ false
-                                    //#endif
-                            );
+                            NativeImage checkBlink = returnMatchPixels(blinkSkinFile2, boxChosenBounds, invertMatch);
                             if (checkBlink != null) {
                                 baseEnchantBlink2Identifier = ETFUtils2.res(SKIN_NAMESPACE, id + "_blink2_enchant.png");
                                 ETFUtils2.registerNativeImageToIdentifier(checkBlink, baseEnchantBlink2Identifier);
                             }
                         }
                         if (coatSkin != null) {
-                            NativeImage checkCoat = returnMatchPixels(modifiedSkin, boxChosenBounds, coatSkin,
-                                    //#if MC >= 12109
-                                    true
-                                    //#else
-                                    //$$ false
-                                    //#endif
-                            );
+                            NativeImage checkCoat = returnMatchPixels(modifiedSkin, boxChosenBounds, coatSkin, invertMatch);
 
                             if (checkCoat != null) {
                                 coatEnchantedIdentifier = ETFUtils2.res(SKIN_NAMESPACE, id + "_coat_enchant.png");
@@ -975,13 +958,7 @@ public class ETFPlayerTexture {
                         }
 
                         if (noseTexture != null) {
-                            NativeImage checkNose = returnMatchPixels(modifiedSkin, boxChosenBounds, noseTexture,
-                                    //#if MC >= 12109
-                                    true
-                                    //#else
-                                    //$$ false
-                                    //#endif
-                            );
+                            NativeImage checkNose = returnMatchPixels(modifiedSkin, boxChosenBounds, noseTexture, invertMatch);
 
                             if (checkNose != null) {
                                 texturedNoseIdentifierEnchanted = ETFUtils2.res(SKIN_NAMESPACE, id + "_nose_enchant.png");
